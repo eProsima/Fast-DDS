@@ -49,8 +49,6 @@
 #define FIXEDSIZED_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure FixedSized defined by the user in the IDL file.
  * @ingroup FixedSized

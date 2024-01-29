@@ -39,7 +39,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/CustomPayloadPool.hpp"
@@ -455,7 +454,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     {
     }
 
-    ASSERT_EQ(eprosima::fastrtps::types::RETCODE_OK,
+    ASSERT_EQ(RETCODE_OK,
             native_reader.take_next_sample((void*)&read_data, &info));
 
     ASSERT_TRUE(exists_pid_related_sample_identity);

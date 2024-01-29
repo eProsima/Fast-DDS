@@ -15,7 +15,10 @@
 #ifndef TYPES_DYNAMIC_DATA_PTR_H
 #define TYPES_DYNAMIC_DATA_PTR_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <memory>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -29,8 +32,8 @@ public:
 
     typedef std::shared_ptr<DynamicData> Base;
 
-    using Base::operator->;
-    using Base::operator*;
+    using Base::operator ->;
+    using Base::operator *;
     using Base::operator bool;
 
     RTPS_DllAPI DynamicData_ptr()

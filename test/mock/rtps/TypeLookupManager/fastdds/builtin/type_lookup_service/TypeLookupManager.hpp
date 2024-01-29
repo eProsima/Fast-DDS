@@ -17,6 +17,7 @@
 #define _FASTDDS_TYPELOOKUP_SERVICE_MANAGER_HPP
 
 #include <vector>
+
 #include <gmock/gmock.h>
 
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
@@ -66,13 +67,16 @@ public:
     }
 
     MOCK_CONST_METHOD1(get_type_dependencies, fastrtps::rtps::SampleIdentity(
-                const xtypes::TypeIdentifierSeq&));
+                const fastdds::dds::xtypes::TypeIdentifierSeq&));
 
     MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
-                const xtypes::TypeIdentifierSeq&));
+                const fastdds::dds::xtypes::TypeIdentifierSeq&));
 
-    MOCK_METHOD1(remove_remote_endpoints, void(
-                fastrtps::rtps::ParticipantProxyData* pdata));
+    void remove_remote_endpoints(
+            fastrtps::rtps::ParticipantProxyData* pdata)
+    {
+        static_cast<void>(pdata);
+    }
 
 };
 

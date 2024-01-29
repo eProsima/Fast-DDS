@@ -22,10 +22,10 @@
 #include <fastrtps/fastrtps_dll.h>
 
 #include <fastdds/dds/core/LoanableTypedCollection.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-
-#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {

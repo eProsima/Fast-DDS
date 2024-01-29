@@ -51,7 +51,6 @@
 #include <mutex>
 
 using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::types;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
 using eprosima::fastdds::dds::SubscriptionMatchedStatus;
 using ParameterList = eprosima::fastdds::dds::ParameterList;

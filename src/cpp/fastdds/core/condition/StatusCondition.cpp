@@ -18,7 +18,8 @@
  */
 
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
-#include <fastrtps/types/TypesBase.h>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 
 #include <fastdds/core/condition/StatusConditionImpl.hpp>
 

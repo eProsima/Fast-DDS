@@ -135,8 +135,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace xmlparser {
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastdds::xml::detail;
+using namespace eprosima::fastrtps::rtps;
 
 static XMLP_ret parseXMLOctetVector(
         tinyxml2::XMLElement* elem,

@@ -661,9 +661,6 @@ protected:
     ReturnCode_t register_dynamic_type(
             fastrtps::types::DynamicType_ptr dyn_type);
 
-    bool register_dynamic_type_to_factories(
-            const TypeSupport& type) const;
-
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,
             PublisherListener* listener);

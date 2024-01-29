@@ -15,7 +15,9 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_PTR_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_PTR_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <memory>
+
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {

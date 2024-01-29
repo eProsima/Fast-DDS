@@ -21,14 +21,9 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
-#include <fastdds/dds/core/LoanableTypedCollection.hpp>
-
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-
-#include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/TypeDescriptor.h>
 
 namespace eprosima {
 namespace fastdds {

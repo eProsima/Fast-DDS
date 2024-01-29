@@ -22,12 +22,12 @@
 #include <string>
 #include <vector>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-
-#include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 #include "DDSFilterGrammar.hpp"
 #include "DDSFilterExpressionParser.hpp"
@@ -51,12 +51,13 @@ namespace DDSSQLFilter {
 
 static ReturnCode_t transform_enum(
         std::shared_ptr<DDSFilterValue>& value,
-        const eprosima::fastrtps::types::TypeIdentifier* type,
+        const eprosima::fastdds::dds::xtypes::TypeIdentifier* type,
         const eprosima::fastcdr::string_255& string_value)
 {
     const char* str_value = string_value.c_str();
-    auto type_obj = eprosima::fastrtps::types::TypeObjectFactory::get_instance()->get_type_object(type);
-    for (const auto& enum_value : type_obj->complete().enumerated_type().literal_seq())
+    xtypes::TypeObject type_obj;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(*type, type_obj);
+    for (const auto& enum_value : type_obj.complete().enumerated_type().literal_seq())
     {
         if (enum_value.detail().name() == str_value)
         {
@@ -71,9 +72,9 @@ static ReturnCode_t transform_enum(
 
 static ReturnCode_t transform_enums(
         std::shared_ptr<DDSFilterValue>& left_value,
-        const eprosima::fastrtps::types::TypeIdentifier* left_type,
+        const eprosima::fastdds::dds::xtypes::TypeIdentifier* left_type,
         std::shared_ptr<DDSFilterValue>& right_value,
-        const eprosima::fastrtps::types::TypeIdentifier* right_type)
+        const eprosima::fastdds::dds::xtypes::TypeIdentifier* right_type)
 {
     if ((DDSFilterValue::ValueKind::ENUM == left_value->kind) &&
             (DDSFilterValue::ValueKind::STRING == right_value->kind))
@@ -195,7 +196,7 @@ static DDSFilterPredicate::OperationKind get_predicate_op(
 
 struct ExpressionParsingState
 {
-    const eprosima::fastrtps::types::TypeObject* type_object;
+    const eprosima::fastdds::dds::xtypes::TypeObject* type_object;
     const IContentFilterFactory::ParameterSeq& filter_parameters;
     DDSFilterExpression* filter;
 };
@@ -457,8 +458,6 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
         const IContentFilterFactory::ParameterSeq& filter_parameters,
         IContentFilter*& filter_instance)
 {
-    using eprosima::fastrtps::types::TypeObjectFactory;
-
     static_cast<void>(data_type);
 
     ReturnCode_t ret = RETCODE_UNSUPPORTED;
@@ -517,19 +516,22 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
     }
     else
     {
-        auto type_object = TypeObjectFactory::get_instance()->get_type_object(type_name, true);
-        if (!type_object)
+        eprosima::fastdds::dds::xtypes::TypeObjectPair type_objects;
+        ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+            type_name, type_objects);
+        auto type_object = eprosima::fastdds::dds::xtypes::TypeObject();
+        type_object.complete(type_objects.complete_type_object);
+        if (RETCODE_BAD_PARAMETER == ret)
         {
             EPROSIMA_LOG_ERROR(DDSSQLFILTER, "No TypeObject found for type " << type_name);
-            ret = RETCODE_BAD_PARAMETER;
         }
         else
         {
-            auto node = parser::parse_filter_expression(filter_expression, type_object);
+            auto node = parser::parse_filter_expression(filter_expression, &type_object);
             if (node)
             {
-                auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
-                auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
+                // TODO(XTypes): PENDING implementation DynamicTypeBuilderFactory::create_type_w_type_object
+                eprosima::fastrtps::types::DynamicType_ptr dyn_type; //= TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
                 DDSFilterExpression* expr = get_expression();
                 expr->set_type(dyn_type);
                 size_t n_params = filter_parameters.length();
@@ -538,7 +540,7 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
                 {
                     expr->parameters.emplace_back();
                 }
-                ExpressionParsingState state{ type_object, filter_parameters, expr };
+                ExpressionParsingState state{ &type_object, filter_parameters, expr };
                 ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
                 if (RETCODE_OK == ret)
                 {

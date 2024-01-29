@@ -29,6 +29,8 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
 using UDPv6Transport = eprosima::fastdds::rtps::UDPv6Transport;
+using UDPv6TransportDescriptor = eprosima::fastdds::rtps::UDPv6TransportDescriptor;
+using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 
 #ifndef __APPLE__
 const uint32_t ReceiveBufferCapacity = 65536;

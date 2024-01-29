@@ -26,14 +26,15 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/ReplierAttributes.hpp>
 #include <fastrtps/attributes/RequesterAttributes.hpp>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {

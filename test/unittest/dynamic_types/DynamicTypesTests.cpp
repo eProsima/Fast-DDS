@@ -12,25 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include "idl/BasicPubSubTypes.h"
-#include "idl/BasicTypeObject.h"
 #include <tinyxml2.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
+#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "idl/BasicPubSubTypes.h"
+#include "idl/BasicTypeObjectSupport.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -68,20 +70,20 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
 {
     // Given
     TypeDescriptor pInt32Descriptor;
-    pInt32Descriptor.set_kind(TK_INT32);
+    pInt32Descriptor.set_kind(eprosima::fastdds::dds::xtypes::TK_INT32);
     pInt32Descriptor.set_name("TEST_INT32");
     TypeDescriptor pInt32Descriptor2;
 
     // Then
     ASSERT_FALSE(pInt32Descriptor.equals(&pInt32Descriptor2));
-    ASSERT_FALSE(pInt32Descriptor2.copy_from(nullptr) == RETCODE_OK);
-    ASSERT_TRUE(pInt32Descriptor2.copy_from(&pInt32Descriptor) == RETCODE_OK);
+    ASSERT_FALSE(pInt32Descriptor2.copy_from(nullptr) == eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_TRUE(pInt32Descriptor2.copy_from(&pInt32Descriptor) == eprosima::fastdds::dds::RETCODE_OK);
     ASSERT_TRUE(pInt32Descriptor.equals(&pInt32Descriptor2));
     pInt32Descriptor2.set_name("TEST_2");
     ASSERT_FALSE(pInt32Descriptor.equals(&pInt32Descriptor2));
     pInt32Descriptor2.set_name(pInt32Descriptor.get_name());
     ASSERT_TRUE(pInt32Descriptor.equals(&pInt32Descriptor2));
-    pInt32Descriptor2.set_kind(TK_NONE);
+    pInt32Descriptor2.set_kind(eprosima::fastdds::dds::xtypes::TK_NONE);
     ASSERT_FALSE(pInt32Descriptor.equals(&pInt32Descriptor2));
 }
 
@@ -102,12 +104,12 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     ASSERT_TRUE(struct_type_builder != nullptr);
 
     // Add members to the struct.
-    ASSERT_TRUE(struct_type_builder->add_member(0, "int32", int32_type) == RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->add_member(0, "int32", int32_type) == eprosima::fastdds::dds::RETCODE_OK);
     auto struct_type = struct_type_builder->build();
     ASSERT_TRUE(struct_type != nullptr);
 
     ASSERT_TRUE(struct_type_builder->add_member(1, "int64",
-            DynamicTypeBuilderFactory::get_instance()->create_int64_type()) == RETCODE_OK);
+            DynamicTypeBuilderFactory::get_instance()->create_int64_type()) == eprosima::fastdds::dds::RETCODE_OK);
     auto struct_type2 = struct_type_builder->build();
     ASSERT_TRUE(struct_type2 != nullptr);
     ASSERT_FALSE(struct_type->equals(struct_type2.get()));
@@ -130,10 +132,10 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         ASSERT_TRUE(type3 != nullptr);
         ASSERT_TRUE(type->equals(type3.get()));
         auto data = DynamicDataFactory::get_instance()->create_data(created_builder.get());
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto data2 = DynamicDataFactory::get_instance()->create_data(type);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -148,8 +150,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -164,8 +166,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -180,8 +182,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -196,8 +198,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -212,8 +214,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -228,8 +230,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_float64_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -244,8 +246,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_float128_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -260,8 +262,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_char8_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -276,8 +278,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -292,8 +294,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -308,8 +310,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_bool_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -324,8 +326,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder =
                 DynamicTypeBuilderFactory::get_instance()->create_string_builder(BOUND_UNLIMITED);
@@ -341,8 +343,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(BOUND_UNLIMITED);
         ASSERT_TRUE(created_builder != nullptr);
@@ -357,12 +359,12 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Create with custom types
         TypeDescriptor pInt32Descriptor;
-        pInt32Descriptor.set_kind(TK_INT32);
+        pInt32Descriptor.set_kind(eprosima::fastdds::dds::xtypes::TK_INT32);
         pInt32Descriptor.set_name("TEST_INT32");
         created_builder = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&pInt32Descriptor);
         ASSERT_TRUE(created_builder != nullptr);
@@ -374,8 +376,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
         data = DynamicDataFactory::get_instance()->create_data(type);
         data2 = DynamicDataFactory::get_instance()->create_copy(data);
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -393,60 +395,60 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
 
         int32_t test1 = 123;
         int32_t test2 = 0;
-        ASSERT_TRUE(data->set_int32_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_int32_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_int32_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int32_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_int32_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        //ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         //int32_t iTest32;
-        //ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -474,9 +476,9 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -494,60 +496,60 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
 
         uint32_t test1 = 123;
         uint32_t test2 = 0;
-        ASSERT_TRUE(data->set_uint32_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_uint32_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_uint32_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_uint32_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_uint32_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //uint32_t uTest32;
-        //ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -575,9 +577,9 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -595,60 +597,60 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
 
         int16_t test1 = 123;
         int16_t test2 = 0;
-        ASSERT_TRUE(data->set_int16_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_int16_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_int16_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int16_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_int16_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //int16_t iTest16;
-        //ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -676,9 +678,9 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -696,60 +698,60 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
 
         uint16_t test1 = 123;
         uint16_t test2 = 0;
-        ASSERT_TRUE(data->set_uint16_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_uint16_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_uint16_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_uint16_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_uint16_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //uint16_t uTest16;
-        //ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -777,9 +779,9 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -797,60 +799,60 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
 
         int64_t test1 = 123;
         int64_t test2 = 0;
-        ASSERT_TRUE(data->set_int64_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_int64_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_int64_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int64_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_int64_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //int64_t iTest64;
-        //ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -878,9 +880,9 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -898,60 +900,60 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
 
         uint64_t test1 = 123;
         uint64_t test2 = 0;
-        ASSERT_TRUE(data->set_uint64_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_uint64_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_uint64_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_uint64_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_uint64_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //uint64_t uTest64;
-        //ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -979,9 +981,9 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -999,60 +1001,60 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
 
         float test1 = 123.0f;
         float test2 = 0.0f;
-        ASSERT_TRUE(data->set_float32_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_float32_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_float32_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_float32_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_float32_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //float fTest32;
-        //ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1080,9 +1082,9 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -1101,60 +1103,60 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
 
         double test1 = 123.0;
         double test2 = 0.0;
-        ASSERT_TRUE(data->set_float64_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_float64_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_float64_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_float64_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_float64_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //double fTest64;
-        //ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1182,9 +1184,9 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -1203,60 +1205,60 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
 
         long double test1 = 123.0;
         long double test2 = 0.0;
-        ASSERT_TRUE(data->set_float128_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_float128_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_float128_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_float128_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_float128_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //long double fTest128;
-        //ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1284,9 +1286,9 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1304,60 +1306,60 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
 
         char test1 = 'a';
         char test2 = 'b';
-        ASSERT_TRUE(data->set_char8_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_char8_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_char8_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_char8_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_char8_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //char cTest8;
-        //ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1385,9 +1387,9 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -1407,60 +1409,60 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
 
         wchar_t test1 = L'a';
         wchar_t test2 = L'b';
-        ASSERT_TRUE(data->set_char16_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_char16_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_char16_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_char16_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_char16_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //wchar_t cTest16;
-        //ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1489,9 +1491,9 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1510,60 +1512,60 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
 
         octet test1 = 255;
         octet test2 = 0;
-        ASSERT_TRUE(data->set_byte_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_byte_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_byte_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_byte_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_byte_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //octet oTest;
-        //ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1591,9 +1593,9 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1611,60 +1613,60 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
 
         bool test1 = true;
         bool test2 = false;
-        ASSERT_TRUE(data->set_bool_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->get_bool_value(test2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_bool_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_bool_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_bool_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //bool bTest;
-        //ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1692,9 +1694,9 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1707,94 +1709,94 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
         ASSERT_TRUE(created_builder != nullptr);
 
         // Add three members to the enum.
-        ASSERT_TRUE(created_builder->add_empty_member(0, "DEFAULT") == RETCODE_OK);
-        ASSERT_TRUE(created_builder->add_empty_member(1, "FIRST") == RETCODE_OK);
-        ASSERT_TRUE(created_builder->add_empty_member(2, "SECOND") == RETCODE_OK);
+        ASSERT_TRUE(created_builder->add_empty_member(0, "DEFAULT") == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(created_builder->add_empty_member(1, "FIRST") == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(created_builder->add_empty_member(2, "SECOND") == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to add a descriptor with the same name.
-        ASSERT_FALSE(created_builder->add_empty_member(4, "DEFAULT") == RETCODE_OK);
+        ASSERT_FALSE(created_builder->add_empty_member(4, "DEFAULT") == eprosima::fastdds::dds::RETCODE_OK);
 
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(created_builder.get());
         ASSERT_TRUE(created_type != nullptr);
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
         ASSERT_TRUE(data != nullptr);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to set an invalid value.
-        ASSERT_FALSE(data->set_enum_value("BAD", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("BAD", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         std::string test1 = "SECOND";
-        ASSERT_FALSE(data->set_enum_value(test1, 1) == RETCODE_OK);
-        ASSERT_TRUE(data->set_enum_value(test1, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value(test1, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->set_enum_value(test1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         std::string test2;
         int iTest;
-        ASSERT_FALSE(data->get_int32_value(iTest, 0) == RETCODE_OK);
-        ASSERT_FALSE(data->get_enum_value(test2, 1) == RETCODE_OK);
-        ASSERT_TRUE(data->get_enum_value(test2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(test2, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_enum_value(test2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
         // Work as uint32_t
         uint32_t uTest1 = 2;
-        ASSERT_FALSE(data->set_enum_value(uTest1, 1) == RETCODE_OK);
-        ASSERT_TRUE(data->set_enum_value(uTest1, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value(uTest1, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->set_enum_value(uTest1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         uint32_t uTest2;
-        ASSERT_FALSE(data->get_int32_value(iTest, 0) == RETCODE_OK);
-        ASSERT_FALSE(data->get_enum_value(uTest2, 1) == RETCODE_OK);
-        ASSERT_TRUE(data->get_enum_value(uTest2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(uTest2, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_enum_value(uTest2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(uTest1 == uTest2);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //std::string sEnumTest;
-        //ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1822,9 +1824,9 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1843,69 +1845,70 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
         ASSERT_TRUE(data != nullptr);
 
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", 1) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", 1) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest1 = "STRING_TEST";
-        ASSERT_TRUE(data->set_string_value(sTest1, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_string_value(sTest1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int test = 0;
-        ASSERT_FALSE(data->get_int32_value(test, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(test, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest2 = "";
-        ASSERT_FALSE(data->get_string_value(sTest2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_string_value(sTest2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_string_value(sTest2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(sTest1 == sTest2);
 
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //std::string sTest;
-        //ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -1933,9 +1936,9 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1954,70 +1957,70 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
         ASSERT_TRUE(data != nullptr);
 
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", 1) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", 1) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring sTest1 = L"STRING_TEST";
-        ASSERT_TRUE(data->set_wstring_value(sTest1, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(data->set_wstring_value(sTest1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int test = 0;
-        ASSERT_FALSE(data->get_int32_value(test, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(test, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring sTest2 = L"";
-        ASSERT_FALSE(data->get_wstring_value(sTest2, 0) == RETCODE_OK);
-        ASSERT_TRUE(data->get_wstring_value(sTest2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(sTest2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_wstring_value(sTest2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(sTest1 == sTest2);
 
         ASSERT_FALSE(data->set_wstring_value(L"TEST_OVER_LENGTH_LIMITS",
-                MEMBER_ID_INVALID) == RETCODE_OK);
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //std::wstring wsTest;
-        //ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -2045,9 +2048,9 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -2069,14 +2072,14 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
         DynamicData* aliasData = DynamicDataFactory::get_instance()->create_data(created_type);
         ASSERT_TRUE(aliasData != nullptr);
 
-        ASSERT_FALSE(aliasData->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(aliasData->set_string_value("", 1) == RETCODE_OK);
+        ASSERT_FALSE(aliasData->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(aliasData->set_string_value("", 1) == eprosima::fastdds::dds::RETCODE_OK);
 
         uint32_t uTest1 = 2;
-        ASSERT_TRUE(aliasData->set_uint32_value(uTest1, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(aliasData->set_uint32_value(uTest1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         uint32_t uTest2 = 0;
-        ASSERT_TRUE(aliasData->get_uint32_value(uTest2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(aliasData->get_uint32_value(uTest2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(uTest1 == uTest2);
 
         // Serialize <-> Deserialize Test
@@ -2105,9 +2108,9 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(aliasData));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(aliasData) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(aliasData) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -2142,20 +2145,20 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
             nullptr, "ALIAS2");
         ASSERT_FALSE(alias2_type_builder != nullptr);
 
-        ASSERT_FALSE(aliasData->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(aliasData->set_string_value("", 1) == RETCODE_OK);
+        ASSERT_FALSE(aliasData->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(aliasData->set_string_value("", 1) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest1 = "STRING_TEST";
-        ASSERT_TRUE(aliasData->set_string_value(sTest1, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_TRUE(aliasData->set_string_value(sTest1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int test = 0;
-        ASSERT_FALSE(aliasData->get_int32_value(test, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(aliasData->get_int32_value(test, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest2 = "";
-        ASSERT_FALSE(aliasData->get_string_value(sTest2, 0) == RETCODE_OK);
-        ASSERT_TRUE(aliasData->get_string_value(sTest2, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(aliasData->get_string_value(sTest2, 0) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(aliasData->get_string_value(sTest2, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(sTest1 == sTest2);
 
         ASSERT_FALSE(aliasData->set_string_value("TEST_OVER_LENGTH_LIMITS",
-                MEMBER_ID_INVALID) == RETCODE_OK);
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
@@ -2167,8 +2170,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(aliasData));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(aliasData) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(aliasData) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -2191,8 +2194,8 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         ASSERT_TRUE(bitset_type_builder != nullptr);
 
         // Add members to the struct.
-        ASSERT_TRUE(bitset_type_builder->add_member(0, "int2", base_type) == RETCODE_OK);
-        ASSERT_TRUE(bitset_type_builder->add_member(1, "int20", base_type2) == RETCODE_OK);
+        ASSERT_TRUE(bitset_type_builder->add_member(0, "int2", base_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(bitset_type_builder->add_member(1, "int20", base_type2) == eprosima::fastdds::dds::RETCODE_OK);
         bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
         bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
         bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
@@ -2203,22 +2206,22 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         auto bitset_data = DynamicDataFactory::get_instance()->create_data(bitset_type);
         ASSERT_TRUE(bitset_data != nullptr);
 
-        ASSERT_FALSE(bitset_data->set_int32_value(10, 1) == RETCODE_OK);
-        ASSERT_FALSE(bitset_data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(bitset_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(bitset_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get the child values.
         octet test1(234);
-        ASSERT_TRUE(bitset_data->set_byte_value(test1, 0) == RETCODE_OK);
+        ASSERT_TRUE(bitset_data->set_byte_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
         octet test2(0);
-        ASSERT_TRUE(bitset_data->get_byte_value(test2, 0) == RETCODE_OK);
+        ASSERT_TRUE(bitset_data->get_byte_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_FALSE(test1 == test2);
         // 11101010
         // 00000010 (two bits)
         ASSERT_TRUE(test2 == 2);
         uint32_t test3(289582314);
-        ASSERT_TRUE(bitset_data->set_uint32_value(test3, 1) == RETCODE_OK);
+        ASSERT_TRUE(bitset_data->set_uint32_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t test4(0);
-        ASSERT_TRUE(bitset_data->get_uint32_value(test4, 1) == RETCODE_OK);
+        ASSERT_TRUE(bitset_data->get_uint32_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_FALSE(test3 == test4);
         // 00000001010000101010110011101010
         // 00000000000000101010110011101010 (20 bits)
@@ -2230,7 +2233,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
         // Tested in DynamicTypes_4_2_Tests
 
         // Delete the structure
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(bitset_data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(bitset_data) == eprosima::fastdds::dds::RETCODE_OK);
 
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -2246,16 +2249,16 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_TRUE(created_builder != nullptr);
 
         // Add two members to the bitmask
-        ASSERT_TRUE(created_builder->add_empty_member(0, "TEST") == RETCODE_OK);
+        ASSERT_TRUE(created_builder->add_empty_member(0, "TEST") == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to add a descriptor with the same name
-        ASSERT_FALSE(created_builder->add_empty_member(1, "TEST") == RETCODE_OK);
+        ASSERT_FALSE(created_builder->add_empty_member(1, "TEST") == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_TRUE(created_builder->add_empty_member(1, "TEST2") == RETCODE_OK);
+        ASSERT_TRUE(created_builder->add_empty_member(1, "TEST2") == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_TRUE(created_builder->add_empty_member(4, "TEST4") == RETCODE_OK);
+        ASSERT_TRUE(created_builder->add_empty_member(4, "TEST4") == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(created_builder->add_empty_member(5, "TEST5") == RETCODE_OK); // Out of bounds
+        ASSERT_FALSE(created_builder->add_empty_member(5, "TEST5") == eprosima::fastdds::dds::RETCODE_OK); // Out of bounds
 
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(created_builder.get());
         ASSERT_TRUE(created_type != nullptr);
@@ -2272,29 +2275,29 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_TRUE(test5Id == MEMBER_ID_INVALID);
 
         bool test1 = true;
-        ASSERT_FALSE(data->set_int32_value(1, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_TRUE(data->set_bool_value(test1, testId) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(1, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->set_bool_value(test1, testId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Over the limit
-        ASSERT_FALSE(data->set_bool_value(test1, limit + 1) == RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(test1, limit + 1) == eprosima::fastdds::dds::RETCODE_OK);
 
         bool test2 = false;
-        ASSERT_TRUE(data->get_bool_value(test2, 2) == RETCODE_OK);
+        ASSERT_TRUE(data->get_bool_value(test2, 2) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test2 == false);
-        ASSERT_TRUE(data->get_bool_value(test2, testId) == RETCODE_OK);
+        ASSERT_TRUE(data->get_bool_value(test2, testId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(data->get_bool_value(test2, testId) == RETCODE_OK);
+        ASSERT_TRUE(data->get_bool_value(test2, testId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
         bool test3 = data->get_bool_value("TEST");
         ASSERT_TRUE(test1 == test3);
-        ASSERT_TRUE(data->set_bool_value(true, "TEST4") == RETCODE_OK);
+        ASSERT_TRUE(data->set_bool_value(true, "TEST4") == eprosima::fastdds::dds::RETCODE_OK);
         bool test4 = data->get_bool_value("TEST4");
         ASSERT_TRUE(test4 == true);
 
         test1 = false;
-        ASSERT_TRUE(data->set_bool_value(test1, testId) == RETCODE_OK);
-        ASSERT_TRUE(data->get_bool_value(test2, test2Id) == RETCODE_OK);
-        ASSERT_TRUE(data->get_bool_value(test2, testId) == RETCODE_OK);
+        ASSERT_TRUE(data->set_bool_value(test1, testId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_bool_value(test2, test2Id) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_bool_value(test2, testId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
         data->set_bitmask_value(55); // 00110111
         uint64_t value = data->get_bitmask_value();
@@ -2307,58 +2310,58 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_FALSE(data->get_bool_value("TEST2"));
         ASSERT_FALSE(data->get_bool_value("TEST4"));
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        //ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         //uint64_t uTest64;
-        //ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        //ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
-        ASSERT_TRUE(data->set_bool_value(true, 0) == RETCODE_OK);
+        ASSERT_TRUE(data->set_bool_value(true, 0) == eprosima::fastdds::dds::RETCODE_OK);
         DynamicPubSubType pubsubType(created_type);
         uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
         SerializedPayload_t payload(payloadSize);
@@ -2369,8 +2372,8 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -2390,26 +2393,26 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
         ASSERT_TRUE(seq_type != nullptr);
 
         auto data = DynamicDataFactory::get_instance()->create_data(seq_type);
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int32_value(234, 1) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(234, 1) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId newId;
-        ASSERT_TRUE(data->insert_sequence_data(newId) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
         MemberId newId2;
-        ASSERT_TRUE(data->insert_sequence_data(newId2) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_sequence_data(newId2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to insert more than the limit.
         MemberId newId3;
-        ASSERT_FALSE(data->insert_sequence_data(newId3) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_sequence_data(newId3) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get a value.
         int32_t test1(234);
-        ASSERT_TRUE(data->set_int32_value(test1, newId2) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int32_value(test1, newId2) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(data->get_int32_value(test2, newId2) == RETCODE_OK);
+        ASSERT_TRUE(data->get_int32_value(test2, newId2) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
         // Serialize <-> Deserialize Test
@@ -2424,67 +2427,67 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
         ASSERT_TRUE(data2->equals(data));
 
         // Remove the elements.
-        ASSERT_TRUE(data->remove_sequence_data(newId) == RETCODE_OK);
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->remove_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
 
         // New Insert Methods
-        ASSERT_TRUE(data->insert_int32_value(test1, newId) == RETCODE_OK);
-        ASSERT_TRUE(data->get_int32_value(test2, newId) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_int32_value(test1, newId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->get_int32_value(test2, newId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
 
         // Check that the sequence is empty.
-        ASSERT_FALSE(data->get_int32_value(test2, 0) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
 
         // SERIALIZATION TEST
@@ -2503,9 +2506,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -2534,31 +2537,31 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         ASSERT_TRUE(seq_seq_type != nullptr);
 
         auto data = DynamicDataFactory::get_instance()->create_data(seq_seq_type);
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId newId;
-        ASSERT_TRUE(data->insert_sequence_data(newId) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
         MemberId newId2;
-        ASSERT_TRUE(data->insert_sequence_data(newId2) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_sequence_data(newId2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Loan Value to modify the first sequence
         auto seq_data = data->loan_value(newId);
         ASSERT_TRUE(seq_data != nullptr);
 
         MemberId newSeqId;
-        ASSERT_TRUE(seq_data->insert_sequence_data(newSeqId) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->insert_sequence_data(newSeqId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get a value.
         int32_t test1(234);
-        ASSERT_TRUE(seq_data->set_int32_value(test1, newSeqId) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->set_int32_value(test1, newSeqId) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(seq_data->get_int32_value(test2, newSeqId) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->get_int32_value(test2, newSeqId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
         // Return the pointer of the sequence
-        ASSERT_TRUE(data->return_loaned_value(seq_data) == RETCODE_OK);
-        ASSERT_FALSE(data->return_loaned_value(seq_data) == RETCODE_OK);
+        ASSERT_TRUE(data->return_loaned_value(seq_data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(seq_data) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(seq_seq_type);
@@ -2572,61 +2575,61 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         ASSERT_TRUE(data2->equals(data));
 
         // Remove the elements.
-        ASSERT_TRUE(data->remove_sequence_data(newId) == RETCODE_OK);
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->remove_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
 
         // Check that the sequence is empty.
-        ASSERT_FALSE(data->get_int32_value(test2, 0) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // SERIALIZATION TEST
         SequenceSequenceStruct seq;
@@ -2645,18 +2648,18 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
         ASSERT_TRUE(data3->equals(data));
 
         // New Insert Methods
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
         seq_data = DynamicDataFactory::get_instance()->create_data(seq_type);
-        ASSERT_TRUE(seq_data->insert_int32_value(test1, newSeqId) == RETCODE_OK);
-        ASSERT_TRUE(seq_data->get_int32_value(test2, newSeqId) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->insert_int32_value(test1, newSeqId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(seq_data->get_int32_value(test2, newSeqId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(data->insert_complex_value(seq_data, newId) == RETCODE_OK);
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->insert_complex_value(seq_data, newId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
 
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -2679,11 +2682,11 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
         ASSERT_TRUE(array_type != nullptr);
 
         auto data = DynamicDataFactory::get_instance()->create_data(array_type);
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId newId;
-        ASSERT_FALSE(data->insert_sequence_data(newId) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Get an index in the multidimensional array.
         std::vector<uint32_t> vPosition = { 1, 1, 1 };
@@ -2699,9 +2702,9 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
 
         // Set and get a value.
         int32_t test1 = 156;
-        ASSERT_TRUE(data->set_int32_value(test1, testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int32_value(test1, testPos) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(data->get_int32_value(test2, testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->get_int32_value(test2, testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
         // Serialize <-> Deserialize Test
@@ -2717,69 +2720,69 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
 
         // Check items count before and after remove an element.
         ASSERT_TRUE(data->get_item_count() == array_type->get_total_bounds());
-        ASSERT_TRUE(data->clear_value(testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->clear_value(testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == array_type->get_total_bounds());
-        ASSERT_TRUE(data->clear_array_data(testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->clear_array_data(testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == array_type->get_total_bounds());
 
         // Check the clear values method
-        ASSERT_TRUE(data->set_int32_value(test1, testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int32_value(test1, testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == array_type->get_total_bounds());
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == array_type->get_total_bounds());
 
         // Try to set a value out of the array.
-        ASSERT_FALSE(data->set_int32_value(test1, 100) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(test1, 100) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // SERIALIZATION TEST
         ArraytStruct seq;
@@ -2797,9 +2800,9 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -2827,11 +2830,11 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         ASSERT_TRUE(parent_array_type != nullptr);
 
         auto data = DynamicDataFactory::get_instance()->create_data(parent_array_type);
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId newId;
-        ASSERT_FALSE(data->insert_sequence_data(newId) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_sequence_data(newId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Get an index in the multidimensional array.
         std::vector<uint32_t> vPosition = { 1, 1 };
@@ -2852,14 +2855,14 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         ASSERT_FALSE(temp2 != nullptr);
 
         int32_t test1 = 156;
-        ASSERT_TRUE(temp->set_int32_value(test1, testPos) == RETCODE_OK);
+        ASSERT_TRUE(temp->set_int32_value(test1, testPos) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(temp->get_int32_value(test2, testPos) == RETCODE_OK);
+        ASSERT_TRUE(temp->get_int32_value(test2, testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_TRUE(data->return_loaned_value(temp) == RETCODE_OK);
-        ASSERT_FALSE(data->return_loaned_value(temp) == RETCODE_OK);
-        ASSERT_FALSE(data->return_loaned_value(temp2) == RETCODE_OK);
+        ASSERT_TRUE(data->return_loaned_value(temp) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(temp) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(temp2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(parent_array_type);
@@ -2874,63 +2877,63 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
         // Check items count before and after remove an element.
         ASSERT_TRUE(data->get_item_count() == parent_array_type->get_total_bounds());
-        ASSERT_TRUE(data->clear_value(testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->clear_value(testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == parent_array_type->get_total_bounds());
-        ASSERT_TRUE(data->clear_array_data(testPos) == RETCODE_OK);
+        ASSERT_TRUE(data->clear_array_data(testPos) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == parent_array_type->get_total_bounds());
 
         // Try to set a value out of the array.
-        ASSERT_FALSE(data->set_int32_value(test1, 100) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(test1, 100) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // SERIALIZATION TEST
         ArrayArrayStruct seq;
@@ -2948,9 +2951,9 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -2973,38 +2976,38 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
 
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
 
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int32_value(234, 0) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(234, 0) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
         auto key_data = DynamicDataFactory::get_instance()->create_data(base_type);
-        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to Add the same key twice.
-        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(base_type);
         key_data->set_int32_value(2, MEMBER_ID_INVALID);
-        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to Add one more than the limit
         auto key_data2 = DynamicDataFactory::get_instance()->create_data(base_type);
         key_data2->set_int32_value(3, MEMBER_ID_INVALID);
-        ASSERT_FALSE(data->insert_map_data(key_data2, keyId, valueId) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_map_data(key_data2, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get a value.
         int32_t test1(234);
-        ASSERT_TRUE(data->set_int32_value(test1, valueId) == RETCODE_OK);
+        ASSERT_TRUE(data->set_int32_value(test1, valueId) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(data->get_int32_value(test2, valueId) == RETCODE_OK);
+        ASSERT_TRUE(data->get_int32_value(test2, valueId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
         // Serialize <-> Deserialize Test
@@ -3018,66 +3021,66 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Check items count with removes
         ASSERT_TRUE(data->get_item_count() == 2);
-        ASSERT_FALSE(data->remove_map_data(valueId) == RETCODE_OK);
+        ASSERT_FALSE(data->remove_map_data(valueId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == 2);
-        ASSERT_TRUE(data->remove_map_data(keyId) == RETCODE_OK);
+        ASSERT_TRUE(data->remove_map_data(keyId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == 1);
-        ASSERT_TRUE(data->clear_all_values() == RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(data->get_item_count() == 0);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         //// SERIALIZATION TEST
         //MapStruct seq;
@@ -3097,13 +3100,13 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
         //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         //ASSERT_TRUE(data3->equals(data));
 
-        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Delete the map
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -3132,97 +3135,97 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
 
         DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_map_type);
 
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
         auto key_data = DynamicDataFactory::get_instance()->create_data(base_type);
-        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to Add the same key twice.
-        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == eprosima::fastdds::dds::RETCODE_OK);
 
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(base_type);
         key_data->set_int32_value(2, MEMBER_ID_INVALID);
-        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == RETCODE_OK);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to Add one more than the limit
         auto key_data2 = DynamicDataFactory::get_instance()->create_data(base_type);
         key_data2->set_int32_value(3, MEMBER_ID_INVALID);
-        ASSERT_FALSE(data->insert_map_data(key_data2, keyId, valueId) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == RETCODE_OK);
+        ASSERT_FALSE(data->insert_map_data(key_data2, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto seq_data = data->loan_value(valueId);
         ASSERT_TRUE(seq_data != nullptr);
 
         auto key_data3 = DynamicDataFactory::get_instance()->create_data(base_type);
-        ASSERT_TRUE(seq_data->insert_map_data(key_data3, keyId, valueId) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data3) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->insert_map_data(key_data3, keyId, valueId) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data3) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get a value.
         int32_t test1(234);
-        ASSERT_TRUE(seq_data->set_int32_value(test1, valueId) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->set_int32_value(test1, valueId) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(seq_data->get_int32_value(test2, valueId) == RETCODE_OK);
+        ASSERT_TRUE(seq_data->get_int32_value(test2, valueId) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
-        ASSERT_TRUE(data->return_loaned_value(seq_data) == RETCODE_OK);
-        ASSERT_FALSE(data->return_loaned_value(seq_data) == RETCODE_OK);
+        ASSERT_TRUE(data->return_loaned_value(seq_data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(seq_data) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
         std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(map_map_type);
@@ -3253,9 +3256,9 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
         //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         //ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -3276,27 +3279,27 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
         ASSERT_TRUE(struct_type_builder != nullptr);
 
         // Add members to the struct.
-        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == RETCODE_OK);
-        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == RETCODE_OK);
+        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto struct_type = struct_type_builder->build();
         ASSERT_TRUE(struct_type != nullptr);
         auto struct_data = DynamicDataFactory::get_instance()->create_data(struct_type);
         ASSERT_TRUE(struct_data != nullptr);
 
-        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == RETCODE_OK);
-        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get the child values.
         int32_t test1(234);
-        ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
         int64_t test3(234);
-        ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t test4(0);
-        ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test3 == test4);
 
         // Serialize <-> Deserialize Test
@@ -3328,11 +3331,11 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(struct_data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Delete the structure
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == eprosima::fastdds::dds::RETCODE_OK);
 
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
@@ -3354,8 +3357,8 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
         ASSERT_TRUE(struct_type_builder != nullptr);
 
         // Add members to the struct.
-        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == RETCODE_OK);
-        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == RETCODE_OK);
+        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto struct_type = struct_type_builder->build();
         ASSERT_TRUE(struct_type != nullptr);
@@ -3371,35 +3374,37 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
         ASSERT_TRUE(child_struct_type_builder != nullptr);
 
         // Add a new member to the child struct.
-        ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32", base_type) == RETCODE_OK);
+        ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32",
+                base_type) == eprosima::fastdds::dds::RETCODE_OK);
 
         // try to add a member to override one of the parent struct.
-        ASSERT_FALSE(child_struct_type_builder->add_member(3, "int32", base_type) == RETCODE_OK);
+        ASSERT_FALSE(child_struct_type_builder->add_member(3, "int32",
+                base_type) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto child_struct_type = child_struct_type_builder->build();
         ASSERT_TRUE(child_struct_type != nullptr);
         auto struct_data = DynamicDataFactory::get_instance()->create_data(child_struct_type);
         ASSERT_TRUE(struct_data != nullptr);
 
-        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == RETCODE_OK);
-        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get the parent values.
         int32_t test1(234);
-        ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
         int64_t test3(234);
-        ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t test4(0);
-        ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test3 == test4);
         // Set and get the child value.
         int32_t test5(234);
-        ASSERT_TRUE(struct_data->set_int32_value(test5, 2) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->set_int32_value(test5, 2) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test6(0);
-        ASSERT_TRUE(struct_data->get_int32_value(test6, 2) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->get_int32_value(test6, 2) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test5 == test6);
 
         // Serialize <-> Deserialize Test
@@ -3413,10 +3418,10 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(struct_data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Delete the structure
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -3437,8 +3442,8 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         ASSERT_TRUE(struct_type_builder != nullptr);
 
         // Add members to the struct.
-        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == RETCODE_OK);
-        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == RETCODE_OK);
+        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto struct_type = struct_type_builder->build();
         ASSERT_TRUE(struct_type != nullptr);
@@ -3449,8 +3454,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         ASSERT_TRUE(parent_struct_type_builder != nullptr);
 
         // Add members to the parent struct.
-        ASSERT_TRUE(parent_struct_type_builder->add_member(0, "child_struct", struct_type) == RETCODE_OK);
-        ASSERT_TRUE(parent_struct_type_builder->add_member(1, "child_int64", base_type2) == RETCODE_OK);
+        ASSERT_TRUE(parent_struct_type_builder->add_member(0, "child_struct",
+                struct_type) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(parent_struct_type_builder->add_member(1, "child_int64",
+                base_type2) == eprosima::fastdds::dds::RETCODE_OK);
 
         auto parent_struct_type = parent_struct_type_builder->build();
         ASSERT_TRUE(parent_struct_type != nullptr);
@@ -3458,14 +3465,14 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         auto struct_data = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
         ASSERT_TRUE(struct_data != nullptr);
 
-        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == RETCODE_OK);
-        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Set and get the child values.
         int64_t test1(234);
-        ASSERT_TRUE(struct_data->set_int64_value(test1, 1) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->set_int64_value(test1, 1) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t test2(0);
-        ASSERT_TRUE(struct_data->get_int64_value(test2, 1) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->get_int64_value(test2, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
 
         auto child_struct_data = struct_data->loan_value(0);
@@ -3473,18 +3480,18 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 
         // Set and get the child values.
         int32_t test3(234);
-        ASSERT_TRUE(child_struct_data->set_int32_value(test3, 0) == RETCODE_OK);
+        ASSERT_TRUE(child_struct_data->set_int32_value(test3, 0) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test4(0);
-        ASSERT_TRUE(child_struct_data->get_int32_value(test4, 0) == RETCODE_OK);
+        ASSERT_TRUE(child_struct_data->get_int32_value(test4, 0) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test3 == test4);
         int64_t test5(234);
-        ASSERT_TRUE(child_struct_data->set_int64_value(test5, 1) == RETCODE_OK);
+        ASSERT_TRUE(child_struct_data->set_int64_value(test5, 1) == eprosima::fastdds::dds::RETCODE_OK);
         int64_t test6(0);
-        ASSERT_TRUE(child_struct_data->get_int64_value(test6, 1) == RETCODE_OK);
+        ASSERT_TRUE(child_struct_data->get_int64_value(test6, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test5 == test6);
 
-        ASSERT_TRUE(struct_data->return_loaned_value(child_struct_data) == RETCODE_OK);
-        ASSERT_FALSE(struct_data->return_loaned_value(child_struct_data) == RETCODE_OK);
+        ASSERT_TRUE(struct_data->return_loaned_value(child_struct_data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(struct_data->return_loaned_value(child_struct_data) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(parent_struct_type);
@@ -3515,11 +3522,11 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(struct_data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Delete the map
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -3541,17 +3548,18 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
         ASSERT_TRUE(union_type_builder != nullptr);
 
         // Add members to the union.
-        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 },
+                true) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
-                false) == RETCODE_OK);
+                false) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to add a second "DEFAULT" value to the union
         ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 },
-                true) == RETCODE_OK);
+                true) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to add a second value to the same case label
         ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 },
-                false) == RETCODE_OK);
+                false) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Create a data of this union
         auto union_type = union_type_builder->build();
@@ -3560,32 +3568,32 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
         ASSERT_TRUE(union_data != nullptr);
 
         // Set and get the child values.
-        ASSERT_FALSE(union_data->set_int32_value(10, 1) == RETCODE_OK);
-        ASSERT_FALSE(union_data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(union_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(union_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         uint64_t label;
-        ASSERT_TRUE(union_data->get_union_label(label) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_union_label(label) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(label == 0);
 
         int32_t test1(234);
-        ASSERT_TRUE(union_data->set_int32_value(test1, 0) == RETCODE_OK);
+        ASSERT_TRUE(union_data->set_int32_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(union_data->get_int32_value(test2, 0) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(union_data->get_union_label(label) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_union_label(label) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(label == 0);
 
         int64_t test3(234);
         int64_t test4(0);
 
         // Try to get values from invalid indexes and from an invalid element ( not the current one )
-        ASSERT_FALSE(union_data->get_int32_value(test2, 1) == RETCODE_OK);
-        ASSERT_FALSE(union_data->get_int64_value(test4, 1) == RETCODE_OK);
+        ASSERT_FALSE(union_data->get_int32_value(test2, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(union_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_TRUE(union_data->set_int64_value(test3, 1) == RETCODE_OK);
-        ASSERT_TRUE(union_data->get_int64_value(test4, 1) == RETCODE_OK);
+        ASSERT_TRUE(union_data->set_int64_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(union_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test3 == test4);
-        ASSERT_TRUE(union_data->get_union_label(label) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_union_label(label) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(label == 1);
 
         // Serialize <-> Deserialize Test
@@ -3617,11 +3625,11 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
         ASSERT_TRUE(data3->equals(union_data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Delete the map
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(union_data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(union_data) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -3643,17 +3651,18 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         ASSERT_TRUE(union_type_builder != nullptr);
 
         // Add members to the union.
-        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 },
+                true) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
-                false) == RETCODE_OK);
+                false) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to add a second "DEFAULT" value to the union
         ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 },
-                true) == RETCODE_OK);
+                true) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Try to add a second value to the same case label
         ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 },
-                false) == RETCODE_OK);
+                false) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Create a data of this union
         auto union_type = union_type_builder->build();
@@ -3665,9 +3674,9 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 
         // Add Members to the parent union
         ASSERT_TRUE(parent_union_type_builder->add_member(0, "first", base_type, "", { 0 },
-                true) == RETCODE_OK);
+                true) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(parent_union_type_builder->add_member(1, "second", union_type, "", { 1 },
-                false) == RETCODE_OK);
+                false) == eprosima::fastdds::dds::RETCODE_OK);
 
         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(
             parent_union_type_builder.get());
@@ -3676,19 +3685,19 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         ASSERT_TRUE(union_data != nullptr);
 
         // Set and get the child values.
-        ASSERT_FALSE(union_data->set_int32_value(10, 1) == RETCODE_OK);
-        ASSERT_FALSE(union_data->set_string_value("", MEMBER_ID_INVALID) == RETCODE_OK);
+        ASSERT_FALSE(union_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(union_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
 
         uint64_t label;
-        ASSERT_TRUE(union_data->get_union_label(label) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_union_label(label) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(label == 0);
 
         int32_t test1(234);
-        ASSERT_TRUE(union_data->set_int32_value(test1, 0) == RETCODE_OK);
+        ASSERT_TRUE(union_data->set_int32_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
         int32_t test2(0);
-        ASSERT_TRUE(union_data->get_int32_value(test2, 0) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_int32_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(union_data->get_union_label(label) == RETCODE_OK);
+        ASSERT_TRUE(union_data->get_union_label(label) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(label == 0);
 
         // Loan Value ( Activates this union id )
@@ -3699,15 +3708,15 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         int64_t test4(0);
 
         // Try to get values from invalid indexes and from an invalid element ( not the current one )
-        ASSERT_FALSE(child_data->get_int32_value(test2, 1) == RETCODE_OK);
-        ASSERT_FALSE(child_data->get_int64_value(test4, 1) == RETCODE_OK);
+        ASSERT_FALSE(child_data->get_int32_value(test2, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_FALSE(child_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
 
-        ASSERT_TRUE(child_data->set_int64_value(test3, 1) == RETCODE_OK);
-        ASSERT_TRUE(child_data->get_int64_value(test4, 1) == RETCODE_OK);
+        ASSERT_TRUE(child_data->set_int64_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(child_data->get_int64_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(test3 == test4);
 
-        ASSERT_TRUE(union_data->return_loaned_value(child_data) == RETCODE_OK);
-        ASSERT_TRUE(union_data->get_union_label(label) == RETCODE_OK);
+        ASSERT_TRUE(union_data->return_loaned_value(child_data) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(union_data->get_union_label(label) == eprosima::fastdds::dds::RETCODE_OK);
         ASSERT_TRUE(label == 1);
 
         // Serialize <-> Deserialize Test
@@ -3721,10 +3730,10 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(union_data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == eprosima::fastdds::dds::RETCODE_OK);
 
         // Delete the map
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(union_data) == RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(union_data) == eprosima::fastdds::dds::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -4827,8 +4836,9 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
         SerializedPayload_t static_payload(static_payloadSize);
         ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
         ASSERT_TRUE(static_payload.length == static_payloadSize);
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();
@@ -4860,8 +4870,9 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
         SerializedPayload_t static_payload(static_payloadSize);
         ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
         ASSERT_TRUE(static_payload.length == static_payloadSize);
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == RETCODE_OK);
+        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS",
+                MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == eprosima::fastdds::dds::RETCODE_OK);
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();
@@ -4944,132 +4955,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
         delete(pbType);
         XMLProfileManager::DeleteInstance();
     }
-}
-
-TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
-{
-    TypeIdentifier enum1 = *GetMyEnumIdentifier(false);
-    TypeIdentifier aliasEnum1 = *GetMyAliasEnumIdentifier(false);
-    TypeIdentifier aliasAliasEnum1 = *GetMyAliasAliasEnumIdentifier(false);
-    TypeIdentifier boolStruct1 = *GetBoolStructIdentifier(false);
-    TypeIdentifier octetStruct1 = *GetOctetStructIdentifier(false);
-    TypeIdentifier shortStruct1 = *GetShortStructIdentifier(false);
-    TypeIdentifier longStruct1 = *GetLongStructIdentifier(false);
-    TypeIdentifier longLongStruct1 = *GetLongLongStructIdentifier(false);
-    TypeIdentifier uShortStruct1 = *GetShortStructIdentifier(false);
-    TypeIdentifier uLongStruct1 = *GetULongStructIdentifier(false);
-    TypeIdentifier uLongLongStruct1 = *GetULongLongStructIdentifier(false);
-    TypeIdentifier floatStruct1 = *GetFloatStructIdentifier(false);
-    TypeIdentifier doubleStruct1 = *GetDoubleStructIdentifier(false);
-    TypeIdentifier longDoubleStruct1 = *GetLongDoubleStructIdentifier(false);
-    TypeIdentifier charStruct1 = *GetCharStructIdentifier(false);
-    TypeIdentifier wcharStruct1 = *GetWCharStructIdentifier(false);
-    TypeIdentifier stringStruct1 = *GetStringStructIdentifier(false);
-    TypeIdentifier wstringStruct1 = *GetWStringStructIdentifier(false);
-    TypeIdentifier largeStringStruct1 = *GetLargeStringStructIdentifier(false);
-    TypeIdentifier largeWStringStruct1 = *GetLargeWStringStructIdentifier(false);
-    TypeIdentifier arrayStruct1 = *GetArraytStructIdentifier(false);
-    GetMyArrayIdentifier(false); // We need to generate it before arrayArrayStruct
-    TypeIdentifier arrayArrayStruct1 = *GetArrayArrayStructIdentifier(false);
-    TypeIdentifier sequenceStruct1 = *GetSequenceStructIdentifier(false);
-    TypeIdentifier sequenceSequenceStruct1 = *GetSequenceSequenceStructIdentifier(false);
-    TypeIdentifier mapStruct1 = *GetMapStructIdentifier(false);
-    TypeIdentifier mapMapStruct1 = *GetMapMapStructIdentifier(false);
-    TypeIdentifier structStruct1 = *GetStructStructIdentifier(false);
-    TypeIdentifier structStructStruct1 = *GetStructStructStructIdentifier(false);
-    TypeIdentifier simpleUnion1 = *GetSimpleUnionIdentifier(false);
-    TypeIdentifier unionUnion1 = *GetUnionUnionIdentifier(false);
-    TypeIdentifier wCharUnion1 = *GetWCharUnionIdentifier(false);
-    TypeIdentifier unionUnionStruct1 = *GetUnionUnionUnionStructIdentifier(false);
-    TypeObjectFactory::get_instance()->delete_instance(); // Force new instances instead reusing them
-    registerBasicTypes(); // Register them again
-    TypeIdentifier enum2 = *GetMyEnumIdentifier(false);
-    TypeIdentifier aliasEnum2 = *GetMyAliasEnumIdentifier(false);
-    TypeIdentifier aliasAliasEnum2 = *GetMyAliasAliasEnumIdentifier(false);
-    TypeIdentifier boolStruct2 = *GetBoolStructIdentifier(false);
-    TypeIdentifier octetStruct2 = *GetOctetStructIdentifier(false);
-    TypeIdentifier shortStruct2 = *GetShortStructIdentifier(false);
-    TypeIdentifier longStruct2 = *GetLongStructIdentifier(false);
-    TypeIdentifier longLongStruct2 = *GetLongLongStructIdentifier(false);
-    TypeIdentifier uShortStruct2 = *GetShortStructIdentifier(false);
-    TypeIdentifier uLongStruct2 = *GetULongStructIdentifier(false);
-    TypeIdentifier uLongLongStruct2 = *GetULongLongStructIdentifier(false);
-    TypeIdentifier floatStruct2 = *GetFloatStructIdentifier(false);
-    TypeIdentifier doubleStruct2 = *GetDoubleStructIdentifier(false);
-    TypeIdentifier longDoubleStruct2 = *GetLongDoubleStructIdentifier(false);
-    TypeIdentifier charStruct2 = *GetCharStructIdentifier(false);
-    TypeIdentifier wcharStruct2 = *GetWCharStructIdentifier(false);
-    TypeIdentifier stringStruct2 = *GetStringStructIdentifier(false);
-    TypeIdentifier wstringStruct2 = *GetWStringStructIdentifier(false);
-    TypeIdentifier largeStringStruct2 = *GetLargeStringStructIdentifier(false);
-    TypeIdentifier largeWStringStruct2 = *GetLargeWStringStructIdentifier(false);
-    TypeIdentifier arrayStruct2 = *GetArraytStructIdentifier(false);
-    TypeIdentifier arrayArrayStruct2 = *GetArrayArrayStructIdentifier(false);
-    TypeIdentifier sequenceStruct2 = *GetSequenceStructIdentifier(false);
-    TypeIdentifier sequenceSequenceStruct2 = *GetSequenceSequenceStructIdentifier(false);
-    TypeIdentifier mapStruct2 = *GetMapStructIdentifier(false);
-    TypeIdentifier mapMapStruct2 = *GetMapMapStructIdentifier(false);
-    TypeIdentifier structStruct2 = *GetStructStructIdentifier(false);
-    TypeIdentifier structStructStruct2 = *GetStructStructStructIdentifier(false);
-    TypeIdentifier simpleUnion2 = *GetSimpleUnionIdentifier(false);
-    TypeIdentifier unionUnion2 = *GetUnionUnionIdentifier(false);
-    TypeIdentifier wCharUnion2 = *GetWCharUnionIdentifier(false);
-    TypeIdentifier unionUnionStruct2 = *GetUnionUnionUnionStructIdentifier(false);
-
-    // Compare equals
-    ASSERT_TRUE(enum1 == enum2);
-    ASSERT_TRUE(aliasEnum1 == aliasEnum2 || aliasEnum2 == enum1);
-    ASSERT_TRUE(aliasAliasEnum1 == aliasAliasEnum2 || aliasAliasEnum2 == enum1);
-    ASSERT_TRUE(boolStruct1 == boolStruct2);
-    ASSERT_TRUE(octetStruct1 == octetStruct2);
-    ASSERT_TRUE(shortStruct1 == shortStruct2);
-    ASSERT_TRUE(longStruct1 == longStruct2);
-    ASSERT_TRUE(longLongStruct1 == longLongStruct2);
-    ASSERT_TRUE(uShortStruct1 == uShortStruct2);
-    ASSERT_TRUE(uLongStruct1 == uLongStruct2);
-    ASSERT_TRUE(uLongLongStruct1 == uLongLongStruct2);
-    ASSERT_TRUE(floatStruct1 == floatStruct2);
-    ASSERT_TRUE(doubleStruct1 == doubleStruct2);
-    ASSERT_TRUE(longDoubleStruct1 == longDoubleStruct2);
-    ASSERT_TRUE(charStruct1 == charStruct2);
-    ASSERT_TRUE(wcharStruct1 == wcharStruct2);
-    ASSERT_TRUE(stringStruct1 == stringStruct2);
-    ASSERT_TRUE(wstringStruct1 == wstringStruct2);
-    ASSERT_TRUE(largeStringStruct1 == largeStringStruct2);
-    ASSERT_TRUE(largeWStringStruct1 == largeWStringStruct2);
-    ASSERT_TRUE(arrayStruct1 == arrayStruct2);
-    ASSERT_TRUE(arrayArrayStruct1 == arrayArrayStruct2);
-    ASSERT_TRUE(sequenceStruct1 == sequenceStruct2);
-    ASSERT_TRUE(sequenceSequenceStruct1 == sequenceSequenceStruct2);
-    ASSERT_TRUE(mapStruct1 == mapStruct2);
-    ASSERT_TRUE(mapMapStruct1 == mapMapStruct2);
-    ASSERT_TRUE(structStruct1 == structStruct2);
-    ASSERT_TRUE(structStructStruct1 == structStructStruct2);
-    ASSERT_TRUE(simpleUnion1 == simpleUnion2);
-    ASSERT_TRUE(unionUnion1 == unionUnion2);
-    ASSERT_TRUE(wCharUnion1 == wCharUnion2);
-    ASSERT_TRUE(unionUnionStruct1 == unionUnionStruct2);
-    ASSERT_TRUE(enum2 == aliasEnum2);
-
-    // Compare some not equals
-    ASSERT_FALSE(aliasAliasEnum1 == boolStruct1);
-    ASSERT_FALSE(octetStruct1 == shortStruct1);
-    ASSERT_FALSE(longStruct1 == longLongStruct1);
-    ASSERT_FALSE(uShortStruct1 == uLongStruct1);
-    ASSERT_FALSE(uLongStruct1 == uLongLongStruct2);
-    ASSERT_FALSE(floatStruct1 == doubleStruct1);
-    ASSERT_FALSE(doubleStruct1 == longDoubleStruct2);
-    ASSERT_FALSE(charStruct1 == wcharStruct1);
-    ASSERT_FALSE(stringStruct1 == wstringStruct1);
-    ASSERT_FALSE(stringStruct1 == largeStringStruct2);
-    ASSERT_FALSE(wstringStruct1 == largeWStringStruct2);
-    ASSERT_FALSE(arrayStruct1 == arrayArrayStruct1);
-    ASSERT_FALSE(sequenceStruct1 == sequenceSequenceStruct1);
-    ASSERT_FALSE(mapStruct1 == mapMapStruct1);
-    ASSERT_FALSE(structStruct1 == structStructStruct1);
-    ASSERT_FALSE(simpleUnion1 == unionUnion1);
-    ASSERT_FALSE(unionUnion1 == wCharUnion2);
-    ASSERT_FALSE(unionUnionStruct1 == unionUnion1);
 }
 
 int main(

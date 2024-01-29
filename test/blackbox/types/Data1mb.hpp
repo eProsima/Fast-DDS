@@ -51,8 +51,6 @@
 #define DATA1MB_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure Data1mb defined by the user in the IDL file.
  * @ingroup Data1mb

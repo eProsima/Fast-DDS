@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <MockTransport.h>
 #include <algorithm>
-#include <cstring>
+#include <vector>
 
-using namespace std;
+#include <MockTransport.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
 std::vector<MockTransport*> MockTransport::mockTransportInstances;
@@ -49,7 +48,7 @@ MockTransport::~MockTransport()
 }
 
 bool MockTransport::init(
-        const PropertyPolicy* /*properties*/)
+        const fastrtps::rtps::PropertyPolicy* /*properties*/)
 
 {
     return true;
@@ -116,7 +115,6 @@ Locator_t MockTransport::RemoteToMainLocal(
         const Locator_t& remote) const
 {
     Locator_t mainLocal(remote);
-    //memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
     mainLocal.set_Invalid_Address();
     return mainLocal;
 }
@@ -140,12 +138,12 @@ LocatorList_t MockTransport::NormalizeLocator(
 }
 
 void MockTransport::select_locators(
-        LocatorSelector& selector) const
+        fastrtps::rtps::LocatorSelector& selector) const
 {
-    ResourceLimitedVector<LocatorSelectorEntry*>& entries = selector.transport_starts();
+    fastrtps::ResourceLimitedVector<fastrtps::rtps::LocatorSelectorEntry*>& entries = selector.transport_starts();
     for (size_t i = 0; i < entries.size(); ++i)
     {
-        LocatorSelectorEntry* entry = entries[i];
+        fastrtps::rtps::LocatorSelectorEntry* entry = entries[i];
         if (entry->transport_should_process)
         {
             for (size_t j = 0; j < entry->unicast.size(); ++j)

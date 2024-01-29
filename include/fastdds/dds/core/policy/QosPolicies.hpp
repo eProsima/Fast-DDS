@@ -2516,7 +2516,7 @@ class TypeInformationParameter : public Parameter_t, public QosPolicy
 public:
 
     //!Type Information
-    TypeInformation type_information;
+    eprosima::fastdds::dds::xtypes::TypeInformation type_information;
 
     /**
      * @brief Constructor
@@ -2549,7 +2549,7 @@ public:
      * @param info TypeInformation to be set
      */
     RTPS_DllAPI TypeInformationParameter(
-            const TypeInformation& info)
+            const eprosima::fastdds::dds::xtypes::TypeInformation& info)
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
         , type_information(info)

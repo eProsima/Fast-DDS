@@ -60,8 +60,6 @@
 #define TOPIC_DllAPI
 #endif // _WIN32
 
-
-
 /*!
  * @brief This class represents the structure Topic defined by the user in the IDL file.
  * @ingroup Topic

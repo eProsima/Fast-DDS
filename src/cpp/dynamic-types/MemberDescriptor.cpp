@@ -159,17 +159,17 @@ ReturnCode_t MemberDescriptor::copy_from(
             index_ = other->index_;
             default_label_ = other->default_label_;
             labels_ = other->labels_;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         catch (std::exception& /*e*/)
         {
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying MemberDescriptor, invalid input descriptor");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -227,14 +227,17 @@ bool MemberDescriptor::is_consistent(
         TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && type_ == nullptr)
+    if ((parentKind != eprosima::fastdds::dds::xtypes::TK_BITMASK &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_ENUM) && type_ == nullptr)
     {
         return false;
     }
 
     // Only aggregated types must use the ID value.
-    if (id_ != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
-            parentKind != TK_BITSET && parentKind != TK_ANNOTATION)
+    if (id_ != MEMBER_ID_INVALID && parentKind != eprosima::fastdds::dds::xtypes::TK_UNION &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_STRUCTURE &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_BITSET &&
+            parentKind != eprosima::fastdds::dds::xtypes::TK_ANNOTATION)
     {
         return false;
     }
@@ -250,12 +253,12 @@ bool MemberDescriptor::is_consistent(
     }
 
     // Only Unions need the field "label"
-    if (labels_.size() != 0 && parentKind != TK_UNION)
+    if (labels_.size() != 0 && parentKind != eprosima::fastdds::dds::xtypes::TK_UNION)
     {
         return false;
     }
     // If the field isn't the default value for the union, it must have a label value.
-    else if (parentKind == TK_UNION && default_label_ == false && labels_.size() == 0)
+    else if (parentKind == eprosima::fastdds::dds::xtypes::TK_UNION && default_label_ == false && labels_.size() == 0)
     {
         return false;
     }
@@ -279,79 +282,79 @@ bool MemberDescriptor::is_default_value_consistent(
             {
                 default:
                     return true;
-                case TK_INT32:
+                case eprosima::fastdds::dds::xtypes::TK_INT32:
                 {
                     int32_t value(0);
                     value = stoi(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_UINT32:
+                case eprosima::fastdds::dds::xtypes::TK_UINT32:
                 {
                     uint32_t value(0);
                     value = stoul(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_INT16:
+                case eprosima::fastdds::dds::xtypes::TK_INT16:
                 {
                     int16_t value(0);
                     value = static_cast<int16_t>(stoi(sDefaultValue));
                     (void)value;
                 }
                 break;
-                case TK_UINT16:
+                case eprosima::fastdds::dds::xtypes::TK_UINT16:
                 {
                     uint16_t value(0);
                     value = static_cast<uint16_t>(stoul(sDefaultValue));
                     (void)value;
                 }
                 break;
-                case TK_INT64:
+                case eprosima::fastdds::dds::xtypes::TK_INT64:
                 {
                     int64_t value(0);
                     value = stoll(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_UINT64:
+                case eprosima::fastdds::dds::xtypes::TK_UINT64:
                 {
                     uint64_t value(0);
                     value = stoul(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_FLOAT32:
+                case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
                 {
                     float value(0.0f);
                     value = stof(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_FLOAT64:
+                case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
                 {
                     double value(0.0f);
                     value = stod(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_FLOAT128:
+                case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
                 {
                     long double value(0.0f);
                     value = stold(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_CHAR8: {
+                case eprosima::fastdds::dds::xtypes::TK_CHAR8: {
                     return sDefaultValue.length() >= 1;
                 }
-                case TK_CHAR16:
+                case eprosima::fastdds::dds::xtypes::TK_CHAR16:
                 {
                     std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());
                     (void)temp;
                 }
                 break;
-                case TK_BOOLEAN:
+                case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
                 {
                     if (sDefaultValue == CONST_TRUE || sDefaultValue == CONST_FALSE)
                     {
@@ -362,37 +365,37 @@ bool MemberDescriptor::is_default_value_consistent(
                     (void)value;
                 }
                 break;
-                case TK_BYTE: {
+                case eprosima::fastdds::dds::xtypes::TK_BYTE: {
                     return sDefaultValue.length() >= 1;
                 }
                 break;
-                case TK_STRING16: {
+                case eprosima::fastdds::dds::xtypes::TK_STRING16: {
                     return true;
                 }
-                case TK_STRING8: {
+                case eprosima::fastdds::dds::xtypes::TK_STRING8: {
                     return true;
                 }
-                case TK_ENUM:
+                case eprosima::fastdds::dds::xtypes::TK_ENUM:
                 {
                     uint32_t value(0);
                     value = stoul(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_BITMASK:
+                case eprosima::fastdds::dds::xtypes::TK_BITMASK:
                 {
                     int value(0);
                     value = stoi(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_ARRAY: {
+                case eprosima::fastdds::dds::xtypes::TK_ARRAY: {
                     return true;
                 }
-                case TK_SEQUENCE: {
+                case eprosima::fastdds::dds::xtypes::TK_SEQUENCE: {
                     return true;
                 }
-                case TK_MAP: {
+                case eprosima::fastdds::dds::xtypes::TK_MAP: {
                     return true;
                 }
             }
@@ -448,7 +451,7 @@ bool MemberDescriptor::annotation_is_optional() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -471,7 +474,7 @@ bool MemberDescriptor::annotation_get_key() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -485,7 +488,7 @@ bool MemberDescriptor::annotation_is_must_understand() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -499,7 +502,7 @@ bool MemberDescriptor::annotation_is_non_serialized() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -529,7 +532,7 @@ std::string MemberDescriptor::annotation_get_value() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value;
         }
@@ -543,7 +546,7 @@ std::string MemberDescriptor::annotation_get_default() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value;
         }
@@ -557,7 +560,7 @@ uint16_t MemberDescriptor::annotation_get_position() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -699,7 +702,7 @@ uint16_t MemberDescriptor::annotation_get_bit_bound() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }
@@ -730,12 +733,12 @@ ReturnCode_t MemberDescriptor::apply_annotation(
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -757,7 +760,7 @@ ReturnCode_t MemberDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 AnnotationDescriptor* MemberDescriptor::get_annotation(

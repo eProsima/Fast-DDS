@@ -54,11 +54,11 @@ DynamicTypeBuilder::DynamicTypeBuilder(
     catch (...)
     {
         name_ = "";
-        kind_ = TK_NONE;
+        kind_ = eprosima::fastdds::dds::xtypes::TK_NONE;
     }
 
     // Alias types use the same members than it's base class.
-    if (kind_ == TK_ALIAS)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS)
     {
         for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
                 it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
@@ -93,12 +93,12 @@ ReturnCode_t DynamicTypeBuilder::add_empty_member(
         const std::string& name)
 {
     MemberDescriptor descriptor(index, name);
-    if (descriptor_->get_kind() == TK_BITMASK)
+    if (descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK)
     {
         if (index >= descriptor_->get_bounds(0))
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, out of bounds.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
         descriptor.annotation_set_position(static_cast<uint16_t>(descriptor.get_index()));
     }
@@ -110,12 +110,15 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 {
     if (descriptor_ != nullptr && descriptor != nullptr && descriptor->is_consistent(descriptor_->get_kind()))
     {
-        if (descriptor_->get_kind() == TK_ANNOTATION || descriptor_->get_kind() == TK_BITMASK
-                || descriptor_->get_kind() == TK_ENUM || descriptor_->get_kind() == TK_STRUCTURE
-                || descriptor_->get_kind() == TK_UNION || descriptor_->get_kind() == TK_BITSET)
+        if (descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_ANNOTATION ||
+                descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK
+                || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM ||
+                descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE
+                || descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
+                descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
         {
             if (!exists_member_by_name(descriptor->get_name()) ||
-                    (kind_ == TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
+                    (kind_ == eprosima::fastdds::dds::xtypes::TK_BITSET && descriptor->get_name().empty())) // Bitsets allow multiple empty members.
             {
                 if (check_union_configuration(descriptor))
                 {
@@ -148,25 +151,25 @@ ReturnCode_t DynamicTypeBuilder::add_member(
                         delete newMember;
                     }
                     ++current_member_id_;
-                    return RETCODE_OK;
+                    return eprosima::fastdds::dds::RETCODE_OK;
                 }
                 else
                 {
                     EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, invalid union parameters.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             else
             {
                 EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, there is other member with the same name.");
-                return RETCODE_BAD_PARAMETER;
+                return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
             }
         }
         else
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, the current type " << descriptor_->get_kind()
                                                                                      << " doesn't support members.");
-            return RETCODE_PRECONDITION_NOT_MET;
+            return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
         }
     }
     else
@@ -179,7 +182,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         {
             EPROSIMA_LOG_WARNING(DYN_TYPES, "Error adding member, The input descriptor isn't consistent.");
         }
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -311,7 +314,7 @@ DynamicType_ptr DynamicTypeBuilder::build()
 bool DynamicTypeBuilder::check_union_configuration(
         const MemberDescriptor* descriptor)
 {
-    if (descriptor_->get_kind() == TK_UNION)
+    if (descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
     {
         if (!descriptor->is_default_union_value() && descriptor->get_union_labels().size() == 0)
         {
@@ -338,7 +341,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from(
         clear();
 
         ReturnCode_t res = copy_from_builder(other);
-        if (res == RETCODE_OK)
+        if (res == eprosima::fastdds::dds::RETCODE_OK)
         {
             current_member_id_ = other->current_member_id_;
         }
@@ -347,7 +350,7 @@ ReturnCode_t DynamicTypeBuilder::copy_from(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicTypeBuilder. Invalid input parameter.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -369,12 +372,12 @@ ReturnCode_t DynamicTypeBuilder::copy_from_builder(
             member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
         }
 
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying DynamicType, invalid input type");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -414,7 +417,7 @@ ReturnCode_t DynamicTypeBuilder::get_all_members(
         std::map<MemberId, DynamicTypeMember*>& members)
 {
     members = member_by_id_;
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 std::string DynamicTypeBuilder::get_name() const
@@ -429,19 +432,30 @@ bool DynamicTypeBuilder::is_consistent() const
 
 bool DynamicTypeBuilder::is_discriminator_type() const
 {
-    if (kind_ == TK_ALIAS && descriptor_ != nullptr && descriptor_->get_base_type() != nullptr)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && descriptor_ != nullptr &&
+            descriptor_->get_base_type() != nullptr)
     {
         return descriptor_->get_base_type()->is_discriminator_type();
     }
-    return kind_ == TK_BOOLEAN || kind_ == TK_BYTE || kind_ == TK_INT16 || kind_ == TK_INT32 ||
-           kind_ == TK_INT64 || kind_ == TK_UINT16 || kind_ == TK_UINT32 || kind_ == TK_UINT64 ||
-           kind_ == TK_FLOAT32 || kind_ == TK_FLOAT64 || kind_ == TK_FLOAT128 || kind_ == TK_CHAR8 ||
-           kind_ == TK_CHAR16 || kind_ == TK_STRING8 || kind_ == TK_STRING16 || kind_ == TK_ENUM || kind_ == TK_BITMASK;
+    return kind_ == eprosima::fastdds::dds::xtypes::TK_BOOLEAN || kind_ == eprosima::fastdds::dds::xtypes::TK_BYTE ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_INT64 || kind_ == eprosima::fastdds::dds::xtypes::TK_UINT16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT32 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT32 || kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT64 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_FLOAT128 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_CHAR16 || kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_ENUM ||
+           kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK;
 }
 
 void DynamicTypeBuilder::refresh_member_ids()
 {
-    if ((descriptor_->get_kind() == TK_STRUCTURE || descriptor_->get_kind() == TK_BITSET) &&
+    if ((descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            descriptor_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET) &&
             descriptor_->get_base_type() != nullptr)
     {
         current_member_id_ = descriptor_->get_base_type()->get_members_count();
@@ -456,7 +470,7 @@ ReturnCode_t DynamicTypeBuilder::set_name(
         descriptor_->set_name(name);
     }
     name_ = name;
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
@@ -469,18 +483,18 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
         if (it != member_by_id_.end())
         {
             it->second->apply_annotation(descriptor);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. The input descriptor isn't consistent.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -494,12 +508,12 @@ ReturnCode_t DynamicTypeBuilder::_apply_annotation_to_member(
     if (it != member_by_id_.end())
     {
         it->second->apply_annotation(annotation_name, key, value);
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation to member. MemberId not found.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 

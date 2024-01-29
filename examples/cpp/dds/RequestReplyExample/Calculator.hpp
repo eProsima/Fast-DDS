@@ -60,8 +60,6 @@ enum class OperationType : uint32_t
     MULTIPLICATION,
     DIVISION
 };
-
-
 /*!
  * @brief This class represents the structure RequestType defined by the user in the IDL file.
  * @ingroup Calculator
@@ -255,8 +253,6 @@ private:
     int32_t m_y{0};
 
 };
-
-
 /*!
  * @brief This class represents the structure ReplyType defined by the user in the IDL file.
  * @ingroup Calculator

@@ -29,9 +29,6 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/rtps/common/Types.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
 
 class HelloWorldSubscriber
 {

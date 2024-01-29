@@ -55,15 +55,15 @@ ReturnCode_t AnnotationDescriptor::copy_from(
         }
         catch (std::exception& /*e*/)
         {
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 bool AnnotationDescriptor::equals(
@@ -112,21 +112,21 @@ ReturnCode_t AnnotationDescriptor::get_value(
     if (it != value_.end())
     {
         value = it->second;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t AnnotationDescriptor::get_all_value(
         std::map<std::string, std::string>& value) const
 {
     value = value_;
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 bool AnnotationDescriptor::is_consistent() const
 {
-    if (type_ == nullptr || type_->get_kind() != TK_ANNOTATION)
+    if (type_ == nullptr || type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_ANNOTATION)
     {
         return false;
     }
@@ -146,7 +146,7 @@ ReturnCode_t AnnotationDescriptor::set_value(
         const std::string& value)
 {
     value_[key] = value;
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 } // namespace types

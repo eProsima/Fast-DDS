@@ -4,18 +4,10 @@ files_to_exclude=(
     './include/fastrtps/types/*'
     )
 
-files_needing_typeobject=(
-    './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
-    './test/blackbox/types/HelloWorld.idl'
-    './test/blackbox/types/TestIncludeRegression3361.idl'
-    './test/blackbox/types/TestRegression3361.idl'
-    './test/unittest/dds/topic/DDSSQLFilter/data_types/ContentFilterTestType.idl'
-    './test/unittest/dynamic_types/idl/Basic.idl'
-    './test/unittest/dynamic_types/idl/new_features_4_2.idl'
-    './test/unittest/dynamic_types/idl/Test.idl'
-    './test/unittest/xtypes/idl/Types.idl'
-    './test/unittest/xtypes/idl/WideEnum.idl'
-    './test/xtypes/idl/Types.idl'
+files_not_needing_typeobject=(
+    './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
+    './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
+    './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
     )
 
 files_needing_case_sensitive=(
@@ -69,7 +61,7 @@ for idl_file in "${idl_files[@]}"; do
     cd "${idl_dir}"
 
     # Detect if needs type_object.
-    [[ ${files_needing_typeobject[*]} =~ $idl_file ]] && to_arg='-typeobject' || to_arg=''
+    [[ ${files_not_needing_typeobject[*]} =~ $idl_file ]] && to_arg='-no-typeobjectsupport' || to_arg=''
 
     # Detect if needs case sensitive.
     [[ ${files_needing_case_sensitive[*]} =~ $idl_file ]] && cs_arg='-cs' || cs_arg=''

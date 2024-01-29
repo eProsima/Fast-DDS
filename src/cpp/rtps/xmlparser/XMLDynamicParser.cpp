@@ -404,7 +404,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     if (baseType != nullptr)
     {
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == types::TK_BITSET)
+        if (parentType != nullptr && parentType->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
         {
             typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(parentType);
         }
@@ -738,7 +738,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     if (baseType != nullptr)
     {
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == types::TK_STRUCTURE)
+        if (parentType != nullptr && parentType->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE)
         {
             typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(parentType);
         }

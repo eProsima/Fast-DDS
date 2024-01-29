@@ -33,7 +33,9 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
+using TCPv4TransportDescriptor = eprosima::fastdds::rtps::TCPv4TransportDescriptor;
 using TCPHeader = eprosima::fastdds::rtps::TCPHeader;
 
 #if defined(_WIN32)
@@ -1833,7 +1835,7 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 {
     eprosima::fastdds::rtps::TCPv4TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
-    MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    eprosima::fastdds::rtps::MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
     eprosima::fastdds::rtps::TCPv4TransportDescriptor sendDescriptor_1;

@@ -106,7 +106,7 @@ TEST_F(EntityTests, entity_enable)
     Entity entity;
 
     ASSERT_FALSE(entity.is_enabled());
-    ASSERT_EQ(entity.enable(), eprosima::fastrtps::types::RETCODE_OK);
+    ASSERT_EQ(entity.enable(), RETCODE_OK);
     ASSERT_TRUE(entity.is_enabled());
     entity.close();
     ASSERT_FALSE(entity.is_enabled());

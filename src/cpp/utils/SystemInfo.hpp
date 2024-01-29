@@ -27,7 +27,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <utils/Host.hpp>
 
 #if defined(_WIN32) || defined(__unix__)

@@ -66,7 +66,7 @@ public:
      * @return CollectionElementFlag instance.
      */
     RTPS_DllAPI static CollectionElementFlag build_collection_element_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool external);
 
     /**
@@ -82,7 +82,7 @@ public:
      * @return StructMemberFlag instance.
      */
     RTPS_DllAPI static StructMemberFlag build_struct_member_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool optional,
             bool must_understand,
             bool key,
@@ -97,7 +97,7 @@ public:
      * @return UnionMemberFlag instance.
      */
     RTPS_DllAPI static UnionMemberFlag build_union_member_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool default_member,
             bool external);
 
@@ -109,7 +109,7 @@ public:
      * @return UnionDiscriminatorFlag instance.
      */
     RTPS_DllAPI static UnionDiscriminatorFlag build_union_discriminator_flag(
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+            TryConstructKind try_construct_kind,
             bool key);
 
     /**
@@ -137,7 +137,7 @@ public:
      * @return StructTypeFlag instance.
      */
     RTPS_DllAPI static StructTypeFlag build_struct_type_flag(
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+            ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -150,7 +150,7 @@ public:
      * @return UnionTypeFlag instance.
      */
     RTPS_DllAPI static UnionTypeFlag build_union_type_flag(
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+            ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -198,7 +198,7 @@ public:
      * @return const PlainCollectionHeader instance.
      */
     RTPS_DllAPI static const PlainCollectionHeader build_plain_collection_header(
-            EquivalenceKindValue equiv_kind,
+            EquivalenceKind equiv_kind,
             CollectionElementFlag element_flags);
 
     /**
@@ -388,6 +388,7 @@ public:
      *
      * @param[in] string StringSTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -397,13 +398,15 @@ public:
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_s_string_type_identifier(
             const StringSTypeDefn& string,
-            const std::string& type_name);
+            const std::string& type_name,
+            bool wstring = false);
 
     /**
      * @brief Register large string/wstring TypeIdentifier into TypeObjectRegistry.
      *
      * @param[in] string StringLTypeDefn union member to set.
      * @param[in] type_name Type name to be registered.
+     * @param[in] wstring Flag to build a wstring. Default false.
      * @exception eprosima::fastdds::dds::xtypesv1_3::InvalidArgumentError exception if the given member is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -413,7 +416,8 @@ public:
      */
     RTPS_DllAPI static ReturnCode_t build_and_register_l_string_type_identifier(
             const StringLTypeDefn& string,
-            const std::string& type_name);
+            const std::string& type_name,
+            bool wstring = false);
 
     /**
      * @brief Register small sequence TypeIdentifier into TypeObjectRegistry.
@@ -757,7 +761,7 @@ public:
      * @return const AppliedVerbatimAnnotation instance.
      */
     RTPS_DllAPI static const AppliedVerbatimAnnotation build_applied_verbatim_annotation(
-            PlacementKindValue placement,
+            PlacementKind placement,
             const eprosima::fastcdr::fixed_string<32>& language,
             const std::string& text);
 
@@ -1880,7 +1884,7 @@ protected:
      */
     static void set_try_construct_behavior(
             MemberFlag& member_flag,
-            eprosima::fastdds::dds::TryConstructKind try_construct_kind);
+            TryConstructKind try_construct_kind);
 
     /**
      * @brief Set the TypeFlag object.
@@ -1892,7 +1896,7 @@ protected:
      */
     static void set_type_flag(
             TypeFlag& type_flag,
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+            ExtensibilityKind extensibility_kind,
             bool nested,
             bool autoid_hash);
 
@@ -1904,7 +1908,7 @@ protected:
      */
     static void set_extensibility_kind(
             TypeFlag& type_flag,
-            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind);
+            ExtensibilityKind extensibility_kind);
 
     /**
      * @brief Check if a given TypeIdentifier is fully-descriptive.
@@ -1957,24 +1961,6 @@ protected:
      */
 
     /**
-     * @brief Check bound consistency: must be different from 0.
-     *
-     * @tparam Either SBound or LBound.
-     * @param[in] bound Bound to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given bound is not
-     *            consistent.
-     */
-    template<typename T>
-    static void bound_consistency(
-            T bound)
-    {
-        if (INVALID_LBOUND == bound)
-        {
-            throw InvalidArgumentError("bound parameter must be greater than 0");
-        }
-    }
-
-    /**
      * @brief Check LBound consistency: must be greater than 255.
      *
      * @param[in] bound LBound to be checked.
@@ -2002,7 +1988,10 @@ protected:
         }
         for (auto bound : array)
         {
-            bound_consistency(bound);
+            if (INVALID_LBOUND == bound)
+            {
+                throw InvalidArgumentError("bound parameter must be greater than 0");
+            }
         }
     }
 
@@ -2015,17 +2004,6 @@ protected:
      */
     static void l_bound_seq_consistency(
             const LBoundSeq& bound_seq);
-
-    /**
-     * @brief Check MemberFlag consistency: At least one of the bits corresponding to the try construct annotation must
-     *        be set.
-     *
-     * @param[in] member_flags MemberFlag to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given MemberFlag is not
-     *            consistent.
-     */
-    static void member_flag_consistency(
-            MemberFlag member_flags);
 
     /**
      * @brief Check CollectionElementFlag consistency.
@@ -2108,6 +2086,16 @@ protected:
     }
 
     /**
+     * @brief Check EquivalenceKind consistency.
+     *
+     * @param[in] equiv_kind Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given EquivalenceKind
+     *            is not consistent.
+     */
+    static void equivalence_kind_consistency(
+            EquivalenceKind equiv_kind);
+
+    /**
      * @brief Check PlainCollectionHeader consistency:
      *          - CollectionElementFlag consistent
      *          - Consistent EquivalenceKind
@@ -2145,16 +2133,6 @@ protected:
      */
     static void map_key_type_identifier_consistency(
             const TypeIdentifier& key_identifier);
-
-    /**
-     * @brief Check StringSTypeDefn consistency.
-     *
-     * @param[in] string Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given StringSTypeDefn is not
-     *            consistent.
-     */
-    static void string_sdefn_consistency(
-            const StringSTypeDefn& string);
 
     /**
      * @brief Check StringLTypeDefn consistency.
@@ -2652,16 +2630,6 @@ protected:
      */
     static void complete_collection_element_consistency(
             const CompleteCollectionElement& complete_collection_element);
-
-    /**
-     * @brief Check CommonCollectionHeader consistency.
-     *
-     * @param[in] common_collection_header Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
-     *            CommonCollectionHeader is not consistent.
-     */
-    static void common_collection_header_consistency(
-            const CommonCollectionHeader& common_collection_header);
 
     /**
      * @brief Check CompleteCollectionHeader consistency.

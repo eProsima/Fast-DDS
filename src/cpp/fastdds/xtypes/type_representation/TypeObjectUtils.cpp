@@ -77,7 +77,7 @@ const TypeObjectHashId TypeObjectUtils::build_type_object_hash_id(
 }
 
 CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool external)
 {
     CollectionElementFlag collection_element_flag = 0;
@@ -90,7 +90,7 @@ CollectionElementFlag TypeObjectUtils::build_collection_element_flag(
 }
 
 StructMemberFlag TypeObjectUtils::build_struct_member_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool optional,
         bool must_understand,
         bool key,
@@ -112,9 +112,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
     }
     if (key)
     {
-        // XTypes v1.3 Clause 7.2.2.4.4.4.8 Key members shall always have their "must understand" attribute set to true.
         struct_member_flag |= MemberFlagBits::IS_KEY;
-        struct_member_flag |= MemberFlagBits::IS_MUST_UNDERSTAND;
     }
     if (external)
     {
@@ -124,7 +122,7 @@ StructMemberFlag TypeObjectUtils::build_struct_member_flag(
 }
 
 UnionMemberFlag TypeObjectUtils::build_union_member_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool default_member,
         bool external)
 {
@@ -142,7 +140,7 @@ UnionMemberFlag TypeObjectUtils::build_union_member_flag(
 }
 
 UnionDiscriminatorFlag TypeObjectUtils::build_union_discriminator_flag(
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind,
+        TryConstructKind try_construct_kind,
         bool key)
 {
     UnionDiscriminatorFlag union_discriminator_flag = 0;
@@ -166,7 +164,7 @@ EnumeratedLiteralFlag TypeObjectUtils::build_enumerated_literal_flag(
 }
 
 StructTypeFlag TypeObjectUtils::build_struct_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+        ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -176,7 +174,7 @@ StructTypeFlag TypeObjectUtils::build_struct_type_flag(
 }
 
 UnionTypeFlag TypeObjectUtils::build_union_type_flag(
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+        ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -188,7 +186,6 @@ UnionTypeFlag TypeObjectUtils::build_union_type_flag(
 const StringSTypeDefn TypeObjectUtils::build_string_s_type_defn(
         SBound bound)
 {
-    bound_consistency(bound);
     StringSTypeDefn string_s_type_defn;
     string_s_type_defn.bound(bound);
     return string_s_type_defn;
@@ -204,30 +201,15 @@ const StringLTypeDefn TypeObjectUtils::build_string_l_type_defn(
 }
 
 const PlainCollectionHeader TypeObjectUtils::build_plain_collection_header(
-        EquivalenceKindValue equiv_kind,
+        EquivalenceKind equiv_kind,
         CollectionElementFlag element_flags)
 {
+    equivalence_kind_consistency(equiv_kind);
 #if !defined(NDEBUG)
     collection_element_flag_consistency(element_flags);
 #endif // !defined(NDEBUG)
     PlainCollectionHeader plain_collection_header;
-    switch (equiv_kind)
-    {
-        case EquivalenceKindValue::MINIMAL:
-            plain_collection_header.equiv_kind(EK_MINIMAL);
-            break;
-
-        case EquivalenceKindValue::COMPLETE:
-            plain_collection_header.equiv_kind(EK_COMPLETE);
-            break;
-
-        case EquivalenceKindValue::BOTH:
-            plain_collection_header.equiv_kind(EK_BOTH);
-            break;
-
-        default:
-            break;
-    }
+    plain_collection_header.equiv_kind(equiv_kind);
     plain_collection_header.element_flags(element_flags);
     return plain_collection_header;
 }
@@ -241,7 +223,6 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
@@ -316,7 +297,6 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
     type_identifier_consistency(*element_identifier);
     collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
-    bound_consistency(bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     map_key_type_identifier_consistency(*key_identifier);
     PlainMapSTypeDefn plain_map_s_type_defn;
@@ -373,25 +353,32 @@ const ExtendedTypeDefn TypeObjectUtils::build_extended_type_defn()
 
 ReturnCode_t TypeObjectUtils::build_and_register_s_string_type_identifier(
         const StringSTypeDefn& string,
-        const std::string& type_name)
+        const std::string& type_name,
+        bool wstring)
 {
-#if !defined(NDEBUG)
-    string_sdefn_consistency(string);
-#endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_sdefn(string);
+    if (wstring)
+    {
+        type_identifier._d(TI_STRING16_SMALL);
+    }
     return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
 ReturnCode_t TypeObjectUtils::build_and_register_l_string_type_identifier(
         const StringLTypeDefn& string,
-        const std::string& type_name)
+        const std::string& type_name,
+        bool wstring)
 {
 #if !defined(NDEBUG)
     string_ldefn_consistency(string);
 #endif // !defined(NDEBUG)
     TypeIdentifier type_identifier;
     type_identifier.string_ldefn(string);
+    if (wstring)
+    {
+        type_identifier._d(TI_STRING16_LARGE);
+    }
     return type_object_registry_observer().register_type_identifier(type_name, type_identifier);
 }
 
@@ -666,8 +653,8 @@ const AppliedAnnotation TypeObjectUtils::build_applied_annotation(
         const TypeIdentifier& annotation_typeid,
         const eprosima::fastcdr::optional<AppliedAnnotationParameterSeq>& param_seq)
 {
-#if !defined(NDEBUG)
     applied_annotation_type_identifier_consistency(annotation_typeid);
+#if !defined(NDEBUG)
     if (param_seq.has_value())
     {
         applied_annotation_parameter_seq_consistency(param_seq.value());
@@ -714,29 +701,29 @@ void TypeObjectUtils::add_applied_annotation(
 }
 
 const AppliedVerbatimAnnotation TypeObjectUtils::build_applied_verbatim_annotation(
-        PlacementKindValue placement,
+        PlacementKind placement,
         const eprosima::fastcdr::fixed_string<32>& language,
         const std::string& text)
 {
     AppliedVerbatimAnnotation applied_verbatim_annotation;
     switch (placement)
     {
-        case PlacementKindValue::AFTER_DECLARATION:
+        case PlacementKind::AFTER_DECLARATION:
             applied_verbatim_annotation.placement(after_declaration);
             break;
-        case PlacementKindValue::BEFORE_DECLARATION:
+        case PlacementKind::BEFORE_DECLARATION:
             applied_verbatim_annotation.placement(before_declaration);
             break;
-        case PlacementKindValue::BEGIN_DECLARATION:
+        case PlacementKind::BEGIN_DECLARATION:
             applied_verbatim_annotation.placement(begin_declaration);
             break;
-        case PlacementKindValue::BEGIN_FILE:
+        case PlacementKind::BEGIN_FILE:
             applied_verbatim_annotation.placement(begin_declaration_file);
             break;
-        case PlacementKindValue::END_DECLARATION:
+        case PlacementKind::END_DECLARATION:
             applied_verbatim_annotation.placement(end_declaration);
             break;
-        case PlacementKindValue::END_FILE:
+        case PlacementKind::END_FILE:
             applied_verbatim_annotation.placement(end_declaration_file);
             break;
         default:
@@ -1300,7 +1287,6 @@ const CompleteCollectionElement TypeObjectUtils::build_complete_collection_eleme
 const CommonCollectionHeader TypeObjectUtils::build_common_collection_header(
         LBound bound)
 {
-    bound_consistency(bound);
     CommonCollectionHeader common_collection_header;
     common_collection_header.bound(bound);
     return common_collection_header;
@@ -1311,7 +1297,6 @@ const CompleteCollectionHeader TypeObjectUtils::build_complete_collection_header
         const eprosima::fastcdr::optional<CompleteTypeDetail>& detail)
 {
 #if !defined(NDEBUG)
-    common_collection_header_consistency(common);
     if (detail.has_value())
     {
         complete_type_detail_consistency(detail.value());
@@ -1840,28 +1825,31 @@ const NameHash TypeObjectUtils::name_hash(
 
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
-        eprosima::fastdds::dds::TryConstructKind try_construct_kind)
+        TryConstructKind try_construct_kind)
 {
     switch (try_construct_kind)
     {
-        case eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT:
+        case TryConstructKind::USE_DEFAULT:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case eprosima::fastdds::dds::TryConstructKind::TRIM:
+        case TryConstructKind::TRIM:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1 | MemberFlagBits::TRY_CONSTRUCT2;
             break;
 
-        case eprosima::fastdds::dds::TryConstructKind::DISCARD:
-        default:
+        case TryConstructKind::DISCARD:
             member_flag |= MemberFlagBits::TRY_CONSTRUCT1;
+            break;
+
+        // TryContructKind::NOT_APPLIED
+        default:
             break;
     }
 }
 
 void TypeObjectUtils::set_type_flag(
         TypeFlag& type_flag,
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind,
+        ExtensibilityKind extensibility_kind,
         bool nested,
         bool autoid_hash)
 {
@@ -1878,21 +1866,24 @@ void TypeObjectUtils::set_type_flag(
 
 void TypeObjectUtils::set_extensibility_kind(
         TypeFlag& type_flag,
-        eprosima::fastdds::dds::ExtensibilityKind extensibility_kind)
+        ExtensibilityKind extensibility_kind)
 {
     switch (extensibility_kind)
     {
-        case eprosima::fastdds::dds::ExtensibilityKind::FINAL:
+        case ExtensibilityKind::FINAL:
             type_flag |= TypeFlagBits::IS_FINAL;
             break;
 
-        case eprosima::fastdds::dds::ExtensibilityKind::MUTABLE:
+        case ExtensibilityKind::MUTABLE:
             type_flag |= TypeFlagBits::IS_MUTABLE;
             break;
 
-        case eprosima::fastdds::dds::ExtensibilityKind::APPENDABLE:
-        default:
+        case ExtensibilityKind::APPENDABLE:
             type_flag |= TypeFlagBits::IS_APPENDABLE;
+            break;
+
+        // ExtensibilityKind::NOT_APPLIED
+        default:
             break;
     }
 }
@@ -1972,19 +1963,9 @@ void TypeObjectUtils::l_bound_seq_consistency(
     }
 }
 
-void TypeObjectUtils::member_flag_consistency(
-        MemberFlag member_flags)
-{
-    if (!(member_flags & MemberFlagBits::TRY_CONSTRUCT1 || member_flags & MemberFlagBits::TRY_CONSTRUCT2))
-    {
-        throw InvalidArgumentError("Inconsistent MemberFlag: INVALID eprosima::fastdds::dds::TryConstructKind");
-    }
-}
-
 void TypeObjectUtils::collection_element_flag_consistency(
         CollectionElementFlag collection_element_flag)
 {
-    member_flag_consistency(collection_element_flag);
     if ((collection_element_flag & collection_element_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct and external flags apply to collection elements");
@@ -1994,16 +1975,11 @@ void TypeObjectUtils::collection_element_flag_consistency(
 void TypeObjectUtils::struct_member_flag_consistency(
         StructMemberFlag member_flags)
 {
-    member_flag_consistency(member_flags);
     if (member_flags & MemberFlagBits::IS_KEY && member_flags & MemberFlagBits::IS_OPTIONAL)
     {
         throw InvalidArgumentError("Keyed members cannot be optional");
     }
-    if (member_flags & MemberFlagBits::IS_KEY && !(member_flags & MemberFlagBits::IS_MUST_UNDERSTAND))
-    {
-        throw InvalidArgumentError("Keyed members must have their \"must understand\" attribute set to true");
-    }
-    if ((MemberFlagBits::IS_DEFAULT & member_flags) != 0)
+    if ((MemberFlagBits::IS_DEFAULT& member_flags) != 0)
     {
         throw InvalidArgumentError("Default flag does not apply to structure members");
     }
@@ -2012,7 +1988,6 @@ void TypeObjectUtils::struct_member_flag_consistency(
 void TypeObjectUtils::union_member_flag_consistency(
         UnionMemberFlag union_member_flag)
 {
-    member_flag_consistency(union_member_flag);
     if ((union_member_flag & union_member_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct, default and external flags apply to union members");
@@ -2022,7 +1997,6 @@ void TypeObjectUtils::union_member_flag_consistency(
 void TypeObjectUtils::union_discriminator_flag_consistency(
         UnionDiscriminatorFlag union_discriminator_flag)
 {
-    member_flag_consistency(union_discriminator_flag);
     if ((union_discriminator_flag & union_discriminator_flag_mask) != 0)
     {
         throw InvalidArgumentError("Only try construct and key flags apply to union discriminator member");
@@ -2049,14 +2023,20 @@ void TypeObjectUtils::type_flag_consistency(
     }
 }
 
-void TypeObjectUtils::plain_collection_header_consistency(
-        const PlainCollectionHeader& header)
+void TypeObjectUtils::equivalence_kind_consistency(
+        EquivalenceKind equiv_kind)
 {
-    collection_element_flag_consistency(header.element_flags());
-    if (header.equiv_kind() != EK_COMPLETE && header.equiv_kind() != EK_MINIMAL && header.equiv_kind() != EK_BOTH)
+    if (EK_BOTH != equiv_kind && EK_COMPLETE != equiv_kind && EK_MINIMAL != equiv_kind)
     {
         throw InvalidArgumentError("Inconsistent PlainCollectionHeader, invalid EquivalenceKind");
     }
+}
+
+void TypeObjectUtils::plain_collection_header_consistency(
+        const PlainCollectionHeader& header)
+{
+    equivalence_kind_consistency(header.equiv_kind());
+    collection_element_flag_consistency(header.element_flags());
 }
 
 void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
@@ -2073,11 +2053,11 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
 void TypeObjectUtils::map_key_type_identifier_consistency(
         const TypeIdentifier& key_identifier)
 {
-    if ((key_identifier._d() != TK_INT8 && key_identifier._d() != TK_UINT8 && key_identifier._d() != TK_INT16 &&
+    if (key_identifier._d() != TK_INT8 && key_identifier._d() != TK_UINT8 && key_identifier._d() != TK_INT16 &&
             key_identifier._d() != TK_UINT16 && key_identifier._d() != TK_INT32 && key_identifier._d() != TK_UINT32 &&
             key_identifier._d() != TK_INT64 && key_identifier._d() != TK_UINT64 &&
             key_identifier._d() != TI_STRING8_SMALL && key_identifier._d() != TI_STRING8_LARGE &&
-            key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE) ||
+            key_identifier._d() != TI_STRING16_SMALL && key_identifier._d() != TI_STRING16_LARGE &&
             !is_direct_hash_type_identifier(key_identifier))
     {
         throw InvalidArgumentError(
@@ -2115,12 +2095,6 @@ void TypeObjectUtils::map_key_type_identifier_consistency(
 #endif // !defined(NDEBUG)
 }
 
-void TypeObjectUtils::string_sdefn_consistency(
-        const StringSTypeDefn& string)
-{
-    bound_consistency(string.bound());
-}
-
 void TypeObjectUtils::string_ldefn_consistency(
         const StringLTypeDefn& string)
 {
@@ -2131,7 +2105,6 @@ void TypeObjectUtils::seq_sdefn_consistency(
         const PlainSequenceSElemDefn& plain_seq)
 {
     plain_collection_header_consistency(plain_seq.header());
-    bound_consistency(plain_seq.bound());
     type_identifier_consistency(*plain_seq.element_identifier());
     plain_collection_type_identifier_header_consistency(plain_seq.header(), *plain_seq.element_identifier());
 }
@@ -2167,10 +2140,9 @@ void TypeObjectUtils::map_sdefn_consistency(
         const PlainMapSTypeDefn& plain_map)
 {
     plain_collection_header_consistency(plain_map.header());
-    bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
+    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
@@ -2180,8 +2152,8 @@ void TypeObjectUtils::map_ldefn_consistency(
     plain_collection_header_consistency(plain_map.header());
     l_bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
+    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
@@ -2208,9 +2180,6 @@ void TypeObjectUtils::type_identifier_consistency(
         case TK_NONE:
             throw InvalidArgumentError("Inconsistent TypeIdentifier: non-initialized");
 
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-            string_sdefn_consistency(type_identifier.string_sdefn());
             break;
 
         case TI_STRING8_LARGE:
@@ -2251,7 +2220,7 @@ void TypeObjectUtils::type_identifier_consistency(
             direct_hash_type_identifier_consistency(type_identifier);
             break;
 
-        // Primitive TypeIdentifiers/ExtendedTypeDefn: no inconsistency rule apply.
+        // Primitive TypeIdentifiers/ExtendedTypeDefn/StringSTypeDefn: no inconsistency rule apply.
         default:
             break;
     }
@@ -2314,7 +2283,7 @@ void TypeObjectUtils::applied_annotation_seq_consistency(
     std::unordered_set<TypeIdentifier> annotation_typeids;
     for (const AppliedAnnotation& annotation : applied_annotation_seq)
     {
-        if (annotation_typeids.insert(annotation.annotation_typeid()).second)
+        if (!annotation_typeids.insert(annotation.annotation_typeid()).second)
         {
             throw InvalidArgumentError("Repeated annotation in the sequence");
         }
@@ -2679,28 +2648,50 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
         const TypeIdentifier& type_id,
         const AnnotationParameterValue& value)
 {
-    TypeObject type_object;
-    // Primitive types
-    if (((type_id._d() > TK_NONE && type_id._d() <= TK_UINT8) ||
-            (type_id._d() == TK_CHAR8 || type_id._d() == TK_CHAR16)) && (type_id._d() != value._d()))
+    switch (type_id._d())
     {
-        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
-    }
-    // String
-    else if ((type_id._d() == TI_STRING8_SMALL || type_id._d() == TI_STRING8_LARGE) && value._d() != TK_STRING8)
-    {
-        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
-    }
-    // Wstring
-    else if ((type_id._d() == TI_STRING16_SMALL || type_id._d() == TI_STRING16_LARGE) && value._d() != TK_STRING16)
-    {
-        throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
-    }
-    // Enum
-    else if (is_direct_hash_type_identifier(type_id))
-    {
-        if (value._d() == TK_ENUM)
+        // Primitive types
+        case TK_BOOLEAN:
+        case TK_BYTE:
+        case TK_INT16:
+        case TK_INT32:
+        case TK_INT64:
+        case TK_UINT16:
+        case TK_UINT32:
+        case TK_UINT64:
+        case TK_FLOAT32:
+        case TK_FLOAT64:
+        case TK_FLOAT128:
+        case TK_INT8:
+        case TK_UINT8:
+        case TK_CHAR8:
+        case TK_CHAR16:
+            if (type_id._d() != value._d())
+            {
+                throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+            }
+            break;
+        // String
+        case TI_STRING8_SMALL:
+        case TI_STRING8_LARGE:
+            if (value._d() != TK_STRING8)
+            {
+                throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+            }
+            break;
+        // Wstring
+        case TI_STRING16_SMALL:
+        case TI_STRING16_LARGE:
+            if (value._d() != TK_STRING16)
+            {
+                throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
+            }
+            break;
+        // Enum & Alias
+        case EK_COMPLETE:
+        case EK_MINIMAL:
         {
+            TypeObject type_object;
             if (eprosima::fastdds::dds::RETCODE_OK ==
                     type_object_registry_observer().get_type_object(type_id, type_object))
             {
@@ -2708,11 +2699,18 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
                 {
                     common_annotation_parameter_type_identifier_default_value_consistency(
                         type_object.complete().alias_type().body().common().related_type(), value);
+                    return;
                 }
                 else if (EK_MINIMAL == type_object._d() && type_object.minimal()._d() == TK_ALIAS)
                 {
                     common_annotation_parameter_type_identifier_default_value_consistency(
                         type_object.minimal().alias_type().body().common().related_type(), value);
+                    return;
+                }
+                if (TK_ENUM != value._d())
+                {
+                    throw InvalidArgumentError(
+                              "Given annotation parameter value is inconsistent with given TypeIdentifier");
                 }
                 else if ((EK_COMPLETE == type_object._d() && type_object.complete()._d() != TK_ENUM) ||
                         (EK_MINIMAL == type_object._d() && type_object.minimal()._d() != TK_ENUM))
@@ -2725,11 +2723,12 @@ void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_
             {
                 throw InvalidArgumentError("Given TypeIdentifier is not found in TypeObjectRegistry");
             }
+            break;
         }
-        else
-        {
+        // Any other TypeIdentifier is erroneous
+        default:
             throw InvalidArgumentError("Given annotation parameter value is inconsistent with given TypeIdentifier");
-        }
+            break;
     }
 }
 
@@ -2848,16 +2847,9 @@ void TypeObjectUtils::complete_collection_element_consistency(
     complete_element_detail_consistency(complete_collection_element.detail());
 }
 
-void TypeObjectUtils::common_collection_header_consistency(
-        const CommonCollectionHeader& common_collection_header)
-{
-    bound_consistency(common_collection_header.bound());
-}
-
 void TypeObjectUtils::complete_collection_header_consistency(
         const CompleteCollectionHeader& complete_collection_header)
 {
-    common_collection_header_consistency(complete_collection_header.common());
     if (complete_collection_header.detail().has_value())
     {
         complete_type_detail_consistency(complete_collection_header.detail().value());
@@ -3118,7 +3110,7 @@ void TypeObjectUtils::complete_bitfield_seq_consistency(
     std::set<uint16_t> positions;
     for (const CompleteBitfield& bitfield : complete_bitfield_seq)
     {
-        if (bitfield.detail().name().size() != 0 && !bitfield_names.insert(bitfield.detail().name()).second)
+        if (!bitfield_names.insert(bitfield.detail().name()).second)
         {
             throw InvalidArgumentError("Repeated bitfield name");
         }

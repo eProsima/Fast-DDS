@@ -38,8 +38,6 @@
 #endif  // GEN_API_VER
 
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type NewAliases defined by the user in the IDL file.
  * @ingroup new_features_4_2
@@ -90,6 +88,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -130,13 +131,8 @@ public:
 
 
 
-
-
-
 namespace bitmodule
 {
-
-
 
     /*!
      * @brief This class represents the TopicDataType of the type BitsetBitmask defined by the user in the IDL file.
@@ -188,6 +184,9 @@ namespace bitmodule
         eProsima_user_DllExport void deleteData(
                 void* data) override;
 
+        //Register TypeObject representation in Fast DDS TypeObjectRegistry
+        eProsima_user_DllExport void register_type_object_representation() const override;
+
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
         eProsima_user_DllExport inline bool is_bounded() const override
         {
@@ -225,8 +224,6 @@ namespace bitmodule
         unsigned char* m_keyBuffer;
 
     };
-
-
 
     /*!
      * @brief This class represents the TopicDataType of the type BM2 defined by the user in the IDL file.
@@ -278,6 +275,9 @@ namespace bitmodule
         eProsima_user_DllExport void deleteData(
                 void* data) override;
 
+        //Register TypeObject representation in Fast DDS TypeObjectRegistry
+        eProsima_user_DllExport void register_type_object_representation() const override;
+
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
         eProsima_user_DllExport inline bool is_bounded() const override
         {
@@ -316,8 +316,6 @@ namespace bitmodule
 
     };
 } // namespace bitmodule
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type StructTest defined by the user in the IDL file.
@@ -368,6 +366,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override

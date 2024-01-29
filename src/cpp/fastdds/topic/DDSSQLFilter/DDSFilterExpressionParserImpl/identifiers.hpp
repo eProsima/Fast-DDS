@@ -58,22 +58,22 @@ struct identifier_processor
         switch (ti._d())
         {
             case TI_PLAIN_ARRAY_SMALL:
-                out_type = ti.array_sdefn().element_identifier();
+                out_type = ti.array_sdefn().element_identifier().get();
                 max_size = process_bounds(ti.array_sdefn().array_bound_seq());
                 return true;
 
             case TI_PLAIN_ARRAY_LARGE:
-                out_type = ti.array_ldefn().element_identifier();
+                out_type = ti.array_ldefn().element_identifier().get();
                 max_size = process_bounds(ti.array_ldefn().array_bound_seq());
                 return true;
 
             case TI_PLAIN_SEQUENCE_SMALL:
-                out_type = ti.seq_sdefn().element_identifier();
+                out_type = ti.seq_sdefn().element_identifier().get();
                 max_size = process_bound(ti.seq_sdefn().bound());
                 return true;
 
             case TI_PLAIN_SEQUENCE_LARGE:
-                out_type = ti.seq_ldefn().element_identifier();
+                out_type = ti.seq_ldefn().element_identifier().get();
                 max_size = process_bound(ti.seq_ldefn().bound());
                 return true;
         }
@@ -87,7 +87,7 @@ struct identifier_processor
             CurrentIdentifierState& identifier_state,
             const CompleteTypeObject& complete)
     {
-        if (TK_STRUCTURE != complete._d())
+        if (eprosima::fastdds::dds::xtypes::TK_STRUCTURE != complete._d())
         {
             throw parse_error("trying to access field on a non-struct type", n->begin());
         }
@@ -143,47 +143,50 @@ struct identifier_processor
     {
         switch (ti._d())
         {
-            case TK_BOOLEAN:
+            case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
                 return DDSFilterValue::ValueKind::BOOLEAN;
 
-            case TK_CHAR8:
+            case eprosima::fastdds::dds::xtypes::TK_CHAR8:
                 return DDSFilterValue::ValueKind::CHAR;
 
-            case TK_STRING8:
+            case eprosima::fastdds::dds::xtypes::TK_STRING8:
             case TI_STRING8_SMALL:
             case TI_STRING8_LARGE:
                 return DDSFilterValue::ValueKind::STRING;
 
-            case TK_INT16:
-            case TK_INT32:
-            case TK_INT64:
+            case eprosima::fastdds::dds::xtypes::TK_INT8:
+            case eprosima::fastdds::dds::xtypes::TK_INT16:
+            case eprosima::fastdds::dds::xtypes::TK_INT32:
+            case eprosima::fastdds::dds::xtypes::TK_INT64:
                 return DDSFilterValue::ValueKind::SIGNED_INTEGER;
 
-            case TK_BYTE:
-            case TK_UINT16:
-            case TK_UINT32:
-            case TK_UINT64:
+            case eprosima::fastdds::dds::xtypes::TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_UINT8:
+            case eprosima::fastdds::dds::xtypes::TK_UINT16:
+            case eprosima::fastdds::dds::xtypes::TK_UINT32:
+            case eprosima::fastdds::dds::xtypes::TK_UINT64:
                 return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
 
-            case TK_FLOAT32:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
                 return DDSFilterValue::ValueKind::FLOAT_FIELD;
 
-            case TK_FLOAT64:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
                 return DDSFilterValue::ValueKind::DOUBLE_FIELD;
 
-            case TK_FLOAT128:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
                 return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
 
             case EK_COMPLETE:
-                const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
-                if (TK_ENUM == type_object->complete()._d())
+                TypeObject type_object;
+                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(ti, type_object);
+                if (eprosima::fastdds::dds::xtypes::TK_ENUM == type_object.complete()._d())
                 {
                     return DDSFilterValue::ValueKind::ENUM;
                 }
-                if (TK_ALIAS == type_object->complete()._d())
+                if (eprosima::fastdds::dds::xtypes::TK_ALIAS == type_object.complete()._d())
                 {
                     const TypeIdentifier& aliasedId =
-                            type_object->complete().alias_type().body().common().related_type();
+                            type_object.complete().alias_type().body().common().related_type();
                     return get_value_kind(aliasedId, pos);
                 }
                 break;
@@ -223,13 +226,15 @@ struct identifier_processor
                     throw parse_error("trying to access field on a non-complete type", n->begin());
                 }
 
-                const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(state.current_type);
-                if (nullptr == type_object)
+                TypeObject type_object;
+                ReturnCode_t ret = DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                    *state.current_type, type_object);
+                if (RETCODE_BAD_PARAMETER == ret)
                 {
                     throw parse_error("could not find type object definition", n->begin());
                 }
 
-                add_member_access(n, state, type_object->complete());
+                add_member_access(n, state, type_object.complete());
             }
         }
 

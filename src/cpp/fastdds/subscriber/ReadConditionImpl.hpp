@@ -21,11 +21,13 @@
 #include <memory>
 #include <mutex>
 
-#include <fastdds/core/condition/ConditionNotifier.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/ReadCondition.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
+
+#include <fastdds/core/condition/ConditionNotifier.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
@@ -37,8 +39,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace detail {
-
-using fastrtps::types::ReturnCode_t;
 
 class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 {

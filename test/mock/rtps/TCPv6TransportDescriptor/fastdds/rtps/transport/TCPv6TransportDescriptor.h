@@ -56,7 +56,7 @@ typedef struct TCPv6TransportDescriptor : public TCPTransportDescriptor
 
     }
 
-} TCPv6TransportDescriptor;
+};
 
 } // namespace rtps
 } // namespace fastdds

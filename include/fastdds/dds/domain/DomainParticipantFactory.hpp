@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_DOMAINPARTICIPANT_HPP_
-#define _FASTDDS_DOMAINPARTICIPANT_HPP_
+#ifndef _FASTDDS_DDS_DOMAIN_DOMAINPARTICIPANT_FACTORY_HPP_
+#define _FASTDDS_DDS_DOMAIN_DOMAINPARTICIPANT_FACTORY_HPP_
 
 #include <map>
 #include <memory>
@@ -331,4 +331,4 @@ protected:
 }  // namespace fastdds
 }  // namespace eprosima
 
-#endif /* _FASTDDS_DOMAINPARTICIPANT_HPP_*/
+#endif /* _FASTDDS_DDS_DOMAIN_DOMAINPARTICIPANT_FACTORY_HPP_*/

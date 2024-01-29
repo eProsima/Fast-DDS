@@ -20,6 +20,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/utils/string_convert.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
@@ -182,12 +183,13 @@ void DynamicData::create_members(
         DynamicType_ptr pType)
 {
     std::map<MemberId, DynamicTypeMember*> members;
-    if (pType->get_all_members(members) == RETCODE_OK)
+    if (pType->get_all_members(members) == eprosima::fastdds::dds::RETCODE_OK)
     {
         if (pType->is_complex_kind())
         {
             // Bitmasks and enums register their members but only manages one value.
-            if (pType->get_kind() == TK_BITMASK || pType->get_kind() == TK_ENUM)
+            if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+                    pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
             {
                 add_value(pType->get_kind(), MEMBER_ID_INVALID);
             }
@@ -195,18 +197,19 @@ void DynamicData::create_members(
             for (auto it = members.begin(); it != members.end(); ++it)
             {
                 MemberDescriptor* newDescriptor = new MemberDescriptor();
-                if (it->second->get_descriptor(newDescriptor) == RETCODE_OK)
+                if (it->second->get_descriptor(newDescriptor) == eprosima::fastdds::dds::RETCODE_OK)
                 {
                     descriptors_.insert(std::make_pair(it->first, newDescriptor));
-                    if (pType->get_kind() != TK_BITMASK && pType->get_kind() != TK_ENUM)
+                    if (pType->get_kind() != eprosima::fastdds::dds::xtypes::TK_BITMASK &&
+                            pType->get_kind() != eprosima::fastdds::dds::xtypes::TK_ENUM)
                     {
                         DynamicData* data = DynamicDataFactory::get_instance()->create_data(newDescriptor->type_);
-                        if (newDescriptor->type_->get_kind() != TK_BITSET &&
-                                newDescriptor->type_->get_kind() != TK_STRUCTURE &&
-                                newDescriptor->type_->get_kind() != TK_UNION &&
-                                newDescriptor->type_->get_kind() != TK_SEQUENCE &&
-                                newDescriptor->type_->get_kind() != TK_ARRAY &&
-                                newDescriptor->type_->get_kind() != TK_MAP)
+                        if (newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                                newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_STRUCTURE &&
+                                newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION &&
+                                newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+                                newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_ARRAY &&
+                                newDescriptor->type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_MAP)
                         {
                             std::string def_value = newDescriptor->annotation_get_default();
                             if (!def_value.empty())
@@ -228,7 +231,7 @@ void DynamicData::create_members(
             }
 
             // Set the default value for unions.
-            if (pType->get_kind() == TK_UNION)
+            if (pType->get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 bool defaultValue = false;
                 // Search the default value.
@@ -264,12 +267,12 @@ ReturnCode_t DynamicData::get_descriptor(
     if (it != descriptors_.end())
     {
         value.copy_from(it->second);
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting MemberDescriptor. MemberId not found.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -280,12 +283,12 @@ ReturnCode_t DynamicData::set_descriptor(
     if (descriptors_.find(id) == descriptors_.end())
     {
         descriptors_.insert(std::make_pair(id, new MemberDescriptor(value)));
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error setting MemberDescriptor. MemberId found.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -311,7 +314,7 @@ bool DynamicData::equals(
             }
 
             // Optimization for unions, only check the selected element.
-            if (get_kind() == TK_UNION)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 if (union_id_ != other->union_id_)
                 {
@@ -367,23 +370,24 @@ bool DynamicData::equals(
                     return false;
                 }
 #else
-                if (get_kind() == TK_ENUM)
+                if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
                 {
-                    if (!compare_values(TK_UINT32, values_.begin()->second, other->values_.begin()->second))
+                    if (!compare_values(eprosima::fastdds::dds::xtypes::TK_UINT32, values_.begin()->second,
+                            other->values_.begin()->second))
                     {
                         return false;
                     }
                 }
-                else if (get_kind() == TK_BITMASK)
+                else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK)
                 {
-                    TypeKind bitmask_kind = TK_BYTE;
+                    TypeKind bitmask_kind = eprosima::fastdds::dds::xtypes::TK_BYTE;
                     size_t type_size = type_->get_size();
                     switch (type_size)
                     {
-                        case 1: bitmask_kind = TK_BYTE; break;
-                        case 2: bitmask_kind = TK_UINT16; break;
-                        case 4: bitmask_kind = TK_UINT32; break;
-                        case 8: bitmask_kind = TK_UINT64; break;
+                        case 1: bitmask_kind = eprosima::fastdds::dds::xtypes::TK_BYTE; break;
+                        case 2: bitmask_kind = eprosima::fastdds::dds::xtypes::TK_UINT16; break;
+                        case 4: bitmask_kind = eprosima::fastdds::dds::xtypes::TK_UINT32; break;
+                        case 8: bitmask_kind = eprosima::fastdds::dds::xtypes::TK_UINT64; break;
                     }
                     if (!compare_values(bitmask_kind, values_.begin()->second, other->values_.begin()->second))
                     {
@@ -462,7 +466,7 @@ TypeKind DynamicData::get_kind() const
 
 uint32_t DynamicData::get_item_count() const
 {
-    if (get_kind() == TK_MAP)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         return static_cast<uint32_t>(complex_values_.size() / 2);
@@ -470,7 +474,7 @@ uint32_t DynamicData::get_item_count() const
         return static_cast<uint32_t>(values_.size() / 2);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
-    else if (get_kind() == TK_ARRAY)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
         return type_->get_total_bounds();
     }
@@ -497,119 +501,119 @@ void DynamicData::add_value(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int32_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint32_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int16_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint16_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int64_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint64_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new float()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new double()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new long double()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new char()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new wchar_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new bool()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new octet()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new std::string()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new std::wstring()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint32_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint64_t()));
@@ -648,7 +652,9 @@ ReturnCode_t DynamicData::clear_all_values()
 {
     if (type_->is_complex_kind())
     {
-        if (get_kind() == TK_SEQUENCE || get_kind() == TK_MAP || get_kind() == TK_ARRAY)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return clear_data();
         }
@@ -676,7 +682,7 @@ ReturnCode_t DynamicData::clear_all_values()
     {
         set_default_value(MEMBER_ID_INVALID);
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 void DynamicData::clean_members()
@@ -701,7 +707,7 @@ void DynamicData::clean_members()
         {
             default:
                 break;
-            case TK_INT32:
+            case eprosima::fastdds::dds::xtypes::TK_INT32:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -709,7 +715,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UINT32:
+            case eprosima::fastdds::dds::xtypes::TK_UINT32:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -717,7 +723,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_INT16:
+            case eprosima::fastdds::dds::xtypes::TK_INT16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -725,7 +731,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UINT16:
+            case eprosima::fastdds::dds::xtypes::TK_UINT16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -733,7 +739,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_INT64:
+            case eprosima::fastdds::dds::xtypes::TK_INT64:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -741,7 +747,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UINT64:
+            case eprosima::fastdds::dds::xtypes::TK_UINT64:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -749,7 +755,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_FLOAT32:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -757,7 +763,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_FLOAT64:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -765,7 +771,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_FLOAT128:
+            case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -773,7 +779,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_CHAR8:
+            case eprosima::fastdds::dds::xtypes::TK_CHAR8:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -781,7 +787,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_CHAR16:
+            case eprosima::fastdds::dds::xtypes::TK_CHAR16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -789,7 +795,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_BOOLEAN:
+            case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -797,7 +803,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_BYTE:
+            case eprosima::fastdds::dds::xtypes::TK_BYTE:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -805,7 +811,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_STRING8:
+            case eprosima::fastdds::dds::xtypes::TK_STRING8:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -813,7 +819,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_STRING16:
+            case eprosima::fastdds::dds::xtypes::TK_STRING16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -821,7 +827,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_ENUM:
+            case eprosima::fastdds::dds::xtypes::TK_ENUM:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -829,7 +835,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_BITMASK:
+            case eprosima::fastdds::dds::xtypes::TK_BITMASK:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -837,13 +843,13 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UNION:
-            case TK_STRUCTURE:
-            case TK_ARRAY:
-            case TK_SEQUENCE:
-            case TK_MAP:
-            case TK_ALIAS:
-            case TK_BITSET:
+            case eprosima::fastdds::dds::xtypes::TK_UNION:
+            case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+            case eprosima::fastdds::dds::xtypes::TK_ARRAY:
+            case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+            case eprosima::fastdds::dds::xtypes::TK_MAP:
+            case eprosima::fastdds::dds::xtypes::TK_ALIAS:
+            case eprosima::fastdds::dds::xtypes::TK_BITSET:
             {
                 break;
             }
@@ -881,7 +887,7 @@ ReturnCode_t DynamicData::clear_nonkey_values()
             set_default_value(MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 ReturnCode_t DynamicData::clear_value(
@@ -915,7 +921,7 @@ ReturnCode_t DynamicData::clear_value(
     {
         set_default_value(id);
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 void* DynamicData::clone_value(
@@ -926,119 +932,119 @@ void* DynamicData::clone_value(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             int32_t* newInt32 = new int32_t();
             get_int32_value(*newInt32, id);
             return newInt32;
         }
         break;
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             uint32_t* newUInt32 = new uint32_t();
             get_uint32_value(*newUInt32, id);
             return newUInt32;
         }
         break;
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             int16_t* newInt16 = new int16_t();
             get_int16_value(*newInt16, id);
             return newInt16;
         }
         break;
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             uint16_t* newUInt16 = new uint16_t();
             get_uint16_value(*newUInt16, id);
             return newUInt16;
         }
         break;
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             int64_t* newInt64 = new int64_t();
             get_int64_value(*newInt64, id);
             return newInt64;
         }
         break;
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             uint64_t* newUInt64 = new uint64_t();
             get_uint64_value(*newUInt64, id);
             return newUInt64;
         }
         break;
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
             float* newFloat32 = new float();
             get_float32_value(*newFloat32, id);
             return newFloat32;
         }
         break;
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             double* newFloat64 = new double();
             get_float64_value(*newFloat64, id);
             return newFloat64;
         }
         break;
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             long double* newFloat128 = new long double();
             get_float128_value(*newFloat128, id);
             return newFloat128;
         }
         break;
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             char* newChar8 = new char();
             get_char8_value(*newChar8, id);
             return newChar8;
         }
         break;
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             wchar_t* newChar16 = new wchar_t();
             get_char16_value(*newChar16, id);
             return newChar16;
         }
         break;
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             bool* newBool = new bool();
             get_bool_value(*newBool, id);
             return newBool;
         }
         break;
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             octet* newByte = new octet();
             get_byte_value(*newByte, id);
             return newByte;
         }
         break;
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             std::string* newString = new std::string();
             get_string_value(*newString, id);
             return newString;
         }
         break;
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             std::wstring* newString = new std::wstring();
             get_wstring_value(*newString, id);
             return newString;
         }
         break;
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             uint32_t* newUInt32 = new uint32_t();
             get_enum_value(*newUInt32, id);
             return newUInt32;
         }
         break;
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             uint64_t* newBitset = new uint64_t();
             get_uint64_value(*newBitset, id);
@@ -1057,52 +1063,52 @@ bool DynamicData::compare_values(
     {
         default:
             break;
-        case TK_INT32:      {
+        case eprosima::fastdds::dds::xtypes::TK_INT32:      {
             return *((int32_t*)left) == *((int32_t*)right);
         }
-        case TK_UINT32:     {
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:     {
             return *((uint32_t*)left) == *((uint32_t*)right);
         }
-        case TK_INT16:      {
+        case eprosima::fastdds::dds::xtypes::TK_INT16:      {
             return *((int16_t*)left) == *((int16_t*)right);
         }
-        case TK_UINT16:     {
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:     {
             return *((uint16_t*)left) == *((uint16_t*)right);
         }
-        case TK_INT64:      {
+        case eprosima::fastdds::dds::xtypes::TK_INT64:      {
             return *((int64_t*)left) == *((int64_t*)right);
         }
-        case TK_UINT64:     {
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:     {
             return *((uint64_t*)left) == *((uint64_t*)right);
         }
-        case TK_FLOAT32:    {
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:    {
             return *((float*)left) == *((float*)right);
         }
-        case TK_FLOAT64:    {
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:    {
             return *((double*)left) == *((double*)right);
         }
-        case TK_FLOAT128:   {
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:   {
             return *((long double*)left) == *((long double*)right);
         }
-        case TK_CHAR8:      {
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:      {
             return *((char*)left) == *((char*)right);
         }
-        case TK_CHAR16:     {
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:     {
             return *((wchar_t*)left) == *((wchar_t*)right);
         }
-        case TK_BOOLEAN:    {
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:    {
             return *((bool*)left) == *((bool*)right);
         }
-        case TK_BYTE:       {
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:       {
             return *((octet*)left) == *((octet*)right);
         }
-        case TK_STRING8:    {
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:    {
             return *((std::string*)left) == *((std::string*)right);
         }
-        case TK_STRING16:   {
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:   {
             return *((std::wstring*)left) == *((std::wstring*)right);
         }
-        case TK_ENUM:       {
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:       {
             return *((uint32_t*)left) == *((uint32_t*)right);
         }
     }
@@ -1117,77 +1123,77 @@ void DynamicData::get_value(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             int32_t value(0);
             get_int32_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             uint32_t value(0);
             get_uint32_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             int16_t value(0);
             get_int16_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             uint16_t value(0);
             get_uint16_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             int64_t value(0);
             get_int64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             uint64_t value(0);
             get_uint64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
             float value(0.0f);
             get_float32_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             double value(0.0f);
             get_float64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             long double value(0.0f);
             get_float128_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             char value = 0;
             get_char8_value(value, id);
             sOutValue = value;
         }
         break;
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             wchar_t value(0);
             get_char16_value(value, id);
@@ -1196,50 +1202,50 @@ void DynamicData::get_value(
             sOutValue = wstring_to_bytes(temp);
         }
         break;
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             bool value(false);
             get_bool_value(value, id);
             sOutValue = std::to_string(value ? 1 : 0);
         }
         break;
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             uint8_t value(0);
             get_byte_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             sOutValue = get_string_value(id);
         }
         break;
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             std::wstring value;
             get_wstring_value(value, id);
             sOutValue = wstring_to_bytes(value);
         }
         break;
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             uint32_t value;
             get_enum_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             uint64_t value(0);
             get_uint64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             // THESE TYPES DON'T MANAGE VALUES
         }
@@ -1255,7 +1261,7 @@ void DynamicData::set_value(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             int32_t value(0);
             try
@@ -1268,7 +1274,7 @@ void DynamicData::set_value(
             set_int32_value(value, id);
         }
         break;
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             uint32_t value(0);
             try
@@ -1281,7 +1287,7 @@ void DynamicData::set_value(
             set_uint32_value(value, id);
         }
         break;
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             int16_t value(0);
             try
@@ -1294,7 +1300,7 @@ void DynamicData::set_value(
             set_int16_value(value, id);
         }
         break;
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             uint16_t value(0);
             try
@@ -1307,7 +1313,7 @@ void DynamicData::set_value(
             set_uint16_value(value, id);
         }
         break;
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             int64_t value(0);
             try
@@ -1320,7 +1326,7 @@ void DynamicData::set_value(
             set_int64_value(value, id);
         }
         break;
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             uint64_t value(0);
             try
@@ -1333,7 +1339,7 @@ void DynamicData::set_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
             float value(0.0f);
             try
@@ -1346,7 +1352,7 @@ void DynamicData::set_value(
             set_float32_value(value, id);
         }
         break;
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             double value(0.0f);
             try
@@ -1359,7 +1365,7 @@ void DynamicData::set_value(
             set_float64_value(value, id);
         }
         break;
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             long double value(0.0f);
             try
@@ -1372,7 +1378,7 @@ void DynamicData::set_value(
             set_float128_value(value, id);
         }
         break;
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             if (sValue.length() >= 1)
             {
@@ -1380,7 +1386,7 @@ void DynamicData::set_value(
             }
         }
         break;
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             wchar_t value(0);
             try
@@ -1395,7 +1401,7 @@ void DynamicData::set_value(
             set_char16_value(value, id);
         }
         break;
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             int value(0);
             try
@@ -1408,7 +1414,7 @@ void DynamicData::set_value(
             set_bool_value(value == 1 ? true : false, id);
         }
         break;
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             if (sValue.length() >= 1)
             {
@@ -1424,17 +1430,17 @@ void DynamicData::set_value(
             }
         }
         break;
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             set_string_value(sValue, id);
         }
         break;
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             set_wstring_value(std::wstring(sValue.begin(), sValue.end()), id);
         }
         break;
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             uint32_t value(0);
             try
@@ -1447,7 +1453,7 @@ void DynamicData::set_value(
             set_enum_value(value, id);
         }
         break;
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             uint64_t value(0);
             try
@@ -1460,10 +1466,10 @@ void DynamicData::set_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             // THESE TYPES DON'T MANAGE VALUES
         }
@@ -1485,7 +1491,7 @@ void DynamicData::set_default_value(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             int32_t value(0);
             try
@@ -1498,7 +1504,7 @@ void DynamicData::set_default_value(
             set_int32_value(value, id);
         }
         break;
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             uint32_t value(0);
             try
@@ -1511,7 +1517,7 @@ void DynamicData::set_default_value(
             set_uint32_value(value, id);
         }
         break;
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             int16_t value(0);
             try
@@ -1524,7 +1530,7 @@ void DynamicData::set_default_value(
             set_int16_value(value, id);
         }
         break;
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             uint16_t value(0);
             try
@@ -1537,7 +1543,7 @@ void DynamicData::set_default_value(
             set_uint16_value(value, id);
         }
         break;
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             int64_t value(0);
             try
@@ -1550,7 +1556,7 @@ void DynamicData::set_default_value(
             set_int64_value(value, id);
         }
         break;
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             uint64_t value(0);
             try
@@ -1563,7 +1569,7 @@ void DynamicData::set_default_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
             float value(0.0f);
             try
@@ -1576,7 +1582,7 @@ void DynamicData::set_default_value(
             set_float32_value(value, id);
         }
         break;
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             double value(0.0f);
             try
@@ -1589,7 +1595,7 @@ void DynamicData::set_default_value(
             set_float64_value(value, id);
         }
         break;
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             long double value(0.0f);
             try
@@ -1602,7 +1608,7 @@ void DynamicData::set_default_value(
             set_float128_value(value, id);
         }
         break;
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             if (defaultValue.length() >= 1)
             {
@@ -1610,7 +1616,7 @@ void DynamicData::set_default_value(
             }
         }
         break;
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             wchar_t value(0);
             try
@@ -1625,7 +1631,7 @@ void DynamicData::set_default_value(
             set_char16_value(value, id);
         }
         break;
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             int value(0);
             try
@@ -1638,7 +1644,7 @@ void DynamicData::set_default_value(
             set_bool_value(value == 1 ? true : false, id);
         }
         break;
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             if (defaultValue.length() >= 1)
             {
@@ -1654,17 +1660,17 @@ void DynamicData::set_default_value(
             }
         }
         break;
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             set_string_value(defaultValue, id);
         }
         break;
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             set_wstring_value(std::wstring(defaultValue.begin(), defaultValue.end()), id);
         }
         break;
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             uint32_t value(0);
             try
@@ -1677,7 +1683,7 @@ void DynamicData::set_default_value(
             set_enum_value(value, id);
         }
         break;
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             uint64_t value(0);
             try
@@ -1690,10 +1696,10 @@ void DynamicData::set_default_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             auto itValue = complex_values_.find(id);
@@ -1730,14 +1736,14 @@ DynamicData* DynamicData::loan_value(
             auto it = complex_values_.find(id);
             if (it != complex_values_.end())
             {
-                if (get_kind() == TK_MAP && it->second->key_element_)
+                if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && it->second->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
                 }
                 else
                 {
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
@@ -1745,9 +1751,9 @@ DynamicData* DynamicData::loan_value(
                     return it->second;
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
             {
-                if (insert_array_data(id) == RETCODE_OK)
+                if (insert_array_data(id) == eprosima::fastdds::dds::RETCODE_OK)
                 {
                     loaned_values_.push_back(id);
                     return complex_values_.at(id);
@@ -1757,14 +1763,14 @@ DynamicData* DynamicData::loan_value(
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TK_MAP && ((DynamicData*)it->second)->key_element_)
+                if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && ((DynamicData*)it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
                 }
                 else
                 {
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
@@ -1772,9 +1778,9 @@ DynamicData* DynamicData::loan_value(
                     return (DynamicData*)it->second;
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
             {
-                if (insert_array_data(id) == RETCODE_OK)
+                if (insert_array_data(id) == eprosima::fastdds::dds::RETCODE_OK)
                 {
                     loaned_values_.push_back(id);
                     return (DynamicData*)values_.at(id);
@@ -1809,20 +1815,20 @@ ReturnCode_t DynamicData::return_loaned_value(
         if (it != complex_values_.end() && it->second == value)
         {
             loaned_values_.erase(loanIt);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #else
         auto it = values_.find(*loanIt);
         if (it != values_.end() && it->second == value)
         {
             loaned_values_.erase(loanIt);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error returning loaned Value. The value hasn't been loaned.");
-    return RETCODE_PRECONDITION_NOT_MET;
+    return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t DynamicData::get_int32_value(
@@ -1830,49 +1836,49 @@ ReturnCode_t DynamicData::get_int32_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32 && id == MEMBER_ID_INVALID)
     {
         value = int32_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_int32_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_int32_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32 && id == MEMBER_ID_INVALID)
         {
             value = *((int32_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_int32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_int32_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -1881,10 +1887,10 @@ ReturnCode_t DynamicData::set_int32_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32 && id == MEMBER_ID_INVALID)
     {
         int32_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -1892,7 +1898,8 @@ ReturnCode_t DynamicData::set_int32_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_get_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_get_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int32_t mask = 0x00;
@@ -1904,40 +1911,40 @@ ReturnCode_t DynamicData::set_int32_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_int32_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_int32_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32 && id == MEMBER_ID_INVALID)
         {
             *((int32_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 int32_t mask = 0x00;
@@ -1949,24 +1956,24 @@ ReturnCode_t DynamicData::set_int32_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_int32_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_int32_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -1975,49 +1982,49 @@ ReturnCode_t DynamicData::get_uint32_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32 && id == MEMBER_ID_INVALID)
     {
         value = uint32_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_uint32_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_uint32_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32 && id == MEMBER_ID_INVALID)
         {
             value = *((uint32_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_uint32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_uint32_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2026,10 +2033,10 @@ ReturnCode_t DynamicData::set_uint32_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32 && id == MEMBER_ID_INVALID)
     {
         uint32_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2037,7 +2044,8 @@ ReturnCode_t DynamicData::set_uint32_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint32_t mask = 0x00;
@@ -2049,40 +2057,40 @@ ReturnCode_t DynamicData::set_uint32_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_uint32_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_uint32_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32 && id == MEMBER_ID_INVALID)
         {
             *((uint32_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 uint32_t mask = 0x00;
@@ -2094,24 +2102,24 @@ ReturnCode_t DynamicData::set_uint32_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_uint32_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_uint32_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2120,49 +2128,49 @@ ReturnCode_t DynamicData::get_int16_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16 && id == MEMBER_ID_INVALID)
     {
         value = int16_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_int16_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_int16_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16 && id == MEMBER_ID_INVALID)
         {
             value = *((int16_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_int16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_int16_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2171,10 +2179,10 @@ ReturnCode_t DynamicData::set_int16_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16 && id == MEMBER_ID_INVALID)
     {
         int16_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2182,7 +2190,8 @@ ReturnCode_t DynamicData::set_int16_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int16_t mask = 0x00;
@@ -2194,40 +2203,40 @@ ReturnCode_t DynamicData::set_int16_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_int16_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_int16_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16 && id == MEMBER_ID_INVALID)
         {
             *((int16_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 int16_t mask = 0x00;
@@ -2239,24 +2248,24 @@ ReturnCode_t DynamicData::set_int16_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_int16_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_int16_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2265,49 +2274,49 @@ ReturnCode_t DynamicData::get_uint16_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16 && id == MEMBER_ID_INVALID)
     {
         value = uint16_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_uint16_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_uint16_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16 && id == MEMBER_ID_INVALID)
         {
             value = *((uint16_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_uint16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_uint16_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2316,10 +2325,10 @@ ReturnCode_t DynamicData::set_uint16_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16 && id == MEMBER_ID_INVALID)
     {
         uint16_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2327,7 +2336,8 @@ ReturnCode_t DynamicData::set_uint16_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint16_t mask = 0x00;
@@ -2339,40 +2349,40 @@ ReturnCode_t DynamicData::set_uint16_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_uint16_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_uint16_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16 && id == MEMBER_ID_INVALID)
         {
             *((uint16_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 uint16_t mask = 0x00;
@@ -2384,23 +2394,23 @@ ReturnCode_t DynamicData::set_uint16_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_uint16_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_uint16_value(value, id);
         }
         return insertResult;
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2409,49 +2419,49 @@ ReturnCode_t DynamicData::get_int64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64 && id == MEMBER_ID_INVALID)
     {
         value = int64_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_int64_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_int64_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64 && id == MEMBER_ID_INVALID)
         {
             value = *((int64_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_int64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_int64_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2460,10 +2470,10 @@ ReturnCode_t DynamicData::set_int64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64 && id == MEMBER_ID_INVALID)
     {
         int64_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2471,7 +2481,8 @@ ReturnCode_t DynamicData::set_int64_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 int64_t mask = 0x00;
@@ -2483,40 +2494,40 @@ ReturnCode_t DynamicData::set_int64_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_int64_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_int64_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64 && id == MEMBER_ID_INVALID)
         {
             *((int64_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 int64_t mask = 0x00;
@@ -2528,24 +2539,24 @@ ReturnCode_t DynamicData::set_int64_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_int64_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_int64_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2554,49 +2565,51 @@ ReturnCode_t DynamicData::get_uint64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+    if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
     {
         value = uint64_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_uint64_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_uint64_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
         {
             value = *((uint64_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_uint64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_uint64_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2605,10 +2618,11 @@ ReturnCode_t DynamicData::set_uint64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+    if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
     {
         uint64_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2616,7 +2630,8 @@ ReturnCode_t DynamicData::set_uint64_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 uint64_t mask = 0x00;
@@ -2628,40 +2643,41 @@ ReturnCode_t DynamicData::set_uint64_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_uint64_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_uint64_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64 ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK) && id == MEMBER_ID_INVALID)
         {
             *((uint64_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 uint64_t mask = 0x00;
@@ -2673,24 +2689,24 @@ ReturnCode_t DynamicData::set_uint64_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_uint64_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_uint64_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2699,49 +2715,49 @@ ReturnCode_t DynamicData::get_float32_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32 && id == MEMBER_ID_INVALID)
     {
         value = float32_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_float32_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_float32_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32 && id == MEMBER_ID_INVALID)
         {
             value = *((float*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_float32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_float32_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2750,10 +2766,10 @@ ReturnCode_t DynamicData::set_float32_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32 && id == MEMBER_ID_INVALID)
     {
         float32_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2761,16 +2777,16 @@ ReturnCode_t DynamicData::set_float32_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_float32_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_float32_value(value, id);
             }
@@ -2778,37 +2794,37 @@ ReturnCode_t DynamicData::set_float32_value(
         }
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32 && id == MEMBER_ID_INVALID)
         {
             *((float*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_float32_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_float32_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2817,49 +2833,49 @@ ReturnCode_t DynamicData::get_float64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64 && id == MEMBER_ID_INVALID)
     {
         value = float64_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_float64_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_float64_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64 && id == MEMBER_ID_INVALID)
         {
             value = *((double*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_float64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_float64_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2868,10 +2884,10 @@ ReturnCode_t DynamicData::set_float64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64 && id == MEMBER_ID_INVALID)
     {
         float64_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2879,53 +2895,53 @@ ReturnCode_t DynamicData::set_float64_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_float64_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_float64_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64 && id == MEMBER_ID_INVALID)
         {
             *((double*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_float64_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_float64_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2934,49 +2950,49 @@ ReturnCode_t DynamicData::get_float128_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128 && id == MEMBER_ID_INVALID)
     {
         value = float128_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_float128_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_float128_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128 && id == MEMBER_ID_INVALID)
         {
             value = *((long double*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_float128_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_float128_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -2985,10 +3001,10 @@ ReturnCode_t DynamicData::set_float128_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128 && id == MEMBER_ID_INVALID)
     {
         float128_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -2996,53 +3012,53 @@ ReturnCode_t DynamicData::set_float128_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_float128_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_float128_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128 && id == MEMBER_ID_INVALID)
         {
             *((long double*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_float128_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_float128_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3051,49 +3067,49 @@ ReturnCode_t DynamicData::get_char8_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8 && id == MEMBER_ID_INVALID)
     {
         value = char8_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_char8_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_char8_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8 && id == MEMBER_ID_INVALID)
         {
             value = *((char*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_char8_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_char8_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3102,10 +3118,10 @@ ReturnCode_t DynamicData::set_char8_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8 && id == MEMBER_ID_INVALID)
     {
         char8_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -3113,53 +3129,53 @@ ReturnCode_t DynamicData::set_char8_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_char8_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_char8_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8 && id == MEMBER_ID_INVALID)
         {
             *((char*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_char8_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_char8_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3168,49 +3184,49 @@ ReturnCode_t DynamicData::get_char16_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16 && id == MEMBER_ID_INVALID)
     {
         value = char16_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_char16_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_char16_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16 && id == MEMBER_ID_INVALID)
         {
             value = *((wchar_t*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_char16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_char16_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3219,10 +3235,10 @@ ReturnCode_t DynamicData::set_char16_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16 && id == MEMBER_ID_INVALID)
     {
         char16_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -3230,16 +3246,16 @@ ReturnCode_t DynamicData::set_char16_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_char16_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_char16_value(value, id);
             }
@@ -3247,37 +3263,37 @@ ReturnCode_t DynamicData::set_char16_value(
         }
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16 && id == MEMBER_ID_INVALID)
         {
             *((wchar_t*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_char16_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_char16_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3286,49 +3302,49 @@ ReturnCode_t DynamicData::get_byte_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE && id == MEMBER_ID_INVALID)
     {
         value = byte_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_byte_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_byte_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE && id == MEMBER_ID_INVALID)
         {
             value = *((octet*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_byte_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_byte_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3337,10 +3353,10 @@ ReturnCode_t DynamicData::set_byte_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE && id == MEMBER_ID_INVALID)
     {
         byte_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -3348,7 +3364,8 @@ ReturnCode_t DynamicData::set_byte_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor()->annotation_is_bit_bound())
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET &&
+                    data->type_->get_descriptor()->annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor()->annotation_get_bit_bound();
                 octet mask = 0x00;
@@ -3360,40 +3377,40 @@ ReturnCode_t DynamicData::set_byte_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_byte_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_byte_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE && id == MEMBER_ID_INVALID)
         {
             *((octet*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
             auto itDescriptor = descriptors_.find(id);
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
             {
                 if (itDescriptor == descriptors_.end())
                 {
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 uint16_t bit_bound = ((MemberDescriptor*)itDescriptor->second)->annotation_get_bit_bound();
                 octet mask = 0x00;
@@ -3405,24 +3422,24 @@ ReturnCode_t DynamicData::set_byte_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_byte_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_byte_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3431,35 +3448,35 @@ ReturnCode_t DynamicData::get_bool_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN && id == MEMBER_ID_INVALID)
     {
         value = bool_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
-    else if (get_kind() == TK_BITMASK && id < type_->get_bounds())
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK && id < type_->get_bounds())
     {
         value = (uint64_value_ & ((uint64_t)1 << id)) != 0;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_bool_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_bool_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.end();
-    if (get_kind() == TK_BITMASK)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK)
     {
         it = values_.find(MEMBER_ID_INVALID);
     }
@@ -3469,32 +3486,32 @@ ReturnCode_t DynamicData::get_bool_value(
     }
     if (it != values_.end())
     {
-        if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             value = *((bool*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
-        else if (get_kind() == TK_BITMASK && id < type_->get_bounds())
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK && id < type_->get_bounds())
         {
             auto m_id = descriptors_.find(id);
             MemberDescriptor* member = m_id->second;
             uint16_t position = member->annotation_get_position();
             value = (*((uint64_t*)it->second) & ((uint64_t)1 << position)) != 0;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_bool_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_bool_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3503,12 +3520,12 @@ ReturnCode_t DynamicData::set_bool_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN && id == MEMBER_ID_INVALID)
     {
         bool_value_ = value;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
-    else if (get_kind() == TK_BITMASK)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK)
     {
         if (id == MEMBER_ID_INVALID)
         {
@@ -3531,12 +3548,12 @@ ReturnCode_t DynamicData::set_bool_value(
             {
                 uint64_value_ &= ~((uint64_t)1 << id);
             }
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else if (id != MEMBER_ID_INVALID)
@@ -3545,26 +3562,26 @@ ReturnCode_t DynamicData::set_bool_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_bool_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_bool_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.end();
-    if (get_kind() == TK_BITMASK)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK)
     {
         it = values_.find(MEMBER_ID_INVALID);
     }
@@ -3575,12 +3592,12 @@ ReturnCode_t DynamicData::set_bool_value(
 
     if (it != values_.end())
     {
-        if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             *((bool*)it->second) = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
-        else if (get_kind() == TK_BITMASK)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_BITMASK)
         {
             if (id == MEMBER_ID_INVALID)
             {
@@ -3592,7 +3609,7 @@ ReturnCode_t DynamicData::set_bool_value(
                 {
                     *((uint64_t*)it->second) = 0;
                 }
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
             else if (type_->get_bounds() == BOUND_UNLIMITED || id < type_->get_bounds())
             {
@@ -3607,35 +3624,35 @@ ReturnCode_t DynamicData::set_bool_value(
                 {
                     *((uint64_t*)it->second) &= ~((uint64_t)1 << position);
                 }
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
             else
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting bool value. The given index is greater than the limit.");
-                return RETCODE_BAD_PARAMETER;
+                return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
             }
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_bool_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_bool_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3644,49 +3661,49 @@ ReturnCode_t DynamicData::get_string_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8 && id == MEMBER_ID_INVALID)
     {
         value = string_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_string_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8 && id == MEMBER_ID_INVALID)
         {
             value = *((std::string*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_string_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3695,18 +3712,18 @@ ReturnCode_t DynamicData::set_string_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8 && id == MEMBER_ID_INVALID)
     {
         if (value.length() <= type_->get_bounds())
         {
             string_value_ = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
                     "Error setting string value. The given string is greater than the length limit.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else if (id != MEMBER_ID_INVALID)
@@ -3715,62 +3732,62 @@ ReturnCode_t DynamicData::set_string_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_string_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_string_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8 && id == MEMBER_ID_INVALID)
         {
             if (value.length() <= type_->get_bounds())
             {
                 *((std::string*)it->second) = value;
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
             else
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
                         "Error setting string value. The given string is greater than the length limit.");
-                return RETCODE_BAD_PARAMETER;
+                return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
             }
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_string_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_string_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3785,7 +3802,7 @@ void DynamicData::set_type_name(
 
 void DynamicData::update_union_discriminator()
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
     {
         uint64_t sUnionValue;
         union_discriminator_->get_discriminator_value(sUnionValue);
@@ -3827,7 +3844,7 @@ MemberId DynamicData::get_union_id() const
 ReturnCode_t DynamicData::set_union_id(
         MemberId id)
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
     {
         auto it = descriptors_.find(id);
         if (id == MEMBER_ID_INVALID || it != descriptors_.end())
@@ -3845,14 +3862,14 @@ ReturnCode_t DynamicData::set_union_id(
                     }
                 }
             }
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting union id. The kind: " << get_kind() << " doesn't support it.");
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::get_wstring_value(
@@ -3860,49 +3877,49 @@ ReturnCode_t DynamicData::get_wstring_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16 && id == MEMBER_ID_INVALID)
     {
         value = wstring_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_wstring_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_wstring_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16 && id == MEMBER_ID_INVALID)
         {
             value = *((std::wstring*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_wstring_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_wstring_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3911,18 +3928,18 @@ ReturnCode_t DynamicData::set_wstring_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16 && id == MEMBER_ID_INVALID)
     {
         if (value.length() <= type_->get_bounds())
         {
             wstring_value_ = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
                     "Error setting wstring value. The given string is greater than the length limit.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else if (id != MEMBER_ID_INVALID)
@@ -3931,62 +3948,62 @@ ReturnCode_t DynamicData::set_wstring_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_wstring_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_wstring_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16 && id == MEMBER_ID_INVALID)
         {
             if (value.length() <= type_->get_bounds())
             {
                 *((std::wstring*)it->second) = value;
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
             else
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
                         "Error setting wstring value. The given string is greater than the length limit.");
-                return RETCODE_BAD_PARAMETER;
+                return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
             }
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_wstring_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_wstring_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -3995,49 +4012,49 @@ ReturnCode_t DynamicData::get_enum_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         value = uint32_value_;
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             value = *((uint32_t*)itValue->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -4046,12 +4063,12 @@ ReturnCode_t DynamicData::set_enum_value(
         MemberId id /*= MEMBER_ID_INVALID*/)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         if (descriptors_.find(value) != descriptors_.end())
         {
             uint32_value_ = value;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
     }
     else if (id != MEMBER_ID_INVALID)
@@ -4060,56 +4077,56 @@ ReturnCode_t DynamicData::set_enum_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_enum_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             if (descriptors_.find(value) != descriptors_.end())
             {
                 *((uint32_t*)itValue->second) = value;
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_enum_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -4118,13 +4135,13 @@ ReturnCode_t DynamicData::get_enum_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         auto it = descriptors_.find(uint32_value_);
         if (it != descriptors_.end())
         {
             value = it->second->get_name();
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
     }
     else if (id != MEMBER_ID_INVALID)
@@ -4132,43 +4149,43 @@ ReturnCode_t DynamicData::get_enum_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return it->second->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             auto it = descriptors_.find(*((uint32_t*)itValue->second));
             if (it != descriptors_.end())
             {
                 value = it->second->get_name();
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != eprosima::fastdds::dds::xtypes::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
@@ -4177,14 +4194,14 @@ ReturnCode_t DynamicData::set_enum_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
         {
             if (it->second->get_name() == value)
             {
                 uint32_value_ = it->first;
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
         }
     }
@@ -4194,80 +4211,80 @@ ReturnCode_t DynamicData::set_enum_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
-            if (insertResult == RETCODE_OK)
+            if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return set_enum_value(value, id);
             }
             return insertResult;
         }
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             for (auto it = descriptors_.begin(); it != descriptors_.end(); ++it)
             {
                 if (it->second->get_name() == value)
                 {
                     *((uint32_t*)itValue->second) = it->first;
-                    return RETCODE_OK;
+                    return eprosima::fastdds::dds::RETCODE_OK;
                 }
             }
         }
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == RETCODE_OK && get_kind() == TK_UNION)
+            if (result == eprosima::fastdds::dds::RETCODE_OK && get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
-        if (insertResult == RETCODE_OK)
+        if (insertResult == eprosima::fastdds::dds::RETCODE_OK)
         {
             return set_enum_value(value, id);
         }
         return insertResult;
     }
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
 ReturnCode_t DynamicData::set_bitmask_value(
         uint64_t value)
 {
-    if (type_->kind_ == TK_BITMASK)
+    if (type_->kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK)
     {
         return set_uint64_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::get_bitmask_value(
         uint64_t& value) const
 {
-    if (type_->kind_ == TK_BITMASK)
+    if (type_->kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK)
     {
         return get_uint64_value(value, MEMBER_ID_INVALID);
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 void DynamicData::sort_member_ids(
@@ -4315,7 +4332,7 @@ void DynamicData::sort_member_ids(
 MemberId DynamicData::get_array_index(
         const std::vector<uint32_t>& position)
 {
-    if (get_kind() == TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
         MemberId outPosition(0);
         uint32_t offset(1);
@@ -4343,7 +4360,7 @@ MemberId DynamicData::get_array_index(
 ReturnCode_t DynamicData::insert_array_data(
         MemberId indexId)
 {
-    if (get_kind() == TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         if (indexId < type_->get_total_bounds())
@@ -4356,7 +4373,7 @@ ReturnCode_t DynamicData::insert_array_data(
             }
             DynamicData* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             complex_values_.insert(std::make_pair(indexId, value));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #else
         if (indexId < type_->get_total_bounds())
@@ -4369,7 +4386,7 @@ ReturnCode_t DynamicData::insert_array_data(
             }
             DynamicData* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             values_.insert(std::make_pair(indexId, value));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         else
@@ -4382,13 +4399,13 @@ ReturnCode_t DynamicData::insert_array_data(
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Error inserting data. The kind " << get_kind() << " doesn't support this method");
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::clear_array_data(
         MemberId indexId)
 {
-    if (get_kind() == TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         if (indexId < type_->get_total_bounds())
@@ -4399,7 +4416,7 @@ ReturnCode_t DynamicData::clear_array_data(
                 DynamicDataFactory::get_instance()->delete_data(it->second);
                 complex_values_.erase(it);
             }
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #else
         if (indexId < type_->get_total_bounds())
@@ -4410,7 +4427,7 @@ ReturnCode_t DynamicData::clear_array_data(
                 DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
                 values_.erase(it);
             }
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         else
@@ -4422,17 +4439,18 @@ ReturnCode_t DynamicData::clear_array_data(
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. The kind " << get_kind() << " doesn't support this method");
     }
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::insert_int32_value(
         int32_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_INT32)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_int32_value(value, outId);
         }
@@ -4441,7 +4459,7 @@ ReturnCode_t DynamicData::insert_int32_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4449,10 +4467,11 @@ ReturnCode_t DynamicData::insert_uint32_value(
         uint32_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_UINT32)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_uint32_value(value, outId);
         }
@@ -4461,7 +4480,7 @@ ReturnCode_t DynamicData::insert_uint32_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4469,10 +4488,11 @@ ReturnCode_t DynamicData::insert_int16_value(
         int16_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_INT16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_int16_value(value, outId);
         }
@@ -4481,7 +4501,7 @@ ReturnCode_t DynamicData::insert_int16_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4489,10 +4509,11 @@ ReturnCode_t DynamicData::insert_uint16_value(
         uint16_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_UINT16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_uint16_value(value, outId);
         }
@@ -4501,7 +4522,7 @@ ReturnCode_t DynamicData::insert_uint16_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4509,10 +4530,11 @@ ReturnCode_t DynamicData::insert_int64_value(
         int64_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_INT64)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_INT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_int64_value(value, outId);
         }
@@ -4521,7 +4543,7 @@ ReturnCode_t DynamicData::insert_int64_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4529,10 +4551,11 @@ ReturnCode_t DynamicData::insert_uint64_value(
         uint64_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_UINT64)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_UINT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_uint64_value(value, outId);
         }
@@ -4541,7 +4564,7 @@ ReturnCode_t DynamicData::insert_uint64_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4549,10 +4572,11 @@ ReturnCode_t DynamicData::insert_float32_value(
         float value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_FLOAT32)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_float32_value(value, outId);
         }
@@ -4561,7 +4585,7 @@ ReturnCode_t DynamicData::insert_float32_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4569,10 +4593,11 @@ ReturnCode_t DynamicData::insert_float64_value(
         double value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_FLOAT64)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_float64_value(value, outId);
         }
@@ -4581,7 +4606,7 @@ ReturnCode_t DynamicData::insert_float64_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4589,10 +4614,11 @@ ReturnCode_t DynamicData::insert_float128_value(
         long double value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_FLOAT128)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_FLOAT128)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_float128_value(value, outId);
         }
@@ -4601,7 +4627,7 @@ ReturnCode_t DynamicData::insert_float128_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4609,10 +4635,11 @@ ReturnCode_t DynamicData::insert_char8_value(
         char value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_CHAR8)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR8)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_char8_value(value, outId);
         }
@@ -4621,7 +4648,7 @@ ReturnCode_t DynamicData::insert_char8_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4629,10 +4656,11 @@ ReturnCode_t DynamicData::insert_char16_value(
         wchar_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_CHAR16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_CHAR16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_char16_value(value, outId);
         }
@@ -4641,7 +4669,7 @@ ReturnCode_t DynamicData::insert_char16_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4649,10 +4677,11 @@ ReturnCode_t DynamicData::insert_byte_value(
         octet value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_BYTE)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_BYTE)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_byte_value(value, outId);
         }
@@ -4661,7 +4690,7 @@ ReturnCode_t DynamicData::insert_byte_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4669,10 +4698,11 @@ ReturnCode_t DynamicData::insert_bool_value(
         bool value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_BOOLEAN)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_BOOLEAN)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_bool_value(value, outId);
         }
@@ -4681,7 +4711,7 @@ ReturnCode_t DynamicData::insert_bool_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4689,10 +4719,11 @@ ReturnCode_t DynamicData::insert_string_value(
         const std::string& value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_STRING8)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING8)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_string_value(value, outId);
         }
@@ -4701,7 +4732,7 @@ ReturnCode_t DynamicData::insert_string_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4709,10 +4740,11 @@ ReturnCode_t DynamicData::insert_wstring_value(
         const std::wstring& value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_STRING16)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRING16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_wstring_value(value, outId);
         }
@@ -4721,7 +4753,7 @@ ReturnCode_t DynamicData::insert_wstring_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4729,10 +4761,11 @@ ReturnCode_t DynamicData::insert_enum_value(
         const std::string& value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_ENUM)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->get_kind() == eprosima::fastdds::dds::xtypes::TK_ENUM)
     {
         ReturnCode_t result = insert_sequence_data(outId);
-        if (result == RETCODE_OK)
+        if (result == eprosima::fastdds::dds::RETCODE_OK)
         {
             result = set_enum_value(value, outId);
         }
@@ -4741,7 +4774,7 @@ ReturnCode_t DynamicData::insert_enum_value(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4749,30 +4782,31 @@ ReturnCode_t DynamicData::insert_complex_value(
         const DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(complex_values_.size());
             complex_values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value)));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value)));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4780,30 +4814,31 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData_ptr value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(complex_values_.size());
             complex_values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value.get())));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value.get())));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4811,30 +4846,31 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(value->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE &&
+            type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             outId = static_cast<MemberId>(complex_values_.size());
             complex_values_.insert(std::make_pair(outId, value));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, value));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The current kinds don't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4842,7 +4878,7 @@ ReturnCode_t DynamicData::insert_sequence_data(
         MemberId& outId)
 {
     outId = MEMBER_ID_INVALID;
-    if (get_kind() == TK_SEQUENCE)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE)
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4850,32 +4886,33 @@ ReturnCode_t DynamicData::insert_sequence_data(
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = static_cast<MemberId>(complex_values_.size());
             complex_values_.insert(std::make_pair(outId, new_element));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outId, new_element));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting data. The container is full.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Error inserting data. The kind " << get_kind() << " doesn't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
 ReturnCode_t DynamicData::remove_sequence_data(
         MemberId id)
 {
-    if (get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
@@ -4884,7 +4921,7 @@ ReturnCode_t DynamicData::remove_sequence_data(
             DynamicDataFactory::get_instance()->delete_data(it->second);
             complex_values_.erase(it);
             sort_member_ids(id);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #else
         auto it = values_.find(id);
@@ -4893,17 +4930,17 @@ ReturnCode_t DynamicData::remove_sequence_data(
             DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
             values_.erase(it);
             sort_member_ids(id);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. Member not found");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing data. The current Kind " << get_kind()
                                                                            << " doesn't support this method");
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::insert_map_data(
@@ -4911,7 +4948,7 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKeyId,
         MemberId& outValueId)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()))
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && type_->get_key_element_type()->equals(key->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4921,7 +4958,7 @@ ReturnCode_t DynamicData::insert_map_data(
                 if (it->second->key_element_ && it->second->equals(key))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             outKeyId = static_cast<MemberId>(complex_values_.size());
@@ -4932,14 +4969,14 @@ ReturnCode_t DynamicData::insert_map_data(
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = static_cast<MemberId>(complex_values_.size());
             complex_values_.insert(std::make_pair(outValueId, new_element));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             for (auto it = values_.begin(); it != values_.end(); ++it)
             {
                 if (((DynamicData*)it->second)->key_element_ && ((DynamicData*)it->second)->equals(key))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             outKeyId = static_cast<MemberId>(values_.size());
@@ -4950,20 +4987,20 @@ ReturnCode_t DynamicData::insert_map_data(
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outValueId, new_element));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The map is full");
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
                                                                                   << " doesn't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -4973,7 +5010,8 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP &&
+            type_->get_key_element_type()->equals(key->type_.get()) &&
             type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
@@ -4984,7 +5022,7 @@ ReturnCode_t DynamicData::insert_map_data(
                 if (it->second->key_element_ && it->second->equals(key))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             outKey = static_cast<MemberId>(complex_values_.size());
@@ -4994,14 +5032,14 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outValue = static_cast<MemberId>(complex_values_.size());
             complex_values_.insert(std::make_pair(outValue, value));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             for (auto it = values_.begin(); it != values_.end(); ++it)
             {
                 if (it->second == key)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             outKey = static_cast<MemberId>(values_.size());
@@ -5011,20 +5049,20 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outValue = static_cast<MemberId>(values_.size());
             values_.insert(std::make_pair(outValue, value));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The map is full");
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
                                                                                   << " doesn't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -5034,7 +5072,8 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(key->type_.get()) &&
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP &&
+            type_->get_key_element_type()->equals(key->type_.get()) &&
             type_->get_element_type()->equals(value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
@@ -5045,7 +5084,7 @@ ReturnCode_t DynamicData::insert_map_data(
                 if (it->second->key_element_ && it->second->equals(key))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             outKey = static_cast<MemberId>(complex_values_.size());
@@ -5056,14 +5095,14 @@ ReturnCode_t DynamicData::insert_map_data(
             outValue = static_cast<MemberId>(complex_values_.size());
             DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             complex_values_.insert(std::make_pair(outValue, valueCopy));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #else
             for (auto it = values_.begin(); it != values_.end(); ++it)
             {
                 if (it->second == key)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
             }
             outKey = static_cast<MemberId>(values_.size());
@@ -5074,20 +5113,20 @@ ReturnCode_t DynamicData::insert_map_data(
             outValue = static_cast<MemberId>(values_.size());
             DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             values_.insert(std::make_pair(outValue, valueCopy));
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The map is full");
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The current Kind " << get_kind()
                                                                                   << " doesn't support this method");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -5103,7 +5142,7 @@ ReturnCode_t DynamicData::insert_map_data(
 ReturnCode_t DynamicData::remove_map_data(
         MemberId keyId)
 {
-    if (get_kind() == TK_MAP)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto itKey = complex_values_.find(keyId);
@@ -5115,7 +5154,7 @@ ReturnCode_t DynamicData::remove_map_data(
             complex_values_.erase(itKey);
             complex_values_.erase(itValue);
             sort_member_ids(keyId);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #else
         auto itKey = values_.find(keyId);
@@ -5127,26 +5166,28 @@ ReturnCode_t DynamicData::remove_map_data(
             values_.erase(itKey);
             values_.erase(itValue);
             sort_member_ids(keyId);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing from map. Invalid input KeyId");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error removing from map. The current Kind " << get_kind()
                                                                                    << " doesn't support this method");
-        return RETCODE_ERROR;
+        return eprosima::fastdds::dds::RETCODE_ERROR;
     }
 }
 
 ReturnCode_t DynamicData::clear_data()
 {
-    if (get_kind() == TK_SEQUENCE || get_kind() == TK_MAP || get_kind() == TK_ARRAY)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
@@ -5161,13 +5202,13 @@ ReturnCode_t DynamicData::clear_data()
         }
         values_.clear();
 #endif // ifdef DYNAMIC_TYPES_CHECKING
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error clearing data. The current Kind " << get_kind()
                                                                            << " doesn't support this method");
 
-    return RETCODE_BAD_PARAMETER;
+    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::get_complex_value(
@@ -5175,31 +5216,36 @@ ReturnCode_t DynamicData::get_complex_value(
         MemberId id) const
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (id != MEMBER_ID_INVALID && (get_kind() == TK_STRUCTURE || get_kind() == TK_UNION ||
-            get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY || get_kind() == TK_MAP || get_kind() == TK_BITSET))
+    if (id != MEMBER_ID_INVALID &&
+            (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
             *value = DynamicDataFactory::get_instance()->create_copy(it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #else
         auto it = values_.find(id);
         if (it != values_.end())
         {
             *value = DynamicDataFactory::get_instance()->create_copy((DynamicData*)it->second);
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -5208,21 +5254,28 @@ ReturnCode_t DynamicData::set_complex_value(
         MemberId id)
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (id != MEMBER_ID_INVALID && (get_kind() == TK_STRUCTURE || get_kind() == TK_UNION ||
-            get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY || get_kind() == TK_MAP || get_kind() == TK_BITSET))
+    if (id != MEMBER_ID_INVALID &&
+            (get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET))
     {
         // With containers, check that the index is valid
-        if ((get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY || get_kind() == TK_MAP) &&
+        if ((get_kind() == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+                get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP) &&
                 id < type_->get_total_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             auto it = complex_values_.find(id);
             if (it != complex_values_.end())
             {
-                if (get_kind() == TK_MAP && it->second->key_element_)
+                if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && it->second->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 else
                 {
@@ -5233,26 +5286,26 @@ ReturnCode_t DynamicData::set_complex_value(
                     complex_values_.erase(it);
 
                     complex_values_.insert(std::make_pair(id, value));
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
             {
                 complex_values_.insert(std::make_pair(id, value));
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
 
 #else
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TK_MAP && ((DynamicData*)it->second)->key_element_)
+                if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP && ((DynamicData*)it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
-                    return RETCODE_BAD_PARAMETER;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                 }
                 else
                 {
@@ -5262,53 +5315,53 @@ ReturnCode_t DynamicData::set_complex_value(
                     }
                     values_.erase(it);
                     values_.insert(std::make_pair(id, value));
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == eprosima::fastdds::dds::xtypes::TK_ARRAY)
             {
                 values_.insert(std::make_pair(id, value));
-                return RETCODE_OK;
+                return eprosima::fastdds::dds::RETCODE_OK;
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. id out of bounds.");
-            return RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
 ReturnCode_t DynamicData::get_union_label(
         uint64_t& value) const
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == eprosima::fastdds::dds::xtypes::TK_UNION)
     {
         if (union_id_ != MEMBER_ID_INVALID)
         {
             value = union_label_;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting union label. There isn't any label selected");
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting union label. The kind " << get_kind() << "doesn't support it");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -5324,7 +5377,7 @@ bool DynamicData::deserialize(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> int32_value_;
@@ -5335,7 +5388,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> uint32_value_;
@@ -5346,7 +5399,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> int16_value_;
@@ -5357,7 +5410,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> uint16_value_;
@@ -5368,7 +5421,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> int64_value_;
@@ -5379,7 +5432,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> uint64_value_;
@@ -5390,7 +5443,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> float32_value_;
@@ -5400,7 +5453,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> float64_value_;
@@ -5411,7 +5464,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> float128_value_;
@@ -5422,7 +5475,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> char8_value_;
@@ -5433,7 +5486,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> char16_value_;
@@ -5444,7 +5497,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> bool_value_;
@@ -5455,7 +5508,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> byte_value_;
@@ -5466,7 +5519,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> string_value_;
@@ -5477,7 +5530,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> wstring_value_;
@@ -5488,7 +5541,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr >> uint32_value_;
@@ -5499,7 +5552,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             size_t type_size = type_->get_size();
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -5542,7 +5595,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
         {
             union_discriminator_->deserialize_discriminator(cdr);
             update_union_discriminator();
@@ -5566,8 +5619,8 @@ bool DynamicData::deserialize(
             }
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             //uint32_t size(static_cast<uint32_t>(complex_values_.size())), memberId(MEMBER_ID_INVALID);
@@ -5630,7 +5683,7 @@ bool DynamicData::deserialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
         {
             uint32_t size(type_->get_total_bounds());
             if (size > 0)
@@ -5687,21 +5740,21 @@ bool DynamicData::deserialize(
             }
             break;
         }
-        case TK_SEQUENCE:
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             uint32_t size(0);
             bool bKeyElement(false);
             cdr >> size;
 
-            if (get_kind() == TK_MAP)
+            if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP)
             {
                 size *= 2; // We serialize the number of pairs.
             }
             for (uint32_t i = 0; i < size; ++i)
             {
                 //cdr >> memberId;
-                if (get_kind() == TK_MAP)
+                if (get_kind() == eprosima::fastdds::dds::xtypes::TK_MAP)
                 {
                     bKeyElement = !bKeyElement;
                 }
@@ -5755,7 +5808,7 @@ bool DynamicData::deserialize(
             break;
         }
 
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
             break;
     }
     return true;
@@ -5766,96 +5819,96 @@ bool DynamicData::deserialize_discriminator(
 {
     switch (get_kind())
     {
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             int32_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<int32_t>(aux);
             break;
         }
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             uint32_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<uint32_t>(aux);
             break;
         }
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             int16_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<int16_t>(aux);
             break;
         }
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             uint16_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<uint16_t>(aux);
             break;
         }
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             int64_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<int64_t>(aux);
             break;
         }
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             uint64_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<uint64_t>(aux);
             break;
         }
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             char aux;
             cdr >> aux;
             discriminator_value_ = static_cast<char>(aux);
             break;
         }
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             wchar_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<wchar_t>(aux);
             break;
         }
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             bool aux;
             cdr >> aux;
             discriminator_value_ = static_cast<bool>(aux);
             break;
         }
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             octet aux;
             cdr >> aux;
             discriminator_value_ = static_cast<octet>(aux);
             break;
         }
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             uint32_t aux;
             cdr >> aux;
             discriminator_value_ = static_cast<uint32_t>(aux);
             break;
         }
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_STRING8:
-        case TK_STRING16:
-        case TK_BITMASK:
-        case TK_UNION:
-        case TK_STRUCTURE:
-        case TK_BITSET:
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_MAP:
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
         default:
             break;
     }
@@ -5877,47 +5930,47 @@ size_t DynamicData::getCdrSerializedSize(
     {
         default:
             break;
-        case TK_INT32:
-        case TK_UINT32:
-        case TK_FLOAT32:
-        case TK_ENUM:
-        case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
         {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             break;
         }
-        case TK_INT16:
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
             break;
         }
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
             break;
         }
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             size_t type_size = data->type_->get_size();
             current_alignment += type_size + eprosima::fastcdr::Cdr::alignment(current_alignment, type_size);
             break;
         }
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
             break;
         }
-        case TK_CHAR8:
-        case TK_BOOLEAN:
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
             break;
         }
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             // string content (length + characters + 1)
@@ -5931,7 +5984,7 @@ size_t DynamicData::getCdrSerializedSize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             // string content (length + (characters * 4) )
@@ -5945,7 +5998,7 @@ size_t DynamicData::getCdrSerializedSize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
         {
             // Union discriminator
             current_alignment += getCdrSerializedSize(data->union_discriminator_, current_alignment);
@@ -5961,8 +6014,8 @@ size_t DynamicData::getCdrSerializedSize(
             }
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             //for (auto it = data->complex_values_.begin(); it != data->complex_values_.end(); ++it)
@@ -6020,7 +6073,7 @@ size_t DynamicData::getCdrSerializedSize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
         {
             uint32_t arraySize = data->type_->get_total_bounds();
             size_t emptyElementSize =
@@ -6045,8 +6098,8 @@ size_t DynamicData::getCdrSerializedSize(
             }
             break;
         }
-        case TK_SEQUENCE:
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             // Elements count
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6065,7 +6118,7 @@ size_t DynamicData::getCdrSerializedSize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
             break;
     }
 
@@ -6079,7 +6132,8 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     // Structures check the the size of the key for their children
-    if (type->get_kind() == TK_STRUCTURE || type->get_kind() == TK_BITSET)
+    if (type->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            type->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
     {
         for (auto it = type->member_by_id_.begin(); it != type->member_by_id_.end(); ++it)
         {
@@ -6111,60 +6165,60 @@ size_t DynamicData::getMaxCdrSerializedSize(
     {
         default:
             break;
-        case TK_INT32:
-        case TK_UINT32:
-        case TK_FLOAT32:
-        case TK_ENUM:
-        case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
         {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             break;
         }
-        case TK_INT16:
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
             break;
         }
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
             break;
         }
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             size_t type_size = type->get_size();
             current_alignment += type_size + eprosima::fastcdr::Cdr::alignment(current_alignment, type_size);
             break;
         }
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
             break;
         }
-        case TK_CHAR8:
-        case TK_BOOLEAN:
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
             break;
         }
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             // string length + string content + 1
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + type->get_bounds() + 1;
             break;
         }
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             // string length + ( string content * 4 )
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (type->get_bounds() * 4);
 
             break;
         }
-        case TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
         {
             // union id
             current_alignment += getMaxCdrSerializedSize(type->get_discriminator_type(), current_alignment);
@@ -6183,8 +6237,8 @@ size_t DynamicData::getMaxCdrSerializedSize(
             current_alignment += max_element_size;
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
         {
             for (auto it = type->member_by_id_.begin(); it != type->member_by_id_.end(); ++it)
             {
@@ -6195,14 +6249,14 @@ size_t DynamicData::getMaxCdrSerializedSize(
             }
             break;
         }
-        case TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
         {
             // Element size with the maximum size
             current_alignment += type->get_total_bounds() *
                     (getMaxCdrSerializedSize(type->descriptor_->get_element_type()));
             break;
         }
-        case TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
         {
             // Elements count
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6212,7 +6266,7 @@ size_t DynamicData::getMaxCdrSerializedSize(
                     (getMaxCdrSerializedSize(type->descriptor_->get_element_type()));
             break;
         }
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             // Elements count
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6227,7 +6281,7 @@ size_t DynamicData::getMaxCdrSerializedSize(
             break;
         }
 
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
         {
             current_alignment += getMaxCdrSerializedSize(type->get_base_type());
             break;
@@ -6249,7 +6303,7 @@ void DynamicData::serialize(
     {
         default:
             break;
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << int32_value_;
@@ -6259,7 +6313,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << uint32_value_;
@@ -6269,7 +6323,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << int16_value_;
@@ -6279,7 +6333,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << uint16_value_;
@@ -6289,7 +6343,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << int64_value_;
@@ -6299,7 +6353,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << uint64_value_;
@@ -6309,7 +6363,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << float32_value_;
@@ -6319,7 +6373,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << float64_value_;
@@ -6329,7 +6383,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << float128_value_;
@@ -6339,7 +6393,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << char8_value_;
@@ -6349,7 +6403,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << char16_value_;
@@ -6359,7 +6413,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << bool_value_;
@@ -6369,7 +6423,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << byte_value_;
@@ -6379,7 +6433,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << string_value_;
@@ -6389,7 +6443,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << wstring_value_;
@@ -6399,7 +6453,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << uint32_value_;
@@ -6409,7 +6463,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             size_t type_size = type_->get_size();
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -6434,7 +6488,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
         {
             union_discriminator_->serialize_discriminator(cdr);
             //cdr << union_id_;
@@ -6449,7 +6503,7 @@ void DynamicData::serialize(
             }
             break;
         }
-        case TK_SEQUENCE: // Sequence is like structure, but with size
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE: // Sequence is like structure, but with size
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << static_cast<uint32_t>(complex_values_.size());
@@ -6468,8 +6522,8 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(complex_values_.size()); ++idx)
@@ -6510,7 +6564,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
         {
             uint32_t arraySize = type_->get_total_bounds();
             for (uint32_t idx = 0; idx < arraySize; ++idx)
@@ -6532,7 +6586,7 @@ void DynamicData::serialize(
             }
             break;
         }
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             cdr << static_cast<uint32_t>(complex_values_.size() / 2); // Number of pairs
@@ -6549,7 +6603,7 @@ void DynamicData::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
             break;
     }
 }
@@ -6559,85 +6613,85 @@ void DynamicData::serialize_discriminator(
 {
     switch (get_kind())
     {
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             int32_t aux = static_cast<int32_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             uint32_t aux = static_cast<uint32_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             int16_t aux = static_cast<int16_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             uint16_t aux = static_cast<uint16_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             int64_t aux = static_cast<int64_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             uint64_t aux = static_cast<uint64_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             char aux = static_cast<char>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             wchar_t aux = static_cast<wchar_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             bool aux = !!(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             octet aux = static_cast<octet>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             uint32_t aux = static_cast<uint32_t>(discriminator_value_);
             cdr << aux;
             break;
         }
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_STRING8:
-        case TK_STRING16:
-        case TK_BITMASK:
-        case TK_UNION:
-        case TK_SEQUENCE:
-        case TK_STRUCTURE:
-        case TK_BITSET:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
         default:
             break;
     }
@@ -6647,7 +6701,8 @@ void DynamicData::serializeKey(
         eprosima::fastcdr::Cdr& cdr) const
 {
     // Structures check the the size of the key for their children
-    if (type_->get_kind() == TK_STRUCTURE || type_->get_kind() == TK_BITSET)
+    if (type_->get_kind() == eprosima::fastdds::dds::xtypes::TK_STRUCTURE ||
+            type_->get_kind() == eprosima::fastdds::dds::xtypes::TK_BITSET)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
@@ -6682,66 +6737,66 @@ size_t DynamicData::getEmptyCdrSerializedSize(
     {
         default:
             break;
-        case TK_INT32:
-        case TK_UINT32:
-        case TK_FLOAT32:
-        case TK_ENUM:
-        case TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16: // WCHARS NEED 32 Bits on Linux & MacOS
         {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             break;
         }
-        case TK_INT16:
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
             break;
         }
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
             break;
         }
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             size_t type_size = type->get_size();
             current_alignment += type_size + eprosima::fastcdr::Cdr::alignment(current_alignment, type_size);
             break;
         }
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
             break;
         }
-        case TK_CHAR8:
-        case TK_BOOLEAN:
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
             break;
         }
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             // string length + 1
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 1;
             break;
         }
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             // string length
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             break;
         }
-        case TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
         {
             // union discriminator
             current_alignment += getEmptyCdrSerializedSize(type->get_discriminator_type().get(), current_alignment);
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
         {
             for (auto it = type->member_by_id_.begin(); it != type->member_by_id_.end(); ++it)
             {
@@ -6753,7 +6808,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(
             }
             break;
         }
-        case TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
         {
             // Elements count
             //current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6763,15 +6818,15 @@ size_t DynamicData::getEmptyCdrSerializedSize(
                     (getEmptyCdrSerializedSize(type->descriptor_->get_element_type().get()));
             break;
         }
-        case TK_SEQUENCE:
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             // Elements count
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             break;
         }
 
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
             current_alignment += getEmptyCdrSerializedSize(type->get_base_type().get());
             break;
     }
@@ -6792,92 +6847,92 @@ void DynamicData::serialize_empty_data(
     {
         default:
             break;
-        case TK_ALIAS:
+        case eprosima::fastdds::dds::xtypes::TK_ALIAS:
         {
             serialize_empty_data(pType->get_base_type(), cdr);
             break;
         }
-        case TK_INT32:
+        case eprosima::fastdds::dds::xtypes::TK_INT32:
         {
             cdr << static_cast<int32_t>(0);
             break;
         }
-        case TK_UINT32:
+        case eprosima::fastdds::dds::xtypes::TK_UINT32:
         {
             cdr << static_cast<uint32_t>(0);
             break;
         }
-        case TK_INT16:
+        case eprosima::fastdds::dds::xtypes::TK_INT16:
         {
             cdr << static_cast<int16_t>(0);
             break;
         }
-        case TK_UINT16:
+        case eprosima::fastdds::dds::xtypes::TK_UINT16:
         {
             cdr << static_cast<uint16_t>(0);
             break;
         }
-        case TK_INT64:
+        case eprosima::fastdds::dds::xtypes::TK_INT64:
         {
             cdr << static_cast<int64_t>(0);
             break;
         }
-        case TK_UINT64:
+        case eprosima::fastdds::dds::xtypes::TK_UINT64:
         {
             cdr << static_cast<uint64_t>(0);
             break;
         }
-        case TK_FLOAT32:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT32:
         {
             cdr << static_cast<float>(0.0f);
             break;
         }
-        case TK_FLOAT64:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT64:
         {
             cdr << static_cast<double>(0.0);
             break;
         }
-        case TK_FLOAT128:
+        case eprosima::fastdds::dds::xtypes::TK_FLOAT128:
         {
             cdr << static_cast<long double>(0.0);
             break;
         }
-        case TK_CHAR8:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR8:
         {
             cdr << static_cast<char>(0);
             break;
         }
-        case TK_CHAR16:
+        case eprosima::fastdds::dds::xtypes::TK_CHAR16:
         {
             cdr << static_cast<uint32_t>(0);
             break;
         }
-        case TK_BOOLEAN:
+        case eprosima::fastdds::dds::xtypes::TK_BOOLEAN:
         {
             cdr << static_cast<uint8_t>(0);
             break;
         }
-        case TK_BYTE:
+        case eprosima::fastdds::dds::xtypes::TK_BYTE:
         {
             cdr << static_cast<uint8_t>(0);
             break;
         }
-        case TK_STRING8:
+        case eprosima::fastdds::dds::xtypes::TK_STRING8:
         {
             cdr << std::string();
             break;
         }
-        case TK_STRING16:
+        case eprosima::fastdds::dds::xtypes::TK_STRING16:
         {
             cdr << std::wstring();
             break;
         }
-        case TK_ENUM:
+        case eprosima::fastdds::dds::xtypes::TK_ENUM:
         {
             cdr << static_cast<uint32_t>(0);
             break;
         }
-        case TK_BITMASK:
+        case eprosima::fastdds::dds::xtypes::TK_BITMASK:
         {
             size_t type_size = pType->get_size();
             switch (type_size)
@@ -6890,18 +6945,18 @@ void DynamicData::serialize_empty_data(
             }
             break;
         }
-        case TK_UNION:
+        case eprosima::fastdds::dds::xtypes::TK_UNION:
         {
             cdr << static_cast<uint32_t>(MEMBER_ID_INVALID);
             break;
         }
-        case TK_SEQUENCE: // Sequence is like structure, but with size
+        case eprosima::fastdds::dds::xtypes::TK_SEQUENCE: // Sequence is like structure, but with size
         {
             cdr << static_cast<uint32_t>(0);
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case eprosima::fastdds::dds::xtypes::TK_STRUCTURE:
+        case eprosima::fastdds::dds::xtypes::TK_BITSET:
         {
             for (uint32_t idx = 0; idx < pType->member_by_id_.size(); ++idx)
             {
@@ -6913,7 +6968,7 @@ void DynamicData::serialize_empty_data(
             }
             break;
         }
-        case TK_ARRAY:
+        case eprosima::fastdds::dds::xtypes::TK_ARRAY:
         {
             uint32_t arraySize = pType->get_total_bounds();
             //cdr << arraySize;
@@ -6923,7 +6978,7 @@ void DynamicData::serialize_empty_data(
             }
             break;
         }
-        case TK_MAP:
+        case eprosima::fastdds::dds::xtypes::TK_MAP:
         {
             cdr << static_cast<uint32_t>(0);
             break;

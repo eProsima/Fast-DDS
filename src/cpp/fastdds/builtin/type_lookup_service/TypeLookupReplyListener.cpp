@@ -37,8 +37,6 @@ using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
 
-using namespace eprosima::fastrtps::types;
-
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -77,7 +75,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 const TypeLookup_getTypes_Out types = reply.return_value().getType().result();
                 for (auto pair : types.types())
                 {
-                    if (pair.type_object()._d() == EK_COMPLETE) // Just in case
+                    if (pair.type_object()._d() == eprosima::fastdds::dds::xtypes::EK_COMPLETE) // Just in case
                     {
                         // TODO (adelcampo) Change to xtypes with TypeObjectRegistry
                         // If build_dynamic_type failed, just sent the nullptr already contained on it.

@@ -27,17 +27,13 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include "HelloWorldTypeObject.h"
+#include "HelloWorldTypeObjectSupport.hpp"
 
 using namespace eprosima::fastdds::dds;
 
 bool ContentFilteredTopicExampleSubscriber::init(
         bool custom_filter)
 {
-    // The default filter class requires the TypeObject to be registered
-    // (see https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/topic/contentFilteredTopic/createContentFilteredTopic.html)
-    registerHelloWorldTypes();
-
     // Initialize internal variables
     matched_ = 0;
 

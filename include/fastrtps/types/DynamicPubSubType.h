@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_PUB_SUB_TYPE_H
 #define TYPES_DYNAMIC_PUB_SUB_TYPE_H
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicDataPtr.h>
@@ -24,6 +24,8 @@
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 
 class DynamicPubSubType : public eprosima::fastdds::dds::TopicDataType
 {

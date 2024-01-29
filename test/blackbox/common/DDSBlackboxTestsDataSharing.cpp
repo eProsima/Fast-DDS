@@ -17,6 +17,7 @@
 #include <thread>
 
 #include <gtest/gtest.h>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>

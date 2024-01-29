@@ -107,7 +107,6 @@ typedef std::vector<eprosima::fastdds::dds::xtypes::SBound> SBoundSeq;
 
 
 
-
 typedef eprosima::fastdds::dds::xtypes::MemberFlag CollectionElementFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag StructMemberFlag;
 typedef eprosima::fastdds::dds::xtypes::MemberFlag UnionMemberFlag;
@@ -127,8 +126,6 @@ typedef eprosima::fastdds::dds::xtypes::TypeFlag AliasTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag EnumTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag BitmaskTypeFlag;
 typedef eprosima::fastdds::dds::xtypes::TypeFlag BitsetTypeFlag;
-
-
 
 
 
@@ -215,6 +212,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -274,8 +274,6 @@ private:
     }
 
 };
-
-
 
 #ifndef SWIG
 namespace detail {
@@ -360,6 +358,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -420,8 +421,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type PlainCollectionHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -472,6 +471,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -509,8 +511,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type PlainSequenceSElemDefn defined by the user in the IDL file.
@@ -562,6 +562,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -599,8 +602,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type PlainSequenceLElemDefn defined by the user in the IDL file.
@@ -652,6 +653,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -689,8 +693,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type PlainArraySElemDefn defined by the user in the IDL file.
@@ -742,6 +744,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -779,8 +784,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type PlainArrayLElemDefn defined by the user in the IDL file.
@@ -832,6 +835,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -869,8 +875,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type PlainMapSTypeDefn defined by the user in the IDL file.
@@ -922,6 +926,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -959,8 +966,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type PlainMapLTypeDefn defined by the user in the IDL file.
@@ -1012,6 +1017,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1049,8 +1057,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type StronglyConnectedComponentId defined by the user in the IDL file.
@@ -1101,6 +1107,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -1190,6 +1199,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1227,7 +1239,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
 
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> TypeIdentifierSeq;
 typedef uint32_t MemberId;
@@ -1284,6 +1295,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1321,9 +1335,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
-
 
 
 /*!
@@ -1376,6 +1387,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1414,8 +1428,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter> AppliedAnnotationParameterSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type AppliedAnnotation defined by the user in the IDL file.
@@ -1467,6 +1479,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1505,8 +1520,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::AppliedAnnotation> AppliedAnnotationSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type AppliedVerbatimAnnotation defined by the user in the IDL file.
@@ -1558,6 +1571,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1595,8 +1611,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type AppliedBuiltinMemberAnnotations defined by the user in the IDL file.
@@ -1648,6 +1662,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1685,8 +1702,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonStructMember defined by the user in the IDL file.
@@ -1738,6 +1753,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1775,8 +1793,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteMemberDetail defined by the user in the IDL file.
@@ -1828,6 +1844,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -1865,8 +1884,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 #ifndef SWIG
 namespace detail {
@@ -1951,6 +1968,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2011,8 +2031,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CompleteStructMember defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -2063,6 +2081,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2101,8 +2122,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteStructMember> CompleteStructMemberSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalStructMember defined by the user in the IDL file.
@@ -2154,6 +2173,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2192,8 +2214,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalStructMember> MinimalStructMemberSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type AppliedBuiltinTypeAnnotations defined by the user in the IDL file.
@@ -2244,6 +2264,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -2333,6 +2356,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2389,8 +2415,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CompleteTypeDetail defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -2441,6 +2465,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2478,8 +2505,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteStructHeader defined by the user in the IDL file.
@@ -2531,6 +2556,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2568,8 +2596,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalStructHeader defined by the user in the IDL file.
@@ -2621,6 +2647,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2658,8 +2687,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteStructType defined by the user in the IDL file.
@@ -2711,6 +2738,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2748,8 +2778,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalStructType defined by the user in the IDL file.
@@ -2801,6 +2829,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2839,8 +2870,6 @@ public:
 
 };
 typedef std::vector<int32_t> UnionCaseLabelSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonUnionMember defined by the user in the IDL file.
@@ -2892,6 +2921,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -2929,8 +2961,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteUnionMember defined by the user in the IDL file.
@@ -2982,6 +3012,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3020,8 +3053,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteUnionMember> CompleteUnionMemberSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalUnionMember defined by the user in the IDL file.
@@ -3073,6 +3104,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3111,8 +3145,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalUnionMember> MinimalUnionMemberSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonDiscriminatorMember defined by the user in the IDL file.
@@ -3164,6 +3196,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3201,8 +3236,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteDiscriminatorMember defined by the user in the IDL file.
@@ -3254,6 +3287,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3291,8 +3327,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalDiscriminatorMember defined by the user in the IDL file.
@@ -3344,6 +3378,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3381,8 +3418,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteUnionHeader defined by the user in the IDL file.
@@ -3434,6 +3469,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3471,8 +3509,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalUnionHeader defined by the user in the IDL file.
@@ -3524,6 +3560,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3561,8 +3600,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteUnionType defined by the user in the IDL file.
@@ -3614,6 +3651,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3651,8 +3691,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalUnionType defined by the user in the IDL file.
@@ -3704,6 +3742,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3741,8 +3782,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonAnnotationParameter defined by the user in the IDL file.
@@ -3794,6 +3833,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3831,8 +3873,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteAnnotationParameter defined by the user in the IDL file.
@@ -3884,6 +3924,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -3922,8 +3965,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter> CompleteAnnotationParameterSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalAnnotationParameter defined by the user in the IDL file.
@@ -3975,6 +4016,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4013,8 +4057,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter> MinimalAnnotationParameterSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteAnnotationHeader defined by the user in the IDL file.
@@ -4065,6 +4107,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -4154,6 +4199,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4191,8 +4239,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteAnnotationType defined by the user in the IDL file.
@@ -4244,6 +4290,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4281,8 +4330,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalAnnotationType defined by the user in the IDL file.
@@ -4334,6 +4381,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4371,8 +4421,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonAliasBody defined by the user in the IDL file.
@@ -4424,6 +4472,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4461,8 +4512,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteAliasBody defined by the user in the IDL file.
@@ -4514,6 +4563,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4551,8 +4603,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalAliasBody defined by the user in the IDL file.
@@ -4604,6 +4654,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4641,8 +4694,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteAliasHeader defined by the user in the IDL file.
@@ -4693,6 +4744,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -4782,6 +4836,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4819,8 +4876,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteAliasType defined by the user in the IDL file.
@@ -4872,6 +4927,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4909,8 +4967,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalAliasType defined by the user in the IDL file.
@@ -4962,6 +5018,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -4999,8 +5058,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteElementDetail defined by the user in the IDL file.
@@ -5052,6 +5109,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5089,8 +5149,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonCollectionElement defined by the user in the IDL file.
@@ -5142,6 +5200,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5179,8 +5240,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteCollectionElement defined by the user in the IDL file.
@@ -5232,6 +5291,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5269,8 +5331,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalCollectionElement defined by the user in the IDL file.
@@ -5322,6 +5382,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5359,8 +5422,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 #ifndef SWIG
 namespace detail {
@@ -5445,6 +5506,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5505,8 +5569,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CompleteCollectionHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -5557,6 +5619,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5594,8 +5659,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalCollectionHeader defined by the user in the IDL file.
@@ -5647,6 +5710,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5684,8 +5750,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteSequenceType defined by the user in the IDL file.
@@ -5737,6 +5801,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5774,8 +5841,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalSequenceType defined by the user in the IDL file.
@@ -5827,6 +5892,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5864,8 +5932,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonArrayHeader defined by the user in the IDL file.
@@ -5917,6 +5983,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -5954,8 +6023,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteArrayHeader defined by the user in the IDL file.
@@ -6007,6 +6074,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6044,8 +6114,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalArrayHeader defined by the user in the IDL file.
@@ -6097,6 +6165,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6134,8 +6205,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteArrayType defined by the user in the IDL file.
@@ -6187,6 +6256,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6224,8 +6296,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalArrayType defined by the user in the IDL file.
@@ -6277,6 +6347,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6314,8 +6387,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteMapType defined by the user in the IDL file.
@@ -6367,6 +6438,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6404,8 +6478,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalMapType defined by the user in the IDL file.
@@ -6457,6 +6529,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6495,8 +6570,6 @@ public:
 
 };
 typedef uint16_t BitBound;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonEnumeratedLiteral defined by the user in the IDL file.
@@ -6548,6 +6621,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6585,8 +6661,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteEnumeratedLiteral defined by the user in the IDL file.
@@ -6638,6 +6712,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6676,8 +6753,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral> CompleteEnumeratedLiteralSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalEnumeratedLiteral defined by the user in the IDL file.
@@ -6729,6 +6804,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6767,8 +6845,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral> MinimalEnumeratedLiteralSeq;
-
-
 
 #ifndef SWIG
 namespace detail {
@@ -6853,6 +6929,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -6913,8 +6992,6 @@ private:
 
 };
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CompleteEnumeratedHeader defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -6965,6 +7042,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7002,8 +7082,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalEnumeratedHeader defined by the user in the IDL file.
@@ -7055,6 +7133,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7092,8 +7173,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteEnumeratedType defined by the user in the IDL file.
@@ -7145,6 +7224,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7182,8 +7264,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalEnumeratedType defined by the user in the IDL file.
@@ -7235,6 +7315,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7272,8 +7355,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonBitflag defined by the user in the IDL file.
@@ -7325,6 +7406,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7362,8 +7446,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteBitflag defined by the user in the IDL file.
@@ -7415,6 +7497,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7453,8 +7538,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteBitflag> CompleteBitflagSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalBitflag defined by the user in the IDL file.
@@ -7506,6 +7589,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7544,8 +7630,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalBitflag> MinimalBitflagSeq;
-
-
 
 #ifndef SWIG
 namespace detail {
@@ -7630,6 +7714,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7692,8 +7779,6 @@ private:
 typedef eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader CompleteBitmaskHeader;
 typedef eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader MinimalBitmaskHeader;
 
-
-
 /*!
  * @brief This class represents the TopicDataType of the type CompleteBitmaskType defined by the user in the IDL file.
  * @ingroup dds_xtypes_typeobject
@@ -7744,6 +7829,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7781,8 +7869,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalBitmaskType defined by the user in the IDL file.
@@ -7834,6 +7920,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7871,8 +7960,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CommonBitfield defined by the user in the IDL file.
@@ -7924,6 +8011,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -7961,8 +8051,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteBitfield defined by the user in the IDL file.
@@ -8014,6 +8102,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8052,8 +8143,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::CompleteBitfield> CompleteBitfieldSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalBitfield defined by the user in the IDL file.
@@ -8105,6 +8194,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8143,8 +8235,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::MinimalBitfield> MinimalBitfieldSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteBitsetHeader defined by the user in the IDL file.
@@ -8195,6 +8285,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -8284,6 +8377,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8321,8 +8417,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteBitsetType defined by the user in the IDL file.
@@ -8374,6 +8468,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8411,8 +8508,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type MinimalBitsetType defined by the user in the IDL file.
@@ -8463,6 +8558,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
@@ -8552,6 +8650,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8589,7 +8690,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
 
 
 /*!
@@ -8642,6 +8742,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8681,12 +8784,8 @@ public:
 };
 
 
-
-
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeObject> TypeObjectSeq;
 typedef eprosima::fastdds::dds::xtypes::TypeObjectSeq StronglyConnectedComponent;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type TypeIdentifierTypeObjectPair defined by the user in the IDL file.
@@ -8738,6 +8837,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8776,8 +8878,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair> TypeIdentifierTypeObjectPairSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type TypeIdentifierPair defined by the user in the IDL file.
@@ -8829,6 +8929,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8867,8 +8970,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair> TypeIdentifierPairSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type TypeIdentfierWithSize defined by the user in the IDL file.
@@ -8920,6 +9021,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -8958,8 +9062,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize> TypeIdentfierWithSizeSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type TypeIdentifierWithDependencies defined by the user in the IDL file.
@@ -9011,6 +9113,9 @@ public:
     eProsima_user_DllExport void deleteData(
             void* data) override;
 
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
+
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
@@ -9049,8 +9154,6 @@ public:
 
 };
 typedef std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies> TypeIdentifierWithDependenciesSeq;
-
-
 
 /*!
  * @brief This class represents the TopicDataType of the type TypeInformation defined by the user in the IDL file.
@@ -9101,6 +9204,9 @@ public:
 
     eProsima_user_DllExport void deleteData(
             void* data) override;
+
+    //Register TypeObject representation in Fast DDS TypeObjectRegistry
+    eProsima_user_DllExport void register_type_object_representation() const override;
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override

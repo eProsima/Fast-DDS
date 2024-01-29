@@ -65,7 +65,7 @@ public:
     {
     }
 
-    ReturnCode_t enable() override
+    efd::ReturnCode_t enable() override
     {
         return efd::RETCODE_OK;
     }

@@ -25,7 +25,7 @@ namespace rtps {
  * Transport configuration
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
+struct TCPTransportDescriptor : public SocketTransportDescriptor
 {
     struct TLSConfig
     {
@@ -204,7 +204,7 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
     {
     }
 
-} TCPTransportDescriptor;
+};
 
 } // namespace rtps
 } // namespace fastdds

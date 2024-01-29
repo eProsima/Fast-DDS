@@ -382,172 +382,41 @@ namespace fastcdr {
 class Cdr;
 class CdrSizeCalculator;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::StringSTypeDefn& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::StringLTypeDefn& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainCollectionHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainArraySElemDefn& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
@@ -562,15 +431,9 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -578,61 +441,39 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::dds::xtypes::AppliedAnnotationParameter& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::AppliedAnnotation& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::AppliedVerbatimAnnotation& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::AppliedBuiltinMemberAnnotations& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonStructMember& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteMemberDetail& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalMemberDetail& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteStructMember& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalStructMember& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -643,52 +484,34 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalTypeDetail& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteTypeDetail& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteStructHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalStructHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteStructType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalStructType& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonUnionMember& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteUnionMember& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -696,71 +519,46 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalUnionMember& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonDiscriminatorMember& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteDiscriminatorMember& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalDiscriminatorMember& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteUnionHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalUnionHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteUnionType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalUnionType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonAnnotationParameter& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteAnnotationParameter& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalAnnotationParameter& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -771,37 +569,25 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalAnnotationHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteAnnotationType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalAnnotationType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonAliasBody& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteAliasBody& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalAliasBody& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
@@ -811,130 +597,86 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalAliasHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteAliasType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalAliasType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteElementDetail& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonCollectionElement& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteCollectionElement& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalCollectionElement& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonCollectionHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteCollectionHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalCollectionHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteSequenceType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalSequenceType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonArrayHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteArrayHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalArrayHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteArrayType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalArrayType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteMapType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalMapType& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonEnumeratedLiteral& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteEnumeratedLiteral& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -942,59 +684,38 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::dds::xtypes::MinimalEnumeratedLiteral& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonEnumeratedHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteEnumeratedHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalEnumeratedHeader& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteEnumeratedType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalEnumeratedType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonBitflag& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteBitflag& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalBitflag& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -1003,42 +724,26 @@ eProsima_user_DllExport void serialize_key(
 
 
 
-
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteBitmaskType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalBitmaskType& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CommonBitfield& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteBitfield& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalBitfield& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -1049,13 +754,9 @@ eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalBitsetHeader& data);
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::CompleteBitsetType& data);
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
@@ -1066,16 +767,9 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::dds::xtypes::CompleteExtendedType& data);
 
 
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::MinimalExtendedType& data);
-
-
-
-
-
-
 
 
 
@@ -1086,15 +780,9 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::TypeIdentifierPair& data);
-
-
-
 
 
 eProsima_user_DllExport void serialize_key(
@@ -1102,21 +790,14 @@ eProsima_user_DllExport void serialize_key(
         const eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::TypeIdentifierWithDependencies& data);
 
 
-
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::dds::xtypes::TypeInformation& data);
-
 
 
 

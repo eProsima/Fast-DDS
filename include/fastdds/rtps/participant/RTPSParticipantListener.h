@@ -24,10 +24,6 @@
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {

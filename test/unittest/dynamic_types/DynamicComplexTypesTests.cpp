@@ -14,26 +14,25 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/TypesBase.h>
 
 #include "idl/Test.hpp"
 #include "idl/TestPubSubTypes.h"
-#include "idl/TestTypeObject.h"
+#include "idl/TestTypeObjectSupport.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -45,7 +44,7 @@ public:
 
     DynamicComplexTypesTests()
     {
-        registerTestTypes();
+        register_Test_type_objects();
         m_factory = DynamicTypeBuilderFactory::get_instance();
         init();
     }
@@ -70,7 +69,6 @@ public:
 
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
-        TypeObjectFactory::delete_instance();
 
         eprosima::fastdds::dds::Log::KillThread();
     }
@@ -440,9 +438,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
 
 void DynamicComplexTypesTests::init()
 {
-    const TypeIdentifier* id = TypeObjectFactory::get_instance()->get_type_identifier("CompleteStruct", true);
-    const TypeObject* obj = TypeObjectFactory::get_instance()->get_type_object(id);
-    m_DynAutoType = TypeObjectFactory::get_instance()->build_dynamic_type("CompleteStruct", id, obj);
+    // TODO(XTypes): PENDING implementation DynamicTypeBuilderFactory::create_type_w_type_object
+    // m_DynAutoType = TypeObjectFactory::get_instance()->build_dynamic_type("CompleteStruct", id, obj);
 
     m_DynManualType = GetCompleteStructType();
 }
@@ -503,54 +500,6 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     ASSERT_TRUE(pubsubtype.deserialize(&payload2, dynData2.get()));
 
     ASSERT_TRUE(dynData2->equals(dynData.get()));
-}
-
-TEST_F(DynamicComplexTypesTests, Conversions_Test)
-{
-    TypeObject newObject;
-    DynamicTypeBuilderFactory::get_instance()->build_type_object(m_DynManualType, newObject, true);
-
-    const TypeIdentifier* identifier = TypeObjectFactory::get_instance()->get_type_identifier(
-        m_DynManualType->get_name(),
-        true);
-    DynamicType_ptr newAutoType = TypeObjectFactory::get_instance()->build_dynamic_type(m_DynManualType->get_name(),
-                    identifier, &newObject);
-    types::DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
-    types::DynamicData* dynData2 = DynamicDataFactory::get_instance()->create_data(newAutoType);
-
-    ASSERT_TRUE(dynData2->equals(dynData));
-
-    DynamicDataFactory::get_instance()->delete_data(dynData);
-    DynamicDataFactory::get_instance()->delete_data(dynData2);
-}
-
-TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
-{
-    TypeObject typeObject1, typeObject2, typeObject3;
-    DynamicTypeBuilder_ptr type1, type2, type3;
-    {
-        type1 = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
-        //types::DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type1));
-        DynamicTypeBuilderFactory::get_instance()->build_type_object(type1->get_type_descriptor(), typeObject1);
-    }
-    {
-        type2 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
-        //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type2));
-        DynamicTypeBuilderFactory::get_instance()->build_type_object(type2->get_type_descriptor(), typeObject2);
-    }
-
-    {
-        type3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
-        //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type3));
-        DynamicTypeBuilderFactory::get_instance()->build_type_object(type3->get_type_descriptor(), typeObject3);
-    }
-
-    const TypeIdentifier* identifier1 = TypeObjectFactory::get_instance()->get_type_identifier(type1->get_name());
-    const TypeIdentifier* identifier2 = TypeObjectFactory::get_instance()->get_type_identifier(type2->get_name());
-    const TypeIdentifier* identifier3 = TypeObjectFactory::get_instance()->get_type_identifier(type3->get_name());
-    ASSERT_FALSE(*identifier1 == *identifier2);
-    ASSERT_FALSE(*identifier1 == *identifier3);
-    ASSERT_TRUE(*identifier2 == *identifier3);
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
@@ -2286,29 +2235,6 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     DynamicDataFactory::get_instance()->delete_data(dynData);
     DynamicDataFactory::get_instance()->delete_data(dynDataFromStatic);
     DynamicDataFactory::get_instance()->delete_data(dynDataFromDynamic);
-}
-
-TEST_F(DynamicComplexTypesTests, TypeInformation)
-{
-    const TypeObject* compl_obj = TypeObjectFactory::get_instance()->get_type_object("CompleteStruct", true);
-    const TypeInformation* info = TypeObjectFactory::get_instance()->get_type_information("CompleteStruct");
-    ASSERT_FALSE(info->minimal().typeid_with_size().type_id() == info->complete().typeid_with_size().type_id());
-    ASSERT_TRUE(info->complete().typeid_with_size().type_id()._d() == EK_COMPLETE);
-    ASSERT_TRUE(info->complete().dependent_typeid_count() == 2);
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    size_t current_alignment {0};
-    ASSERT_TRUE(info->complete().typeid_with_size().typeobject_serialized_size()
-            == calculator.calculate_serialized_size(*compl_obj, current_alignment));
-    const TypeInformation* enum_info = TypeObjectFactory::get_instance()->get_type_information("MyAliasEnum");
-    ASSERT_TRUE(enum_info->minimal().typeid_with_size().type_id()._d() == EK_MINIMAL);
-    const TypeInformation* bool_info = TypeObjectFactory::get_instance()->get_type_information("bool");
-    ASSERT_TRUE(bool_info->minimal().typeid_with_size().type_id()._d() == TK_BOOLEAN);
-    ASSERT_TRUE(bool_info->minimal().typeid_with_size().typeobject_serialized_size() == 0);
-
-    const TypeObject* key_obj = TypeObjectFactory::get_instance()->get_type_object("key");
-    ASSERT_EQ(key_obj->minimal()._d(), TK_ANNOTATION);
-    key_obj = TypeObjectFactory::get_instance()->get_type_object("Key");
-    ASSERT_EQ(key_obj->minimal()._d(), TK_ANNOTATION);
 }
 
 int main(

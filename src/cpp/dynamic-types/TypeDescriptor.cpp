@@ -124,17 +124,17 @@ ReturnCode_t TypeDescriptor::copy_from(
             bound_ = descriptor->bound_;
             element_type_ = descriptor->element_type_;
             key_element_type_ = descriptor->key_element_type_;
-            return RETCODE_OK;
+            return eprosima::fastdds::dds::RETCODE_OK;
         }
         catch (std::exception& /*e*/)
         {
-            return RETCODE_ERROR;
+            return eprosima::fastdds::dds::RETCODE_ERROR;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying TypeDescriptor, invalid input descriptor");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -213,51 +213,62 @@ uint32_t TypeDescriptor::get_total_bounds() const
 bool TypeDescriptor::is_consistent() const
 {
     // Alias Types need the base type to indicate what type has been aliased.
-    if (kind_ == TK_ALIAS && base_type_ == nullptr)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ALIAS && base_type_ == nullptr)
     {
         return false;
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
-    if (base_type_ != nullptr && kind_ != TK_ALIAS && kind_ != TK_STRUCTURE && kind_ != TK_BITSET)
+    if (base_type_ != nullptr && kind_ != eprosima::fastdds::dds::xtypes::TK_ALIAS &&
+            kind_ != eprosima::fastdds::dds::xtypes::TK_STRUCTURE &&
+            kind_ != eprosima::fastdds::dds::xtypes::TK_BITSET)
     {
         return false;
     }
 
     // Arrays need one or more bound fields with the lenghts of each dimension.
-    if (kind_ == TK_ARRAY && bound_.size() == 0)
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY && bound_.size() == 0)
     {
         return false;
     }
 
     // These types need one bound with the length of the field.
-    if (bound_.size() != 1 && (kind_ == TK_SEQUENCE || kind_ == TK_MAP || kind_ == TK_BITMASK ||
-            kind_ == TK_STRING8 || kind_ == TK_STRING16))
+    if (bound_.size() != 1 &&
+            (kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16))
     {
         return false;
     }
 
     // Only union types need the discriminator of the union
-    if ((discriminator_type_ == nullptr) == (kind_ == TK_UNION))
+    if ((discriminator_type_ == nullptr) == (kind_ == eprosima::fastdds::dds::xtypes::TK_UNION))
     {
         return false;
     }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if ((element_type_ == nullptr) == (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
-            kind_ == TK_STRING16 || kind_ == TK_MAP || kind_ == TK_BITMASK))
+    if ((element_type_ == nullptr) ==
+            (kind_ == eprosima::fastdds::dds::xtypes::TK_ARRAY ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_SEQUENCE ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING8 ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_STRING16 || kind_ == eprosima::fastdds::dds::xtypes::TK_MAP ||
+            kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK))
     {
         return false;
     }
 
     // For Bitmask types is mandatory that this element is boolean.
-    if (kind_ == TK_BITMASK && (element_type_->get_kind() != TK_BOOLEAN))
+    if (kind_ == eprosima::fastdds::dds::xtypes::TK_BITMASK &&
+            (element_type_->get_kind() != eprosima::fastdds::dds::xtypes::TK_BOOLEAN))
     {
         return false;
     }
 
     // Only map types need the keyElementType to store the "Key" type of the pair.
-    if ((key_element_type_ == nullptr) == (kind_ == TK_MAP))
+    if ((key_element_type_ == nullptr) == (kind_ == eprosima::fastdds::dds::xtypes::TK_MAP))
     {
         return false;
     }
@@ -330,12 +341,12 @@ ReturnCode_t TypeDescriptor::apply_annotation(
         AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
         pNewDescriptor->copy_from(&descriptor);
         annotation_.push_back(pNewDescriptor);
-        return RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error applying annotation. The input descriptor isn't consistent.");
-        return RETCODE_BAD_PARAMETER;
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
 }
 
@@ -357,7 +368,7 @@ ReturnCode_t TypeDescriptor::apply_annotation(
         pNewDescriptor->set_value(key, value);
         annotation_.push_back(pNewDescriptor);
     }
-    return RETCODE_OK;
+    return eprosima::fastdds::dds::RETCODE_OK;
 }
 
 AnnotationDescriptor* TypeDescriptor::get_annotation(
@@ -399,7 +410,7 @@ bool TypeDescriptor::annotation_is_mutable() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == RETCODE_OK)
+            if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return value.compare(EXTENSIBILITY_MUTABLE) == 0;
             }
@@ -420,7 +431,7 @@ bool TypeDescriptor::annotation_is_final() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == RETCODE_OK)
+            if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return value.compare(EXTENSIBILITY_FINAL) == 0;
             }
@@ -441,7 +452,7 @@ bool TypeDescriptor::annotation_is_appendable() const
         if (ann != nullptr)
         {
             std::string value;
-            if (ann->get_value(value) == RETCODE_OK)
+            if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
             {
                 return value.compare(EXTENSIBILITY_APPENDABLE) == 0;
             }
@@ -471,7 +482,7 @@ bool TypeDescriptor::annotation_is_non_serialized() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -486,7 +497,7 @@ std::string TypeDescriptor::annotation_get_extensibility() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value;
         }
@@ -500,7 +511,7 @@ bool TypeDescriptor::annotation_get_nested() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -518,7 +529,7 @@ bool TypeDescriptor::annotation_get_key() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return value == CONST_TRUE;
         }
@@ -532,7 +543,7 @@ uint16_t TypeDescriptor::annotation_get_bit_bound() const
     if (ann != nullptr)
     {
         std::string value;
-        if (ann->get_value(value) == RETCODE_OK)
+        if (ann->get_value(value) == eprosima::fastdds::dds::RETCODE_OK)
         {
             return static_cast<uint16_t>(std::stoi(value));
         }

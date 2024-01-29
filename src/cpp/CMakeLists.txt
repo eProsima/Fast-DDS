@@ -37,8 +37,6 @@ set(${PROJECT_NAME}_source_files
     ${DDSSQLFILTER_SOURCES}
 
     dynamic-types/AnnotationDescriptor.cpp
-    dynamic-types/AnnotationParameterValue.cpp
-    dynamic-types/BuiltinAnnotationsTypeObject.cpp
     dynamic-types/DynamicData.cpp
     dynamic-types/DynamicDataFactory.cpp
     dynamic-types/DynamicDataHelper.cpp
@@ -52,13 +50,6 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/DynamicTypePtr.cpp
     dynamic-types/MemberDescriptor.cpp
     dynamic-types/TypeDescriptor.cpp
-    dynamic-types/TypeIdentifier.cpp
-    dynamic-types/TypeIdentifierTypes.cpp
-    dynamic-types/TypeNamesGenerator.cpp
-    dynamic-types/TypeObject.cpp
-    dynamic-types/TypeObjectFactory.cpp
-    dynamic-types/TypeObjectHashId.cpp
-    dynamic-types/TypesBase.cpp
     fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
     fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
     fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
@@ -243,8 +234,10 @@ if (FASTDDS_STATISTICS)
         statistics/rtps/reader/StatisticsReaderImpl.cpp
         statistics/rtps/StatisticsBase.cpp
         statistics/rtps/writer/StatisticsWriterImpl.cpp
-        statistics/types/typesPubSubTypes.cxx
         statistics/types/monitorservice_typesPubSubTypes.cxx
+        statistics/types/monitorservice_typesTypeObjectSupport.cxx
+        statistics/types/typesPubSubTypes.cxx
+        statistics/types/typesTypeObjectSupport.cxx
         )
 
     list(APPEND ${PROJECT_NAME}_source_files
