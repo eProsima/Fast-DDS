@@ -17,6 +17,7 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <gtest/gtest.h>
 
+#include "../types/statistics/monitorservice_typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
