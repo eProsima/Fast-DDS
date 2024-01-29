@@ -190,6 +190,10 @@ protected:
             const std::vector<uint16_t>& availablePorts,
             RTCPMessageManager* rtcp_manager);
 
+    bool check_socket_send_buffer(
+            const size_t& msg_size,
+            const asio::ip::tcp::socket::native_handle_type& socket_native_handle);
+
     TCPConnectionType tcp_connection_type_;
 
     friend class TCPTransportInterface;

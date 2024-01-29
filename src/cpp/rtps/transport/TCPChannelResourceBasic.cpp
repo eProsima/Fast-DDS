@@ -151,6 +151,13 @@ size_t TCPChannelResourceBasic::send(
     if (eConnecting < connection_status_)
     {
         std::lock_guard<std::mutex> send_guard(send_mutex_);
+
+        if (parent_->get_non_blocking_send() &&
+                !check_socket_send_buffer(header_size + size, socket_->native_handle()))
+        {
+            return 0;
+        }
+
         if (header_size > 0)
         {
             std::array<asio::const_buffer, 2> buffers;

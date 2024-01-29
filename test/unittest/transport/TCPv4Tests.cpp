@@ -21,6 +21,7 @@
 #include "mock/MockTCPChannelResource.h"
 #include "mock/MockTCPv4Transport.h"
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -1262,6 +1263,126 @@ TEST_F(TCPv4Tests, send_and_receive_between_both_secure_ports_with_sni)
     }
 }
 
+#ifndef _WIN32
+// The primary purpose of this test is to check the non-blocking behavior of a secure socket sending data to a
+// destination that does not read or does it so slowly.
+TEST_F(TCPv4Tests, secure_non_blocking_send)
+{
+    uint16_t port = g_default_port;
+    uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
+    // Create a TCP Server transport
+    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
+    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
+    TCPv4TransportDescriptor senderDescriptor;
+    senderDescriptor.add_listener_port(port);
+    senderDescriptor.sendBufferSize = msg_size;
+    senderDescriptor.tls_config.handshake_role = TLSHSRole::CLIENT;
+    senderDescriptor.tls_config.verify_file = "ca.crt";
+    senderDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
+    senderDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
+    senderDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
+    senderDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
+    senderDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
+    MockTCPv4Transport senderTransportUnderTest(senderDescriptor);
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes att;
+    att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
+    senderTransportUnderTest.init(&att.properties);
+
+    // Create a TCP Client socket.
+    // The creation of a reception transport for testing this functionality is not
+    // feasible. For the saturation of the sending socket, it's necessary first to
+    // saturate the reception socket of the datareader. This saturation requires
+    // preventing the datareader from reading from the socket, what inevitably
+    // happens continuously if instantiating and connecting the receiver transport.
+    // Hence, a raw socket is opened and connected to the server. There won't be read
+    // calls on that socket.
+    Locator_t serverLoc;
+    serverLoc.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(serverLoc, 127, 0, 0, 1);
+    serverLoc.port = port;
+    IPLocator::setLogicalPort(serverLoc, 7410);
+
+    // Socket TLS config
+    asio::ssl::context ssl_context(asio::ssl::context::sslv23);
+    ssl_context.set_verify_callback([](bool preverified, asio::ssl::verify_context&)
+            {
+                return preverified;
+            });
+    ssl_context.set_password_callback([](std::size_t, asio::ssl::context_base::password_purpose)
+            {
+                return "fastddspwd";
+            });
+    ssl_context.use_certificate_chain_file("fastdds.crt");
+    ssl_context.use_private_key_file("fastdds.key", asio::ssl::context::pem);
+    ssl_context.use_tmp_dh_file("dh_params.pem");
+
+    uint32_t options = 0;
+    options |= asio::ssl::context::default_workarounds;
+    options |= asio::ssl::context::single_dh_use;
+    options |= asio::ssl::context::no_sslv2;
+    options |= asio::ssl::context::no_compression;
+    ssl_context.set_options(options);
+
+    // TCPChannelResourceSecure::connect() like connection
+    asio::io_service io_service;
+    asio::ip::tcp::resolver resolver(io_service);
+    auto endpoints = resolver.resolve(
+        IPLocator::ip_to_string(serverLoc),
+        std::to_string(IPLocator::getPhysicalPort(serverLoc)));
+
+    auto secure_socket = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket>>(io_service, ssl_context);
+    asio::ssl::verify_mode vm = 0x00;
+    vm |= asio::ssl::verify_peer;
+    secure_socket->set_verify_mode(vm);
+
+    asio::async_connect(secure_socket->lowest_layer(), endpoints,
+            [secure_socket](const std::error_code& ec
+#if ASIO_VERSION >= 101200
+            , asio::ip::tcp::endpoint
+#else
+            , const tcp::resolver::iterator&     /*endpoint*/
+#endif // if ASIO_VERSION >= 101200
+            )
+            {
+                ASSERT_TRUE(!ec);
+                asio::ssl::stream_base::handshake_type role = asio::ssl::stream_base::server;
+                secure_socket->async_handshake(role,
+                [](const std::error_code& ec)
+                {
+                    ASSERT_TRUE(!ec);
+                });
+            });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+    /*
+       Get server's accepted channel. This is retrieved from the unbound_channel_resources_,
+       which is a vector where client channels are pushed immediately after the server accepts
+       a connection. This channel will not be present in the server's channel_resources_ map
+       as communication lacks most of the discovery messages using a raw socket as participant.
+     */
+    auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
+    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
+    auto sender_channel_resource =
+            std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+
+    // Prepare the message
+    asio::error_code ec;
+    std::vector<octet> message(msg_size, 0);
+    const octet* data = message.data();
+    size_t size = message.size();
+
+    // Send the message with no header
+    for (int i = 0; i < 5; i++)
+    {
+        sender_channel_resource->send(nullptr, 0, data, size, ec);
+    }
+
+    secure_socket->lowest_layer().close(ec);
+}
+#endif // ifndef _WIN32
+
 #endif //TLS_FOUND
 
 TEST_F(TCPv4Tests, send_and_receive_between_allowed_localhost_interfaces_ports)
@@ -1694,6 +1815,90 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 
     ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
 }
+
+#ifndef _WIN32
+// The primary purpose of this test is to check the non-blocking behavior of a secure socket sending data to a
+// destination that does not read or does it so slowly.
+TEST_F(TCPv4Tests, non_blocking_send)
+{
+    uint16_t port = g_default_port;
+    uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
+    // Create a TCP Server transport
+    TCPv4TransportDescriptor senderDescriptor;
+    senderDescriptor.add_listener_port(port);
+    senderDescriptor.sendBufferSize = msg_size;
+    MockTCPv4Transport senderTransportUnderTest(senderDescriptor);
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes att;
+    att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
+    senderTransportUnderTest.init(&att.properties);
+
+    // Create a TCP Client socket.
+    // The creation of a reception transport for testing this functionality is not
+    // feasible. For the saturation of the sending socket, it's necessary first to
+    // saturate the reception socket of the datareader. This saturation requires
+    // preventing the datareader from reading from the socket, what inevitably
+    // happens continuously if instantiating and connecting the receiver transport.
+    // Hence, a raw socket is opened and connected to the server. There won't be read
+    // calls on that socket.
+    Locator_t serverLoc;
+    serverLoc.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(serverLoc, 127, 0, 0, 1);
+    serverLoc.port = port;
+    IPLocator::setLogicalPort(serverLoc, 7410);
+
+    // TCPChannelResourceBasic::connect() like connection
+    asio::io_service io_service;
+    asio::ip::tcp::resolver resolver(io_service);
+    auto endpoints = resolver.resolve(
+        IPLocator::ip_to_string(serverLoc),
+        std::to_string(IPLocator::getPhysicalPort(serverLoc)));
+
+    asio::ip::tcp::socket socket = asio::ip::tcp::socket (io_service);
+    asio::async_connect(
+        socket,
+        endpoints,
+        [](std::error_code ec
+#if ASIO_VERSION >= 101200
+        , asio::ip::tcp::endpoint
+#else
+        , asio::ip::tcp::resolver::iterator
+#endif // if ASIO_VERSION >= 101200
+        )
+        {
+            ASSERT_TRUE(!ec);
+        }
+        );
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    /*
+       Get server's accepted channel. This is retrieved from the unbound_channel_resources_,
+       which is a vector where client channels are pushed immediately after the server accepts
+       a connection. This channel will not be present in the server's channel_resources_ map
+       as communication lacks most of the discovery messages using a raw socket as participant.
+     */
+    auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
+    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
+    auto sender_channel_resource =
+            std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+
+    // Prepare the message
+    asio::error_code ec;
+    std::vector<octet> message(msg_size, 0);
+    const octet* data = message.data();
+    size_t size = message.size();
+
+    // Send the message with no header
+    for (int i = 0; i < 5; i++)
+    {
+        sender_channel_resource->send(nullptr, 0, data, size, ec);
+    }
+
+    socket.shutdown(asio::ip::tcp::socket::shutdown_both);
+    socket.cancel();
+    socket.close();
+}
+#endif // ifndef _WIN32
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
