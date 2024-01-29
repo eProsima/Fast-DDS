@@ -28,9 +28,9 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastrtps/types/DynamicTypeBuilder.h>
 
 namespace eprosima {
 
@@ -291,7 +291,7 @@ public:
             const LibrarySettings& library_settings);
 
     /**
-     * @brief Get the DynamicTypeBuilder defined in XML file.
+     * @brief Get the @ref DynamicType defined in XML file.
      *        The XML file shall be previously loaded.
      *
      * @param type_name Dynamic type name.
@@ -302,7 +302,7 @@ public:
      */
     FASTDDS_EXPORTED_API ReturnCode_t get_dynamic_type_builder_from_xml_by_name(
             const std::string& type_name,
-            fastrtps::types::DynamicTypeBuilder*& type);
+            DynamicType::_ref_type& type);
 
     /**
      * @brief Return the TypeObjectRegistry member to access the public API.

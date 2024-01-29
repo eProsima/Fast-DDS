@@ -504,14 +504,13 @@ ReturnCode_t DomainParticipantFactory::set_library_settings(
 
 ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name(
         const std::string& type_name,
-        fastrtps::types::DynamicTypeBuilder*& type)
+        DynamicType::_ref_type& type)
 {
     if (type_name.empty())
     {
         return RETCODE_BAD_PARAMETER;
     }
-    type = XMLProfileManager::getDynamicTypeByName(type_name);
-    if (nullptr == type)
+    if (XMLP_ret::XML_OK != XMLProfileManager::getDynamicTypeByName(type, type_name))
     {
         return RETCODE_NO_DATA;
     }

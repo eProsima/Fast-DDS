@@ -30,9 +30,9 @@
 #include <xmlparser/XMLParserCommon.h>
 #include <xmlparser/XMLProfileManager.h>
 #include <xmlparser/XMLTree.h>
-#include "../../fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp"
-#include "../../fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp"
-#include "../../fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp"
+#include "../fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp"
+#include "../fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp"
+#include "../fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;

@@ -20,9 +20,9 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
 
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include "../types/statistics/types.hpp"
 #include "../types/statistics/typesPubSubTypes.h"
 #include "BlackboxTests.hpp"

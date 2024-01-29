@@ -29,7 +29,6 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 

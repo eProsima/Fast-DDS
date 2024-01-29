@@ -19,9 +19,6 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 
-#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
-
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 
@@ -45,8 +42,6 @@
 
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-
-#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 
