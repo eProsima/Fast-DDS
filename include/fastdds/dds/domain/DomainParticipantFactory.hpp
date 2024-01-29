@@ -28,6 +28,7 @@
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/LibrarySettings.hpp>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -289,6 +290,20 @@ public:
      */
     RTPS_DllAPI ReturnCode_t set_library_settings(
             const LibrarySettings& library_settings);
+
+    /**
+     * @brief Get the DynamicTypeBuilder defined in XML file.
+     *        The XML file shall be previously loaded.
+     *
+     * @param type_name Dynamic type name.
+     * @param type Reference where the Dynamic type builder is returned.
+     * @return RETCODE_BAD_PARAMETER if type_name is empty.
+     *         RETCODE_NO_DATA if type_name is unknown.
+     *         RETCODE_OK otherwise.
+     */
+    RTPS_DllAPI ReturnCode_t get_dynamic_type_builder_from_xml_by_name(
+            const std::string& type_name,
+            fastrtps::types::DynamicTypeBuilder*& type);
 
 protected:
 

@@ -499,6 +499,22 @@ ReturnCode_t DomainParticipantFactory::set_library_settings(
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
+ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name(
+        const std::string& type_name,
+        fastrtps::types::DynamicTypeBuilder*& type)
+{
+    if (type_name.empty())
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+    type = XMLProfileManager::getDynamicTypeByName(type_name);
+    if (nullptr == type)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+    return ReturnCode_t::RETCODE_OK;
+}
+
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */

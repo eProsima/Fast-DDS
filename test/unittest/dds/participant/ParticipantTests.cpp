@@ -51,6 +51,7 @@
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
@@ -419,6 +420,36 @@ TEST(ParticipantTests, DomainParticipantFactoryLibrarySettings)
     EXPECT_EQ(DomainParticipantFactory::get_instance()->get_library_settings(library_settings),
             ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_FULL, library_settings.intraprocess_delivery);
+}
+
+TEST(ParticipantTests, DomainParticipantFactoryGetDynamicTypeBuilder)
+{
+    fastrtps::types::DynamicTypeBuilder* type = nullptr;
+    std::string type_name("MyAloneEnumType");
+    // Trying to get a Dynamic Type with empty name returns RETCODE_BAD_PARAMETER
+    EXPECT_EQ(ReturnCode_t::RETCODE_BAD_PARAMETER,
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(std::string(), type));
+    // Trying to get an unknown Dynamic Type return RETCODE_NO_DATA
+    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA,
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name, type));
+    EXPECT_EQ(nullptr, type);
+    // Load XML file
+    std::string xml =
+            "\
+            <types>\
+                <type>\
+                    <enum name=\"MyAloneEnumType\">\
+                        <enumerator name=\"A\" value=\"0\"/>\
+                        <enumerator name=\"B\" value=\"1\"/>\
+                    </enum>\
+                </type>\
+            </types>\
+            ";
+    DomainParticipantFactory::get_instance()->load_XML_profiles_string(xml.c_str(), xml.length());
+    // Getting a known dynamic type returns RETCODE_OK
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK,
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name, type));
+    EXPECT_NE(nullptr, type);
 }
 
 TEST(ParticipantTests, CreateDomainParticipant)
