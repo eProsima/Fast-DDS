@@ -17,6 +17,9 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <gtest/gtest.h>
 
+// TODO(jlbueno): remove private header
+#include <statistics/rtps/StatisticsBase.hpp>
+
 #include "../types/statistics/monitorservice_typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -1172,9 +1175,9 @@ TEST(DDSMonitorServiceTest, monitor_service_environment_variable)
     const char* value = "NETWORK_LATENCY_TOPIC;MONITOR_SERVICE_TOPIC";
 
     #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", value));
     #else
-    ASSERT_EQ(0, setenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
+    ASSERT_EQ(0, setenv("FASTDDS_STATISTICS", value, 1));
     #endif // ifdef _WIN32
 
     //! Setup

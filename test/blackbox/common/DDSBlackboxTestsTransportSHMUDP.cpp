@@ -25,11 +25,13 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <gtest/gtest.h>
 
-// BlackboxTests.hpp should be included before API
+// TODO(jlbueno): remove private header
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include "BlackboxTests.hpp"
-#include "../api/dds-pim/PubSubReader.hpp"
-#include "../api/dds-pim/PubSubWriter.hpp"
 #include "mock/BlackboxMockConsumer.h"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

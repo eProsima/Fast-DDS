@@ -18,6 +18,9 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <gtest/gtest.h>
 
+// TODO(jlbueno): remove private header
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

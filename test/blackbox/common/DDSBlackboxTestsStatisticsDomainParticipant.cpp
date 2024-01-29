@@ -14,11 +14,6 @@
 
 #include <stdlib.h>
 
-#include <gtest/gtest.h>
-
-#include "BlackboxTests.hpp"
-#include "PubSubReader.hpp"
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -26,6 +21,12 @@
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <gtest/gtest.h>
+
+#include "../types/statistics/types.h"
+#include "../types/statistics/typesPubSubTypes.h"
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
 
 class WriterReaderDataTest : public eprosima::fastdds::statistics::WriterReaderData
 {
@@ -299,9 +300,9 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
     // 1. Set environment variable and create participant using Qos set by code
     const char* value = "HISTORY_LATENCY_TOPIC;NETWORK_LATENCY_TOPIC;RTPS_LOST_TOPIC;RTPS_SENT_TOPIC;GAP_COUNT_TOPIC";
 #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", value));
 #else
-    ASSERT_EQ(0, setenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
+    ASSERT_EQ(0, setenv("FASTDDS_STATISTICS", value, 1));
 #endif // ifdef _WIN32
 
     // There is no problem if some topic name is repeated.
@@ -349,9 +350,9 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
     // Otherwise each domainParticipant (each DataReader is launched in its own domainParticipant) will also enable
     // the statistics DataWriters set with the environment variable.
 #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, ""));
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", ""));
 #else
-    ASSERT_EQ(0, unsetenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE));
+    ASSERT_EQ(0, unsetenv("FASTDDS_STATISTICS"));
 #endif // ifdef _WIN32
 
     // Check that the statistics DataWriters has been created by matching a corresponding DataReader on those topics
@@ -473,9 +474,9 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     // 1. Set environment variable and create participant using Qos set by code
     const char* value = "PUBLICATION_THROUGHPUT_TOPIC;HEARTBEAT_COUNT_TOPIC;RESENT_DATAS_TOPIC;ACKNACK_COUNT_TOPIC";
 #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", value));
 #else
-    ASSERT_EQ(0, setenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
+    ASSERT_EQ(0, setenv("FASTDDS_STATISTICS", value, 1));
 #endif // ifdef _WIN32
 
     // Load XML profiles
@@ -520,9 +521,9 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     // Otherwise each domainParticipant (each DataReader is launched in its own domainParticipant) will also enable
     // the statistics DataWriters set with the environment variable.
 #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, ""));
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", ""));
 #else
-    ASSERT_EQ(0, unsetenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE));
+    ASSERT_EQ(0, unsetenv("FASTDDS_STATISTICS"));
 #endif // ifdef _WIN32
 
     // Check that the statistics DataWriters has been created by matching a corresponding DataReader on those topics

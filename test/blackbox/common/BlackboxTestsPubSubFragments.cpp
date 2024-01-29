@@ -18,6 +18,9 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 
+// TODO(jlbueno): remove private header
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "BlackboxTests.hpp"
 
 #if HAVE_SECURITY
 
@@ -27,7 +28,9 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <gtest/gtest.h>
 
-#include "BlackboxTests.hpp"
+// TODO(jlbueno): remove private header
+#include <rtps/transport/test_UDPv4Transport.h>
+
 #include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
