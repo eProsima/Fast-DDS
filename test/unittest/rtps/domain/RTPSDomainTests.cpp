@@ -46,7 +46,7 @@ TEST(RTPSDomainTests, library_settings_test)
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY, library_settings.intraprocess_delivery);
     // Remove RTPSParticipant
-    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant));
+    eprosima::fastrtps::rtps::RTPSDomain::stopAll();
     library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
     // Setting LibrarySettings with no participants shall suceed
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));

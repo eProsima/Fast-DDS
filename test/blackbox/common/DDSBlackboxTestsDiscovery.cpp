@@ -1649,6 +1649,7 @@ TEST(DDSDiscovery, WaitSetMatchedStatus)
 TEST(DDSDiscovery, DataracePDP)
 {
     using namespace eprosima;
+    using namespace eprosima::fastdds;
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastdds::rtps;
 
@@ -1706,10 +1707,11 @@ TEST(DDSDiscovery, DataracePDP)
     };
 
     // Disable intraprocess
-    auto settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
+    LibrarySettings settings;
+    DomainParticipantFactory::get_instance()->get_library_settings(settings);
     auto prev_intraprocess_delivery = settings.intraprocess_delivery;
-    settings.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
-    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
+    settings.intraprocess_delivery = INTRAPROCESS_OFF;
+    DomainParticipantFactory::get_instance()->set_library_settings(settings);
 
     // DDS Domain Id
     const unsigned int DOMAIN_ID = (uint32_t)GET_PID() % 230;
@@ -1777,5 +1779,5 @@ TEST(DDSDiscovery, DataracePDP)
 
     // Reestablish previous intraprocess configuration
     settings.intraprocess_delivery = prev_intraprocess_delivery;
-    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
+    DomainParticipantFactory::get_instance()->set_library_settings(settings);
 }
