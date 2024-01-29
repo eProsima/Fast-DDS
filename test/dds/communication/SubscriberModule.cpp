@@ -148,7 +148,7 @@ bool SubscriberModule::run_for(
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
-    if(run_)
+    if (run_)
     {
         auto t0 = std::chrono::steady_clock::now();
         std::unique_lock<std::mutex> lock(mutex_);
@@ -302,8 +302,9 @@ void SubscriberModule::on_data_available(
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << sample.index() << ")");
+                    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE,
+                            "Received sample (" << info.sample_identity.writer_guid() << " - " <<
+                            info.sample_identity.sequence_number() << "): index(" << sample.index() << ")");
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();
@@ -319,9 +320,10 @@ void SubscriberModule::on_data_available(
                 if (info.instance_state == ALIVE_INSTANCE_STATE)
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
-                    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "Received sample (" << info.sample_identity.writer_guid() << " - " <<
-                        info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
-                              << sample.message() << ")");
+                    EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE,
+                            "Received sample (" << info.sample_identity.writer_guid() << " - " <<
+                            info.sample_identity.sequence_number() << "): index(" << sample.index() << "), message("
+                                                << sample.message() << ")");
                     if (max_number_samples_ <= ++number_samples_[info.sample_identity.writer_guid()])
                     {
                         cv_.notify_all();
