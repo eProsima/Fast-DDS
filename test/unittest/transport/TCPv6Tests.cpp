@@ -421,6 +421,7 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
 
     // Clear test
     EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
+    client_resource_list.clear();
     delete serverTransportUnderTest;
     delete clientTransportUnderTest;
 }
