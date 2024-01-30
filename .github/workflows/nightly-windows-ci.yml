@@ -22,7 +22,7 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds_branch: 'master'
 
-  nightly-3.0.x-windows-ci:
+  nightly-3_0_x-windows-ci:
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
       label: 'nightly-3.0.x-windows-ci'

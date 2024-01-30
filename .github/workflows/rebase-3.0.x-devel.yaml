@@ -11,7 +11,7 @@ jobs:
   rebase-branches:
     name: Rebase 3.0.x-devel branch HEAD with master current branch
     runs-on: ubuntu-latest
-        
+
     steps:
       # Step 1: checkout action
     - name: Checkout target repo
@@ -24,8 +24,8 @@ jobs:
     - name: Rebase current branch
       id: rebase_master
       run: |
-        git fetch master
-        git rebase master
+        git fetch origin master
+        git rebase origin/master
       shell: bash
 
       # Step 3: Push
