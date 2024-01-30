@@ -345,6 +345,11 @@ void RTPSMessageGroup::send()
                 pending_data_ = nullptr;
                 pending_data_size_ = 0;
                 pending_padding_ = 0;
+                std::cout << "\npending_data_ != nullptr" << std::endl;
+            }
+            else
+            {
+                std::cout << "\npending_data_ == nullptr" << std::endl;
             }
 
             if (!sender_->send(buffers, num_buffers, total_bytes, max_blocking_time_point_))
@@ -373,7 +378,7 @@ void RTPSMessageGroup::check_and_maybe_flush(
 
     CDRMessage::initCDRMsg(submessage_msg_);
 
-    if (sender_->destinations_have_changed())
+    if (sender_->destinations_have_changed()) //QUESTION: Always false?
     {
         flush_and_reset();
     }

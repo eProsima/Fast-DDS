@@ -99,6 +99,8 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
     descriptor->sendBufferSize = 1048576;
     descriptor->receiveBufferSize = 1048576;
 
+    descriptor->maxMessageSize = 1048576;
+
     descriptor->calculate_crc = false;
     descriptor->check_crc = false;
     descriptor->apply_security = false;

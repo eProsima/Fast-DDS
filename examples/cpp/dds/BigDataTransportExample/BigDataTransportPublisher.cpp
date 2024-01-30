@@ -112,6 +112,12 @@ bool HelloWorldPublisher::init(
     pqos.name("Participant_pub");
     listener_.set_num_wait_matched(num_wait_matched);
 
+    // Increase the sending buffer size
+    pqos.transport().send_socket_buffer_size = 1048576;
+
+    // Increase the receiving buffer size
+    pqos.transport().listen_socket_buffer_size = 1048576;
+
     if (profile.empty())
     {
         if (transport != BuiltinTransports::DEFAULT)

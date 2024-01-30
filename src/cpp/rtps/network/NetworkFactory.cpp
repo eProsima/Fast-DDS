@@ -141,7 +141,8 @@ bool NetworkFactory::RegisterTransport(
         {
             if (descriptor->max_message_size() < maxMessageSizeBetweenTransports_)
             {
-                maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
+                // maxMessageSizeBetweenTransports_ = descriptor->max_message_size();
+                maxMessageSizeBetweenTransports_ = 1048576;
             }
 
             if (minSendBufferSize < minSendBufferSize_)

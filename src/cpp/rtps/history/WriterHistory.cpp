@@ -366,8 +366,9 @@ void WriterHistory::set_fragments(
     {
         // Fragment the data.
         // Set the fragment size to the cachechange.
-        change->setFragmentSize(static_cast<uint16_t>(
-                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
+        std::cout<<"Fragmentation skipped"<<std::endl;
+        // change->setFragmentSize(static_cast<uint16_t>(
+        //             (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
     }
 }
 

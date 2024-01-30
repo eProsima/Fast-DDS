@@ -178,9 +178,9 @@ protected:
 
 private:
 
-    SenderResource()                                 = delete;
+    SenderResource() = delete;
     SenderResource(
-            const SenderResource&)            = delete;
+            const SenderResource&) = delete;
     SenderResource& operator =(
             const SenderResource&) = delete;
 };
