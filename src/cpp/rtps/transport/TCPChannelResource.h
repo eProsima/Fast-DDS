@@ -130,13 +130,33 @@ public:
             size_t size,
             asio::error_code& ec) = 0;
 
+    /**
+     * @brief Gets the remote endpoint of the socket connection.
+     * @throws Exception on failure.
+     * @return asio::ip::tcp::endpoint of the remote endpoint.
+     */
     virtual asio::ip::tcp::endpoint remote_endpoint() const = 0;
 
+    /**
+     * @brief Gets the local endpoint of the socket connection.
+     * @throws Exception on failure.
+     * @return asio::ip::tcp::endpoint of the local endpoint.
+     */
     virtual asio::ip::tcp::endpoint local_endpoint() const = 0;
 
+    /**
+     * @brief Gets the remote endpoint, setting error code if any.
+     * @param ec Set to indicate what error occurred, if any.
+     * @return asio::ip::tcp::endpoint of the remote endpoint or returns a default-constructed endpoint object if an error occurred.
+     */
     virtual asio::ip::tcp::endpoint remote_endpoint(
             asio::error_code& ec) const = 0;
 
+    /**
+     * @brief Gets the local endpoint, setting error code if any.
+     * @param ec Set to indicate what error occurred, if any.
+     * @return asio::ip::tcp::endpoint of the remote endpoint or returns a default-constructed endpoint object if an error occurred.
+     */
     virtual asio::ip::tcp::endpoint local_endpoint(
             asio::error_code& ec) const = 0;
 

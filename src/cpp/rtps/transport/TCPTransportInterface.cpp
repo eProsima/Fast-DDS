@@ -260,6 +260,19 @@ void TCPTransportInterface::clean()
     }
 }
 
+Locator TCPTransportInterface::remote_endpoint_to_locator(
+        const std::shared_ptr<TCPChannelResource>& channel) const
+{
+    Locator locator;
+    asio::error_code ec;
+    endpoint_to_locator(channel->remote_endpoint(ec), locator);
+    if (ec)
+    {
+        LOCATOR_INVALID(locator);
+    }
+    return locator;
+}
+
 void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
@@ -898,12 +911,8 @@ void TCPTransportInterface::perform_listen_operation(
     if (rtcp_message_manager)
     {
         channel = channel_weak.lock();
-        asio::error_code ec;
-        endpoint_to_locator(channel->remote_endpoint(ec), remote_locator);
-        if (ec)
-        {
-            remote_locator.kind = LOCATOR_KIND_INVALID;
-        }
+
+        remote_locator = remote_endpoint_to_locator(channel);
 
         if (channel)
         {
@@ -1185,7 +1194,7 @@ bool TCPTransportInterface::Receive(
                     {
                         if (!IsLocatorValid(remote_locator))
                         {
-                            endpoint_to_locator(channel->remote_endpoint(), remote_locator);
+                            remote_locator = remote_endpoint_to_locator(channel);
                         }
                         IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
                         EPROSIMA_LOG_INFO(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
