@@ -375,6 +375,7 @@ const std::shared_ptr<LogResources>& get_log_resources()
 void Log::RegisterConsumer(
         std::unique_ptr<LogConsumer>&& consumer)
 {
+    int unused_variable = 0;
     detail::get_log_resources()->RegisterConsumer(std::move(consumer));
 }
 
