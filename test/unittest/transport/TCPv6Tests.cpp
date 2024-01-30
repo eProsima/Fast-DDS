@@ -363,11 +363,11 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     // Connect client to server
     EXPECT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
     SendResourceList client_resource_list;
-    ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list ,initialPeerLocator));
+    ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
     ASSERT_FALSE(client_resource_list.empty());
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     auto channel = clientTransportUnderTest->get_channel_resources().begin()->second;
-    
+
     // Logical port is opened
     ASSERT_TRUE(channel->is_logical_port_opened(7410));
 
