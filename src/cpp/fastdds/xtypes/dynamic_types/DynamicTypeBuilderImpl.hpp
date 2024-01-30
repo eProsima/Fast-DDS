@@ -135,6 +135,9 @@ private:
 
     //! Copy of the TypeDescriptor provided by the user.
     TypeDescriptorImpl type_descriptor_;
+
+    std::vector<VerbatimTextDescriptorImpl> verbatim_;
+
 };
 
 } // namespace dds
