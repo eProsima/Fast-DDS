@@ -116,6 +116,24 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     reader->getHistory()->remove_change(change);
 }
 
+TypeLookupReplyWListener::TypeLookupReplyWListener(
+        TypeLookupManager* manager)
+    : tlm_(manager)
+    , factory_(TypeObjectFactory::get_instance())
+{
+}
+
+TypeLookupReplyWListener::~TypeLookupReplyWListener()
+{
+}
+
+void TypeLookupReplyWListener::onWriterChangeReceivedByAll(
+            fastrtps::rtps::RTPSWriter*,
+            fastrtps::rtps::CacheChange_t* change)
+{
+    tlm_->reply_cache_change_acked(change);
+}
+
 } // namespace builtin
 } // namespace dds
 } // namespace fastdds
