@@ -515,6 +515,14 @@ jobs:
             "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
           }
 
+      - name: Post PR comment for warnings/errors
+        if: always()
+        uses: JacobDomagala/CompileResult@v0.0.2
+        with:
+          compile_result_file: ${{runner.workspace}}/log/latest_build/events.log
+          compiler: MVSC
+          comment_title: Windows build result
+          
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') &&
                 (
