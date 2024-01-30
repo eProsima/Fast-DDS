@@ -185,9 +185,9 @@ void TCPChannelResource::add_logical_port_response(
         negotiating_logical_ports_.erase(it);
         if (portIt != pending_logical_output_ports_.end())
         {
-            pending_logical_output_ports_.erase(portIt);
             if (success)
             {
+                pending_logical_output_ports_.erase(portIt);
                 logical_output_ports_.push_back(port);
                 EPROSIMA_LOG_INFO(RTCP, "OpenedLogicalPort: " << port);
             }
