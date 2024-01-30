@@ -142,31 +142,31 @@ jobs:
              # WER service is manual by default
              Start-Service WerSvc
 
-      - name: Install OpenSSL
-        uses: eProsima/eprosima-CI/windows/install_openssl@v0
-        with:
-          version: '3.1.1'
+      # - name: Install OpenSSL
+      #   uses: eProsima/eprosima-CI/windows/install_openssl@v0
+      #   with:
+      #     version: '3.1.1'
 
-      - name: Update OpenSSL environment variables
-        run: |
-          # Update the environment
-          if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
-          {
-            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
-          }
-          elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
-          {
-            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
-          }
-          elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
-          {
-            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
-          }
-          else
-          {
-            Write-Error -Message "Cannot find OpenSSL installation."
-            exit 1
-          }
+      # - name: Update OpenSSL environment variables
+      #   run: |
+      #     # Update the environment
+      #     if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
+      #     {
+      #       "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      #     }
+      #     elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
+      #     {
+      #       "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      #     }
+      #     elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
+      #     {
+      #       "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      #     }
+      #     else
+      #     {
+      #       Write-Error -Message "Cannot find OpenSSL installation."
+      #       exit 1
+      #     }
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
@@ -213,151 +213,151 @@ jobs:
           "$Env:ProgramData\chocolatey\lib\tinyxml2\share\cmake;$Env:CMAKE_PREFIX_PATH" |
           Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
-      - name: Install googletest
-        run: |
-          git clone --branch release-1.11.0 https://github.com/google/googletest.git
-          $crt = '-Dgtest_force_shared_crt=ON'
+      # - name: Install googletest
+      #   run: |
+      #     git clone --branch release-1.11.0 https://github.com/google/googletest.git
+      #     $crt = '-Dgtest_force_shared_crt=ON'
 
-          # Show the args
-          EchoArgs -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
-                -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
+      #     # Show the args
+      #     EchoArgs -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
+      #           -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
 
-          # Generate
-          cmake -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
-                -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
+      #     # Generate
+      #     cmake -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
+      #           -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
 
-          # Build and install elevated if required
-          $build = { cmake --build ./build/googletest --target install "$Env:CONFIG_TYPE".split(" ") --verbose }
-          (& $build) | Tee-Object -FilePath gtest.log
+      #     # Build and install elevated if required
+      #     $build = { cmake --build ./build/googletest --target install "$Env:CONFIG_TYPE".split(" ") --verbose }
+      #     (& $build) | Tee-Object -FilePath gtest.log
 
-          # Hint install dir
-          $pattern = "-- Installing:\s+(?<cmake_path>.*)/GTestConfig.cmake"
-          $matches = sls -Path gtest.log -Pattern $pattern
-          $Env:GTest_DIR = ($matches.Matches.Groups | ? name -eq cmake_path).Value
-          ("GTest_DIR=" + $Env:GTest_DIR) | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      #     # Hint install dir
+      #     $pattern = "-- Installing:\s+(?<cmake_path>.*)/GTestConfig.cmake"
+      #     $matches = sls -Path gtest.log -Pattern $pattern
+      #     $Env:GTest_DIR = ($matches.Matches.Groups | ? name -eq cmake_path).Value
+      #     ("GTest_DIR=" + $Env:GTest_DIR) | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
-          # clean up
-          'build', 'googletest', 'gtest.log' | del -Recurse -Force
+      #     # clean up
+      #     'build', 'googletest', 'gtest.log' | del -Recurse -Force
 
-      - name: Update known hosts file for DNS resolver testing
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-        run: |
-          $hostfile = "$Env:SystemRoot\system32\drivers" -replace "\\", "/"
-          $hostfile += "/etc/hosts"
+      # - name: Update known hosts file for DNS resolver testing
+      #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+      #   run: |
+      #     $hostfile = "$Env:SystemRoot\system32\drivers" -replace "\\", "/"
+      #     $hostfile += "/etc/hosts"
 
-          # DNS entries to add
-          $new_entries = @{
-            "localhost.test" = "127.0.0.1", "::1"
-            "www.eprosima.com.test" = "154.56.134.194"
-            "www.acme.com.test" = "216.58.215.164", "2a00:1450:400e:803::2004"
-            "www.foo.com.test" = "140.82.121.4", "140.82.121.3"
-            "acme.org.test" = "ff1e::ffff:efff:1"
-          }
+      #     # DNS entries to add
+      #     $new_entries = @{
+      #       "localhost.test" = "127.0.0.1", "::1"
+      #       "www.eprosima.com.test" = "154.56.134.194"
+      #       "www.acme.com.test" = "216.58.215.164", "2a00:1450:400e:803::2004"
+      #       "www.foo.com.test" = "140.82.121.4", "140.82.121.3"
+      #       "acme.org.test" = "ff1e::ffff:efff:1"
+      #     }
 
-          # Modify the file
-          $mod = { Param([string]$FilePath, [Hashtable]$Entries )
-            $entries.GetEnumerator() |
-              % { $hostname = $_.key; $_.value |
-              % { "{0,-25} {1}" -f $_, $hostname }} |
-              Out-File $filepath -Append
-          }
+      #     # Modify the file
+      #     $mod = { Param([string]$FilePath, [Hashtable]$Entries )
+      #       $entries.GetEnumerator() |
+      #         % { $hostname = $_.key; $_.value |
+      #         % { "{0,-25} {1}" -f $_, $hostname }} |
+      #         Out-File $filepath -Append
+      #     }
 
-          & $mod -FilePath $hostfile -Entries $new_entries
+      #     & $mod -FilePath $hostfile -Entries $new_entries
 
-          # Show the result
-          gc $hostfile
+      #     # Show the result
+      #     gc $hostfile
 
-      - name: Set up libp11 and SoftHSM
-        timeout-minutes: 10
-        continue-on-error: true
-        run: |
-          if(!(Test-Path -Path Env:OPENSSL64_ROOT))
-          {
-            Write-Error -Message "OpenSSL is not set up properly. Check previous steps."
-          }
+      # - name: Set up libp11 and SoftHSM
+      #   timeout-minutes: 10
+      #   continue-on-error: true
+      #   run: |
+      #     if(!(Test-Path -Path Env:OPENSSL64_ROOT))
+      #     {
+      #       Write-Error -Message "OpenSSL is not set up properly. Check previous steps."
+      #     }
 
-          # Install the HSM emulator (required for testing PKCS #11 support)
-          $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi"
-          $msiHSM = "$Env:tmp\SoftHSM2-2.5.0.msi"
-          iwr $urlHSM -OutFile $msiHSM
-          msiexec /i $msiHSM /log "$Env:tmp\SoftHSM2.log" /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
+      #     # Install the HSM emulator (required for testing PKCS #11 support)
+      #     $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi"
+      #     $msiHSM = "$Env:tmp\SoftHSM2-2.5.0.msi"
+      #     iwr $urlHSM -OutFile $msiHSM
+      #     msiexec /i $msiHSM /log "$Env:tmp\SoftHSM2.log" /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
 
-          # move to pkcs11 installation while msiexec installs softhsm2
+      #     # move to pkcs11 installation while msiexec installs softhsm2
 
-          # Build pkcs11 library
-          $deploy_dir = "$Env:ProgramFiles/libp11"
-          git clone https://github.com/OpenSC/libp11.git $deploy_dir
-          $deploy_dir = gi $deploy_dir
+      #     # Build pkcs11 library
+      #     $deploy_dir = "$Env:ProgramFiles/libp11"
+      #     git clone https://github.com/OpenSC/libp11.git $deploy_dir
+      #     $deploy_dir = gi $deploy_dir
 
-          $pwshmodule = gi $Env:VSPWSH
-          Import-Module $pwshmodule
-          Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
-                            -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
+      #     $pwshmodule = gi $Env:VSPWSH
+      #     Import-Module $pwshmodule
+      #     Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
+      #                       -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
 
-          cd $deploy_dir
+      #     cd $deploy_dir
 
-          nmake .\Makefile.mak OPENSSL_DIR="$Env:OPENSSL64_ROOT" BUILD_FOR=WIN64
-          $config = ls -Path "$Env:OPENSSL64_ROOT" -Recurse -Include openssl.cnf;
-          $libp11_path = Join-Path $deploy_dir src
+      #     nmake .\Makefile.mak OPENSSL_DIR="$Env:OPENSSL64_ROOT" BUILD_FOR=WIN64
+      #     $config = ls -Path "$Env:OPENSSL64_ROOT" -Recurse -Include openssl.cnf;
+      #     $libp11_path = Join-Path $deploy_dir src
 
-          # Check softhsm2 installation
-          if (!(sls -Path "$Env:tmp\SoftHSM2.log" -Pattern  "Installation success or error status: 0" -SimpleMatch -Quiet))
-          {
-            Write-Error -Message "SoftHSM2 installation failed."
-          }
+      #     # Check softhsm2 installation
+      #     if (!(sls -Path "$Env:tmp\SoftHSM2.log" -Pattern  "Installation success or error status: 0" -SimpleMatch -Quiet))
+      #     {
+      #       Write-Error -Message "SoftHSM2 installation failed."
+      #     }
 
-          # lead openssl to the right config file
-          $Env:OPENSSL_CONF=$config
+      #     # lead openssl to the right config file
+      #     $Env:OPENSSL_CONF=$config
 
-          # Set up environment: introduce openssl and softhsm2 binaries in the path for the lower check
-          $Env:SOFTHSM2_ROOT = Join-Path "${Env:ProgramFiles(x86)}" SoftHSM2
-          $Env:SOFTHSM2_CONF = (gci -Path $Env:SOFTHSM2_ROOT -R -Filter *.conf | select -First 1).fullname
-          $Env:Path += ($env:Path[-1] -ne ';' ? ';' : $null) + (Join-Path $Env:SOFTHSM2_ROOT bin)
-          $Env:Path += ";" + (Join-Path $Env:SOFTHSM2_ROOT lib)
-          $Env:Path += ";" + (Join-Path $Env:OPENSSL64_ROOT bin)
-          $Env:Path += ";" + $libp11_path
+      #     # Set up environment: introduce openssl and softhsm2 binaries in the path for the lower check
+      #     $Env:SOFTHSM2_ROOT = Join-Path "${Env:ProgramFiles(x86)}" SoftHSM2
+      #     $Env:SOFTHSM2_CONF = (gci -Path $Env:SOFTHSM2_ROOT -R -Filter *.conf | select -First 1).fullname
+      #     $Env:Path += ($env:Path[-1] -ne ';' ? ';' : $null) + (Join-Path $Env:SOFTHSM2_ROOT bin)
+      #     $Env:Path += ";" + (Join-Path $Env:SOFTHSM2_ROOT lib)
+      #     $Env:Path += ";" + (Join-Path $Env:OPENSSL64_ROOT bin)
+      #     $Env:Path += ";" + $libp11_path
 
-          # Set up OpenSSL
-          $module_path = gci -Path $Env:SOFTHSM2_ROOT -Recurse -Include '*.dll' | ? FullName -match 64
-          $contents = gc $config;
+      #     # Set up OpenSSL
+      #     $module_path = gci -Path $Env:SOFTHSM2_ROOT -Recurse -Include '*.dll' | ? FullName -match 64
+      #     $contents = gc $config;
 
-          $header = "# HSM test ancillary configuration",
-                    "openssl_conf = openssl_init"
+      #     $header = "# HSM test ancillary configuration",
+      #               "openssl_conf = openssl_init"
 
-          $footer = "[openssl_init]",
-                    "engines = engine_section",
-                    "",
-                    "[engine_section]",
-                    "pkcs11 = pkcs11_section",
-                    "",
-                    "[pkcs11_section]",
-                    "engine_id = pkcs11",
-                    ("dynamic_path =" + ("$libp11_path/pkcs11.dll" -replace "\\","/")),
-                    ("MODULE_PATH =" + ($module_path.FullName -replace "\\","/")),
-                    "init = 0"
+      #     $footer = "[openssl_init]",
+      #               "engines = engine_section",
+      #               "",
+      #               "[engine_section]",
+      #               "pkcs11 = pkcs11_section",
+      #               "",
+      #               "[pkcs11_section]",
+      #               "engine_id = pkcs11",
+      #               ("dynamic_path =" + ("$libp11_path/pkcs11.dll" -replace "\\","/")),
+      #               ("MODULE_PATH =" + ($module_path.FullName -replace "\\","/")),
+      #               "init = 0"
 
-          $header_line = ($contents | sls '^HOME')[0].LineNumber;
-          ($contents[0..$header_line] + $header +  $contents[$header_line..$contents.count] + $footer) |
-          % { $_.TrimStart() } | Out-File $config -Encoding OEM;
+      #     $header_line = ($contents | sls '^HOME')[0].LineNumber;
+      #     ($contents[0..$header_line] + $header +  $contents[$header_line..$contents.count] + $footer) |
+      #     % { $_.TrimStart() } | Out-File $config -Encoding OEM;
 
-          # Check config file
-          Get-Content $config
+      #     # Check config file
+      #     Get-Content $config
 
-          # Propagate to the other steps using github actions ad hoc files
-          ('LibP11_ROOT_64=' + $libp11_path ),
-          ('OPENSSL_CONF=' + $Env:OPENSSL_CONF),
-          ('SOFTHSM2_ROOT=' + $Env:SOFTHSM2_ROOT),
-          ('SOFTHSM2_CONF=' + $Env:SOFTHSM2_CONF ) |
-                Out-File -Path $Env:GITHUB_ENV -Append -Encoding OEM
+      #     # Propagate to the other steps using github actions ad hoc files
+      #     ('LibP11_ROOT_64=' + $libp11_path ),
+      #     ('OPENSSL_CONF=' + $Env:OPENSSL_CONF),
+      #     ('SOFTHSM2_ROOT=' + $Env:SOFTHSM2_ROOT),
+      #     ('SOFTHSM2_CONF=' + $Env:SOFTHSM2_CONF ) |
+      #           Out-File -Path $Env:GITHUB_ENV -Append -Encoding OEM
 
-          # keep softhsm2-util working in the testing
-          (Join-path $Env:SOFTHSM2_ROOT bin),
-          (Join-path $Env:SOFTHSM2_ROOT lib),
-          $libp11_path | Out-File -Path $Env:GITHUB_PATH -Encoding OEM -Append
+      #     # keep softhsm2-util working in the testing
+      #     (Join-path $Env:SOFTHSM2_ROOT bin),
+      #     (Join-path $Env:SOFTHSM2_ROOT lib),
+      #     $libp11_path | Out-File -Path $Env:GITHUB_PATH -Encoding OEM -Append
 
-          # check if is working
-          openssl engine pkcs11 -t
-          softhsm2-util --show-slots
+      #     # check if is working
+      #     openssl engine pkcs11 -t
+      #     softhsm2-util --show-slots
 
       - name: Prepare colcon workspace
         run: |
