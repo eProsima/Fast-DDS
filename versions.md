@@ -1,13 +1,9 @@
 Forthcoming
 -----------
 
-<<<<<<< HEAD
-Version 2.10.3
-=======
 * Added `non_blocking_send` to TCP Transport.
 
-Version 2.13.0
->>>>>>> b5f8c8adc (TCP non-blocking send (#4237))
+Version 2.10.3
 --------------
 
 * Added the possibility to define a listening port equal to 0 in TCP Transport
