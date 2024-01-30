@@ -570,10 +570,13 @@ bool UDPTransportInterface::send(
                     reinterpret_cast<const char*>(&timeStruct), sizeof(timeStruct));
 #endif // ifndef _WIN32
 
+            // Use a list of const_buffers to send the message
+            std::list<asio::const_buffer> buffers;
+            buffers.push_back(asio::buffer(send_buffer, send_buffer_size));
+
             asio::error_code ec;
             statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
-            bytesSent = getSocketPtr(socket)->send_to(asio::buffer(send_buffer,
-                            send_buffer_size), destinationEndpoint, 0, ec);
+            bytesSent = getSocketPtr(socket)->send_to(buffers, destinationEndpoint, 0, ec);
             if (!!ec)
             {
                 if ((ec.value() == asio::error::would_block) ||
