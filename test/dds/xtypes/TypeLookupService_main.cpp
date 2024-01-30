@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file TypeLookup_main.cpp
+ * @file TypeLookupService_main.cpp
  *
  */
 
-#include "TypeLookupPublisher.h"
-#include "TypeLookupSubscriber.h"
+#include "TypeLookupServicePublisher.h"
+#include "TypeLookupServiceSubscriber.h"
 
 #include <iostream>
 #include <sstream>
@@ -119,13 +119,13 @@ int main(
     {
         switch (args.kind){
             case 1: {
-                eprosima::fastdds::dds::TypeLookupPublisher pub;
+                eprosima::fastdds::dds::TypeLookupServicePublisher pub;
                 return (pub.init(args.known_types) &&
                        pub.wait_discovery(args.expected_matches, args.timeout) &&
                        pub.run(args.samples, args.timeout)) ? 0 : -1;
             }
             case 2: {
-                eprosima::fastdds::dds::TypeLookupSubscriber sub;
+                eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;
                 return (sub.init(args.known_types) &&
                        sub.wait_discovery(args.expected_matches, args.timeout) &&
                        sub.run(args.samples, args.timeout)) ? 0 : -1;

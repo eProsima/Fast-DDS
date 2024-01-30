@@ -37,14 +37,15 @@ set(COMMON_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeBigTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeDepPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeDepTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeNoTypeObjectPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/RTPSDomain.cpp
 )
 
 set(DDS_XTYPES_SOURCE ${COMMON_SOURCE}
-    TypeLookup_main.cpp
-    TypeLookupPublisher.cpp
-    TypeLookupSubscriber.cpp
+    TypeLookupService_main.cpp
+    TypeLookupServicePublisher.cpp
+    TypeLookupServiceSubscriber.cpp
     )    
 
 add_executable(DDSXtypesCommunication ${DDS_XTYPES_SOURCE})
@@ -62,6 +63,7 @@ target_link_libraries(DDSXtypesCommunication fastrtps fastcdr foonathan_memory $
 ###############################################################################
 # Standard tests
 list(APPEND TEST_DEFINITIONS
+    Case0
     Case1
     Case2
     Case3

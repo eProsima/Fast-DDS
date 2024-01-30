@@ -13,10 +13,10 @@
 // limitations under the License.
 
 /**
- * @file TypeLookupPublisher.cpp
+ * @file TypeLookupServicePublisher.cpp
  */
 
-#include "TypeLookupPublisher.h"
+#include "TypeLookupServicePublisher.h"
 
 #include <chrono>
 #include <fstream>
@@ -42,7 +42,7 @@ using namespace eprosima::fastrtps::rtps;
 
 static int PUB_DOMAIN_ID_ = 10;
 
-TypeLookupPublisher::~TypeLookupPublisher()
+TypeLookupServicePublisher::~TypeLookupServicePublisher()
 {
     for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
     {
@@ -71,7 +71,7 @@ TypeLookupPublisher::~TypeLookupPublisher()
     }
 }
 
-void TypeLookupPublisher::create_type_creator_functions()
+void TypeLookupServicePublisher::create_type_creator_functions()
 {
     PUBLISHER_TYPE_CREATOR_FUNCTION(Type1);
     PUBLISHER_TYPE_CREATOR_FUNCTION(Type2);
@@ -176,9 +176,10 @@ void TypeLookupPublisher::create_type_creator_functions()
     PUBLISHER_TYPE_CREATOR_FUNCTION(Type100);
     PUBLISHER_TYPE_CREATOR_FUNCTION(TypeBig);
     PUBLISHER_TYPE_CREATOR_FUNCTION(TypeDep);
+    PUBLISHER_TYPE_CREATOR_FUNCTION(TypeNoTypeObject);
 }
 
-bool TypeLookupPublisher::init(
+bool TypeLookupServicePublisher::init(
         std::vector<std::string> known_types)
 {
     create_type_creator_functions();
@@ -191,7 +192,7 @@ bool TypeLookupPublisher::init(
                     ->create_participant(PUB_DOMAIN_ID_, PARTICIPANT_QOS_DEFAULT, this);
     if (participant_ == nullptr)
     {
-        std::cout << "ERROR TypeLookupSubscriber: create_participant" << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher: create_participant" << std::endl;
         return false;
     }
 
@@ -206,7 +207,7 @@ bool TypeLookupPublisher::init(
     return true;
 }
 
-bool TypeLookupPublisher::create_known_type(
+bool TypeLookupServicePublisher::create_known_type(
         const std::string& type)
 {
     // Find the type creator in the map
@@ -218,18 +219,17 @@ bool TypeLookupPublisher::create_known_type(
     }
     else
     {
-        std::cout << "ERROR TypeLookupSubscriber: init unknown type: " << type << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher: init unknown type: " << type << std::endl;
         return false;
     }
 }
 
 template <typename Type, typename TypePubSubType>
-bool TypeLookupPublisher::create_known_type_impl(
+bool TypeLookupServicePublisher::create_known_type_impl(
         const std::string& type)
 {
     // Create a new PubKnownType for the given type
     PubKnownType a_type;
-    a_type.obj_ = new Type();
     a_type.type_.reset(new TypePubSubType());
     a_type.type_.register_type(participant_);
 
@@ -238,7 +238,7 @@ bool TypeLookupPublisher::create_known_type_impl(
     a_type.publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, this);
     if (a_type.publisher_ == nullptr)
     {
-        std::cout << "ERROR TypeLookupSubscriber: create_publisher: " << type << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher: create_publisher: " << type << std::endl;
         return false;
     }
 
@@ -249,7 +249,7 @@ bool TypeLookupPublisher::create_known_type_impl(
             participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
     if (a_type.topic_ == nullptr)
     {
-        std::cout << "ERROR TypeLookupSubscriber: create_topic: " << type << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher: create_topic: " << type << std::endl;
         return false;
     }
 
@@ -263,7 +263,7 @@ bool TypeLookupPublisher::create_known_type_impl(
     a_type.writer_ = a_type.publisher_->create_datawriter(a_type.topic_, wqos, this);
     if (a_type.writer_ == nullptr)
     {
-        std::cout << "ERROR TypeLookupSubscriber: create_datawriter" << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher: create_datawriter" << std::endl;
         return false;
     }
 
@@ -282,7 +282,7 @@ bool TypeLookupPublisher::create_known_type_impl(
     return true;
 }
 
-bool TypeLookupPublisher::check_registered_type(
+bool TypeLookupServicePublisher::check_registered_type(
         const xtypes::TypeInformationParameter& type_info)
 {
     xtypes::TypeObject type_obj;
@@ -290,7 +290,7 @@ bool TypeLookupPublisher::check_registered_type(
         type_info.type_information.complete().typeid_with_size().type_id(), type_obj);
 }
 
-bool TypeLookupPublisher::wait_discovery(
+bool TypeLookupServicePublisher::wait_discovery(
         uint32_t expected_matches,
         uint32_t timeout)
 {
@@ -303,14 +303,13 @@ bool TypeLookupPublisher::wait_discovery(
                     });
     if (!result)
     {
-        std::cout << "TypeLookupPublisher discovery Timeout with matched = "
-                  << matched_ << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher discovery Timeout with matched = " << matched_ << std::endl;
         return false;
     }
     return true;
 }
 
-bool TypeLookupPublisher::run(
+bool TypeLookupServicePublisher::run(
         uint32_t samples,
         uint32_t timeout)
 {
@@ -346,7 +345,13 @@ bool TypeLookupPublisher::run(
 
     if (!result)
     {
-        std::cout << "TypeLookupPublisher run Timeout" << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher run Timeout" << std::endl;
+
+        if (expected_matches_ != sent_samples_.size())
+        {
+            std::cout << "expected_matches_ = " << expected_matches_ <<
+                " matched_ = " << sent_samples_.size() << std::endl;
+        }
 
         for (auto& sent_sample : sent_samples_)
         {
@@ -361,7 +366,7 @@ bool TypeLookupPublisher::run(
     return true;
 }
 
-void TypeLookupPublisher::on_publication_matched(
+void TypeLookupServicePublisher::on_publication_matched(
         DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
@@ -376,26 +381,31 @@ void TypeLookupPublisher::on_publication_matched(
     }
     else
     {
-        std::cout << "ERROR TypeLookupPublisher: info.current_count_change" << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher: info.current_count_change" << std::endl;
     }
     cv_.notify_all();
 }
 
-void TypeLookupPublisher::on_data_reader_discovery(
+void TypeLookupServicePublisher::on_data_reader_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
         eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info)
 {
+    std::string typeName = info.info.typeName().to_string();
+
     // Check if the type is already created
-    if (nullptr == participant_->find_type(info.info.typeName().to_string()))
+    if (participant_->find_type(typeName) == nullptr)
     {
-        if (check_registered_type(info.info.type_information()))
+        // Check type registration
+        const bool should_be_registered = typeName.find("NoTypeObject") != std::string::npos;
+
+        if ((should_be_registered && check_registered_type(info.info.type_information())) ||
+                (!should_be_registered && !check_registered_type(info.info.type_information())))
         {
-            create_known_types_threads.emplace_back(&TypeLookupPublisher::create_known_type, this,
-                    info.info.typeName().to_string());
+            throw TypeLookupServicePublisherTypeRegistryException(typeName +
+                          (should_be_registered ? " registered" : " not registered"));
         }
-        else
-        {
-            throw TypeLookupPublisherTypeNotRegisteredException(info.info.typeName().to_string());
-        }
+
+        // Create new publisher for the type
+        create_known_types_threads.emplace_back(&TypeLookupServicePublisher::create_known_type, this, typeName);
     }
 }

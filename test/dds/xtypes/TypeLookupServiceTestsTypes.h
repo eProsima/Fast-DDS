@@ -13,17 +13,18 @@
 // limitations under the License.
 
 /**
- * @file TypeLookupTestsTypes.h
+ * @file TypeLookupServiceTestsTypes.h
  *
  */
 
-#ifndef _TYPELOOKUPTEST_TYPES_H_
-#define _TYPELOOKUPTEST_TYPES_H_
+#ifndef _TYPELOOKUPSERVICETEST_TYPES_H_
+#define _TYPELOOKUPSERVICETEST_TYPES_H_
 
 #include "idl/XtypesTestsType1PubSubTypes.h"
 #include "idl/XtypesTestsType2PubSubTypes.h"
 #include "idl/XtypesTestsType3PubSubTypes.h"
 #include "idl/XtypesTestsTypeBigPubSubTypes.h"
 #include "idl/XtypesTestsTypeDepPubSubTypes.h"
+#include "idl/XtypesTestsTypeNoTypeObjectPubSubTypes.h"
 
-#endif /* _TYPELOOKUPTEST_TYPES_H_ */
+#endif /* _TYPELOOKUPSERVICETEST_TYPES_H_ */

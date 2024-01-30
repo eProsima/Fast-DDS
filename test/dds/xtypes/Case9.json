@@ -4,7 +4,7 @@
         {
             "kind": "publisher",
             "samples": "10",
-            "timeout": "10",
+            "timeout": "5",
             "expected_matches": "2",
             "known_types": [
                 "Type1"
@@ -13,7 +13,7 @@
         {
             "kind": "publisher",
             "samples": "10",
-            "timeout": "10",
+            "timeout": "5",
             "expected_matches": "2",
             "known_types": [
                 "Type1"
@@ -22,7 +22,7 @@
         {
             "kind": "subscriber",
             "samples": "10",
-            "timeout": "10",
+            "timeout": "5",
             "expected_matches": "4",
             "known_types": [
                 "Type1",

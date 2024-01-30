@@ -40,17 +40,6 @@
 
 
 namespace eprosima {
-
-namespace fastdds {
-namespace dds {
-namespace builtin {
-
-class TypeLookupManager;
-
-} // namespace builtin
-} // namespace dds
-} // namespace fastdds
-
 namespace fastrtps {
 namespace rtps {
 

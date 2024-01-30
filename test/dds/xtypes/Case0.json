@@ -1,5 +1,5 @@
 {
-    "description": "Case 5: Subscriber knows Type1 and Type2, Publisher knows Type1 and Type2.",
+    "description": "Case 1: Subscriber knows TypeNoTypeObject, Publisher knows Type1.",
     "participants": [
         {
             "kind": "subscriber",
@@ -7,8 +7,7 @@
             "timeout": "5",
             "expected_matches": "2",
             "known_types": [
-                "Type1",
-                "Type2"
+                "TypeNoTypeObject"
             ]
         },
         {
@@ -17,8 +16,7 @@
             "timeout": "5",
             "expected_matches": "2",
             "known_types": [
-                "Type1",
-                "Type2"
+                "Type1"
             ]
         }
     ]

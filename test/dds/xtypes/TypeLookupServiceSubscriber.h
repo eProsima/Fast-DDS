@@ -13,71 +13,73 @@
 // limitations under the License.
 
 /**
- * @file TypeLookupPublisher.h
+ * @file TypeLookupServiceSubscriber.h
  *
  */
 
-#ifndef _TYPELOOKUPTEST_PUBLISHER_H_
-#define _TYPELOOKUPTEST_PUBLISHER_H_
+#ifndef _TYPELOOKUPSERVICETEST_SUBSCRIBER_H_
+#define _TYPELOOKUPSERVICETEST_SUBSCRIBER_H_
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/publisher/PublisherListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-#include "TypeLookupTestsTypes.h"
+#include "TypeLookupServiceTestsTypes.h"
 
+#include <chrono>
 #include <condition_variable>
 #include <functional>
-#include <mutex>
 #include <map>
+#include <mutex>
 #include <future>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class TypeLookupPublisherTypeNotRegisteredException : public std::runtime_error
+class TypeLookupServiceSubscriberTypeRegistryException : public std::runtime_error
 {
 public:
 
-    TypeLookupPublisherTypeNotRegisteredException(
-            std::string type_name)
-        : std::runtime_error("Type: " + type_name + " not registered in TypeLookupPublisher")
+    TypeLookupServiceSubscriberTypeRegistryException(
+            std::string msg)
+        : std::runtime_error("Type: " + msg + " in TypeLookupServiceSubscriber")
     {
     }
 
 };
 
-struct PubKnownType
+struct SubKnownType
 {
     TypeSupport type_;
     void* obj_;
     void* type_sup_;
-    Publisher* publisher_ = nullptr;
-    DataWriter* writer_ = nullptr;
+    Subscriber* subscriber_ = nullptr;
+    DataReader* reader_ = nullptr;
     Topic* topic_ = nullptr;
 
-    std::function<void(void* data, int current_sample)> callback_;
+    std::function<void(void* data)> callback_;
 };
 
 // Define a macro to simplify type registration
-#define PUBLISHER_TYPE_CREATOR_FUNCTION(Type) \
-    type_creator_functions_[#Type] = std::bind(&TypeLookupPublisher::create_known_type_impl<Type, Type ## PubSubType>, \
+#define SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type) \
+    type_creator_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::create_known_type_impl<Type, \
+                    Type ## PubSubType>, \
                     this, \
                     std::placeholders::_1)
 
-
-class TypeLookupPublisher
+class TypeLookupServiceSubscriber
     : public DomainParticipantListener
 {
 public:
 
-    TypeLookupPublisher()
+    TypeLookupServiceSubscriber()
     {
     }
 
-    ~TypeLookupPublisher();
+    ~TypeLookupServiceSubscriber();
 
     void create_type_creator_functions();
 
@@ -102,13 +104,16 @@ public:
             uint32_t samples,
             uint32_t timeout);
 
-    void on_publication_matched(
-            DataWriter* /*writer*/,
-            const PublicationMatchedStatus& info) override;
+    void on_subscription_matched(
+            DataReader* /*reader*/,
+            const SubscriptionMatchedStatus& info) override;
 
-    void on_data_reader_discovery(
+    void on_data_available(
+            DataReader* reader) override;
+
+    void on_data_writer_discovery(
             eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-            eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override;
+            eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
 private:
 
@@ -119,16 +124,18 @@ private:
     unsigned int matched_ = 0;
     unsigned int expected_matches_ = 0;
 
-    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> sent_samples_;
+    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> received_samples_;
 
     std::mutex known_types_mutex_;
-    std::map<std::string, PubKnownType> known_types_;
+    std::map<std::string, SubKnownType> known_types_;
     std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
     std::vector<std::thread> create_known_types_threads;
+
 };
 
 } // dds
 } // fastdds
 } // eprosima
 
-#endif /* _TYPELOOKUPTEST_PUBLISHER_H_ */
+
+#endif /* _TYPELOOKUPSERVICETEST_SUBSCRIBER_H_ */
