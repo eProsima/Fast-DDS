@@ -16,7 +16,11 @@
                 "-DCOMPILE_TOOLS=ON",
                 "-DCOMPILE_EXAMPLES=ON",
                 "-DEPROSIMA_BUILD_TESTS=ON",
-                "-DSYSTEM_TESTS=ON"
+                "-DSYSTEM_TESTS=ON",
+                "-DCMAKE_CXX_FLAGS='-Werror'",
+                "-DTHIRDPARTY_Asio=OFF",
+                "-DTHIRDPARTY_TinyXML2=OFF",
+                "-DTHIRDPARTY_UPDATE=OFF"
             ]
         },
         "googletest-distribution" :
