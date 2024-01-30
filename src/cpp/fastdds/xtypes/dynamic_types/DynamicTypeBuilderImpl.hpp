@@ -111,6 +111,9 @@ private:
     uint32_t next_index_ {0};
 
     TypeDescriptorImpl type_descriptor_;
+
+    std::vector<VerbatimTextDescriptorImpl> verbatim_;
+
 };
 
 } // namespace dds
