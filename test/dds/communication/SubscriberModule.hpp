@@ -84,7 +84,7 @@ public:
 
     bool run(
             bool notexit,
-            uint32_t timeout = 0);
+            uint32_t timeout = 86400000);
 
     bool run_for(
             bool notexit,

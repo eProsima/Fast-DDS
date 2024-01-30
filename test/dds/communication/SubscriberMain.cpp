@@ -45,7 +45,7 @@ int main(
     uint32_t seed = 7800;
     uint32_t samples = 4;
     uint32_t publishers = 1;
-    uint32_t timeout = 0;
+    uint32_t timeout = 86400000; // 24 h in ms
     char* xml_file = nullptr;
     std::string magic;
 

@@ -68,6 +68,7 @@ int main(
     uint32_t wait = 0;
     uint32_t samples = 4;
     uint32_t publishers = 1;
+    uint32_t timeout = 86400000; // 24 hours in ms
     // The first loop could be easily ignored by the reader
     uint32_t publisher_loops = 2;
     uint32_t interval = 250;
@@ -131,6 +132,16 @@ int main(
             }
 
             interval = strtol(argv[arg_count], nullptr, 10);
+        }
+        else if (strcmp(argv[arg_count], "--timeout") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--timeout expects a parameter" << std::endl;
+                return -1;
+            }
+
+            timeout = strtol(argv[arg_count], nullptr, 10);
         }
         else if (strcmp(argv[arg_count], "--magic") == 0)
         {
@@ -197,7 +208,7 @@ int main(
 
         if (subscriber.init(seed, magic))
         {
-            result = subscriber.run(notexit) ? 0 : -1;
+            result = subscriber.run(notexit, timeout) ? 0 : -1;
         }
 
         publisher_thread.join();
