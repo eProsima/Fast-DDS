@@ -6027,8 +6027,7 @@ size_t DynamicData::getCdrSerializedSize(
         case TK_ARRAY:
         {
             uint32_t arraySize = data->type_->get_total_bounds();
-            size_t emptyElementSize =
-                    getEmptyCdrSerializedSize(data->type_->get_element_type().get(), current_alignment);
+
             for (uint32_t idx = 0; idx < arraySize; ++idx)
             {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -6044,7 +6043,8 @@ size_t DynamicData::getCdrSerializedSize(
                 }
                 else
                 {
-                    current_alignment += emptyElementSize;
+                    current_alignment +=
+                        getEmptyCdrSerializedSize(data->type_->get_element_type().get(), current_alignment);
                 }
             }
             break;
