@@ -22,6 +22,7 @@
 
 #include <string>
 
+#include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
@@ -320,6 +321,14 @@ public:
     {
         return flow_controllers_;
     }
+
+    /**
+     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios.
+     *
+     * @param transports Defines the transport configuration scenario to setup.
+     */
+    RTPS_DllAPI void setup_transports(
+            rtps::BuiltinTransports transports);
 
 private:
 

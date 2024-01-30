@@ -608,6 +608,15 @@ protected:
             tinyxml2::XMLElement* elem,
             SubscriberAttributes& subscriber,
             uint8_t ident);
+
+    RTPS_DllAPI static XMLP_ret getXMLEntityFactoryQos(
+            tinyxml2::XMLElement& elem,
+            fastdds::dds::EntityFactoryQosPolicy& entity_factory);
+
+    RTPS_DllAPI static XMLP_ret getXMLBuiltinTransports(
+            tinyxml2::XMLElement* elem,
+            eprosima::fastdds::rtps::BuiltinTransports* bt,
+            uint8_t ident);
 };
 
 } // namespace xmlparser
