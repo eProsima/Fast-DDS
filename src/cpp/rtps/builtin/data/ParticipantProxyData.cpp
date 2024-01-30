@@ -394,7 +394,7 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool should_filter_locators,
         fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, &source_vendor_id](
+    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)

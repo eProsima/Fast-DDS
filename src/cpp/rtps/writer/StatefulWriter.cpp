@@ -485,7 +485,7 @@ bool StatefulWriter::intraprocess_gap(
     RTPSReader* reader = reader_proxy->local_reader();
     if (reader)
     {
-        return reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_seq));
+        return reader->processGapMsg(m_guid, first_seq, SequenceNumberSet_t(last_seq), c_VendorId_eProsima);
     }
 
     return false;
@@ -519,7 +519,8 @@ bool StatefulWriter::intraprocess_heartbeat(
         {
             incrementHBCount();
             returned_value =
-                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness);
+                    reader->processHeartbeatMsg(m_guid, m_heartbeatCount, first_seq, last_seq, true, liveliness,
+                            c_VendorId_eProsima);
         }
     }
 

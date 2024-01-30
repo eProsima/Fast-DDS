@@ -68,7 +68,7 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                     {
                         // TODO(eduponz): This check is done here because an implicit fall through rises a warning.
                         // C++17 included a [[fallthrough]] attribute to avoid this kind of warning.
-                        if (pid == PID_RELATED_ENTITY_GUID)
+                        if (pid == PID_CUSTOM_RELATED_SAMPLE_IDENTITY)
                         {
                             // Ignore custom PID when coming from other vendors except RTI Connext
                             if ((rtps::c_VendorId_eProsima != change.vendor_id) &&
@@ -87,6 +87,13 @@ bool ParameterList::updateCacheChangeFromInlineQos(
                                 return false;
                             }
 
+                            /*
+                             * TODO(eduponz): The data from this PID should be used to filled the
+                             * related_sample_identity field, not the sample_identity one.
+                             * Changing this here implies a behaviour change in the
+                             * RTPS layer, so it is postponed until the next major release.
+                             */
+                            FASTDDS_TODO_BEFORE(3, 0, "Fill related sample identity instead");
                             change.write_params.sample_identity(p.sample_id);
                         }
                         break;

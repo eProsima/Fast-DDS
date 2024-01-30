@@ -857,9 +857,8 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
-                        // Ignore custom PID when coming from other vendors except RTI Connext
-                        if ((c_VendorId_eProsima != source_vendor_id) &&
-                                (fastdds::rtps::c_VendorId_rti_connext != source_vendor_id))
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != source_vendor_id)
                         {
                             EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
                                     "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
@@ -971,8 +970,9 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
                     {
-                        // Ignore custom PID when coming from other vendors
-                        if (c_VendorId_eProsima != source_vendor_id)
+                        // Ignore custom PID when coming from other vendors except RTI Connext
+                        if ((c_VendorId_eProsima != source_vendor_id) &&
+                                (fastdds::rtps::c_VendorId_rti_connext != source_vendor_id))
                         {
                             EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
                                     "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);

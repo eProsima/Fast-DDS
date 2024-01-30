@@ -22,6 +22,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
@@ -663,6 +664,218 @@ TEST(BuiltinDataSerializationTests, other_vendor_parameter_list_with_custom_pids
         reader_pdata.networkConfiguration(0);
         reader_read(data_buffer, buffer_length, reader_pdata);
         ASSERT_EQ(reader_pdata.networkConfiguration(), 0u);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
+}
+
+// Check interoperability of compatible custom PIDs when vendor ID is RTI Connext
+TEST(BuiltinDataSerializationTests, rti_parameter_list_with_custom_pids)
+{
+    /* Convenient functions to group code */
+    auto participant_read = [](octet* buffer, uint32_t buffer_length, ParticipantProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
+
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, true, network, false, false,
+                        fastdds::rtps::c_VendorId_rti_connext)));
+            };
+
+    auto writer_read = [](octet* buffer, uint32_t buffer_length, WriterProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
+
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false,
+                        fastdds::rtps::c_VendorId_rti_connext)));
+            };
+
+    auto reader_read = [](octet* buffer, uint32_t buffer_length, ReaderProxyData& out) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
+
+                EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, false,
+                        fastdds::rtps::c_VendorId_rti_connext)));
+            };
+
+    auto update_cache_change =
+            [](CacheChange_t& change, octet* buffer, uint32_t buffer_length, uint32_t qos_size) -> void
+            {
+                CDRMessage_t msg(0);
+                msg.init(buffer, buffer_length);
+                msg.length = msg.max_size;
+
+                EXPECT_TRUE(fastdds::dds::ParameterList::updateCacheChangeFromInlineQos(change, &msg, qos_size));
+            };
+
+    /* Custom PID tests */
+
+    // PID_PERSISTENCE_GUID
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_PERSISTENCE_GUID
+            0x02, 0x80, 16, 0,
+            0x52, 0x54, 0x49, 0x5F, 0x47, 0x55, 0x49, 0x44, 0x5F, 0x54, 0x45, 0x53, 0x54, 0x50, 0x49, 0x44,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // Define guid for checking the read data
+        GuidPrefix_t prefix;
+        prefix.value[0] = 0x52;
+        prefix.value[1] = 0x54;
+        prefix.value[2] = 0x49;
+        prefix.value[3] = 0x5F;
+        prefix.value[4] = 0x47;
+        prefix.value[5] = 0x55;
+        prefix.value[6] = 0x49;
+        prefix.value[7] = 0x44;
+        prefix.value[8] = 0x5F;
+        prefix.value[9] = 0x54;
+        prefix.value[10] = 0x45;
+        prefix.value[11] = 0x53;
+
+        EntityId_t entity_id;
+        entity_id.value[0] = 0x54;
+        entity_id.value[1] = 0x50;
+        entity_id.value[2] = 0x49;
+        entity_id.value[3] = 0x44;
+
+        GUID_t guid(prefix, entity_id);
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_pdata.set_persistence_guid(c_Guid_Unknown);
+        participant_read(data_buffer, buffer_length, participant_pdata);
+
+        ASSERT_EQ(participant_pdata.get_persistence_guid(), c_Guid_Unknown);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_pdata.persistence_guid(c_Guid_Unknown);
+        writer_read(data_buffer, buffer_length, writer_pdata);
+        ASSERT_EQ(writer_pdata.persistence_guid(), guid);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_read(data_buffer, buffer_length, reader_pdata);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        update_cache_change(change, data_buffer, buffer_length, 0);
+    }
+
+    // PID_CUSTOM_RELATED_SAMPLE_IDENTITY
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_CUSTOM_RELATED_SAMPLE_IDENTITY
+            0x0f, 0x80, 24, 0,
+            // Writer guid
+            0x52, 0x54, 0x49, 0x5F, 0x47, 0x55, 0x49, 0x44, 0x5F, 0x54, 0x45, 0x53, 0x54, 0x50, 0x49, 0x44,
+            // Sequence number high
+            0x00, 0x00, 0x00, 0x00,
+            // Sequence number low
+            0x05, 0x00, 0x00, 0x00,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // Define sample identity for checking the read data
+        GuidPrefix_t prefix;
+        prefix.value[0] = 0x52;
+        prefix.value[1] = 0x54;
+        prefix.value[2] = 0x49;
+        prefix.value[3] = 0x5F;
+        prefix.value[4] = 0x47;
+        prefix.value[5] = 0x55;
+        prefix.value[6] = 0x49;
+        prefix.value[7] = 0x44;
+        prefix.value[8] = 0x5F;
+        prefix.value[9] = 0x54;
+        prefix.value[10] = 0x45;
+        prefix.value[11] = 0x53;
+
+        EntityId_t entity_id;
+        entity_id.value[0] = 0x54;
+        entity_id.value[1] = 0x50;
+        entity_id.value[2] = 0x49;
+        entity_id.value[3] = 0x44;
+
+        GUID_t guid(prefix, entity_id);
+
+        SequenceNumber_t sn = {0, 5};
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_read(data_buffer, buffer_length, writer_pdata);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_read(data_buffer, buffer_length, reader_pdata);
+
+        // CacheChange_t check
+        CacheChange_t change;
+        change.vendor_id = fastdds::rtps::c_VendorId_rti_connext;
+        GuidPrefix_t init_prefix;
+        prefix.value[0] = 1;
+        change.write_params.sample_identity().writer_guid(GUID_t(init_prefix, 1));
+        change.write_params.sample_identity().sequence_number() = {2, 0};
+        update_cache_change(change, data_buffer, buffer_length, 0);
+        ASSERT_EQ(change.write_params.sample_identity().writer_guid(), guid);
+        ASSERT_EQ(change.write_params.sample_identity().sequence_number(), sn);
+    }
+
+    // PID_DISABLE_POSITIVE_ACKS
+    {
+        octet data_buffer[] =
+        {
+            // Encapsulation
+            0x00, 0x03, 0x00, 0x00,
+            // PID_DISABLE_POSITIVE_ACKS
+            0x05, 0x80, 4, 0,
+            1, 0, 0, 0,
+            // PID_SENTINEL
+            0x01, 0, 0, 0
+        };
+
+        uint32_t buffer_length = static_cast<uint32_t>(sizeof(data_buffer));
+
+        // ParticipantProxyData check
+        ParticipantProxyData participant_pdata(RTPSParticipantAllocationAttributes{});
+        participant_read(data_buffer, buffer_length, participant_pdata);
+
+        // WriterProxyData check
+        WriterProxyData writer_pdata(max_unicast_locators, max_multicast_locators);
+        writer_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        writer_read(data_buffer, buffer_length, writer_pdata);
+        ASSERT_EQ(writer_pdata.m_qos.m_disablePositiveACKs.enabled, true);
+
+        // ReaderProxyData check
+        ReaderProxyData reader_pdata(max_unicast_locators, max_multicast_locators);
+        reader_pdata.m_qos.m_disablePositiveACKs.enabled = false;
+        reader_read(data_buffer, buffer_length, reader_pdata);
+        ASSERT_EQ(reader_pdata.m_qos.m_disablePositiveACKs.enabled, true);
 
         // CacheChange_t check
         CacheChange_t change;
