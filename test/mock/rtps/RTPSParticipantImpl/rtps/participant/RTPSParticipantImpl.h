@@ -26,6 +26,7 @@
 #include <gmock/gmock.h>
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -46,15 +47,6 @@
 
 namespace eprosima {
 namespace fastdds {
-
-namespace dds {
-namespace builtin {
-
-class TypeLookupManager;
-
-} // namespace builtin
-} // namespace dds
-
 namespace rtps {
 
 class Endpoint;

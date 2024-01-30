@@ -14,10 +14,8 @@
 
 file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQLFilter/*.cpp)
 
-set(TYPELOOKUPTESTS_SOURCE TypeLookupTests.cpp
+set(TYPELOOKUPSERVICETESTS_SOURCE TypeLookupServiceTests.cpp
 ${DDSSQLFILTER_SOURCES}
-    # ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
-    # ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
@@ -81,9 +79,12 @@ ${DDSSQLFILTER_SOURCES}
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/utils/QosConverters.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ReaderProxyData.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/WriterProxyData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
@@ -91,7 +92,7 @@ ${DDSSQLFILTER_SOURCES}
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPool.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/history/TopicPayloadPoolRegistry.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
+    # ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLDynamicParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLElementParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/xmlparser/XMLParser.cpp
@@ -105,18 +106,6 @@ ${DDSSQLFILTER_SOURCES}
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
-    
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
-    src/cpp/fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/endpoint/EDPSimple.cpp
-
-    # ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/PDP.cpp
-    # ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/PDPSimple.cpp
-
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ReaderProxyData.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/WriterProxyData.cpp
-
 )
 
 if (FASTDDS_STATISTICS)
@@ -130,13 +119,13 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
         )
 
-    list(APPEND TYPELOOKUPTESTS_SOURCE ${statistics_sources})
+    list(APPEND TYPELOOKUPSERVICETESTS_SOURCE ${statistics_sources})
 
 endif()
 
 # External sources
 if(TINYXML2_SOURCE_DIR)
-    list(APPEND TYPELOOKUPTESTS_SOURCE
+    list(APPEND TYPELOOKUPSERVICETESTS_SOURCE
         ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
         )
 endif()
@@ -152,15 +141,14 @@ endif()
 
 if(ANDROID)
     if (ANDROID_NATIVE_API_LEVEL LESS 24)
-        list(APPEND TYPELOOKUPTESTS_SOURCE
+        list(APPEND TYPELOOKUPSERVICETESTS_SOURCE
             ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
             )
     endif()
 endif()
 
-
-add_executable(TypeLookupTests ${TYPELOOKUPTESTS_SOURCE})
-target_compile_definitions(TypeLookupTests PRIVATE
+add_executable(TypeLookupServiceTests ${TYPELOOKUPSERVICETESTS_SOURCE})
+target_compile_definitions(TypeLookupServiceTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     ASIO_DISABLE_VISIBILITY
@@ -170,15 +158,11 @@ target_compile_definitions(TypeLookupTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${WIN32}>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
     )
-target_include_directories(TypeLookupTests PUBLIC
+target_include_directories(TypeLookupServiceTests PUBLIC
     ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TypeObjectRegistry
-
-
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/BuiltinProtocols
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/DataSharingPayloadPool
-    # ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDP
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PDPSimple
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomain
@@ -191,11 +175,6 @@ target_include_directories(TypeLookupTests PUBLIC
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-
-    # ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
-    # ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
-
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TimedEvent
@@ -206,20 +185,14 @@ target_include_directories(TypeLookupTests PUBLIC
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WLP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/XMLEndPointParser
-
-
-
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
-
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${THIRDPARTY_BOOST_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 
-
-target_link_libraries(TypeLookupTests fastcdr foonathan_memory
+target_link_libraries(TypeLookupServiceTests fastcdr foonathan_memory
     ${TINYXML2_LIBRARY}
     GTest::gmock
     ${CMAKE_DL_LIBS}
@@ -227,11 +200,10 @@ target_link_libraries(TypeLookupTests fastcdr foonathan_memory
     )
 
 if(QNX)
-    target_link_libraries(TypeLookupTests socket)
+    target_link_libraries(TypeLookupServiceTests socket)
 endif()
 if(MSVC OR MSVC_IDE)
-    target_link_libraries(TypeLookupTests iphlpapi Shlwapi ws2_32)
+    target_link_libraries(TypeLookupServiceTests iphlpapi Shlwapi ws2_32)
 endif()
 
-
-gtest_discover_tests(TypeLookupTests)
+gtest_discover_tests(TypeLookupServiceTests)

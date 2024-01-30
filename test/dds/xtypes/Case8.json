@@ -2,18 +2,18 @@
     "description": "Case 8: Subscriber from Type1, Publisher knows Type1...Type100 ",
     "participants": [
         {
-            "kind": "subscriber",
+            "kind": "publisher",
             "samples": "3",
-            "timeout": "10",
+            "timeout": "5",
             "expected_matches": "100",
             "known_types": [
                 "Type1"
             ]
         },
         {
-            "kind": "publisher",
+            "kind": "subscriber",
             "samples": "3",
-            "timeout": "10",
+            "timeout": "5",
             "expected_matches": "100",
             "known_types": [
                 "Type1",

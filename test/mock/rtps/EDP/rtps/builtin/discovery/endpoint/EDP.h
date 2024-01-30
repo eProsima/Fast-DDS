@@ -35,18 +35,6 @@ class EDP
 {
 public:
 
-    EDP()
-    {
-    }
-
-    EDP(
-            PDP* p,
-            RTPSParticipantImpl* part)
-    {
-        mp_PDP = p;
-        mp_RTPSParticipant = part;
-    }
-
     virtual ~EDP()
     {
 
@@ -112,14 +100,6 @@ public:
                 const GUID_t& participant_guid,
                 const GUID_t& reader_guid));
 
-    MOCK_METHOD0(get_temporary_writer_proxies_pool, ProxyPool<WriterProxyData>& ());
-
-    MOCK_METHOD0(get_temporary_reader_proxies_pool, ProxyPool<ReaderProxyData>& ());
-
-    MOCK_METHOD2(pairing_writer_proxy_with_any_local_reader, bool(const GUID_t&, WriterProxyData*));
-
-    MOCK_METHOD2(pairing_reader_proxy_with_any_local_writer, bool(const GUID_t&, ReaderProxyData*));
-
 #if HAVE_SECURITY
     MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer,
             const GUID_t& remote_participant_guid, ReaderProxyData & rdata));
@@ -148,9 +128,6 @@ public:
     }
 
 #endif // if HAVE_SECURITY
-
-    eprosima::fastdds::rtps::RTPSParticipantImpl* mp_RTPSParticipant;
-    eprosima::fastdds::rtps::PDP* mp_PDP;
 };
 
 } //namespace rtps
