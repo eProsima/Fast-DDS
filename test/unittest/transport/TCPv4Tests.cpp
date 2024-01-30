@@ -2009,6 +2009,95 @@ TEST_F(TCPv4Tests, non_blocking_send)
 }
 #endif // ifndef _WIN32
 
+// This test verifies that a server can reconnect to a client after the client has once failed in a
+// openLogicalPort request
+TEST_F(TCPv4Tests, reconnect_after_open_port_failure)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+    uint16_t port = g_default_port;
+    // Create a TCP Server transport
+    TCPv4TransportDescriptor serverDescriptor;
+    serverDescriptor.add_listener_port(port);
+    TCPv4Transport* serverTransportUnderTest = new TCPv4Transport(serverDescriptor);
+    serverTransportUnderTest->init();
+
+    // Create a TCP Client transport
+    TCPv4TransportDescriptor clientDescriptor;
+    MockTCPv4Transport* clientTransportUnderTest = new MockTCPv4Transport(clientDescriptor);
+    clientTransportUnderTest->init();
+
+    // Add initial peer to the client
+    Locator_t initialPeerLocator;
+    initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+    IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+    initialPeerLocator.port = port;
+    IPLocator::setLogicalPort(initialPeerLocator, 7410);
+
+    // Connect client to server
+    EXPECT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
+    SendResourceList client_resource_list;
+    ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list ,initialPeerLocator));
+    ASSERT_FALSE(client_resource_list.empty());
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    auto channel = clientTransportUnderTest->get_channel_resources().begin()->second;
+    
+    // Logical port is opened
+    ASSERT_TRUE(channel->is_logical_port_opened(7410));
+
+    // Disconnect server
+    EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
+    delete serverTransportUnderTest;
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    // Client should have passed logical port to pending list
+    ASSERT_FALSE(channel->is_logical_port_opened(7410));
+    ASSERT_TRUE(channel->is_logical_port_added(7410));
+
+    // Now try normal reconnection
+    serverTransportUnderTest = new TCPv4Transport(serverDescriptor);
+    serverTransportUnderTest->init();
+    ASSERT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
+    clientTransportUnderTest->send(nullptr, 0, channel, initialPeerLocator); // connect()
+
+    // Logical port is opened (moved from pending list)
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    ASSERT_TRUE(channel->is_logical_port_opened(7410));
+
+    // Disconnect server
+    EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
+    delete serverTransportUnderTest;
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    // Client should have passed logical port to pending list
+    ASSERT_FALSE(channel->is_logical_port_opened(7410));
+    ASSERT_TRUE(channel->is_logical_port_added(7410));
+
+    // Now try reconnect the server and close server's input channel before client's open logical
+    // port request, and then delete server and reconnect
+    serverTransportUnderTest = new TCPv4Transport(serverDescriptor);
+    serverTransportUnderTest->init();
+    ASSERT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
+    EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
+    clientTransportUnderTest->send(nullptr, 0, channel, initialPeerLocator); // connect()
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    delete serverTransportUnderTest;
+    ASSERT_FALSE(channel->is_logical_port_opened(7410));
+    ASSERT_TRUE(channel->is_logical_port_added(7410));
+
+    // Now try normal reconnection
+    serverTransportUnderTest = new TCPv4Transport(serverDescriptor);
+    serverTransportUnderTest->init();
+    ASSERT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
+    clientTransportUnderTest->send(nullptr, 0, channel, initialPeerLocator); // connect()
+
+    // Logical port is opened (moved from pending list)
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    ASSERT_TRUE(channel->is_logical_port_opened(7410));
+
+    // Clear test
+    EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
+    delete serverTransportUnderTest;
+    delete clientTransportUnderTest;
+}
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
