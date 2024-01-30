@@ -21,6 +21,8 @@
 #define TYPELOOKUP_REPLY_LISTENER_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
+
 
 namespace eprosima {
 namespace fastrtps {
@@ -70,7 +72,7 @@ public:
      */
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const  change) override;
+            const fastrtps::rtps::CacheChange_t* const change) override;
 
 private:
 
@@ -81,9 +83,39 @@ private:
     fastrtps::types::TypeObjectFactory* factory_;
 };
 
+class TypeLookupReplyWListener : public fastrtps::rtps::WriterListener
+{
+public:
+
+    /**
+     * @brief Constructor
+     * @param pwlp Pointer to the writer liveliness protocol
+     */
+    TypeLookupReplyWListener(
+            TypeLookupManager* pwlp);
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~TypeLookupReplyWListener() override;
+
+    void onWriterChangeReceivedByAll(
+            fastrtps::rtps::RTPSWriter*,
+            fastrtps::rtps::CacheChange_t* change) override;
+
+private:
+
+    //! A pointer to the typelookup manager
+    TypeLookupManager* tlm_;
+
+    //! A pointer to the TypeObject factory.
+    fastrtps::types::TypeObjectFactory* factory_;
+
+};
+
 } /* namespace builtin */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* TYPELOOKUP_REPLY_LISTENER_HPP_*/
