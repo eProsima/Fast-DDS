@@ -162,8 +162,8 @@ TypeLookupRequestWListener::~TypeLookupRequestWListener()
 }
 
 void TypeLookupRequestWListener::onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change)
+        fastrtps::rtps::RTPSWriter*,
+        fastrtps::rtps::CacheChange_t* change)
 {
     tlm_->request_cache_change_acked(change);
 }

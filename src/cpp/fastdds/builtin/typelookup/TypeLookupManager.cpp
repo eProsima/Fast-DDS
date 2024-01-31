@@ -716,7 +716,7 @@ void TypeLookupManager::request_cache_change_acked(
 }
 
 void TypeLookupManager::reply_cache_change_acked(
-fastrtps::rtps::CacheChange_t* change)
+        fastrtps::rtps::CacheChange_t* change)
 {
     builtin_reply_writer_history_->remove_change(change);
 }

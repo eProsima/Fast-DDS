@@ -128,8 +128,8 @@ TypeLookupReplyWListener::~TypeLookupReplyWListener()
 }
 
 void TypeLookupReplyWListener::onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change)
+        fastrtps::rtps::RTPSWriter*,
+        fastrtps::rtps::CacheChange_t* change)
 {
     tlm_->reply_cache_change_acked(change);
 }
