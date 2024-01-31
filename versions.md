@@ -2,7 +2,7 @@ Forthcoming
 -----------
 
 * Rename project to `fastdds`.
-* Rename to `FASTDDS_DEFAULT_PROFILES_FILE` and `FASTDDS_DEFAULT_PROFILES` environment variables when loading XML profiles.
+* Rename environment variable to `FASTDDS_DEFAULT_PROFILES_FILE` and rename default XML profiles file to `FASTDDS_DEFAULT_PROFILES`.
 * Remove API marked as deprecated.
 * Added `non_blocking_send` to TCP Transport.
 
@@ -27,7 +27,7 @@ Version 2.12.0
 * Exposed custom payload pool on DDS endpoints declaration
 * Processing environment variables on XML text
 * Upgrade to support Fast CDR v2.0.0.
-  Default encoding is XCDRv1 to maintain interoperability with previous Fast-DDS versions.
+  Default encoding is XCDRv1 to maintain interoperability with previous Fast DDS versions.
   Some concerns:
     - Data type source code generated with Fast DDS-Gen v2 should be regenerated using Fast DDS-Gen v3.
     - **API break**. Changed a `MEMBER_INVALID` identifier from a `#define` to a `constexpr`.

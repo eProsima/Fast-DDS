@@ -20,11 +20,11 @@
 
 <div class="badges" align="center">
     <a href="https://www.fiware.org/developers/catalogue/"><img alt="FIWARE Robotics" src="https://nexus.lab.fiware.org/static/badges/chapters/robotics.svg"/></a>
-    <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/github/license/eProsima/Fast-RTPS.svg"/></a>
-    <a href="https://github.com/eProsima/Fast-RTPS/releases"><img alt="Releases" src="https://img.shields.io/github/v/release/eProsima/Fast-RTPS?sort=semver"/></a>
-    <a href="https://github.com/eProsima/Fast-RTPS/issues"><img alt="Issues" src="https://img.shields.io/github/issues/eProsima/Fast-RTPS.svg"/></a>
-    <a href="https://github.com/eProsima/Fast-RTPS/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/eProsima/Fast-RTPS.svg"/></a>
-    <a href="https://github.com/eProsima/Fast-RTPS/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/eProsima/Fast-RTPS.svg"/></a>
+    <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/github/license/eProsima/Fast-DDS.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/releases"><img alt="Releases" src="https://img.shields.io/github/v/release/eProsima/Fast-DDS?sort=semver"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/issues"><img alt="Issues" src="https://img.shields.io/github/issues/eProsima/Fast-DDS.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/eProsima/Fast-DDS.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/eProsima/Fast-DDS.svg"/></a>
     <a href="https://eprosima-fast-rtps.readthedocs.io"><img alt="Documentation badge" src="https://img.shields.io/readthedocs/eprosima-fast-rtps.svg"/></a>
     <br>
     <a href=""><img alt="Status" src="https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg"/></a>
@@ -103,7 +103,7 @@ See the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/Q
 
 ## Quick Demo
 
-eProsima provides the eProsima Fast DDS Suite Docker image for those who want a quick demonstration of Fast-DDS running on an Ubuntu platform.
+eProsima provides the eProsima Fast DDS Suite Docker image for those who want a quick demonstration of Fast DDS running on an Ubuntu platform.
 It can be downloaded from [eProsima's downloads page](https://eprosima.com/index.php/downloads-all).
 
 This Docker image was built for Ubuntu 20.04 (Focal Fossa).

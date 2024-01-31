@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-x',
         '--xml_file',
-        help='A Fast-RTPS XML configuration file',
+        help='A Fast DDS XML configuration file',
         required=False
     )
     parser.add_argument(
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         '-d',
         '--data_sharing',
         choices=['on', 'off'],
-        help='Explicitly enable/disable data sharing. (Defaults: Fast-DDS default settings)',
+        help='Explicitly enable/disable data sharing. (Defaults: Fast DDS default settings)',
         required=False
     )
     parser.add_argument(
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--shared_memory',
         choices=['on', 'off'],
-        help='Explicitly enable/disable shared memory transport. (Defaults: Fast-DDS default settings)',
+        help='Explicitly enable/disable shared memory transport. (Defaults: Fast DDS default settings)',
         required=False
         )
 

@@ -1,4 +1,4 @@
-name: Fast-DDS Windows CI reusable workflow
+name: Fast DDS Windows CI reusable workflow
 
 on:
   workflow_call:

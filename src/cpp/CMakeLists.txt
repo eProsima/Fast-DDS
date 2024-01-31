@@ -488,11 +488,11 @@ if(MSVC OR MSVC_IDE)
     # On installed binaries use manifest to specify dependencies
     if(INSTALLER_PLATFORM AND OPENSSL_FOUND)
 
-        # Get Fast-DDS version suitable manifest format
+        # Get Fast DDS version suitable manifest format
         set(FASTDDS_CANONICAL_VERSION ${fastdds_VERSION})
 
         if( NOT FASTDDS_CANONICAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
-            message(FATAL_ERROR "Fast-DDS version number ${fastdds_VERSION} must include major, minor and patch.")
+            message(FATAL_ERROR "Fast DDS version number ${fastdds_VERSION} must include major, minor and patch.")
         endif()
 
         if( NOT fastdds_VERSION_TWEAK)
@@ -684,7 +684,7 @@ if(LINK_SSL)
         set(FASTDDS_INSTALLER_DEPS_ANCILLARY "\
         function(find_fastdds_deployed_openssl)\n\
             if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
-                message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast-DDS binaries building, ABI issues may arise\")\n\
+                message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast DDS binaries building, ABI issues may arise\")\n\
             endif()\n\
             set(OPENSSL_USE_STATIC_LIBS TRUE)\n\
             set(OPENSSL_ROOT_DIR  \"\${PACKAGE_PREFIX_DIR}/lib/${INSTALLER_PLATFORM}\")\n\

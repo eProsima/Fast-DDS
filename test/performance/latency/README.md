@@ -97,9 +97,9 @@ The utility offers several options:
 | --samples=<number>                  | Number of samples sent in the test. Default is *10000 samples*                                                                             |
 | --domain \<domain_id>               | Set the DDS domain to be used. Default domain is a random one. If testing in separate processes, always set the domain using this argument |
 | --file=<file>                       | File to read the payload demands.                                                                                                          |
-| --data_sharing=[on/off]             | Explicitly enable/disable Data Sharing feature. Fast-DDS default is *auto*                                                                 |
+| --data_sharing=[on/off]             | Explicitly enable/disable Data Sharing feature. Fast DDS default is *auto*                                                                 |
 | --data_load                         | Enables the use of Data Loans feature                                                                                                      |
-| --shared_memory                     | Explicitly enable/disable Shared Memory transport. Fast-DDS default is *on*                                                                |
+| --shared_memory                     | Explicitly enable/disable Shared Memory transport. Fast DDS default is *on*                                                                |
 | --security=[true/false]             | Enable/disable DDS security                                                                                                                |
 | --certs=\<directory>                | Directory with the certificates. Used when security is enable                                                                              |
 
@@ -165,7 +165,7 @@ The python scripts offers several options:
 | -                                   | -                                                                                                                                          |
 | --reliability                       | Set the Reliability QoS of the DDS entities to reliable. Default Reliability is best-effort                                                |
 | --data_loans                        | Enable the use of the loan sample API. Default is disable                                                                                  |
-| --shared_memory [on/off]            | Explicitly enable/disable shared memory transport. Fast-DDS default is *on*                                                                |
+| --shared_memory [on/off]            | Explicitly enable/disable shared memory transport. Fast DDS default is *on*                                                                |
 | --interprocess                      | Publisher and subscriber in separate processes. Default is both in the sample process and using intraprocess communications                |
 | --security                          | Enable security. Default disable                                                                                                           |
 | -n \<number>                        | Number of samples sent in the test. Default is *10000 samples*

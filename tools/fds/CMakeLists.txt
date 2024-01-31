@@ -43,7 +43,7 @@ if (MSVC)
             "${FAST_INCLUDE_DIR}/**/*.hxx"
             )
 
-        source_group("Fast-RTPS Headers" FILES ${ALL_FAST_HEADERS})
+        source_group("Fast DDS Headers" FILES ${ALL_FAST_HEADERS})
 
     endif()
 
@@ -77,7 +77,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX d-${PROJECT_VERSI
 
 # If not isolated integrate
 if(CMAKE_PROJECT_NAME STREQUAL "fastdds" )
-    set(BIN_INSTALL_DIR tools/fds/${BIN_INSTALL_DIR} CACHE PATH "Installation directory for binaries within Fast-DDS")
+    set(BIN_INSTALL_DIR tools/fds/${BIN_INSTALL_DIR} CACHE PATH "Installation directory for binaries within Fast DDS")
 else()
     set(BIN_INSTALL_DIR bin/ CACHE PATH "Installation directory for binaries")
 endif()

@@ -737,7 +737,7 @@ public:
     RTPS_DllAPI ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
-    // DomainParticipant methods specific from Fast-DDS
+    // DomainParticipant methods specific from Fast DDS
 
     /**
      * Register a type in this participant.
