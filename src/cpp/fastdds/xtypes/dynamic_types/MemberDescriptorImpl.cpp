@@ -72,7 +72,7 @@ bool MemberDescriptorImpl::equals(
 {
     return name_ == descriptor.name_ &&
            id_ == descriptor.id_ &&
-           type_ == descriptor.type_ && // TODO(richiware) change when dynamictype has equals.
+           ((!type_ && !descriptor.type_) || (type_ && type_->equals(descriptor.type_))) &&
            default_value_ == descriptor.default_value_ &&
            index_ == descriptor.index_ &&
            label_ == descriptor.label_ &&

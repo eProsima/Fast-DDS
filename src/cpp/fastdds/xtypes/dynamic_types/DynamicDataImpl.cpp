@@ -3655,14 +3655,8 @@ void DynamicDataImpl::serialize(
             TypeKind element_kind {get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                                type_->get_descriptor().element_type()))};
             bool is_primitive {!is_complex_kind(element_kind)};
-            eprosima::fastcdr::Cdr::state dheader_state(cdr);
-
-            if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
-            {
-                // Serialize DHEADER
-                uint32_t dheader {0};
-                cdr.serialize(dheader);
-            }
+            eprosima::fastcdr::Cdr::state dheader_state{!is_primitive ? cdr.allocate_xcdrv2_dheader() :
+                                                        eprosima::fastcdr::Cdr::state{cdr}};
 
             assert(key_to_id_.size() == value_.size());
             cdr << static_cast<uint32_t>(key_to_id_.size());
@@ -3832,15 +3826,9 @@ void DynamicDataImpl::serialize(
                 }
             }
 
-            if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+            if (!is_primitive)
             {
-                auto offset = cdr.get_current_position();
-                eprosima::fastcdr::Cdr::state state_after(cdr);
-                cdr.set_state(dheader_state);
-                size_t dheader = offset - cdr.get_current_position() - (4 + cdr.alignment(sizeof(uint32_t)));
-                cdr.serialize(static_cast<uint32_t>(dheader));
-                cdr.set_state(state_after);
-                //serialized_member_size_ = SERIALIZED_MEMBER_SIZE;
+                cdr.set_xcdrv2_dheader(dheader_state);
             }
 
             break;

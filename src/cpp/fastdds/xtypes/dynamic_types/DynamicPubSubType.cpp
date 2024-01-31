@@ -217,10 +217,10 @@ bool DynamicPubSubType::serialize(
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     //TODO (richiware)
-    //ser.set_encoding_flag(
-    //    data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-    //    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-    //    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+    ser.set_encoding_flag(
+        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
+        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
 
     try
     {

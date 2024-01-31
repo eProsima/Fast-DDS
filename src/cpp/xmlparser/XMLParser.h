@@ -305,12 +305,12 @@ protected:
 
     static fastdds::dds::traits<fastdds::dds::DynamicType>::ref_type parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type builder,
+            fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type& builder,
             fastdds::dds::MemberId mId);
 
     static fastdds::dds::traits<fastdds::dds::DynamicType>::ref_type parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type builder,
+            fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type& builder,
             fastdds::dds::MemberId mId,
             const std::string& values);
 

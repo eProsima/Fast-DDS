@@ -81,17 +81,6 @@ namespace dds {
 using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
-    << << << < HEAD
-    using fastrtps::types::DynamicData_ptr;
-using fastrtps::types::DynamicDataFactory;
-using fastrtps::types::DynamicType_ptr;
-using fastrtps::types::DynamicTypeBuilder_ptr;
-using fastrtps::types::DynamicTypeBuilderFactory;
-using fastrtps::types::TypeDescriptor;
-== == == =
-        using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::xmlparser::XMLProfileManager;
->> >> >> > ab1455f1a (Refs 17138. DynamicTypePtr as shared_ptr alias)
 
 // Mocked TopicDataType for Topic creation tests
 class TopicDataTypeMock : public TopicDataType
@@ -427,7 +416,7 @@ TEST(ParticipantTests, DomainParticipantFactoryLibrarySettings)
 
 TEST(ParticipantTests, DomainParticipantFactoryGetDynamicTypeBuilder)
 {
-    fastrtps::types::DynamicTypeBuilder* type = nullptr;
+    traits<DynamicType>::ref_type type;
     std::string type_name("MyAloneEnumType");
     // Trying to get a Dynamic Type with empty name returns RETCODE_BAD_PARAMETER
     EXPECT_EQ(RETCODE_BAD_PARAMETER,

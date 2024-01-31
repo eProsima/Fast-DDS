@@ -154,7 +154,7 @@ bool DynamicTypeImpl::equals(
 
     if (ret_value &= type_descriptor_.equals(impl->type_descriptor_))
     {
-        if (annotation_.size() == impl->annotation_.size())
+        if (ret_value &= annotation_.size() == impl->annotation_.size())
         {
             for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
             {
@@ -163,22 +163,26 @@ bool DynamicTypeImpl::equals(
         }
 
         ret_value &= member_.size() == impl->member_.size();
-        assert(TK_STRUCTURE == type_descriptor_.kind() ||
+        assert(TK_ANNOTATION == type_descriptor_.kind() ||
+                TK_STRUCTURE == type_descriptor_.kind() ||
                 TK_UNION ==  type_descriptor_.kind() ||
                 0 == member_.size());
-        assert(TK_STRUCTURE == impl->type_descriptor_.kind() ||
+        assert(TK_ANNOTATION == type_descriptor_.kind() ||
+                TK_STRUCTURE == impl->type_descriptor_.kind() ||
                 TK_UNION ==  impl->type_descriptor_.kind() ||
                 0 == impl->member_.size());
-        assert((TK_STRUCTURE != type_descriptor_.kind() &&
-                TK_UNION &&  type_descriptor_.kind()) ||
+        assert((TK_ANNOTATION != type_descriptor_.kind() &&
+                TK_STRUCTURE != type_descriptor_.kind() &&
+                TK_UNION != type_descriptor_.kind()) ||
                 0 < member_.size());
-        assert((TK_STRUCTURE != impl->type_descriptor_.kind() &&
-                TK_UNION &&  impl->type_descriptor_.kind()) ||
+        assert((TK_ANNOTATION != type_descriptor_.kind() &&
+                TK_STRUCTURE != impl->type_descriptor_.kind() &&
+                TK_UNION != impl->type_descriptor_.kind()) ||
                 0 < member_.size());
 
         assert(member_by_name_.size() == members_.size());
         assert(impl->member_by_name_.size() == impl->members_.size());
-        if (member_by_name_.size() == impl->member_by_name_.size())
+        if (ret_value &= member_by_name_.size() == impl->member_by_name_.size())
         {
             auto it = member_by_name_.begin();
             auto impl_it = impl->member_by_name_.begin();
@@ -191,7 +195,7 @@ bool DynamicTypeImpl::equals(
             }
         }
 
-        if (verbatim_.size() == impl->verbatim_.size())
+        if (ret_value &= verbatim_.size() == impl->verbatim_.size())
         {
             for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
             {
