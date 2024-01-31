@@ -59,7 +59,7 @@ TEST(SHMSegmentTests, Writer)
     std::shared_ptr<WriterPool> payload_pool(new WriterPool(history_attr.payloadMaxSize,
             history_attr.maximumReservedCaches));
 
-    RTPSWriter* writer;
+    RTPSWriter* writer = nullptr;
     EXPECT_NO_THROW(writer = RTPSDomain::createRTPSWriter(participant, writer_attr, payload_pool, history));
     // RTPSWriter creation failed, as expected.
     EXPECT_EQ(writer, nullptr);
