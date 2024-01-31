@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _TYPELOOKUPSERVICETEST_TYPES_H_
-#define _TYPELOOKUPSERVICETEST_TYPES_H_
+#ifndef _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_TYPES_H_
+#define _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_TYPES_H_
 
 #include "idl/XtypesTestsType1PubSubTypes.h"
 #include "idl/XtypesTestsType2PubSubTypes.h"
@@ -27,4 +27,4 @@
 #include "idl/XtypesTestsTypeDepPubSubTypes.h"
 #include "idl/XtypesTestsTypeNoTypeObjectPubSubTypes.h"
 
-#endif /* _TYPELOOKUPSERVICETEST_TYPES_H_ */
+#endif /* _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_TYPES_H_ */

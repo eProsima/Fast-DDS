@@ -17,8 +17,20 @@
  *
  */
 
-#ifndef _TYPELOOKUPSERVICETEST_SUBSCRIBER_H_
-#define _TYPELOOKUPSERVICETEST_SUBSCRIBER_H_
+#ifndef _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_SUBSCRIBER_H_
+#define _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_SUBSCRIBER_H_
+
+#include <asio.hpp>
+#include <chrono>
+#include <condition_variable>
+#include <fstream>
+#include <functional>
+#include <future>
+#include <iostream>
+#include <map>
+#include <mutex>
+#include <thread>
+#include <unordered_set>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -27,13 +39,6 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
 #include "TypeLookupServiceTestsTypes.h"
-
-#include <chrono>
-#include <condition_variable>
-#include <functional>
-#include <map>
-#include <mutex>
-#include <future>
 
 namespace eprosima {
 namespace fastdds {
@@ -59,8 +64,6 @@ struct SubKnownType
     Subscriber* subscriber_ = nullptr;
     DataReader* reader_ = nullptr;
     Topic* topic_ = nullptr;
-
-    std::function<void(void* data)> callback_;
 };
 
 // Define a macro to simplify type registration
@@ -100,20 +103,16 @@ public:
             uint32_t expected_matches,
             uint32_t timeout);
 
-    bool run(
-            uint32_t samples,
+    void notify_discovery(
+            std::string type_name,
+            xtypes::TypeInformationParameter type_info);
+
+    bool run_for(
             uint32_t timeout);
 
-    void on_subscription_matched(
-            DataReader* /*reader*/,
-            const SubscriptionMatchedStatus& info) override;
-
-    void on_data_available(
-            DataReader* reader) override;
-
     void on_data_writer_discovery(
-            eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-            eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override;
+            DomainParticipant* /*participant*/,
+            fastrtps::rtps::WriterDiscoveryInfo&& info) override;
 
 private:
 
@@ -124,12 +123,11 @@ private:
     unsigned int matched_ = 0;
     unsigned int expected_matches_ = 0;
 
-    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> received_samples_;
-
     std::mutex known_types_mutex_;
     std::map<std::string, SubKnownType> known_types_;
     std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
     std::vector<std::thread> create_known_types_threads;
+    std::unordered_set<std::string> unique_types_;
 
 };
 
@@ -138,4 +136,4 @@ private:
 } // eprosima
 
 
-#endif /* _TYPELOOKUPSERVICETEST_SUBSCRIBER_H_ */
+#endif /* _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_SUBSCRIBER_H_ */

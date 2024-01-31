@@ -102,19 +102,6 @@ int main(
 
     CommandLineArgs args = parse_args(argc, argv);
 
-    if (args.kind == 0 || args.samples == 0  || args.timeout == 0  ||
-            args.expected_matches == 0 || args.known_types.empty())
-    {
-        std::cout << "Invalid command-line arguments. Usage: " <<
-            "./DDSXtypesCommunication " <<
-            "kind=<publisher/subscriber> " <<
-            "samples=<amount> " <<
-            "expected_matches=<amount> " <<
-            "timeout=<timeout> " <<
-            "known_types=<Type1,Type2,...>" << std::endl;
-        return -1;
-    }
-
     try
     {
         switch (args.kind){
@@ -122,13 +109,13 @@ int main(
                 eprosima::fastdds::dds::TypeLookupServicePublisher pub;
                 return (pub.init(args.known_types) &&
                        pub.wait_discovery(args.expected_matches, args.timeout) &&
-                       pub.run(args.samples, args.timeout)) ? 0 : -1;
+                       pub.run_for(args.timeout)) ? 0 : -1;
             }
             case 2: {
                 eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;
                 return (sub.init(args.known_types) &&
                        sub.wait_discovery(args.expected_matches, args.timeout) &&
-                       sub.run(args.samples, args.timeout)) ? 0 : -1;
+                       sub.run_for(args.timeout)) ? 0 : -1;
             }
             default:
                 std::cout << "Invalid participant type. Use 'publisher' or 'subscriber'." << std::endl;

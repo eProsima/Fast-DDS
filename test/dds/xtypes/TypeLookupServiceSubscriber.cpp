@@ -19,13 +19,6 @@
 
 #include "TypeLookupServiceSubscriber.h"
 
-#include <chrono>
-#include <fstream>
-#include <string>
-#include <thread>
-
-#include <asio.hpp>
-
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -272,13 +265,6 @@ bool TypeLookupServiceSubscriber::create_known_type_impl(
         return false;
     }
 
-    // CREATE CALLBACK
-    a_type.callback_ = [](void* data)
-            {
-                Type* sample = static_cast<Type*>(data);
-                std::cout <<  "index(" << sample->index() << ")" << std::endl;
-            };
-
     {
         std::lock_guard<std::mutex> guard(known_types_mutex_);
         known_types_.emplace(type, a_type);
@@ -296,132 +282,56 @@ bool TypeLookupServiceSubscriber::check_registered_type(
 }
 
 bool TypeLookupServiceSubscriber::wait_discovery(
-        uint32_t expected_matches,
+        uint32_t expected_discoveries,
         uint32_t timeout)
 {
-    expected_matches_ = expected_matches;
+    expected_matches_ = expected_discoveries;
+
     std::unique_lock<std::mutex> lock(mutex_);
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
                     [&]()
                     {
                         return matched_ == expected_matches_;
                     });
+
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServiceSubscriber discovery Timeout with matched = " << matched_ << std::endl;
+        std::cout << "ERROR TypeLookupServiceSubscriber discovery Timeout with matched = " <<
+            matched_ << std::endl;
         return false;
     }
     return true;
 }
 
-bool TypeLookupServiceSubscriber::run(
-        uint32_t samples,
+void TypeLookupServiceSubscriber::notify_discovery(
+        std::string type_name,
+        xtypes::TypeInformationParameter type_info)
+{
+    if (unique_types_.insert(type_name).second)
+    {
+        const bool should_be_registered = type_name.find("NoTypeObject") == std::string::npos;
+        if (should_be_registered && !check_registered_type(type_info))
+        {
+            throw TypeLookupServiceSubscriberTypeRegistryException(type_name +
+                          (should_be_registered ? " registered" : " not registered"));
+        }
+        std::unique_lock<std::mutex> lock(mutex_);
+        ++matched_;
+        cv_.notify_one();
+    }
+}
+
+bool TypeLookupServiceSubscriber::run_for(
         uint32_t timeout)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-    bool result =  cv_.wait_for(
-        lock, std::chrono::seconds(timeout), [&]
-        {
-            if (expected_matches_ != received_samples_.size())
-            {
-                return false;
-            }
-
-            for (auto& received_sample : received_samples_)
-            {
-                if (samples != received_sample.second)
-
-                {
-                    return false;
-                }
-            }
-            return true;
-        });
-
-    if (!result)
-    {
-        std::cout << "ERROR TypeLookupServiceSubscriber run Timeout" << std::endl;
-
-        if (expected_matches_ != received_samples_.size())
-        {
-            std::cout << "expected_matches_ = " << expected_matches_ <<
-                " matched_ = " << received_samples_.size() << std::endl;
-        }
-        for (auto& received_sample : received_samples_)
-        {
-            if (samples != received_sample.second)
-            {
-                std::cout << "From: " << received_sample.first <<
-                    " samples: " << received_sample.second << "/" << samples << std::endl;
-            }
-        }
-
-        return false;
-    }
+    std::this_thread::sleep_for(std::chrono::seconds(timeout));
     return true;
-}
-
-void TypeLookupServiceSubscriber::on_subscription_matched(
-        DataReader* /*reader*/,
-        const SubscriptionMatchedStatus& info)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-    if (info.current_count_change == 1)
-    {
-        ++matched_;
-    }
-    else if (info.current_count_change == -1)
-    {
-        --matched_;
-    }
-    else
-    {
-        std::cout << "ERROR TypeLookupServiceSubscriber: info.current_count_change" << std::endl;
-    }
-    cv_.notify_all();
-}
-
-void TypeLookupServiceSubscriber::on_data_available(
-        DataReader* reader)
-{
-    SampleInfo info;
-    void* sample_data = known_types_[reader->type().get_type_name()].obj_;
-
-    if (reader->take_next_sample(sample_data, &info) == RETCODE_OK)
-    {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
-        {
-            std::cout << "Subscriber " << reader->type().get_type_name() <<
-                " received sample:" << info.sample_identity.sequence_number() << "->";
-            // Call the callback function to process the received data
-            known_types_[reader->type().get_type_name()].callback_(sample_data);
-
-            received_samples_[info.sample_identity.writer_guid()]++;
-            cv_.notify_all();
-        }
-    }
 }
 
 void TypeLookupServiceSubscriber::on_data_writer_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info)
+        DomainParticipant* /*participant*/,
+        fastrtps::rtps::WriterDiscoveryInfo&& info)
 {
-    std::string typeName = info.info.typeName().to_string();
-
-    // Check if the type is already created
-    if (participant_->find_type(typeName) == nullptr)
-    {
-        // Check type registration
-        const bool should_be_registered = typeName.find("NoTypeObject") != std::string::npos;
-
-        if ((should_be_registered && check_registered_type(info.info.type_information())) ||
-                (!should_be_registered && !check_registered_type(info.info.type_information())))
-        {
-            throw TypeLookupServiceSubscriberTypeRegistryException(typeName +
-                          (should_be_registered ? " registered" : " not registered"));
-        }
-
-        // Create new publisher for the type
-        create_known_types_threads.emplace_back(&TypeLookupServiceSubscriber::create_known_type, this, typeName);
-    }
+    create_known_types_threads.emplace_back(&TypeLookupServiceSubscriber::notify_discovery,
+            this, info.info.typeName().to_string(), info.info.type_information());
 }

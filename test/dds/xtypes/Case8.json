@@ -4,17 +4,8 @@
         {
             "kind": "publisher",
             "samples": "3",
-            "timeout": "5",
-            "expected_matches": "100",
-            "known_types": [
-                "Type1"
-            ]
-        },
-        {
-            "kind": "subscriber",
-            "samples": "3",
-            "timeout": "5",
-            "expected_matches": "100",
+            "timeout": "10",
+            "expected_matches": "50",
             "known_types": [
                 "Type1",
                 "Type2",
@@ -65,7 +56,15 @@
                 "Type47",
                 "Type48",
                 "Type49",
-                "Type50",
+                "Type50"
+            ]
+        },
+        {
+            "kind": "subscriber",
+            "samples": "3",
+            "timeout": "10",
+            "expected_matches": "50",
+            "known_types": [
                 "Type51",
                 "Type52",
                 "Type53",

@@ -18,17 +18,6 @@
 
 #include "TypeLookupServicePublisher.h"
 
-#include <chrono>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <string>
-#include <thread>
-#include <future>
-
-#include <asio.hpp>
-
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -267,13 +256,6 @@ bool TypeLookupServicePublisher::create_known_type_impl(
         return false;
     }
 
-    // CREATE CALLBACK
-    a_type.callback_ = [type](void* data, int current_sample)
-            {
-                Type* typed_data = static_cast<Type*>(data);
-                typed_data->index(current_sample);
-            };
-
     {
         std::lock_guard<std::mutex> guard(known_types_mutex_);
         known_types_.emplace(type, a_type);
@@ -291,121 +273,56 @@ bool TypeLookupServicePublisher::check_registered_type(
 }
 
 bool TypeLookupServicePublisher::wait_discovery(
-        uint32_t expected_matches,
+        uint32_t expected_discoveries,
         uint32_t timeout)
 {
-    expected_matches_ = expected_matches;
+    expected_matches_ = expected_discoveries;
+
     std::unique_lock<std::mutex> lock(mutex_);
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
                     [&]()
                     {
                         return matched_ == expected_matches_;
                     });
+
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServicePublisher discovery Timeout with matched = " << matched_ << std::endl;
+        std::cout << "ERROR TypeLookupServicePublisher discovery Timeout with matched = " <<
+            matched_ << std::endl;
         return false;
     }
     return true;
 }
 
-bool TypeLookupServicePublisher::run(
-        uint32_t samples,
+void TypeLookupServicePublisher::notify_discovery(
+        std::string type_name,
+        xtypes::TypeInformationParameter type_info)
+{
+    if (unique_types_.insert(type_name).second)
+    {
+        const bool should_be_registered = type_name.find("NoTypeObject") == std::string::npos;
+        if (should_be_registered && !check_registered_type(type_info))
+        {
+            throw TypeLookupServicePublisherTypeRegistryException(type_name +
+                          (should_be_registered ? " registered" : " not registered"));
+        }
+        std::unique_lock<std::mutex> lock(mutex_);
+        ++matched_;
+        cv_.notify_one();
+    }
+}
+
+bool TypeLookupServicePublisher::run_for(
         uint32_t timeout)
 {
-    std::unique_lock<std::mutex> lock(mutex_);
-    bool result = cv_.wait_for(
-        lock, std::chrono::seconds(timeout), [&]
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            uint32_t current_sample = 0;
-            void* sample = nullptr;
-
-            while (samples > current_sample)
-            {
-                for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
-                {
-                    sample =  it->second.type_.create_data();
-                    it->second.callback_(sample, current_sample);
-
-                    std::cout << "Publisher " << it->second.type_.get_type_name() <<
-                        " writting sample: " << current_sample << std::endl;
-
-                    it->second.writer_->write(sample);
-                    it->second.type_.delete_data(sample);
-
-                    ++sent_samples_[it->second.writer_->guid()];
-
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                }
-                ++current_sample;
-            }
-            return true;
-        });
-
-    if (!result)
-    {
-        std::cout << "ERROR TypeLookupServicePublisher run Timeout" << std::endl;
-
-        if (expected_matches_ != sent_samples_.size())
-        {
-            std::cout << "expected_matches_ = " << expected_matches_ <<
-                " matched_ = " << sent_samples_.size() << std::endl;
-        }
-
-        for (auto& sent_sample : sent_samples_)
-        {
-            if (samples != sent_sample.second)
-            {
-                std::cout << sent_sample.first << "Wrote: "
-                          << sent_sample.second <<  " samples" << std::endl;
-            }
-        }
-        return false;
-    }
+    std::this_thread::sleep_for(std::chrono::seconds(timeout));
     return true;
-}
-
-void TypeLookupServicePublisher::on_publication_matched(
-        DataWriter* /*writer*/,
-        const PublicationMatchedStatus& info)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-    if (info.current_count_change == 1)
-    {
-        ++matched_;
-    }
-    else if (info.current_count_change == -1)
-    {
-        --matched_;
-    }
-    else
-    {
-        std::cout << "ERROR TypeLookupServicePublisher: info.current_count_change" << std::endl;
-    }
-    cv_.notify_all();
 }
 
 void TypeLookupServicePublisher::on_data_reader_discovery(
-        eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info)
+        DomainParticipant* /*participant*/,
+        fastrtps::rtps::ReaderDiscoveryInfo&& info)
 {
-    std::string typeName = info.info.typeName().to_string();
-
-    // Check if the type is already created
-    if (participant_->find_type(typeName) == nullptr)
-    {
-        // Check type registration
-        const bool should_be_registered = typeName.find("NoTypeObject") != std::string::npos;
-
-        if ((should_be_registered && check_registered_type(info.info.type_information())) ||
-                (!should_be_registered && !check_registered_type(info.info.type_information())))
-        {
-            throw TypeLookupServicePublisherTypeRegistryException(typeName +
-                          (should_be_registered ? " registered" : " not registered"));
-        }
-
-        // Create new publisher for the type
-        create_known_types_threads.emplace_back(&TypeLookupServicePublisher::create_known_type, this, typeName);
-    }
+    create_known_types_threads.emplace_back(&TypeLookupServicePublisher::notify_discovery,
+            this, info.info.typeName().to_string(), info.info.type_information());
 }

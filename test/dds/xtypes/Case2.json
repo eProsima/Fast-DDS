@@ -2,23 +2,20 @@
     "description": "Case 2: Subscriber knows Type1 and Type2, Publisher knows Type1.",
     "participants": [
         {
-            "kind": "subscriber",
-            "samples": "10",
-            "timeout": "5",
-            "expected_matches": "2",
-            "known_types": [
-                "Type1",
-                "Type2"
-            ]
-        },
-        {
             "kind": "publisher",
             "samples": "10",
-            "timeout": "5",
-            "expected_matches": "2",
+            "timeout": "3",
+            "expected_matches": "0",
             "known_types": [
                 "Type1"
             ]
+        },
+        {
+            "kind": "subscriber",
+            "samples": "10",
+            "timeout": "3",
+            "expected_matches": "1",
+            "known_types": []
         }
     ]
 }

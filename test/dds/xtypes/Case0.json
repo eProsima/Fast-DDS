@@ -2,22 +2,20 @@
     "description": "Case 1: Subscriber knows TypeNoTypeObject, Publisher knows Type1.",
     "participants": [
         {
-            "kind": "subscriber",
+            "kind": "publisher",
             "samples": "10",
-            "timeout": "5",
-            "expected_matches": "2",
+            "timeout": "3",
+            "expected_matches": "0",
             "known_types": [
                 "TypeNoTypeObject"
             ]
         },
         {
-            "kind": "publisher",
+            "kind": "subscriber",
             "samples": "10",
-            "timeout": "5",
-            "expected_matches": "2",
-            "known_types": [
-                "Type1"
-            ]
+            "timeout": "3",
+            "expected_matches": "1",
+            "known_types": []
         }
     ]
 }
