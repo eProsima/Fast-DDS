@@ -20,10 +20,9 @@
 #include <string>
 #include <thread>
 
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <optionparser.hpp>
+
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "MemoryTestPublisher.h"
 #include "MemoryTestSubscriber.h"

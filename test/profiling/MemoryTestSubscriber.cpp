@@ -21,45 +21,31 @@
 
 #include <thread>
 
-#include <dds/core/LengthUnlimited.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastdds::dds;
 
 using std::cout;
 using std::endl;
 
 MemoryTestSubscriber::MemoryTestSubscriber()
-    : mp_participant(nullptr)
-    , mp_commandpub(nullptr)
-    , mp_datasub(nullptr)
-    , mp_commandsub(nullptr)
-    , disc_count_(0)
-    , comm_count_(0)
-    , data_count_(0)
-    , m_status(0)
-    , n_received(0)
-    , n_samples(0)
-    , m_datasublistener(nullptr)
-    , m_commandpublistener(nullptr)
-    , m_commandsublistener(nullptr)
-    , m_echo(true)
-    , dynamic_data(false)
-    , mp_memory(nullptr)
 {
-    m_datasublistener.mp_up = this;
-    m_commandpublistener.mp_up = this;
-    m_commandsublistener.mp_up = this;
-
-
+    m_datasublistener.up_ = this;
+    m_commandpublistener.up_ = this;
+    m_commandsublistener.up_ = this;
 }
 
 MemoryTestSubscriber::~MemoryTestSubscriber()
 {
-    Domain::removeParticipant(mp_participant);
+    participant_->delete_contained_entities();
 }
 
 bool MemoryTestSubscriber::init(
@@ -68,8 +54,8 @@ bool MemoryTestSubscriber::init(
         bool reliable,
         uint32_t pid,
         bool hostname,
-        const PropertyPolicy& part_property_policy,
-        const PropertyPolicy& property_policy,
+        const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+        const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
         const std::string& sXMLConfigFile,
         uint32_t data_size,
         bool dynamic_types)
@@ -78,61 +64,79 @@ bool MemoryTestSubscriber::init(
     m_echo = echo;
     n_samples = nsam;
     m_data_size = data_size;
-    dynamic_data = dynamic_types;
+    dynamic_data_ = dynamic_types;
 
-    if (dynamic_data) // Dummy type registration
+    if (dynamic_data_) // Dummy type registration
     {
         // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+        DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+        // Create basic builders
+        TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+        type_descriptor->kind(TK_STRUCTURE);
+        type_descriptor->name("MemoryType");
+        DynamicTypeBuilder::_ref_type struct_type_builder(factory->create_type(type_descriptor));
 
         // Add members to the struct.
-        struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(1, "data",
-                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), ::dds::core::LENGTH_UNLIMITED
-                    ));
-        struct_type_builder->set_name("MemoryType");
-
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+        member_descriptor->name("seqnum");
+        struct_type_builder->add_member(member_descriptor);
+        member_descriptor = traits<MemberDescriptor>::make_shared();
+        member_descriptor->type(factory->create_sequence_type(factory->get_primitive_type(eprosima::fastdds::dds::
+                        TK_UINT32), 0)->build());
+        member_descriptor->name("data");
+        struct_type_builder->add_member(member_descriptor);
         m_pDynType = struct_type_builder->build();
-        m_DynType.SetDynamicType(m_pDynType);
     }
 
     // Create RTPSParticipant
     std::string participant_profile_name = "participant_profile";
-    ParticipantAttributes PParam;
-    PParam.domainId = pid % 230;
-    PParam.rtps.setName("Participant_sub");
-    PParam.rtps.properties = part_property_policy;
+    DomainParticipantQos participant_qos;
+    participant_qos.name("MemoryTest_Participant_Subscriber");
+    participant_qos.properties(part_property_policy);
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_participant = Domain::createParticipant(participant_profile_name);
+        participant_ = DomainParticipantFactory::get_instance()->create_participant_with_profile(pid % 230,
+                        participant_profile_name);
     }
     else
     {
-        mp_participant = Domain::createParticipant(PParam);
+        participant_ = DomainParticipantFactory::get_instance()->create_participant(pid % 230, participant_qos);
     }
 
-    if (mp_participant == nullptr)
+    if (nullptr == participant_)
     {
         return false;
     }
 
-    if (dynamic_data)
+    if (dynamic_data_)
     {
-        Domain::registerType(mp_participant, &m_DynType);
+        dynamic_type_support_ = new DynamicPubSubType(m_pDynType);
+        data_type_ = TypeSupport{dynamic_type_support_};
     }
     else
     {
-        Domain::registerType(mp_participant, (TopicDataType*)&memory_t);
+        data_type_ = TypeSupport{new MemoryDataType()};
     }
-    Domain::registerType(mp_participant, (TopicDataType*)&command_t);
+    participant_->register_type(data_type_);
+    participant_->register_type(command_type_);
 
-    // Create Data Subscriber
-    std::string profile_name = "subscriber_profile";
-    SubscriberAttributes SubDataparam;
-    SubDataparam.topic.topicDataType = "MemoryType";
-    SubDataparam.topic.topicKind = NO_KEY;
+    publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
+
+    if (nullptr == publisher_)
+    {
+        return false;
+    }
+
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+
+    if (nullptr == subscriber_)
+    {
+        return false;
+    }
+
     std::ostringstream st;
     st << "MemoryTest_";
     if (hostname)
@@ -140,35 +144,37 @@ bool MemoryTestSubscriber::init(
         st << asio::ip::host_name() << "_";
     }
     st << pid << "_PUB2SUB";
-    SubDataparam.topic.topicName = st.str();
+    data_topic_ = participant_->create_topic(st.str(), "MemoryType", TOPIC_QOS_DEFAULT);
+
+    if (nullptr == data_topic_)
+    {
+        return false;
+    }
+
+    // Create Data Subscriber
+    std::string profile_name = "subscriber_profile";
+    DataReaderQos reader_qos;
     if (reliable)
     {
-        SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     }
-    SubDataparam.properties = property_policy;
-    if (m_data_size > 60000)
-    {
-        SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
+    reader_qos.properties(property_policy);
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        mp_datasub = Domain::createSubscriber(mp_participant, profile_name, &this->m_datasublistener);
+        data_reader_ = subscriber_->create_datareader_with_profile(data_topic_, profile_name, &this->m_datasublistener);
     }
     else
     {
-        mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
+        data_reader_ = subscriber_->create_datareader(data_topic_, reader_qos, &this->m_datasublistener);
     }
 
-    if (mp_datasub == nullptr)
+    if (nullptr == data_reader_)
     {
         return false;
     }
 
     //COMMAND PUBLISHER
-    PublisherAttributes PubCommandParam;
-    PubCommandParam.topic.topicDataType = "TestCommandType";
-    PubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream pct;
     pct << "MemoryTest_Command_";
     if (hostname)
@@ -176,22 +182,33 @@ bool MemoryTestSubscriber::init(
         pct << asio::ip::host_name() << "_";
     }
     pct << pid << "_SUB2PUB";
-    PubCommandParam.topic.topicName = pct.str();
+        << << << < HEAD
+        PubCommandParam.topic.topicName = pct.str();
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     PubCommandParam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
+    == == == =
+            command_pub_topic_ = participant_->create_topic(pct.str(), "TestCommandType", TOPIC_QOS_DEFAULT);
+    >> >> >> > 7092350d 2 (Refs #17138. Refactor test to use DDS API)
 
-    mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-
-    if (mp_commandpub == nullptr)
+    if (nullptr == command_pub_topic_)
     {
         return false;
     }
 
-    SubscriberAttributes SubCommandParam;
-    SubCommandParam.topic.topicDataType = "TestCommandType";
-    SubCommandParam.topic.topicKind = NO_KEY;
+    DataWriterQos writer_qos;
+    writer_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    writer_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    writer_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    command_writer_ = publisher_->create_datawriter(command_pub_topic_, writer_qos, &this->m_commandpublistener);
+
+    if (nullptr == command_writer_)
+    {
+        return false;
+    }
+
     std::ostringstream sct;
     sct << "MemoryTest_Command_";
     if (hostname)
@@ -199,123 +216,120 @@ bool MemoryTestSubscriber::init(
         sct << asio::ip::host_name() << "_";
     }
     sct << pid << "_PUB2SUB";
-    SubCommandParam.topic.topicName = sct.str();
-    SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    command_sub_topic_ = participant_->create_topic(sct.str(), "TestCommandType", TOPIC_QOS_DEFAULT);
 
-    mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-
-    if (mp_commandsub == nullptr)
+    if (nullptr == command_sub_topic_)
     {
         return false;
     }
 
-    if (dynamic_data)
+    DataReaderQos command_reader_qos;
+    command_reader_qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    command_reader_qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    command_reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+
+    command_reader_ = subscriber_->create_datareader(command_sub_topic_, command_reader_qos,
+                    &this->m_commandsublistener);
+
+    if (nullptr == command_reader_)
     {
-        DynamicTypeBuilderFactory::delete_instance();
-        subAttr = mp_datasub->getAttributes();
-        Domain::removeSubscriber(mp_datasub);
-        Domain::unregisterType(mp_participant, "MemoryType"); // Unregister as we will register it later with correct size
+        return false;
     }
 
     return true;
 }
 
-void MemoryTestSubscriber::DataSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& info)
+void MemoryTestSubscriber::DataSubListener::on_subscription_matched(
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(up_->mutex_);
 
-    if (info.status == MATCHED_MATCHING)
+    if (0 < info.current_count_change)
     {
         cout << C_MAGENTA << "Data Sub Matched " << C_DEF << endl;
-        ++mp_up->disc_count_;
     }
     else
     {
         cout << C_MAGENTA << "Data Sub unmatched " << C_DEF << endl;
-        --mp_up->disc_count_;
     }
+    up_->disc_count_ += info.current_count_change;
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    up_->disc_cond_.notify_one();
 }
 
-void MemoryTestSubscriber::CommandPubListener::onPublicationMatched(
-        Publisher* /*pub*/,
-        MatchingInfo& info)
+void MemoryTestSubscriber::CommandPubListener::on_publication_matched(
+        DataWriter*,
+        const PublicationMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(up_->mutex_);
 
-    if (info.status == MATCHED_MATCHING)
+    if (0 < info.current_count_change)
     {
         cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
-        ++mp_up->disc_count_;
     }
     else
     {
         cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << endl;
-        --mp_up->disc_count_;
     }
+    up_->disc_count_ += info.current_count_change;
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    up_->disc_cond_.notify_one();
 }
 
-void MemoryTestSubscriber::CommandSubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& info)
+void MemoryTestSubscriber::CommandSubListener::on_subscription_matched(
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
 {
-    std::unique_lock<std::mutex> lock(mp_up->mutex_);
+    std::unique_lock<std::mutex> lock(up_->mutex_);
 
-    if (info.status == MATCHED_MATCHING)
+    if (0 < info.current_count_change)
     {
         cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
-        ++mp_up->disc_count_;
     }
     else
     {
         cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << endl;
-        --mp_up->disc_count_;
     }
+    up_->disc_count_ += info.current_count_change;
 
     lock.unlock();
-    mp_up->disc_cond_.notify_one();
+    up_->disc_cond_.notify_one();
 }
 
-void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(
-        Subscriber* subscriber)
+void MemoryTestSubscriber::CommandSubListener::on_data_available(
+        DataReader* reader)
 {
     TestCommandType command;
-    if (subscriber->takeNextData(&command, &mp_up->m_sampleinfo))
+    if (RETCODE_OK == reader->take_next_sample(&command, &up_->m_sampleinfo))
     {
         cout << "RCOMMAND: " << command.m_command << endl;
         if (command.m_command == READY)
         {
             cout << "Publisher has new test ready..." << endl;
-            mp_up->mutex_.lock();
-            ++mp_up->comm_count_;
-            mp_up->mutex_.unlock();
-            mp_up->comm_cond_.notify_one();
+            up_->mutex_.lock();
+            ++up_->comm_count_;
+            up_->mutex_.unlock();
+            up_->comm_cond_.notify_one();
         }
         else if (command.m_command == STOP)
         {
             cout << "Publisher has stopped the test" << endl;
-            mp_up->mutex_.lock();
-            ++mp_up->data_count_;
-            mp_up->mutex_.unlock();
-            mp_up->data_cond_.notify_one();
+            up_->mutex_.lock();
+            ++up_->data_count_;
+            up_->mutex_.unlock();
+            up_->data_cond_.notify_one();
         }
         else if (command.m_command == STOP_ERROR)
         {
             cout << "Publisher has canceled the test" << endl;
-            mp_up->m_status = -1;
-            mp_up->mutex_.lock();
-            ++mp_up->data_count_;
-            mp_up->mutex_.unlock();
-            mp_up->data_cond_.notify_one();
+            up_->m_status = -1;
+            up_->mutex_.lock();
+            ++up_->data_count_;
+            up_->mutex_.unlock();
+            up_->data_cond_.notify_one();
         }
         else if (command.m_command == DEFAULT)
         {
@@ -324,26 +338,27 @@ void MemoryTestSubscriber::CommandSubListener::onNewDataMessage(
     }
 }
 
-void MemoryTestSubscriber::DataSubListener::onNewDataMessage(
-        Subscriber* subscriber)
+void MemoryTestSubscriber::DataSubListener::on_data_available(
+        DataReader* reader)
 {
-    if (mp_up->dynamic_data)
+    if (up_->dynamic_data_)
     {
-        subscriber->takeNextData((void*)mp_up->m_DynData, &mp_up->m_sampleinfo);
-        ++mp_up->n_received;
-        if (mp_up->m_echo)
+        reader->take_next_sample(&up_->m_DynData, &up_->m_sampleinfo);
+        ++up_->n_received;
+        if (up_->m_echo)
         {
-            std::cout << "Received data: " << mp_up->m_DynData->get_uint32_value(0)
-                      << "(" << mp_up->n_received << ")" << std::endl;
+            uint32_t seq_num {0};
+            up_->m_DynData->get_uint32_value(seq_num, 0);
+            std::cout << "Received data: " << seq_num << "(" << up_->n_received << ")" << std::endl;
         }
     }
     else
     {
-        subscriber->takeNextData((void*)mp_up->mp_memory, &mp_up->m_sampleinfo);
-        ++mp_up->n_received;
-        if (mp_up->m_echo)
+        reader->take_next_sample((void*)up_->memory_, &up_->m_sampleinfo);
+        ++up_->n_received;
+        if (up_->m_echo)
         {
-            std::cout << "Received data: " << mp_up->mp_memory->seqnum << "(" << mp_up->n_received << ")" << std::endl;
+            std::cout << "Received data: " << up_->memory_->seqnum << "(" << up_->n_received << ")" << std::endl;
         }
     }
 }
@@ -368,34 +383,13 @@ bool MemoryTestSubscriber::test(
     cout << "Preparing test with data size: " << datasize + 4 << endl;
 
     //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
-    if (dynamic_data)
+    if (dynamic_data_)
     {
-        // Create basic builders
-        DynamicTypeBuilder_ptr struct_type_builder(
-            DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
-
-        // Add members to the struct.
-        struct_type_builder->add_member(0, "seqnum",
-                DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-        struct_type_builder->add_member(1, "data",
-                DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                    DynamicTypeBuilderFactory::get_instance()->create_byte_type(), datasize
-                    ));
-        struct_type_builder->set_name("MemoryType");
-
-        m_pDynType = struct_type_builder->build();
-        m_DynType.CleanDynamicType();
-        m_DynType.SetDynamicType(m_pDynType);
-
-        Domain::registerType(mp_participant, &m_DynType);
-
-        mp_datasub = Domain::createSubscriber(mp_participant, subAttr, &m_datasublistener);
-
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
     }
     else
     {
-        mp_memory = new MemoryType(datasize);
+        memory_ = new MemoryType(datasize);
     }
 
     // Finally data matching
@@ -421,7 +415,7 @@ bool MemoryTestSubscriber::test(
     TestCommandType command;
     command.m_command = BEGIN;
     cout << "Testing with data size: " << datasize + 4 << endl;
-    mp_commandpub->write(&command);
+    command_writer_->write(&command);
 
     lock.lock();
     data_cond_.wait(lock, [&]()
@@ -433,15 +427,13 @@ bool MemoryTestSubscriber::test(
 
     cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    if (dynamic_data)
+    if (dynamic_data_)
     {
-        DynamicTypeBuilderFactory::delete_instance();
         DynamicDataFactory::get_instance()->delete_data(m_DynData);
-        subAttr = mp_datasub->getAttributes();
     }
     else
     {
-        delete(mp_memory);
+        delete(memory_);
     }
     if (m_status == -1)
     {
