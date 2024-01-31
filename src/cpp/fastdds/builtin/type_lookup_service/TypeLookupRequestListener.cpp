@@ -427,11 +427,11 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
     reader->getHistory()->remove_change(change);
 }
 
-void TypeLookupRequestListener::onWriterChangeReceivedByAll(
+void TypeLookupRequestWListener::onWriterChangeReceivedByAll(
         fastrtps::rtps::RTPSWriter*,
         fastrtps::rtps::CacheChange_t* change)
 {
-    typelookup_manager_->request_cache_change_acked(change);
+    typelookup_manager_->remove_builtin_request_writer_history_change(change);
 }
 
 } // namespace builtin

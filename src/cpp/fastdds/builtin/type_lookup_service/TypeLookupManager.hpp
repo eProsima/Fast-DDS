@@ -115,7 +115,9 @@ using AsyncGetTypeReaderCallback = std::function<
 class TypeLookupManager
 {
     friend class TypeLookupRequestListener;
+    friend class TypeLookupRequestWListener;
     friend class TypeLookupReplyListener;
+    friend class TypeLookupReplyWListener;
 
 public:
 
@@ -363,6 +365,20 @@ protected:
      */
     bool create_endpoints();
 
+    /**
+     * Removes a change from the builtin_request_writer_history_.
+     * @param change[in] CacheChange_t to be removed.
+     */
+    void remove_builtin_request_writer_history_change(
+            fastrtps::rtps::CacheChange_t* change);
+
+    /**
+     * Removes a change from the builtin_reply_writer_history_.
+     * @param change[in] CacheChange_t to be removed.
+     */
+    void remove_builtin_reply_writer_history_change(
+            fastrtps::rtps::CacheChange_t* change);
+
     //! Pointer to the local RTPSParticipant.
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
 
@@ -398,9 +414,11 @@ protected:
 
     //! Request Listener object.
     TypeLookupRequestListener* request_listener_ = nullptr;
+    TypeLookupRequestWListener* request_wlistener_ = nullptr;
 
     //! Reply Listener object.
     TypeLookupReplyListener* reply_listener_ = nullptr;
+    TypeLookupReplyWListener* reply_wlistener_ = nullptr;
 
     //! Mutex to protect access to temp_reader_proxy_data_ and temp_writer_proxy_data_.
     std::mutex temp_data_lock_;

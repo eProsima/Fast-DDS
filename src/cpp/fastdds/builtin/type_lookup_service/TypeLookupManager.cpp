@@ -97,7 +97,9 @@ TypeLookupManager::~TypeLookupManager()
     delete builtin_reply_reader_history_;
 
     delete reply_listener_;
+    delete reply_wlistener_;
     delete request_listener_;
+    delete request_wlistener_;
 
     delete temp_reader_proxy_data_;
     delete temp_writer_proxy_data_;
@@ -507,6 +509,7 @@ bool TypeLookupManager::create_endpoints()
     // Built-in request writer
     request_listener_ = new TypeLookupRequestListener(this);
     builtin_request_writer_history_ = new WriterHistory(hatt);
+    request_wlistener_ = new TypeLookupRequestWListener(this);
 
     RTPSWriter* req_writer;
     if (participant_->createWriter(
@@ -525,12 +528,15 @@ bool TypeLookupManager::create_endpoints()
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
         delete builtin_request_writer_history_;
         builtin_request_writer_history_ = nullptr;
+        delete request_wlistener_;
+        request_wlistener_ = nullptr;
         return false;
     }
 
     // Built-in reply writer
     reply_listener_ = new TypeLookupReplyListener(this);
     builtin_reply_writer_history_ = new WriterHistory(hatt);
+    reply_wlistener_ = new TypeLookupReplyWListener(this);
 
     RTPSWriter* rep_writer;
     if (participant_->createWriter(
@@ -549,6 +555,8 @@ bool TypeLookupManager::create_endpoints()
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
         delete builtin_reply_writer_history_;
         builtin_reply_writer_history_ = nullptr;
+        delete reply_wlistener_;
+        reply_wlistener_ = nullptr;
         return false;
     }
 
@@ -739,7 +747,7 @@ bool TypeLookupManager::send_impl(
     }
 
     // Serialize the message using the provided PubSubType
-    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     // If serialization was successful, update the change and add it to the WriterHistory
     if (result)
     {
@@ -858,13 +866,13 @@ std::string TypeLookupManager::get_instance_name(
     return "dds.builtin.TOS." + str;
 }
 
-void TypeLookupManager::request_cache_change_acked(
+void TypeLookupManager::remove_builtin_request_writer_history_change(
         fastrtps::rtps::CacheChange_t* change)
 {
     builtin_request_writer_history_->remove_change(change);
 }
 
-void TypeLookupManager::reply_cache_change_acked(
+void TypeLookupManager::remove_builtin_reply_writer_history_change(
         fastrtps::rtps::CacheChange_t* change)
 {
     builtin_reply_writer_history_->remove_change(change);
