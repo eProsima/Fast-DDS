@@ -30,12 +30,13 @@
 
 #include <fastrtps/utils/fixed_size_string.hpp>
 
-#include <stdint.h>
 #include <array>
+#include <bitset>
+#include <cstdint>
+#include <map>
+#include <stdint.h>
 #include <string>
 #include <vector>
-#include <map>
-#include <bitset>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
