@@ -333,7 +333,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             }
         }
 
-        traits<eprosima::fastdds::dds::DynamicType>::ref_type value_type;
+        traits<DynamicType>::ref_type value_type;
         if ((p_root->Attribute(ARRAY_DIMENSIONS) != nullptr) ||
                 (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) ||
                 (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
@@ -720,7 +720,6 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     traits<DynamicTypeBuilder>::ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                            enum_descriptor)};
 
-    MemberId currValue{0};
     for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
             literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))
     {
@@ -731,14 +730,16 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
             return XMLP_ret::XML_ERROR;
         }
 
-        const char* value = literal->Attribute(VALUE);
-        if (value != nullptr)
-        {
+        /* TODO(richiware) Change to set annotation @value
+           const char* value = literal->Attribute(VALUE);
+           if (value != nullptr)
+           {
             currValue = static_cast<uint32_t>(std::atoi(value));
-        }
+           }
+         */
 
         traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
-        md->id(currValue++);
+        md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
         md->name(name);
         type_builder->add_member(md);
     }
@@ -765,8 +766,8 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     const char* name = p_root->Attribute(NAME);
     MemberId mId{0};
 
-    traits<TypeDescriptorImpl>::ref_type structure_descriptor {
-        std::make_shared<TypeDescriptorImpl>(TK_STRUCTURE, name)};
+    traits<TypeDescriptorImpl>::ref_type structure_descriptor {std::make_shared<TypeDescriptorImpl>(TK_STRUCTURE,
+                                                                       name)};
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
@@ -1209,21 +1210,6 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
     {
         if (!isArray)
         {
-            member = factory->get_primitive_type(TK_INT8);
-        }
-        else
-        {
-            std::vector<uint32_t> bounds;
-            dimensionsToArrayBounds(memberArray, bounds);
-            member = factory->create_array_type(
-                factory->get_primitive_type(TK_INT8),
-                bounds)->build();
-        }
-    }
-    else if (strncmp(memberType, INT8, 5) == 0)
-    {
-        if (!isArray)
-        {
             member = factory->get_primitive_type(TK_UINT8);
         }
         else
@@ -1232,6 +1218,21 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
             dimensionsToArrayBounds(memberArray, bounds);
             member = factory->create_array_type(
                 factory->get_primitive_type(TK_UINT8),
+                bounds)->build();
+        }
+    }
+    else if (strncmp(memberType, INT8, 5) == 0)
+    {
+        if (!isArray)
+        {
+            member = factory->get_primitive_type(TK_INT8);
+        }
+        else
+        {
+            std::vector<uint32_t> bounds;
+            dimensionsToArrayBounds(memberArray, bounds);
+            member = factory->create_array_type(
+                factory->get_primitive_type(TK_INT8),
                 bounds)->build();
         }
     }
@@ -1483,7 +1484,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
 
 traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
-        fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type builder,
+        traits<fastdds::dds::DynamicTypeBuilder>::ref_type& builder,
         MemberId mId)
 {
     return parseXMLMemberDynamicType(p_root, builder, mId, "");
@@ -1491,7 +1492,7 @@ traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
 
 traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
-        fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type builder,
+        traits<fastdds::dds::DynamicTypeBuilder>::ref_type& builder,
         MemberId mId,
         const std::string& values)
 {

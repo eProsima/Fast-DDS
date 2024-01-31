@@ -142,11 +142,14 @@ bool TypeDescriptorImpl::equals(
 {
     return kind_ == descriptor.kind_ &&
            name_ == descriptor.name_ &&
-           base_type_ == descriptor.base_type_ && // TODO(richiware) change when dynamictype has equals.
-           discriminator_type_ == descriptor.discriminator_type_ &&
+           ((!base_type_ && !descriptor.base_type_) || (base_type_ && base_type_->equals(descriptor.base_type_))) &&
+           ((!discriminator_type_ && !descriptor.discriminator_type_) ||
+           (discriminator_type_ && discriminator_type_->equals(descriptor.discriminator_type_))) &&
            bound_ == descriptor.bound_ &&
-           element_type_ == descriptor.element_type_ &&
-           key_element_type_ == descriptor.key_element_type_ &&
+           ((!element_type_ && !descriptor.element_type_) ||
+           (element_type_ && element_type_->equals(descriptor.element_type_))) &&
+           ((!key_element_type_ && !descriptor.key_element_type_) ||
+           (key_element_type_ && key_element_type_->equals(descriptor.key_element_type_))) &&
            extensibility_kind_ == descriptor.extensibility_kind_ &&
            is_nested_ == descriptor.is_nested_;
 }

@@ -184,7 +184,7 @@ bool DynamicTypeBuilderImpl::equals(
 
     if (ret_value &= type_descriptor_.equals(impl->type_descriptor_))
     {
-        if (annotation_.size() == impl->annotation_.size())
+        if (ret_value &= annotation_.size() == impl->annotation_.size())
         {
             for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
             {
@@ -212,7 +212,7 @@ bool DynamicTypeBuilderImpl::equals(
 
         assert(member_by_name_.size() == members_.size());
         assert(impl->member_by_name_.size() == impl->members_.size());
-        if (member_by_name_.size() == impl->member_by_name_.size())
+        if (ret_value &= member_by_name_.size() == impl->member_by_name_.size())
         {
             auto it = member_by_name_.begin();
             auto impl_it = impl->member_by_name_.begin();
@@ -379,6 +379,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         {
             dyn_member->get_descriptor().id(next_id_++);
             id_reverter.activate = true;
+            member_id = dyn_member->get_descriptor().id();
+
         }
 
         // Check there is already a member with same id.

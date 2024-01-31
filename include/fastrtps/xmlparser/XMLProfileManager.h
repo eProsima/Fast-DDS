@@ -214,10 +214,10 @@ public:
     //!Add a new dynamic type instance along with its name.
     RTPS_DllAPI static bool insertDynamicTypeByName(
             const std::string& type_name,
-            fastdds::dds::traits<fastdds::dds::DynamicType>::ref_type type);
+            const fastdds::dds::traits<fastdds::dds::DynamicType>::ref_type& type);
 
     RTPS_DllAPI static XMLP_ret getDynamicTypeByName(
-            fastdds::dds::traits<fastdds::dds::DynamicType>::ref_type dynamic_type,
+            fastdds::dds::traits<fastdds::dds::DynamicType>::ref_type& dynamic_type,
             const std::string& type_name);
 
     /**

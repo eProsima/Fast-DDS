@@ -45,28 +45,6 @@ using namespace eprosima::fastdds::dds;
 
 // Ancillary gtest formatters
 
-/*TODO(richiware)
-   void PrintTo(
-        const MemberDescriptor& md,
-        std::ostream* os)
-   {
-    if (os)
-    {
- * os << md;
-    }
-   }
-
-   void PrintTo(
-        const TypeDescriptor& md,
-        std::ostream* os)
-   {
-    if (os)
-    {
- * os << md;
-    }
-   }
- */
-
 using primitive_builder_api = const DynamicTypeBuilder * (DynamicTypeBuilderFactory::* )();
 using primitive_type_api = const DynamicType * (DynamicTypeBuilderFactory::* )();
 
@@ -3279,7 +3257,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     {
         /// Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
-        bool test3 {false};
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
@@ -3305,7 +3282,6 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     {
         /// Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(created_type);
-        bool test3 {false};
         uint32_t payloadSize =
                 static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
         SerializedPayload_t payload(payloadSize);
@@ -5504,77 +5480,107 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(union_data);
 }
 
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum_test)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Enum
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ENUM);
+    type_descriptor->name("MyEnum");
+    DynamicTypeBuilder::_ref_type enum_builder {factory->create_type(type_descriptor)};
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("A");
+    enum_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("B");
+    enum_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("C");
+    enum_builder->add_member(member_descriptor);
+
+
+    // Struct EnumStruct
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("EnumStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(enum_builder->build());
+    member_descriptor->name("my_enum");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Enum
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ENUM);
+    type_descriptor->name("MyEnum");
+    DynamicTypeBuilder::_ref_type enum_builder {factory->create_type(type_descriptor)};
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("A");
+    enum_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("B");
+    enum_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("C");
+    enum_builder->add_member(member_descriptor);
+
+
+    // Alias
+    /*
+       std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(*enum_type, "MyAliasEnum")};
+       std::unique_ptr<const DynamicType> alias_type {alias_builder->build()};
+
+       // Struct AliasStruct
+       std::unique_ptr<DynamicTypeBuilder> struct_alias_builder {factory.create_struct_type()};
+       struct_alias_builder->add_member({0, "my_alias", alias_type.get()});
+       struct_alias_builder->set_name("AliasStruct");
+       std::unique_ptr<const DynamicType> struct_alias_type {struct_alias_builder->build()};
+
+       std::unique_ptr<const DynamicType> type;
+       // TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
+       EXPECT_EQ(*type, *struct_alias_type);
+       EXPECT_TRUE(type->equals(*struct_alias_type));
+     */
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
 /*
-   TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-   {
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Enum
-   std::unique_ptr<DynamicTypeBuilder> enum_builder { factory.create_enum_type()};
-   enum_builder->add_member({0, "A"});
-   enum_builder->add_member({1, "B"});
-   enum_builder->add_member({2, "C"});
-   enum_builder->set_name("MyEnum");
-
-   // Struct EnumStruct
-   std::unique_ptr<DynamicTypeBuilder> es_builder {factory.create_struct_type()};
-   es_builder->add_member({0, "my_enum", enum_builder->build()});
-   es_builder->set_name("EnumStruct");
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   //TODO(richiware) ASSERT_EQ(*type, *es_builder);
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Enum
-   std::unique_ptr<DynamicTypeBuilder> enum_builder { factory.create_enum_type()};
-   enum_builder->add_member({0, "A"});
-   enum_builder->add_member({1, "B"});
-   enum_builder->add_member({2, "C"});
-   enum_builder->set_name("MyEnum");
-   std::unique_ptr<const DynamicType> enum_type {enum_builder->build()};
-
-   // Alias
-   std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(*enum_type, "MyAliasEnum")};
-   std::unique_ptr<const DynamicType> alias_type {alias_builder->build()};
-
-   // Struct AliasStruct
-   std::unique_ptr<DynamicTypeBuilder> struct_alias_builder {factory.create_struct_type()};
-   struct_alias_builder->add_member({0, "my_alias", alias_type.get()});
-   struct_alias_builder->set_name("AliasStruct");
-   std::unique_ptr<const DynamicType> struct_alias_type {struct_alias_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   // TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *struct_alias_type);
-   EXPECT_TRUE(type->equals(*struct_alias_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
    TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
    {
    using namespace xmlparser;
@@ -5598,7 +5604,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(*enum_type, "MyAliasEnum")};
    std::unique_ptr<const DynamicType> alias_type {alias_builder->build()};
    std::unique_ptr<DynamicTypeBuilder> alias_alias_builder { factory.create_alias_type(*alias_type,
-                                                         "MyAliasAliasEnum")};
+                                                   "MyAliasAliasEnum")};
    std::unique_ptr<const DynamicType> alias_alias_type {alias_alias_builder->build()};
 
    // Struct AliasAliasStruct
@@ -6287,13 +6293,13 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
    // Typedef aka Alias
    std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(
  * factory.get_int32_type(),
-                                               { 2, 2 })};
+                                         { 2, 2 })};
    std::unique_ptr<DynamicTypeBuilder> myArray_builder { factory.create_alias_type(*array_builder.build(), "MyArray")};
 
    // Struct ArrayArrayStruct
    std::unique_ptr<DynamicTypeBuilder> aas_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> aMyArray_builder { factory.create_array_type(*myArray_builder.build(),
-                                                      { 2, 2 })};
+                                                { 2, 2 })};
    aas_builder.add_member(0, "my_array_array", aMyArray_builder.build());
    aas_builder->set_name("ArrayArrayStruct");
    std::unique_ptr<const DynamicType> aas_type = aas_builder.build();
@@ -6351,16 +6357,16 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
    // Typedef aka Alias
    std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(
  * factory.get_int32_type(),
-                                               { 2, 2 })};
+                                         { 2, 2 })};
    std::unique_ptr<DynamicTypeBuilder> myArray_builder { factory.create_alias_type(
  * array_builder.build(),
-                                                 "MyArray")};
+                                           "MyArray")};
 
    // Struct ArrayArrayStruct
    std::unique_ptr<DynamicTypeBuilder> aas_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> aMyArray_builder { factory.create_array_type(
  * myArray_builder.build(),
-                                                  { 2, 2 })};
+                                            { 2, 2 })};
    aas_builder.add_member(0, "my_array_array", aMyArray_builder.build());
    aas_builder->set_name("ArrayArrayStruct");
 
@@ -6368,7 +6374,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> aaas_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> aas_array_builder { factory.create_array_type(
  * aas_builder.build(),
-                                                   { 2, 2 })};
+                                             { 2, 2 })};
    aaas_builder.add_member(0, "my_array_array_array", aas_array_builder.build());
    aaas_builder->set_name("ArrayArrayArrayStruct");
    std::unique_ptr<const DynamicType> aaas_type = aaas_builder.build();
@@ -6395,7 +6401,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 
    std::unique_ptr<DynamicTypeBuilder> seq_builder { factory.create_sequence_type(
  * factory.get_int32_type(),
-                                             2)};
+                                       2)};
 
    std::unique_ptr<DynamicTypeBuilder> seqs_builder { factory.create_struct_type()};
    seqs_builder.add_member(0, "my_sequence", seq_builder.build());
@@ -6424,10 +6430,10 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 
    std::unique_ptr<DynamicTypeBuilder> seq_builder { factory.create_sequence_type(
  * factory.get_int32_type(),
-                                             2)};
+                                       2)};
    std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(
  * seq_builder.build(),
-                                               "my_sequence_sequence_inner")};
+                                         "my_sequence_sequence_inner")};
 
    std::unique_ptr<DynamicTypeBuilder> sss_builder { factory.create_struct_type()};
    std::unique_ptr<DynamicTypeBuilder> seq_seq_builder { factory.create_sequence_type(*alias_builder.build(), 2)};
@@ -6458,7 +6464,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> map_builder { factory.create_map_type(
  * factory.get_int32_type(),
  * factory.get_int32_type(),
-                                             7)};
+                                       7)};
 
    std::unique_ptr<DynamicTypeBuilder> maps_builder { factory.create_struct_type()};
    maps_builder.add_member(0, "my_map", map_builder.build());
@@ -6489,14 +6495,14 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
    std::unique_ptr<DynamicTypeBuilder> map_builder { factory.create_map_type(
  * int32_type,
  * int32_type,
-                                             2)};
+                                       2)};
    std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(
  * map_builder.build(),
-                                               "my_map_map_inner")};
+                                         "my_map_map_inner")};
    std::unique_ptr<DynamicTypeBuilder> map_map_builder { factory.create_map_type(
  * int32_type,
  * alias_builder.build(),
-                                                 2)};
+                                           2)};
 
    std::unique_ptr<DynamicTypeBuilder> maps_builder { factory.create_struct_type()};
    maps_builder.add_member(0, "my_map_map", map_map_builder.build());
