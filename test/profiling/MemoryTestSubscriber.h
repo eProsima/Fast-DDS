@@ -22,15 +22,20 @@
 
 #include <asio.hpp>
 #include <condition_variable>
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+
 #include "MemoryTestTypes.h"
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicPubSubType.h>
 
 class MemoryTestSubscriber
 {
@@ -39,21 +44,28 @@ public:
     MemoryTestSubscriber();
     virtual ~MemoryTestSubscriber();
 
-    eprosima::fastrtps::Participant* mp_participant;
-    eprosima::fastrtps::Publisher* mp_commandpub;
-    eprosima::fastrtps::Subscriber* mp_datasub;
-    eprosima::fastrtps::Subscriber* mp_commandsub;
-    eprosima::fastrtps::SampleInfo_t m_sampleinfo;
+    eprosima::fastdds::dds::DomainParticipant* participant_ {nullptr};
+    eprosima::fastdds::dds::Publisher* publisher_ {nullptr};
+    eprosima::fastdds::dds::Subscriber* subscriber_ {nullptr};
+    eprosima::fastdds::dds::TypeSupport command_type_ {new TestCommandDataType()};
+    eprosima::fastdds::dds::TypeSupport data_type_;
+    eprosima::fastdds::dds::Topic* command_pub_topic_ {nullptr};
+    eprosima::fastdds::dds::Topic* command_sub_topic_ {nullptr};
+    eprosima::fastdds::dds::Topic* data_topic_ {nullptr};
+    eprosima::fastdds::dds::DataWriter* command_writer_ {nullptr};
+    eprosima::fastdds::dds::DataReader* data_reader_ {nullptr};
+    eprosima::fastdds::dds::DataReader* command_reader_ {nullptr};
+    eprosima::fastdds::dds::SampleInfo m_sampleinfo;
     std::mutex mutex_;
-    int disc_count_;
+    int disc_count_ {0};
     std::condition_variable disc_cond_;
-    int comm_count_;
+    int comm_count_ {0};
     std::condition_variable comm_cond_;
-    int data_count_;
+    int data_count_ {0};
     std::condition_variable data_cond_;
-    int m_status;
-    int n_received;
-    int n_samples;
+    int m_status {0};
+    int n_received {0};
+    int n_samples {0};
     bool init(
             bool echo,
             int nsam,
@@ -70,13 +82,13 @@ public:
     bool test(
             uint32_t datasize);
 
-    class DataSubListener : public eprosima::fastrtps::SubscriberListener
+    class DataSubListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
         DataSubListener(
                 MemoryTestSubscriber* up)
-            : mp_up(up)
+            : up_(up)
         {
         }
 
@@ -84,22 +96,24 @@ public:
         {
         }
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
-        MemoryTestSubscriber* mp_up;
-    }
-    m_datasublistener;
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
-    class CommandPubListener : public eprosima::fastrtps::PublisherListener
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        MemoryTestSubscriber* up_ {nullptr};
+    }
+    m_datasublistener {nullptr};
+
+    class CommandPubListener : public eprosima::fastdds::dds::DataWriterListener
     {
     public:
 
         CommandPubListener(
                 MemoryTestSubscriber* up)
-            : mp_up(up)
+            : up_(up)
         {
         }
 
@@ -107,20 +121,21 @@ public:
         {
         }
 
-        void onPublicationMatched(
-                eprosima::fastrtps::Publisher* pub,
-                eprosima::fastrtps::rtps::MatchingInfo& info);
-        MemoryTestSubscriber* mp_up;
-    }
-    m_commandpublistener;
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* writer,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-    class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+        MemoryTestSubscriber* up_ {nullptr};
+    }
+    m_commandpublistener {nullptr};
+
+    class CommandSubListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
         CommandSubListener(
                 MemoryTestSubscriber* up)
-            : mp_up(up)
+            : up_(up)
         {
         }
 
@@ -128,27 +143,27 @@ public:
         {
         }
 
-        void onSubscriptionMatched(
-                eprosima::fastrtps::Subscriber* sub,
-                eprosima::fastrtps::rtps::MatchingInfo& into);
-        void onNewDataMessage(
-                eprosima::fastrtps::Subscriber* sub);
-        MemoryTestSubscriber* mp_up;
-    }
-    m_commandsublistener;
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
 
-    bool m_echo;
-    TestCommandDataType command_t;
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* reader,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+        MemoryTestSubscriber* up_ {nullptr};
+    }
+    m_commandsublistener {nullptr};
+
+    bool m_echo {true};
     std::string m_sXMLConfigFile;
-    uint32_t m_data_size;
-    bool dynamic_data = false;
+    uint32_t m_data_size {0};
+    bool dynamic_data_ {false};
     // Static Data
-    MemoryType* mp_memory;
-    MemoryDataType memory_t;
+    MemoryType* memory_ {nullptr};
     // Dynamic Data
-    eprosima::fastrtps::types::DynamicData* m_DynData;
-    eprosima::fastrtps::types::DynamicPubSubType m_DynType;
-    eprosima::fastrtps::types::DynamicType_ptr m_pDynType;
+    eprosima::fastdds::dds::DynamicData::_ref_type m_DynData;
+    eprosima::fastdds::dds::DynamicType::_ref_type m_pDynType;
+    eprosima::fastdds::dds::DynamicPubSubType* dynamic_type_support_ {nullptr};
     eprosima::fastrtps::SubscriberAttributes subAttr;
 };
 
