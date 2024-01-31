@@ -170,7 +170,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     const std::string xml =
             "                                                                                                                 \
             <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                      \
-                <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastdds_profiles\">                                           \
+                <dds xmlns=\"http://www.eprosima.com\">                                           \
                     <profiles>                                                                                                \
                         <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                     \
                             <rtps>                                                                                            \
@@ -446,7 +446,7 @@ TEST_F(StatisticsFromXMLProfileTests, XMLConfigurationForStatisticsDataWritersQo
     const std::string xml =
             "                                                                                                                                       \
             <?xml version=\"1.0\" encoding=\"utf-8\"  ?>                                                                                            \
-                <dds xmlns=\"http://www.eprosima.com/XMLSchemas/fastdds_profiles\">                                                                 \
+                <dds xmlns=\"http://www.eprosima.com\">                                                                 \
                     <profiles>                                                                                                                      \
                         <participant profile_name=\"statistics_participant\" is_default_profile=\"true\">                                           \
                             <rtps>                                                                                                                  \
