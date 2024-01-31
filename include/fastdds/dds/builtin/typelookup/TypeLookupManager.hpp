@@ -292,10 +292,10 @@ private:
      */
 
     void request_cache_change_acked(
-        fastrtps::rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change);
 
     void reply_cache_change_acked(
-        fastrtps::rtps::CacheChange_t* change);
+            fastrtps::rtps::CacheChange_t* change);
 };
 
 } /* namespace builtin */

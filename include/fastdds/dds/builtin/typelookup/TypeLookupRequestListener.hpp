@@ -72,7 +72,7 @@ public:
      */
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const  change) override;
+            const fastrtps::rtps::CacheChange_t* const change) override;
 
 private:
 
@@ -118,5 +118,5 @@ private:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* TYPELOOKUP_REQUEST_LISTENER_HPP_*/

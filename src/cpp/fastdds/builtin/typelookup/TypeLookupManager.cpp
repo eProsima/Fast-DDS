@@ -68,7 +68,9 @@ TypeLookupManager::TypeLookupManager(
     , builtin_request_reader_history_(nullptr)
     , builtin_reply_reader_history_(nullptr)
     , request_listener_(nullptr)
+    , request_wlistener_(nullptr)
     , reply_listener_(nullptr)
+    , reply_wlistener_(nullptr)
     , temp_reader_proxy_data_(
         prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
@@ -124,6 +126,9 @@ TypeLookupManager::~TypeLookupManager()
     delete builtin_reply_writer_history_;
     delete builtin_request_reader_history_;
     delete builtin_reply_reader_history_;
+
+    delete request_wlistener_;
+    delete reply_wlistener_;
 
     delete reply_listener_;
     delete request_listener_;
@@ -368,6 +373,8 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
             delete builtin_request_writer_history_;
             builtin_request_writer_history_ = nullptr;
+            delete request_wlistener_;
+            request_wlistener_ = nullptr;
             return false;
         }
     }
@@ -395,6 +402,8 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
             delete builtin_reply_writer_history_;
             builtin_reply_writer_history_ = nullptr;
+            delete reply_wlistener_;
+            reply_wlistener_ = nullptr;
             return false;
         }
     }
