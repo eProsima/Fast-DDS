@@ -22,6 +22,7 @@
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
 #include <map>
+#include <asio.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -247,10 +248,27 @@ protected:
 
 private:
 
+    /**
+     * Copies a single buffer into the shared_buffer.
+     * @param send_buffer Buffer to copy.
+     * @param send_buffer_size Size of the buffer.
+     * @param max_blocking_time_point Maximum time this function will block.
+     */
     std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
             const std::chrono::steady_clock::time_point& max_blocking_time_point);
+
+    /**
+     * Copies a list of buffers into the shared_buffer.
+     * @param buffers List of buffers to copy.
+     * @param total_bytes Total amount of bytes of the whole list of buffers.
+     * @param max_blocking_time_point Maximum time this function will block.
+     */
+    std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
+        const std::list<asio::const_buffer>& buffers,
+        const uint32_t total_bytes,
+        const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     bool send(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,
