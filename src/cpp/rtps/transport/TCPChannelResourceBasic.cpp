@@ -161,14 +161,18 @@ size_t TCPChannelResourceBasic::send(
 
         if (header_size > 0)
         {
-            std::array<asio::const_buffer, 2> buffers;
-            buffers[0] = asio::buffer(header, header_size);
-            buffers[1] = asio::buffer(data, size);
+            // Use a list of const_buffers to send the message
+            std::list<asio::const_buffer> buffers;
+            buffers.push_back(asio::buffer(header, header_size));
+            buffers.push_back(asio::buffer(data, size));
             bytes_sent = asio::write(*socket_.get(), buffers, ec);
         }
         else
         {
-            bytes_sent = asio::write(*socket_.get(), asio::buffer(data, size), ec);
+            // Use a list of const_buffers to send the message
+            std::list<asio::const_buffer> buffers;
+            buffers.push_back(asio::buffer(data, size));
+            bytes_sent = asio::write(*socket_.get(), buffers, ec);
         }
     }
 
