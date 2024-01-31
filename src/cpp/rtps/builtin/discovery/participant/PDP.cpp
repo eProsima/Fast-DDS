@@ -593,7 +593,8 @@ void PDP::notify_and_maybe_ignore_new_participant(
     {
         {
             std::lock_guard<std::mutex> cb_lock(callback_mtx_);
-            ParticipantDiscoveryInfo info(*pdata);
+            ParticipantProxyData* pdata_copy = get_participant_proxy_data(pdata->m_guid.guidPrefix);
+            ParticipantDiscoveryInfo info(*pdata_copy);
             info.status = ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT;
 
 

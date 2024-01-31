@@ -489,7 +489,7 @@ void PDPClient::assignRemoteEndpoints(
                 if (data_matches_with_prefix(svr.guidPrefix, *pdata))
                 {
                     std::unique_lock<std::recursive_mutex> lock(*getMutex());
-                    svr.proxy = pdata;
+                    svr.proxy = get_participant_proxy_data(pdata->m_guid.guidPrefix);
                 }
             }
         }
