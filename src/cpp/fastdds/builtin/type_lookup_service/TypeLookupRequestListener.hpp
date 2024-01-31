@@ -27,6 +27,7 @@
 #include <condition_variable>
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
@@ -181,6 +182,37 @@ protected:
     std::condition_variable request_processor_cv_;
     bool processing_;
     rtps::ThreadSettings request_processor_thread_settings_;
+};
+
+class TypeLookupRequestWListener : public fastrtps::rtps::WriterListener
+{
+public:
+
+    /**
+     * @brief Constructor
+     * @param pwlp Pointer to the TypeLookupManager
+     */
+    TypeLookupRequestWListener(
+            TypeLookupManager* manager)
+        : typelookup_manager_(manager)
+    {
+    }
+
+    /**
+     * @brief Destructor
+     */
+    virtual ~TypeLookupRequestWListener() override
+    {
+    }
+
+    void onWriterChangeReceivedByAll(
+            fastrtps::rtps::RTPSWriter*,
+            fastrtps::rtps::CacheChange_t* change) override;
+
+private:
+
+    //! A pointer to the typelookup manager
+    TypeLookupManager* typelookup_manager_;
 };
 
 } /* namespace builtin */
