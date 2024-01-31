@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"  ?>
-<dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles">
+<dds xmlns="http://www.eprosima.com">
     <library_settings>
         <intraprocess_delivery>FULL</intraprocess_delivery>
     </library_settings>

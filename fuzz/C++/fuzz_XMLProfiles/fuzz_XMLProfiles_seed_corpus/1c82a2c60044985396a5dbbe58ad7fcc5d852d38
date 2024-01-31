@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<dds xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles" >
+<dds xmlns="http://www.eprosima.com" >
     <profiles>
         <participant profile_name="participant_profile">
             <domainId>80</domainId>

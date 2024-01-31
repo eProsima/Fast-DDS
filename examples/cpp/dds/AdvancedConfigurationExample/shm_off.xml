@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <dds>
-    <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastdds_profiles" >
+    <profiles xmlns="http://www.eprosima.com" >
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>custom_udpv4_transport</transport_id>
