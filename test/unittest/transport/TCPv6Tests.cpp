@@ -284,16 +284,16 @@ TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
 // process this lead to overwriting server's channel resources map elements.
 TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 {
-    TCPv6TransportDescriptor recvDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
     MockTCPv6Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
-    TCPv6TransportDescriptor sendDescriptor_1;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor sendDescriptor_1;
     TCPv6Transport sendTransportUnderTest_1(sendDescriptor_1);
     sendTransportUnderTest_1.init();
 
-    TCPv6TransportDescriptor sendDescriptor_2;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor sendDescriptor_2;
     TCPv6Transport sendTransportUnderTest_2(sendDescriptor_2);
     sendTransportUnderTest_2.init();
 
@@ -324,7 +324,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
     uint16_t port = g_default_port;
     uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
     // Create a TCP Server transport
-    TCPv6TransportDescriptor senderDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
     senderDescriptor.sendBufferSize = msg_size;
     MockTCPv6Transport senderTransportUnderTest(senderDescriptor);
