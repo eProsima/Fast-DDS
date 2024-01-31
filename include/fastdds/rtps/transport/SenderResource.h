@@ -19,10 +19,12 @@
 
 #include <functional>
 #include <vector>
+#include <list>
 #include <chrono>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -41,6 +43,8 @@ class MessageReceiver;
 class SenderResource
 {
 public:
+
+    using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
     /**
      * Sends to a destination locator, through the channel managed by this resource.
@@ -61,14 +65,29 @@ public:
     {
         bool returned_value = false;
 
-        if (send_lambda_)
+        // Use a list of NetworkBuffer to send the message
+        std::list<NetworkBuffer> buffers;
+        buffers.push_back(NetworkBuffer(data, dataLength));
+        uint32_t total_bytes = dataLength;
+
+        if (send_buffers_lambda_)
         {
+            returned_value = send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                            max_blocking_time_point);
+        }
+        else if (send_lambda_)
+        {
+            EPROSIMA_LOG_WARNING(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
+                    << std::endl << "Please implement send_buffers_lambda_ instead.");
             returned_value = send_lambda_(data, dataLength, destination_locators_begin, destination_locators_end,
                             max_blocking_time_point);
         }
 
         return returned_value;
     }
+
+    // TODO: Create a new send function that receives a list of NetworkBuffers. The one that received octet* will be deprecated.
+    // TODO: The deprecated send function will warn ONCE about its deprecation and call the new one.
 
     /**
      * Resources can only be transfered through move semantics. Copy, assignment, and
@@ -116,6 +135,13 @@ protected:
                 LocatorsIterator* destination_locators_begin,
                 LocatorsIterator* destination_locators_end,
                 const std::chrono::steady_clock::time_point&)> send_lambda_;
+
+    std::function<bool(
+                const std::list<NetworkBuffer>&,
+                uint32_t,
+                LocatorsIterator* destination_locators_begin,
+                LocatorsIterator* destination_locators_end,
+                const std::chrono::steady_clock::time_point&)> send_buffers_lambda_;
 
 private:
 
