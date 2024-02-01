@@ -137,11 +137,24 @@ public:
             std::size_t size,
             asio::error_code& ec) = 0;
 
+    size_t send(
+            const fastrtps::rtps::octet* header,
+            size_t header_size,
+            const fastrtps::rtps::octet* data,
+            size_t data_size,
+            asio::error_code& ec)
+    {
+        NetworkBuffer buffers(data, data_size);
+        std::list<NetworkBuffer> buffer_list;
+        buffer_list.push_back(buffers);
+        return send(header, header_size, buffer_list, data_size, ec);
+    }
+
     virtual size_t send(
             const fastrtps::rtps::octet* header,
             size_t header_size,
-            const fastrtps::rtps::octet* buffer,
-            size_t size,
+            const std::list<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
             asio::error_code& ec) = 0;
 
     /**

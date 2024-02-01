@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 #include <utils/thread.hpp>
 
