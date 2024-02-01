@@ -695,6 +695,7 @@ bool StatefulReader::processDataFragMsg(
                     {
                         work_change->copy_not_memcpy(change_to_add);
                         work_change->serializedPayload.length = sampleSize;
+                        work_change->instanceHandle.clear();
                         work_change->setFragmentSize(change_to_add->getFragmentSize(), true);
                         change_created = work_change;
                     }
@@ -703,6 +704,12 @@ bool StatefulReader::processDataFragMsg(
 
             if (work_change != nullptr)
             {
+                // Set the instanceHandle only when fragment number 1 is received
+                if (!work_change->instanceHandle.isDefined() && fragmentStartingNum == 1)
+                {
+                    work_change->instanceHandle = change_to_add->instanceHandle;
+                }
+
                 work_change->add_fragments(change_to_add->serializedPayload, fragmentStartingNum,
                         fragmentsInSubmessage);
             }

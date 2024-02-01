@@ -794,6 +794,13 @@ public:
         return *this;
     }
 
+    PubSubReader& expect_inline_qos(
+            bool expect)
+    {
+        subscriber_attr_.expectsInlineQos = expect;
+        return *this;
+    }
+
     PubSubReader& heartbeatResponseDelay(
             const int32_t secs,
             const int32_t frac)
