@@ -1,5 +1,4 @@
 {
-    "description": "Case 5: Subscriber knows Type1 and Type2, Publisher knows Type1 and Type2.",
     "participants": [
         {
             "kind": "publisher",
