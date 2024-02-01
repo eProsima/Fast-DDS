@@ -1544,11 +1544,26 @@ bool TCPTransportInterface::getDefaultMetatrafficUnicastLocators(
         LocatorList& locators,
         uint32_t metatraffic_unicast_port) const
 {
-    Locator locator;
-    locator.kind = transport_kind_;
-    locator.set_Invalid_Address();
-    fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
-    locators.push_back(locator);
+    if (configuration()->listening_ports.empty())
+    {
+        Locator locator;
+        locator.kind = transport_kind_;
+        locator.set_Invalid_Address();
+        fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+        locators.push_back(locator);
+    }
+    else
+    {
+        for (const auto& port : configuration()->listening_ports)
+        {
+            Locator locator;
+            locator.kind = transport_kind_;
+            locator.set_Invalid_Address();
+            IPLocator::setPhysicalPort(locator, port);
+            fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+            locators.push_back(locator);
+        }
+    }
     return true;
 }
 
@@ -1556,11 +1571,26 @@ bool TCPTransportInterface::getDefaultUnicastLocators(
         LocatorList& locators,
         uint32_t unicast_port) const
 {
-    Locator locator;
-    locator.kind = transport_kind_;
-    locator.set_Invalid_Address();
-    fillUnicastLocator(locator, unicast_port);
-    locators.push_back(locator);
+    if (configuration()->listening_ports.empty())
+    {
+        Locator locator;
+        locator.kind = transport_kind_;
+        locator.set_Invalid_Address();
+        fillUnicastLocator(locator, unicast_port);
+        locators.push_back(locator);
+    }
+    else
+    {
+        for (const auto& port : configuration()->listening_ports)
+        {
+            Locator locator;
+            locator.kind = transport_kind_;
+            locator.set_Invalid_Address();
+            IPLocator::setPhysicalPort(locator, port);
+            fillUnicastLocator(locator, unicast_port);
+            locators.push_back(locator);
+        }
+    }
     return true;
 }
 
@@ -1608,6 +1638,7 @@ bool TCPTransportInterface::configureInitialPeerLocator(
             }
 
             list.push_back(auxloc);
+            initial_peers_.push_back(IPLocator::toPhysicalLocator(auxloc));
         }
     }
     else
@@ -1619,11 +1650,13 @@ bool TCPTransportInterface::configureInitialPeerLocator(
                 Locator auxloc(locator);
                 IPLocator::setLogicalPort(auxloc, static_cast<uint16_t>(port_params.getUnicastPort(domainId, i)));
                 list.push_back(auxloc);
+                initial_peers_.push_back(IPLocator::toPhysicalLocator(auxloc));
             }
         }
         else
         {
             list.push_back(locator);
+            initial_peers_.push_back(IPLocator::toPhysicalLocator(locator));
         }
     }
 
