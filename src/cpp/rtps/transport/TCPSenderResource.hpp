@@ -42,14 +42,14 @@ public:
                     transport.SenderResourceHasBeenClosed(locator_);
                 };
 
-        send_lambda_ = [this, &transport](
-            const fastrtps::rtps::octet* data,
-            uint32_t dataSize,
+        send_buffers_lambda_ = [this, &transport](
+            const std::list<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point&) -> bool
                 {
-                    return transport.send(data, dataSize, locator_, destination_locators_begin,
+                    return transport.send(buffers, total_bytes, locator_, destination_locators_begin,
                                    destination_locators_end);
                 };
     }

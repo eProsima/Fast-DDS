@@ -313,13 +313,17 @@ bool TCPTransportInterface::check_crc(
 
 void TCPTransportInterface::calculate_crc(
         TCPHeader& header,
-        const octet* data,
-        uint32_t size) const
+        const std::list<NetworkBuffer>& buffers) const
 {
     uint32_t crc(0);
-    for (uint32_t i = 0; i < size; ++i)
+    for (const NetworkBuffer& buffer : buffers)
     {
-        crc = RTCPMessageManager::addToCRC(crc, data[i]);
+        size_t size = buffer.size;
+        const octet* data = static_cast<const octet*>(buffer.buffer);
+        for (size_t i = 0; i < size; ++i)
+        {
+            crc = RTCPMessageManager::addToCRC(crc, data[i]);
+        }
     }
     header.crc = crc;
 }
@@ -415,15 +419,15 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
 
 void TCPTransportInterface::fill_rtcp_header(
         TCPHeader& header,
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::list<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         uint16_t logical_port) const
 {
-    header.length = send_buffer_size + static_cast<uint32_t>(TCPHeader::size());
+    header.length = total_bytes + static_cast<uint32_t>(TCPHeader::size());
     header.logical_port = logical_port;
     if (configuration()->calculate_crc)
     {
-        calculate_crc(header, send_buffer, send_buffer_size);
+        calculate_crc(header, buffers);
     }
 }
 
@@ -1421,8 +1425,8 @@ bool TCPTransportInterface::Receive(
 }
 
 bool TCPTransportInterface::send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::list<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         const fastrtps::rtps::Locator_t& locator,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end)
@@ -1435,7 +1439,7 @@ bool TCPTransportInterface::send(
     {
         if (IsLocatorSupported(*it))
         {
-            ret &= send(send_buffer, send_buffer_size, locator, *it);
+            ret &= send(buffers, total_bytes, locator, *it);
         }
 
         ++it;
@@ -1445,8 +1449,8 @@ bool TCPTransportInterface::send(
 }
 
 bool TCPTransportInterface::send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::list<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         const fastrtps::rtps::Locator_t& locator,
         const Locator& remote_locator)
 {
@@ -1471,7 +1475,7 @@ bool TCPTransportInterface::send(
         }
     }
 
-    if (locator_mismatch || send_buffer_size > configuration()->sendBufferSize)
+    if (locator_mismatch || total_bytes > configuration()->sendBufferSize)
     {
         return false;
     }
@@ -1522,21 +1526,22 @@ bool TCPTransportInterface::send(
                 scoped_lock.lock();
             }
             TCPHeader tcp_header;
-            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
-            fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
+            // TODO Carlos: Handle statistics buffer message
+            // statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
+            fill_rtcp_header(tcp_header, buffers, total_bytes, logical_port);
             {
                 asio::error_code ec;
                 size_t sent = channel->send(
                     (octet*)&tcp_header,
                     static_cast<uint32_t>(TCPHeader::size()),
-                    send_buffer,
-                    send_buffer_size,
+                    buffers,
+                    total_bytes,
                     ec);
 
-                if (sent != static_cast<uint32_t>(TCPHeader::size() + send_buffer_size) || ec)
+                if (sent != static_cast<uint32_t>(TCPHeader::size() + total_bytes) || ec)
                 {
                     EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
-                            TCPHeader::size() + send_buffer_size << " b): " << ec.message());
+                            TCPHeader::size() + total_bytes << " b): " << ec.message());
                     success = false;
                 }
                 else
