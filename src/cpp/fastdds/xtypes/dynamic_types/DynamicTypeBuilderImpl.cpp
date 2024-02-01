@@ -296,49 +296,6 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
     auto descriptor_impl = traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(descriptor);
 
-    if (TK_UNION == type_descriptor_kind)
-    {
-        for (auto member : members_)
-        {
-            const auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
-
-            // Check that there isn't any member as default label and that there isn't any member with the same case.
-            if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
-            {
-                EPROSIMA_LOG_ERROR(DYN_TYPES,
-                        "Member " << member_impl->member_descriptor_.name().c_str() <<
-                        " already defined a default_label");
-                return RETCODE_BAD_PARAMETER;
-            }
-            for (const int32_t new_label : descriptor_impl->label())
-            {
-                for (const int32_t label : member_impl->member_descriptor_.label())
-                {
-                    if (new_label == label)
-                    {
-                        EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Member " << member_impl->member_descriptor_.name().c_str() << " already contains the label " <<
-                                label);
-                        return RETCODE_BAD_PARAMETER;
-                    }
-                }
-
-                // Recalculate the default discriminator value (for default case or default implicit member).
-                if (new_label >= default_discriminator_value_)
-                {
-                    default_discriminator_value_ = new_label + 1;
-                }
-            }
-        }
-
-        // In case of default case, store the related MemberId.
-        if (descriptor_impl->is_default_label())
-        {
-            assert(MEMBER_ID_INVALID != descriptor_impl->id());
-            default_union_member_ = descriptor_impl->id();
-        }
-    }
-
 
     // Check bitmask doesn't exceed bound.
     assert(TK_BITMASK != type_descriptor_kind || 1 == type_descriptor_.bound().size());
@@ -403,6 +360,50 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         dyn_member->get_descriptor().index(next_index_++);
         index_reverter.activate = true;
     }
+
+    if (TK_UNION == type_descriptor_kind)
+    {
+        for (auto member : members_)
+        {
+            const auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+
+            // Check that there isn't any member as default label and that there isn't any member with the same case.
+            if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES,
+                        "Member " << member_impl->member_descriptor_.name().c_str() <<
+                        " already defined a default_label");
+                return RETCODE_BAD_PARAMETER;
+            }
+            for (const int32_t new_label : descriptor_impl->label())
+            {
+                for (const int32_t label : member_impl->member_descriptor_.label())
+                {
+                    if (new_label == label)
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Member " << member_impl->member_descriptor_.name().c_str() << " already contains the label " <<
+                                label);
+                        return RETCODE_BAD_PARAMETER;
+                    }
+                }
+
+                // Recalculate the default discriminator value (for default case or default implicit member).
+                if (new_label >= default_discriminator_value_)
+                {
+                    default_discriminator_value_ = new_label + 1;
+                }
+            }
+        }
+
+        // In case of default case, store the related MemberId.
+        if (descriptor_impl->is_default_label())
+        {
+            assert(MEMBER_ID_INVALID != member_id);
+            default_union_member_ = member_id;
+        }
+    }
+
 
     dyn_member->get_descriptor().parent_kind(type_descriptor_kind); // Set before calling is_consistent().
 

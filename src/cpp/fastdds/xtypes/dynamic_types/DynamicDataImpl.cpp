@@ -717,7 +717,7 @@ MemberId DynamicDataImpl::get_member_id_by_name(
 
             if (key_to_id_.end() == it)
             {
-                if (0 == type_->get_descriptor().bound().at(0) ||
+                if (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
                         type_->get_descriptor().bound().at(0) > key_to_id_.size())
                 {
                     ret_value = next_map_member_id_++;
@@ -1431,7 +1431,9 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
                             std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
                     assert(sequence);
                     if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
-                            (TK_SEQUENCE == type_kind && (0 == type_->get_descriptor().bound().at(0) ||
+                            (TK_SEQUENCE == type_kind &&
+                            (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
+                            type_->get_descriptor().bound().at(0) ||
                             type_->get_descriptor().bound().at(0) >= id + 1)))
                     {
                         if (sequence->size() < id + 1)
@@ -1513,7 +1515,8 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
             auto sequence =
                     std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
             assert((TK_ARRAY == type_kind && sequence->size() >= *loan_it + 1) ||
-                    (TK_SEQUENCE == type_kind && (0 == type_->get_descriptor().bound().at(0) ||
+                    (TK_SEQUENCE == type_kind &&
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
                     type_->get_descriptor().bound().at(0) >= *loan_it + 1)));
             if (sequence->size() >= *loan_it + 1)
             {
@@ -3223,7 +3226,8 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
             auto sequence = std::static_pointer_cast<SequenceTypeForKind<TK>>(it->second);
             assert(sequence);
             if ((TK_ARRAY == type_kind && sequence->size() >= id + value.size()) ||
-                    (TK_SEQUENCE == type_kind && (0 == type_->get_descriptor().bound().at(0) ||
+                    (TK_SEQUENCE == type_kind &&
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
                     type_->get_descriptor().bound().at(0) >= id + value.size())))
             {
                 if (sequence->size() < id + value.size())
@@ -3300,7 +3304,8 @@ ReturnCode_t DynamicDataImpl::set_value(
             auto sequence = std::static_pointer_cast<SequenceTypeForKind<TK>>(it->second);
             assert(sequence);
             if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
-                    (TK_SEQUENCE == type_kind && (0 == type_->get_descriptor().bound().at(0) ||
+                    (TK_SEQUENCE == type_kind &&
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
                     type_->get_descriptor().bound().at(0) >= id + 1)))
             {
                 if (sequence->size() < id + 1)
@@ -4347,7 +4352,7 @@ bool DynamicDataImpl::deserialize(
                     (is_primitive || eprosima::fastcdr::CdrVersion::XCDRv2 != cdr.get_cdr_version() ||
                     cdr.get_current_position() - offset < dheader) && count < length; ++count)
             {
-                if (0 == type_->get_descriptor().bound().at(0) ||
+                if (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
                         type_->get_descriptor().bound().at(0) > key_to_id_.size())
                 {
                     std::string key;
