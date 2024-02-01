@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Added `non_blocking_send` to TCP Transport.
+* Added `netmask_filter` and `blocklist` transport configuration options.
 
 Version 2.13.0
 --------------
