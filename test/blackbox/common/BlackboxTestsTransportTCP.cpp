@@ -957,7 +957,7 @@ TEST(TransportTCP, TCPv4_transport_sanitizer)
                 client->disable_builtin_transport().add_user_transport_to_pparams(client_transport);
                 Locator_t initialPeerLocator;
                 initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
-                IPLocator::setIPv6(initialPeerLocator, "::1");
+                IPLocator::setIPv4(initialPeerLocator, 127,0,0,1);
                 initialPeerLocator.port = server_port;
                 LocatorList_t initial_peer_list;
                 initial_peer_list.push_back(initialPeerLocator);
@@ -1016,7 +1016,7 @@ TEST(TransportTCP, TCPv6_transport_sanitizer)
     // ChainingTransportDescriptor. This will allow us to get send_resource_list_ from the
     // server participant when its transport gets its OpenOutputChannel() method called.
     uint16_t server_port = 10000;
-    auto low_level_server_transport = std::make_shared<TCPv4TransportDescriptor>();
+    auto low_level_server_transport = std::make_shared<TCPv6TransportDescriptor>();
     low_level_server_transport->add_listener_port(server_port);
     auto server_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_server_transport);
     server->disable_builtin_transport().add_user_transport_to_pparams(server_transport).init();
@@ -1025,11 +1025,11 @@ TEST(TransportTCP, TCPv6_transport_sanitizer)
     // Client
     auto initialize_client = [&]() -> PubSubWriter<HelloWorldPubSubType>*
             {
-                auto client_transport = std::make_shared<TCPv4TransportDescriptor>();
+                auto client_transport = std::make_shared<TCPv6TransportDescriptor>();
                 client->disable_builtin_transport().add_user_transport_to_pparams(client_transport);
                 Locator_t initialPeerLocator;
-                initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
-                IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+                initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+                IPLocator::setIPv6(initialPeerLocator, "::1");
                 initialPeerLocator.port = server_port;
                 LocatorList_t initial_peer_list;
                 initial_peer_list.push_back(initialPeerLocator);
