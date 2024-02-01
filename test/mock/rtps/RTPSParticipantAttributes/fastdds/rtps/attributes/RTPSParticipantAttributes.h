@@ -35,7 +35,7 @@
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>

@@ -23,7 +23,7 @@
 #include <unordered_map>
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 
 #include <rtps/network/NetmaskFilterUtils.hpp>
 

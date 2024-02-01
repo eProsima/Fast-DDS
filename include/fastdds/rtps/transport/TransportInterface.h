@@ -23,7 +23,7 @@
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>

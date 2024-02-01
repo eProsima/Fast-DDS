@@ -19,7 +19,7 @@
 #include <vector>
 #include <string>
 
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 
 namespace eprosima {

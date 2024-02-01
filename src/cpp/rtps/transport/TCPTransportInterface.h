@@ -24,7 +24,7 @@
 #include <asio/steady_timer.hpp>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPFinder.h>
