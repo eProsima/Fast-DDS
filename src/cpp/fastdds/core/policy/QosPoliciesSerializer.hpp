@@ -1045,7 +1045,7 @@ template<>
 inline uint32_t QosPoliciesSerializer<xtypes::TypeInformationParameter>::cdr_serialized_size(
         const xtypes::TypeInformationParameter& qos_policy)
 {
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
     size_t size = calculator.calculate_serialized_size(qos_policy.type_information, current_alignment) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
@@ -1056,7 +1056,7 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_
         const xtypes::TypeInformationParameter& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     size_t current_alignment {0};
     size_t size =
             calculator.calculate_serialized_size(qos_policy.type_information,
@@ -1065,10 +1065,10 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::XCDRv1); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    ser.serialize_encapsulation();
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
 
     ser << qos_policy.type_information;
 #if FASTCDR_VERSION_MAJOR == 1
@@ -1102,18 +1102,10 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::read_conten
 
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN
-#if FASTCDR_VERSION_MAJOR == 1
-            , eprosima::fastcdr::Cdr::CdrType::DDS_CDR
-#endif // FASTCDR_VERSION_MAJOR == 1
-            );
-
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::CdrVersion::XCDRv2);
     try
     {
-        // Deserialize encapsulation.
-        deser.read_encapsulation();
-        payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
         deser >> qos_policy.type_information;
         qos_policy.assigned(true);
     }
