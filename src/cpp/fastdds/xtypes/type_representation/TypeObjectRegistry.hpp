@@ -735,6 +735,16 @@ protected:
      */
     void register_primitive_type_identifiers();
 
+    /**
+     * @brief Get Minimal TypeIdentifier from Complete TypeIdentifier.
+     *
+     * @param complete_type_id Direct hash complete TypeIdentifier
+     * @return TypeIdentifier Minimal TypeIdentifier related to the given Complete TypeIdentifier.
+     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash complete TypeIdentifier.
+     */
+    const TypeIdentifier minimal_from_complete_type_identifier(
+            const TypeIdentifier& complete_type_id);
+
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
     // In case of indirect hash TypeIdentifiers, type_identifier_2 would be uninitialized (TK_NONE).
