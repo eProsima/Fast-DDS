@@ -957,7 +957,7 @@ TEST(TransportTCP, TCPv4_transport_sanitizer)
                 client->disable_builtin_transport().add_user_transport_to_pparams(client_transport);
                 Locator_t initialPeerLocator;
                 initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
-                IPLocator::setIPv4(initialPeerLocator, 127,0,0,1);
+                IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
                 initialPeerLocator.port = server_port;
                 LocatorList_t initial_peer_list;
                 initial_peer_list.push_back(initialPeerLocator);
