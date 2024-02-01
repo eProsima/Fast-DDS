@@ -1959,6 +1959,16 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
+        else if (strcmp(name, BUILTIN_TRANS) == 0)
+        {
+            // builtinTransports
+            eprosima::fastdds::rtps::BuiltinTransports bt;
+            if (XMLP_ret::XML_OK != getXMLBuiltinTransports(p_aux0, &bt, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+            participant_node.get()->rtps.setup_transports(bt);
+        }
         else if (strcmp(name, PROPERTIES_POLICY) == 0)
         {
             // propertiesPolicy
