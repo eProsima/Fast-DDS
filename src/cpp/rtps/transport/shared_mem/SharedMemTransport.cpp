@@ -418,43 +418,34 @@ bool SharedMemTransport::transform_remote_locator(
 }
 
 std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::list<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    assert(shared_mem_segment_);
-
-    std::shared_ptr<SharedMemManager::Buffer> shared_buffer =
-            shared_mem_segment_->alloc_buffer(send_buffer_size, max_blocking_time_point);
-
-    memcpy(shared_buffer->data(), send_buffer, send_buffer_size);
-
-    return shared_buffer;
-}
-
-std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buffer(
-        const std::list<asio::const_buffer>& buffers,
-        const uint32_t total_bytes,
-        const std::chrono::steady_clock::time_point& max_blocking_time_point)
-{
+    using namespace eprosima::fastdds::statistics::rtps;
 
     assert(shared_mem_segment_);
 
     std::shared_ptr<SharedMemManager::Buffer> shared_buffer =
             shared_mem_segment_->alloc_buffer(total_bytes, max_blocking_time_point);
+    void* pos = shared_buffer->data();
+
+    // TODO Carlos: handle statistics
 
     for (auto it = buffers.begin(); it != buffers.end(); ++it)
     {
         // Direct copy from the const_buffer to the mutable shared_buffer
-        memcpy(shared_buffer->data(), ((*it).data()), asio::buffer_size(*it));
+        memcpy(pos, ((*it).buffer), (*it).size);
+        // Static cast to avoid pointer arithmetic on void*
+        pos = static_cast<char*>(pos) + (*it).size;
     }
 
     return shared_buffer;
 }
 
 bool SharedMemTransport::send(
-        const octet* send_buffer,
-        uint32_t send_buffer_size,
+        const std::list<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end,
         const std::chrono::steady_clock::time_point& max_blocking_time_point)
@@ -480,12 +471,7 @@ bool SharedMemTransport::send(
                 // Only copy the first time
                 if (shared_buffer == nullptr)
                 {
-                    remove_statistics_submessage(send_buffer, send_buffer_size);
-
-                    // Use a list of const_buffers to send the message
-                    std::list<asio::const_buffer> buffers;
-                    buffers.push_back(asio::buffer(send_buffer, send_buffer_size));
-                    shared_buffer = copy_to_shared_buffer(buffers, send_buffer_size, max_blocking_time_point);
+                    shared_buffer = copy_to_shared_buffer(buffers, total_bytes, max_blocking_time_point);
                 }
 
                 ret &= send(shared_buffer, *it);
