@@ -123,6 +123,7 @@
             ├ ignore_non_matching_locators         [bool],
             ├ sendSocketBufferSize                 [uint32],
             ├ listenSocketBufferSize               [uint32],
+            ├ netmask_filter                       [string] ("OFF", "AUTO", "ON"),
             ├ builtin                              [0~1],
             ├ port                                 [0~1],
             ├ participantID                        [int32],
@@ -153,6 +154,15 @@
                         <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="sendSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="listenSocketBufferSize" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="netmask_filter" minOccurs="0" maxOccurs="1">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="OFF"/>
+                                    <xs:enumeration value="AUTO"/>
+                                    <xs:enumeration value="ON"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
                         <xs:element name="builtin" type="builtinAttributesType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="port" type="portType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="participantID" type="int32" minOccurs="0" maxOccurs="1"/>
@@ -850,32 +860,35 @@
         ├ receiveBufferSize         [uint32],
         ├ maxMessageSize            [uint32],
         ├ maxInitialPeersRange      [uint32],
-        ├ interfaceWhiteList        [0~*],                     (NOT  available for   SHM type)
+        ├ interfaceWhiteList        [0~*],                            (NOT  available for   SHM type)
         |   └ address               [ipv4Address|ipv6Address]
-        ├ TTL                       [uint8],                   (ONLY available for  UDP  type)
-        ├ non_blocking_send         [boolean],                 (ONLY available for  UDP  type)
-        ├ output_port               [uint16],                  (ONLY available for  UDP  type)
-        ├ wan_addr                  [ipv4AddressFormat],       (ONLY available for TCPv4 type)
-        ├ keep_alive_frequency_ms   [uint32],                  (ONLY available for TCP   type)
-        ├ keep_alive_timeout_ms     [uint32],                  (ONLY available for TCP   type)
-        ├ max_logical_port          [uint16],                  (ONLY available for TCP   type)
-        ├ logical_port_range        [uint16],                  (ONLY available for TCP   type)
-        ├ logical_port_increment    [uint16],                  (ONLY available for TCP   type)
-        ├ listening_ports           [0~*],                     (ONLY available for TCP   type)
-        |   └ port                  [uint16]                   (ONLY available for TCP   type)
-        ├ tls                       [0~1],                     (ONLY available for TCP   type)
-        ├ calculate_crc             [bool],                    (ONLY available for TCP   type)
-        ├ check_crc                 [bool],                    (ONLY available for TCP   type)
-        ├ enable_tcp_nodelay        [bool],                    (ONLY available for TCP   type)
-        ├ keep_alive_thread         [threadSettingsType],      (ONLY available for TCP   type)
-        ├ accept_thread             [threadSettingsType],      (ONLY available for TCP   type)
-        ├ segment_size              [uint32],                  (ONLY available for   SHM type)
-        ├ port_queue_capacity       [uint32],                  (ONLY available for   SHM type)
-        ├ healthy_check_timeout_ms  [uint32],                  (ONLY available for   SHM type)
-        ├ rtps_dump_file            [string]                   (ONLY available for   SHM type)
+        |   └ interface             [string]
+        ├ netmask_filter            [string] ("OFF", "AUTO", "ON"),   (NOT  available for   SHM type)
+        ├ interfaces                [interfacesType],                 (NOT  available for   SHM type)
+        ├ TTL                       [uint8],                          (ONLY available for  UDP  type)
+        ├ non_blocking_send         [boolean],                        (ONLY available for  UDP  type)
+        ├ output_port               [uint16],                         (ONLY available for  UDP  type)
+        ├ wan_addr                  [ipv4AddressFormat],              (ONLY available for TCPv4 type)
+        ├ keep_alive_frequency_ms   [uint32],                         (ONLY available for TCP   type)
+        ├ keep_alive_timeout_ms     [uint32],                         (ONLY available for TCP   type)
+        ├ max_logical_port          [uint16],                         (ONLY available for TCP   type)
+        ├ logical_port_range        [uint16],                         (ONLY available for TCP   type)
+        ├ logical_port_increment    [uint16],                         (ONLY available for TCP   type)
+        ├ listening_ports           [0~*],                            (ONLY available for TCP   type)
+        |   └ port                  [uint16]                          (ONLY available for TCP   type)
+        ├ tls                       [0~1],                            (ONLY available for TCP   type)
+        ├ calculate_crc             [bool],                           (ONLY available for TCP   type)
+        ├ check_crc                 [bool],                           (ONLY available for TCP   type)
+        ├ enable_tcp_nodelay        [bool],                           (ONLY available for TCP   type)
+        ├ keep_alive_thread         [threadSettingsType],             (ONLY available for TCP   type)
+        ├ accept_thread             [threadSettingsType],             (ONLY available for TCP   type)
+        ├ segment_size              [uint32],                         (ONLY available for   SHM type)
+        ├ port_queue_capacity       [uint32],                         (ONLY available for   SHM type)
+        ├ healthy_check_timeout_ms  [uint32],                         (ONLY available for   SHM type)
+        ├ rtps_dump_file            [string]                          (ONLY available for   SHM type)
         ├ default_reception_threads [threadSettingsType]
-        ├ reception_threads         [receptionThreadsListType] (ONLY available for   SHM type)
-        └ dump_thread               [threadSettingsType]       (ONLY available for   SHM type) -->
+        ├ reception_threads         [receptionThreadsListType]        (ONLY available for   SHM type)
+        └ dump_thread               [threadSettingsType]              (ONLY available for   SHM type) -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
@@ -897,7 +910,7 @@
             <xs:element name="maxInitialPeersRange" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="interfaceWhiteList" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
-                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                    <xs:sequence minOccurs="0" maxOccurs="unbounded">
                         <xs:choice minOccurs="1">
                             <xs:element name="address" maxOccurs="unbounded">
                                 <xs:simpleType>
@@ -909,6 +922,16 @@
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
+            <xs:element name="netmask_filter" minOccurs="0" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="OFF"/>
+                        <xs:enumeration value="AUTO"/>
+                        <xs:enumeration value="ON"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="interfaces" type="interfacesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="TTL" type="uint8" minOccurs="0" maxOccurs="1"/>
             <xs:element name="non_blocking_send" type="boolean" minOccurs="0" maxOccurs="1"/>
             <xs:element name="output_port" type="uint16" minOccurs="0" maxOccurs="1"/>
@@ -939,6 +962,52 @@
             <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
+    </xs:complexType>
+
+    <!--interfaces:
+        ├ allowlist       [allowlistType],
+        └ blocklist       [blocklistType] -->
+    <xs:complexType name="interfacesType">
+        <xs:all>
+            <xs:element name="allowlist" type="allowlistType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="blocklist" type="blocklistType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--allowlist:
+        ├ interface                 [0~*]
+        | ╠ att. name               [string] REQ,
+        | ╠ att. netmask_filter     [string] REQ ("OFF", "AUTO", "ON") -->
+    <xs:complexType name="allowlistType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="interface" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="string" use="required"/>
+                    <xs:attribute name="netmask_filter" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="OFF"/>
+                                <xs:enumeration value="AUTO"/>
+                                <xs:enumeration value="ON"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--blocklist:
+        ├ interface       [0~*]
+        | ╠ att. name     [string] REQ -->
+    <xs:complexType name="blocklistType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="interface" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="name" type="string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
     </xs:complexType>
 
     <!--Transport Layer Security (TLS):

@@ -23,6 +23,7 @@
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/transport/NetmaskFilterKind.h>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
@@ -891,9 +892,19 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <interfaceWhiteList>\
                         <address>192.168.1.41</address>\
                         <address>127.0.0.1</address>\
-                        <address>wlp0s20f3</address>\
-                        <address>lo</address>\
+                        <interface>wlp0s20f3</interface>\
+                        <interface>lo</interface>\
                     </interfaceWhiteList>\
+                    <netmask_filter>ON</netmask_filter>\
+                    <interfaces>\
+                        <allowlist>\
+                            <interface name=\"wlp59s0\" netmask_filter=\"ON\"/>\
+                            <interface name=\"127.0.0.1\" netmask_filter=\"AUTO\"/>\
+                        </allowlist>\
+                        <blocklist>\
+                            <interface name=\"docker0\"/>\
+                        </blocklist>\
+                    </interfaces>\
                     <wan_addr>80.80.55.44</wan_addr>\
                     <output_port>5101</output_port>\
                     <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
@@ -935,7 +946,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     </reception_threads>\
                 </transport_descriptor>\
                 ";
-        constexpr size_t xml_len {3000};
+        constexpr size_t xml_len {3500};
         char xml[xml_len];
 
         // UDPv4
@@ -956,6 +967,10 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[1], "127.0.0.1");
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[2], "wlp0s20f3");
         EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[3], "lo");
+        EXPECT_EQ(pUDPv4Desc->netmask_filter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
+        EXPECT_EQ(pUDPv4Desc->interface_allowlist[0], std::make_pair(std::string("wlp59s0"), eprosima::fastdds::rtps::NetmaskFilterKind::ON));
+        EXPECT_EQ(pUDPv4Desc->interface_allowlist[1], std::make_pair(std::string("127.0.0.1"), eprosima::fastdds::rtps::NetmaskFilterKind::AUTO));
+        EXPECT_EQ(pUDPv4Desc->interface_blocklist[0], "docker0");
         EXPECT_EQ(pUDPv4Desc->m_output_udp_socket, 5101u);
         EXPECT_EQ(pUDPv4Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pUDPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
@@ -979,8 +994,12 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pUDPv6Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[0], "192.168.1.41");
         EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[1], "127.0.0.1");
-        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[2], "wlp0s20f3");
-        EXPECT_EQ(pUDPv4Desc->interfaceWhiteList[3], "lo");
+        EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[2], "wlp0s20f3");
+        EXPECT_EQ(pUDPv6Desc->interfaceWhiteList[3], "lo");
+        EXPECT_EQ(pUDPv6Desc->netmask_filter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
+        EXPECT_EQ(pUDPv6Desc->interface_allowlist[0], std::make_pair(std::string("wlp59s0"), eprosima::fastdds::rtps::NetmaskFilterKind::ON));
+        EXPECT_EQ(pUDPv6Desc->interface_allowlist[1], std::make_pair(std::string("127.0.0.1"), eprosima::fastdds::rtps::NetmaskFilterKind::AUTO));
+        EXPECT_EQ(pUDPv6Desc->interface_blocklist[0], "docker0");
         EXPECT_EQ(pUDPv6Desc->m_output_udp_socket, 5101u);
         EXPECT_EQ(pUDPv6Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pUDPv6Desc->get_thread_config_for_port(12345), modified_thread_settings);
@@ -1005,8 +1024,18 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <maxInitialPeersRange>100</maxInitialPeersRange>\
                     <interfaceWhiteList>\
                         <address>192.168.1.41</address>\
-                        <address>127.0.0.1</address>\
+                        <interface>lo</interface>\
                     </interfaceWhiteList>\
+                    <netmask_filter>ON</netmask_filter>\
+                    <interfaces>\
+                        <allowlist>\
+                            <interface name=\"wlp59s0\" netmask_filter=\"ON\"/>\
+                            <interface name=\"127.0.0.1\" netmask_filter=\"AUTO\"/>\
+                        </allowlist>\
+                        <blocklist>\
+                            <interface name=\"docker0\"/>\
+                        </blocklist>\
+                    </interfaces>\
                     <wan_addr>80.80.55.44</wan_addr>\
                     <keep_alive_frequency_ms>5000</keep_alive_frequency_ms>\
                     <keep_alive_timeout_ms>25000</keep_alive_timeout_ms>\
@@ -1072,7 +1101,11 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv4Desc->max_message_size(), 16384u);
         EXPECT_EQ(pTCPv4Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[0], "192.168.1.41");
-        EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pTCPv4Desc->interfaceWhiteList[1], "lo");
+        EXPECT_EQ(pTCPv4Desc->netmask_filter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
+        EXPECT_EQ(pTCPv4Desc->interface_allowlist[0], std::make_pair(std::string("wlp59s0"), eprosima::fastdds::rtps::NetmaskFilterKind::ON));
+        EXPECT_EQ(pTCPv4Desc->interface_allowlist[1], std::make_pair(std::string("127.0.0.1"), eprosima::fastdds::rtps::NetmaskFilterKind::AUTO));
+        EXPECT_EQ(pTCPv4Desc->interface_blocklist[0], "docker0");
         EXPECT_EQ(pTCPv4Desc->wan_addr[0], (octet)80);
         EXPECT_EQ(pTCPv4Desc->wan_addr[1], (octet)80);
         EXPECT_EQ(pTCPv4Desc->wan_addr[2], (octet)55);
@@ -1106,7 +1139,11 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv6Desc->max_message_size(), 16384u);
         EXPECT_EQ(pTCPv6Desc->max_initial_peers_range(), 100u);
         EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[0], "192.168.1.41");
-        EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[1], "127.0.0.1");
+        EXPECT_EQ(pTCPv6Desc->interfaceWhiteList[1], "lo");
+        EXPECT_EQ(pTCPv6Desc->netmask_filter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
+        EXPECT_EQ(pTCPv6Desc->interface_allowlist[0], std::make_pair(std::string("wlp59s0"), eprosima::fastdds::rtps::NetmaskFilterKind::ON));
+        EXPECT_EQ(pTCPv6Desc->interface_allowlist[1], std::make_pair(std::string("127.0.0.1"), eprosima::fastdds::rtps::NetmaskFilterKind::AUTO));
+        EXPECT_EQ(pTCPv6Desc->interface_blocklist[0], "docker0");
         EXPECT_EQ(pTCPv6Desc->keep_alive_frequency_ms, 5000u);
         EXPECT_EQ(pTCPv6Desc->keep_alive_timeout_ms, 25000u);
         EXPECT_EQ(pTCPv6Desc->max_logical_port, 9000u);
@@ -1214,6 +1251,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "TTL",
         "non_blocking_send",
         "interfaceWhiteList",
+        "netmask_filter",
+        "interfaces",
         "output_port",
         "default_reception_threads",
         "reception_threads",
@@ -1228,6 +1267,8 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "receiveBufferSize",
         "TTL",
         "interfaceWhiteList",
+        "netmask_filter",
+        "interfaces",
         "keep_alive_frequency_ms",
         "keep_alive_timeout_ms",
         "max_logical_port",

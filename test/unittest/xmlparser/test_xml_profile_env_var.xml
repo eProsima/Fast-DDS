@@ -143,6 +143,7 @@
                 </port>
                 <participantID>${XML_PROFILES_ENV_VAR_63}</participantID>
                 <useBuiltinTransports>${XML_PROFILES_ENV_VAR_64}</useBuiltinTransports>
+                <netmask_filter>${XML_PROFILES_ENV_VAR_162}</netmask_filter>
                 <name>${XML_PROFILES_ENV_VAR_65}</name>
                 <userData>
                     <value>${XML_PROFILES_ENV_VAR_66}</value>

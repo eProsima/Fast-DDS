@@ -162,6 +162,7 @@
                 </port>
                 <participantID>9898</participantID>
                 <useBuiltinTransports>true</useBuiltinTransports>
+                <netmask_filter>ON</netmask_filter>
                 <name>test_name</name>
                 <userData>
                     <value>56.30.0.ce</value>

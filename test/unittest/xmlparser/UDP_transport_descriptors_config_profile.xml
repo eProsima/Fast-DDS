@@ -13,8 +13,18 @@
                 <maxInitialPeersRange>100</maxInitialPeersRange>
                 <interfaceWhiteList>
                     <address>192.168.1.41</address>
-                    <address>127.0.0.1</address>
+                    <interface>lo</interface>
                 </interfaceWhiteList>
+                <netmask_filter>ON</netmask_filter>
+                <interfaces>
+                    <allowlist>
+                        <interface name="wlp59s0" netmask_filter="ON"/>
+                        <interface name="127.0.0.1" netmask_filter="AUTO"/>
+                    </allowlist>
+                    <blocklist>
+                        <interface name="docker0"/>
+                    </blocklist>
+                </interfaces>
                 <output_port>5101</output_port>
                 <default_reception_threads>
                     <scheduling_policy>-1</scheduling_policy>

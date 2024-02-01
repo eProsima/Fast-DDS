@@ -235,6 +235,18 @@ protected:
             tinyxml2::XMLElement* p_root,
             std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
 
+    RTPS_DllAPI static XMLP_ret parseXMLInterfaces(
+            tinyxml2::XMLElement* p_root,
+            std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLAllowlist(
+            tinyxml2::XMLElement* p_root,
+            std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
+
+    RTPS_DllAPI static XMLP_ret parseXMLBlocklist(
+            tinyxml2::XMLElement* p_root,
+            std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
+
     RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
