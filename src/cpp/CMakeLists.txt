@@ -42,6 +42,8 @@ set(${PROJECT_NAME}_source_files
     fastdds/log/StdoutConsumer.cpp
     fastdds/log/FileConsumer.cpp
 
+    rtps/common/GuidPrefix_t.cpp
+    rtps/common/LocatorWithMask.cpp
     rtps/common/Time_t.cpp
     rtps/resources/ResourceEvent.cpp
     rtps/resources/TimedEvent.cpp
@@ -76,6 +78,7 @@ set(${PROJECT_NAME}_source_files
     rtps/messages/submessages/GapMsg.hpp
     rtps/messages/submessages/HeartbeatMsg.hpp
     rtps/network/ExternalLocatorsProcessor.cpp
+    rtps/network/NetmaskFilterUtils.cpp
     rtps/network/NetworkFactory.cpp
     rtps/network/ReceiverResource.cpp
     rtps/attributes/RTPSParticipantAttributes.cpp

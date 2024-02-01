@@ -350,6 +350,14 @@ bool ReaderProxyData::writeToCDRMessage(
     }
 
     {
+        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, PARAMETER_GUID_LENGTH, m_guid);
+        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
+        {
+            return false;
+        }
+    }
+
+    {
         ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
         p.netconfigSet = m_networkConfiguration;
         if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
@@ -405,13 +413,6 @@ bool ReaderProxyData::writeToCDRMessage(
     {
         ParameterKey_t p(fastdds::dds::PID_KEY_HASH, 16, m_key);
         if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::add_to_cdr_message(p, msg))
-        {
-            return false;
-        }
-    }
-    {
-        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, PARAMETER_GUID_LENGTH, m_guid);
-        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -877,7 +878,8 @@ bool ReaderProxyData::readFromCDRMessage(
                         else
                         {
                             Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration))
+                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
+                                    m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     is_shm_transport_available,
@@ -904,7 +906,8 @@ bool ReaderProxyData::readFromCDRMessage(
                         else
                         {
                             Locator_t temp_locator;
-                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration))
+                            if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration,
+                                    m_guid.is_from_this_host()))
                             {
                                 ProxyDataFilters::filter_locators(
                                     is_shm_transport_available,
@@ -1245,7 +1248,7 @@ void ReaderProxyData::set_remote_unicast_locators(
     remote_locators_.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_remote_or_allowed(locator))
+        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1265,7 +1268,7 @@ void ReaderProxyData::set_multicast_locators(
     remote_locators_.multicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.is_locator_remote_or_allowed(locator))
+        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
         {
             remote_locators_.add_multicast_locator(locator);
         }
@@ -1288,7 +1291,7 @@ void ReaderProxyData::set_remote_locators(
 
     for (const Locator_t& locator : locators.unicast)
     {
-        if (network.is_locator_remote_or_allowed(locator))
+        if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
         {
             remote_locators_.add_unicast_locator(locator);
         }
@@ -1298,7 +1301,7 @@ void ReaderProxyData::set_remote_locators(
     {
         for (const Locator_t& locator : locators.multicast)
         {
-            if (network.is_locator_remote_or_allowed(locator))
+            if (network.is_locator_remote_or_allowed(locator, m_guid.is_from_this_host()))
             {
                 remote_locators_.add_multicast_locator(locator);
             }

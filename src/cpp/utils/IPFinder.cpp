@@ -65,6 +65,7 @@
 #include <netinet/in.h>
 #endif // if defined(__FreeBSD__)
 
+#include <bitset>
 #include <cstddef>
 #include <cstring>
 #include <algorithm>
@@ -136,17 +137,36 @@ bool IPFinder::getIPs(
                         continue;
                     }
 
+                    // Parse IP
+                    bool success;
                     if (info.type == IP4)
                     {
-                        parseIP4(info);
+                        success = parseIP4(info);
                     }
                     else if (info.type == IP6)
                     {
-                        parseIP6(info);
+                        success = parseIP6(info);
+                    }
+
+                    // Abort if parsing failed
+                    if (!success)
+                    {
+                        continue;
                     }
 
                     if (return_loopback || (info.type != IP6_LOCAL && info.type != IP4_LOCAL))
                     {
+                        // Parse prefix length if available (introduced in Windows Vista)
+                        if (ua->Length <= offsetof(IP_ADAPTER_UNICAST_ADDRESS_LH, OnLinkPrefixLength))
+                        {
+                            info.masked_locator.mask(0);
+                        }
+                        else
+                        {
+                            info.masked_locator.mask(ua->OnLinkPrefixLength);
+                        }
+                        info.masked_locator = info.locator; // NOTE: copy (kind and address) after parsing ip
+
                         vec_name->push_back(info);
                     }
                     //printf("Buffer: %s\n", buf);
@@ -187,6 +207,11 @@ bool IPFinder::getIPs(
 
         if (family == AF_INET)
         {
+            info_IP info;
+            info.type = IP4;
+            info.dev = std::string(ifa->ifa_name);
+
+            // Get interface name
             s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
@@ -194,19 +219,48 @@ bool IPFinder::getIPs(
                 EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
-            info_IP info;
-            info.type = IP4;
             info.name = std::string(host);
-            info.dev = std::string(ifa->ifa_name);
-            parseIP4(info);
 
-            if (return_loopback || info.type != IP4_LOCAL)
+            // Get interface network mask
+            s = getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in),
+                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0)
             {
-                vec_name->push_back(info);
+                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
+                continue;
+            }
+            auto netmask_str = std::string(host);
+
+            if (parseIP4(info))
+            {
+                if (return_loopback || info.type != IP4_LOCAL)
+                {
+                    // Convert parsed netmask string to locator
+                    Locator_t netmask_locator;
+                    netmask_locator.kind = LOCATOR_KIND_UDPv4;
+                    netmask_locator.port = 0;
+                    IPLocator::setIPv4(netmask_locator, netmask_str);
+
+                    // Get netmask length from locator
+                    uint8_t netmask = 0;
+                    for (const auto& addr_octet: netmask_locator.address)
+                    {
+                        netmask += static_cast<uint8_t>(std::bitset<8>(addr_octet).count());
+                    }
+                    info.masked_locator.mask(netmask);
+                    info.masked_locator = info.locator; // NOTE: copy (kind and address) after parseIP4
+
+                    vec_name->push_back(info);
+                }
             }
         }
         else if (family == AF_INET6)
         {
+            info_IP info;
+            info.type = IP6;
+            info.dev = std::string(ifa->ifa_name);
+
+            // Get interface name
             s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
                             host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             if (s != 0)
@@ -214,14 +268,37 @@ bool IPFinder::getIPs(
                 EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
                 continue;
             }
-            info_IP info;
-            info.type = IP6;
             info.name = std::string(host);
-            info.dev = std::string(ifa->ifa_name);
+
+            // Get interface network mask
+            s = getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in6),
+                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+            if (s != 0)
+            {
+                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
+                continue;
+            }
+            auto netmask_str = std::string(host);
+
             if (parseIP6(info))
             {
                 if (return_loopback || info.type != IP6_LOCAL)
                 {
+                    // Convert parsed netmask string to locator
+                    Locator_t netmask_locator;
+                    netmask_locator.kind = LOCATOR_KIND_UDPv6;
+                    netmask_locator.port = 0;
+                    IPLocator::setIPv6(netmask_locator, netmask_str);
+
+                    // Get netmask length from locator
+                    uint8_t netmask = 0;
+                    for (const auto& addr_octet: netmask_locator.address)
+                    {
+                        netmask += static_cast<uint8_t>(std::bitset<8>(addr_octet).count());
+                    }
+                    info.masked_locator.mask(netmask);
+                    info.masked_locator = info.locator; // NOTE: copy (kind and address) after parseIP6
+
                     vec_name->push_back(info);
                 }
             }
@@ -505,7 +582,7 @@ bool IPFinder::getIP6Address(
 bool IPFinder::parseIP4(
         info_IP& info)
 {
-    info.locator.kind = 1;
+    info.locator.kind = LOCATOR_KIND_UDPv4;
     info.locator.port = 0;
     IPLocator::setIPv4(info.locator, info.name);
     if (IPLocator::isLocal(info.locator))

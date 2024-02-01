@@ -145,15 +145,14 @@ bool test_UDPv4TransportDescriptor::operator ==(
            SocketTransportDescriptor::operator ==(t));
 }
 
-void test_UDPv4Transport::get_ips(
+bool test_UDPv4Transport::get_ips(
         std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-        bool return_loopback)
+        bool return_loopback,
+        bool force_lookup) const
 {
-
     if (!simulate_no_interfaces)
     {
-        UDPv4Transport::get_ips(locNames, return_loopback);
-        return;
+        return UDPv4Transport::get_ips(locNames, return_loopback, force_lookup);
     }
 
     if (return_loopback)
@@ -164,8 +163,11 @@ void test_UDPv4Transport::get_ips(
         local.name = "127.0.0.1";
         local.locator.kind = LOCATOR_KIND_UDPv4;
         fill_local_ip(local.locator);
+        local.masked_locator = local.locator;
+        local.masked_locator.mask(32);
         locNames.emplace_back(local);
     }
+    return true;
 }
 
 LocatorList test_UDPv4Transport::NormalizeLocator(

@@ -37,15 +37,15 @@ TCPAcceptor::TCPAcceptor(
 
 TCPAcceptor::TCPAcceptor(
         asio::io_service& io_service,
-        const std::string& interface,
+        const std::string& iface,
         const Locator& locator)
-    : acceptor_(io_service, asio::ip::tcp::endpoint(asio::ip::address::from_string(interface),
+    : acceptor_(io_service, asio::ip::tcp::endpoint(asio::ip::address::from_string(iface),
             IPLocator::getPhysicalPort(locator)))
     , locator_(locator)
     , io_service_(&io_service)
 {
     locator_.port = acceptor_.local_endpoint().port();
-    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address::from_string(interface),
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address::from_string(iface),
                     IPLocator::getPhysicalPort(locator_));
 }
 

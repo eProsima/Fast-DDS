@@ -469,6 +469,14 @@ bool TCPTransportInterface::init(
     ip::tcp::endpoint local_endpoint = initial_peer_local_locator_socket_->local_endpoint();
     initial_peer_local_locator_port_ = local_endpoint.port();
 
+    // Get non_blocking_send property
+    if (properties)
+    {
+        auto s_non_blocking_send = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(*properties,
+                        "fastdds.tcp_transport.non_blocking_send");
+        non_blocking_send_ = s_non_blocking_send && *s_non_blocking_send == "true" ? true : false;
+    }
+
     // Check system buffer sizes.
     if (configuration()->sendBufferSize == 0)
     {
@@ -519,9 +527,6 @@ bool TCPTransportInterface::init(
     {
         rtcp_message_manager_ = std::make_shared<RTCPMessageManager>(this);
     }
-
-    // TODO(Ricardo) Create an event that update this list.
-    get_ips(current_interfaces_);
 
     auto ioServiceFunction = [&]()
             {
@@ -1885,6 +1890,11 @@ bool TCPTransportInterface::is_localhost_allowed() const
     Locator local_locator;
     fill_local_ip(local_locator);
     return is_locator_allowed(local_locator);
+}
+
+NetmaskFilterInfo TCPTransportInterface::netmask_filter_info() const
+{
+    return {netmask_filter_, allowed_interfaces_};
 }
 
 void TCPTransportInterface::fill_local_physical_port(

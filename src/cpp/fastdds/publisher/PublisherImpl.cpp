@@ -31,8 +31,12 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <rtps/network/NetmaskFilterUtils.hpp>
+#include <rtps/network/NetworkFactory.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
 
 #include <fastrtps/attributes/PublisherAttributes.h>
 
@@ -238,6 +242,26 @@ DataWriter* PublisherImpl::create_datawriter(
     if (!DataWriterImpl::check_qos_including_resource_limits(qos, type_support))
     {
         return nullptr;
+    }
+
+    // Check netmask filtering preconditions
+    fastrtps::rtps::RTPSParticipantImpl* rtps_impl = fastrtps::rtps::RTPSDomainImpl::find_local_participant(
+        rtps_participant()->getGuid());
+    if (nullptr != rtps_impl)
+    {
+        std::vector<fastdds::rtps::NetmaskFilterUtils::TransportNetmaskFilterInfo> netmask_filter_info =
+                rtps_impl->network_factory().netmask_filter_info();
+        std::string error_msg;
+        if (!fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+                qos.endpoint().ignore_non_matching_locators,
+                error_msg) ||
+                !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+                qos.endpoint().external_unicast_locators, error_msg))
+        {
+            EPROSIMA_LOG_ERROR(PUBLISHER,
+                    "Failed to create publisher -> " << error_msg);
+            return nullptr;
+        }
     }
 
     DataWriterImpl* impl = create_datawriter_impl(type_support, topic, qos, listener, payload_pool);

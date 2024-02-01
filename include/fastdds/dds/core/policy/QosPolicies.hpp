@@ -33,6 +33,8 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -2748,6 +2750,7 @@ public:
         , send_socket_buffer_size(0)
         , listen_socket_buffer_size(0)
         , max_msg_size_no_frag(0)
+        , netmask_filter(fastdds::rtps::NetmaskFilterKind::AUTO)
     {
     }
 
@@ -2765,6 +2768,7 @@ public:
                (this->listen_socket_buffer_size == b.listen_socket_buffer_size) &&
                (this->builtin_transports_reception_threads_ == b.builtin_transports_reception_threads_) &&
                (this->max_msg_size_no_frag == b.max_msg_size_no_frag) &&
+               (this->netmask_filter == b.netmask_filter) &&
                QosPolicy::operator ==(b);
     }
 
@@ -2799,6 +2803,9 @@ public:
      * higher than 65500K.
      */
     uint32_t max_msg_size_no_frag;
+
+    //! Netmask filter configuration
+    fastdds::rtps::NetmaskFilterKind netmask_filter;
 };
 
 //! Qos Policy to configure the endpoint

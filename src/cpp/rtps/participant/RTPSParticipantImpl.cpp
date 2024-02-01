@@ -58,15 +58,16 @@
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/NetmaskFilterUtils.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
-#include <utils/SystemInfo.hpp>
 #include <utils/string_utilities.hpp>
+#include <utils/SystemInfo.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
@@ -318,6 +319,21 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // User defined transports
     for (const auto& transportDescriptor : m_att.userTransports)
     {
+        auto socket_descriptor =
+                std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(transportDescriptor);
+        if (socket_descriptor != nullptr)
+        {
+            if (!fastdds::rtps::NetmaskFilterUtils::validate_and_transform(socket_descriptor->netmask_filter,
+                    m_att.netmaskFilter))
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                        "User transport failed to register. Provided descriptor's netmask filter ("
+                        << socket_descriptor->netmask_filter << ") is incompatible with participant's ("
+                        << m_att.netmaskFilter << ").");
+                continue;
+            }
+        }
+
         if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties,
                 m_att.max_msg_size_no_frag))
         {
@@ -349,6 +365,21 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     if (!networkFactoryHasRegisteredTransports())
     {
+        return;
+    }
+
+    // Check netmask filtering preconditions
+    std::vector<TransportNetmaskFilterInfo> netmask_filter_info = m_network_Factory.netmask_filter_info();
+    std::string error_msg;
+    if (!fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info, m_att.ignore_non_matching_locators,
+            error_msg) ||
+            !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+            m_att.builtin.metatraffic_external_unicast_locators,
+            error_msg) ||
+            !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+            m_att.default_external_unicast_locators, error_msg))
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, error_msg);
         return;
     }
 
@@ -1365,6 +1396,14 @@ void RTPSParticipantImpl::update_attributes(
 {
     bool local_interfaces_changed = false;
 
+    // Update cached network interfaces
+    if (!SystemInfo::update_interfaces())
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
+                "Failed to update cached network interfaces during " << m_att.getName() <<
+                " attributes update");
+    }
+
     // Check if new interfaces have been added
     if (internal_metatraffic_locators_)
     {
@@ -2041,8 +2080,8 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
     auto removeEndpoint = [this](EndpointKind_t kind, Endpoint* p)
             {
                 return kind == WRITER
-               ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
-               : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
+                       ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
+                       : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
             };
 
 #if HAVE_SECURITY
@@ -2822,7 +2861,7 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                 WriterHistory* hist,
                 WriterListener* listen,
                 const EntityId_t& entityId,
-                bool isBuiltin)-> bool
+                bool isBuiltin) -> bool
                 {
                     return this->createWriter(WriterOut, param, payload_pool, hist, listen, entityId, isBuiltin);
                 },

@@ -46,12 +46,12 @@ public:
     /**
      * Constructor
      * @param io_service Reference to the ASIO service.
-     * @param interface Network interface to bind the socket
+     * @param iface Network interface to bind the socket
      * @param locator Locator with the information about where to accept connections.
      */
     TCPAcceptorSecure(
             asio::io_service& io_service,
-            const std::string& interface,
+            const std::string& iface,
             const Locator& locator);
 
     /**

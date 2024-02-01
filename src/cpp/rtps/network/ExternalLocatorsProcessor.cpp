@@ -18,6 +18,8 @@
 
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
 
+#include <algorithm>
+
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -25,11 +27,32 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastrtps/utils/IPLocator.h>
+#include <rtps/network/NetmaskFilterUtils.hpp>
+#include <utils/SystemInfo.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 namespace ExternalLocatorsProcessor {
+
+static uint8_t get_locator_mask(
+        const Locator& locator)
+{
+    uint8_t ret = 24;
+
+    std::vector<fastrtps::rtps::IPFinder::info_IP> infoIPs;
+    SystemInfo::get_ips(infoIPs, true);
+    for (const fastrtps::rtps::IPFinder::info_IP& infoIP : infoIPs)
+    {
+        if (infoIP.locator.kind == locator.kind &&
+                std::equal(infoIP.locator.address, infoIP.locator.address + 16, locator.address))
+        {
+            ret = infoIP.masked_locator.mask();
+            break;
+        }
+    }
+    return ret;
+}
 
 static void get_mask_and_cost(
         const Locator& locator,
@@ -37,19 +60,19 @@ static void get_mask_and_cost(
         uint8_t& cost)
 {
     cost = 0;
-    mask = 24;
+    mask = get_locator_mask(locator);
 
     switch (locator.kind)
     {
         case LOCATOR_KIND_UDPv4:
         case LOCATOR_KIND_TCPv4:
-            // TODO(MiguelCompany): We should take cost and mask from the routing table
+            // TODO(MiguelCompany): We should take cost from the routing table
             cost = 1;
             break;
 
         case LOCATOR_KIND_UDPv6:
         case LOCATOR_KIND_TCPv6:
-            // TODO(MiguelCompany): We should take cost and mask from the routing table
+            // TODO(MiguelCompany): We should take cost from the routing table
             cost = 2;
             break;
 
@@ -162,68 +185,6 @@ void add_external_locators(
     perform_add_external_locators(list, external_locators);
 }
 
-/**
- * Checks if the first significant bits of two locator addresses match.
- *
- * @param [in] addr1     First address to check.
- * @param [in] addr2     Second address to check.
- * @param [in] num_bits  Number of bits to take into account.
- *
- * @return true when the first @c num_bits of both addresses are equal, false otherwise.
- */
-static bool address_matches(
-        const uint8_t* addr1,
-        const uint8_t* addr2,
-        uint64_t num_bits)
-{
-    uint64_t full_bytes = num_bits / 8;
-    if ((0 == full_bytes) || std::equal(addr1, addr1 + full_bytes, addr2))
-    {
-        uint64_t rem_bits = num_bits % 8;
-        if (rem_bits == 0)
-        {
-            return true;
-        }
-
-        uint8_t mask = 0xFF << (8 - rem_bits);
-        return (addr1[full_bytes] & mask) == (addr2[full_bytes] & mask);
-    }
-
-    return false;
-}
-
-/**
- * Checks if a remote locator matches with a local locator.
- *
- * @param [in] local_locator     LocatorWithMask with the matching configuration.
- * @param [in] remote_locator    Locator being checked.
- *
- * @return true when the locators match, false otherwise.
- */
-static bool match_with_mask(
-        const LocatorWithMask& local_locator,
-        const Locator& remote_locator)
-{
-    if (local_locator.kind == remote_locator.kind)
-    {
-        switch (local_locator.kind)
-        {
-            case LOCATOR_KIND_UDPv4:
-            case LOCATOR_KIND_TCPv4:
-                assert(32 >= local_locator.mask());
-                return address_matches(remote_locator.address + 12, local_locator.address + 12, local_locator.mask());
-
-            case LOCATOR_KIND_UDPv6:
-            case LOCATOR_KIND_TCPv6:
-            case LOCATOR_KIND_SHM:
-                assert(128 >= local_locator.mask());
-                return address_matches(remote_locator.address, local_locator.address, local_locator.mask());
-        }
-    }
-
-    return false;
-}
-
 static constexpr uint64_t heuristic_value(
         uint64_t externality,
         uint64_t cost)
@@ -252,7 +213,7 @@ static uint64_t heuristic(
         {
             for (const LocatorWithMask& local_locator : cost.second)
             {
-                if (match_with_mask(local_locator, remote_locator))
+                if (local_locator.matches(remote_locator))
                 {
                     return heuristic_value(externality.first, cost.first);
                 }
