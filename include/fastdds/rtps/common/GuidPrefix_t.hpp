@@ -44,6 +44,13 @@ struct RTPS_DllAPI GuidPrefix_t
         memset(value, 0, size);
     }
 
+    /**
+     * Checks whether this guid prefix is from an entity created on this host (from where this method is called).
+     *
+     * @return true when this guid prefix is from an entity created on this host, false otherwise.
+     */
+    bool is_from_this_host() const;
+
     static GuidPrefix_t unknown()
     {
         return GuidPrefix_t();

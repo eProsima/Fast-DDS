@@ -206,6 +206,42 @@ bool NetworkFactory::transform_remote_locator(
     return false;
 }
 
+bool NetworkFactory::transform_remote_locator(
+        const Locator_t& remote_locator,
+        Locator_t& result_locator,
+        const NetworkConfigSet_t& remote_network_config,
+        bool is_fastdds_local) const
+{
+    if (!is_locator_supported(remote_locator))
+    {
+        return false;
+    }
+
+    if (is_fastdds_local)
+    {
+        return transform_remote_locator(remote_locator, result_locator, remote_network_config);
+    }
+    else
+    {
+        result_locator = remote_locator;
+        return true;
+    }
+}
+
+bool NetworkFactory::is_locator_supported(
+        const Locator_t& locator) const
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (transport->IsLocatorSupported(locator))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool NetworkFactory::is_locator_allowed(
         const Locator_t& locator) const
 {
@@ -224,6 +260,13 @@ bool NetworkFactory::is_locator_remote_or_allowed(
         const Locator_t& locator) const
 {
     return !is_local_locator(locator) || is_locator_allowed(locator);
+}
+
+bool NetworkFactory::is_locator_remote_or_allowed(
+        const Locator_t& locator,
+        bool is_fastdds_local) const
+{
+    return (is_locator_supported(locator) && !is_fastdds_local) || is_locator_allowed(locator);
 }
 
 void NetworkFactory::select_locators(
@@ -469,6 +512,16 @@ void NetworkFactory::update_network_interfaces()
     {
         transport->update_network_interfaces();
     }
+}
+
+std::vector<TransportNetmaskFilterInfo> NetworkFactory::netmask_filter_info() const
+{
+    std::vector<TransportNetmaskFilterInfo> ret;
+    for (auto& transport : mRegisteredTransports)
+    {
+        ret.push_back({transport->kind(), transport->netmask_filter_info()});
+    }
+    return ret;
 }
 
 } // namespace rtps

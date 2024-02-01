@@ -22,6 +22,8 @@
 
 #include <asio.hpp>
 
+#include <fastdds/rtps/common/LocatorWithMask.hpp>
+#include <fastdds/rtps/transport/NetmaskFilterKind.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -172,13 +174,14 @@ public:
 
     bool is_localhost_allowed() const override;
 
+    NetmaskFilterInfo netmask_filter_info() const override;
+
 protected:
 
     friend class UDPChannelResource;
 
     // For UDPv6, the notion of channel corresponds to a port + direction tuple.
     asio::io_service io_service_;
-    std::vector<fastrtps::rtps::IPFinder::info_IP> currentInterfaces;
 
     mutable std::recursive_mutex mInputMapMutex;
     std::map<uint16_t, std::vector<UDPChannelResource*>> mInputSockets;
@@ -189,6 +192,9 @@ protected:
 
     //! First time open output channel flag: open the first socket with the ip::multicast::enable_loopback
     bool first_time_open_output_channel_;
+
+    NetmaskFilterKind netmask_filter_;
+    std::vector<std::pair<LocatorWithMask, NetmaskFilterKind>> allowed_interfaces_;
 
     UDPTransportInterface(
             int32_t transport_kind);
@@ -220,9 +226,10 @@ protected:
             const Locator& loc,
             uint16_t port) = 0;
     virtual asio::ip::udp generate_protocol() const = 0;
-    virtual void get_ips(
+    virtual bool get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback = false) = 0;
+            bool return_loopback = false,
+            bool force_lookup = false) const = 0;
     virtual const std::string& localhost_name() = 0;
 
     //! Checks if the interfaces white list is empty.
@@ -230,7 +237,7 @@ protected:
 
     //! Checks if the given interface is allowed by the white list.
     virtual bool is_interface_allowed(
-            const std::string& interface) const = 0;
+            const std::string& iface) const = 0;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
@@ -256,6 +263,10 @@ protected:
     eProsimaUDPSocket OpenAndBindUnicastOutputSocket(
             const asio::ip::udp::endpoint& endpoint,
             uint16_t& port);
+    eProsimaUDPSocket OpenAndBindUnicastOutputSocket(
+            const asio::ip::udp::endpoint& endpoint,
+            uint16_t& port,
+            const LocatorWithMask& locator);
 
     virtual void set_receive_buffer_size(
             uint32_t size) = 0;

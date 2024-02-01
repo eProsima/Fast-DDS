@@ -19,6 +19,8 @@ set(GUID_UTILS_TESTS_SOURCE GuidUtilsTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
@@ -43,6 +45,10 @@ set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp)
 
 set(TIMETESTS_SOURCE TimeTests.cpp

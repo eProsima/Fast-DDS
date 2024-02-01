@@ -76,7 +76,7 @@ struct RTPS_DllAPI GUID_t
     }
 
     /**
-     * Checks whether this guid is for an entity on the same host as another guid.
+     * Checks whether this guid is from an entity on the same host as another guid.
      *
      * @param other_guid GUID_t to compare to.
      *
@@ -86,6 +86,16 @@ struct RTPS_DllAPI GUID_t
             const GUID_t& other_guid) const
     {
         return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 4) == 0;
+    }
+
+    /**
+     * Checks whether this guid is from an entity created on this host (from where this method is called).
+     *
+     * @return true when this guid is from an entity created on this host, false otherwise.
+     */
+    bool is_from_this_host() const
+    {
+        return guidPrefix.is_from_this_host();
     }
 
     /**

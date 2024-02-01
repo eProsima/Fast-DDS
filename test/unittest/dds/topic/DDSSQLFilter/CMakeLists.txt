@@ -23,7 +23,11 @@ file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp

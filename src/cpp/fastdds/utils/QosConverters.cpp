@@ -154,6 +154,7 @@ void set_qos_from_attributes(
     qos.transport().use_builtin_transports = attr.useBuiltinTransports;
     qos.transport().send_socket_buffer_size = attr.sendSocketBufferSize;
     qos.transport().listen_socket_buffer_size = attr.listenSocketBufferSize;
+    qos.transport().netmask_filter = attr.netmaskFilter;
     qos.name() = attr.getName();
     qos.flow_controllers() = attr.flow_controllers;
     qos.builtin_controllers_sender_thread() = attr.builtin_controllers_sender_thread;
@@ -200,6 +201,7 @@ void set_attributes_from_qos(
     attr.useBuiltinTransports = qos.transport().use_builtin_transports;
     attr.sendSocketBufferSize = qos.transport().send_socket_buffer_size;
     attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
+    attr.netmaskFilter = qos.transport().netmask_filter;
     attr.userData = qos.user_data().data_vec();
     attr.flow_controllers = qos.flow_controllers();
     attr.builtin_controllers_sender_thread = qos.builtin_controllers_sender_thread();

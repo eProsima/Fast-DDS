@@ -55,8 +55,12 @@ set(UDPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
@@ -65,6 +69,7 @@ set(UDPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
@@ -77,8 +82,12 @@ set(UDPV6TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
@@ -88,6 +97,7 @@ set(UDPV6TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv6Transport.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
@@ -102,9 +112,13 @@ set(TCPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
@@ -148,9 +162,13 @@ set(TCPV6TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
@@ -193,9 +211,13 @@ set(TEST_UDPV4TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
@@ -219,8 +241,12 @@ set(SHAREDMEMTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/GuidPrefix_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp

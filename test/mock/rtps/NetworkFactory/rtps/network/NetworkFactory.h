@@ -31,6 +31,8 @@ namespace rtps {
 
 class RTPSParticipantAttributes;
 
+using TransportNetmaskFilterInfo = std::pair<int32_t, fastdds::rtps::NetmaskFilterInfo>;
+
 /**
  * Provides the FastRTPS library with abstract resources, which
  * in turn manage the SEND and RECEIVE operations over some transport.
@@ -55,6 +57,22 @@ public:
         return true;
     }
 
+    bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator,
+            const NetworkConfigSet_t&,
+            bool) const
+    {
+        result_locator = remote_locator;
+        return true;
+    }
+
+    bool is_locator_supported(
+            const Locator_t&) const
+    {
+        return true;
+    }
+
     bool is_locator_allowed(
             const Locator_t&) const
     {
@@ -63,6 +81,13 @@ public:
 
     bool is_locator_remote_or_allowed(
             const Locator_t&) const
+    {
+        return true;
+    }
+
+    bool is_locator_remote_or_allowed(
+            const Locator_t&,
+            bool) const
     {
         return true;
     }
@@ -76,6 +101,12 @@ public:
             const Locator_t&) const
     {
         return true;
+    }
+
+    // TODO
+    std::vector<TransportNetmaskFilterInfo> netmask_filter_info() const
+    {
+        return {};
     }
 
 };

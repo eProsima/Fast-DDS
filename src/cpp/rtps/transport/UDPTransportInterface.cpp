@@ -62,6 +62,7 @@ UDPTransportInterface::UDPTransportInterface(
     , mSendBufferSize(0)
     , mReceiveBufferSize(0)
     , first_time_open_output_channel_(true)
+    , netmask_filter_(NetmaskFilterKind::AUTO)
 {
 }
 
@@ -170,9 +171,6 @@ bool UDPTransportInterface::init(
         return false;
     }
 
-    // TODO(Ricardo) Create an event that update this list.
-    get_ips(currentInterfaces);
-
     return true;
 }
 
@@ -257,6 +255,36 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     return socket;
 }
 
+eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
+        const ip::udp::endpoint& endpoint,
+        uint16_t& port,
+        const LocatorWithMask& locator)
+{
+    eProsimaUDPSocket socket = OpenAndBindUnicastOutputSocket(endpoint, port);
+
+    socket.locator = locator;
+
+    auto it = std::find_if(
+        allowed_interfaces_.begin(),
+        allowed_interfaces_.end(),
+        [&locator](const std::pair<fastdds::rtps::LocatorWithMask,
+        NetmaskFilterKind>& entry)
+        {
+            return locator == entry.first;
+        });
+
+    if (it != allowed_interfaces_.end())
+    {
+        socket.netmask_filter = it->second;
+    }
+    else
+    {
+        socket.netmask_filter = netmask_filter_;
+    }
+
+    return socket;
+}
+
 bool UDPTransportInterface::OpenOutputChannel(
         SendResourceList& sender_resource_list,
         const Locator& locator)
@@ -316,9 +344,9 @@ bool UDPTransportInterface::OpenOutputChannel(
                     try
                     {
                         eProsimaUDPSocket multicastSocket =
-                                OpenAndBindUnicastOutputSocket(generate_endpoint((*locIt).name, new_port), new_port);
+                                OpenAndBindUnicastOutputSocket(generate_endpoint((*locIt).name, new_port), new_port,
+                                        (*locIt).masked_locator);
                         SetSocketOutboundInterface(multicastSocket, (*locIt).name);
-
                         sender_resource_list.emplace_back(
                             static_cast<SenderResource*>(new UDPSenderResource(*this, multicastSocket, true)));
                     }
@@ -340,7 +368,8 @@ bool UDPTransportInterface::OpenOutputChannel(
                 if (is_interface_allowed(infoIP.name))
                 {
                     eProsimaUDPSocket unicastSocket =
-                            OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name, port), port);
+                            OpenAndBindUnicastOutputSocket(generate_endpoint(infoIP.name,
+                                    port), port, infoIP.masked_locator);
                     SetSocketOutboundInterface(unicastSocket, infoIP.name);
                     if (first_time_open_output_channel_)
                     {
@@ -491,6 +520,12 @@ bool UDPTransportInterface::send(
 
     if (is_multicast_remote_address == only_multicast_purpose || whitelisted)
     {
+        if (!is_multicast_remote_address && socket.should_filter(remote_locator))
+        {
+            // Filter unicast remote locators according to socket conditions (e.g. netmask filtering)
+            return true;
+        }
+
         auto destinationEndpoint = generate_endpoint(remote_locator, IPLocator::getPhysicalPort(remote_locator));
 
         size_t bytesSent = 0;
@@ -737,6 +772,11 @@ bool UDPTransportInterface::is_localhost_allowed() const
     Locator local_locator;
     fill_local_ip(local_locator);
     return is_locator_allowed(local_locator);
+}
+
+NetmaskFilterInfo UDPTransportInterface::netmask_filter_info() const
+{
+    return {netmask_filter_, allowed_interfaces_};
 }
 
 } // namespace rtps

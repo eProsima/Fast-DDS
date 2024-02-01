@@ -35,6 +35,7 @@
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/utils/fixed_size_string.hpp>
@@ -467,6 +468,7 @@ public:
                (this->ignore_non_matching_locators == b.ignore_non_matching_locators) &&
                (this->sendSocketBufferSize == b.sendSocketBufferSize) &&
                (this->listenSocketBufferSize == b.listenSocketBufferSize) &&
+               (this->netmaskFilter == b.netmaskFilter) &&
                (this->builtin == b.builtin) &&
                (this->port == b.port) &&
                (this->userData == b.userData) &&
@@ -526,6 +528,9 @@ public:
      * Default value: 0.
      */
     uint32_t listenSocketBufferSize = 0;
+
+    //! Netmask filter configuration
+    fastdds::rtps::NetmaskFilterKind netmaskFilter = fastdds::rtps::NetmaskFilterKind::AUTO;
 
     //! Optionally allows user to define the GuidPrefix_t
     GuidPrefix_t prefix;
