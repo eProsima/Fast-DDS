@@ -21,14 +21,14 @@
 #define VIDEOPUBLISHER_H_
 
 #include <asio.hpp>
+#include <condition_variable>
+#include <chrono>
 
 #include "VideoTestTypes.hpp"
 #include <gstreamer-1.0/gst/app/gstappsrc.h>
 #include <gstreamer-1.0/gst/app/gstappsink.h>
 #include <gstreamer-1.0/gst/gst.h>
 
-#include <condition_variable>
-#include <chrono>
 
 class VideoTestPublisher
 {
@@ -39,20 +39,15 @@ public:
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
     eprosima::fastdds::dds::Publisher* mp_datapub;
-    eprosima::fastdds::dds::DataWriter* mp_data_dw;
     eprosima::fastdds::dds::Publisher* mp_commandpub;
-    eprosima::fastdds::dds::DataWriter* mp_command_dw;
     eprosima::fastdds::dds::Subscriber* mp_commandsub;
-    eprosima::fastdds::dds::DataReader* mp_dr;
     eprosima::fastdds::dds::Topic* mp_video_topic;
     eprosima::fastdds::dds::Topic* mp_command_pub_topic;
     eprosima::fastdds::dds::Topic* mp_command_sub_topic;
-
     VideoType* mp_video_out;
     std::chrono::steady_clock::time_point t_start_;
     int n_subscribers;
     unsigned int n_samples;
-    eprosima::fastdds::dds::SampleInfo m_sampleinfo;
     std::mutex mutex_;
     int disc_count_;
     std::condition_variable disc_cond_;
@@ -179,6 +174,9 @@ protected:
     eprosima::fastdds::dds::DataReaderQos datareader_qos;
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_cmd;
     eprosima::fastdds::dds::DataWriterQos datawriter_qos_data;
+    eprosima::fastdds::dds::DataWriter* mp_data_dw;
+    eprosima::fastdds::dds::DataReader* mp_dr;
+    eprosima::fastdds::dds::DataWriter* mp_command_dw;
 
 };
 

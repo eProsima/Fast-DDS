@@ -38,7 +38,7 @@
 #endif // if defined(_MSC_VER)
 
 using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::dds;
 
 using std::cout;
 using std::endl;
@@ -403,7 +403,7 @@ int main(
         }
     }
 
-    PropertyPolicy pub_part_property_policy, sub_part_property_policy,
+    eprosima::fastrtps::rtps::PropertyPolicy pub_part_property_policy, sub_part_property_policy,
             pub_property_policy, sub_property_policy;
 
 #if HAVE_SECURITY

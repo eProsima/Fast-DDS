@@ -22,6 +22,7 @@
 
 #include <asio.hpp>
 #include <condition_variable>
+
 #include "VideoTestTypes.hpp"
 #include <gstreamer-1.0/gst/app/gstappsrc.h>
 #include <gstreamer-1.0/gst/app/gstappsink.h>
@@ -51,11 +52,13 @@ class VideoTestSubscriber
         VideoTestSubscriber();
         virtual ~VideoTestSubscriber();
 
-        eprosima::fastrtps::Participant* mp_participant;
-        eprosima::fastrtps::Publisher* mp_commandpub;
-        eprosima::fastrtps::Subscriber* mp_datasub;
-        eprosima::fastrtps::Subscriber* mp_commandsub;
-        eprosima::fastrtps::SampleInfo_t m_sampleinfo;
+        eprosima::fastdds::dds::DomainParticipant* mp_participant;
+        eprosima::fastdds::dds::Publisher* mp_commandpub;
+        eprosima::fastdds::dds::Subscriber* mp_datasub;
+        eprosima::fastdds::dds::Subscriber* mp_commandsub;
+        eprosima::fastdds::dds::Topic* mp_video_topic;
+        eprosima::fastdds::dds::Topic* mp_command_pub_topic;
+        eprosima::fastdds::dds::Topic* mp_command_sub_topic;
         std::mutex mutex_;
         int disc_count_;
         std::condition_variable disc_cond_;
@@ -66,7 +69,7 @@ class VideoTestSubscriber
         int m_status;
         int n_received;
         int n_samples;
-        bool init(int nsam, bool reliable, uint32_t pid, bool hostname,
+        void init(int nsam, bool reliable, uint32_t pid, bool hostname,
                 const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
                 const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
                 const std::string& sXMLConfigFile, bool export_csv, const std::string& export_file,
@@ -75,40 +78,45 @@ class VideoTestSubscriber
         void run();
         bool test();
 
-        class DataSubListener : public eprosima::fastrtps::SubscriberListener
+        class DataSubListener : public eprosima::fastdds::dds::DataReaderListener
         {
             public:
                 DataSubListener(VideoTestSubscriber* up):mp_up(up){}
                 ~DataSubListener(){}
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& into);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+                void on_subscription_matched(
+                    eprosima::fastdds::dds::DataReader* /*datareader*/,
+                    const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+                void on_data_available(
+                     eprosima::fastdds::dds::DataReader* datareader) override;
                 VideoTestSubscriber* mp_up;
         } m_datasublistener;
 
-        class CommandPubListener : public eprosima::fastrtps::PublisherListener
+        class CommandPubListener : public eprosima::fastdds::dds::DataWriterListener
         {
             public:
                 CommandPubListener(VideoTestSubscriber* up):mp_up(up){}
                 ~CommandPubListener(){}
-                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
+                void on_publication_matched(
+                        eprosima::fastdds::dds::DataWriter* /*datawriter*/,
+                        const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
                 VideoTestSubscriber* mp_up;
         } m_commandpublistener;
 
-        class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+        class CommandSubListener : public eprosima::fastdds::dds::DataReaderListener
         {
             public:
                 CommandSubListener(VideoTestSubscriber* up):mp_up(up){}
                 ~CommandSubListener(){}
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& into);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+                void on_subscription_matched(
+                        eprosima::fastdds::dds::DataReader* /*datareader*/,
+                        const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+                void on_data_available(
+                        eprosima::fastdds::dds::DataReader* datareader) override;
                 VideoTestSubscriber* mp_up;
         } m_commandsublistener;
 
-        VideoDataType video_t;
-        TestCommandDataType command_t;
+        //VideoDataType video_t;
+        //TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
         bool m_bRunning;
 
@@ -152,6 +160,12 @@ protected:
     void stop();
     void analyzeTimes();
     void printStat(TimeStats& TS);
+    eprosima::fastdds::dds::DataReaderQos datareader_qos_data;
+    eprosima::fastdds::dds::DataReaderQos datareader_qos_cmd;
+    eprosima::fastdds::dds::DataWriterQos datawriter_qos;
+    eprosima::fastdds::dds::DataWriter*   mp_dw;
+    eprosima::fastdds::dds::DataReader*   mp_data_dr;
+    eprosima::fastdds::dds::DataReader*   mp_commanhd_dr;
 
     void push_video_packet(VideoType& packet)
     {
