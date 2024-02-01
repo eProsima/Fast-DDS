@@ -4,7 +4,6 @@
         "fastrtps" :
         {
             "cmake-args": [
-                "-DEPROSIMA_BUILD=ON",
                 "-DINTERNAL_DEBUG=ON",
                 "-DFASTRTPS_API_TESTS=OFF",
                 "-DFASTDDS_PIM_API_TESTS=ON",
@@ -13,7 +12,11 @@
                 "-DSECURITY=ON",
                 "-DMEMORYCHECK_COMMAND_OPTIONS=-q --tool=memcheck --leak-check=yes --show-reachable=yes
                     --num-callers=50 --log-fd=2 --error-exitcode=1",
-                "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastrtps/valgrind.supp"
+                "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastrtps/valgrind.supp",
+                "-DCOMPILE_TOOLS=ON",
+                "-DCOMPILE_EXAMPLES=ON",
+                "-DEPROSIMA_BUILD_TESTS=ON",
+                "-DSYSTEM_TESTS=ON"
             ]
         },
         "googletest-distribution" :
