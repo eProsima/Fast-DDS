@@ -141,7 +141,7 @@
         </struct>
     </type>
     <type>
-        <struct name="ArraytStruct">
+        <struct name="ArrayStruct">
             <member name="my_array" type="int32" arrayDimensions="2,2,2"/>
         </struct>
     </type>

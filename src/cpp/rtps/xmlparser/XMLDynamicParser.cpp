@@ -199,8 +199,9 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     }
 
     traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
-    md->id(field_position);
+    md->index(field_position);
     md->name(memberName);
+    md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     builder->add_member(md);
     //TODO(richiware) get_builtin_annotation
     //builder.apply_annotation_to_member(
@@ -857,7 +858,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
             traits<DynamicTypeBuilder>::ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->
                                                                        create_type(union_descriptor)};
 
-            MemberId mId{0};
+            MemberId mId{1};
             for (p_element = p_root->FirstChildElement(CASE);
                     p_element != nullptr; p_element = p_element->NextSiblingElement(CASE))
             {

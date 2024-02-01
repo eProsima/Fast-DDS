@@ -55,7 +55,7 @@ class DynamicTypesPrimitiveTestsAPIs
 {
 };
 
-TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
+TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis)
 {
     // Get the factory singleton
     traits<DynamicTypeBuilderFactory>::ref_type factory = DynamicTypeBuilderFactory::get_instance();
@@ -156,7 +156,7 @@ public:
 };
 
 
-TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
+TEST_F(DynamicTypesTests, TypeDescriptors)
 {
     // Do not use the TypeDescriptor to:
     // + Get primitive types. Use the DynamicTypeBuilderFactory instead.
@@ -194,7 +194,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     EXPECT_FALSE(state->equals(default_descriptor));
 }
 
-TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_basic)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -368,7 +368,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     }
 }
 
-TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
+TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -396,7 +396,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     ASSERT_TRUE(type->equals(type2));
 }
 
-TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_int32)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -544,7 +544,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_uint32)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -683,7 +683,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_int16)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -825,7 +825,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_uint16)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -966,7 +966,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_int64)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1109,7 +1109,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_uint64)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1248,7 +1248,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_float32)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1394,7 +1394,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_float64)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1545,7 +1545,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_float128)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1701,7 +1701,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_char8)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1837,7 +1837,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_char16)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -1972,7 +1972,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_byte)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -2112,7 +2112,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_boolean_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_boolean)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -2251,7 +2251,7 @@ TEST_F(DynamicTypesTests, DynamicType_boolean_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_enum)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -2428,7 +2428,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_string)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -2601,7 +2601,7 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_wstring)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -2771,7 +2771,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_alias)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -2871,7 +2871,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
 }
 
 /*
-   TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
+   TEST_F(DynamicTypesTests, DynamicType_nested_alias)
    {
     // Check alias comparison in dependent types
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
@@ -2982,7 +2982,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
    }
  */
 
-TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_nested_alias)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -3105,7 +3105,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
 }
 
 /*
-   TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
+   TEST_F(DynamicTypesTests, DynamicType_bitset)
    {
    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -3163,7 +3163,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
    }
  */
 
-TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_bitmask)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -3349,7 +3349,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_sequence)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -3474,7 +3474,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -3637,7 +3637,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_array)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -3774,7 +3774,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -4112,7 +4112,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_map)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -4239,7 +4239,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -4467,7 +4467,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_structure)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -4606,7 +4606,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(struct_data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -4888,7 +4888,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(struct_data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_multi_structure)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -5085,7 +5085,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(struct_data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_union)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -5295,7 +5295,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(union_data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
+TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
@@ -5480,7 +5480,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     DynamicDataFactory::get_instance()->delete_data(union_data);
 }
 
-TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum_test)
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)
 {
     using namespace xmlparser;
 
@@ -5510,7 +5510,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum_test)
     member_descriptor->name("C");
     enum_builder->add_member(member_descriptor);
 
-
     // Struct EnumStruct
     type_descriptor = traits<TypeDescriptor>::make_shared();
     type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
@@ -5528,7 +5527,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum_test)
     XMLProfileManager::DeleteInstance();
 }
 
-TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias)
 {
     using namespace xmlparser;
 
@@ -5558,1123 +5557,1173 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
     member_descriptor->name("C");
     enum_builder->add_member(member_descriptor);
 
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyAliasEnum");
+    type_descriptor->base_type(enum_builder->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    // Struct AliasStruct
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("AliasStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(alias_builder->build());
+    member_descriptor->name("my_alias");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_with_alias)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("AliasAliasStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Enum
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ENUM);
+    type_descriptor->name("MyEnum");
+    DynamicTypeBuilder::_ref_type enum_builder {factory->create_type(type_descriptor)};
+
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("A");
+    enum_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("B");
+    enum_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
+    member_descriptor->name("C");
+    enum_builder->add_member(member_descriptor);
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyAliasEnum");
+    type_descriptor->base_type(enum_builder->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyAliasAliasEnum");
+    type_descriptor->base_type(alias_builder->build());
+    DynamicTypeBuilder::_ref_type alias_alias_builder {factory->create_type(type_descriptor)};
+
+    // Struct AliasStruct
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("AliasAliasStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(alias_alias_builder->build());
+    member_descriptor->name("my_alias_alias");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_boolean)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct BoolStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("BoolStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
+    member_descriptor->name("my_bool");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_octet)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("OctetStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct OctetStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("OctetStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_BYTE));
+    member_descriptor->name("my_octet");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct ShortStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ShortStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_INT16));
+    member_descriptor->name("my_int16");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_long)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct LongStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("LongStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_INT32));
+    member_descriptor->name("my_int32");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_longlong)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongLongStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct LongLongStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("LongLongStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_INT64));
+    member_descriptor->name("my_int64");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ushort)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct UShortStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("UShortStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_UINT16));
+    member_descriptor->name("my_uint16");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ulong)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct ULongStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ULongStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+    member_descriptor->name("my_uint32");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ulonglong)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct ULongLongStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ULongLongStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_UINT64));
+    member_descriptor->name("my_uint64");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_float)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct FloatStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("FloatStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_FLOAT32));
+    member_descriptor->name("my_float32");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_double)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct DoubleStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("DoubleStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_FLOAT64));
+    member_descriptor->name("my_float64");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_longdouble)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct LongDoubleStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("LongDoubleStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_FLOAT128));
+    member_descriptor->name("my_float128");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_char)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct CharStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("CharStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_CHAR8));
+    member_descriptor->name("my_char");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wchar)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct WCharStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("WCharStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type(TK_CHAR16));
+    member_descriptor->name("my_wchar");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_string)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct StringStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StringStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->name("my_string");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wstring)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct WStringStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("WStringStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_wstring_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->name("my_wstring");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_large_string)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct LargeStringStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("LargeStringStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_string_type(41925)->build());
+    member_descriptor->name("my_large_string");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_large_wstring)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct LargeWStringStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("LargeWStringStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_wstring_type(41925)->build());
+    member_descriptor->name("my_large_wstring");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short_string)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct ShortStringStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ShortStringStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_string_type(15)->build());
+    member_descriptor->name("my_short_string");
+    builder->add_member(member_descriptor);
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short_wstring)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Struct ShortWStringStruct
+    TypeDescriptor::_ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ShortWStringStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->create_wstring_type(15)->build());
+    member_descriptor->name("my_short_wstring");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_string)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
     // Alias
-    /*
-       std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(*enum_type, "MyAliasEnum")};
-       std::unique_ptr<const DynamicType> alias_type {alias_builder->build()};
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyAliasString");
+    type_descriptor->base_type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
 
-       // Struct AliasStruct
-       std::unique_ptr<DynamicTypeBuilder> struct_alias_builder {factory.create_struct_type()};
-       struct_alias_builder->add_member({0, "my_alias", alias_type.get()});
-       struct_alias_builder->set_name("AliasStruct");
-       std::unique_ptr<const DynamicType> struct_alias_type {struct_alias_builder->build()};
+    // Struct StructAliasString
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructAliasString");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(alias_builder->build());
+    member_descriptor->name("my_alias_string");
+    builder->add_member(member_descriptor);
 
-       std::unique_ptr<const DynamicType> type;
-       // TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-       EXPECT_EQ(*type, *struct_alias_type);
-       EXPECT_TRUE(type->equals(*struct_alias_type));
-     */
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_wstring)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasWString");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Alias
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyAliasWString");
+    type_descriptor->base_type(factory->create_wstring_type(LENGTH_UNLIMITED)->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    // Struct StructAliasWString
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructAliasWString");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(alias_builder->build());
+    member_descriptor->name("my_alias_wstring");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Array
+    DynamicTypeBuilder::_ref_type array_builder {factory->create_array_type(factory->get_primitive_type(
+                                                             TK_INT32), {2, 2, 2})};
+
+    // Struct ArrayStruct
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ArrayStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(array_builder->build());
+    member_descriptor->name("my_array");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array_of_arrays)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Typedef aka Alias
+    DynamicTypeBuilder::_ref_type array_builder {factory->create_array_type(factory->get_primitive_type(
+                                                             TK_INT32), {2, 2})};
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyArray");
+    type_descriptor->base_type(array_builder->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    DynamicTypeBuilder::_ref_type array_array_builder {factory->create_array_type(alias_builder->build(), {2, 2})};
+
+    // Struct ArrayArrayStruct
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ArrayArrayStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(array_array_builder->build());
+    member_descriptor->name("my_array_array");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array_struct_with_array_of_arrays)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Typedef aka Alias
+    DynamicTypeBuilder::_ref_type array_builder {factory->create_array_type(factory->get_primitive_type(
+                                                             TK_INT32), {2, 2})};
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("MyArray");
+    type_descriptor->base_type(array_builder->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    DynamicTypeBuilder::_ref_type array_array_builder {factory->create_array_type(alias_builder->build(), {2, 2})};
+
+    // Struct ArrayArrayStruct
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ArrayArrayStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(array_array_builder->build());
+    member_descriptor->name("my_array_array");
+    builder->add_member(member_descriptor);
+
+    DynamicTypeBuilder::_ref_type array_struct_builder {factory->create_array_type(builder->build(), {2, 2})};
+
+
+    // Struct ArrayArrayArrayStruct
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("ArrayArrayArrayStruct");
+    builder = factory->create_type(type_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(array_struct_builder->build());
+    member_descriptor->name("my_array_array_array");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    DynamicTypeBuilder::_ref_type sequence_builder {factory->create_sequence_type(factory->get_primitive_type(
+                                                                TK_INT32), 2)};
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("SequenceStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(sequence_builder->build());
+    member_descriptor->name("my_sequence");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence_of_sequences)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    DynamicTypeBuilder::_ref_type sequence_builder {factory->create_sequence_type(factory->get_primitive_type(
+                                                                TK_INT32), 2)};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("my_sequence_sequence_inner");
+    type_descriptor->base_type(sequence_builder->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    DynamicTypeBuilder::_ref_type sequence_sequence_builder {factory->create_sequence_type(alias_builder->build(), 2)};
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("SequenceSequenceStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(sequence_sequence_builder->build());
+    member_descriptor->name("my_sequence_sequence");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    DynamicTypeBuilder::_ref_type map_builder {factory->create_map_type(factory->get_primitive_type(TK_INT32),
+                                                       factory->get_primitive_type(TK_INT32), 7)};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("MapStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(map_builder->build());
+    member_descriptor->name("my_map");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map_of_maps)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    DynamicTypeBuilder::_ref_type map_builder {factory->create_map_type(factory->get_primitive_type(TK_INT32),
+                                                       factory->get_primitive_type(TK_INT32), 2)};
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
+    type_descriptor->name("my_map_map_inner");
+    type_descriptor->base_type(map_builder->build());
+    DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
+
+    DynamicTypeBuilder::_ref_type map_map_builder {factory->create_map_type(factory->get_primitive_type(TK_INT32),
+                                                           alias_builder->build(), 2)};
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("MapMapStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(map_map_builder->build());
+    member_descriptor->name("my_map_map");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_two_members)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type((TK_INT32)));
+    member_descriptor->name("a");
+    builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT64)));
+    member_descriptor->name("b");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_struct)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructStruct");
+    DynamicTypeBuilder::_ref_type child_builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type((TK_INT32)));
+    member_descriptor->name("a");
+    child_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT64)));
+    member_descriptor->name("b");
+    child_builder->add_member(member_descriptor);
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("StructStructStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(child_builder->build());
+    member_descriptor->name("child_struct");
+    builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT64)));
+    member_descriptor->name("child_int64");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_union)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_UNION);
+    type_descriptor->name("SimpleUnion");
+    type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
+    DynamicTypeBuilder::_ref_type union_builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type((TK_INT32)));
+    member_descriptor->name("first");
+    member_descriptor->is_default_label(true);
+    member_descriptor->label().push_back(0);
+    union_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT64)));
+    member_descriptor->name("second");
+    member_descriptor->label().push_back(1);
+    union_builder->add_member(member_descriptor);
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("SimpleUnionStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(union_builder->build());
+    member_descriptor->name("my_union");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_union_with_union)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_UNION);
+    type_descriptor->name("SimpleUnion");
+    type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
+    DynamicTypeBuilder::_ref_type union_builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type((TK_INT32)));
+    member_descriptor->name("first");
+    member_descriptor->is_default_label(true);
+    member_descriptor->label().push_back(0);
+    union_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT64)));
+    member_descriptor->name("second");
+    member_descriptor->label().push_back(1);
+    union_builder->add_member(member_descriptor);
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_UNION);
+    type_descriptor->name("UnionUnion");
+    type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
+    DynamicTypeBuilder::_ref_type union_union_builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT32)));
+    member_descriptor->name("first");
+    member_descriptor->is_default_label(true);
+    member_descriptor->label().push_back(0);
+    union_union_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(union_builder->build());
+    member_descriptor->name("second");
+    member_descriptor->label().push_back(1);
+    union_union_builder->add_member(member_descriptor);
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("UnionUnionStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(union_union_builder->build());
+    member_descriptor->name("my_union");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_UNION);
+    type_descriptor->name("WCharUnion");
+    type_descriptor->discriminator_type(factory->get_primitive_type(TK_CHAR16));
+    DynamicTypeBuilder::_ref_type union_builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type((TK_INT32)));
+    member_descriptor->name("first");
+    member_descriptor->is_default_label(true);
+    member_descriptor->label().push_back(0);
+    union_builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_INT64)));
+    member_descriptor->name("second");
+    member_descriptor->label().push_back(1);
+    union_builder->add_member(member_descriptor);
+
+    type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(eprosima::fastdds::dds::TK_STRUCTURE);
+    type_descriptor->name("WCharUnionStruct");
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(union_builder->build());
+    member_descriptor->name("my_union");
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
 }
 
 /*
-   TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("AliasAliasStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Enum
-   std::unique_ptr<DynamicTypeBuilder> enum_builder {factory.create_enum_type()};
-   enum_builder->add_member({0, "A"});
-   enum_builder->add_member({1, "B"});
-   enum_builder->add_member({2, "C"});
-   enum_builder->set_name("MyEnum");
-   std::unique_ptr<const DynamicType> enum_type {enum_builder->build()};
-
-   // Alias and aliasalias
-   std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(*enum_type, "MyAliasEnum")};
-   std::unique_ptr<const DynamicType> alias_type {alias_builder->build()};
-   std::unique_ptr<DynamicTypeBuilder> alias_alias_builder { factory.create_alias_type(*alias_type,
-                                                   "MyAliasAliasEnum")};
-   std::unique_ptr<const DynamicType> alias_alias_type {alias_alias_builder->build()};
-
-   // Struct AliasAliasStruct
-   std::unique_ptr<DynamicTypeBuilder> aliasAliasS_builder { factory.create_struct_type()};
-   aliasAliasS_builder->add_member({0, "my_alias_alias", alias_alias_type.get()});
-   aliasAliasS_builder->set_name("AliasAliasStruct");
-   std::unique_ptr<const DynamicType> aliasAliasS_type {aliasAliasS_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *aliasAliasS_type);
-   EXPECT_TRUE(type->equals(*aliasAliasS_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Boolean
-   std::unique_ptr<const DynamicType> boolean_type {factory.get_bool_type()};
-
-   // Struct BoolStruct
-   std::unique_ptr<DynamicTypeBuilder> bool_builder {factory.create_struct_type()};
-   bool_builder->add_member({0, "my_bool", boolean_type.get()});
-   bool_builder->set_name("BoolStruct");
-   std::unique_ptr<const DynamicType> bool_type {bool_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *bool_type);
-   EXPECT_TRUE(type->equals(*bool_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_OctetStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("OctetStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Byte
-   std::unique_ptr<const DynamicType> byte_type { factory.get_byte_type()};
-
-   // Struct OctetStruct
-   std::unique_ptr<DynamicTypeBuilder> octet_builder { factory.create_struct_type()};
-   octet_builder->add_member({0, "my_octet", byte_type.get()});
-   octet_builder->set_name("OctetStruct");
-   std::unique_ptr<const DynamicType> octet_type {octet_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *octet_type);
-   EXPECT_TRUE(type->equals(*octet_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ShortStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Int16
-   std::unique_ptr<const DynamicType> byte_type { factory.get_int16_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> int16_builder { factory.create_struct_type()};
-   int16_builder->add_member({0, "my_int16", byte_type.get()});
-   int16_builder->set_name("ShortStruct");
-   std::unique_ptr<const DynamicType> int16_type {int16_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware)ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *int16_type);
-   EXPECT_TRUE(type->equals(*int16_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_LongStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Int32
-   std::unique_ptr<const DynamicType> byte_type { factory.get_int32_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> int32_builder {factory.create_struct_type()};
-   int32_builder->add_member({0, "my_int32", byte_type.get()});
-   int32_builder->set_name("LongStruct");
-   std::unique_ptr<const DynamicType> int32_type {int32_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *int32_type);
-   EXPECT_TRUE(type->equals(*int32_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongLongStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Int32
-   std::unique_ptr<const DynamicType> byte_type { factory.get_int64_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> int64_builder { factory.create_struct_type()};
-   int64_builder->add_member({0, "my_int64", byte_type.get()});
-   int64_builder->set_name("LongLongStruct");
-   std::unique_ptr<const DynamicType> int64_type {int64_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *int64_type);
-   EXPECT_TRUE(type->equals(*int64_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // uint16
-   std::unique_ptr<const DynamicType> byte_type {factory.get_uint16_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> uint16_builder {factory.create_struct_type()};
-   uint16_builder->add_member({0, "my_uint16", byte_type.get()});
-   uint16_builder->set_name("UShortStruct");
-   std::unique_ptr<const DynamicType> uint16_type {uint16_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *uint16_type);
-   EXPECT_TRUE(type->equals(*uint16_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // uint32
-   std::unique_ptr<const DynamicType> byte_type { factory.get_uint32_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> uint32_builder {factory.create_struct_type()};
-   uint32_builder->add_member({0, "my_uint32", byte_type.get()});
-   uint32_builder->set_name("ULongStruct");
-   std::unique_ptr<const DynamicType> uint32_type {uint32_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *uint32_type);
-   EXPECT_TRUE(type->equals(*uint32_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // uint64
-   std::unique_ptr<const DynamicType> byte_type {factory.get_uint64_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> uint64_builder {factory.create_struct_type()};
-   uint64_builder->add_member({0, "my_uint64", byte_type.get()});
-   uint64_builder->set_name("ULongLongStruct");
-   std::unique_ptr<const DynamicType> uint64_type {uint64_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *uint64_type);
-   EXPECT_TRUE(type->equals(*uint64_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // float32
-   std::unique_ptr<const DynamicType> byte_type {factory.get_float32_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> float32_builder {factory.create_struct_type()};
-   float32_builder->add_member({0, "my_float32", byte_type.get()});
-   float32_builder->set_name("FloatStruct");
-   std::unique_ptr<const DynamicType> float32_type {float32_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *float32_type);
-   EXPECT_TRUE(type->equals(*float32_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // float64
-   std::unique_ptr<const DynamicType> byte_type {factory.get_float64_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> float64_builder {factory.create_struct_type()};
-   float64_builder->add_member({0, "my_float64", byte_type.get()});
-   float64_builder->set_name("DoubleStruct");
-   std::unique_ptr<const DynamicType> float64_type {float64_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *float64_type);
-   EXPECT_TRUE(type->equals(*float64_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_LongDoubleStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // float128
-   std::unique_ptr<const DynamicType> byte_type {factory.get_float128_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> float128_builder {factory.create_struct_type()};
-   float128_builder->add_member({0, "my_float128", byte_type.get()});
-   float128_builder->set_name("LongDoubleStruct");
-   std::unique_ptr<const DynamicType> float128_type {float128_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *float128_type);
-   EXPECT_TRUE(type->equals(*float128_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // char8
-   std::unique_ptr<const DynamicType> byte_type {factory.get_char8_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> char8_builder {factory.create_struct_type()};
-   char8_builder->add_member({0, "my_char", byte_type.get()});
-   char8_builder->set_name("CharStruct");
-   std::unique_ptr<const DynamicType> char8_type {char8_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *char8_type);
-   EXPECT_TRUE(type->equals(*char8_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // wchar
-   std::unique_ptr<const DynamicType> byte_type { factory.get_char16_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> char16_builder { factory.create_struct_type()};
-   char16_builder->add_member({0, "my_wchar", byte_type.get()});
-   char16_builder->set_name("WCharStruct");
-   std::unique_ptr<const DynamicType> char16_type {char16_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *char16_type);
-   EXPECT_TRUE(type->equals(*char16_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // string
-   std::unique_ptr<const DynamicType> byte_type {factory.get_string_type()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> string_builder {factory.create_struct_type()};
-   string_builder->add_member({0, "my_string", byte_type.get()});
-   string_builder->set_name("StringStruct");
-   std::unique_ptr<const DynamicType> string_type {string_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *string_type);
-   EXPECT_TRUE(type->equals(*string_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // wstring
-   std::unique_ptr<DynamicTypeBuilder> string_builder {factory.create_type(
- * factory.create_wstring_type()->get_descriptor())};
-   std::unique_ptr<const DynamicType> string_type {string_builder->build()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> wstring_builder { factory.create_struct_type()};
-   wstring_builder->add_member({0, "my_wstring", string_type.get()});
-   wstring_builder->set_name("WStringStruct");
-   std::unique_ptr<const DynamicType> wstring_type {wstring_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *wstring_type);
-   EXPECT_TRUE(type->equals(*wstring_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // string
-   std::unique_ptr<const DynamicType> byte_type {factory.get_string_type(41925)};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> string_builder {factory.create_struct_type()};
-   string_builder->add_member({0, "my_large_string", byte_type.get()});
-   string_builder->set_name("LargeStringStruct");
-   std::unique_ptr<const DynamicType> string_type {string_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *string_type);
-   EXPECT_TRUE(type->equals(*string_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // wstring
-   std::unique_ptr<DynamicTypeBuilder> string_builder {factory.create_type(*factory.create_wstring_type(41925))};
-   string_builder->set_name("wstringl_41925");
-   std::unique_ptr<const DynamicType> string_type {string_builder->build()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> wstring_builder {factory.create_struct_type()};
-   wstring_builder->add_member({0, "my_large_wstring", string_type.get()});
-   wstring_builder->set_name("LargeWStringStruct");
-   std::unique_ptr<const DynamicType> wstring_type {wstring_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *wstring_type);
-   EXPECT_TRUE(type->equals(*wstring_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // string
-   std::unique_ptr<const DynamicType> byte_type {factory.get_string_type(15)};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> string_builder {factory.create_struct_type()};
-   string_builder->add_member({0, "my_short_string", byte_type.get()});
-   string_builder->set_name("ShortStringStruct");
-   std::unique_ptr<const DynamicType> string_type {string_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *string_type);
-   EXPECT_TRUE(type->equals(*string_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // wstring
-   std::unique_ptr<DynamicTypeBuilder> string_builder {factory.create_type(*factory.create_wstring_type(15))};
-   string_builder->set_name("wstrings_15");
-   std::unique_ptr<const DynamicType> string_type {string_builder->build()};
-
-   // Struct ShortStruct
-   std::unique_ptr<DynamicTypeBuilder> wstring_builder {factory.create_struct_type()};
-   wstring_builder->add_member({0, "my_short_wstring", string_type.get()});
-   wstring_builder->set_name("ShortWStringStruct");
-   std::unique_ptr<const DynamicType> wstring_type {wstring_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *wstring_type);
-   EXPECT_TRUE(type->equals(*wstring_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // String
-   std::unique_ptr<const DynamicType> string_type {factory.get_string_type()};
-
-   // Alias
-   std::unique_ptr<const DynamicType> myAlias_type {factory.get_alias_type(*string_type, "MyAliasString")};
-
-   // Struct StructAliasString
-   std::unique_ptr<DynamicTypeBuilder> alias_string_builder { factory.create_struct_type()};
-   alias_string_builder->add_member({0, "my_alias_string", myAlias_type.get()});
-   alias_string_builder->set_name("StructAliasString");
-   std::unique_ptr<const DynamicType> alias_string_type {alias_string_builder->build()};
-
-   std::unique_ptr<const DynamicType> type;
-   //TODO(richiware) ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *alias_string_type);
-   EXPECT_TRUE(type->equals(*alias_string_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-   {
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasWString");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // wstring
-   std::unique_ptr<DynamicTypeBuilder> wstring_builder { factory.create_type(
- * factory.get_wstring_type())};
-   std::unique_ptr<const DynamicType> wstring_type = wstring_builder.build();
-
-   // Alias
-   std::unique_ptr<const DynamicType> myAlias_type =
-   factory.get_alias_type(*wstring_type, "MyAliasWString");
-
-   // Struct StructAliasWString
-   std::unique_ptr<DynamicTypeBuilder> alias_wstring_builder { factory.create_struct_type()};
-   alias_wstring_builder.add_member(0, "my_alias_wstring", myAlias_type);
-   alias_wstring_builder->set_name("StructAliasWString");
-   std::unique_ptr<const DynamicType> alias_wstring_type = alias_wstring_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *alias_wstring_type);
-   EXPECT_TRUE(type->equals(*alias_wstring_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Int32
-   std::unique_ptr<const DynamicType> int32_type = factory.get_int32_type();
-
-   // Array
-   std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(*int32_type, { 2, 2, 2 })};
-
-   // Struct ShortWStringStruct
-   std::unique_ptr<DynamicTypeBuilder> array_int32_builder { factory.create_struct_type()};
-   array_int32_builder.add_member(0, "my_array", array_builder.build());
-   array_int32_builder->set_name("ArraytStruct");
-   std::unique_ptr<const DynamicType> array_int32_type = array_int32_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *array_int32_type);
-   EXPECT_TRUE(type->equals(*array_int32_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Typedef aka Alias
-   std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(
- * factory.get_int32_type(),
-                                         { 2, 2 })};
-   std::unique_ptr<DynamicTypeBuilder> myArray_builder { factory.create_alias_type(*array_builder.build(), "MyArray")};
-
-   // Struct ArrayArrayStruct
-   std::unique_ptr<DynamicTypeBuilder> aas_builder { factory.create_struct_type()};
-   std::unique_ptr<DynamicTypeBuilder> aMyArray_builder { factory.create_array_type(*myArray_builder.build(),
-                                                { 2, 2 })};
-   aas_builder.add_member(0, "my_array_array", aMyArray_builder.build());
-   aas_builder->set_name("ArrayArrayStruct");
-   std::unique_ptr<const DynamicType> aas_type = aas_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *aas_type);
-   EXPECT_TRUE(type->equals(*aas_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   //      Manual comparision test
-
-   //           typedef long MyArray[2][2];
-   //
-   //           struct ArrayArrayStruct
-   //           {
-   //            MyArray my_array_array[2][2];
-   //           };
-   //
-   //           struct ArrayArrayArrayStruct
-   //           {
-   //            ArrayArrayStruct my_array_array_array[2][2];
-   //           };
-   //
-   //           ======
-   //
-   //           <type>
-   //            <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
-   //           </type>
-   //           <type>
-   //            <struct name="ArrayArrayStruct">
-   //                <member name="my_array_array" type="nonBasic" nonBasicTypeName="MyArray" arrayDimensions="2,2"/>
-   //            </struct>
-   //           </type>
-   //           <type>
-   //            <struct name="ArrayArrayArrayStruct">
-   //                <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
-   //            </struct>
-   //           </type>
-
-   // Typedef aka Alias
-   std::unique_ptr<DynamicTypeBuilder> array_builder { factory.create_array_type(
- * factory.get_int32_type(),
-                                         { 2, 2 })};
-   std::unique_ptr<DynamicTypeBuilder> myArray_builder { factory.create_alias_type(
- * array_builder.build(),
-                                           "MyArray")};
-
-   // Struct ArrayArrayStruct
-   std::unique_ptr<DynamicTypeBuilder> aas_builder { factory.create_struct_type()};
-   std::unique_ptr<DynamicTypeBuilder> aMyArray_builder { factory.create_array_type(
- * myArray_builder.build(),
-                                            { 2, 2 })};
-   aas_builder.add_member(0, "my_array_array", aMyArray_builder.build());
-   aas_builder->set_name("ArrayArrayStruct");
-
-   // Struct ArrayArrayArrayStruct
-   std::unique_ptr<DynamicTypeBuilder> aaas_builder { factory.create_struct_type()};
-   std::unique_ptr<DynamicTypeBuilder> aas_array_builder { factory.create_array_type(
- * aas_builder.build(),
-                                             { 2, 2 })};
-   aaas_builder.add_member(0, "my_array_array_array", aas_array_builder.build());
-   aaas_builder->set_name("ArrayArrayArrayStruct");
-   std::unique_ptr<const DynamicType> aaas_type = aaas_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *aaas_type);
-   EXPECT_TRUE(type->equals(*aaas_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<DynamicTypeBuilder> seq_builder { factory.create_sequence_type(
- * factory.get_int32_type(),
-                                       2)};
-
-   std::unique_ptr<DynamicTypeBuilder> seqs_builder { factory.create_struct_type()};
-   seqs_builder.add_member(0, "my_sequence", seq_builder.build());
-   seqs_builder->set_name("SequenceStruct");
-   std::unique_ptr<const DynamicType> seqs_type = seqs_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *seqs_type);
-   EXPECT_TRUE(type->equals(*seqs_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<DynamicTypeBuilder> seq_builder { factory.create_sequence_type(
- * factory.get_int32_type(),
-                                       2)};
-   std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(
- * seq_builder.build(),
-                                         "my_sequence_sequence_inner")};
-
-   std::unique_ptr<DynamicTypeBuilder> sss_builder { factory.create_struct_type()};
-   std::unique_ptr<DynamicTypeBuilder> seq_seq_builder { factory.create_sequence_type(*alias_builder.build(), 2)};
-   sss_builder.add_member(0, "my_sequence_sequence", seq_seq_builder.build());
-   sss_builder->set_name("SequenceSequenceStruct");
-   std::unique_ptr<const DynamicType> sss_type = sss_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *sss_type);
-   EXPECT_TRUE(type->equals(*sss_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<DynamicTypeBuilder> map_builder { factory.create_map_type(
- * factory.get_int32_type(),
- * factory.get_int32_type(),
-                                       7)};
-
-   std::unique_ptr<DynamicTypeBuilder> maps_builder { factory.create_struct_type()};
-   maps_builder.add_member(0, "my_map", map_builder.build());
-   maps_builder->set_name("MapStruct");
-   std::unique_ptr<const DynamicType> maps_type = maps_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *maps_type);
-   EXPECT_TRUE(type->equals(*maps_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<const DynamicType> int32_type = factory.get_int32_type();
-   std::unique_ptr<DynamicTypeBuilder> map_builder { factory.create_map_type(
- * int32_type,
- * int32_type,
-                                       2)};
-   std::unique_ptr<DynamicTypeBuilder> alias_builder { factory.create_alias_type(
- * map_builder.build(),
-                                         "my_map_map_inner")};
-   std::unique_ptr<DynamicTypeBuilder> map_map_builder { factory.create_map_type(
- * int32_type,
- * alias_builder.build(),
-                                           2)};
-
-   std::unique_ptr<DynamicTypeBuilder> maps_builder { factory.create_struct_type()};
-   maps_builder.add_member(0, "my_map_map", map_map_builder.build());
-   maps_builder->set_name("MapMapStruct");
-   std::unique_ptr<const DynamicType> maps_type = maps_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *maps_type);
-   EXPECT_TRUE(type->equals(*maps_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<DynamicTypeBuilder> structs_builder { factory.create_struct_type()};
-   structs_builder.add_member(0, "a", factory.get_int32_type());
-   structs_builder.add_member(1, "b", factory.get_int64_type());
-   structs_builder->set_name("StructStruct");
-   std::unique_ptr<const DynamicType> structs_type = structs_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *structs_type);
-   EXPECT_TRUE(type->equals(*structs_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<DynamicTypeBuilder> structs_builder { factory.create_struct_type()};
-   structs_builder.add_member(0, "a", factory.get_int32_type());
-   structs_builder.add_member(1, "b", factory.get_int64_type());
-   structs_builder->set_name("StructStruct");
-
-   std::unique_ptr<DynamicTypeBuilder> sss_builder { factory.create_struct_type()};
-   sss_builder.add_member(0, "child_struct", structs_builder.build());
-   sss_builder.add_member(1, "child_int64", factory.get_int64_type());
-   sss_builder->set_name("StructStructStruct");
-   std::unique_ptr<const DynamicType> sss_type = sss_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *sss_type);
-   EXPECT_TRUE(type->equals(*sss_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<const DynamicType> int32_type = factory.get_int32_type();
-
-   std::unique_ptr<DynamicTypeBuilder> union_builder { factory.create_union_type(*int32_type)};
-   union_builder.add_member(0, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
-   union_builder.add_member(1, "second", factory.get_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
-   union_builder->set_name("SimpleUnion");
-
-   std::unique_ptr<DynamicTypeBuilder> us_builder { factory.create_struct_type()};
-   us_builder.add_member(0, "my_union", union_builder.build());
-   us_builder->set_name("SimpleUnionStruct");
-   std::unique_ptr<const DynamicType> us_type = us_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *us_type);
-   EXPECT_TRUE(type->equals(*us_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<const DynamicType> int32_type = factory.get_int32_type();
-
-   std::unique_ptr<DynamicTypeBuilder> union_builder { factory.create_union_type(*int32_type)};
-   union_builder.add_member(0, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
-   union_builder.add_member(1, "second", factory.get_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
-   union_builder->set_name("SimpleUnion");
-
-   std::unique_ptr<DynamicTypeBuilder> union_union_builder { factory.create_union_type(*int32_type)};
-   union_union_builder.add_member(0, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
-   union_union_builder.add_member(1, "second", union_builder.build(), "", std::vector<uint64_t>{ 1 }, false);
-   union_union_builder->set_name("UnionUnion");
-
-   std::unique_ptr<DynamicTypeBuilder> uus_builder { factory.create_struct_type()};
-   uus_builder.add_member(0, "my_union", union_union_builder.build());
-   uus_builder->set_name("UnionUnionStruct");
-   std::unique_ptr<const DynamicType> uus_type = uus_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *uus_type);
-   EXPECT_TRUE(type->equals(*uus_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   std::unique_ptr<DynamicTypeBuilder> union_builder { factory.create_union_type(*factory.get_char16_type())};
-   union_builder.add_member(0, "first", factory.get_int32_type(), "", std::vector<uint64_t>{ 0 }, true);
-   union_builder.add_member(1, "second", factory.get_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
-   union_builder->set_name("WCharUnion");
-
-   std::unique_ptr<DynamicTypeBuilder> us_builder { factory.create_struct_type()};
-   us_builder.add_member(0, "my_union", union_builder.build());
-   us_builder->set_name("WCharUnionStruct");
-   std::unique_ptr<const DynamicType> us_type = us_builder.build();
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type, *us_type);
-   EXPECT_TRUE(type->equals(*us_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
+   TEST_F(DynamicTypesTests, DynamicType_bounded_string)
    {
    using namespace xmlparser;
 
@@ -6706,7 +6755,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
    XMLProfileManager::DeleteInstance();
    }
 
-   TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
+   TEST_F(DynamicTypesTests, DynamicType_bounded_wstring)
    {
    using namespace xmlparser;
 
@@ -6870,163 +6919,50 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
 
    ASSERT_EQ(reference, os.str());
    }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   // Bitset
-   std::unique_ptr<DynamicTypeBuilder> builder { factory.create_bitmask_type(8)};
-   builder->add_member(0, "flag0");
-   builder->add_member(1, "flag1");
-   builder->add_member(2, "flag2");
-   builder->add_member(5, "flag5");
-   builder->set_name("MyBitMask");
-   std::unique_ptr<const DynamicType> type = builder.build();
-   ASSERT_TRUE(type);
-
-   std::unique_ptr<const DynamicType> type2;
-   ASSERT_EQ(pbType->GetDynamicType(type2), eprosima::fastdds::dds::RETCODE_OK);
-   EXPECT_EQ(*type2, *type);
-   EXPECT_TRUE(type2->equals(*type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
-   {
-   TypeIdentifier enum1 = *GetMyEnumIdentifier(false);
-   TypeIdentifier aliasEnum1 = *GetMyAliasEnumIdentifier(false);
-   TypeIdentifier aliasAliasEnum1 = *GetMyAliasAliasEnumIdentifier(false);
-   TypeIdentifier boolStruct1 = *GetBoolStructIdentifier(false);
-   TypeIdentifier octetStruct1 = *GetOctetStructIdentifier(false);
-   TypeIdentifier shortStruct1 = *GetShortStructIdentifier(false);
-   TypeIdentifier longStruct1 = *GetLongStructIdentifier(false);
-   TypeIdentifier longLongStruct1 = *GetLongLongStructIdentifier(false);
-   TypeIdentifier uShortStruct1 = *GetShortStructIdentifier(false);
-   TypeIdentifier uLongStruct1 = *GetULongStructIdentifier(false);
-   TypeIdentifier uLongLongStruct1 = *GetULongLongStructIdentifier(false);
-   TypeIdentifier floatStruct1 = *GetFloatStructIdentifier(false);
-   TypeIdentifier doubleStruct1 = *GetDoubleStructIdentifier(false);
-   TypeIdentifier longDoubleStruct1 = *GetLongDoubleStructIdentifier(false);
-   TypeIdentifier charStruct1 = *GetCharStructIdentifier(false);
-   TypeIdentifier wcharStruct1 = *GetWCharStructIdentifier(false);
-   TypeIdentifier stringStruct1 = *GetStringStructIdentifier(false);
-   TypeIdentifier wstringStruct1 = *GetWStringStructIdentifier(false);
-   TypeIdentifier largeStringStruct1 = *GetLargeStringStructIdentifier(false);
-   TypeIdentifier largeWStringStruct1 = *GetLargeWStringStructIdentifier(false);
-   TypeIdentifier arrayStruct1 = *GetArraytStructIdentifier(false);
-   GetMyArrayIdentifier(false); // We need to generate it before arrayArrayStruct
-   TypeIdentifier arrayArrayStruct1 = *GetArrayArrayStructIdentifier(false);
-   TypeIdentifier sequenceStruct1 = *GetSequenceStructIdentifier(false);
-   TypeIdentifier sequenceSequenceStruct1 = *GetSequenceSequenceStructIdentifier(false);
-   TypeIdentifier mapStruct1 = *GetMapStructIdentifier(false);
-   TypeIdentifier mapMapStruct1 = *GetMapMapStructIdentifier(false);
-   TypeIdentifier structStruct1 = *GetStructStructIdentifier(false);
-   TypeIdentifier structStructStruct1 = *GetStructStructStructIdentifier(false);
-   TypeIdentifier simpleUnion1 = *GetSimpleUnionIdentifier(false);
-   TypeIdentifier unionUnion1 = *GetUnionUnionIdentifier(false);
-   TypeIdentifier wCharUnion1 = *GetWCharUnionIdentifier(false);
-   TypeIdentifier unionUnionStruct1 = *GetUnionUnionUnionStructIdentifier(false);
-   TypeObjectFactory::get_instance()->delete_instance(); // Force new instances instead reusing them
-   registerBasicTypes(); // Register them again
-   TypeIdentifier enum2 = *GetMyEnumIdentifier(false);
-   TypeIdentifier aliasEnum2 = *GetMyAliasEnumIdentifier(false);
-   TypeIdentifier aliasAliasEnum2 = *GetMyAliasAliasEnumIdentifier(false);
-   TypeIdentifier boolStruct2 = *GetBoolStructIdentifier(false);
-   TypeIdentifier octetStruct2 = *GetOctetStructIdentifier(false);
-   TypeIdentifier shortStruct2 = *GetShortStructIdentifier(false);
-   TypeIdentifier longStruct2 = *GetLongStructIdentifier(false);
-   TypeIdentifier longLongStruct2 = *GetLongLongStructIdentifier(false);
-   TypeIdentifier uShortStruct2 = *GetShortStructIdentifier(false);
-   TypeIdentifier uLongStruct2 = *GetULongStructIdentifier(false);
-   TypeIdentifier uLongLongStruct2 = *GetULongLongStructIdentifier(false);
-   TypeIdentifier floatStruct2 = *GetFloatStructIdentifier(false);
-   TypeIdentifier doubleStruct2 = *GetDoubleStructIdentifier(false);
-   TypeIdentifier longDoubleStruct2 = *GetLongDoubleStructIdentifier(false);
-   TypeIdentifier charStruct2 = *GetCharStructIdentifier(false);
-   TypeIdentifier wcharStruct2 = *GetWCharStructIdentifier(false);
-   TypeIdentifier stringStruct2 = *GetStringStructIdentifier(false);
-   TypeIdentifier wstringStruct2 = *GetWStringStructIdentifier(false);
-   TypeIdentifier largeStringStruct2 = *GetLargeStringStructIdentifier(false);
-   TypeIdentifier largeWStringStruct2 = *GetLargeWStringStructIdentifier(false);
-   TypeIdentifier arrayStruct2 = *GetArraytStructIdentifier(false);
-   TypeIdentifier arrayArrayStruct2 = *GetArrayArrayStructIdentifier(false);
-   TypeIdentifier sequenceStruct2 = *GetSequenceStructIdentifier(false);
-   TypeIdentifier sequenceSequenceStruct2 = *GetSequenceSequenceStructIdentifier(false);
-   TypeIdentifier mapStruct2 = *GetMapStructIdentifier(false);
-   TypeIdentifier mapMapStruct2 = *GetMapMapStructIdentifier(false);
-   TypeIdentifier structStruct2 = *GetStructStructIdentifier(false);
-   TypeIdentifier structStructStruct2 = *GetStructStructStructIdentifier(false);
-   TypeIdentifier simpleUnion2 = *GetSimpleUnionIdentifier(false);
-   TypeIdentifier unionUnion2 = *GetUnionUnionIdentifier(false);
-   TypeIdentifier wCharUnion2 = *GetWCharUnionIdentifier(false);
-   TypeIdentifier unionUnionStruct2 = *GetUnionUnionUnionStructIdentifier(false);
-
-   // Compare equals
-   ASSERT_TRUE(enum1 == enum2);
-   ASSERT_TRUE(aliasEnum1 == aliasEnum2 || aliasEnum2 == enum1);
-   ASSERT_TRUE(aliasAliasEnum1 == aliasAliasEnum2 || aliasAliasEnum2 == enum1);
-   ASSERT_TRUE(boolStruct1 == boolStruct2);
-   ASSERT_TRUE(octetStruct1 == octetStruct2);
-   ASSERT_TRUE(shortStruct1 == shortStruct2);
-   ASSERT_TRUE(longStruct1 == longStruct2);
-   ASSERT_TRUE(longLongStruct1 == longLongStruct2);
-   ASSERT_TRUE(uShortStruct1 == uShortStruct2);
-   ASSERT_TRUE(uLongStruct1 == uLongStruct2);
-   ASSERT_TRUE(uLongLongStruct1 == uLongLongStruct2);
-   ASSERT_TRUE(floatStruct1 == floatStruct2);
-   ASSERT_TRUE(doubleStruct1 == doubleStruct2);
-   ASSERT_TRUE(longDoubleStruct1 == longDoubleStruct2);
-   ASSERT_TRUE(charStruct1 == charStruct2);
-   ASSERT_TRUE(wcharStruct1 == wcharStruct2);
-   ASSERT_TRUE(stringStruct1 == stringStruct2);
-   ASSERT_TRUE(wstringStruct1 == wstringStruct2);
-   ASSERT_TRUE(largeStringStruct1 == largeStringStruct2);
-   ASSERT_TRUE(largeWStringStruct1 == largeWStringStruct2);
-   ASSERT_TRUE(arrayStruct1 == arrayStruct2);
-   ASSERT_TRUE(arrayArrayStruct1 == arrayArrayStruct2);
-   ASSERT_TRUE(sequenceStruct1 == sequenceStruct2);
-   ASSERT_TRUE(sequenceSequenceStruct1 == sequenceSequenceStruct2);
-   ASSERT_TRUE(mapStruct1 == mapStruct2);
-   ASSERT_TRUE(mapMapStruct1 == mapMapStruct2);
-   ASSERT_TRUE(structStruct1 == structStruct2);
-   ASSERT_TRUE(structStructStruct1 == structStructStruct2);
-   ASSERT_TRUE(simpleUnion1 == simpleUnion2);
-   ASSERT_TRUE(unionUnion1 == unionUnion2);
-   ASSERT_TRUE(wCharUnion1 == wCharUnion2);
-   ASSERT_TRUE(unionUnionStruct1 == unionUnionStruct2);
-   ASSERT_TRUE(enum2 == aliasEnum2);
-
-   // Compare some not equals
-   ASSERT_FALSE(aliasAliasEnum1 == boolStruct1);
-   ASSERT_FALSE(octetStruct1 == shortStruct1);
-   ASSERT_FALSE(longStruct1 == longLongStruct1);
-   ASSERT_FALSE(uShortStruct1 == uLongStruct1);
-   ASSERT_FALSE(uLongStruct1 == uLongLongStruct2);
-   ASSERT_FALSE(floatStruct1 == doubleStruct1);
-   ASSERT_FALSE(doubleStruct1 == longDoubleStruct2);
-   ASSERT_FALSE(charStruct1 == wcharStruct1);
-   ASSERT_FALSE(stringStruct1 == wstringStruct1);
-   ASSERT_FALSE(stringStruct1 == largeStringStruct2);
-   ASSERT_FALSE(wstringStruct1 == largeWStringStruct2);
-   ASSERT_FALSE(arrayStruct1 == arrayArrayStruct1);
-   ASSERT_FALSE(sequenceStruct1 == sequenceSequenceStruct1);
-   ASSERT_FALSE(mapStruct1 == mapMapStruct1);
-   ASSERT_FALSE(structStruct1 == structStructStruct1);
-   ASSERT_FALSE(simpleUnion1 == unionUnion1);
-   ASSERT_FALSE(unionUnion1 == wCharUnion2);
-   ASSERT_FALSE(unionUnionStruct1 == unionUnion1);
-   }
  */
+
+TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
+{
+    using namespace xmlparser;
+
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
+
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
+
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    // Bitmask
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(eprosima::fastdds::dds::TK_BITMASK);
+    type_descriptor->element_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
+    type_descriptor->name("MyBitMask");
+    type_descriptor->bound().push_back(8);
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->type(factory->get_primitive_type((TK_BOOLEAN)));
+    member_descriptor->name("flag0");
+    builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_BOOLEAN)));
+    member_descriptor->name("flag1");
+    builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_BOOLEAN)));
+    member_descriptor->name("flag2");
+    builder->add_member(member_descriptor);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(factory->get_primitive_type((TK_BOOLEAN)));
+    member_descriptor->name("flag5");
+    member_descriptor->index(5);
+    builder->add_member(member_descriptor);
+
+    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    ASSERT_TRUE(type->equals(builder->build()));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
 
 int main(
         int argc,
