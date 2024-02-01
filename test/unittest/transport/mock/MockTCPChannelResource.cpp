@@ -55,6 +55,16 @@ size_t MockTCPChannelResource::send(
     return 0;
 }
 
+size_t MockTCPChannelResource::send(
+        const octet*,
+        size_t,
+        const std::list<NetworkBuffer>&,
+        uint32_t,
+        asio::error_code&)
+{
+    return 0;
+}
+
 asio::ip::tcp::endpoint MockTCPChannelResource::remote_endpoint() const
 {
     asio::ip::tcp::endpoint ep;

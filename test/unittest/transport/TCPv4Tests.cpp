@@ -22,6 +22,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
 
@@ -42,6 +43,7 @@ using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic
 using TCPHeader = eprosima::fastdds::rtps::TCPHeader;
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 using TCPv4TransportDescriptor = eprosima::fastdds::rtps::TCPv4TransportDescriptor;
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -1521,10 +1523,13 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     std::vector<octet> message(msg_size * 2, 0);
     const octet* data = message.data();
     size_t size = message.size();
+    NetworkBuffer buffers(data, size);
+    std::list<NetworkBuffer> buffer_list;
+    buffer_list.push_back(buffers);
 
     // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
     // it should be able to send a message of msg_size*2.
-    size_t bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
+    size_t bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, size);
 
     // Now wait until the receive buffer is flushed (send buffer will be empty too)
@@ -1538,7 +1543,9 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     message.resize(msg_size * 2 + 1);
     data = message.data();
     size = message.size();
-    bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
+    buffer_list.clear();
+    buffer_list.push_back(NetworkBuffer(data, size));
+    bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, 0u);
 
     secure_socket->lowest_layer().close(ec);
@@ -2035,10 +2042,13 @@ TEST_F(TCPv4Tests, non_blocking_send)
     std::vector<octet> message(msg_size * 2, 0);
     const octet* data = message.data();
     size_t size = message.size();
+    NetworkBuffer buffers(data, size);
+    std::list<NetworkBuffer> buffer_list;
+    buffer_list.push_back(buffers);
 
     // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
     // it should be able to send a message of msg_size*2.
-    size_t bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
+    size_t bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, size);
 
     // Now wait until the receive buffer is flushed (send buffer will be empty too)
@@ -2050,7 +2060,9 @@ TEST_F(TCPv4Tests, non_blocking_send)
     message.resize(msg_size * 2 + 1);
     data = message.data();
     size = message.size();
-    bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
+    buffer_list.clear();
+    buffer_list.push_back(NetworkBuffer(data, size));
+    bytes_sent = sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     ASSERT_EQ(bytes_sent, 0u);
 
     socket.shutdown(asio::ip::tcp::socket::shutdown_both);
