@@ -23,7 +23,7 @@
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>

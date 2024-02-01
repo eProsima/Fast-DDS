@@ -28,7 +28,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>

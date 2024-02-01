@@ -23,7 +23,7 @@
 #include <asio.hpp>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>

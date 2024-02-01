@@ -20,7 +20,7 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 
 #include <rtps/transport/ChannelResource.h>
 

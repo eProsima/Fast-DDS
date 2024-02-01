@@ -23,7 +23,7 @@
 #include <vector>
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -16,8 +16,8 @@
  * @file NetmaskFilterKind.hpp
  */
 
-#ifndef _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_H_
-#define _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_H_
+#ifndef _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_HPP_
+#define _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_HPP_
 
 #include <ostream>
 #include <string>
@@ -61,4 +61,4 @@ inline std::ostream& operator <<(
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_H_
+#endif // _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_HPP_
