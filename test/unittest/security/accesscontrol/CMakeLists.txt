@@ -20,23 +20,25 @@ if(WIN32)
 endif()
 
 set(COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/ResourceEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/exceptions/Exception.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/common/SharedSecretHandle.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp//utils/TimedConditionVariable.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/exceptions/SecurityException.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
     )
 
 if(TINYXML2_SOURCE_DIR)
@@ -127,10 +129,14 @@ add_executable(
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 
     # src files
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetmaskFilterUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/DistinguishedName.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 
     # test files
     ${CMAKE_CURRENT_SOURCE_DIR}/DistinguishedNameTests.cpp
