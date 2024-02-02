@@ -232,18 +232,10 @@ jobs:
         id: build
         continue-on-error: false
         run: |
-          # build type mixin names doesn't match cmake ones
-          $translate = @{
-              "Debug"="debug"
-              "Release"="release"
-              "RelWithDebInfo"="rel-with-deb-info"
-              "MinSizeRel"="min-size-rel"
-              }
           # For convenience use an array to pass the arguments
-          $buildargs = "--event-handlers=console_direct+",
-                      "--mixin", $translate["${{ matrix.cmake-config }}"]
+          $buildargs = "--event-handlers=console_direct+"
 
-          $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }}'
+          $cmakeargs = '--cmake-args --no-warn-unused-cli -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} ${{ inputs.cmake-args }}'
 
           # On Windows we must load the developer environment and chose a config
           $pwshmodule = gi $Env:VSPWSH
@@ -254,10 +246,10 @@ jobs:
           $cmakeargs += "$Env:BIN_ARCH $Env:HOST_ARCH"
 
           # Show the args
-          EchoArgs $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon-args }} $cmakeargs.split(" ")
+          EchoArgs $buildargs --metas ci.meta ${{ inputs.colcon-args }} $cmakeargs.split(" ")
 
           "::group::cmake summary"
-          colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon-args }} $cmakeargs.split(" ")
+          colcon build $buildargs --metas ci.meta ${{ inputs.colcon-args }} $cmakeargs.split(" ")
           "::endgroup::"
 
           $output_buffer = ""
@@ -317,13 +309,13 @@ jobs:
 
           # Show the arguments
           EchoArgs --packages-select fastrtps --event-handlers=console_direct+ `
-            --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
+            --merge-install --ctest-args $ctestargs --repeat until-pass:3 `
             --timeout 300 --output-junit $junit
 
           # Run the testing
           "::group::ctest summary"
           colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-            --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
+            --merge-install --ctest-args $ctestargs --repeat until-pass:3 `
             --timeout 300 --output-junit $junit
           "::endgroup::"
 
