@@ -30,6 +30,7 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
 
 #include "BasicConfigurationPublisher.h"
 
@@ -94,6 +95,8 @@ bool HelloWorldPublisher::init(
             case UDPv4:
             {
                 auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+                udp_transport->netmask_filter = NetmaskFilterKind::ON;
+                udp_transport->interface_blocklist.push_back("docker0");
                 pqos.transport().user_transports.push_back(udp_transport);
             }
             break;
