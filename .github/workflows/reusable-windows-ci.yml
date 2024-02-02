@@ -231,63 +231,75 @@ jobs:
       - name: Build
         id: build
         continue-on-error: false
-        run: |
-          # For convenience use an array to pass the arguments
-          $buildargs = "--event-handlers=console_direct+"
+        uses: eProsima/eProsima-CI/windows/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: --cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXXFLAGS="/MP /WX"
+          cmake_build_type: ${{ matrix.cmake-config }}
+          workspace: ${{ github.workspace }}
 
-          $cmakeargs = '--cmake-args --no-warn-unused-cli -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} ${{ inputs.cmake-args }}'
+      # - name: Build
+      #   id: build
+      #   continue-on-error: false
+      #   run: |
+      #     # For convenience use an array to pass the arguments
+      #     $buildargs = "--event-handlers=console_direct+"
 
-          # On Windows we must load the developer environment and chose a config
-          $pwshmodule = gi $Env:VSPWSH
-          Import-Module $pwshmodule
-          Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
-                            -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
+      #     $cmakeargs = '--cmake-args --no-warn-unused-cli -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} ${{ inputs.cmake-args }}'
 
-          $cmakeargs += "$Env:BIN_ARCH $Env:HOST_ARCH"
+      #     # On Windows we must load the developer environment and chose a config
+      #     $pwshmodule = gi $Env:VSPWSH
+      #     Import-Module $pwshmodule
+      #     Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
+      #                       -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
 
-          # Show the args
-          EchoArgs $buildargs --metas ci.meta ${{ inputs.colcon-args }} $cmakeargs.split(" ")
+      #     $cmakeargs += "$Env:BIN_ARCH $Env:HOST_ARCH"
 
-          "::group::cmake summary"
-          colcon build $buildargs --metas ci.meta ${{ inputs.colcon-args }} $cmakeargs.split(" ")
-          "::endgroup::"
+      #     # Show the args
+      #     EchoArgs $buildargs --metas ci.meta ${{ inputs.colcon-args }} $cmakeargs.split(" ")
 
-          $output_buffer = ""
-          $warning_sb = {Write-Warning $args[0]; $global:output_buffer += $args[0]}
-          $error_sb = {Write-Error $args[0]; $global:output_buffer += $args[0]}
+      #     "::group::cmake summary"
+      #     colcon build $buildargs --metas ci.meta ${{ inputs.colcon-args }} $cmakeargs.split(" ")
+      #     "::endgroup::"
 
-          switch($LASTEXITCODE)
-          {
-              0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
-              1 { $report_kind = "CMake errors"; $wm = $error_sb }
-              2 { $report_kind = "build errors"; $wm = $error_sb }
-          }
+      #     $output_buffer = ""
+      #     $warning_sb = {Write-Warning $args[0]; $global:output_buffer += $args[0]}
+      #     $error_sb = {Write-Error $args[0]; $global:output_buffer += $args[0]}
 
-          # Show only warnings or error reports but do not fail
-          $LASTEXITCODE=0
-          $WarningPreference = $ErrorActionPreference = 'Continue'
-          $reports = gci -Path ./log/build_* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
+      #     switch($LASTEXITCODE)
+      #     {
+      #         0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
+      #         1 { $report_kind = "CMake errors"; $wm = $error_sb }
+      #         2 { $report_kind = "build errors"; $wm = $error_sb }
+      #     }
 
-          $reports.FullName
+      #     # Show only warnings or error reports but do not fail
+      #     $LASTEXITCODE=0
+      #     $WarningPreference = $ErrorActionPreference = 'Continue'
+      #     $reports = gci -Path ./log/build_* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
 
-          if($reports)
-          {
-            $logFolder = New-Item -Type Directory -Path build_logs
-            $msg = "There were $report_kind in some packages:"
-            & $wm $msg
-            (($reports.FullName | sls "log.build_[\d-_]*.(?<package>[^/]*).stderr.log").Matches.Groups |
-                ? name -eq "package").value | % {
-                    $msg += " $_"
-                    & $wm $_
-                    $file = Resolve-Path "./log/*/$_/stderr.log"
-                    $dest_file = Join-Path -Path $logFolder -ChildPath "$_-stderr.log"
-                    Copy-Item -Path $file -Destination $dest_file
-                    Get-Content $file
-                }
+      #     $reports.FullName
 
-            "BuildWarningsErrors=" + $output_buffer | Out-File $Env:GITHUB_OUTPUT
-            "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
-          }
+      #     if($reports)
+      #     {
+      #       $logFolder = New-Item -Type Directory -Path build_logs
+      #       $msg = "There were $report_kind in some packages:"
+      #       & $wm $msg
+      #       (($reports.FullName | sls "log.build_[\d-_]*.(?<package>[^/]*).stderr.log").Matches.Groups |
+      #           ? name -eq "package").value | % {
+      #               $msg += " $_"
+      #               & $wm $_
+      #               $file = Resolve-Path "./log/*/$_/stderr.log"
+      #               $dest_file = Join-Path -Path $logFolder -ChildPath "$_-stderr.log"
+      #               Copy-Item -Path $file -Destination $dest_file
+      #               Get-Content $file
+      #           }
+
+      #       "BuildWarningsErrors=" + $output_buffer | Out-File $Env:GITHUB_OUTPUT
+      #       "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
+      #     }
 
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') &&
