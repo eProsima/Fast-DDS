@@ -240,9 +240,7 @@ jobs:
               "MinSizeRel"="min-size-rel"
               }
           # For convenience use an array to pass the arguments
-          $buildargs = "--merge-install",
-                      "--symlink-install",
-                      "--event-handlers=console_direct+",
+          $buildargs = "--event-handlers=console_direct+",
                       "--packages-up-to", "fastrtps",
                       "--mixin", $translate["${{ matrix.cmake-config }}"]
 
