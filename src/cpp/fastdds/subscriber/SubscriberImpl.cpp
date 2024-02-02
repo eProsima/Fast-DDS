@@ -214,22 +214,25 @@ DataReader* SubscriberImpl::create_datareader(
     }
 
     // Check netmask filtering preconditions
-    fastrtps::rtps::RTPSParticipantImpl* rtps_impl = fastrtps::rtps::RTPSDomainImpl::find_local_participant(
-        rtps_participant()->getGuid());
-    if (nullptr != rtps_impl)
+    if (nullptr != rtps_participant())
     {
-        std::vector<fastdds::rtps::NetmaskFilterUtils::TransportNetmaskFilterInfo> netmask_filter_info =
-                rtps_impl->network_factory().netmask_filter_info();
-        std::string error_msg;
-        if (!fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
-                qos.endpoint().ignore_non_matching_locators,
-                error_msg) ||
-                !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
-                qos.endpoint().external_unicast_locators, error_msg))
+        fastrtps::rtps::RTPSParticipantImpl* rtps_impl = fastrtps::rtps::RTPSDomainImpl::find_local_participant(
+            rtps_participant()->getGuid());
+        if (nullptr != rtps_impl)
         {
-            EPROSIMA_LOG_ERROR(SUBSCRIBER,
-                    "Failed to create subscriber -> " << error_msg);
-            return nullptr;
+            std::vector<fastdds::rtps::NetmaskFilterUtils::TransportNetmaskFilterInfo> netmask_filter_info =
+                    rtps_impl->network_factory().netmask_filter_info();
+            std::string error_msg;
+            if (!fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+                    qos.endpoint().ignore_non_matching_locators,
+                    error_msg) ||
+                    !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+                    qos.endpoint().external_unicast_locators, error_msg))
+            {
+                EPROSIMA_LOG_ERROR(SUBSCRIBER,
+                        "Failed to create subscriber -> " << error_msg);
+                return nullptr;
+            }
         }
     }
 
