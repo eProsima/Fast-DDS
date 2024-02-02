@@ -41,7 +41,7 @@ jobs:
           - 'v142'
     steps:
       - name: Sync eProsima/Fast-DDS repository
-        uses: actions/checkout@v4
+        uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastrtps
 
@@ -89,7 +89,7 @@ jobs:
                                   "Common7\Tools\Microsoft.VisualStudio.DevShell.dll" | gi
 
           $env_variables +=
-            'CXXFLAGS=/MP',
+            'CXXFLAGS=/MP /WX',
             'CONFIG_TYPE=--config ${{ matrix.cmake-config }}',
             'BIN_ARCH=-A x64',
             'HOST_ARCH=-T ${{ matrix.vs-toolset }},host=x64',
@@ -241,10 +241,9 @@ jobs:
               }
           # For convenience use an array to pass the arguments
           $buildargs = "--event-handlers=console_direct+",
-                      "--packages-up-to", "fastrtps",
                       "--mixin", $translate["${{ matrix.cmake-config }}"]
 
-          $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }} -DCMAKE_CXX_FLAGS="/WX"'
+          $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }}'
 
           # On Windows we must load the developer environment and chose a config
           $pwshmodule = gi $Env:VSPWSH
