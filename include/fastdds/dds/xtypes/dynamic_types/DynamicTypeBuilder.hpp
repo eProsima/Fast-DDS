@@ -70,7 +70,7 @@ public:
 
     /*!
      * Returns all members sorted by name.
-     * @param[inout] member @ref DynamicTypeMemberByName reference used to return all members.
+     * @param[inout] member DynamicTypeMemberByName reference used to return all members.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK always.
      */
@@ -90,7 +90,7 @@ public:
 
     /*!
      * Returns all members sorted by MemberId.
-     * @param[inout] member @ref DynamicTypeMemberById reference used to return all members.
+     * @param[inout] member DynamicTypeMemberById reference used to return all members.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK always.
      */
@@ -164,6 +164,7 @@ public:
 
     /*!
      * Apply the given annotation to a member of this type.
+     * @param[in] member_id the id of the member.
      * @param[in] descriptor @ref AnnotationDescriptor reference to be applied.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the annotation was applied successful.

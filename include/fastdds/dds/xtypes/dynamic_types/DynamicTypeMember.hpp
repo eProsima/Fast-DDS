@@ -87,7 +87,7 @@ public:
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.6.3
-     * @param[in] other @DynamicTypeMember reference to compare to
+     * @param[in] other DynamicTypeMember reference to compare to
      * @return \b bool `true` on equality
      */
     FASTDDS_EXPORTED_API virtual bool equals(
