@@ -41,7 +41,7 @@ public:
         catch(const std::exception&)
         {
         }
-        
+
         try
         {
             boost::interprocess::interprocess_mutex mutex;
@@ -60,10 +60,10 @@ int main()
     {
         ThirdpartyBoostCompileTest compile_test;
     }
-    catch(const std::exception& e)
+    catch(const std::exception&)
     {
         return -1;
     }
-    
+
     return 0;
 }
