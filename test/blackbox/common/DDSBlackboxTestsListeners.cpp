@@ -1732,7 +1732,7 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_all_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+    ASSERT_NE(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
@@ -1832,7 +1832,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_all_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+    ASSERT_NE(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
@@ -1926,7 +1926,7 @@ TEST(DDSStatus, sample_rejected_key_re_dw_re_dr_keep_last_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+    ASSERT_NE(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
@@ -2026,7 +2026,7 @@ TEST(DDSStatus, sample_rejected_key_large_re_dw_re_dr_keep_last_max_samples_2)
     ASSERT_EQ(5u, test_status.total_count);
     ASSERT_EQ(5u, test_status.total_count_change);
     ASSERT_EQ(eprosima::fastdds::dds::REJECTED_BY_SAMPLES_LIMIT, test_status.last_reason);
-    ASSERT_EQ(c_InstanceHandle_Unknown, test_status.last_instance_handle);
+    ASSERT_NE(c_InstanceHandle_Unknown, test_status.last_instance_handle);
 }
 
 /*!
