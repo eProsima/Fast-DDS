@@ -216,7 +216,7 @@ const PlainCollectionHeader TypeObjectUtils::build_plain_collection_header(
 
 const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
         const PlainCollectionHeader& header,
-        SBound bound,
+        SBound s_bound,
         const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
@@ -226,25 +226,25 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
-    plain_sequence_s_elem_defn.bound(bound);
+    plain_sequence_s_elem_defn.bound(s_bound);
     plain_sequence_s_elem_defn.element_identifier(element_identifier);
     return plain_sequence_s_elem_defn;
 }
 
 const PlainSequenceLElemDefn TypeObjectUtils::build_plain_sequence_l_elem_defn(
         const PlainCollectionHeader& header,
-        LBound bound,
+        LBound l_bound,
         const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    l_bound_consistency(bound);
+    l_bound_consistency(l_bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceLElemDefn plain_sequence_l_elem_defn;
     plain_sequence_l_elem_defn.header(header);
-    plain_sequence_l_elem_defn.bound(bound);
+    plain_sequence_l_elem_defn.bound(l_bound);
     plain_sequence_l_elem_defn.element_identifier(element_identifier);
     return plain_sequence_l_elem_defn;
 }

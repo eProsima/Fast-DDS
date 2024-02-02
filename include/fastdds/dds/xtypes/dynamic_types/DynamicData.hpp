@@ -168,7 +168,7 @@ public:
     /*!
      * Retrieves an \b int32 value associated to an identifier.
      * @param[inout] value \b int32 to populate
-     * @param[in] Id identifier of the member to query.
+     * @param[in] id identifier of the member to query.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
@@ -516,7 +516,7 @@ public:
 
     /*!
      * Sets an \b bool value associated to an identifier
-     * @param[in] Id identifier of the member to set.
+     * @param[in] id identifier of the member to set.
      * @param[in] value \b bool to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
