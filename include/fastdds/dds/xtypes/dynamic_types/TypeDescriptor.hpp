@@ -48,7 +48,7 @@ public:
 
     /*!
      * Modifies the underlying @ref TypeKind.
-     * @param[in] @ref TypeKind to be set.
+     * @param[in] kind @ref TypeKind to be set.
      */
     virtual void kind(
             TypeKind kind) = 0;
@@ -93,7 +93,7 @@ public:
 
     /*!
      * Modifies the underlying base type reference.
-     * @param[in] @ref DynamicType reference.
+     * @param[in] type @ref DynamicType reference.
      */
     virtual void base_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -112,7 +112,7 @@ public:
 
     /*!
      * Modifies the underlying discriminator type reference.
-     * @param[in] @ref DynamicType reference.
+     * @param[in] type @ref DynamicType reference.
      */
     virtual void discriminator_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -131,14 +131,14 @@ public:
 
     /*!
      * Modifies the underlying bound by copy.
-     * @param[in] @ref BoundSeq
+     * @param[in] bound @ref BoundSeq
      */
     virtual void bound(
             const BoundSeq& bound) = 0;
 
     /*!
      * Modifies the underlying bound by move.
-     * @param[in] @ref BoundSeq
+     * @param[in] bound @ref BoundSeq
      */
     virtual void bound(
             BoundSeq&& bound) = 0;
@@ -157,7 +157,7 @@ public:
 
     /*!
      * Modifies the underlying element type reference.
-     * @param[in] @ref DynamicType reference.
+     * @param[in] type @ref DynamicType reference.
      */
     virtual void element_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -176,7 +176,7 @@ public:
 
     /*!
      * Modifies the underlying key element type reference.
-     * @param[in] @ref DynamicType reference.
+     * @param[in] type @ref DynamicType reference.
      */
     virtual void key_element_type(
             traits<DynamicType>::ref_type type) = 0;
@@ -196,7 +196,7 @@ public:
 
     /*!
      * Modifies the extensibility kind.
-     * @param[in] @ref ExtensibilityKind
+     * @param[in] extensibility_kind @ref ExtensibilityKind
      */
     virtual void extensibility_kind(
             ExtensibilityKind extensibility_kind) = 0;
@@ -215,7 +215,7 @@ public:
 
     /*!
      * Mofifies the is_nested property.
-     * @param[in] Boolean
+     * @param[in] is_nested
      */
     virtual void is_nested(
             bool is_nested) = 0;

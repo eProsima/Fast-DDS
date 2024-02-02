@@ -78,8 +78,8 @@ public:
             traits<DynamicType>::ref_type type) = 0;
 
     /*!
-     * Creates a new @ref DynamicTypeBuilder reference based on the given @ref TypeObject instance.
-     * @param[in] type_object @ref TypeObject instance to be used.
+     * Creates a new @ref DynamicTypeBuilder reference based on the given @ref xtypes::TypeObject instance.
+     * @param[in] type_object @ref xtypes::TypeObject instance to be used.
      * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicTypeBuilder>::ref_type create_type_w_type_object(
@@ -117,7 +117,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference representing an array.
      * @param[in] element_type @ref DynamicType reference which becomes the element type
-     * @param[in] bounds `uint32_t` representing the desired dimensions.
+     * @param[in] bound `uint32_t` representing the desired dimensions.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicTypeBuilder>::ref_type create_array_type(
@@ -126,8 +126,8 @@ public:
 
     /*!
      * Creates a new @ref DynamicTypeBuilder reference representing a map.
-     * @param[in] key_type @ref DynamicType reference which becomes the map's key type
-     * @param[in] value_type @ref DynamicType reference which becomes the map's value type
+     * @param[in] key_element_type @ref DynamicType reference which becomes the map's key type
+     * @param[in] element_type @ref DynamicType reference which becomes the map's value type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the map type shall be considered to be unbounded.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
@@ -148,7 +148,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference by parsing the type description at the given URL.
      * @remark Not implemented yet.
-     * @param[in] URL pointing to the XML description.
+     * @param[in] document_url pointing to the XML description.
      * @param[in] type_name Fully qualified name of the type to be loaded from the document.
      * @param[in] include_paths A collection of URLs to directories to be searched for additional type description
      * documents.
@@ -162,7 +162,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference by parsing the type description contained in the given string.
      * @remark Not implemented yet.
-     * @param[in] String containing the type description.
+     * @param[in] document containing the type description.
      * @param[in] type_name Fully qualified name of the type to be loaded from the string.
      * @param[in] include_paths A collection of URLs to directories to be searched for additional type description
      * documents.

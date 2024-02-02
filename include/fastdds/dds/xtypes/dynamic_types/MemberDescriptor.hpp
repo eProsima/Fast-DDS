@@ -75,7 +75,7 @@ public:
 
     /*!
      * Modifies the underlying @ref MemberId.
-     * @param[in] @ref MemberId to be set.
+     * @param[in] id @ref MemberId to be set.
      */
     virtual void id(
             MemberId id) = 0;
@@ -94,7 +94,7 @@ public:
 
     /*!
      * Modifies the underlying member's type reference.
-     * @param[in] @ref DynamicType reference.
+     * @param[in] type @ref DynamicType reference.
      */
     virtual void type(
             traits<DynamicType>::ref_type type) = 0;
@@ -151,14 +151,14 @@ public:
 
     /*!
      * Modifies the labels the member belongs to by copy.
-     * @param[in] @ref UnionCaseLabelSeq
+     * @param[in] label @ref UnionCaseLabelSeq
      */
     virtual void label(
             const UnionCaseLabelSeq& label) = 0;
 
     /*!
      * Modifies the labels the member belongs to by move.
-     * @param[in] @ref UnionCaseLabelSeq
+     * @param[in] label @ref UnionCaseLabelSeq
      */
     virtual void label(
             UnionCaseLabelSeq&& label) = 0;
