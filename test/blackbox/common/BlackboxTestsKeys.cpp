@@ -17,6 +17,8 @@
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+
 TEST(KeyedTopic, RegistrationNonKeyedFail)
 {
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -179,6 +181,105 @@ TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
 
     ASSERT_TRUE(writer.unregister_instance(data.front(), instance_handle_1));
     ASSERT_TRUE(writer.unregister_instance(data.back(), instance_handle_2));
+}
+
+// Regression test for redmine issue #20239
+TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
+{
+    PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<KeyedHelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
+    bool writer_sends_inline_qos = true;
+    bool writer_sends_pid_key_hash = true;
+
+    testTransport->drop_data_messages_filter_ = [&writer_sends_inline_qos,
+                    &writer_sends_pid_key_hash](eprosima::fastrtps::rtps::CDRMessage_t& msg) -> bool
+            {
+                // Check for inline_qos
+                uint8_t flags = msg.buffer[msg.pos - 3];
+                auto old_pos = msg.pos;
+
+                // Skip extraFlags, read octetsToInlineQos, and calculate inline qos position.
+                msg.pos += 2;
+                uint16_t to_inline_qos = 0;
+                eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &to_inline_qos);
+                uint32_t inline_qos_pos = msg.pos + to_inline_qos;
+
+                // Filters are only applied to user data
+                // no need to check if the packets comer from a builtin
+
+                writer_sends_inline_qos &= static_cast<bool>((flags & (1 << 1)));
+
+                // Stop seeking if inline qos are not present
+                // Fail the test afterwards
+                if (!writer_sends_inline_qos)
+                {
+                    return false;
+                }
+                else
+                {
+                    // Process inline qos
+                    msg.pos = inline_qos_pos;
+                    bool key_hash_was_found = false;
+                    while (msg.pos < msg.length)
+                    {
+                        uint16_t pid = 0;
+                        uint16_t plen = 0;
+
+                        eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
+                        eprosima::fastrtps::rtps::CDRMessage::readUInt16(&msg, &plen);
+                        uint32_t next_pos = msg.pos + plen;
+
+                        if (pid == eprosima::fastdds::dds::PID_KEY_HASH)
+                        {
+                            key_hash_was_found = true;
+                        }
+                        else if (pid == eprosima::fastdds::dds::PID_SENTINEL)
+                        {
+                            break;
+                        }
+
+                        msg.pos = next_pos;
+                    }
+
+                    writer_sends_pid_key_hash &= key_hash_was_found;
+                    msg.pos = old_pos;
+                }
+
+                // Do not drop the packet in any case
+                return false;
+            };
+
+    writer.
+            disable_builtin_transport().
+            add_user_transport_to_pparams(testTransport).
+            init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.
+            expect_inline_qos(false).
+            init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_keyedhelloworld_data_generator(5);
+
+    reader.startReception(data);
+    writer.send(data);
+
+    // In this test all data should be sent.
+    EXPECT_TRUE(data.empty());
+    reader.block_for_all();
+
+    EXPECT_TRUE(writer_sends_inline_qos);
+    EXPECT_TRUE(writer_sends_pid_key_hash);
 }
 
 /* Uncomment when DDS API supports NO_WRITERS_ALIVE
