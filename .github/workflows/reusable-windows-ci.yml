@@ -48,7 +48,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.28.2'
 
       - name: Install OpenSSL
         uses: eProsima/eprosima-CI/windows/install_openssl@v0
