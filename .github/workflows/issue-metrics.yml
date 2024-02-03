@@ -1,0 +1,30 @@
+name: Yearly issue metrics
+on:
+  workflow_dispatch:
+    inputs:
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS '
+        required: true
+        default: 'master'
+
+permissions:
+  issues: write
+  pull-requests: read
+
+jobs:
+  build:
+    name: issue metrics
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run issue-metrics tool
+      uses: github/issue-metrics@v2
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SEARCH_QUERY: 'repo:owner/repo is:issue created:2023-01-01..2023-12-31'
+
+    - name: Create issue
+      uses: peter-evans/create-issue-from-file@v5
+      with:
+        title: Monthly issue metrics report
+        token: ${{ secrets.GITHUB_TOKEN }}
+        content-filepath: ./issue_metrics.md
