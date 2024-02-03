@@ -108,7 +108,8 @@ if(MSVC OR MSVC_IDE)
 endif()
 
 
-gtest_discover_tests(AccessControlTests)
+gtest_discover_tests(AccessControlTests
+    PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")
 
 ####################################################################################################
 ####################################################################################################
