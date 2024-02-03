@@ -1,4 +1,7 @@
 names:
+    fastcdr:
+        cmake-args:
+            - "-DBUILD_TESTING=ON"
     fastrtps:
         cmake-args:
             - "-DBUILD_DOCUMENTATION=OFF"
