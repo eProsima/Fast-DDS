@@ -50,6 +50,32 @@ jobs:
         with:
           cmakeVersion: '3.22.6'
 
+      - name: Install OpenSSL
+        uses: eProsima/eprosima-CI/windows/install_openssl@v0
+        with:
+          version: '3.1.1'
+
+      - name: Update OpenSSL environment variables
+        run: |
+          # Update the environment
+          if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
+          {
+            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          }
+          elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
+          {
+            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          }
+          elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
+          {
+            "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          }
+          else
+          {
+            Write-Error -Message "Cannot find OpenSSL installation."
+            exit 1
+          }
+
         # TODO: check arguments
       - name: Install colcon
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
