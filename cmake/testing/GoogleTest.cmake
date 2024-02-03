@@ -26,6 +26,6 @@ function(gtest_discover_tests TARGET)
 
         set(CMAKE_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_win_wrapper_$<CONFIG>.bat")
     endif()
-    set(_DISCOVERY_TIMEOUT "DISCOVERY_TIMEOUT 100")
+    set(_DISCOVERY_TIMEOUT "DISCOVERY_TIMEOUT;100")
     _gtest_discover_tests(${TARGET} ${ARGN} ${_DISCOVERY_TIMEOUT})
 endfunction()
