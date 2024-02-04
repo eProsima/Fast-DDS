@@ -108,8 +108,7 @@ jobs:
           # Install
           cmake --build ./build/googletest --config ${{ matrix.cmake-config }} --target install
 
-          # Clean up
-          'build', 'googletest', 'gtest.log' | del -Recurse -Force
+          New-Item -ItemType File googletest/COLCON_IGNORE
 
       - name: Prepare colcon workspace
         run: |
