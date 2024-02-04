@@ -156,8 +156,8 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: --cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_PREFIX_PATH="C:\Program Files\googletest" -DGTest_DIR="C:\Program Files\googletest" -DCMAKE_CXXFLAGS="/MP /WX"
+          cmake_args: --no-warn-unused-cli ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_PREFIX_PATH='C:/Program Files/googletest/lib/cmake/GTest' -DGTest_DIR='C:/Program Files/googletest/lib/cmake/GTest' -DCMAKE_CXXFLAGS="/MP /WX"
           cmake_build_type: ${{ matrix.cmake-config }}
           workspace: ${{ github.workspace }}
 
