@@ -98,6 +98,28 @@ jobs:
           "$Env:ProgramData\chocolatey\lib\tinyxml2\share\cmake;$Env:CMAKE_PREFIX_PATH" |
           Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
+      - name: Install googletest
+        run: |
+          git clone --branch release-1.11.0 https://github.com/google/googletest.git
+          $crt = '-Dgtest_force_shared_crt=ON'
+
+          # Generate
+          cmake -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} $crt -DCMAKE_VERBOSE_MAKEFILE=ON `
+                -B ./build/googletest "$Env:BIN_ARCH".split(" ") "$Env:HOST_ARCH".split(" ") ./googletest
+
+          # Build and install elevated if required
+          $build = { cmake --build ./build/googletest --target install "$Env:CONFIG_TYPE".split(" ") --verbose }
+          (& $build) | Tee-Object -FilePath gtest.log
+
+          # Hint install dir
+          $pattern = "-- Installing:\s+(?<cmake_path>.*)/GTestConfig.cmake"
+          $matches = sls -Path gtest.log -Pattern $pattern
+          $Env:GTest_DIR = ($matches.Matches.Groups | ? name -eq cmake_path).Value
+          ("GTest_DIR=" + $Env:GTest_DIR) | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+
+          # clean up
+          'build', 'googletest', 'gtest.log' | del -Recurse -Force
+
       - name: Prepare colcon workspace
         run: |
           # Get some convenient tools
