@@ -22,6 +22,8 @@ if (NOT DEFINED RUNTIME_LIST)
     message(FATAL_ERROR "This scrips needs RUNTIME_LIST variable set")
 endif()
 
+message(STATUS "RUNTIME_LIST: ${RUNTIME_LIST}")
+
 set(_path "")
 
 foreach(_runtime_dll IN LISTS RUNTIME_LIST)
@@ -31,6 +33,9 @@ foreach(_runtime_dll IN LISTS RUNTIME_LIST)
 endforeach()
 
 list(REMOVE_DUPLICATES _path)
+
+message(STATUS "_path: ${_path}")
+message(STATUS "_cmake_command: ${_cmake_command}")
 
 cmake_path(NATIVE_PATH CMAKE_COMMAND _cmake_command)
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_win_wrapper_${CONFIG}.bat" "
