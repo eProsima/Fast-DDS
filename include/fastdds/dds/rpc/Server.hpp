@@ -253,7 +253,32 @@ public:
      */
     RTPS_DllAPI bool stop()
     {
-        return true;
+        stop_.store(true);
+        request_cv_.notify_one();
+
+        std::unique_lock<std::mutex> lock(dds_mutex_);
+
+        // Clear request queue
+        {
+            std::lock_guard<std::mutex> lock(request_queue_mutex_);
+            RequestQueue empty_queue;
+            std::swap(requests_queue_, empty_queue);
+        }
+
+        // Delete DDS entities
+        ReturnCode_t ret = participant_->delete_contained_entities();
+
+        if ((ret == ReturnCode_t::RETCODE_OK) && participant_ownership_)
+        {
+            ret = DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        }
+
+        if (ret != ReturnCode_t::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(RPC, "Failed to delete contained entities");
+        }
+
+        return ret == ReturnCode_t::RETCODE_OK;
     }
 
 protected:
@@ -316,8 +341,11 @@ protected:
     //! The request queue element type.
     using RequestQueueElement = std::pair<RequestType, SampleInfo>;
 
+    //! The request queue type.
+    using RequestQueue = std::queue<RequestQueueElement>;
+
     //! The queue for incoming requests.
-    std::queue<RequestQueueElement> requests_queue_;
+    RequestQueue requests_queue_;
 
     //! Mutex to protect the request queue.
     mutable std::mutex request_queue_mutex_;
