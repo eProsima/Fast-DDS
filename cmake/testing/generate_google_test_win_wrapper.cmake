@@ -35,11 +35,14 @@ endforeach()
 list(REMOVE_DUPLICATES _path)
 
 message(STATUS "_path: ${_path}")
-message(STATUS "_cmake_command: ${_cmake_command}")
 
 cmake_path(NATIVE_PATH CMAKE_COMMAND _cmake_command)
+message(STATUS "_cmake_command: ${_cmake_command}")
+
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_win_wrapper_${CONFIG}.bat" "
 @ECHO OFF
 set \"PATH=${_path};%PATH%\"
 \"${_cmake_command}\" %*
 ")
+
+message(STATUS "PATH: ${_path};$ENV{PATH}")
