@@ -19,19 +19,45 @@
 #ifndef _FASTDDS_DDS_RPC_SERVER_HPP_
 #define _FASTDDS_DDS_RPC_SERVER_HPP_
 
+#include <atomic>
 #include <functional>
+#include <mutex>
+#include <stdexcept>
 #include <string>
 
+#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace rpc {
+
+static void check_entity_creation(
+        const Entity* entity)
+{
+    if (nullptr == entity)
+    {
+        throw std::runtime_error("Entity creation failed");
+    }
+}
 
 /**
  * @brief The Server class represents an RPC server.
@@ -84,7 +110,74 @@ public:
             const std::string& request_topic_name,
             const std::string& response_topic_name,
             Duration_t max_ack_wait,
-            ServiceProcedure service_procedure);
+            ServiceProcedure service_procedure)
+        : service_procedure_(service_procedure)
+        , participant_(participant)
+        , request_type_support_(new RequestTypeSupport())
+        , request_topic_(nullptr)
+        , subscriber_(nullptr)
+        , request_reader_(nullptr)
+        , response_type_support_(new ResponseTypeSupport())
+        , response_topic_(nullptr)
+        , publisher_(nullptr)
+        , response_writer_(nullptr)
+        , max_ack_wait_(max_ack_wait)
+        , stop_(false)
+        , participant_ownership_(false)
+    {
+        std::unique_lock<std::mutex> lock(dds_mutex_);
+
+        /* Create participant if not provided */
+        if (nullptr == participant_)
+        {
+            // TODO(eduponz): Different ctor for this case
+            participant_ = DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            check_entity_creation(participant_);
+            participant_ownership_ = true;
+        }
+        // TODO(eduponz): StatusMask cannot be set on already constructed entities.
+
+        /* Register types and create topics */
+        request_type_support_.register_type(participant_, request_type_support_.get_type_name());
+        response_type_support_.register_type(participant_, response_type_support_.get_type_name());
+
+        response_topic_ = participant_->create_topic(
+            response_topic_name,
+            response_type_support_.get_type_name(),
+            TOPIC_QOS_DEFAULT);
+        check_entity_creation(response_topic_);
+
+        request_topic_ = participant_->create_topic(
+            request_topic_name,
+            request_type_support_.get_type_name(),
+            TOPIC_QOS_DEFAULT);
+        check_entity_creation(request_topic_);
+
+        /* Create response DataWriter */
+        publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
+        check_entity_creation(publisher_);
+
+        // TODO(eduponz): Add Qos a profile for this
+        response_writer_ = publisher_->create_datawriter(response_topic_, DATAWRITER_QOS_DEFAULT);
+        check_entity_creation(response_writer_);
+        EPROSIMA_LOG_INFO(RPC,
+                "Created response writer in topic: " << response_topic_name << " [" << response_type_support_.get_type_name() <<
+                "]");
+
+        /* Create request DataReader */
+        subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+        check_entity_creation(subscriber_);
+
+        // TODO(eduponz): Add Qos a profile for this
+        DataReaderQos reader_qos;
+        reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        request_reader_ =
+                subscriber_->create_datareader(request_topic_, reader_qos, this, StatusMask::data_available());
+        check_entity_creation(request_reader_);
+        EPROSIMA_LOG_INFO(RPC,
+                "Created request reader in topic: " << request_topic_name << " [" << request_type_support_.get_type_name() <<
+                "]");
+    }
 
     /**
      * @brief Runs the server.
@@ -98,7 +191,9 @@ public:
      * its onw thread). This function executes the provided service procedure for each incoming
      * request, and it is used to send the responses back to the clients.
      */
-    RTPS_DllAPI void run();
+    RTPS_DllAPI void run()
+    {
+    }
 
     /**
      * @brief Stops the server.
@@ -109,7 +204,10 @@ public:
      *
      * @return true if the server was successfully stopped, false otherwise.
      */
-    RTPS_DllAPI bool stop();
+    RTPS_DllAPI bool stop()
+    {
+        return true;
+    }
 
 protected:
 
@@ -122,8 +220,51 @@ protected:
      * @param reader The DataReader object that received the data.
      */
     void on_data_available(
-            DataReader* reader) override;
+            DataReader* reader) override
+    {
+    }
 
+    //! Callback function for handling status changes in the DataReader.
+    ServiceProcedure service_procedure_;
+
+    //! The DomainParticipant object used for communication.
+    DomainParticipant* participant_;
+
+    //! The type support object for the request data type.
+    TypeSupport request_type_support_;
+
+    //! The topic for receiving requests.
+    Topic* request_topic_;
+
+    //! The Subscriber for the request DataReader.
+    Subscriber* subscriber_;
+
+    //! The DataReader for receiving requests.
+    DataReader* request_reader_;
+
+    //! The type support object for the response data type.
+    TypeSupport response_type_support_;
+
+    //! The topic for sending responses.
+    Topic* response_topic_;
+
+    //! The Publisher for the response DataWriter.
+    Publisher* publisher_;
+
+    //! The DataWriter for sending responses.
+    DataWriter* response_writer_;
+
+    //! The maximum time to wait for response acknowledgments.
+    Duration_t max_ack_wait_;
+
+    //! Flag to indicate whether the server is stopped.
+    std::atomic<bool> stop_;
+
+    //! Mutex to protect the DDS entities.
+    mutable std::mutex dds_mutex_;
+
+    //! Flag to indicate whether the participant is owned by the server or provided by the user.
+    bool participant_ownership_ = false;
 };
 
 } // namespace rpc
