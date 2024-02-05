@@ -20,10 +20,13 @@
 #define _FASTDDS_DDS_RPC_SERVER_HPP_
 
 #include <atomic>
+#include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <queue>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
@@ -37,12 +40,14 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/fastrtps_dll.h>
+#include <fastrtps/rtps/common/WriteParams.h>
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
@@ -58,6 +63,11 @@ static void check_entity_creation(
         throw std::runtime_error("Entity creation failed");
     }
 }
+
+/**
+ * TODO(eduponz): Consider adding a base class and two derived classes for handling sync and async
+ * servers.
+ */
 
 /**
  * @brief The Server class represents an RPC server.
@@ -193,6 +203,43 @@ public:
      */
     RTPS_DllAPI void run()
     {
+        while (!stop_)
+        {
+            // Block until a request is available or the server is stopped
+            {
+                std::unique_lock<std::mutex> lock(request_cv_mutex_);
+                request_cv_.wait(lock, [this]
+                        {
+                            return !requests_queue_.empty() || stop_;
+                        });
+            }
+
+            // Check if the server has been stopped
+            if (requests_queue_.empty() && stop_)
+            {
+                break;
+            }
+
+            // Get the request from the queue
+            RequestQueueElement request;
+            {
+                std::lock_guard<std::mutex> lock(request_queue_mutex_);
+                request = requests_queue_.front();
+                requests_queue_.pop();
+            }
+
+            // Run the service procedure to get the response
+            ResponseType response = service_procedure_(request.first);
+
+            // Fill the response related sample identity to that the client can differentiate
+            // between the response to its request and other responses.
+            eprosima::fastrtps::rtps::WriteParams write_params;
+            write_params.related_sample_identity(request.second.sample_identity);
+
+            // Send the response
+            response_writer_->write(&response, write_params);
+            response_writer_->wait_for_acknowledgments(max_ack_wait_);
+        }
     }
 
     /**
@@ -265,6 +312,21 @@ protected:
 
     //! Flag to indicate whether the participant is owned by the server or provided by the user.
     bool participant_ownership_ = false;
+
+    //! The request queue element type.
+    using RequestQueueElement = std::pair<RequestType, SampleInfo>;
+
+    //! The queue for incoming requests.
+    std::queue<RequestQueueElement> requests_queue_;
+
+    //! Mutex to protect the request queue.
+    mutable std::mutex request_queue_mutex_;
+
+    //! Mutex to protect the request condition variable.
+    mutable std::mutex request_cv_mutex_;
+
+    //! Condition variable to notify the server of available requests.
+    std::condition_variable request_cv_;
 };
 
 } // namespace rpc
