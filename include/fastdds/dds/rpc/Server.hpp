@@ -294,6 +294,28 @@ protected:
     void on_data_available(
             DataReader* reader) override
     {
+        std::unique_lock<std::mutex> lock(dds_mutex_);
+
+        RequestType request;
+        SampleInfo info;
+
+        // TODO(eduponz): Use take() api instead to handle loans when possible
+        while (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&request, &info))
+        {
+            if (info.valid_data)
+            {
+                {
+                    std::lock_guard<std::mutex> lock(request_queue_mutex_);
+                    requests_queue_.push({request, info});
+                }
+                request_cv_.notify_one();
+            }
+
+            if (stop_)
+            {
+                break;
+            }
+        }
     }
 
     //! Callback function for handling status changes in the DataReader.
