@@ -103,7 +103,7 @@ jobs:
           git clone --branch release-1.11.0 https://github.com/google/googletest.git googletest
 
           # Generate
-          cmake -DCMAKE_INSTALL_PREFIX='C:\Program Files\googletest' -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} -Dgtest_force_shared_crt=ON -B ./build/googletest -A x64 -T host=x64 ./googletest
+          cmake -DCMAKE_INSTALL_PREFIX='C:\Program Files\googletest' -DBUILD_SHARED_LIBS=ON -DBUILD_GMOCK=ON -DCMAKE_BUILD_TYPE=${{ matrix.cmake-config }} -Dgtest_force_shared_crt=ON -B ./build/googletest -A x64 -T host=x64 ./googletest
 
           # Install
           cmake --build ./build/googletest --config ${{ matrix.cmake-config }} --target install
