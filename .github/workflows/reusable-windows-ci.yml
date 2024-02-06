@@ -162,7 +162,7 @@ jobs:
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
           colcon_meta_file: ${{ github.workspace }}/ci.meta
-          colcon_build_args: ${{ inputs.colcon-args }}
+          colcon_build_args: --merge-install ${{ inputs.colcon-args }}
           cmake_args: --no-warn-unused-cli ${{ inputs.cmake-args }}
           cmake_args_default: -DCMAKE_PREFIX_PATH='C:/Program Files/googletest/lib/cmake/GTest' -DGTest_DIR='C:/Program Files/googletest/lib/cmake/GTest' -DCMAKE_CXXFLAGS="/MP /WX"
           cmake_build_type: ${{ matrix.cmake-config }}
