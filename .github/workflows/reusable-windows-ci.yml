@@ -278,8 +278,8 @@ jobs:
           # Install the HSM emulator (required for testing PKCS #11 support)
           $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi"
           $msiHSM = "$Env:tmp/SoftHSM2-2.5.0.msi"
-          iwr $urlHSM -OutFile $msiHSM
-          msiexec /i $msiHSM /log "$Env:tmp/SoftHSM2.log" /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
+          wget $urlHSM -output $msiHSM
+          msiexec /i $msiHSM /l* "$Env:tmp/SoftHSM2.log" /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
 
           # move to pkcs11 installation while msiexec installs softhsm2
 
@@ -300,7 +300,7 @@ jobs:
           $libp11_path = Join-Path $deploy_dir src
 
           # Check softhsm2 installation
-          if (!(sls -Path "$Env:tmp/SoftHSM2.log" -Pattern  "Installation success or error status: 0" -SimpleMatch -Quiet))
+          if (!(sls -Path "$Env:tmp/SoftHSM2.log" -Pattern  "success or error status: 0" -SimpleMatch -Quiet))
           {
             Write-Error -Message "SoftHSM2 installation failed."
           }
