@@ -95,8 +95,9 @@ public:
         return secure_socket_;
     }
 
-    void waitConnection_to_accept(
-            const std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket);
+    void update_channel(
+            const std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+            const eConnectionStatus status);
 
 private:
 
