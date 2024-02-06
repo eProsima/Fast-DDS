@@ -753,7 +753,8 @@ public:
     }
 
     PubSubWriter& setup_large_data_tcp(
-            bool v6 = false)
+            bool v6 = false,
+            const uint16_t& port = 0)
     {
         participant_attr_.rtps.useBuiltinTransports = false;
 
@@ -761,7 +762,7 @@ public:
         // UDP transport for PDP over multicast
         // TCP transport for EDP and application data (The listening port must to be unique for
         // each participant in the same host)
-        constexpr uint16_t tcp_listening_port = 0;
+        uint16_t tcp_listening_port = port;
         if (v6)
         {
             auto pdp_transport = std::make_shared<eprosima::fastdds::rtps::UDPv6TransportDescriptor>();

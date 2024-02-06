@@ -16,6 +16,7 @@
 
 #include <chrono>
 #include <thread>
+#include <random>
 
 #include <gtest/gtest.h>
 
@@ -736,88 +737,164 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
 // Test TCPv4 transport on LARGE_DATA topology
 TEST_P(TransportTCP, TCPv4_large_data_topology)
 {
+    int n_participants = 5;
+    bool use_v6 = false;
+
     /* Test configuration */
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    std::vector<std::unique_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
+    std::vector<std::unique_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
+
+    for(int i = 0; i < n_participants; i++)
+    {
+        readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        writers.emplace_back(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    }
+
+    // Create a vector of ports and shuffle it
+    std::vector<uint16_t> ports;
+    for(uint16_t i = 0; i < 2*n_participants; i++)
+    {
+        ports.push_back(7200 + i);
+    }
+    auto rng = std::default_random_engine{};
+    std::shuffle(ports.begin(), ports.end(), rng);
 
     // Reliable Keep_all to wait for all acked as end condition
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+    for(int i = 0; i < n_participants; i++)
+    {
+        writers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+        readers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
 
-    // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
-    bool use_v6 = false;
-    writer.setup_large_data_tcp(use_v6);
-    reader.setup_large_data_tcp(use_v6);
+        // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
+        writers[i]->setup_large_data_tcp(use_v6, ports[i]);
+        readers[i]->setup_large_data_tcp(use_v6, ports[n_participants+i]);
+    }
 
-    /* Run test */
-    // Init writer
-    writer.init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Init reader
-    reader.init();
-    ASSERT_TRUE(reader.isInitialized());
+    // Init participants
+    for(int i = 0; i < n_participants; i++)
+    {
+        writers[i]->init();
+        readers[i]->init();
+        ASSERT_TRUE(writers[i]->isInitialized());
+        ASSERT_TRUE(readers[i]->isInitialized());
+    }
 
     // Wait for discovery
-    writer.wait_discovery();
-    reader.wait_discovery();
+    for(int i = 0; i < n_participants; i++)
+    {
+        writers[i]->wait_discovery(n_participants, std::chrono::seconds(5));
+        ASSERT_EQ(writers[i]->get_matched(), n_participants);
+        readers[i]->wait_discovery(std::chrono::seconds(5) ,n_participants);
+        ASSERT_EQ(readers[i]->get_matched(), n_participants);
+    }
 
     // Send data
-    auto data = default_helloworld_data_generator();
-    reader.startReception(data);
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
+    std::list<HelloWorld> data;
+    for(int i = 0; i < n_participants; i++)
+    {
+        data = default_helloworld_data_generator();
+        for(int j = 0; j < n_participants; j++)
+        {
+            readers[j]->startReception(data);
+        }
+        writers[i]->send(data);
+        ASSERT_TRUE(data.empty());
+        for(int j = 0; j < n_participants; j++)
+        {
+            ASSERT_TRUE(readers[j]->wait_for_all_received(std::chrono::seconds(2)));
+        }
+        EXPECT_TRUE(writers[i]->waitForAllAcked(std::chrono::seconds(5)));
+    }
 
-    // Wait for reception acknowledgement
-    reader.block_for_all();
-    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
-
+    // Destroy participants
+    readers.clear();
+    writers.clear();
 }
 
 // Test TCPv6 transport on LARGE_DATA topology
 TEST_P(TransportTCP, TCPv6_large_data_topology)
 {
+    int n_participants = 5;
+    bool use_v6 = true;
+
     /* Test configuration */
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    std::vector<std::unique_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
+    std::vector<std::unique_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
+
+    for(int i = 0; i < n_participants; i++)
+    {
+        readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        writers.emplace_back(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    }
+
+    // Create a vector of ports and shuffle it
+    std::vector<uint16_t> ports;
+    for(uint16_t i = 0; i < 2*n_participants; i++)
+    {
+        ports.push_back(7200 + i);
+    }
+    auto rng = std::default_random_engine{};
+    std::shuffle(ports.begin(), ports.end(), rng);
 
     // Reliable Keep_all to wait for all acked as end condition
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+    for(int i = 0; i < n_participants; i++)
+    {
+        writers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS);
+        readers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
 
-    // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
-    bool use_v6 = true;
-    writer.setup_large_data_tcp(use_v6);
-    reader.setup_large_data_tcp(use_v6);
+        // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
+        writers[i]->setup_large_data_tcp(use_v6, ports[i]);
+        readers[i]->setup_large_data_tcp(use_v6, ports[n_participants+i]);
+    }
 
-    /* Run test */
-    // Init writer
-    writer.init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    // Init reader
-    reader.init();
-    ASSERT_TRUE(reader.isInitialized());
+    // Init participants
+    for(int i = 0; i < n_participants; i++)
+    {
+        writers[i]->init();
+        readers[i]->init();
+        ASSERT_TRUE(writers[i]->isInitialized());
+        ASSERT_TRUE(readers[i]->isInitialized());
+    }
 
     // Wait for discovery
-    writer.wait_discovery();
-    reader.wait_discovery();
+    for(int i = 0; i < n_participants; i++)
+    {
+        writers[i]->wait_discovery(n_participants, std::chrono::seconds(5));
+        ASSERT_EQ(writers[i]->get_matched(), n_participants);
+        readers[i]->wait_discovery(std::chrono::seconds(5) ,n_participants);
+        ASSERT_EQ(readers[i]->get_matched(), n_participants);
+    }
 
-    // Send data
-    auto data = default_helloworld_data_generator();
-    reader.startReception(data);
-    writer.send(data);
-    ASSERT_TRUE(data.empty());
+    std::list<HelloWorld> data;
+    for(int i = 0; i < n_participants; i++)
+    {
+        data = default_helloworld_data_generator();
+        for(int j = 0; j < n_participants; j++)
+        {
+            readers[j]->startReception(data);
+        }
+        writers[i]->send(data);
+        ASSERT_TRUE(data.empty());
+        for(int j = 0; j < n_participants; j++)
+        {
+            ASSERT_TRUE(readers[j]->wait_for_all_received(std::chrono::seconds(2)));
+        }
+        EXPECT_TRUE(writers[i]->waitForAllAcked(std::chrono::seconds(5)));
+    }
 
-    // Wait for reception acknowledgement
-    reader.block_for_all();
-    EXPECT_TRUE(writer.waitForAllAcked(std::chrono::seconds(3)));
+    // Destroy participants
+    writers.clear();
+    readers.clear();
 }
 
 // Test TCPv4 transport sanitizer. This test matches a server with a client, then releases the
