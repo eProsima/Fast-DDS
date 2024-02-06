@@ -237,6 +237,7 @@ public:
      *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
      *                      TypeObject.
+     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeObject is not consistent.
      */
     ReturnCode_t register_type_object(
             const TypeIdentifier& type_identifier,

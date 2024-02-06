@@ -35,6 +35,9 @@
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+class DynamicTypeBuilderFactoryImpl;
+
 namespace xtypes {
 
 class TypeObjectRegistry;
@@ -1867,6 +1870,7 @@ public:
 private:
 
     friend class TypeObjectRegistry;
+    friend class eprosima::fastdds::dds::DynamicTypeBuilderFactoryImpl;
 
     // Class with only static methods
     TypeObjectUtils() = delete;
@@ -2388,6 +2392,16 @@ protected:
             const CompleteStructType& complete_struct_type);
 
     /**
+     * @brief Check MinimalStructType consistency.
+     *
+     * @param[in] minimal_struct_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given MinimalStructType
+     *            is not consistent.
+     */
+    static void minimal_struct_type_consistency(
+            const MinimalStructType& minimal_struct_type);
+
+    /**
      * @brief Check UnionCaseLabelSeq consistency.
      *
      * @param[in] union_case_label_seq Instance to be checked.
@@ -2490,6 +2504,16 @@ protected:
             const CompleteUnionType& complete_union_type);
 
     /**
+     * @brief Check MinimalUnionType consistency.
+     *
+     * @param[in] minimal_union_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalUnionType is not consistent.
+     */
+    static void minimal_union_type_consistency(
+            const MinimalUnionType& minimal_union_type);
+
+    /**
      * @brief Check that the annotation value is of the same type as the given TypeIdentifier.
      *
      * @param type_id TypeIdentifier.
@@ -2552,6 +2576,16 @@ protected:
             const CompleteAnnotationType& complete_annotation_type);
 
     /**
+     * @brief Check MinimalAnnotationType consistency.
+     *
+     * @param[in] minimal_annotation_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalAnnotationType is not consistent.
+     */
+    static void minimal_annotation_type_consistency(
+            const MinimalAnnotationType& minimal_annotation_type);
+
+    /**
      * @brief Check CommonAliasBody consistency.
      *
      * @param[in] common_alias_body Instance to be checked.
@@ -2600,6 +2634,16 @@ protected:
      */
     static void complete_alias_type_consistency(
             const CompleteAliasType& complete_alias_type);
+
+    /**
+     * @brief Check MinimalAliasType consistency.
+     *
+     * @param[in] minimal_alias_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            CompleteAliasType is not consistent.
+     */
+    static void minimal_alias_type_consistency(
+            const MinimalAliasType& minimal_alias_type);
 
     /**
      * @brief Check CompleteElementDetail consistency.
@@ -2652,6 +2696,16 @@ protected:
             const CompleteSequenceType& complete_sequence_type);
 
     /**
+     * @brief Check MinimalSequenceType consistency.
+     *
+     * @param[in] minimal_sequence_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalSequenceType is not consistent.
+     */
+    static void minimal_sequence_type_consistency(
+            const MinimalSequenceType& minimal_sequence_type);
+
+    /**
      * @brief Check CommonArrayHeader consistency.
      *
      * @param[in] common_array_header Instance to be checked.
@@ -2682,6 +2736,16 @@ protected:
             const CompleteArrayType& complete_array_type);
 
     /**
+     * @brief Check MinimalArrayType consistency.
+     *
+     * @param[in] minimal_array_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalArrayType is not consistent.
+     */
+    static void minimal_array_type_consistency(
+            const MinimalArrayType& minimal_array_type);
+
+    /**
      * @brief Check CompleteMapType consistency.
      *
      * @param[in] complete_map_type Instance to be checked.
@@ -2690,6 +2754,16 @@ protected:
      */
     static void complete_map_type_consistency(
             const CompleteMapType& complete_map_type);
+
+    /**
+     * @brief Check MinimalMapType consistency.
+     *
+     * @param[in] minimal_map_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalMapType is not consistent.
+     */
+    static void minimal_map_type_consistency(
+            const MinimalMapType& minimal_map_type);
 
     /**
      * @brief Check CommonEnumeratedLiteral consistency.
@@ -2776,6 +2850,16 @@ protected:
             const CompleteEnumeratedType& complete_enumerated_type);
 
     /**
+     * @brief Check MinimalEnumeratedType consistency.
+     *
+     * @param[in] minimal_enumerated_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalEnumeratedType is not consistent.
+     */
+    static void minimal_enumerated_type_consistency(
+            const MinimalEnumeratedType& minimal_enumerated_type);
+
+    /**
      * @brief Check bitflag position consistency.
      *
      * @param[in] position Instance to be checked.
@@ -2824,6 +2908,16 @@ protected:
      */
     static void complete_bitmask_type_consistency(
             const CompleteBitmaskType& complete_bitmask_type);
+
+    /**
+     * @brief Check MinimalBitmaskType consistency.
+     *
+     * @param[in] minimal_bitmask_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalBitmaskType is not consistent.
+     */
+    static void minimal_bitmask_type_consistency(
+            const MinimalBitmaskType& minimal_bitmask_type);
 
     /**
      * @brief Check consistency between the holder type and the bitcount.
@@ -2887,6 +2981,16 @@ protected:
             const CompleteBitsetType& complete_bitset_type);
 
     /**
+     * @brief Check MinimalBitsetType consistency.
+     *
+     * @param[in] minimal_bitset_type Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalBitsetType is not consistent.
+     */
+    static void minimal_bitset_type_consistency(
+            const MinimalBitsetType& minimal_bitset_type);
+
+    /**
      * @brief Check CompleteTypeObject consistency.
      *
      * @param[in] complete_type_object Instance to be checked.
@@ -2895,6 +2999,26 @@ protected:
      */
     static void complete_type_object_consistency(
             const CompleteTypeObject& complete_type_object);
+
+    /**
+     * @brief Check MinimalTypeObject consistency.
+     *
+     * @param[in] minimal_type_object Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            MinimalTypeObject is not consistent.
+     */
+    static void minimal_type_object_consistency(
+            const MinimalTypeObject& minimal_type_object);
+
+    /**
+     * @brief Check TypeObject consistency.
+     *
+     * @param[in] type_object Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            TypeObject is not consistent.
+     */
+    static void type_object_consistency(
+            const TypeObject& type_object);
 
 };
 
