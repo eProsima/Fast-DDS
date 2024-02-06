@@ -15,11 +15,16 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERFACTORYIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERFACTORYIMPL_HPP
 
+#include <string>
+
+#include <fastcdr/xcdr/optional.hpp>
+
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
+#include "DynamicTypeBuilderImpl.hpp"
 #include "DynamicTypeImpl.hpp"
-
 
 namespace eprosima {
 namespace fastdds {
@@ -93,6 +98,69 @@ public:
             TypeKind kind) noexcept override;
 
 private:
+
+    //-------------------------------------------------------------------
+    // Auxiliary methods for creating DynamicTypeBuilders with TypeObject
+    traits<DynamicTypeBuilder>::ref_type create_alias_type_w_complete_type_object(
+            const xtypes::CompleteAliasType& alias_type);
+    traits<DynamicTypeBuilder>::ref_type create_alias_type_w_minimal_type_object(
+            const xtypes::MinimalAliasType& alias_type);
+    traits<DynamicTypeBuilder>::ref_type create_annotation_type_w_complete_type_object(
+            const xtypes::CompleteAnnotationType& annotation_type);
+    traits<DynamicTypeBuilder>::ref_type create_annotation_type_w_minimal_type_object(
+            const xtypes::MinimalAnnotationType& annotation_type);
+    traits<DynamicTypeBuilder>::ref_type create_structure_type_w_complete_type_object(
+            const xtypes::CompleteStructType& struct_type);
+    traits<DynamicTypeBuilder>::ref_type create_structure_type_w_minimal_type_object(
+            const xtypes::MinimalStructType& struct_type);
+    traits<DynamicTypeBuilder>::ref_type create_union_type_w_complete_type_object(
+            const xtypes::CompleteUnionType& union_type);
+    traits<DynamicTypeBuilder>::ref_type create_union_type_w_minimal_type_object(
+            const xtypes::MinimalUnionType& union_type);
+    traits<DynamicTypeBuilder>::ref_type create_bitset_type_w_complete_type_object(
+            const xtypes::CompleteBitsetType& bitset_type);
+    traits<DynamicTypeBuilder>::ref_type create_bitset_type_w_minimal_type_object(
+            const xtypes::MinimalBitsetType& bitset_type);
+    traits<DynamicTypeBuilder>::ref_type create_sequence_type_w_complete_type_object(
+            const xtypes::CompleteSequenceType& sequence_type);
+    traits<DynamicTypeBuilder>::ref_type create_sequence_type_w_minimal_type_object(
+            const xtypes::MinimalSequenceType& sequence_type);
+    traits<DynamicTypeBuilder>::ref_type create_array_type_w_complete_type_object(
+            const xtypes::CompleteArrayType& array_type);
+    traits<DynamicTypeBuilder>::ref_type create_array_type_w_minimal_type_object(
+            const xtypes::MinimalArrayType& array_type);
+    traits<DynamicTypeBuilder>::ref_type create_map_type_w_complete_type_object(
+            const xtypes::CompleteMapType& map_type);
+    traits<DynamicTypeBuilder>::ref_type create_map_type_w_minimal_type_object(
+            const xtypes::MinimalMapType& map_type);
+    traits<DynamicTypeBuilder>::ref_type create_enum_type_w_complete_type_object(
+            const xtypes::CompleteEnumeratedType& enum_type);
+    traits<DynamicTypeBuilder>::ref_type create_enum_type_w_minimal_type_object(
+            const xtypes::MinimalEnumeratedType& enum_type);
+    traits<DynamicTypeBuilder>::ref_type create_bitmask_type_w_complete_type_object(
+            const xtypes::CompleteBitmaskType& bitmask_type);
+    traits<DynamicTypeBuilder>::ref_type create_bitmask_type_w_minimal_type_object(
+            const xtypes::MinimalBitmaskType& bitmask_type);
+
+    traits<DynamicType>::ref_type base_type_from_type_identifier(
+            const xtypes::TypeIdentifier& type_identifier);
+
+    bool apply_custom_annotations(
+            traits<DynamicTypeBuilderImpl>::ref_type& ret_val,
+            const fastcdr::optional<xtypes::AppliedAnnotationSeq>& ann_custom,
+            const MemberId& member_id = MEMBER_ID_INVALID);
+    void apply_builtin_type_annotations(
+            traits<DynamicTypeBuilderImpl>::ref_type& ret_val,
+            const fastcdr::optional<xtypes::AppliedBuiltinTypeAnnotations>& ann_builtin);
+    void apply_try_construct_flag(
+            MemberDescriptor::_ref_type& ret_val,
+            const xtypes::MemberFlag& flags);
+
+    std::string get_annotation_parameter_value(
+            const xtypes::AnnotationParameterValue& value);
+    std::string get_string_from_name_hash(
+            const xtypes::NameHash& name);
+    //-------------------------------------------------------------------
 
     static traits<DynamicTypeBuilderFactoryImpl>::ref_type instance_;
 
