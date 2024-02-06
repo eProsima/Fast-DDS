@@ -496,7 +496,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 # No need to expose linked libs when target is a shared library on MSVC.
 if(BUILD_SHARED_LIBS AND MSVC)
-    set(PRIVACY "PRIVATE")
+    set(PRIVACY "PUBLIC")
 else()
     set(PRIVACY "PUBLIC")
 endif()
