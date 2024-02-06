@@ -61,14 +61,20 @@ jobs:
           if (Test-Path -Path $Env:ProgramW6432\OpenSSL)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            Set-Item -Force -Path "Env:PATH" -Value "$Env:PATH;$Env:ProgramW6432\OpenSSL"
+            "PATH=$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
           }
           elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            Set-Item -Force -Path "Env:PATH" -Value "$Env:PATH;$Env:ProgramW6432\OpenSSL-Win"
+            "PATH=$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
           }
           elseif (Test-Path -Path $Env:ProgramW6432\OpenSSL-Win64)
           {
             "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+            Set-Item -Force -Path "Env:PATH" -Value "$Env:PATH;$Env:ProgramW6432\OpenSSL-Win64"
+            "PATH=$Env:PATH" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
           }
           else
           {
@@ -76,7 +82,7 @@ jobs:
             exit 1
           }
 
-        # TODO: check arguments
+      # TODO: check arguments
       - name: Install colcon
         uses: eProsima/eProsima-CI/windows/install_colcon@v0
 
