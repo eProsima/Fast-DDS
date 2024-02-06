@@ -279,11 +279,45 @@ void TCPTransportInterface::bind_socket(
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-    auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
-    assert(it_remove != unbound_channel_resources_.end());
-    unbound_channel_resources_.erase(it_remove);
-    channel_resources_[channel->locator()] = channel;
+    Locator physical_locator = IPLocator::toPhysicalLocator(channel->locator());
 
+    if (waiting_connect_channels_.find(physical_locator) != waiting_connect_channels_.end())
+    {
+        // Bind_socket() after OpenOutputChannel()
+        auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
+        assert(it_remove != unbound_channel_resources_.end());
+        unbound_channel_resources_.erase(it_remove);
+
+        // Update channel with params of the waiting_connect_channel
+        auto reuse_channel = waiting_connect_channels_[physical_locator];
+        if (auto basic_cast = std::dynamic_pointer_cast<TCPChannelResourceBasic>(channel))
+        {
+            // Channel is not secure
+            std::dynamic_pointer_cast<TCPChannelResourceBasic>(reuse_channel)->update_channel(basic_cast->socket(), basic_cast->connection_status());
+            reuse_channel->thread(basic_cast->get_thread());
+        }
+        else if (auto secure_cast = std::dynamic_pointer_cast<TCPChannelResourceSecure>(channel))
+        {
+            // Channel is secure
+            // TODO Carlos: Include secure channel logic
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(RTCP, "TCPTransportInterface::bind_socket - Channel type not recognized");
+        }
+        // Update channel_resources_
+        channel_resources_[channel->locator()] = reuse_channel;
+        channel = reuse_channel;
+        waiting_connect_channels_.erase(physical_locator);
+    }
+    else
+    {
+        // Bind_socket() before OpenOutputChannel()
+        auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
+        assert(it_remove != unbound_channel_resources_.end());
+        unbound_channel_resources_.erase(it_remove);
+        channel_resources_[channel->locator()] = channel;
+    }
 }
 
 bool TCPTransportInterface::check_crc(
