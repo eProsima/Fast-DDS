@@ -34,9 +34,12 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;
@@ -275,8 +278,9 @@ int main(
                 throw 1;
             }
 
-            // TODO(XTypes): PENDING DynamicTypeBuilderFactory::create_type_w_type_object
-            // type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
+            TypeObject type_object;
+            type_object.complete(type_objects.complete_type_object);
+            type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(type_object)->build();
 
             if (!type)
             {
