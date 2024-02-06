@@ -78,8 +78,7 @@ jobs:
           $mdir = New-Item -Type Directory -Path (Join-Path ($Env:TMP ?? "/tmp") (New-GUID))
           Save-Module -Name Pscx -Path $mdir -Repository PSGallery
           $echo = gci -Path $mdir -R -Filter EchoArgs*
-          "PATH=$Env:PATH" + [IO.Path]::PathSeparator + ($echo | Split-Path | gi)
-          | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          "PATH=$Env:PATH" + [IO.Path]::PathSeparator + ($echo | Split-Path | gi) | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
           # Handle single target/multi target
           $env_variables = @()
