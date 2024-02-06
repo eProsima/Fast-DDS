@@ -63,7 +63,7 @@ public:
      * @retval RETCODE_OK is otherwise returned.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t delete_data(
-            traits<DynamicData>::ref_type data) = 0;
+            traits<DynamicData>::ref_type& data) = 0;
 
 protected:
 

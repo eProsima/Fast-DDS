@@ -49,9 +49,12 @@ traits<DynamicData>::ref_type DynamicDataFactoryImpl::create_data(
 }
 
 ReturnCode_t DynamicDataFactoryImpl::delete_data(
-        traits<DynamicData>::ref_type data) noexcept
+        traits<DynamicData>::ref_type& data) noexcept
 {
-    data.reset();
+    if (data)
+    {
+        data.reset();
+    }
     return RETCODE_OK;
 }
 
