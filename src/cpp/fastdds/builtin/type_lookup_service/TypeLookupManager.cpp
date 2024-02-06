@@ -676,23 +676,6 @@ TypeLookup_Request* TypeLookupManager::create_request(
     return request;
 }
 
-bool TypeLookupManager::prepare_send_payload(
-        fastrtps::rtps::CacheChange_t* change,
-        fastrtps::rtps::SerializedPayload_t& payload) const
-{
-    CDRMessage_t msg(change->serializedPayload);
-    bool valid = CDRMessage::addOctet(&msg, 0);
-    change->serializedPayload.encapsulation = static_cast<uint16_t>(PL_DEFAULT_ENCAPSULATION);
-    msg.msg_endian = DEFAULT_ENDIAN;
-    valid &= CDRMessage::addOctet(&msg, PL_DEFAULT_ENCAPSULATION);
-    valid &= CDRMessage::addUInt16(&msg, 0);
-    change->serializedPayload.pos = msg.pos;
-    change->serializedPayload.length = msg.length;
-    payload.max_size = change->serializedPayload.max_size - 4;
-    payload.data = change->serializedPayload.data + 4;
-    return valid;
-}
-
 bool TypeLookupManager::send(
         TypeLookup_Request& request) const
 {
@@ -727,7 +710,7 @@ bool TypeLookupManager::send_impl(
         [&msg]()
         {
             // Calculate the serialized size of the message using a CdrSizeCalculator
-            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
+            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
             size_t current_alignment {0};
             return static_cast<uint32_t>(calculator.calculate_serialized_size(msg, current_alignment) + 4);
         },
@@ -741,13 +724,9 @@ bool TypeLookupManager::send_impl(
 
     // Prepare the payload for sending the message
     SerializedPayload_t payload;
-    if (!prepare_send_payload(change, payload))
-    {
-        return false;
-    }
 
     // Serialize the message using the provided PubSubType
-    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     // If serialization was successful, update the change and add it to the WriterHistory
     if (result)
     {
