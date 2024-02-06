@@ -44,6 +44,7 @@ jobs:
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastrtps
+          submodules: true
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
@@ -91,18 +92,18 @@ jobs:
         with:
           packages: vcstool xmlschema
 
-      - name: Install asio and tinyxml2
-        run: |
-          $tmpdir = New-Item -Path "$Env:TMP\choco_aux" -Type Directory
-          iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg -OutFile "$tmpdir\asio.1.12.1.nupkg"
-          iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg -OutFile "$tmpdir\tinyxml2.6.0.0.nupkg"
-          choco install -y -s $tmpdir asio tinyxml2
-          del $tmpdir -Recurse
+      # - name: Install asio and tinyxml2
+      #   run: |
+      #     $tmpdir = New-Item -Path "$Env:TMP\choco_aux" -Type Directory
+      #     iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/asio.1.12.1.nupkg -OutFile "$tmpdir\asio.1.12.1.nupkg"
+      #     iwr -Uri https://github.com/ros2/choco-packages/releases/download/2020-02-24/tinyxml2.6.0.0.nupkg -OutFile "$tmpdir\tinyxml2.6.0.0.nupkg"
+      #     choco install -y -s $tmpdir asio tinyxml2
+      #     del $tmpdir -Recurse
 
-          # Need to be very explicit in path location due to poor choice on ros2 choco-package composition
-          "CMAKE_PREFIX_PATH=$Env:ProgramData\chocolatey\lib\asio\share\cmake;" +
-          "$Env:ProgramData\chocolatey\lib\tinyxml2\share\cmake;$Env:CMAKE_PREFIX_PATH" |
-          Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+      #     # Need to be very explicit in path location due to poor choice on ros2 choco-package composition
+      #     "CMAKE_PREFIX_PATH=$Env:ProgramData\chocolatey\lib\asio\share\cmake;" +
+      #     "$Env:ProgramData\chocolatey\lib\tinyxml2\share\cmake;$Env:CMAKE_PREFIX_PATH" |
+      #     Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
       - name: Install googletest
         run: |
