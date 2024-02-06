@@ -1373,21 +1373,13 @@ const CompleteMapType TypeObjectUtils::build_complete_map_type(
         const CompleteCollectionElement& key,
         const CompleteCollectionElement& element)
 {
-    // TODO: included to remove warning in Windows v141. Remove when no longer supported.
-    try
-    {
-        empty_flags_consistency(collection_flag);
+    empty_flags_consistency(collection_flag);
 #if !defined(NDEBUG)
-        complete_collection_header_consistency(header);
-        complete_collection_element_consistency(key);
-        complete_collection_element_consistency(element);
+    complete_collection_header_consistency(header);
+    complete_collection_element_consistency(key);
+    complete_collection_element_consistency(element);
 #endif // !defined(NDEBUG)
-        map_key_type_identifier_consistency(key.common().type());
-    }
-    catch (const InvalidArgumentError& e)
-    {
-        throw InvalidArgumentError(e.what());
-    }
+    map_key_type_identifier_consistency(key.common().type());
     CompleteMapType complete_map_type;
     complete_map_type.collection_flag(collection_flag);
     complete_map_type.header(header);
@@ -2589,6 +2581,34 @@ void TypeObjectUtils::complete_struct_type_consistency(
     complete_struct_member_seq_consistency(complete_struct_type.member_seq());
 }
 
+void TypeObjectUtils::minimal_struct_type_consistency(
+        const MinimalStructType& minimal_struct_type)
+{
+    type_flag_consistency(minimal_struct_type.struct_flags());
+    if (minimal_struct_type.header().base_type()._d() != TK_NONE)
+    {
+        structure_base_type_consistency(minimal_struct_type.header().base_type());
+    }
+    std::set<MemberId> member_ids;
+    std::set<NameHash> hash_names;
+    for (const MinimalStructMember& member : minimal_struct_type.member_seq())
+    {
+        if (!member_ids.insert(member.common().member_id()).second)
+        {
+            throw InvalidArgumentError("Repeated member id in the sequence");
+        }
+        if (!hash_names.insert(member.detail().name_hash()).second)
+        {
+            throw InvalidArgumentError("Repeated member name in the sequence");
+        }
+        common_struct_member_consistency(member.common());
+        if (member.detail().name_hash() == NameHash())
+        {
+            throw InvalidArgumentError("Structure member hashed name cannot be empty");
+        }
+    }
+}
+
 void TypeObjectUtils::union_case_label_seq_consistency(
         const UnionCaseLabelSeq& union_case_label_seq)
 {
@@ -2767,6 +2787,51 @@ void TypeObjectUtils::complete_union_type_consistency(
     complete_union_member_seq_consistency(complete_union_type.member_seq());
 }
 
+void TypeObjectUtils::minimal_union_type_consistency(
+        const MinimalUnionType& minimal_union_type)
+{
+    type_flag_consistency(minimal_union_type.union_flags());
+    common_discriminator_member_consistency(minimal_union_type.discriminator().common());
+    if (minimal_union_type.member_seq().size() == 0)
+    {
+        throw InvalidArgumentError("Unions require at least one union member");
+    }
+    std::set<MemberId> member_ids;
+    std::set<NameHash> hash_names;
+    std::set<int32_t> case_labels;
+    bool default_member = false;
+    for (const MinimalUnionMember& member : minimal_union_type.member_seq())
+    {
+        if (!member_ids.insert(member.common().member_id()).second)
+        {
+            throw InvalidArgumentError("Repeated member id in the sequence");
+        }
+        if (!hash_names.insert(member.detail().name_hash()).second)
+        {
+            throw InvalidArgumentError("Repeated member name in the sequence");
+        }
+        if (member.common().member_flags() & MemberFlagBits::IS_DEFAULT)
+        {
+            if (default_member)
+            {
+                throw InvalidArgumentError("Union should have at most one default member");
+            }
+            default_member = true;
+        }
+        for (int32_t label : member.common().label_seq())
+        {
+            if (!case_labels.insert(label).second)
+            {
+                throw InvalidArgumentError("Repeated union case label");
+            }
+        }
+        if (member.detail().name_hash() == NameHash())
+        {
+            throw InvalidArgumentError("Union member hashed name cannot be empty");
+        }
+    }
+}
+
 void TypeObjectUtils::common_annotation_parameter_type_identifier_default_value_consistency(
         const TypeIdentifier& type_id,
         const AnnotationParameterValue& value)
@@ -2905,6 +2970,27 @@ void TypeObjectUtils::complete_annotation_type_consistency(
     complete_annotation_parameter_seq_consistency(complete_annotation_type.member_seq());
 }
 
+void TypeObjectUtils::minimal_annotation_type_consistency(
+        const MinimalAnnotationType& minimal_annotation_type)
+{
+    empty_flags_consistency(minimal_annotation_type.annotation_flag());
+    std::set<NameHash> hash_names;
+    for (const MinimalAnnotationParameter& param : minimal_annotation_type.member_seq())
+    {
+        if (!hash_names.insert(param.name_hash()).second)
+        {
+            throw InvalidArgumentError("Repeated parameter name in the sequence");
+        }
+        common_annotation_parameter_consistency(param.common());
+        common_annotation_parameter_type_identifier_default_value_consistency(param.common().member_type_id(),
+                param.default_value());
+        if (param.name_hash() == NameHash())
+        {
+            throw InvalidArgumentError("Annotation parameter hashed name cannot be empty");
+        }
+    }
+}
+
 void TypeObjectUtils::common_alias_body_consistency(
         const CommonAliasBody& common_alias_body)
 {
@@ -2944,6 +3030,13 @@ void TypeObjectUtils::complete_alias_type_consistency(
     empty_flags_consistency(complete_alias_type.alias_flags());
     complete_alias_header_consistency(complete_alias_type.header());
     complete_alias_body_consistency(complete_alias_type.body());
+}
+
+void TypeObjectUtils::minimal_alias_type_consistency(
+        const MinimalAliasType& minimal_alias_type)
+{
+    empty_flags_consistency(minimal_alias_type.alias_flags());
+    common_alias_body_consistency(minimal_alias_type.body().common());
 }
 
 void TypeObjectUtils::complete_element_detail_consistency(
@@ -2987,6 +3080,13 @@ void TypeObjectUtils::complete_sequence_type_consistency(
     complete_collection_element_consistency(complete_sequence_type.element());
 }
 
+void TypeObjectUtils::minimal_sequence_type_consistency(
+        const MinimalSequenceType& minimal_sequence_type)
+{
+    empty_flags_consistency(minimal_sequence_type.collection_flag());
+    common_collection_element_consistency(minimal_sequence_type.element().common());
+}
+
 void TypeObjectUtils::common_array_header_consistency(
         const CommonArrayHeader& common_array_header)
 {
@@ -3008,22 +3108,31 @@ void TypeObjectUtils::complete_array_type_consistency(
     complete_collection_element_consistency(complete_array_type.element());
 }
 
+void TypeObjectUtils::minimal_array_type_consistency(
+        const MinimalArrayType& minimal_array_type)
+{
+    empty_flags_consistency(minimal_array_type.collection_flag());
+    common_array_header_consistency(minimal_array_type.header().common());
+    common_collection_element_consistency(minimal_array_type.element().common());
+}
+
 void TypeObjectUtils::complete_map_type_consistency(
         const CompleteMapType& complete_map_type)
 {
-    // TODO: included to remove warning in Windows v141. Remove when no longer supported.
-    try
-    {
-        empty_flags_consistency(complete_map_type.collection_flag());
-        complete_collection_header_consistency(complete_map_type.header());
-        map_key_type_identifier_consistency(complete_map_type.key().common().type());
-        complete_collection_element_consistency(complete_map_type.key());
-        complete_collection_element_consistency(complete_map_type.element());
-    }
-    catch (const InvalidArgumentError& e)
-    {
-        throw InvalidArgumentError(e.what());
-    }
+    empty_flags_consistency(complete_map_type.collection_flag());
+    complete_collection_header_consistency(complete_map_type.header());
+    map_key_type_identifier_consistency(complete_map_type.key().common().type());
+    complete_collection_element_consistency(complete_map_type.key());
+    complete_collection_element_consistency(complete_map_type.element());
+}
+
+void TypeObjectUtils::minimal_map_type_consistency(
+        const MinimalMapType& minimal_map_type)
+{
+    empty_flags_consistency(minimal_map_type.collection_flag());
+    map_key_type_identifier_consistency(minimal_map_type.key().common().type());
+    common_collection_element_consistency(minimal_map_type.key().common());
+    common_collection_element_consistency(minimal_map_type.element().common());
 }
 
 void TypeObjectUtils::common_enumerated_literal_consistency(
@@ -3123,6 +3232,44 @@ void TypeObjectUtils::complete_enumerated_type_consistency(
     complete_enumerated_literal_seq_consistency(complete_enumerated_type.literal_seq());
 }
 
+void TypeObjectUtils::minimal_enumerated_type_consistency(
+        const MinimalEnumeratedType& minimal_enumerated_type)
+{
+    empty_flags_consistency(minimal_enumerated_type.enum_flags());
+    common_enumerated_header_consistency(minimal_enumerated_type.header().common());
+    if (minimal_enumerated_type.literal_seq().size() == 0)
+    {
+        throw InvalidArgumentError("Enumerations require at least one enum literal");
+    }
+    std::set<int32_t> values;
+    std::set<NameHash> hash_names;
+    bool default_member = false;
+    for (const MinimalEnumeratedLiteral& literal : minimal_enumerated_type.literal_seq())
+    {
+        if (!values.insert(literal.common().value()).second)
+        {
+            throw InvalidArgumentError("Repeated literal value in the sequence");
+        }
+        if (!hash_names.insert(literal.detail().name_hash()).second)
+        {
+            throw InvalidArgumentError("Repeated literal name in the sequence");
+        }
+        if (literal.common().flags() & MemberFlagBits::IS_DEFAULT)
+        {
+            if (default_member)
+            {
+                throw InvalidArgumentError("Enumeration should have at most one default literal");
+            }
+            default_member = true;
+        }
+        common_enumerated_literal_consistency(literal.common());
+        if (literal.detail().name_hash() == NameHash())
+        {
+            throw InvalidArgumentError("Literal hashed name cannot be empty");
+        }
+    }
+}
+
 void TypeObjectUtils::bit_position_consistency(
         uint16_t position)
 {
@@ -3179,6 +3326,31 @@ void TypeObjectUtils::complete_bitmask_type_consistency(
     empty_flags_consistency(complete_bitmask_type.bitmask_flags());
     complete_enumerated_header_consistency(complete_bitmask_type.header(), true);
     complete_bitflag_seq_consistency(complete_bitmask_type.flag_seq());
+}
+
+void TypeObjectUtils::minimal_bitmask_type_consistency(
+        const MinimalBitmaskType& minimal_bitmask_type)
+{
+    empty_flags_consistency(minimal_bitmask_type.bitmask_flags());
+    common_enumerated_header_consistency(minimal_bitmask_type.header().common(), true);
+    if (minimal_bitmask_type.flag_seq().size() == 0)
+    {
+        throw InvalidArgumentError("At least one bitflag must be defined within the bitmask");
+    }
+    std::set<uint16_t> positions;
+    std::set<NameHash> bitflag_hash_names;
+    for (const MinimalBitflag& bitflag : minimal_bitmask_type.flag_seq())
+    {
+        if (!positions.insert(bitflag.common().position()).second)
+        {
+            throw InvalidArgumentError("Repeated bitflag position");
+        }
+        if (!bitflag_hash_names.insert(bitflag.detail().name_hash()).second)
+        {
+            throw InvalidArgumentError("Repeated bitflag name");
+        }
+        common_bitflag_consistency(bitflag.common());
+    }
 }
 
 void TypeObjectUtils::bitfield_holder_type_consistency(
@@ -3263,6 +3435,38 @@ void TypeObjectUtils::complete_bitset_type_consistency(
     complete_bitfield_seq_consistency(complete_bitset_type.field_seq());
 }
 
+void TypeObjectUtils::minimal_bitset_type_consistency(
+        const MinimalBitsetType& minimal_bitset_type)
+{
+    empty_flags_consistency(minimal_bitset_type.bitset_flags());
+    if (minimal_bitset_type.field_seq().size() == 0)
+    {
+        throw InvalidArgumentError("Bitset requires at least one bitfield definition");
+    }
+    std::set<NameHash> bitfield_hash_names;
+    std::set<uint16_t> positions;
+    for (const MinimalBitfield& bitfield : minimal_bitset_type.field_seq())
+    {
+        if (!bitfield_hash_names.insert(bitfield.name_hash()).second)
+        {
+            throw InvalidArgumentError("Repeated bitfield name");
+        }
+        for (uint16_t j = bitfield.common().position();
+                j < bitfield.common().bitcount(); j++)
+        {
+            if (!positions.insert(bitfield.common().position() + j).second)
+            {
+                throw InvalidArgumentError("Bitfields with repeated/overlapping positions");
+            }
+        }
+        common_bitfield_consistency(bitfield.common());
+        if (bitfield.name_hash() == NameHash())
+        {
+            throw InvalidArgumentError("Bitfield hashed name cannot be empty");
+        }
+    }
+}
+
 void TypeObjectUtils::complete_type_object_consistency(
         const CompleteTypeObject& complete_type_object)
 {
@@ -3300,6 +3504,62 @@ void TypeObjectUtils::complete_type_object_consistency(
             break;
         default:
             throw InvalidArgumentError("Inconsistent TypeObject");
+    }
+}
+
+void TypeObjectUtils::minimal_type_object_consistency(
+        const MinimalTypeObject& minimal_type_object)
+{
+    switch (minimal_type_object._d())
+    {
+        case TK_ALIAS:
+            minimal_alias_type_consistency(minimal_type_object.alias_type());
+            break;
+        case TK_ANNOTATION:
+            minimal_annotation_type_consistency(minimal_type_object.annotation_type());
+            break;
+        case TK_STRUCTURE:
+            minimal_struct_type_consistency(minimal_type_object.struct_type());
+            break;
+        case TK_UNION:
+            minimal_union_type_consistency(minimal_type_object.union_type());
+            break;
+        case TK_BITSET:
+            minimal_bitset_type_consistency(minimal_type_object.bitset_type());
+            break;
+        case TK_SEQUENCE:
+            minimal_sequence_type_consistency(minimal_type_object.sequence_type());
+            break;
+        case TK_ARRAY:
+            minimal_array_type_consistency(minimal_type_object.array_type());
+            break;
+        case TK_MAP:
+            minimal_map_type_consistency(minimal_type_object.map_type());
+            break;
+        case TK_ENUM:
+            minimal_enumerated_type_consistency(minimal_type_object.enumerated_type());
+            break;
+        case TK_BITMASK:
+            minimal_bitmask_type_consistency(minimal_type_object.bitmask_type());
+            break;
+        default:
+            throw InvalidArgumentError("Inconsistent TypeObject");
+    }
+}
+
+void TypeObjectUtils::type_object_consistency(
+        const TypeObject& type_object)
+{
+    switch (type_object._d())
+    {
+        case EK_COMPLETE:
+            complete_type_object_consistency(type_object.complete());
+            break;
+        case EK_MINIMAL:
+            minimal_type_object_consistency(type_object.minimal());
+            break;
+        default:
+           throw InvalidArgumentError("Inconsistent TypeObject"); 
     }
 }
 
