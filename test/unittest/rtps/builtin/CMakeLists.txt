@@ -17,6 +17,7 @@ set(BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE BuiltinDataSerializationTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
@@ -56,7 +57,10 @@ target_compile_definitions(BuiltinDataSerializationTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(BuiltinDataSerializationTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/NetworkFactory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}
