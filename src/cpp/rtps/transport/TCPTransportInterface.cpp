@@ -765,17 +765,17 @@ bool TCPTransportInterface::OpenOutputChannel(
 
         std::shared_ptr<TCPChannelResource> channel;
 
-        // (Server-Client Topology OR LARGE DATA with TCP connection before PDP discovery) - Server side
+        // (Server-Client Topology OR LARGE DATA with PDP discovery after TCP connection) - Server side
         if (channel_resource != channel_resources_.end())
         {
-            // There is an existing channel_resource created for reception with the remote locator as key. Use it.
+            // There is an existing channel in channel_resources_ created for reception with the remote locator as key. Use it.
             channel = channel_resource->second;
             socketsLock.unlock();
             // This large_data_mutex is necessary to prevent sending the same logical port request of processBindConnectionRequest()
             std::unique_lock<std::mutex> large_dataLock(large_data_mutex_);
             channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         }
-        // (Server-Client Topology - Client Side) OR LARGE DATA Topology
+        // (Server-Client Topology - Client Side) OR LARGE DATA Topology with PDP discovery before TCP connection
         else
         {
             socketsLock.unlock();
@@ -822,18 +822,18 @@ bool TCPTransportInterface::OpenOutputChannel(
                     std::unique_lock<std::mutex> large_dataLock(large_data_mutex_);
                     std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
 
-                    if (unbound_channel_resources_.empty())
+                    if (waiting_connect_channels_.find(physical_locator) == waiting_connect_channels_.end())
                     {
-                        // Server side
+                        // Server side LARGE_DATA
                         if (IPLocator::getPhysicalPort(physical_locator) < *(config->listening_ports.begin()))
                         {
                             // Act as server and wait to the other endpoint to connect. Create a WAIT_CONNECTION channel now to
-                            // assign it to send_resource_list, but it will be updated later in SocketAccepted()
+                            // assign it to send_resource_list, but it will be updated later in bind_socket()
                             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
                                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
 
-                            // Create a TCP_WAIT_CONNECTION_TYPE channel
+                            // Create a TCP_WAIT_CONNECTION_TYPE channel to avoid reconnection tries
                             channel.reset(
 #if TLS_FOUND
                                 (configuration()->apply_security) ?
@@ -847,11 +847,10 @@ bool TCPTransportInterface::OpenOutputChannel(
                                     configuration()->maxMessageSize,
                                     TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE))
                                 );
-                            // Add it to unbound_channel_resource to modified it later in SocketAccepted(), instead of adding it to channel_resources
-                            unbound_channel_resources_.push_back(channel);
-                            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+
+                            waiting_connect_channels_[physical_locator] = channel;
                         }
-                        // Client side
+                        // Client side LARGE_DATA
                         else
                         {
                             // Create CONNECT channel to act as clients
@@ -861,10 +860,10 @@ bool TCPTransportInterface::OpenOutputChannel(
                     // Server side, PDP discovery occurs before bind_socket() and after SocketAccepted()
                     else
                     {
-                        channel = *(unbound_channel_resources_.begin());
-                        // Set the new locator because SocketAccepted() instantiates it with default config
-                        channel->set_locator(physical_locator);
-                        channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+                        // Do nothing, the channel is either in channel_resources_ or in waiting_connect_channels_
+                        // Enter here <=> (the channel has been created in SocketAccepted() AND has not yet been updated in bind_socket())
+                        // AND this is not the first call to OpenOutputChannel() for this locator
+                        return success;
                     }
                 }
             }
