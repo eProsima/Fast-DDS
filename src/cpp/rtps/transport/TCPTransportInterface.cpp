@@ -1502,53 +1502,23 @@ void TCPTransportInterface::SocketAccepted(
     {
         if (!error.value())
         {
-            // Check if PDP discovery occurred before channel was created in LARGE DATA Topology
-            auto check_reuse = [](const shared_ptr<TCPChannelResource>& channel_resource)
-                    {
-                        return channel_resource->tcp_connection_type() ==
-                               TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE;
-                    };
-
-            // large_data_mutex not needed because this method is protected with unbound_map_mutex
-            std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
-
-            auto it_reuse = std::find_if(unbound_channel_resources_.begin(),
-                            unbound_channel_resources_.end(), check_reuse);
-
-            if (it_reuse != unbound_channel_resources_.end())
-            {
-                // LARGE DATA Topology, PDP discovery before TCP connection
-                (std::dynamic_pointer_cast<TCPChannelResourceBasic>(*it_reuse))->waitConnection_to_accept(socket);
-
-                (*it_reuse)->set_options(configuration());
-                create_listening_thread(*it_reuse);
-
-                EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                        << (*it_reuse)->local_endpoint().address() << ":"
-                        << (*it_reuse)->local_endpoint().port() << "), remote: "
-                        << (*it_reuse)->remote_endpoint().address() << ":"
-                        << (*it_reuse)->remote_endpoint().port() << ")");
-
-                unbound_lock.unlock();
-            }
-            else
-            {
-                // Server-Client Topology OR LARGE DATA Topology when TCP Connection occurs before PDP discovery
-                std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
+            // Always create a new channel, it might be replaced later in bind_socket()
+            std::shared_ptr<TCPChannelResource> channel(new TCPChannelResourceBasic(this,
                         io_service_, socket, configuration()->maxMessageSize));
 
+            {
+                std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
                 unbound_channel_resources_.push_back(channel);
-                unbound_lock.unlock();
-
-                channel->set_options(configuration());
-                create_listening_thread(channel);
-
-                EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                        << channel->local_endpoint().address() << ":"
-                        << channel->local_endpoint().port() << "), remote: "
-                        << channel->remote_endpoint().address() << ":"
-                        << channel->remote_endpoint().port() << ")");
             }
+
+            channel->set_options(configuration());
+            create_listening_thread(channel);
+
+            EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
+                    << channel->local_endpoint().address() << ":"
+                    << channel->local_endpoint().port() << "), remote: "
+                    << channel->remote_endpoint().address() << ":"
+                    << channel->remote_endpoint().port() << ")");
         }
         else
         {
@@ -1577,6 +1547,7 @@ void TCPTransportInterface::SecureSocketAccepted(
     {
         if (!error.value())
         {
+            // TODO Carlos: update secure channel logic
             // Check if PDP discovery occurred before channel was created in LARGE DATA Topology
             auto check_reuse = [](const shared_ptr<TCPChannelResource>& channel_resource)
                     {
