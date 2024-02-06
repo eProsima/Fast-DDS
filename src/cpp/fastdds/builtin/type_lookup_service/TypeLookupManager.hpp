@@ -258,16 +258,6 @@ protected:
             TypeLookup_RequestPubSubType& pupsubtype) const;
 
     /**
-     * Prepares the the payload for sending a CacheChange before serializing.
-     * @param change[in] CacheChange_t received.
-     * @param payload[out] SerializedPayload_t prepared.
-     * @return true if received payload is prepared, false otherwise.
-     */
-    bool prepare_send_payload(
-            fastrtps::rtps::CacheChange_t* change,
-            fastrtps::rtps::SerializedPayload_t& payload) const;
-
-    /**
      * Uses the send_impl with the appropriate parameters.
      * @param request[in] TypeLookup_Request to be sent.
      * @return true if request was sent, false otherwise.
