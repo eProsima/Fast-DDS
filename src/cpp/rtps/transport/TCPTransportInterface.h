@@ -110,6 +110,8 @@ protected:
 
     std::map<Locator, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
     std::vector<std::shared_ptr<TCPChannelResource>> unbound_channel_resources_;
+    // Stores the channels that are waiting for a connection to be established in LARGE_DATA mode
+    std::map<Locator, std::shared_ptr<TCPChannelResource>> waiting_connect_channels_; // The key is the "Physical locator"
     // The key is the logical port
     std::map<uint16_t, std::pair<TransportReceiverInterface*, ReceiverInUseCV*>> receiver_resources_;
 
