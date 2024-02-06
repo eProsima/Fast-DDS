@@ -33,7 +33,7 @@ public:
             traits<DynamicType>::ref_type type) noexcept override;
 
     ReturnCode_t delete_data(
-            traits<DynamicData>::ref_type data) noexcept override;
+            traits<DynamicData>::ref_type& data) noexcept override;
 
 private:
 
