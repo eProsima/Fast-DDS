@@ -347,12 +347,13 @@ void TCPChannelResourceSecure::shutdown(
     secure_socket_->shutdown();
 }
 
-void TCPChannelResourceSecure::waitConnection_to_accept(
-        const std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket)
+void TCPChannelResourceSecure::update_channel(
+        const std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> socket,
+        const eConnectionStatus status)
 {
     secure_socket_ = socket;
     tcp_connection_type_ = TCPConnectionType::TCP_ACCEPT_TYPE;
-    connection_status_ = eConnectionStatus::eConnected;
+    connection_status_ = status;
 }
 
 } // namespace rtps
