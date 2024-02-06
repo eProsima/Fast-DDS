@@ -724,6 +724,8 @@ bool TypeLookupManager::send_impl(
 
     // Prepare the payload for sending the message
     SerializedPayload_t payload;
+    payload.max_size = change->serializedPayload.max_size;
+    payload.data = change->serializedPayload.data;
 
     // Serialize the message using the provided PubSubType
     bool result = pubsubtype->serialize(&msg, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
