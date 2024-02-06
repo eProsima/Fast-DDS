@@ -672,7 +672,9 @@ void TCPTransportInterface::CloseOutputChannel(
     channel.reset();
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(physical_locator);
-    assert(channel_resource != channel_resources_.end());
+    auto wait_channel_resource = waiting_connect_channels_.find(physical_locator);
+    // Channel might be either in the channel_resources_ OR in the waiting_connect_channels_
+    assert(channel_resource != channel_resources_.end() || wait_channel_resource != waiting_connect_channels_.end());
     (void)channel_resource;
 }
 
