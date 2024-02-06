@@ -128,6 +128,7 @@ target_compile_definitions(XMLProfileParserTests PRIVATE
     )
 target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
@@ -149,6 +150,7 @@ target_link_libraries(XMLProfileParserTests GTest::gmock
     ${TINYXML2_LIBRARY}
     fastcdr
     fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     )
 if(QNX)
     target_link_libraries(XMLProfileParserTests socket)
@@ -206,6 +208,7 @@ target_compile_definitions(XMLParserTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(XMLParserTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
@@ -228,6 +231,7 @@ target_link_libraries(XMLParserTests GTest::gtest
     fastcdr
     fastdds::log
     fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     )
 if(QNX)
     target_link_libraries(XMLParserTests socket)
