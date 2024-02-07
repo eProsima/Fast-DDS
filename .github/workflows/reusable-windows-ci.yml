@@ -172,8 +172,7 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="/MP"
+          cmake_args_default: ${{ inputs.cmake-args }}
           cmake_build_type: ${{ matrix.cmake-config }}
           workspace: ${{ github.workspace }}
 
