@@ -868,69 +868,69 @@ ReturnCode_t DynamicDataImpl::clear_all_sequence(
     switch (element_type->get_kind())
     {
         case TK_INT32:
-            std::static_pointer_cast<std::vector<int32_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<int32_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_UINT32:
-            std::static_pointer_cast<std::vector<uint32_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<uint32_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_INT8:
-            std::static_pointer_cast<std::vector<int8_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<int8_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_INT16:
-            std::static_pointer_cast<std::vector<int16_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<int16_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_UINT16:
-            std::static_pointer_cast<std::vector<uint16_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<uint16_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_INT64:
-            std::static_pointer_cast<std::vector<int64_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<int64_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_UINT64:
-            std::static_pointer_cast<std::vector<uint64_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<uint64_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_FLOAT32:
-            std::static_pointer_cast<std::vector<float>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<float>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_FLOAT64:
-            std::static_pointer_cast<std::vector<double>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<double>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_FLOAT128:
-            std::static_pointer_cast<std::vector<long double>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<long double>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_CHAR8:
-            std::static_pointer_cast<std::vector<char>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<char>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_CHAR16:
-            std::static_pointer_cast<std::vector<wchar_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<wchar_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_BOOLEAN:
-            std::static_pointer_cast<std::vector<bool>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<bool>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_BYTE:
         case TK_UINT8:
-            std::static_pointer_cast<std::vector<uint8_t>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<uint8_t>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_STRING8:
-            std::static_pointer_cast<std::vector<std::string>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<std::string>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->second)->resize(sequence_size);
             break;
         case TK_STRING16:
-            std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second)->clear();
-            std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second)->resize(sequence_size);
+            std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->second)->clear();
+            std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->second)->resize(sequence_size);
             break;
         default:
             auto vector = std::static_pointer_cast <std::vector<traits<DynamicDataImpl>::ref_type >> (
@@ -1039,7 +1039,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
     {
         case TK_INT32:
         {
-            auto seq = std::static_pointer_cast<std::vector<int32_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1053,7 +1053,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_UINT32:
         {
-            auto seq = std::static_pointer_cast<std::vector<uint32_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1067,7 +1067,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_INT8:
         {
-            auto seq = std::static_pointer_cast<std::vector<uint8_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1081,7 +1081,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_INT16:
         {
-            auto seq = std::static_pointer_cast<std::vector<int16_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1095,7 +1095,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_UINT16:
         {
-            auto seq = std::static_pointer_cast<std::vector<uint16_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1109,7 +1109,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_INT64:
         {
-            auto seq = std::static_pointer_cast<std::vector<int64_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1123,7 +1123,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_UINT64:
         {
-            auto seq = std::static_pointer_cast<std::vector<uint64_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1137,7 +1137,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_FLOAT32:
         {
-            auto seq = std::static_pointer_cast<std::vector<float>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1151,7 +1151,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_FLOAT64:
         {
-            auto seq = std::static_pointer_cast<std::vector<double>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1165,7 +1165,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_FLOAT128:
         {
-            auto seq = std::static_pointer_cast<std::vector<long double>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1179,7 +1179,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_CHAR8:
         {
-            auto seq = std::static_pointer_cast<std::vector<char>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1193,7 +1193,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_CHAR16:
         {
-            auto seq = std::static_pointer_cast<std::vector<wchar_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1207,7 +1207,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_BOOLEAN:
         {
-            auto seq = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1222,7 +1222,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         case TK_BYTE:
         case TK_UINT8:
         {
-            auto seq = std::static_pointer_cast<std::vector<uint8_t>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1236,7 +1236,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_STRING8:
         {
-            auto seq = std::static_pointer_cast<std::vector<std::string>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
@@ -1250,7 +1250,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
         }
         case TK_STRING16:
         {
-            auto seq = std::static_pointer_cast<std::vector<std::wstring>>(value_.begin()->second);
+            auto seq = std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->second);
             if (seq->size() > id)
             {
                 auto it = seq->erase(seq->begin() + id);
