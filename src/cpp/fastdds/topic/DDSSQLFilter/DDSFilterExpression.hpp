@@ -77,7 +77,7 @@ private:
     /// The Dynamic type used to deserialize the payloads
     DynamicType::_ref_type dyn_type_;
     /// The Dynamic data used to deserialize the payloads
-    traits<DynamicDataImpl>::ref_type dyn_data_;
+    traits<DynamicData>::ref_type dyn_data_;
 };
 
 }  // namespace DDSSQLFilter

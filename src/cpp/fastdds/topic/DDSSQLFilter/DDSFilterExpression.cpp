@@ -59,7 +59,7 @@ bool DDSFilterExpression::evaluate(
 #endif // FASTCDR_VERSION_MAJOR == 1
                 );
         deser.read_encapsulation();
-        dyn_data_->deserialize(deser);
+        traits<DynamicData>::narrow<DynamicDataImpl>(dyn_data_)->deserialize(deser);
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {

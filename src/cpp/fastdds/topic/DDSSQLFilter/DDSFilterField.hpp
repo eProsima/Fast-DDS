@@ -64,7 +64,7 @@ public:
      * @param[in]  data_kind     Kind of data the field represents.
      */
     DDSFilterField(
-            const eprosima::fastdds::dds::xtypes::TypeIdentifier* type_id,
+            const std::shared_ptr<xtypes::TypeIdentifier> type_id,
             const std::vector<FieldAccessor>& access_path,
             ValueKind data_kind)
         : DDSFilterValue(data_kind)
@@ -140,7 +140,7 @@ private:
 
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;
-    const eprosima::fastdds::dds::xtypes::TypeIdentifier* type_id_ = nullptr;
+    const std::shared_ptr<xtypes::TypeIdentifier> type_id_;
     std::unordered_set<DDSFilterPredicate*> parents_;
 };
 
