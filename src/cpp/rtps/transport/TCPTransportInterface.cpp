@@ -307,6 +307,7 @@ void TCPTransportInterface::bind_socket(
             EPROSIMA_LOG_ERROR(RTCP, "TCPTransportInterface::bind_socket - Channel type not recognized");
         }
         // Update channel_resources_
+        std::cout << "bind_socket: [LARGE_DATA] Reuse Channel" << std::endl;
         channel_resources_[channel->locator()] = reuse_channel;
         channel = reuse_channel;
         waiting_connect_channels_.erase(physical_locator);
@@ -314,6 +315,7 @@ void TCPTransportInterface::bind_socket(
     else
     {
         // Bind_socket() before OpenOutputChannel()
+        std::cout << "bind_socket: Normal behavior" << std::endl;
         auto it_remove = std::find(unbound_channel_resources_.begin(), unbound_channel_resources_.end(), channel);
         assert(it_remove != unbound_channel_resources_.end());
         unbound_channel_resources_.erase(it_remove);
@@ -725,6 +727,10 @@ bool TCPTransportInterface::OpenOutputChannel(
         SendResourceList& send_resource_list,
         const Locator& locator)
 {
+    std::cout << "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(
+                locator) << "; logical: " << IPLocator::getLogicalPort(
+                locator) << ") @ " << IPLocator::to_string(locator) << std::endl;
+
     if (!IsLocatorSupported(locator))
     {
         return false;
@@ -858,7 +864,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                 {
                     std::unique_lock<std::mutex> large_dataLock(large_data_mutex_);
                     std::unique_lock<std::mutex> unbound_lock(unbound_map_mutex_);
-
+                    std::cout << "OpenOutputChannel: [LARGE_DATA] local: "<< *(config->listening_ports.begin())<< " ; Remote: " << physical_locator << std::endl;
                     if (waiting_connect_channels_.find(physical_locator) == waiting_connect_channels_.end())
                     {
                         // Server side LARGE_DATA
@@ -885,12 +891,14 @@ bool TCPTransportInterface::OpenOutputChannel(
                                     TCPChannelResource::TCPConnectionType::TCP_WAIT_CONNECTION_TYPE))
                                 );
 
+                            std::cout << "OpenOutputChannel: [LARGE_DATA] Create Wait_connection" << std::endl;
                             waiting_connect_channels_[physical_locator] = channel;
                         }
                         // Client side LARGE_DATA
                         else
                         {
                             // Create CONNECT channel to act as clients
+                            std::cout << "OpenOutputChannel: [LARGE_DATA] Create connect" << std::endl;
                             create_connect_channel();
                         }
                     }
@@ -900,6 +908,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                         // Do nothing, the channel is either in channel_resources_ or in waiting_connect_channels_
                         // Enter here <=> (the channel has been created in SocketAccepted() AND has not yet been updated in bind_socket())
                         // AND this is not the first call to OpenOutputChannel() for this locator
+                        std::cout << "OpenOutputChannel: [LARGE_DATA] Do nothing" << std::endl;
                         return success;
                     }
                 }
@@ -1516,6 +1525,12 @@ void TCPTransportInterface::SocketAccepted(
 
             channel->set_options(configuration());
             create_listening_thread(channel);
+
+            std::cout << "Accepted connection (local: "
+                    << channel->local_endpoint().address() << ":"
+                    << channel->local_endpoint().port() << "), remote: "
+                    << channel->remote_endpoint().address() << ":"
+                    << channel->remote_endpoint().port() << ")"<< std::endl;
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
                     << channel->local_endpoint().address() << ":"
