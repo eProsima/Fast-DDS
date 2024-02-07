@@ -111,7 +111,7 @@ bool TypeLookupManager::init(
     participant_ = protocols->mp_participantImpl;
     builtin_protocols_ = protocols;
 
-    local_instance_name_ = get_instance_name(participant_->getGuid().guidPrefix);
+    local_instance_name_ = get_instance_name(participant_->getGuid());
 
     temp_reader_proxy_data_ = new fastrtps::rtps::ReaderProxyData(
         protocols->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
@@ -258,7 +258,7 @@ void TypeLookupManager::remove_remote_endpoints(
 
 SampleIdentity TypeLookupManager::get_type_dependencies(
         const xtypes::TypeIdentifierSeq& id_seq,
-        const fastrtps::rtps::GuidPrefix_t& type_server,
+        const fastrtps::rtps::GUID_t& type_server,
         const std::vector<uint8_t>& continuation_point) const
 {
     TypeLookup_getTypeDependencies_In in;
@@ -287,7 +287,7 @@ SampleIdentity TypeLookupManager::get_type_dependencies(
 
 SampleIdentity TypeLookupManager::get_types(
         const xtypes::TypeIdentifierSeq& id_seq,
-        const fastrtps::rtps::GuidPrefix_t& type_server) const
+        const fastrtps::rtps::GUID_t& type_server) const
 {
     TypeLookup_getTypes_In in;
     in.type_ids(id_seq);
@@ -335,7 +335,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 {
     xtypes::TypeIdentfierWithSize type_identifier_with_size =
             temp_proxy_data->type_information().type_information.complete().typeid_with_size();
-    fastrtps::rtps::GuidPrefix_t type_server = temp_proxy_data->guid().guidPrefix;
+    fastrtps::rtps::GUID_t type_server = temp_proxy_data->guid();
 
     // Check if the type is known
     if (fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
@@ -665,7 +665,7 @@ bool TypeLookupManager::create_endpoints()
 }
 
 TypeLookup_Request* TypeLookupManager::create_request(
-        const fastrtps::rtps::GuidPrefix_t& type_server,
+        const fastrtps::rtps::GUID_t& type_server,
         TypeLookup_RequestPubSubType& pupsubtype) const
 {
     TypeLookup_Request* request = static_cast<TypeLookup_Request*>(pupsubtype.createData());
@@ -833,17 +833,25 @@ bool TypeLookupManager::receive_impl(
 }
 
 std::string TypeLookupManager::get_instance_name(
-        const fastrtps::rtps::GuidPrefix_t guid) const
+        const fastrtps::rtps::GUID_t guid) const
 {
     std::stringstream ss;
-    ss << guid;
+    ss << std::hex;
+    for (const auto& elem : guid.guidPrefix.value)
+    {
+        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(elem);
+    }
+    for (const auto& elem : guid.entityId.value)
+    {
+        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(elem);
+    }
+
     std::string str = ss.str();
     std::transform(str.begin(), str.end(), str.begin(),
             [](unsigned char c)
             {
-                return static_cast<unsigned char>(std::tolower(c));
+                return std::tolower(c);
             });
-    str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
     return "dds.builtin.TOS." + str;
 }
 

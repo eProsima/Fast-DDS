@@ -52,7 +52,7 @@ class TypeLookupManager;
 struct ReplyWithServerGUID
 {
     TypeLookup_Reply reply;
-    fastrtps::rtps::GuidPrefix_t type_server;
+    fastrtps::rtps::GUID_t type_server;
 };
 
 /**
@@ -110,12 +110,12 @@ protected:
      * If they are, sends get_types request and adds it to the list.
      * Also removes the current SampleIdentity from the list.
      * @param request_id[in] The SampleIdentity of the request.
-     * @param type_server[in] GuidPrefix corresponding to the remote participant which TypeInformation is being solved.
+     * @param type_server[in] GUID corresponding to the remote participant which TypeInformation is being solved.
      * @param reply[in] The reply data.
      */
     void check_get_type_dependencies_reply(
             const SampleIdentity& request_id,
-            const fastrtps::rtps::GuidPrefix_t type_server,
+            const fastrtps::rtps::GUID_t type_server,
             const TypeLookup_getTypeDependencies_Out& reply);
 
     /**
