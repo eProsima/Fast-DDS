@@ -777,12 +777,12 @@ public:
         {
             // Define locator for PDP over multicast
             pdp_locator.kind = LOCATOR_KIND_UDPv6;
-            eprosima::fastrtps::rtps::IPLocator::setIPv6(pdp_locator, "ff02::1");
+            eprosima::fastrtps::rtps::IPLocator::setIPv6(pdp_locator, "ff1e::ffff:efff:1");
             // Define locator for EDP and user data
             tcp_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastrtps::rtps::IPLocator::setIPv6(tcp_locator, "::");
             eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(tcp_locator, tcp_listening_port);
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(tcp_locator, tcp_listening_port);
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(tcp_locator, 0);
         }
         else
         {
@@ -793,7 +793,7 @@ public:
             tcp_locator.kind = LOCATOR_KIND_TCPv4;
             eprosima::fastrtps::rtps::IPLocator::setIPv4(tcp_locator, "0.0.0.0");
             eprosima::fastrtps::rtps::IPLocator::setPhysicalPort(tcp_locator, tcp_listening_port);
-            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(tcp_locator, tcp_listening_port);
+            eprosima::fastrtps::rtps::IPLocator::setLogicalPort(tcp_locator, 0);
         }
 
         participant_attr_.rtps.builtin.metatrafficMulticastLocatorList.push_back(pdp_locator);
