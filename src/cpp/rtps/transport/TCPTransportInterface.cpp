@@ -912,10 +912,10 @@ void TCPTransportInterface::perform_listen_operation(
     {
         channel = channel_weak.lock();
 
-        remote_locator = remote_endpoint_to_locator(channel);
-
         if (channel)
         {
+            remote_locator = remote_endpoint_to_locator(channel);
+
             uint32_t port = channel->local_endpoint().port();
             set_name_to_current_thread("dds.tcp.%u", port);
 
