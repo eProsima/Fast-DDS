@@ -181,7 +181,7 @@ void TypeLookupReplyListener::check_get_types_reply(
 
 void TypeLookupReplyListener::check_get_type_dependencies_reply(
         const SampleIdentity& request_id,
-        const fastrtps::rtps::GuidPrefix_t type_server,
+        const fastrtps::rtps::GUID_t type_server,
         const TypeLookup_getTypeDependencies_Out& reply)
 {
     // Check if the received reply SampleIdentity corresponds to an outstanding request
@@ -290,7 +290,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         }
 
         // Add reply to the processing queue
-        replies_queue_.push(ReplyWithServerGUID{reply, change->writerGUID.guidPrefix});
+        replies_queue_.push(ReplyWithServerGUID{reply, change->writerGUID});
         {
             // Notify processor
             std::unique_lock<std::mutex> guard(replies_processor_cv_mutex_);
