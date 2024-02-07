@@ -240,16 +240,16 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_;
             type_objects.complete_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_;
         }
         else
         {
             type_objects.complete_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_;
             type_objects.minimal_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_;
         }
     }
     return ret_code;

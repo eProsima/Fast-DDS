@@ -45,7 +45,7 @@ struct ParseNode : parse_tree::basic_node< ParseNode >
     // When the node is a fieldname, it will hold the access path to the field, the data kind, and the type id
     std::vector<DDSFilterField::FieldAccessor> field_access_path;
     DDSFilterValue::ValueKind field_kind = DDSFilterValue::ValueKind::STRING;
-    const eprosima::fastdds::dds::xtypes::TypeIdentifier* type_id = nullptr;
+    std::shared_ptr<xtypes::TypeIdentifier> type_id;
 
     // When the node is a parameter, it will hold the parameter index
     int32_t parameter_index = 0;

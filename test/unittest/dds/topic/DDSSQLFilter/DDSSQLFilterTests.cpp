@@ -1015,6 +1015,12 @@ public:
 
 protected:
 
+    void SetUp() override
+    {
+        register_ContentFilterTestType_type_objects();
+        eprosima::fastdds::dds::Log::ClearConsumers();
+    }
+
     DDSFilterFactory uut;
     ContentFilterTestTypePubSubType type_support;
 

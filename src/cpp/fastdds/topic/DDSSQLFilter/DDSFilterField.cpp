@@ -44,7 +44,7 @@ bool DDSFilterField::set_value(
     bool last_step = access_path_.size() - 1 == n;
     bool ret = false;
 
-    if (access_path_[n].array_index != MEMBER_ID_INVALID)
+    if (access_path_[n].array_index < MEMBER_ID_INVALID)
     {
         DynamicData::_ref_type array_data = data->loan_value(member_id);
         if (array_data)
@@ -120,6 +120,17 @@ bool DDSFilterField::set_value_using_member_id(
         case eprosima::fastdds::dds::xtypes::TI_STRING8_SMALL:
         case eprosima::fastdds::dds::xtypes::TI_STRING8_LARGE:
         {
+            std::string tmp;
+            ret = RETCODE_OK == data->get_string_value(tmp, member_id);
+            string_value = tmp.c_str();
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_INT8:
+        {
+            int8_t value8 {0};
+            ret = RETCODE_OK == data->get_int8_value(value8, member_id);
+            signed_integer_value = value8;
         }
         break;
 
@@ -144,6 +155,14 @@ bool DDSFilterField::set_value_using_member_id(
             break;
 
         case eprosima::fastdds::dds::xtypes::TK_BYTE:
+        {
+            fastrtps::rtps::octet byte {0};
+            ret = RETCODE_OK == data->get_byte_value(byte, member_id);
+            unsigned_integer_value = byte;
+        }
+        break;
+
+        case eprosima::fastdds::dds::xtypes::TK_UINT8:
         {
             uint8_t valueu8 {0};
             ret = RETCODE_OK == data->get_uint8_value(valueu8, member_id);
@@ -193,8 +212,8 @@ bool DDSFilterField::set_value_using_member_id(
 
         case eprosima::fastdds::dds::xtypes::EK_COMPLETE:
         {
-            uint32_t valueenum {0};
-            ret = RETCODE_OK == data->get_uint32_value(valueenum, member_id);
+            int32_t valueenum {0};
+            ret = RETCODE_OK == data->get_int32_value(valueenum, member_id);
             signed_integer_value = valueenum;
             break;
         }
