@@ -222,7 +222,7 @@ void DynamicDataImpl::add_sequence_value(
             case TK_FLOAT128:
             {
                 value_.emplace(MEMBER_ID_INVALID,
-                        std::make_shared<std::vector<SequenceTypeForKind<TK_FLOAT128>>>(sequence_size));
+                        std::make_shared<SequenceTypeForKind<TK_FLOAT128>>(sequence_size));
             }
             break;
             case TK_CHAR8:
