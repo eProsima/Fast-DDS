@@ -579,7 +579,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
     PATTERN "*.ipp"
     )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastdds
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastrtps
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
     FILES_MATCHING
