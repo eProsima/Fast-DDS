@@ -155,76 +155,6 @@ jobs:
 
       - name: Build
         id: build
-<<<<<<< HEAD
-        run: |
-          # build type mixin names doesn't match cmake ones
-          $translate = @{
-              "Debug"="debug"
-              "Release"="release"
-              "RelWithDebInfo"="rel-with-deb-info"
-              "MinSizeRel"="min-size-rel"
-              }
-          # For convenience use an array to pass the arguments
-          $buildargs = "--merge-install",
-                      "--symlink-install",
-                      "--event-handlers=console_direct+",
-                      "--packages-up-to", "fastrtps",
-                      "--mixin", $translate["${{ matrix.cmake-config }}"]
-
-          $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }} '
-
-          # On Windows we must load the developer environment and chose a config
-          $pwshmodule = gi $Env:VSPWSH
-          Import-Module $pwshmodule
-          Enter-VsDevShell -SetDefaultWindowTitle -VsInstallPath $pwshmodule.Directory.Parent.Parent `
-                            -StartInPath (pwd) -DevCmdArguments '/arch=x64 /host_arch=x64'
-
-          $cmakeargs += "$Env:BIN_ARCH $Env:HOST_ARCH"
-
-          # Show the args
-          EchoArgs $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon-args }} $cmakeargs.split(" ")
-
-          "::group::cmake summary"
-          colcon build $buildargs --metas ci.meta --executor sequential ${{ inputs.colcon-args }} $cmakeargs.split(" ")
-          "::endgroup::"
-
-          $output_buffer = ""
-          $warning_sb = {Write-Warning $args[0]; $global:output_buffer += $args[0]}
-          $error_sb = {Write-Error $args[0]; $global:output_buffer += $args[0]}
-
-          switch($LASTEXITCODE)
-          {
-              0 { $report_kind = "generation or build warnings"; $wm = $warning_sb }
-              1 { $report_kind = "CMake errors"; $wm = $error_sb }
-              2 { $report_kind = "build errors"; $wm = $error_sb }
-          }
-
-          # Show only warnings or error reports but do not fail
-          $LASTEXITCODE=0
-          $WarningPreference = $ErrorActionPreference = 'Continue'
-          $reports = gci -Path ./log/build_* -R -Filter stderr.log | ? { sls -Path $_ -Pattern "error|warning" }
-
-          $reports.FullName
-
-          if($reports)
-          {
-            $logFolder = New-Item -Type Directory -Path build_logs
-            $msg = "There were $report_kind in some packages:"
-            & $wm $msg
-            (($reports.FullName | sls "log.build_[\d-_]*.(?<package>[^/]*).stderr.log").Matches.Groups |
-                ? name -eq "package").value | % {
-                    $msg += " $_"
-                    & $wm $_
-                    $file = Resolve-Path "./log/*/$_/stderr.log"
-                    $dest_file = Join-Path -Path $logFolder -ChildPath "$_-stderr.log"
-                    Copy-Item -Path $file -Destination $dest_file
-                    Get-Content $file
-                }
-
-            "BuildWarningsErrors=" + $output_buffer | Out-File $Env:GITHUB_OUTPUT
-            "BuildLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
-          }
-=======
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
@@ -233,7 +163,6 @@ jobs:
           cmake_args_default: ${{ inputs.cmake-args }}
           cmake_build_type: ${{ matrix.cmake-config }}
           workspace: ${{ github.workspace }}
->>>>>>> 7adc833b4 (Fix and refactor Windows Github CI (#4356))
 
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
