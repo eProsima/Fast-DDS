@@ -19,13 +19,12 @@ function(gtest_discover_tests TARGET)
     if (WIN32)
         add_custom_command(
             TARGET ${TARGET} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -DTARGET=${TARGET} -DCONFIG=$<CONFIG> -DRUNTIME_LIST=$<TARGET_RUNTIME_DLLS:${TARGET}> -P ${CMAKE_SOURCE_DIR}/cmake/testing/generate_google_test_win_wrapper.cmake
-            COMMAND_EXPAND_LISTS
+            COMMAND ${CMAKE_COMMAND} -DTARGET=${TARGET} -DCONFIG=$<CONFIG> "-DRUNTIME_LIST=$<TARGET_RUNTIME_DLLS:${TARGET}>" -P ${CMAKE_SOURCE_DIR}/cmake/testing/generate_google_test_win_wrapper.cmake
             VERBATIM
             )
 
         set(CMAKE_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}_win_wrapper_$<CONFIG>.bat")
     endif()
-    set(_DISCOVERY_TIMEOUT "DISCOVERY_TIMEOUT;10")
+    set(_DISCOVERY_TIMEOUT "DISCOVERY_TIMEOUT;100")
     _gtest_discover_tests(${TARGET} ${ARGN} ${_DISCOVERY_TIMEOUT})
 endfunction()
