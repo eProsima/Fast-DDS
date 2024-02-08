@@ -36,9 +36,9 @@ public:
 
         try
         {
-            boost::interprocess::managed_shared_memory foo(boost::interprocess::open_only,"foo");
+            boost::interprocess::managed_shared_memory foo(boost::interprocess::open_only, "foo");
         }
-        catch(const std::exception&)
+        catch (const std::exception&)
         {
         }
 
@@ -46,12 +46,13 @@ public:
         {
             boost::interprocess::interprocess_mutex mutex;
             boost::interprocess::interprocess_condition cv;
-			boost::get_system_time();
+            boost::get_system_time();
         }
-        catch(const std::exception&)
+        catch (const std::exception&)
         {
         }
     }
+
 };
 
 int main()
@@ -60,7 +61,7 @@ int main()
     {
         ThirdpartyBoostCompileTest compile_test;
     }
-    catch(const std::exception&)
+    catch (const std::exception&)
     {
         return -1;
     }
