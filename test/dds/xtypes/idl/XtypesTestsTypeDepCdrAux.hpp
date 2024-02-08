@@ -24,7 +24,7 @@
 
 #include "XtypesTestsTypeDep.hpp"
 
-constexpr uint32_t TypeDep_max_cdr_typesize {32UL};
+constexpr uint32_t TypeDep_max_cdr_typesize {1056UL};
 constexpr uint32_t TypeDep_max_key_cdr_typesize {0UL};
 
 

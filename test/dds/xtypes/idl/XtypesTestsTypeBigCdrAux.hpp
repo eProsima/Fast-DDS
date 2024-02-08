@@ -24,301 +24,301 @@
 
 #include "XtypesTestsTypeBig.hpp"
 
-constexpr uint32_t Type30_max_cdr_typesize {6UL};
+constexpr uint32_t Type30_max_cdr_typesize {264UL};
 constexpr uint32_t Type30_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type35_max_cdr_typesize {6UL};
+constexpr uint32_t Type35_max_cdr_typesize {264UL};
 constexpr uint32_t Type35_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type36_max_cdr_typesize {6UL};
+constexpr uint32_t Type36_max_cdr_typesize {264UL};
 constexpr uint32_t Type36_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type100_max_cdr_typesize {6UL};
+constexpr uint32_t Type100_max_cdr_typesize {264UL};
 constexpr uint32_t Type100_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type37_max_cdr_typesize {6UL};
+constexpr uint32_t Type37_max_cdr_typesize {264UL};
 constexpr uint32_t Type37_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type38_max_cdr_typesize {6UL};
+constexpr uint32_t Type38_max_cdr_typesize {264UL};
 constexpr uint32_t Type38_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type31_max_cdr_typesize {6UL};
+constexpr uint32_t Type31_max_cdr_typesize {264UL};
 constexpr uint32_t Type31_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type32_max_cdr_typesize {6UL};
+constexpr uint32_t Type32_max_cdr_typesize {264UL};
 constexpr uint32_t Type32_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type33_max_cdr_typesize {6UL};
+constexpr uint32_t Type33_max_cdr_typesize {264UL};
 constexpr uint32_t Type33_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type34_max_cdr_typesize {6UL};
+constexpr uint32_t Type34_max_cdr_typesize {264UL};
 constexpr uint32_t Type34_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type28_max_cdr_typesize {6UL};
+constexpr uint32_t Type28_max_cdr_typesize {264UL};
 constexpr uint32_t Type28_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type29_max_cdr_typesize {6UL};
+constexpr uint32_t Type29_max_cdr_typesize {264UL};
 constexpr uint32_t Type29_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t TypeBig_max_cdr_typesize {806UL};
+constexpr uint32_t TypeBig_max_cdr_typesize {26664UL};
 constexpr uint32_t TypeBig_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type24_max_cdr_typesize {6UL};
+constexpr uint32_t Type24_max_cdr_typesize {264UL};
 constexpr uint32_t Type24_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type25_max_cdr_typesize {6UL};
+constexpr uint32_t Type25_max_cdr_typesize {264UL};
 constexpr uint32_t Type25_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type26_max_cdr_typesize {6UL};
+constexpr uint32_t Type26_max_cdr_typesize {264UL};
 constexpr uint32_t Type26_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type27_max_cdr_typesize {6UL};
+constexpr uint32_t Type27_max_cdr_typesize {264UL};
 constexpr uint32_t Type27_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type20_max_cdr_typesize {6UL};
+constexpr uint32_t Type20_max_cdr_typesize {264UL};
 constexpr uint32_t Type20_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type21_max_cdr_typesize {6UL};
+constexpr uint32_t Type21_max_cdr_typesize {264UL};
 constexpr uint32_t Type21_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type22_max_cdr_typesize {6UL};
+constexpr uint32_t Type22_max_cdr_typesize {264UL};
 constexpr uint32_t Type22_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type23_max_cdr_typesize {6UL};
+constexpr uint32_t Type23_max_cdr_typesize {264UL};
 constexpr uint32_t Type23_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type17_max_cdr_typesize {6UL};
+constexpr uint32_t Type17_max_cdr_typesize {264UL};
 constexpr uint32_t Type17_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type18_max_cdr_typesize {6UL};
+constexpr uint32_t Type18_max_cdr_typesize {264UL};
 constexpr uint32_t Type18_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type19_max_cdr_typesize {6UL};
+constexpr uint32_t Type19_max_cdr_typesize {264UL};
 constexpr uint32_t Type19_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type50_max_cdr_typesize {6UL};
+constexpr uint32_t Type50_max_cdr_typesize {264UL};
 constexpr uint32_t Type50_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type51_max_cdr_typesize {6UL};
+constexpr uint32_t Type51_max_cdr_typesize {264UL};
 constexpr uint32_t Type51_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type52_max_cdr_typesize {6UL};
+constexpr uint32_t Type52_max_cdr_typesize {264UL};
 constexpr uint32_t Type52_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type57_max_cdr_typesize {6UL};
+constexpr uint32_t Type57_max_cdr_typesize {264UL};
 constexpr uint32_t Type57_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type58_max_cdr_typesize {6UL};
+constexpr uint32_t Type58_max_cdr_typesize {264UL};
 constexpr uint32_t Type58_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type59_max_cdr_typesize {6UL};
+constexpr uint32_t Type59_max_cdr_typesize {264UL};
 constexpr uint32_t Type59_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type53_max_cdr_typesize {6UL};
+constexpr uint32_t Type53_max_cdr_typesize {264UL};
 constexpr uint32_t Type53_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type54_max_cdr_typesize {6UL};
+constexpr uint32_t Type54_max_cdr_typesize {264UL};
 constexpr uint32_t Type54_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type55_max_cdr_typesize {6UL};
+constexpr uint32_t Type55_max_cdr_typesize {264UL};
 constexpr uint32_t Type55_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type56_max_cdr_typesize {6UL};
+constexpr uint32_t Type56_max_cdr_typesize {264UL};
 constexpr uint32_t Type56_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type40_max_cdr_typesize {6UL};
+constexpr uint32_t Type40_max_cdr_typesize {264UL};
 constexpr uint32_t Type40_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type41_max_cdr_typesize {6UL};
+constexpr uint32_t Type41_max_cdr_typesize {264UL};
 constexpr uint32_t Type41_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type46_max_cdr_typesize {6UL};
+constexpr uint32_t Type46_max_cdr_typesize {264UL};
 constexpr uint32_t Type46_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type47_max_cdr_typesize {6UL};
+constexpr uint32_t Type47_max_cdr_typesize {264UL};
 constexpr uint32_t Type47_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type48_max_cdr_typesize {6UL};
+constexpr uint32_t Type48_max_cdr_typesize {264UL};
 constexpr uint32_t Type48_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type49_max_cdr_typesize {6UL};
+constexpr uint32_t Type49_max_cdr_typesize {264UL};
 constexpr uint32_t Type49_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type42_max_cdr_typesize {6UL};
+constexpr uint32_t Type42_max_cdr_typesize {264UL};
 constexpr uint32_t Type42_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type43_max_cdr_typesize {6UL};
+constexpr uint32_t Type43_max_cdr_typesize {264UL};
 constexpr uint32_t Type43_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type44_max_cdr_typesize {6UL};
+constexpr uint32_t Type44_max_cdr_typesize {264UL};
 constexpr uint32_t Type44_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type45_max_cdr_typesize {6UL};
+constexpr uint32_t Type45_max_cdr_typesize {264UL};
 constexpr uint32_t Type45_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type39_max_cdr_typesize {6UL};
+constexpr uint32_t Type39_max_cdr_typesize {264UL};
 constexpr uint32_t Type39_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type71_max_cdr_typesize {6UL};
+constexpr uint32_t Type71_max_cdr_typesize {264UL};
 constexpr uint32_t Type71_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type72_max_cdr_typesize {6UL};
+constexpr uint32_t Type72_max_cdr_typesize {264UL};
 constexpr uint32_t Type72_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type73_max_cdr_typesize {6UL};
+constexpr uint32_t Type73_max_cdr_typesize {264UL};
 constexpr uint32_t Type73_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type74_max_cdr_typesize {6UL};
+constexpr uint32_t Type74_max_cdr_typesize {264UL};
 constexpr uint32_t Type74_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type70_max_cdr_typesize {6UL};
+constexpr uint32_t Type70_max_cdr_typesize {264UL};
 constexpr uint32_t Type70_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type79_max_cdr_typesize {6UL};
+constexpr uint32_t Type79_max_cdr_typesize {264UL};
 constexpr uint32_t Type79_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type75_max_cdr_typesize {6UL};
+constexpr uint32_t Type75_max_cdr_typesize {264UL};
 constexpr uint32_t Type75_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type76_max_cdr_typesize {6UL};
+constexpr uint32_t Type76_max_cdr_typesize {264UL};
 constexpr uint32_t Type76_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type77_max_cdr_typesize {6UL};
+constexpr uint32_t Type77_max_cdr_typesize {264UL};
 constexpr uint32_t Type77_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type78_max_cdr_typesize {6UL};
+constexpr uint32_t Type78_max_cdr_typesize {264UL};
 constexpr uint32_t Type78_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type60_max_cdr_typesize {6UL};
+constexpr uint32_t Type60_max_cdr_typesize {264UL};
 constexpr uint32_t Type60_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type61_max_cdr_typesize {6UL};
+constexpr uint32_t Type61_max_cdr_typesize {264UL};
 constexpr uint32_t Type61_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type62_max_cdr_typesize {6UL};
+constexpr uint32_t Type62_max_cdr_typesize {264UL};
 constexpr uint32_t Type62_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type63_max_cdr_typesize {6UL};
+constexpr uint32_t Type63_max_cdr_typesize {264UL};
 constexpr uint32_t Type63_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type68_max_cdr_typesize {6UL};
+constexpr uint32_t Type68_max_cdr_typesize {264UL};
 constexpr uint32_t Type68_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type69_max_cdr_typesize {6UL};
+constexpr uint32_t Type69_max_cdr_typesize {264UL};
 constexpr uint32_t Type69_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type64_max_cdr_typesize {6UL};
+constexpr uint32_t Type64_max_cdr_typesize {264UL};
 constexpr uint32_t Type64_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type65_max_cdr_typesize {6UL};
+constexpr uint32_t Type65_max_cdr_typesize {264UL};
 constexpr uint32_t Type65_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type66_max_cdr_typesize {6UL};
+constexpr uint32_t Type66_max_cdr_typesize {264UL};
 constexpr uint32_t Type66_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type67_max_cdr_typesize {6UL};
+constexpr uint32_t Type67_max_cdr_typesize {264UL};
 constexpr uint32_t Type67_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t Type93_max_cdr_typesize {6UL};
+constexpr uint32_t Type93_max_cdr_typesize {264UL};
 constexpr uint32_t Type93_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t Type94_max_cdr_typesize {6UL};
+constexpr uint32_t Type94_max_cdr_typesize {264UL};
 constexpr uint32_t Type94_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type4_max_cdr_typesize {6UL};
+constexpr uint32_t Type4_max_cdr_typesize {264UL};
 constexpr uint32_t Type4_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type95_max_cdr_typesize {6UL};
+constexpr uint32_t Type95_max_cdr_typesize {264UL};
 constexpr uint32_t Type95_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type5_max_cdr_typesize {6UL};
+constexpr uint32_t Type5_max_cdr_typesize {264UL};
 constexpr uint32_t Type5_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type96_max_cdr_typesize {6UL};
+constexpr uint32_t Type96_max_cdr_typesize {264UL};
 constexpr uint32_t Type96_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type6_max_cdr_typesize {6UL};
+constexpr uint32_t Type6_max_cdr_typesize {264UL};
 constexpr uint32_t Type6_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type7_max_cdr_typesize {6UL};
+constexpr uint32_t Type7_max_cdr_typesize {264UL};
 constexpr uint32_t Type7_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type90_max_cdr_typesize {6UL};
+constexpr uint32_t Type90_max_cdr_typesize {264UL};
 constexpr uint32_t Type90_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type8_max_cdr_typesize {6UL};
+constexpr uint32_t Type8_max_cdr_typesize {264UL};
 constexpr uint32_t Type8_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type91_max_cdr_typesize {6UL};
+constexpr uint32_t Type91_max_cdr_typesize {264UL};
 constexpr uint32_t Type91_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type9_max_cdr_typesize {6UL};
+constexpr uint32_t Type9_max_cdr_typesize {264UL};
 constexpr uint32_t Type9_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type92_max_cdr_typesize {6UL};
+constexpr uint32_t Type92_max_cdr_typesize {264UL};
 constexpr uint32_t Type92_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type13_max_cdr_typesize {6UL};
+constexpr uint32_t Type13_max_cdr_typesize {264UL};
 constexpr uint32_t Type13_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type14_max_cdr_typesize {6UL};
+constexpr uint32_t Type14_max_cdr_typesize {264UL};
 constexpr uint32_t Type14_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type15_max_cdr_typesize {6UL};
+constexpr uint32_t Type15_max_cdr_typesize {264UL};
 constexpr uint32_t Type15_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type16_max_cdr_typesize {6UL};
+constexpr uint32_t Type16_max_cdr_typesize {264UL};
 constexpr uint32_t Type16_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type97_max_cdr_typesize {6UL};
+constexpr uint32_t Type97_max_cdr_typesize {264UL};
 constexpr uint32_t Type97_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type10_max_cdr_typesize {6UL};
+constexpr uint32_t Type10_max_cdr_typesize {264UL};
 constexpr uint32_t Type10_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type98_max_cdr_typesize {6UL};
+constexpr uint32_t Type98_max_cdr_typesize {264UL};
 constexpr uint32_t Type98_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type11_max_cdr_typesize {6UL};
+constexpr uint32_t Type11_max_cdr_typesize {264UL};
 constexpr uint32_t Type11_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type99_max_cdr_typesize {6UL};
+constexpr uint32_t Type99_max_cdr_typesize {264UL};
 constexpr uint32_t Type99_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t Type12_max_cdr_typesize {6UL};
+constexpr uint32_t Type12_max_cdr_typesize {264UL};
 constexpr uint32_t Type12_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type82_max_cdr_typesize {6UL};
+constexpr uint32_t Type82_max_cdr_typesize {264UL};
 constexpr uint32_t Type82_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type83_max_cdr_typesize {6UL};
+constexpr uint32_t Type83_max_cdr_typesize {264UL};
 constexpr uint32_t Type83_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type84_max_cdr_typesize {6UL};
+constexpr uint32_t Type84_max_cdr_typesize {264UL};
 constexpr uint32_t Type84_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type85_max_cdr_typesize {6UL};
+constexpr uint32_t Type85_max_cdr_typesize {264UL};
 constexpr uint32_t Type85_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type80_max_cdr_typesize {6UL};
+constexpr uint32_t Type80_max_cdr_typesize {264UL};
 constexpr uint32_t Type80_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type81_max_cdr_typesize {6UL};
+constexpr uint32_t Type81_max_cdr_typesize {264UL};
 constexpr uint32_t Type81_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type86_max_cdr_typesize {6UL};
+constexpr uint32_t Type86_max_cdr_typesize {264UL};
 constexpr uint32_t Type86_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type87_max_cdr_typesize {6UL};
+constexpr uint32_t Type87_max_cdr_typesize {264UL};
 constexpr uint32_t Type87_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type88_max_cdr_typesize {6UL};
+constexpr uint32_t Type88_max_cdr_typesize {264UL};
 constexpr uint32_t Type88_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Type89_max_cdr_typesize {6UL};
+constexpr uint32_t Type89_max_cdr_typesize {264UL};
 constexpr uint32_t Type89_max_key_cdr_typesize {0UL};
 
 

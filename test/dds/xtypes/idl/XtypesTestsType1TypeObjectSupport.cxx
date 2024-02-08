@@ -65,18 +65,55 @@ void register_Type1_type_identifier()
         {
             return_code_Type1 =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint16_t", type_ids_Type1);
+                "anonymous_string_unbounded", type_ids_Type1);
 
             if (return_code_Type1 != eprosima::fastdds::dds::RETCODE_OK)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                return;
+                std::string type_id_kind_anonymous_string_unbounded("TI_STRING8_SMALL");
+                if (type_id_kind_anonymous_string_unbounded == "TI_STRING8_SMALL")
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded"))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+                else if (type_id_kind_anonymous_string_unbounded == "TI_STRING8_LARGE")
+                {
+                    LBound bound = 255;
+                    StringLTypeDefn string_ldefn = TypeObjectUtils::build_string_l_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_l_string_type_identifier(string_ldefn,
+                            "anonymous_string_unbounded"))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_unbounded: Unknown String kind.");
+                    return;
+                }
+                return_code_Type1 =
+                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                    "anonymous_string_unbounded", type_ids_Type1);
+                if (return_code_Type1 != eprosima::fastdds::dds::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                    return;
+                }
             }
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+            StructMemberFlag member_flags_content = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
-            CommonStructMember common_index;
-            MemberId member_id_index = 0x00000000;
+            CommonStructMember common_content;
+            MemberId member_id_content = 0x00000000;
             if (EK_COMPLETE == type_ids_Type1.type_identifier1()._d() || TK_NONE == type_ids_Type1.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Type1.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Type1.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -93,7 +130,7 @@ void register_Type1_type_identifier()
                     (EK_COMPLETE == type_ids_Type1.type_identifier1().map_ldefn().header().equiv_kind() ||
                     EK_COMPLETE == type_ids_Type1.type_identifier1().map_ldefn().key_identifier()->_d())))
             {
-                common_index = TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, type_ids_Type1.type_identifier1());
+                common_content = TypeObjectUtils::build_common_struct_member(member_id_content, member_flags_content, type_ids_Type1.type_identifier1());
             }
             else if (EK_COMPLETE == type_ids_Type1.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Type1.type_identifier2()._d() &&
@@ -111,20 +148,20 @@ void register_Type1_type_identifier()
                     (EK_COMPLETE == type_ids_Type1.type_identifier2().map_ldefn().header().equiv_kind() ||
                     EK_COMPLETE == type_ids_Type1.type_identifier2().map_ldefn().key_identifier()->_d())))
             {
-                common_index = TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, type_ids_Type1.type_identifier2());
+                common_content = TypeObjectUtils::build_common_struct_member(member_id_content, member_flags_content, type_ids_Type1.type_identifier2());
             }
             else
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "Structure index member TypeIdentifier inconsistent.");
+                        "Structure content member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_index = "index";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_index;
+            MemberName name_content = "content";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_content;
             ann_custom_Type1.reset();
-            CompleteMemberDetail detail_index = TypeObjectUtils::build_complete_member_detail(name_index, member_ann_builtin_index, ann_custom_Type1);
-            CompleteStructMember member_index = TypeObjectUtils::build_complete_struct_member(common_index, detail_index);
-            TypeObjectUtils::add_complete_struct_member(member_seq_Type1, member_index);
+            CompleteMemberDetail detail_content = TypeObjectUtils::build_complete_member_detail(name_content, member_ann_builtin_content, ann_custom_Type1);
+            CompleteStructMember member_content = TypeObjectUtils::build_complete_struct_member(common_content, detail_content);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Type1, member_content);
         }
         CompleteStructType struct_type_Type1 = TypeObjectUtils::build_complete_struct_type(struct_flags_Type1, header_Type1, member_seq_Type1);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

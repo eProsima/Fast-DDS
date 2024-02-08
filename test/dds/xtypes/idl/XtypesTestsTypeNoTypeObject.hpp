@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_XTYPESTESTSTYPENOTYPEOBJECT_HPP_
 
 #include <cstdint>
+#include <string>
 #include <utility>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -78,7 +80,7 @@ public:
     eProsima_user_DllExport TypeNoTypeObject(
             const TypeNoTypeObject& x)
     {
-                    m_index = x.m_index;
+                    m_content = x.m_content;
 
     }
 
@@ -89,7 +91,7 @@ public:
     eProsima_user_DllExport TypeNoTypeObject(
             TypeNoTypeObject&& x) noexcept
     {
-        m_index = x.m_index;
+        m_content = std::move(x.m_content);
     }
 
     /*!
@@ -100,7 +102,7 @@ public:
             const TypeNoTypeObject& x)
     {
 
-                    m_index = x.m_index;
+                    m_content = x.m_content;
 
         return *this;
     }
@@ -113,7 +115,7 @@ public:
             TypeNoTypeObject&& x) noexcept
     {
 
-        m_index = x.m_index;
+        m_content = std::move(x.m_content);
         return *this;
     }
 
@@ -124,7 +126,7 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeNoTypeObject& x) const
     {
-        return (m_index == x.m_index);
+        return (m_content == x.m_content);
     }
 
     /*!
@@ -138,38 +140,48 @@ public:
     }
 
     /*!
-     * @brief This function sets a value in member index
-     * @param _index New value for member index
+     * @brief This function copies the value in member content
+     * @param _content New value to be copied in member content
      */
-    eProsima_user_DllExport void index(
-            uint16_t _index)
+    eProsima_user_DllExport void content(
+            const std::string& _content)
     {
-        m_index = _index;
+        m_content = _content;
     }
 
     /*!
-     * @brief This function returns the value of member index
-     * @return Value of member index
+     * @brief This function moves the value in member content
+     * @param _content New value to be moved in member content
      */
-    eProsima_user_DllExport uint16_t index() const
+    eProsima_user_DllExport void content(
+            std::string&& _content)
     {
-        return m_index;
+        m_content = std::move(_content);
     }
 
     /*!
-     * @brief This function returns a reference to member index
-     * @return Reference to member index
+     * @brief This function returns a constant reference to member content
+     * @return Constant reference to member content
      */
-    eProsima_user_DllExport uint16_t& index()
+    eProsima_user_DllExport const std::string& content() const
     {
-        return m_index;
+        return m_content;
+    }
+
+    /*!
+     * @brief This function returns a reference to member content
+     * @return Reference to member content
+     */
+    eProsima_user_DllExport std::string& content()
+    {
+        return m_content;
     }
 
 
 
 private:
 
-    uint16_t m_index{0};
+    std::string m_content;
 
 };
 

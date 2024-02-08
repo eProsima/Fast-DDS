@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_XTYPESTESTSTYPEDEP_HPP_
 
 #include <cstdint>
+#include <string>
 #include <utility>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 #include "XtypesTestsType1.hpp"
 #include "XtypesTestsType2.hpp"
 #include "XtypesTestsType3.hpp"
@@ -81,7 +83,7 @@ public:
     eProsima_user_DllExport TypeDep(
             const TypeDep& x)
     {
-                    m_index = x.m_index;
+                    m_content = x.m_content;
 
                     m_var_type1 = x.m_var_type1;
 
@@ -98,7 +100,7 @@ public:
     eProsima_user_DllExport TypeDep(
             TypeDep&& x) noexcept
     {
-        m_index = x.m_index;
+        m_content = std::move(x.m_content);
         m_var_type1 = std::move(x.m_var_type1);
         m_var_type2 = std::move(x.m_var_type2);
         m_var_type3 = std::move(x.m_var_type3);
@@ -112,7 +114,7 @@ public:
             const TypeDep& x)
     {
 
-                    m_index = x.m_index;
+                    m_content = x.m_content;
 
                     m_var_type1 = x.m_var_type1;
 
@@ -131,7 +133,7 @@ public:
             TypeDep&& x) noexcept
     {
 
-        m_index = x.m_index;
+        m_content = std::move(x.m_content);
         m_var_type1 = std::move(x.m_var_type1);
         m_var_type2 = std::move(x.m_var_type2);
         m_var_type3 = std::move(x.m_var_type3);
@@ -145,7 +147,7 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeDep& x) const
     {
-        return (m_index == x.m_index &&
+        return (m_content == x.m_content &&
            m_var_type1 == x.m_var_type1 &&
            m_var_type2 == x.m_var_type2 &&
            m_var_type3 == x.m_var_type3);
@@ -162,31 +164,41 @@ public:
     }
 
     /*!
-     * @brief This function sets a value in member index
-     * @param _index New value for member index
+     * @brief This function copies the value in member content
+     * @param _content New value to be copied in member content
      */
-    eProsima_user_DllExport void index(
-            uint16_t _index)
+    eProsima_user_DllExport void content(
+            const std::string& _content)
     {
-        m_index = _index;
+        m_content = _content;
     }
 
     /*!
-     * @brief This function returns the value of member index
-     * @return Value of member index
+     * @brief This function moves the value in member content
+     * @param _content New value to be moved in member content
      */
-    eProsima_user_DllExport uint16_t index() const
+    eProsima_user_DllExport void content(
+            std::string&& _content)
     {
-        return m_index;
+        m_content = std::move(_content);
     }
 
     /*!
-     * @brief This function returns a reference to member index
-     * @return Reference to member index
+     * @brief This function returns a constant reference to member content
+     * @return Constant reference to member content
      */
-    eProsima_user_DllExport uint16_t& index()
+    eProsima_user_DllExport const std::string& content() const
     {
-        return m_index;
+        return m_content;
+    }
+
+    /*!
+     * @brief This function returns a reference to member content
+     * @return Reference to member content
+     */
+    eProsima_user_DllExport std::string& content()
+    {
+        return m_content;
     }
 
 
@@ -310,7 +322,7 @@ public:
 
 private:
 
-    uint16_t m_index{0};
+    std::string m_content;
     Type1 m_var_type1;
     Type2 m_var_type2;
     Type3 m_var_type3;

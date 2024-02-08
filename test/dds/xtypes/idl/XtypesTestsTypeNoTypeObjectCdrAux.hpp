@@ -24,7 +24,7 @@
 
 #include "XtypesTestsTypeNoTypeObject.hpp"
 
-constexpr uint32_t TypeNoTypeObject_max_cdr_typesize {6UL};
+constexpr uint32_t TypeNoTypeObject_max_cdr_typesize {264UL};
 constexpr uint32_t TypeNoTypeObject_max_key_cdr_typesize {0UL};
 
 

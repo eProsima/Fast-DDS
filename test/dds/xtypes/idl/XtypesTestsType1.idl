@@ -1,4 +1,4 @@
 struct Type1
 {
-	unsigned short index;
+	string content;
 };

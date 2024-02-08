@@ -4,397 +4,397 @@
 
 struct Type4	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type5	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type6	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type7	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type8	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type9	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type10	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type11	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type12	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type13	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type14	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type15	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type16	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type17	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type18	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type19	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type20	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type21	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type22	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type23	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type24	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type25	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type26	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type27	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type28	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type29	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type30	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type31	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type32	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type33	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type34	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type35	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type36	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type37	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type38	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type39	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type40	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type41	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type42	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type43	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type44	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type45	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type46	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type47	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type48	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type49	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type50	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type51	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type52	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type53	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type54	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type55	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type56	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type57	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type58	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type59	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type60	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type61	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type62	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type63	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type64	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type65	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type66	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type67	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type68	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type69	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type70	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type71	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type72	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type73	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type74	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type75	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type76	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type77	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type78	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type79	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type80	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type81	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type82	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type83	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type84	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type85	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type86	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type87	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type88	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type89	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type90	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type91	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type92	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type93	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type94	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type95	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type96	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type97	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type98	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type99	
 {	
-	unsigned short index;
+	string content;
 };	
 struct Type100	
 {	
-	unsigned short index;
+	string content;
 };	
 
 
 struct TypeBig			
 {			
-	unsigned short index;
+	string content;
 	Type1 dep1;
 	Type2 dep2;
 	Type3 dep3;

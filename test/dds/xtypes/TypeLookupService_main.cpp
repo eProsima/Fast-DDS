@@ -109,13 +109,13 @@ int main(
                 eprosima::fastdds::dds::TypeLookupServicePublisher pub;
                 return (pub.init(args.known_types) &&
                        pub.wait_discovery(args.expected_matches, args.timeout) &&
-                       pub.run_for(args.timeout)) ? 0 : -1;
+                       pub.run(args.samples, args.timeout)) ? 0 : -1;
             }
             case 2: {
                 eprosima::fastdds::dds::TypeLookupServiceSubscriber sub;
                 return (sub.init(args.known_types) &&
                        sub.wait_discovery(args.expected_matches, args.timeout) &&
-                       sub.run_for(args.timeout)) ? 0 : -1;
+                       sub.run(args.samples, args.timeout)) ? 0 : -1;
             }
             default:
                 std::cout << "Invalid participant type. Use 'publisher' or 'subscriber'." << std::endl;

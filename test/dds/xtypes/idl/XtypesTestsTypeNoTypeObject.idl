@@ -1,4 +1,4 @@
 struct TypeNoTypeObject
 {
-	unsigned short index;
+	string content;
 };
