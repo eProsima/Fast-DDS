@@ -107,7 +107,7 @@ jobs:
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
 
