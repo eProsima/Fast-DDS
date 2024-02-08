@@ -182,6 +182,6 @@ jobs:
         with:
           name: "Report: ${{ matrix.cmake-config }} | ${{ matrix.vs-toolset }} "
           path: "${{ steps.test.outputs.ctest_results_path }}*.xml"
-          working-directory: 'src'
+          working-directory: 'src/fastrtps'
           path-replace-backslashes: 'true'
           list-tests: 'failed'
