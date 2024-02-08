@@ -189,6 +189,12 @@ protected:
             Locator& locator) const = 0;
 
     /**
+     * Converts a remote endpoint to a locator if possible. Otherwise, it sets an invalid locator.
+     */
+    Locator remote_endpoint_to_locator(
+            const std::shared_ptr<TCPChannelResource>& channel) const;
+
+    /**
      * Shutdown method to close the connections of the transports.
      */
     void shutdown() override;
