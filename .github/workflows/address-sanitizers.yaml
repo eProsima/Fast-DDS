@@ -6,15 +6,15 @@ on:
       discovery_server_branch:
         description: 'Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)'
         required: true
-        default: 'master'
+        default: '3.0.x-devel'
       fastdds_branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-        default: 'master'
+        default: '3.0.x-devel'
 
   pull_request:
     branches:
-      - 'master'
+      - '3.0.x-devel'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -122,8 +122,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
-      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'master' }}
+      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '3.0.x-devel' }}
+      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || '3.0.x-devel' }}
 
     steps:
       - name: Install apt packages

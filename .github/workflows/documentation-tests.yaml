@@ -6,11 +6,9 @@ on:
         description: 'Documentation branch name'
         required: true
         type: string
-        default: 'master'
+        default: '3.0.x-devel'
 
   pull_request:
-    branches:
-      - 'master'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -108,7 +106,7 @@ jobs:
 
                 # Attempt to use version's branch, which will most likely be the base anyways.
                 # This is just in case the PR was to an intermediate branch
-                TEMP_BRANCH=master
+                TEMP_BRANCH=3.0.x-devel
                 RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
 
                 if [[ ${RESPONSE_CODE} == "0" ]]
