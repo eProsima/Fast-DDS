@@ -165,7 +165,7 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
-    if (base_type_ && TK_ALIAS != kind_ && TK_STRUCTURE != kind_ && TK_BITSET != kind_)
+    if (base_type_ && TK_ALIAS != kind_ && TK_STRUCTURE != kind_)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Descriptor doesn't describe an ALIAS|STRUCTURE|BITSET but the base_type was set");

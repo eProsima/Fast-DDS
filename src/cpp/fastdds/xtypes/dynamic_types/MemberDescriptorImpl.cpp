@@ -18,6 +18,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
+#include "DynamicTypeImpl.hpp"
 #include "TypeValueConverter.hpp"
 
 namespace eprosima {
@@ -100,8 +101,14 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     }
 
     // Only aggregated types must use the ID value.
-    if ((MEMBER_ID_INVALID == id_ && (TK_UNION == parent_kind_ || TK_STRUCTURE == parent_kind_)) ||
-            (MEMBER_ID_INVALID != id_ && TK_UNION != parent_kind_ && TK_STRUCTURE != parent_kind_))
+    if ((MEMBER_ID_INVALID == id_ && (TK_ANNOTATION == parent_kind_ ||
+            TK_BITSET == parent_kind_ ||
+            TK_UNION == parent_kind_ ||
+            TK_STRUCTURE == parent_kind_)) ||
+            (MEMBER_ID_INVALID != id_ && TK_ANNOTATION != parent_kind_ &&
+            TK_BITSET != parent_kind_ &&
+            TK_UNION != parent_kind_ &&
+            TK_STRUCTURE != parent_kind_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor has a wrong MemberId " << id_);
         return false;
@@ -136,18 +143,46 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
-    // Check enum enclosing type.
-    if (TK_ENUM == parent_kind_ &&
-            TK_INT8 != type_->get_kind() &&
-            TK_UINT8 != type_->get_kind() &&
-            TK_INT16 != type_->get_kind() &&
-            TK_UINT16 != type_->get_kind() &&
-            TK_INT32 != type_->get_kind() &&
-            TK_UINT32 != type_->get_kind())
+    // Check bitfield|enum enclosing type.
+    if (TK_BITSET == parent_kind_ ||
+            TK_ENUM == parent_kind_)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an ENUM and the enclosing type is not valid");
-        return false;
+
+        TypeKind kind = type_->get_kind();
+        auto type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
+
+        if (TK_ALIAS == kind)         // If alias, get enclosing type.
+        {
+            do {
+                type = traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type());
+                kind = type->get_kind();
+            } while (TK_ALIAS == kind);
+        }
+
+        switch (kind)
+        {
+            case TK_INT8:
+            case TK_UINT8:
+            case TK_INT16:
+            case TK_UINT16:
+            case TK_INT32:
+            case TK_UINT32:
+                break;
+            case TK_INT64:
+            case TK_UINT64:
+                if (TK_ENUM == parent_kind_)
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an ENUM and the enclosing type is not valid");
+                    return false;
+                }
+                break;
+            default:
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an BITSET|ENUM and the enclosing type is not valid");
+                return false;
+                break;
+        }
     }
+
 
     // Check bitmask enclosing type.
     if (TK_BITMASK ==  parent_kind_ && TK_BOOLEAN != type_->get_kind())
@@ -159,6 +194,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     // Check name consistency
     if (0 == name_.size() && (TK_ANNOTATION == parent_kind_ ||
             TK_BITMASK == parent_kind_ ||
+            TK_BITSET == parent_kind_ ||
             TK_ENUM == parent_kind_ ||
             TK_STRUCTURE == parent_kind_ ||
             TK_UNION == parent_kind_))
