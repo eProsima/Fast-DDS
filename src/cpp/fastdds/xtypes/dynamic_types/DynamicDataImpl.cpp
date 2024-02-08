@@ -15,6 +15,7 @@
 #include "DynamicDataImpl.hpp"
 
 #include <algorithm>
+#include <numeric>
 #include <string>
 
 #include <fastcdr/Cdr.h>
@@ -88,6 +89,7 @@ DynamicDataImpl::DynamicDataImpl(
     TypeKind type_kind = get_enclosing_typekind(type_);
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -144,8 +146,7 @@ DynamicDataImpl::DynamicDataImpl(
         value_.emplace(MEMBER_ID_INVALID,
                 std::make_shared<std::vector<bool>>(type_->get_descriptor().bound().at(0), false));
     }
-    else if (TK_BITSET != type_kind &&
-            TK_MAP != type_kind)     // Primitives
+    else if (TK_MAP != type_kind)     // Primitives
     {
         add_value(type_kind, MEMBER_ID_INVALID);
     }
@@ -563,14 +564,6 @@ void DynamicDataImpl::set_value(
             set_wstring_value(MEMBER_ID_INVALID, std::wstring(str.begin(), str.end()));
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
-        {
-            // THESE TYPES DON'T MANAGE VALUES
-        }
-        break;
         default:
             break;
     }
@@ -605,6 +598,7 @@ bool DynamicDataImpl::equals(
         TypeKind type_kind = get_enclosing_typekind(type_);
 
         if (TK_ANNOTATION == type_kind ||
+                TK_BITSET == type_kind ||
                 TK_STRUCTURE == type_kind)
         {
             return value_.size() == other_data->value_.size() &&
@@ -672,7 +666,7 @@ bool DynamicDataImpl::equals(
             return *(std::static_pointer_cast<std::vector<bool>>(value_.begin()->second)) ==
                    *(std::static_pointer_cast<std::vector<bool>>(other_data->value_.begin()->second));
         }
-        else if (TK_BITSET != type_kind) // primitives
+        else // primitives
         {
             // primitives
             return compare_values(type_kind, value_.begin()->second, other_data->value_.begin()->second);
@@ -689,6 +683,7 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     TypeKind type_kind = get_enclosing_typekind(type_);
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -756,6 +751,7 @@ MemberId DynamicDataImpl::get_member_id_at_index(
     TypeKind type_kind = get_enclosing_typekind(type_);
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -986,7 +982,10 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
         assert(sequence->size() == type_->get_descriptor().bound().at(0));
         sequence->assign(sequence->size(), false);
     }
-    else if (TK_ANNOTATION == type_kind || TK_STRUCTURE == type_kind || TK_UNION == type_kind)
+    else if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
+            TK_STRUCTURE == type_kind ||
+            TK_UNION == type_kind)
     {
         const auto& members = type_->get_all_members();
         for (auto& e : value_)
@@ -1015,7 +1014,7 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
             }
         }
     }
-    else if (TK_BITSET != type_kind)
+    else
     {
         set_value("");
     }
@@ -1327,7 +1326,9 @@ ReturnCode_t DynamicDataImpl::clear_value(
             ret_val = RETCODE_OK;
         }
     }
-    else if (TK_ANNOTATION == type_kind || TK_STRUCTURE == type_kind )
+    else if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
+            TK_STRUCTURE == type_kind )
     {
         const auto& members = type_->get_all_members();
         auto it_value = value_.find(id);
@@ -1377,7 +1378,7 @@ ReturnCode_t DynamicDataImpl::clear_value(
             }
         }
     }
-    else if (TK_BITSET != type_kind)
+    else
     {
         if (MEMBER_ID_INVALID == id)
         {
@@ -2172,6 +2173,69 @@ ReturnCode_t DynamicDataImpl::set_wstring_values(
     return RETCODE_BAD_PARAMETER;
 }
 
+template<TypeKind TK>
+void DynamicDataImpl::apply_bitset_mask(
+        MemberId member_id,
+        TypeForKind<TK>& value) const noexcept
+{
+    // Get member index.
+    assert(type_->get_all_members().end() != type_->get_all_members().find(member_id));
+    const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                                type_->get_all_members().at(member_id))};
+    const auto member_index {member_impl->get_descriptor().index()};
+    const auto bound {type_->get_descriptor().bound().at(member_index)};
+    uint64_t mask {0XFFFFFFFFFFFFFFFFllu << bound};
+    value &= static_cast<TypeForKind<TK>>(~mask);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_FLOAT32>(
+        MemberId,
+        TypeForKind<TK_FLOAT32>&) const noexcept
+{
+    assert(false);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_FLOAT64>(
+        MemberId,
+        TypeForKind<TK_FLOAT64>&) const noexcept
+{
+    assert(false);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_FLOAT128>(
+        MemberId,
+        TypeForKind<TK_FLOAT128>&) const noexcept
+{
+    assert(false);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_CHAR16>(
+        MemberId,
+        TypeForKind<TK_CHAR16>&) const noexcept
+{
+    assert(false);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_STRING8>(
+        MemberId,
+        TypeForKind<TK_STRING8>&) const noexcept
+{
+    assert(false);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_STRING16>(
+        MemberId,
+        TypeForKind<TK_STRING16>&) const noexcept
+{
+    assert(false);
+}
+
 bool DynamicDataImpl::compare_sequence_values(
         TypeKind kind,
         std::shared_ptr<void> l,
@@ -2816,6 +2880,7 @@ ReturnCode_t DynamicDataImpl::get_value(
     auto type_kind = get_enclosing_typekind(type_);
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -2867,7 +2932,7 @@ ReturnCode_t DynamicDataImpl::get_value(
     {
         ret_value = get_bitmask_bit<TK>(value, id);
     }
-    else if (TK_BITSET != type_kind) // Primitives
+    else // Primitives
     {
         if (MEMBER_ID_INVALID == id || TK_STRING8 == type_kind || TK_STRING16 == type_kind)
         {
@@ -3265,6 +3330,7 @@ ReturnCode_t DynamicDataImpl::set_value(
     TypeKind type_kind = get_enclosing_typekind(type_);
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -3281,8 +3347,16 @@ ReturnCode_t DynamicDataImpl::set_value(
             auto it = value_.find(id);
             if (it != value_.end())
             {
+                TypeForKind<TK> new_value {value};
+
+                // In case of BITSET, apply mask.
+                if (TK_BITSET == type_kind)
+                {
+                    apply_bitset_mask<TK>(id, new_value);
+                }
+
                 ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->set_value<TK>(
-                    MEMBER_ID_INVALID, value);
+                    MEMBER_ID_INVALID, new_value);
             }
 
             if (RETCODE_OK == ret_value && TK_UNION == type_kind && 0 != id)     // Set new discriminator.
@@ -3336,7 +3410,7 @@ ReturnCode_t DynamicDataImpl::set_value(
     {
         ret_value = set_bitmask_bit<TK>(id, value);
     }
-    else if (TK_BITSET != type_kind) // Primitives
+    else // Primitives
     {
         if (MEMBER_ID_INVALID == id)
         {
@@ -3477,7 +3551,7 @@ void DynamicDataImpl::serialize(
                     eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
             // The union_id_ must be serialized as a discriminator_type_
-            auto discriminator_data = std::static_pointer_cast<DynamicDataImpl>(value_.at(0));
+            auto discriminator_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(0))};
             cdr << eprosima::fastcdr::MemberId{0} << discriminator_data;
 
             if (MEMBER_ID_INVALID != selected_union_member_)
@@ -3490,6 +3564,67 @@ void DynamicDataImpl::serialize(
             break;
         }
         case TK_BITSET:
+        {
+            size_t index = 0;
+            size_t sum {0};
+            std::bitset<64> bitset;
+            for (auto& member : type->get_all_members_by_index())
+            {
+                MemberId member_id {member->get_id()};
+                auto it = value_.find(member_id);
+
+                if (it != value_.end())
+                {
+                    int64_t value {0};
+                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                    if (RETCODE_OK == member_data->get_value<TK_INT64>(value, MEMBER_ID_INVALID))
+                    {
+                        auto base {member_id};
+                        auto size {type_->get_descriptor().bound().at(index)};
+                        for (auto i = base; i < base + size; ++i)
+                        {
+                            bitset.set(i, !!(value & 0x01));
+                            value = value >> 1;
+                        }
+                        sum += size;
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error retrieving bitset bitfield value");
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES,
+                            "Error serializing bitset bitfield because not found on DynamicData");
+                }
+
+                ++index;
+            }
+
+            if (9 > sum)
+            {
+                std::bitset<8> new_bitset(bitset.to_ullong());
+                cdr << new_bitset;
+            }
+            else if (17 > sum)
+            {
+                std::bitset<16> new_bitset(bitset.to_ullong());
+                cdr << new_bitset;
+            }
+            else if (33 > sum)
+            {
+                std::bitset<32> new_bitset(bitset.to_ullong());
+                cdr << new_bitset;
+            }
+            else
+            {
+                cdr << bitset;
+            }
+            break;
+        }
         case TK_STRUCTURE:
         {
             eprosima::fastcdr::Cdr::state current_state(cdr);
@@ -3507,9 +3642,14 @@ void DynamicDataImpl::serialize(
 
                     if (it != value_.end())
                     {
-                        auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
 
                         cdr << eprosima::fastcdr::MemberId{member->get_id()} << member_data;
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error serializing structure member because not found on DynamicData");
                     }
                 }
             }
@@ -4061,6 +4201,106 @@ bool DynamicDataImpl::deserialize(
             break;
         }
         case TK_BITSET:
+        {
+            std::bitset<64> bitset;
+            auto sum =
+                    std::accumulate(type_->get_descriptor().bound().begin(), type_->get_descriptor().bound().end(), 0);
+
+            if (9 > sum)
+            {
+                std::bitset<8> new_bitset;
+                cdr >> new_bitset;
+                bitset = {new_bitset.to_ullong()};
+            }
+            else if (17 > sum)
+            {
+                std::bitset<16> new_bitset;
+                cdr >> new_bitset;
+                bitset = {new_bitset.to_ullong()};
+            }
+            else if (33 > sum)
+            {
+                std::bitset<32> new_bitset;
+                cdr >> new_bitset;
+                bitset = {new_bitset.to_ullong()};
+            }
+            else
+            {
+                cdr << bitset;
+            }
+
+            size_t index = 0;
+            for (auto& member : type->get_all_members_by_index())
+            {
+                MemberId member_id {member->get_id()};
+                auto it = value_.find(member_id);
+
+                if (it != value_.end())
+                {
+                    int64_t value {0};
+                    auto base {member_id};
+                    auto size {type_->get_descriptor().bound().at(index)};
+                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                    for (auto i = 0; i < size; ++i)
+                    {
+                        if (bitset.test(i + base))
+                        {
+                            value |= 0x1 << i;
+                        }
+                    }
+
+                    TypeKind element_kind {
+                        get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                    member->get_descriptor().type()))};
+                    ReturnCode_t ret_value {RETCODE_ERROR};
+
+                    switch (element_kind)
+                    {
+                        case TK_INT8:
+                            ret_value = member_data->set_value<TK_INT8>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_UINT8:
+                            ret_value = member_data->set_value<TK_UINT8>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_INT16:
+                            ret_value = member_data->set_value<TK_INT16>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_UINT16:
+                            ret_value = member_data->set_value<TK_UINT16>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_INT32:
+                            ret_value = member_data->set_value<TK_INT32>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_UINT32:
+                            ret_value = member_data->set_value<TK_UINT32>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_INT64:
+                            ret_value = member_data->set_value<TK_INT64>(MEMBER_ID_INVALID, value);
+                            break;
+                        case TK_UINT64:
+                            ret_value = member_data->set_value<TK_UINT64>(MEMBER_ID_INVALID, value);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (RETCODE_OK != ret_value)
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error retrieving bitset bitfield value");
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES,
+                            "Error serializing bitset bitfield because not found on DynamicData");
+                }
+
+                ++index;
+            }
+            break;
+        }
         case TK_STRUCTURE:
         {
             cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
@@ -4728,6 +4968,31 @@ size_t DynamicDataImpl::calculate_serialized_size(
             break;
         }
         case TK_BITSET:
+        {
+            auto sum =
+                    std::accumulate(type_->get_descriptor().bound().begin(), type_->get_descriptor().bound().end(), 0);
+            if (9 > sum)
+            {
+                std::bitset<8> bitset;
+                calculated_size = calculator.calculate_serialized_size(bitset, current_alignment);
+            }
+            else if (17 > sum)
+            {
+                std::bitset<16> bitset;
+                calculated_size = calculator.calculate_serialized_size(bitset, current_alignment);
+            }
+            else if (33 > sum)
+            {
+                std::bitset<32> bitset;
+                calculated_size = calculator.calculate_serialized_size(bitset, current_alignment);
+            }
+            else
+            {
+                std::bitset<64> bitset;
+                calculated_size = calculator.calculate_serialized_size(bitset, current_alignment);
+            }
+            break;
+        }
         case TK_STRUCTURE:
         {
             eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();

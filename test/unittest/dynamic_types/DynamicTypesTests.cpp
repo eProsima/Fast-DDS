@@ -3104,64 +3104,146 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     DynamicDataFactory::get_instance()->delete_data(data);
 }
 
-/*
-   TEST_F(DynamicTypesTests, DynamicType_bitset)
-   {
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+TEST_F(DynamicTypesTests, DynamicType_bitset)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder { factory.create_byte_type()};
-   ASSERT_TRUE(base_type_builder);
-   auto base_type = base_type_builder->build();
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_BITSET);
+    type_descriptor->name("MyBitset");
+    type_descriptor->bound({2, 20});
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(builder);
 
-   std::unique_ptr<const DynamicTypeBuilder> base_type_builder2 { factory.create_uint32_type()};
-   ASSERT_TRUE(base_type_builder2);
-   auto base_type2 = base_type_builder2->build();
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->id(0);
+    member_descriptor->name("int2");
+    member_descriptor->type(factory->get_primitive_type(TK_UINT8));
+    ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-   std::unique_ptr<DynamicTypeBuilder> bitset_type_builder { factory.create_bitset_type()};
-   ASSERT_TRUE(bitset_type_builder);
+    ASSERT_FALSE(builder->build());
 
-   // Add members to the struct.
-   ASSERT_EQ(bitset_type_builder->add_member({0, "int2", base_type}), eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_EQ(bitset_type_builder->add_member({1, "int20", base_type2}), eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-     bitset_type_builder->apply_annotation_to_member(0, {ANNOTATION_BIT_BOUND, "value", "2"}));
-   ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-     bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION, "value", "0"));
-   ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-     bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND, "value", "20"));
-   ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-     bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION, "value", "10")); // 8 bits empty
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->id(1);
+    member_descriptor->name("int20");
+    member_descriptor->type(factory->get_primitive_type(TK_INT32));
+    ASSERT_NE(RETCODE_OK, builder->add_member(member_descriptor));
 
-   auto bitset_type = bitset_type_builder->build();
-   ASSERT_TRUE(bitset_type);
-   auto bitset_data = DynamicDataFactory::get_instance().create_data(*bitset_type);
-   ASSERT_TRUE(bitset_data);
+    member_descriptor->id(60);
+    ASSERT_NE(RETCODE_OK, builder->add_member(member_descriptor));
 
-   ASSERT_FALSE(bitset_data->set_int32_value(10, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_FALSE(bitset_data->set_string_value("", MEMBER_ID_INVALID) == eprosima::fastdds::dds::RETCODE_OK);
+    member_descriptor->id(3);
+    ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-   // Set and get the child values.
-   octet test1(234);
-   ASSERT_TRUE(bitset_data->set_byte_value(test1, 0) == eprosima::fastdds::dds::RETCODE_OK);
-   octet test2(0);
-   ASSERT_TRUE(bitset_data->get_byte_value(test2, 0) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_FALSE(test1 == test2);
-   // 11101010
-   // 00000010 (two bits)
-   ASSERT_TRUE(test2 == 2);
-   uint32_t test3(289582314);
-   ASSERT_TRUE(bitset_data->set_uint32_value(test3, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   uint32_t test4(0);
-   ASSERT_TRUE(bitset_data->get_uint32_value(test4, 1) == eprosima::fastdds::dds::RETCODE_OK);
-   ASSERT_FALSE(test3 == test4);
-   // 00000001010000101010110011101010
-   // 00000000000000101010110011101010 (20 bits)
-   ASSERT_TRUE(test4 == 175338);
+    DynamicType::_ref_type created_type {builder->build()};
+    ASSERT_TRUE(created_type);
 
-   // Bitset serialization
-   // Tested in DynamicTypes_4_2_Tests
-   }
- */
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->id(25);
+    member_descriptor->name("int3");
+    member_descriptor->type(factory->get_primitive_type(TK_UINT8));
+    ASSERT_NE(RETCODE_OK, builder->add_member(member_descriptor));
+
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
+
+    // Testing get_member_by_name and get_member_id_at_index.
+    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("int3"));
+    ASSERT_EQ(0, data->get_member_id_by_name("int2"));
+    ASSERT_EQ(3, data->get_member_id_by_name("int20"));
+    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
+    ASSERT_EQ(0, data->get_member_id_at_index(0));
+    ASSERT_EQ(3, data->get_member_id_at_index(1));
+
+    const uint8_t set_test_field_1 {6};
+    ASSERT_NE(data->set_uint8_value(MEMBER_ID_INVALID, set_test_field_1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(data->set_uint8_value(1, set_test_field_1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(data->set_uint8_value(0, set_test_field_1), eprosima::fastdds::dds::RETCODE_OK);
+
+    const int32_t set_test_field_2 {6};
+    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, set_test_field_2), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(data->set_int32_value(5, set_test_field_2), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(data->set_int32_value(3, set_test_field_2), eprosima::fastdds::dds::RETCODE_OK);
+
+    uint8_t get_test_field_1 {0};
+    ASSERT_NE(data->get_uint8_value(get_test_field_1, MEMBER_ID_INVALID), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(data->get_uint8_value(get_test_field_1, 1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(data->get_uint8_value(get_test_field_1, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(set_test_field_1 & 0x3, get_test_field_1);
+
+    int32_t get_test_field_2 {0};
+    ASSERT_NE(data->get_int32_value(get_test_field_2, MEMBER_ID_INVALID), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_NE(data->get_int32_value(get_test_field_2, 5), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(set_test_field_2, get_test_field_2);
+
+    // Testing loan_value.
+    ASSERT_FALSE(data->loan_value(0));
+
+    // Testing get_item_count.
+    ASSERT_EQ(2, data->get_item_count());
+
+    // XCDRv1
+    {
+        /// Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(created_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(data));
+        ASSERT_EQ(data2->get_uint8_value(get_test_field_1, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(set_test_field_1 & 0x3, get_test_field_1);
+        ASSERT_EQ(data2->get_int32_value(get_test_field_2, 3), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(set_test_field_2, get_test_field_2);
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // XCDRv2
+    {
+        /// Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(created_type);
+        uint32_t payloadSize =
+                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
+        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
+        ASSERT_TRUE(data2->equals(data));
+        ASSERT_EQ(data2->get_uint8_value(get_test_field_1, 0), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(set_test_field_1 & 0x3, get_test_field_1);
+        ASSERT_EQ(data2->get_int32_value(get_test_field_2, 3), eprosima::fastdds::dds::RETCODE_OK);
+        ASSERT_EQ(set_test_field_2, get_test_field_2);
+        DynamicDataFactory::get_instance()->delete_data(data2);
+    }
+
+    // Remove the elements.
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->clear_all_values());
+    ASSERT_EQ(data->get_uint8_value(get_test_field_1, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, get_test_field_1);
+    ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, get_test_field_2);
+
+    ASSERT_EQ(data->set_uint8_value(0, set_test_field_1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(data->set_int32_value(3, set_test_field_2), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->clear_nonkey_values());
+    ASSERT_EQ(data->get_uint8_value(get_test_field_1, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, get_test_field_1);
+    ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, get_test_field_2);
+
+    ASSERT_EQ(data->set_uint8_value(0, set_test_field_1), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(data->set_int32_value(3, set_test_field_2), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, data->clear_value(2));
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, data->clear_value(3));
+    ASSERT_EQ(data->get_uint8_value(get_test_field_1, 0), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(set_test_field_1 & 0x3, get_test_field_1);
+    ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), eprosima::fastdds::dds::RETCODE_OK);
+    ASSERT_EQ(0, get_test_field_2);
+}
 
 TEST_F(DynamicTypesTests, DynamicType_bitmask)
 {

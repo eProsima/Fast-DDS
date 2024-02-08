@@ -394,6 +394,14 @@ protected:
 
 private:
 
+    /*!
+     * Auxiliary function to apply the bitset mask when setting a value.
+     */
+    template<TypeKind TK>
+    void apply_bitset_mask(
+            MemberId member_id,
+            TypeForKind<TK>& value) const noexcept;
+
     void add_sequence_value(
             const traits<DynamicTypeImpl>::ref_type& sequence_type,
             uint32_t sequence_size) noexcept;

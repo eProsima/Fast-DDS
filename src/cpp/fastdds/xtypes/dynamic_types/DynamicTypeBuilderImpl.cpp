@@ -235,15 +235,15 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     auto type_descriptor_kind = type_descriptor_.kind();
 
     // Auxiliary structtures to revert index/id increasing.
-    struct RevertIndexIncreasing
+    struct RollbackIndexIncreasing
     {
-        RevertIndexIncreasing(
+        RollbackIndexIncreasing(
                 uint32_t& index)
             : index_{index}
         {
         }
 
-        ~RevertIndexIncreasing()
+        ~RollbackIndexIncreasing()
         {
             if (activate)
             {
@@ -255,15 +255,16 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         uint32_t& index_;
     }
     index_reverter{next_index_};
-    struct RevertIdIncreasing
+
+    struct RollbackIdIncreasing
     {
-        RevertIdIncreasing(
+        RollbackIdIncreasing(
                 MemberId& id)
             : id_{id}
         {
         }
 
-        ~RevertIdIncreasing()
+        ~RollbackIdIncreasing()
         {
             if (activate)
             {
@@ -297,7 +298,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     auto descriptor_impl = traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(descriptor);
 
 
-    // Check bitmask doesn't exceed bound.
+    // Check on BITMASK doesn't exceed bound.
     assert(TK_BITMASK != type_descriptor_kind || 1 == type_descriptor_.bound().size());
     if (TK_BITMASK == type_descriptor_kind && members_.size() >= type_descriptor_.bound().at(0))
     {
@@ -305,15 +306,14 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         return RETCODE_BAD_PARAMETER;
     }
 
-    const auto& member_name = descriptor_impl->name();
-
-    // Bitsets allow multiple empty members.
-    /* TODO(richiware) have we support empty bitfield to increase the offset?
-       if (TK_BITSET != type_descriptor_kind && 0 == descriptor_impl->name().size())
-       {
+    // Check on BITSET new member doesn't exceed the bound vector's size.
+    if (TK_BITSET == type_descriptor_kind && members_.size() == type_descriptor_.bound().size())
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Adding new member in this BITSET exceeds the size of bounds.");
         return RETCODE_BAD_PARAMETER;
-       }
-     */
+    }
+
+    const auto& member_name = descriptor_impl->name();
 
     // Check there is already a member with same name.
     auto it_by_name = member_by_name_.find(member_name);
@@ -348,6 +348,16 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             return RETCODE_BAD_PARAMETER;
         }
     }
+    // It is mandatory to a BITSET's member to have MemberId.
+    else if (TK_BITSET == type_descriptor_kind)
+    {
+        if (MEMBER_ID_INVALID == member_id)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId for BITSET must be different MEMBER_ID_INVALID");
+            return RETCODE_BAD_PARAMETER;
+        }
+    }
+    // Rest of types have to come with MEMBER_ID_INVALID.
     else if (MEMBER_ID_INVALID != member_id)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId must be MEMBER_ID_INVALID");
@@ -361,11 +371,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         index_reverter.activate = true;
     }
 
+    // Specific checks for UNION
     if (TK_UNION == type_descriptor_kind)
     {
         for (auto member : members_)
         {
-            const auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+            const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
 
             // Check that there isn't any member as default label and that there isn't any member with the same case.
             if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
@@ -403,9 +414,51 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             default_union_member_ = member_id;
         }
     }
+    // Specific checks for BITSET
+    else if (TK_BITSET == type_descriptor_kind)
+    {
+        const MemberId new_member_id {dyn_member->get_descriptor().id()};
+        const auto new_member_bound {type_descriptor_.bound().at(dyn_member->get_descriptor().index())};
 
+        for (auto member : member_)
+        {
+            const MemberId member_id {member.first};
+            const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+            const auto member_index {member_impl->get_descriptor().index()};
 
-    dyn_member->get_descriptor().parent_kind(type_descriptor_kind); // Set before calling is_consistent().
+            assert(member_id != new_member_id);
+            if (member_id < new_member_id)
+            {
+                const auto bound {type_descriptor_.bound().at(member_index)};
+
+                if (new_member_id < member_id + bound)
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because is less than MemberId(" <<
+                            member_id << ") + Bound(" << bound << ")");
+                    return RETCODE_BAD_PARAMETER;
+                }
+            }
+            else
+            {
+                if (member_id < new_member_id + new_member_bound)
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because exists a member with id "
+                            << "less than MemberId(" << new_member_id << ") + Bound(" << new_member_bound << ")");
+                    return RETCODE_BAD_PARAMETER;
+                }
+            }
+        }
+
+        if (64 < new_member_id + new_member_bound)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because exceeds the maximum "
+                    << "64 bits length");
+            return RETCODE_BAD_PARAMETER;
+        }
+    }
+
+    // Set before calling is_consistent().
+    dyn_member->get_descriptor().parent_kind(type_descriptor_kind);
 
     if (!dyn_member->get_descriptor().is_consistent())
     {
@@ -440,10 +493,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     else
     {
+        assert(dyn_member->get_descriptor().index() == members_.size()); // Check continuity on index.
         members_.push_back(dyn_member);
     }
     member_by_name_.emplace(std::make_pair(member_name, dyn_member));
     if (TK_ANNOTATION == type_descriptor_kind ||
+            TK_BITSET == type_descriptor_kind ||
             TK_STRUCTURE == type_descriptor_kind ||
             TK_UNION == type_descriptor_kind)
     {
@@ -504,17 +559,26 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
 
     if (type_descriptor_.is_consistent())
     {
-        ret_val = std::make_shared<DynamicTypeImpl>(type_descriptor_);
-        for (auto& annotation : annotation_)
+        // In case of BITSET, verify the TypeDescriptor's bounds size is same as number of members.
+        if (TK_BITSET != type_descriptor_.kind() ||
+                type_descriptor_.bound().size() == members_.size())
         {
-            ret_val->annotation_.emplace_back();
-            ret_val->annotation_.back().copy_from(annotation);
+            ret_val = std::make_shared<DynamicTypeImpl>(type_descriptor_);
+            for (auto& annotation : annotation_)
+            {
+                ret_val->annotation_.emplace_back();
+                ret_val->annotation_.back().copy_from(annotation);
+            }
+            ret_val->member_ = member_;
+            ret_val->member_by_name_ = member_by_name_;
+            ret_val->members_ = members_;
+            ret_val->default_discriminator_value_ = default_discriminator_value_;
+            ret_val->default_union_member_ = default_union_member_;
         }
-        ret_val->member_ = member_;
-        ret_val->member_by_name_ = member_by_name_;
-        ret_val->members_ = members_;
-        ret_val->default_discriminator_value_ = default_discriminator_value_;
-        ret_val->default_union_member_ = default_union_member_;
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected more members in BITSET according to the size of bounds.");
+        }
     }
 
     return ret_val;
