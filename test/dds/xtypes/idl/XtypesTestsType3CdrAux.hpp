@@ -24,7 +24,7 @@
 
 #include "XtypesTestsType3.hpp"
 
-constexpr uint32_t Type3_max_cdr_typesize {8UL};
+constexpr uint32_t Type3_max_cdr_typesize {264UL};
 constexpr uint32_t Type3_max_key_cdr_typesize {0UL};
 
 

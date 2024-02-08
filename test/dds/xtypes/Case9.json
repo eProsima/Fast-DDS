@@ -18,7 +18,7 @@
             "kind": "subscriber",
             "samples": "10",
             "timeout": "3",
-            "expected_matches": "0",
+            "expected_matches": "2",
             "known_types": [
                 "Type2"
             ]

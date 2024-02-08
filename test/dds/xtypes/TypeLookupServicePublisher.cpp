@@ -33,28 +33,14 @@ static int PUB_DOMAIN_ID_ = 10;
 
 TypeLookupServicePublisher::~TypeLookupServicePublisher()
 {
-    for (auto it = known_types_.begin(); it != known_types_.end(); ++it)
-    {
-        if (nullptr != it->second.writer_)
-        {
-            it->second.publisher_->delete_datawriter(it->second.writer_);
-        }
-        if (nullptr != it->second.publisher_)
-        {
-            participant_->delete_publisher(it->second.publisher_);
-        }
-        if (nullptr != it->second.topic_)
-        {
-            participant_->delete_topic(it->second.topic_);
-        }
-    }
-
     if (nullptr != participant_)
     {
+        participant_->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        participant_ = nullptr;
     }
 
-    for (auto& thread : create_known_types_threads)
+    for (auto& thread : create_types_threads)
     {
         thread.join();
     }
@@ -196,9 +182,50 @@ bool TypeLookupServicePublisher::init(
     return true;
 }
 
+bool TypeLookupServicePublisher::setup_publisher(
+        PubKnownType& a_type)
+{
+    std::string type_name = a_type.type_sup_.get_type_name();
+
+    // CREATE THE PUBLISHER
+    Publisher* publisher = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
+    if (publisher == nullptr)
+    {
+        std::cout << "ERROR TypeLookupServicePublisher: create_publisher: " << type_name << std::endl;
+        return false;
+    }
+
+    // CREATE THE TOPIC
+    std::ostringstream topic_name;
+    topic_name << type_name << "_" << asio::ip::host_name() << "_" << PUB_DOMAIN_ID_;
+    Topic* topic = participant_->create_topic(topic_name.str(), a_type.type_sup_.get_type_name(), TOPIC_QOS_DEFAULT);
+    if (topic == nullptr)
+    {
+        std::cout << "ERROR TypeLookupServicePublisher: create_topic: " << type_name << std::endl;
+        return false;
+    }
+
+    // CREATE THE DATAWRITER
+    DataWriterQos wqos = publisher->get_default_datawriter_qos();
+    wqos.data_sharing().off();
+    a_type.writer_ = publisher->create_datawriter(topic, wqos);
+    if (a_type.writer_ == nullptr)
+    {
+        std::cout << "ERROR TypeLookupServicePublisher: create_datawriter" << std::endl;
+        return false;
+    }
+    return true;
+}
+
 bool TypeLookupServicePublisher::create_known_type(
         const std::string& type)
 {
+    // Check if the type is already created
+    if (nullptr != participant_->find_type(type))
+    {
+        return false;
+    }
+
     // Find the type creator in the map
     auto it = type_creator_functions_.find(type);
     if (it != type_creator_functions_.end())
@@ -219,48 +246,78 @@ bool TypeLookupServicePublisher::create_known_type_impl(
 {
     // Create a new PubKnownType for the given type
     PubKnownType a_type;
-    a_type.type_.reset(new TypePubSubType());
-    a_type.type_.register_type(participant_);
+    a_type.type_ = new Type();
+    a_type.type_sup_.reset(new TypePubSubType());
+    a_type.type_sup_.register_type(participant_);
 
+    // CREATE SET METHOD
+    a_type.set_values_ = [](void* sample, std::string current_sample)
+            {
+                Type* typed_data = static_cast<Type*>(sample);
+                typed_data->content(current_sample);
+            };
 
-    // CREATE THE PUBLISHER
-    a_type.publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, this);
-    if (a_type.publisher_ == nullptr)
+    if (!setup_publisher(a_type))
     {
-        std::cout << "ERROR TypeLookupServicePublisher: create_publisher: " << type << std::endl;
         return false;
     }
 
-    // CREATE THE TOPIC
-    std::ostringstream topic_name;
-    topic_name << type << "_" << asio::ip::host_name() << "_" << PUB_DOMAIN_ID_;
-    a_type.topic_ =
-            participant_->create_topic(topic_name.str(), a_type.type_.get_type_name(), TOPIC_QOS_DEFAULT);
-    if (a_type.topic_ == nullptr)
+    std::lock_guard<std::mutex> guard(known_types_mutex_);
+    known_types_.emplace(type, a_type);
+    return true;
+}
+
+bool TypeLookupServicePublisher::create_discovered_type(
+        const SubscriptionBuiltinTopicData& info)
+{
+    std::string new_type_name = info.type_name.to_string();
+    // Check if the type is already created
+    if (nullptr != participant_->find_type(new_type_name))
     {
-        std::cout << "ERROR TypeLookupServicePublisher: create_topic: " << type << std::endl;
         return false;
     }
 
-    // CREATE THE DATAWRITER
-    DataWriterQos wqos = a_type.publisher_->get_default_datawriter_qos();
-    wqos.liveliness().lease_duration = 3;
-    wqos.liveliness().announcement_period = 1;
-    wqos.liveliness().kind = AUTOMATIC_LIVELINESS_QOS;
-    wqos.data_sharing().off();
+    PubKnownType a_type;
 
-    a_type.writer_ = a_type.publisher_->create_datawriter(a_type.topic_, wqos, this);
-    if (a_type.writer_ == nullptr)
+    //CREATE THE DYNAMIC TYPE
+    xtypes::TypeObject type_object;
+    if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                info.type_information.type_information.complete().typeid_with_size().type_id(), type_object))
+
     {
-        std::cout << "ERROR TypeLookupServicePublisher: create_datawriter" << std::endl;
+        std::cout << "ERROR: TypeObject cannot be retrieved for type: " << new_type_name << std::endl;
         return false;
     }
 
+    // Create DynamicType
+    a_type.dyn_type_ = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(type_object)->build();
+    if (!a_type.dyn_type_)
     {
-        std::lock_guard<std::mutex> guard(known_types_mutex_);
-        known_types_.emplace(type, a_type);
+        std::cout << "ERROR: DynamicType cannot be created for type: " << new_type_name << std::endl;
+        return false;
     }
 
+    // Register the data type
+    a_type.type_sup_.reset(new DynamicPubSubType(a_type.dyn_type_));
+    if (RETCODE_OK != a_type.type_sup_.register_type(participant_))
+    {
+        std::cout << "ERROR: DynamicType cannot be registered for type: " << new_type_name << std::endl;
+        return false;
+    }
+
+    // CREATE SET METHOD
+    a_type.dyn_set_values_ = [](DynamicData::_ref_type sample, std::string current_sample)
+            {
+                sample->set_string_value(0, current_sample);
+            };
+
+    if (!setup_publisher(a_type))
+    {
+        return false;
+    }
+
+    std::lock_guard<std::mutex> guard(known_types_mutex_);
+    known_types_.emplace(new_type_name, a_type);
     return true;
 }
 
@@ -273,10 +330,10 @@ bool TypeLookupServicePublisher::check_registered_type(
 }
 
 bool TypeLookupServicePublisher::wait_discovery(
-        uint32_t expected_discoveries,
+        uint32_t expected_matches,
         uint32_t timeout)
 {
-    expected_matches_ = expected_discoveries;
+    expected_matches_ = expected_matches;
 
     std::unique_lock<std::mutex> lock(mutex_);
     bool result = cv_.wait_for(lock, std::chrono::seconds(timeout),
@@ -294,29 +351,81 @@ bool TypeLookupServicePublisher::wait_discovery(
     return true;
 }
 
-void TypeLookupServicePublisher::notify_discovery(
-        std::string type_name,
-        xtypes::TypeInformationParameter type_info)
-{
-    if (unique_types_.insert(type_name).second)
-    {
-        const bool should_be_registered = type_name.find("NoTypeObject") == std::string::npos;
-        if (should_be_registered && !check_registered_type(type_info))
-        {
-            throw TypeLookupServicePublisherTypeRegistryException(type_name +
-                          (should_be_registered ? " registered" : " not registered"));
-        }
-        std::unique_lock<std::mutex> lock(mutex_);
-        ++matched_;
-        cv_.notify_one();
-    }
-}
-
-bool TypeLookupServicePublisher::run_for(
+bool TypeLookupServicePublisher::run(
+        uint32_t samples,
         uint32_t timeout)
 {
-    std::this_thread::sleep_for(std::chrono::seconds(timeout));
+    std::unique_lock<std::mutex> lock(mutex_);
+    bool result = cv_.wait_for(
+        lock, std::chrono::seconds(timeout), [&]
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            uint32_t current_sample = 0;
+            std::string type_name;
+            while (samples > current_sample)
+            {
+                for (auto& known_type : known_types_)
+                {
+                    type_name = known_type.second.type_sup_.get_type_name();
+                    if (known_type.second.dyn_type_)
+                    {
+                        DynamicData::_ref_type sample =
+                        DynamicDataFactory::get_instance()->create_data(known_type.second.dyn_type_);
+                        known_type.second.dyn_set_values_(sample, std::to_string(current_sample));
+                        std::cout << "Publisher dyn_type_" << type_name << ": " << current_sample << std::endl;
+                        known_type.second.writer_->write(&sample);
+                    }
+
+                    if (known_type.second.type_)
+                    {
+                        void* sample = known_type.second.type_sup_.create_data();
+                        known_type.second.set_values_(sample, std::to_string(current_sample));
+                        std::cout << "Publisher type_" << type_name << ": " << current_sample << std::endl;
+                        known_type.second.writer_->write(sample);
+                        known_type.second.type_sup_.delete_data(sample);
+                    }
+
+                    ++sent_samples_[known_type.second.writer_->guid()];
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+                ++current_sample;
+            }
+            return true;
+        });
+
+    if (!result)
+    {
+        std::cout << "ERROR TypeLookupServicePublisher run Timeout" << std::endl;
+
+        if (expected_matches_ != sent_samples_.size())
+        {
+            std::cout << "expected_matches_ = " << expected_matches_ <<
+                " matched_ = " << sent_samples_.size() << std::endl;
+        }
+
+        for (auto& sent_sample : sent_samples_)
+        {
+            if (samples != sent_sample.second)
+            {
+                std::cout << sent_sample.first << "Wrote: "
+                          << sent_sample.second <<  " samples" << std::endl;
+            }
+        }
+        return false;
+    }
     return true;
+}
+
+void TypeLookupServicePublisher::on_publication_matched(
+        DataWriter* /*writer*/,
+        const PublicationMatchedStatus& info)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    if (info.current_count_change == 1)
+    {
+        ++matched_;
+        cv_.notify_all();
+    }
 }
 
 void TypeLookupServicePublisher::on_data_reader_discovery(
@@ -326,10 +435,27 @@ void TypeLookupServicePublisher::on_data_reader_discovery(
         bool& should_be_ignored)
 {
     should_be_ignored = false;
+    std::string discovered_reader_type_name = info.type_name.to_string();
 
     if (eprosima::fastdds::rtps::ReaderDiscoveryStatus::DISCOVERED_READER == reason)
     {
-        create_known_types_threads.emplace_back(&TypeLookupServicePublisher::notify_discovery,
-                this, info.type_name.to_string(), info.type_information);
+        // Check if the type is already created
+        if (nullptr == participant_->find_type(discovered_reader_type_name))
+        {
+            // Check type registration
+            const bool should_be_registered = discovered_reader_type_name.find("NoTypeObject") == std::string::npos;
+            if ((should_be_registered && !check_registered_type(info.type_information)) ||
+                    (!should_be_registered && check_registered_type(info.type_information)))
+            {
+                throw std::runtime_error(discovered_reader_type_name +
+                              (should_be_registered ? " registered" : " not registered"));
+            }
+
+            // Create new publisher for the type
+            if (should_be_registered)
+            {
+                create_types_threads.emplace_back(&TypeLookupServicePublisher::create_discovered_type, this, info);
+            }
+        }
     }
 }

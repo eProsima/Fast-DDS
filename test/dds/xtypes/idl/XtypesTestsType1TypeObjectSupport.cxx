@@ -59,34 +59,42 @@ void register_Type1_type_identifier(
         header_Type1 = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_Type1);
         CompleteStructMemberSeq member_seq_Type1;
         {
-            TypeIdentifierPair type_ids_index;
-            ReturnCode_t return_code_index {eprosima::fastdds::dds::RETCODE_OK};
-            return_code_index =
+            TypeIdentifierPair type_ids_content;
+            ReturnCode_t return_code_content {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_content =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint16_t", type_ids_index);
+                "anonymous_string_unbounded", type_ids_content);
 
-            if (eprosima::fastdds::dds::RETCODE_OK != return_code_index)
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_content)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                        "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
-                return;
+                {
+                    SBound bound = 0;
+                    StringSTypeDefn string_sdefn = TypeObjectUtils::build_string_s_type_defn(bound);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_s_string_type_identifier(string_sdefn,
+                            "anonymous_string_unbounded", type_ids_content))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "anonymous_string_unbounded already registered in TypeObjectRegistry for a different type.");
+                    }
+                }
             }
-            StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+            StructMemberFlag member_flags_content = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_index = 0x00000000;
-            bool common_index_ec {false};
-            CommonStructMember common_index {TypeObjectUtils::build_common_struct_member(member_id_index, member_flags_index, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_index, common_index_ec))};
-            if (!common_index_ec)
+            MemberId member_id_content = 0x00000000;
+            bool common_content_ec {false};
+            CommonStructMember common_content {TypeObjectUtils::build_common_struct_member(member_id_content, member_flags_content, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_content, common_content_ec))};
+            if (!common_content_ec)
             {
-                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure index member TypeIdentifier inconsistent.");
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure content member TypeIdentifier inconsistent.");
                 return;
             }
-            MemberName name_index = "index";
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_index;
+            MemberName name_content = "content";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_content;
             ann_custom_Type1.reset();
-            CompleteMemberDetail detail_index = TypeObjectUtils::build_complete_member_detail(name_index, member_ann_builtin_index, ann_custom_Type1);
-            CompleteStructMember member_index = TypeObjectUtils::build_complete_struct_member(common_index, detail_index);
-            TypeObjectUtils::add_complete_struct_member(member_seq_Type1, member_index);
+            CompleteMemberDetail detail_content = TypeObjectUtils::build_complete_member_detail(name_content, member_ann_builtin_content, ann_custom_Type1);
+            CompleteStructMember member_content = TypeObjectUtils::build_complete_struct_member(common_content, detail_content);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Type1, member_content);
         }
         CompleteStructType struct_type_Type1 = TypeObjectUtils::build_complete_struct_type(struct_flags_Type1, header_Type1, member_seq_Type1);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==

@@ -3,8 +3,8 @@
         {
             "kind": "publisher",
             "samples": "10",
-            "timeout": "3",
-            "expected_matches": "0",
+            "timeout": "10",
+            "expected_matches": "1",
             "known_types": [
                 "TypeBig"
             ]
@@ -12,7 +12,7 @@
         {
             "kind": "subscriber",
             "samples": "10",
-            "timeout": "3",
+            "timeout": "10",
             "expected_matches": "1",
             "known_types": []
         }

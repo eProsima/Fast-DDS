@@ -30,11 +30,15 @@
 #include <map>
 #include <mutex>
 #include <thread>
-#include <unordered_set>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 #include "TypeLookupServiceTestsTypes.h"
@@ -43,25 +47,16 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class TypeLookupServicePublisherTypeRegistryException : public std::runtime_error
-{
-public:
-
-    TypeLookupServicePublisherTypeRegistryException(
-            std::string msg)
-        : std::runtime_error("Type: " + msg + " in TypeLookupServicePublisher")
-    {
-    }
-
-};
-
 struct PubKnownType
 {
-    TypeSupport type_;
-    void* type_sup_;
-    Publisher* publisher_ = nullptr;
+    void* type_;
+    DynamicType::_ref_type dyn_type_;
+    TypeSupport type_sup_;
+
     DataWriter* writer_ = nullptr;
-    Topic* topic_ = nullptr;
+
+    std::function<void(void* sample, std::string current_sample)> set_values_;
+    std::function<void(DynamicData::_ref_type sample, std::string current_sample)> dyn_set_values_;
 };
 
 // Define a macro to simplify type registration
@@ -88,12 +83,18 @@ public:
     bool init(
             std::vector<std::string> known_types);
 
+    bool setup_publisher(
+            PubKnownType& new_type);
+
     bool create_known_type(
             const std::string& type);
 
     template <typename Type, typename TypePubSubType>
     bool create_known_type_impl(
             const std::string& type);
+
+    bool create_discovered_type(
+            const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& info);
 
     bool check_registered_type(
             const xtypes::TypeInformationParameter& type_info);
@@ -102,12 +103,13 @@ public:
             uint32_t expected_matches,
             uint32_t timeout);
 
-    void notify_discovery(
-            std::string type_name,
-            xtypes::TypeInformationParameter type_info);
-
-    bool run_for(
+    bool run(
+            uint32_t samples,
             uint32_t timeout);
+
+    void on_publication_matched(
+            DataWriter* /*writer*/,
+            const PublicationMatchedStatus& info) override;
 
     void on_data_reader_discovery(
             eprosima::fastdds::dds::DomainParticipant* /*participant*/,
@@ -123,13 +125,12 @@ private:
     std::condition_variable cv_;
     unsigned int matched_ = 0;
     unsigned int expected_matches_ = 0;
+    std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> sent_samples_;
 
     std::mutex known_types_mutex_;
     std::map<std::string, PubKnownType> known_types_;
     std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
-    std::vector<std::thread> create_known_types_threads;
-    std::unordered_set<std::string> unique_types_;
-
+    std::vector<std::thread> create_types_threads;
 };
 
 } // dds

@@ -67,13 +67,14 @@ def execute_commands(commands, logger):
     for command in commands:
         logger.info(f'Executing: {command}')
         processes.append(subprocess.Popen(command))
-        time.sleep(1)  # Delay for consistency
+        time.sleep(0.5)  # Delay for consistency
 
     ret_value = 0
 
     for proc in processes:
         proc.communicate()
         ret_value += proc.returncode
+        # time.sleep(1)  # Delay for consistency
 
     return ret_value
 

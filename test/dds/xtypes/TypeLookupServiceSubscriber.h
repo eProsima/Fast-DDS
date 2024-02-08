@@ -36,6 +36,11 @@
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.hpp>
 
 #include "TypeLookupServiceTestsTypes.h"
@@ -44,26 +49,14 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class TypeLookupServiceSubscriberTypeRegistryException : public std::runtime_error
-{
-public:
-
-    TypeLookupServiceSubscriberTypeRegistryException(
-            std::string msg)
-        : std::runtime_error("Type: " + msg + " in TypeLookupServiceSubscriber")
-    {
-    }
-
-};
-
 struct SubKnownType
 {
-    TypeSupport type_;
-    void* obj_;
-    void* type_sup_;
-    Subscriber* subscriber_ = nullptr;
-    DataReader* reader_ = nullptr;
-    Topic* topic_ = nullptr;
+    void* type_;
+    DynamicType::_ref_type dyn_type_;
+    TypeSupport type_sup_;
+
+    std::function<void(void* sample)> print_values_;
+    std::function<void(DynamicData::_ref_type sample)> dyn_print_values_;
 };
 
 // Define a macro to simplify type registration
@@ -89,12 +82,18 @@ public:
     bool init(
             std::vector<std::string> known_types);
 
+    bool setup_subscriber(
+            SubKnownType& new_type);
+
     bool create_known_type(
             const std::string& type);
 
     template <typename Type, typename TypePubSubType>
     bool create_known_type_impl(
             const std::string& type);
+
+    bool create_discovered_type(
+            const eprosima::fastdds::dds::PublicationBuiltinTopicData& info);
 
     bool check_registered_type(
             const xtypes::TypeInformationParameter& type_info);
@@ -103,12 +102,16 @@ public:
             uint32_t expected_matches,
             uint32_t timeout);
 
-    void notify_discovery(
-            std::string type_name,
-            xtypes::TypeInformationParameter type_info);
-
-    bool run_for(
+    bool run(
+            uint32_t samples,
             uint32_t timeout);
+
+    void on_subscription_matched(
+            DataReader* /*reader*/,
+            const SubscriptionMatchedStatus& info) override;
+
+    void on_data_available(
+            DataReader* reader) override;
 
     void on_data_writer_discovery(
             eprosima::fastdds::dds::DomainParticipant* /*participant*/,
@@ -124,13 +127,12 @@ private:
     std::condition_variable cv_;
     unsigned int matched_ = 0;
     unsigned int expected_matches_ = 0;
+    std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> received_samples_;
 
     std::mutex known_types_mutex_;
     std::map<std::string, SubKnownType> known_types_;
     std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
-    std::vector<std::thread> create_known_types_threads;
-    std::unordered_set<std::string> unique_types_;
-
+    std::vector<std::thread> create_types_threads;
 };
 
 } // dds

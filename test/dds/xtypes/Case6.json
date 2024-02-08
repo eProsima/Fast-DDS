@@ -4,7 +4,7 @@
             "kind": "publisher",
             "samples": "10",
             "timeout": "3",
-            "expected_matches": "0",
+            "expected_matches": "1",
             "known_types": [
                 "TypeDep"
             ]
