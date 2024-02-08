@@ -49,10 +49,10 @@ public:
     bool send(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
-            std::shared_ptr<TCPChannelResource>& channel,
+            fastrtps::rtps::Locator_t& locator,
             const Locator_t& remote_locator)
     {
-        return TCPv6Transport::send(send_buffer, send_buffer_size, channel, remote_locator);
+        return TCPv6Transport::send(send_buffer, send_buffer_size, locator, remote_locator);
     }
 
 };

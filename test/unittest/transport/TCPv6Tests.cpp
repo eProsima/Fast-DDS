@@ -383,7 +383,8 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     serverTransportUnderTest = new TCPv6Transport(serverDescriptor);
     serverTransportUnderTest->init();
     ASSERT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
-    clientTransportUnderTest->send(nullptr, 0, channel, initialPeerLocator); // connect()
+    auto loc = channel->locator();
+    clientTransportUnderTest->send(nullptr, 0, loc, initialPeerLocator); // connect()
 
     // Logical port is opened (moved from pending list)
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -403,7 +404,7 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     serverTransportUnderTest->init();
     ASSERT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
     EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
-    clientTransportUnderTest->send(nullptr, 0, channel, initialPeerLocator); // connect()
+    clientTransportUnderTest->send(nullptr, 0, loc, initialPeerLocator); // connect()
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
     delete serverTransportUnderTest;
     ASSERT_FALSE(channel->is_logical_port_opened(7410));
@@ -413,7 +414,7 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     serverTransportUnderTest = new TCPv6Transport(serverDescriptor);
     serverTransportUnderTest->init();
     ASSERT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
-    clientTransportUnderTest->send(nullptr, 0, channel, initialPeerLocator); // connect()
+    clientTransportUnderTest->send(nullptr, 0, loc, initialPeerLocator); // connect()
 
     // Logical port is opened (moved from pending list)
     std::this_thread::sleep_for(std::chrono::milliseconds(300));

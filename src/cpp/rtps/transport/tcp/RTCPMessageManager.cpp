@@ -464,7 +464,8 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     //    << " and will respond with our locator: " << response.locator());
 
     {
-        std::unique_lock<std::mutex> large_dataLock(mTransport->large_data_mutex_);
+        // TODO Carlos: is this mutex needed anymore? // Linked with large_dataLock of 772 & 819
+        // std::unique_lock<std::mutex> large_dataLock(mTransport->large_data_mutex_);
         ResponseCode code = channel->process_bind_request(request.transportLocator());
 
         if (RETCODE_OK == code)
@@ -475,12 +476,13 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
 
         sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, code);
 
-        if (!channel->is_pending_logical_port_empty())
-        {
-            // Let the client process the bind connection response
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            channel->send_pending_open_logical_ports(this);
-        }
+        // TODO Carlos: pending logicals at this point won't happen anymore.
+        // if (!channel->is_pending_logical_port_empty())
+        // {
+        //     // Let the client process the bind connection response
+        //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        //     channel->send_pending_open_logical_ports(this);
+        // }
     }
 
     return RETCODE_OK;
