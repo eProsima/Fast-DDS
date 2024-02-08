@@ -1976,7 +1976,7 @@ TEST_F(TCPv4Tests, non_blocking_send)
     uint16_t port = g_default_port;
     uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
     // Create a TCP Server transport
-    TCPv4TransportDescriptor senderDescriptor;
+    eprosima::fastdds::rtps::TCPv4TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
     senderDescriptor.sendBufferSize = msg_size;
     MockTCPv4Transport senderTransportUnderTest(senderDescriptor);
