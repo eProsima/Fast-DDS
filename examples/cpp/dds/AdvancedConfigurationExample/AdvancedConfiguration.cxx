@@ -129,6 +129,7 @@ uint32_t& AdvancedConfiguration::index()
     return m_index;
 }
 
+
 /*!
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
@@ -167,6 +168,7 @@ std::array<char, 20>& AdvancedConfiguration::message()
     return m_message;
 }
 
+
 /*!
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
@@ -204,6 +206,7 @@ std::vector<uint8_t>& AdvancedConfiguration::data()
 {
     return m_data;
 }
+
 
 // Include auxiliary functions like for serializing/deserializing.
 #include "AdvancedConfigurationCdrAux.ipp"
