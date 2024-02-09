@@ -178,7 +178,7 @@ jobs:
 
       - name: Test Report
         uses: eProsima/eProsima-CI/external/test-reporter@main
-        if: success() || failure()
+        if: (success() || failure()) && ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         with:
           name: "Report: ${{ matrix.cmake-config }} | ${{ matrix.vs-toolset }} "
           path: "${{ steps.test.outputs.ctest_results_path }}*.xml"
