@@ -805,7 +805,7 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
         ASSERT_TRUE(data.empty());
         for(int j = 0; j < n_participants; j++)
         {
-            ASSERT_TRUE(readers[j]->wait_for_all_received(std::chrono::seconds(2)));
+            ASSERT_TRUE(readers[j]->block_for_all(std::chrono::seconds(2)));
         }
         EXPECT_TRUE(writers[i]->waitForAllAcked(std::chrono::seconds(5)));
     }
@@ -887,7 +887,7 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
         ASSERT_TRUE(data.empty());
         for(int j = 0; j < n_participants; j++)
         {
-            ASSERT_TRUE(readers[j]->wait_for_all_received(std::chrono::seconds(2)));
+            ASSERT_TRUE(readers[j]->block_for_all(std::chrono::seconds(2)));
         }
         EXPECT_TRUE(writers[i]->waitForAllAcked(std::chrono::seconds(5)));
     }
