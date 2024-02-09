@@ -736,7 +736,7 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
 // Test TCPv4 transport on LARGE_DATA topology
 TEST_P(TransportTCP, TCPv4_large_data_topology)
 {
-    int n_participants = 5;
+    int n_participants = 15;
     bool use_v6 = false;
 
     /* Test configuration */
@@ -837,7 +837,7 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
 // Test TCPv6 transport on LARGE_DATA topology
 TEST_P(TransportTCP, TCPv6_large_data_topology)
 {
-    int n_participants = 5;
+    int n_participants = 15;
     bool use_v6 = true;
 
     /* Test configuration */

@@ -480,8 +480,10 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortRequest(
         const OpenLogicalPortRequest_t& request,
         const TCPTransactionId& transaction_id)
 {
-    if (!channel->connection_established())
+    // A server can send an OpenLogicalPortRequest to a client before the BindConnectionResponse is processed.
+    if (!channel->connection_established() && channel->connection_status_ != TCPChannelResource::eConnectionStatus::eWaitingForBindResponse)
     {
+        EPROSIMA_LOG_ERROR(RTCP, "Trying to send [OPEN_LOGICAL_PORT_RESPONSE] without connection established.");
         sendData(channel, CHECK_LOGICAL_PORT_RESPONSE, transaction_id, nullptr, RETCODE_SERVER_ERROR);
     }
     else if (request.logicalPort() == 0 || !mTransport->is_input_port_open(request.logicalPort()))
