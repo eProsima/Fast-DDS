@@ -740,13 +740,13 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
     bool use_v6 = false;
 
     /* Test configuration */
-    std::vector<std::unique_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
-    std::vector<std::unique_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
+    std::vector<std::unique_ptr<PubSubReader<KeyedHelloWorldPubSubType>>> readers;
+    std::vector<std::unique_ptr<PubSubWriter<KeyedHelloWorldPubSubType>>> writers;
 
     for(int i = 0; i < n_participants; i++)
     {
-        readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
-        writers.emplace_back(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        readers.emplace_back(new PubSubReader<KeyedHelloWorldPubSubType>(TEST_TOPIC_NAME));
+        writers.emplace_back(new PubSubWriter<KeyedHelloWorldPubSubType>(TEST_TOPIC_NAME));
     }
 
     // Create a vector of ports and shuffle it
@@ -786,28 +786,47 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
     // Wait for discovery
     for(int i = 0; i < n_participants; i++)
     {
-        writers[i]->wait_discovery(n_participants, std::chrono::seconds(5));
+        writers[i]->wait_discovery(n_participants, std::chrono::seconds(0));
         ASSERT_EQ(writers[i]->get_matched(), n_participants);
-        readers[i]->wait_discovery(std::chrono::seconds(5) ,n_participants);
+        readers[i]->wait_discovery(std::chrono::seconds(0) ,n_participants);
         ASSERT_EQ(readers[i]->get_matched(), n_participants);
     }
 
-    // Send data
-    std::list<HelloWorld> data;
-    for(int i = 0; i < n_participants; i++)
+    // Send and receive data
+    std::list<KeyedHelloWorld> data;
+    size_t samples_per_participant = 10;
+    data = default_keyedhelloworld_per_participant_data_generator(n_participants, samples_per_participant);
+
+    for(auto& reader : readers)
     {
-        data = default_helloworld_data_generator();
-        for(int j = 0; j < n_participants; j++)
+        reader->startReception(data);
+    }
+
+    auto validate_key = [](const std::list<KeyedHelloWorld>& data, uint16_t participant_key)
+    {
+        for(const auto& sample : data)
         {
-            readers[j]->startReception(data);
+            ASSERT_EQ(sample.key(), participant_key);
         }
-        writers[i]->send(data);
-        ASSERT_TRUE(data.empty());
-        for(int j = 0; j < n_participants; j++)
-        {
-            ASSERT_TRUE(readers[j]->block_for_all(std::chrono::seconds(2)));
-        }
-        EXPECT_TRUE(writers[i]->waitForAllAcked(std::chrono::seconds(5)));
+    };
+
+    for(int i=0; i < n_participants; i++)
+    {
+        auto start = std::next(data.begin(), i*samples_per_participant ); // Moves to the 4th element (index 3)
+        auto end = std::next(start, samples_per_participant);
+        auto writer_data(std::list<KeyedHelloWorld>(start, end));
+        validate_key(writer_data, i);
+        writers[i]->send(writer_data);
+        EXPECT_TRUE(writer_data.empty());
+    }
+
+    for(auto& reader : readers)
+    {
+        reader->block_for_all();
+    }
+    for(auto& writer : writers)
+    {
+        EXPECT_TRUE(writer->waitForAllAcked(std::chrono::seconds(5)));
     }
 
     // Destroy participants
@@ -822,13 +841,13 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
     bool use_v6 = true;
 
     /* Test configuration */
-    std::vector<std::unique_ptr<PubSubReader<HelloWorldPubSubType>>> readers;
-    std::vector<std::unique_ptr<PubSubWriter<HelloWorldPubSubType>>> writers;
+    std::vector<std::unique_ptr<PubSubReader<KeyedHelloWorldPubSubType>>> readers;
+    std::vector<std::unique_ptr<PubSubWriter<KeyedHelloWorldPubSubType>>> writers;
 
     for(int i = 0; i < n_participants; i++)
     {
-        readers.emplace_back(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
-        writers.emplace_back(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+        readers.emplace_back(new PubSubReader<KeyedHelloWorldPubSubType>(TEST_TOPIC_NAME));
+        writers.emplace_back(new PubSubWriter<KeyedHelloWorldPubSubType>(TEST_TOPIC_NAME));
     }
 
     // Create a vector of ports and shuffle it
@@ -868,28 +887,47 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
     // Wait for discovery
     for(int i = 0; i < n_participants; i++)
     {
-        writers[i]->wait_discovery(n_participants, std::chrono::seconds(5));
+        writers[i]->wait_discovery(n_participants, std::chrono::seconds(0));
         ASSERT_EQ(writers[i]->get_matched(), n_participants);
-        readers[i]->wait_discovery(std::chrono::seconds(5) ,n_participants);
+        readers[i]->wait_discovery(std::chrono::seconds(0) ,n_participants);
         ASSERT_EQ(readers[i]->get_matched(), n_participants);
     }
 
-    // Send data
-    std::list<HelloWorld> data;
-    for(int i = 0; i < n_participants; i++)
+    // Send and receive data
+    std::list<KeyedHelloWorld> data;
+    size_t samples_per_participant = 10;
+    data = default_keyedhelloworld_per_participant_data_generator(n_participants, samples_per_participant);
+
+    for(auto& reader : readers)
     {
-        data = default_helloworld_data_generator();
-        for(int j = 0; j < n_participants; j++)
+        reader->startReception(data);
+    }
+
+    auto validate_key = [](const std::list<KeyedHelloWorld>& data, uint16_t participant_key)
+    {
+        for(const auto& sample : data)
         {
-            readers[j]->startReception(data);
+            ASSERT_EQ(sample.key(), participant_key);
         }
-        writers[i]->send(data);
-        ASSERT_TRUE(data.empty());
-        for(int j = 0; j < n_participants; j++)
-        {
-            ASSERT_TRUE(readers[j]->block_for_all(std::chrono::seconds(2)));
-        }
-        EXPECT_TRUE(writers[i]->waitForAllAcked(std::chrono::seconds(5)));
+    };
+
+    for(int i=0; i < n_participants; i++)
+    {
+        auto start = std::next(data.begin(), i*samples_per_participant ); // Moves to the 4th element (index 3)
+        auto end = std::next(start, samples_per_participant);
+        auto writer_data(std::list<KeyedHelloWorld>(start, end));
+        validate_key(writer_data, i);
+        writers[i]->send(writer_data);
+        EXPECT_TRUE(writer_data.empty());
+    }
+
+    for(auto& reader : readers)
+    {
+        reader->block_for_all();
+    }
+    for(auto& writer : writers)
+    {
+        EXPECT_TRUE(writer->waitForAllAcked(std::chrono::seconds(5)));
     }
 
     // Destroy participants
