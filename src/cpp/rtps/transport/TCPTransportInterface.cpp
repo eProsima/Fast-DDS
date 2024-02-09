@@ -1846,11 +1846,18 @@ bool TCPTransportInterface::sanitize_transport(
 
         TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
 
-        if (tcp_sender_resource &&
-                tcp_sender_resource->channel()->connection_status() ==
-                TCPChannelResource::eConnectionStatus::eDisconnected)
+        if (tcp_sender_resource)
         {
-            it = send_resource_list.erase(it);
+            auto channel = channel_resources_.find(tcp_sender_resource->locator());
+            if (channel != channel_resources_.end() &&
+                channel->second->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
+            {
+                it = send_resource_list.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
         }
         else
         {
