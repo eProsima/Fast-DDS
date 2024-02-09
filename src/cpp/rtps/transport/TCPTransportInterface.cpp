@@ -694,7 +694,6 @@ bool TCPTransportInterface::OpenOutputChannel(
         return false;
     }
 
-    bool success = false;
     Locator physical_locator = IPLocator::toPhysicalLocator(locator);
 
     // We try to find a SenderResource that has this locator.
@@ -753,68 +752,57 @@ bool TCPTransportInterface::OpenOutputChannel(
     // (Server-Client Topology - Client Side) OR LARGE DATA Topology with PDP discovery before TCP connection
     else
     {
+        // Get listening port (0 if client)
+        uint16_t listening_port = 0;
+        const TCPTransportDescriptor* config = configuration();
+        assert (config != nullptr);
+        if (!config->listening_ports.empty())
+        {
+            listening_port = config->listening_ports.front();
+        }
+
         // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
         // and the locator added to the send_resource_list.
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
-        const TCPTransportDescriptor* config = configuration();
-        if (config != nullptr)
+        if (IPLocator::getPhysicalPort(physical_locator) < listening_port)
         {
-            auto create_connect_channel = [&]()
-                    {
-                        EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
-                                << IPLocator::getPhysicalPort(locator) << "; logical: "
-                                << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+            // Client side (either Server-Client or LARGE_DATA)
+            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
+                    << IPLocator::getPhysicalPort(locator) << "; logical: "
+                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
 
-                        // Create a TCP_CONNECT_TYPE channel
-                        channel.reset(
+            // Create a TCP_CONNECT_TYPE channel
+            channel.reset(
 #if TLS_FOUND
-                            (configuration()->apply_security) ?
-                            static_cast<TCPChannelResource*>(
-                                new TCPChannelResourceSecure(this, io_service_, ssl_context_,
-                                physical_locator, configuration()->maxMessageSize)) :
+                (configuration()->apply_security) ?
+                static_cast<TCPChannelResource*>(
+                    new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+                    physical_locator, configuration()->maxMessageSize)) :
 #endif // if TLS_FOUND
-                            static_cast<TCPChannelResource*>(
-                                new TCPChannelResourceBasic(this, io_service_, physical_locator,
-                                configuration()->maxMessageSize))
-                            );
+                static_cast<TCPChannelResource*>(
+                    new TCPChannelResourceBasic(this, io_service_, physical_locator,
+                    configuration()->maxMessageSize))
+                );
 
-                        channel_resources_[physical_locator] = channel;
-                        channel->connect(channel_resources_[physical_locator]);
-                        channel->add_logical_port(logical_port, rtcp_message_manager_.get());
-                    };
-
-            // Server-Client Topology - Client Side
-            if (config->listening_ports.empty())
-            {
-                // Create CONNECT channel to act as clients
-                create_connect_channel();
-            }
-            // LARGE DATA Topology
-            else
-            {
-                // Server side LARGE_DATA
-                if (IPLocator::getPhysicalPort(physical_locator) < *(config->listening_ports.begin()))
-                {
-                    // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
-                    EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
-                            << IPLocator::getPhysicalPort(locator) << "; logical: "
-                            << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
-                }
-                // Client side LARGE_DATA
-                else
-                {
-                    // Create CONNECT channel to act as clients
-                    create_connect_channel();
-                }
-            }
+            channel_resources_[physical_locator] = channel;
+            channel->connect(channel_resources_[physical_locator]);
+            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+        }
+        else
+        {
+            // Server side LARGE_DATA
+            // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
+            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
+                    << IPLocator::getPhysicalPort(locator) << "; logical: "
+                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
         }
     }
+
     statistics_info_.add_entry(locator);
-    success = true;
     send_resource_list.emplace_back(
         static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
 
-    return success;
+    return true;
 }
 
 bool TCPTransportInterface::OpenInputChannel(
