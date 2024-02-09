@@ -91,7 +91,7 @@ class Clean:
             The deleted file names
 
         """
-        segment_lock_re = re.compile('^fastrtps_(\\d|[a-z]){16}_el|_sl')
+        segment_lock_re = re.compile('^fastrtps_(\\d|[a-z]){16}(_el|_sl)')
 
         # Each segment has an "_el" lock file that is locked if the segment
         # is open and the owner process is alive
@@ -123,7 +123,7 @@ class Clean:
             the deleted file names
 
         """
-        port_lock_re = re.compile('^fastrtps_port\\d{,5}_el|_sl')
+        port_lock_re = re.compile('^fastrtps_port\\d{,5}(_el|_sl)')
         # Each port has an "_el | _sl" lock file that is locked if the port
         # is open and the owner process is alive
         port_locks = [
