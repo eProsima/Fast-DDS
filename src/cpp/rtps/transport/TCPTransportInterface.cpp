@@ -722,7 +722,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                                                                       << IPLocator::getLogicalPort(
                 locator) << ") @ " << IPLocator::to_string(locator));
 
-    std::unique_lock<std::mutex> socketsLock(sockets_map_mutex_);
+    std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(physical_locator);
 
     // Maybe as WAN?
@@ -739,11 +739,10 @@ bool TCPTransportInterface::OpenOutputChannel(
         }
     }
 
-    std::shared_ptr<TCPChannelResource> channel;
-
     // (Server-Client Topology OR LARGE DATA with PDP discovery after TCP connection) - Server side
     if (channel_resource != channel_resources_.end())
     {
+        std::shared_ptr<TCPChannelResource> channel;
         // There is an existing channel in channel_resources_ created for reception with the remote locator as key. Use it.
         channel = channel_resource->second;
         // Add logical port to channel if it's not there yet
@@ -772,7 +771,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
 
             // Create a TCP_CONNECT_TYPE channel
-            channel.reset(
+            std::shared_ptr<TCPChannelResource> channel(
 #if TLS_FOUND
                 (configuration()->apply_security) ?
                 static_cast<TCPChannelResource*>(
