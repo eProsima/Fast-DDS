@@ -50,11 +50,6 @@ public:
         thread_.swap(pThread);
     }
 
-    inline eprosima::thread get_thread()
-    {
-        return std::move(thread_);
-    }
-
     inline bool alive() const
     {
         return alive_.load();

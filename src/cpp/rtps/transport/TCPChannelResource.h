@@ -95,8 +95,6 @@ public:
     bool is_logical_port_added(
             uint16_t port);
 
-    bool is_pending_logical_port_empty();
-
     bool connection_established()
     {
         return connection_status_ == eConnectionStatus::eEstablished;
@@ -110,12 +108,6 @@ public:
     inline const Locator& locator() const
     {
         return locator_;
-    }
-
-    void set_locator(
-            Locator locator)
-    {
-        locator_ = locator;
     }
 
     ResponseCode process_bind_request(
