@@ -728,14 +728,11 @@ bool TCPTransportInterface::OpenOutputChannel(
     // Maybe as WAN?
     if (channel_resource == channel_resources_.end() && IPLocator::hasWan(locator))
     {
-        Locator wan_locator;
-        wan_locator.kind = locator.kind;
-        wan_locator.port = locator.port;     // Copy full port
-        IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(locator));     // WAN to IP
+        Locator wan_locator = IPLocator::WanToLanLocator(locator);
         channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(wan_locator));
         if (channel_resource != channel_resources_.end())
         {
-            channel_resources_[IPLocator::toPhysicalLocator(locator)] = channel_resource->second;     // Add alias!
+            channel_resources_[physical_locator] = channel_resource->second;     // Add alias!
         }
     }
 
@@ -1279,10 +1276,8 @@ bool TCPTransportInterface::send(
     // Maybe is WAN?
     if (locator_mismatch && IPLocator::hasWan(remote_locator))
     {
-        Locator wan_locator;
-        wan_locator.kind = remote_locator.kind;
-        wan_locator.port = IPLocator::toPhysicalLocator(remote_locator).port;
-        IPLocator::setIPv4(wan_locator, IPLocator::toWanstring(remote_locator)); // WAN to IP
+        Locator wan_locator = IPLocator::WanToLanLocator(remote_locator);
+        wan_locator = IPLocator::toPhysicalLocator(wan_locator);
         if (locator == wan_locator)
         {
             locator_mismatch = false;
