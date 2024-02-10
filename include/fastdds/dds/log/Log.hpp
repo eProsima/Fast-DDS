@@ -178,6 +178,32 @@ public:
             Log::Kind);
 };
 
+//! Streams Log::Kind serialization
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const Log::Kind& kind)
+{
+    switch (kind){
+        case Log::Kind::Info:
+            output << "Info";
+            break;
+
+        case Log::Kind::Warning:
+            output << "Warning";
+            break;
+
+        case Log::Kind::Error:
+            output << "Error";
+            break;
+
+        default:
+            output << "Invalid Verbosity Kind.";
+            break;
+    }
+
+    return output;
+}
+
 /**
  * Consumes a log entry to output it somewhere.
  */
