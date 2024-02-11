@@ -2415,7 +2415,7 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_STRING16>(
 }
 
 traits<DynamicTypeImpl>::ref_type DynamicDataImpl::get_enclosing_type(
-        traits<DynamicTypeImpl>::ref_type type) const noexcept
+        traits<DynamicTypeImpl>::ref_type type) noexcept
 {
     traits<DynamicTypeImpl>::ref_type ret_value = type;
 
@@ -2443,7 +2443,7 @@ traits<DynamicTypeImpl>::ref_type DynamicDataImpl::get_enclosing_type(
 }
 
 TypeKind DynamicDataImpl::get_enclosing_typekind(
-        traits<DynamicTypeImpl>::ref_type type) const noexcept
+        traits<DynamicTypeImpl>::ref_type type) noexcept
 {
     return get_enclosing_type(type)->get_kind();
 }
@@ -3543,12 +3543,33 @@ void DynamicDataImpl::serialize(
         }
         case TK_UNION:
         {
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+            {
+                switch (type_->get_descriptor().extensibility_kind())
+                {
+                    case ExtensibilityKind::MUTABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                        break;
+                    case ExtensibilityKind::APPENDABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                        break;
+                    case ExtensibilityKind::FINAL:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                        break;
+                }
+            }
+            else
+            {
+                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                {
+                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+                }
+            }
+
             eprosima::fastcdr::Cdr::state current_state(cdr);
-            cdr.begin_serialize_type(current_state,
-                    eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2:                     //TODO(richiware) get
-                                                                                                //extensibility
-                    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            cdr.begin_serialize_type(current_state, encoding);
 
             // The union_id_ must be serialized as a discriminator_type_
             auto discriminator_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(0))};
@@ -3627,12 +3648,33 @@ void DynamicDataImpl::serialize(
         }
         case TK_STRUCTURE:
         {
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+            {
+                switch (type_->get_descriptor().extensibility_kind())
+                {
+                    case ExtensibilityKind::MUTABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                        break;
+                    case ExtensibilityKind::APPENDABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                        break;
+                    case ExtensibilityKind::FINAL:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                        break;
+                }
+            }
+            else
+            {
+                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                {
+                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+                }
+            }
+
             eprosima::fastcdr::Cdr::state current_state(cdr);
-            cdr.begin_serialize_type(current_state,
-                    eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2:                     //TODO(richiware) get
-                                                                                                //extensibility
-                    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+            cdr.begin_serialize_type(current_state, encoding);
 
             for (auto& member : type->get_all_members_by_index())
             {
@@ -4010,10 +4052,6 @@ void DynamicDataImpl::serialize(
             }
         }
         break;
-        case TK_ALIAS:
-            assert(type->get_descriptor().base_type());
-            serialize(cdr, traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
-            break;
     }
 }
 
@@ -4139,9 +4177,31 @@ bool DynamicDataImpl::deserialize(
         }
         case TK_UNION:
         {
-            cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :     //TODO(richiware) get extensibility
-                    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+            {
+                switch (type_->get_descriptor().extensibility_kind())
+                {
+                    case ExtensibilityKind::MUTABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                        break;
+                    case ExtensibilityKind::APPENDABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                        break;
+                    case ExtensibilityKind::FINAL:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                        break;
+                }
+            }
+            else
+            {
+                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                {
+                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+                }
+            }
+            cdr.deserialize_type(encoding,
                     [&](eprosima::fastcdr::Cdr& dcdr,
                     const eprosima::fastcdr::MemberId& mid) -> bool
                     {
@@ -4242,7 +4302,7 @@ bool DynamicDataImpl::deserialize(
                     auto size {type_->get_descriptor().bound().at(index)};
                     auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
 
-                    for (auto i = 0; i < size; ++i)
+                    for (uint32_t i = 0; i < size; ++i)
                     {
                         if (bitset.test(i + base))
                         {
@@ -4303,9 +4363,31 @@ bool DynamicDataImpl::deserialize(
         }
         case TK_STRUCTURE:
         {
-            cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-                    eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2 :     //TODO(richiware) get extensibility
-                    eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+            {
+                switch (type_->get_descriptor().extensibility_kind())
+                {
+                    case ExtensibilityKind::MUTABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                        break;
+                    case ExtensibilityKind::APPENDABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                        break;
+                    case ExtensibilityKind::FINAL:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                        break;
+                }
+            }
+            else
+            {
+                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                {
+                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+                }
+            }
+            cdr.deserialize_type(encoding,
                     [&](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
                     {
                         bool ret_value = true;
@@ -4845,10 +4927,6 @@ bool DynamicDataImpl::deserialize(
 
         }
         break;
-        case TK_ALIAS:
-            assert(type->get_descriptor().base_type());
-            return deserialize(cdr,
-                           traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()));
         default:
             break;
     }
@@ -4944,13 +5022,33 @@ size_t DynamicDataImpl::calculate_serialized_size(
             break;
         case TK_UNION:
         {
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+            if (eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
+            {
+                switch (type_->get_descriptor().extensibility_kind())
+                {
+                    case ExtensibilityKind::MUTABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                        break;
+                    case ExtensibilityKind::APPENDABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                        break;
+                    case ExtensibilityKind::FINAL:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                        break;
+                }
+            }
+            else
+            {
+                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                {
+                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+                }
+            }
+
             eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-            calculated_size = calculator.begin_calculate_type_serialized_size(
-                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2:                         //TODO(richiware) get
-                                                                                                //extensibility
-                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
-                current_alignment);
+            calculated_size = calculator.begin_calculate_type_serialized_size(encoding, current_alignment);
 
             // Union discriminator
             auto discriminator_data = std::static_pointer_cast<DynamicDataImpl>(value_.at(0));
@@ -4995,13 +5093,33 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_STRUCTURE:
         {
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+            if (eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
+            {
+                switch (type_->get_descriptor().extensibility_kind())
+                {
+                    case ExtensibilityKind::MUTABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                        break;
+                    case ExtensibilityKind::APPENDABLE:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                        break;
+                    case ExtensibilityKind::FINAL:
+                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                        break;
+                }
+            }
+            else
+            {
+                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                {
+                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+                }
+            }
+
             eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-            calculated_size = calculator.begin_calculate_type_serialized_size(
-                eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2:                         //TODO(richiware) get
-                                                                                                //extensibility
-                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR,
-                current_alignment);
+            calculated_size = calculator.begin_calculate_type_serialized_size(encoding, current_alignment);
 
             for (auto& member : type->get_all_members_by_index())
             {
@@ -5132,7 +5250,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
                                             type_->get_descriptor().key_element_type()))};
             TypeKind element_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                                 type_->get_descriptor().element_type()))};
-            bool is_primitive {!is_complex_kind(element_kind)};
+            bool is_primitive {!is_complex_kind(element_kind) &&
+                               TK_STRING8 != element_kind &&
+                               TK_STRING16 != element_kind};
             size_t initial_alignment {current_alignment};
 
             if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
@@ -5379,13 +5499,6 @@ size_t DynamicDataImpl::calculate_serialized_size(
             }
         }
         break;
-        case TK_ALIAS:
-            assert(type->get_descriptor().base_type());
-            calculated_size = calculate_serialized_size(
-                calculator,
-                traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type()),
-                current_alignment);
-            break;
         default:
             break;
     }
@@ -5396,22 +5509,462 @@ size_t DynamicDataImpl::calculate_serialized_size(
 void DynamicDataImpl::serialize_key(
         eprosima::fastcdr::Cdr& cdr) const noexcept
 {
+    TypeKind type_kind = get_enclosing_typekind(type_);
+
+    switch (type_kind)
+    {
+        default:
+            serialize(cdr);
+            break;
+        case TK_STRUCTURE:
+        {
+            bool there_is_keyed_member {false};
+            for (auto& member : type_->get_all_members())
+            {
+                auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                if (member_impl->get_descriptor().is_key())
+                {
+                    there_is_keyed_member = true;
+                    auto it = value_.find(member.first);
+
+                    if (it != value_.end())
+                    {
+                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                        member_data->serialize_key(cdr);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error serializing structure member because not found on DynamicData");
+                    }
+                }
+            }
+
+            if (!there_is_keyed_member)
+            {
+                for (auto& member : type_->get_all_members())
+                {
+                    auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                    auto it = value_.find(member.first);
+
+                    if (it != value_.end())
+                    {
+                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                        member_data->serialize_key(cdr);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error serializing structure member because not found on DynamicData");
+                    }
+                }
+            }
+
+            break;
+        }
+        case TK_UNION:
+        {
+            // The union_id_ must be serialized as a discriminator_type_
+            auto discriminator_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(0))};
+            discriminator_data->serialize_key(cdr);
+
+            if (MEMBER_ID_INVALID != selected_union_member_)
+            {
+                auto member_data = std::static_pointer_cast<DynamicDataImpl>(value_.at(selected_union_member_));
+                member_data->serialize_key(cdr);
+            }
+            break;
+        }
+    }
 }
 
-size_t DynamicDataImpl::get_key_max_cdr_serialized_size(
+size_t DynamicDataImpl::calculate_key_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        size_t& current_alignment) const noexcept
+{
+    size_t calculated_size {0};
+
+    TypeKind type_kind = get_enclosing_typekind(type_);
+
+    switch (type_kind)
+    {
+        default:
+            calculated_size = calculate_serialized_size(calculator, current_alignment);
+            break;
+        case TK_STRUCTURE:
+        {
+            bool there_is_keyed_member {false};
+            for (auto& member : type_->get_all_members())
+            {
+                auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                if (member_impl->get_descriptor().is_key())
+                {
+                    there_is_keyed_member = true;
+                    auto it = value_.find(member.first);
+
+                    if (it != value_.end())
+                    {
+                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                        calculated_size += calculator.calculate_member_serialized_size(
+                            member.first, member_data, current_alignment);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error calculating size structure member because not found on DynamicData");
+                    }
+                }
+            }
+
+            if (!there_is_keyed_member)
+            {
+                for (auto& member : type_->get_all_members())
+                {
+                    auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                    auto it = value_.find(member.first);
+
+                    if (it != value_.end())
+                    {
+                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                        calculated_size += calculator.calculate_member_serialized_size(
+                            member.first, member_data, current_alignment);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                "Error serializing structure member because not found on DynamicData");
+                    }
+                }
+            }
+
+            break;
+        }
+        case TK_UNION:
+        {
+            // The union_id_ must be serialized as a discriminator_type_
+            auto discriminator_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(0))};
+            calculated_size += calculator.calculate_member_serialized_size(
+                0, discriminator_data, current_alignment);
+
+            if (MEMBER_ID_INVALID != selected_union_member_)
+            {
+                auto member_data = std::static_pointer_cast<DynamicDataImpl>(value_.at(selected_union_member_));
+                calculated_size += calculator.calculate_member_serialized_size(
+                    selected_union_member_, member_data, current_alignment);
+            }
+            break;
+        }
+    }
+
+    return calculated_size;
+}
+
+size_t DynamicDataImpl::calculate_max_serialized_size(
         traits<DynamicType>::ref_type type,
         size_t current_alignment)
 {
-    return 0;
-}
+    size_t initial_alignment {current_alignment};
 
-size_t DynamicDataImpl::get_max_cdr_serialized_size(
-        traits<DynamicType>::ref_type type,
-        size_t current_alignment)
-{
-    return 0;
+    /*TODO(richiware)
+       if (data.type_ && annotation_is_non_serialized())
+       {
+        return 0;
+       }
+     */
+
+    auto type_impl = get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(type));
+
+    switch (type_impl->get_kind())
+    {
+        case TK_FLOAT128:
+            current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            break;
+        case TK_FLOAT64:
+        case TK_INT64:
+        case TK_UINT64:
+            current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            break;
+        case TK_FLOAT32:
+        case TK_INT32:
+        case TK_UINT32:
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            break;
+        case TK_INT16:
+        case TK_UINT16:
+        case TK_CHAR16:
+            current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            break;
+        case TK_CHAR8:
+        case TK_BYTE:
+        case TK_BOOLEAN:
+        case TK_INT8:
+        case TK_UINT8:
+            current_alignment += 1;
+            break;
+        case TK_STRING8:
+        {
+            size_t max_size = type_impl->get_descriptor().bound().at(0);
+            if (static_cast<uint32_t>(LENGTH_UNLIMITED) == max_size)
+            {
+                max_size = 255;
+            }
+            current_alignment = 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + max_size + 1;
+            break;
+        }
+        case TK_STRING16:
+        {
+            size_t max_size = type_impl->get_descriptor().bound().at(0);
+            if (static_cast<uint32_t>(LENGTH_UNLIMITED) == max_size)
+            {
+                max_size = 255;
+            }
+            current_alignment = 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (max_size * 2);
+            break;
+        }
+        case TK_UNION:
+        {
+            size_t reset_alignment {0};
+            size_t union_max_size_serialized {0};
+            if (ExtensibilityKind::FINAL != type_impl->get_descriptor().extensibility_kind())
+            {
+                // For APPENDABLE and MUTABLE, the maximum is the XCDR2 header (DHEADER(0) : Int32).
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+            current_alignment += calculate_max_serialized_size(
+                type_impl->get_descriptor().discriminator_type(), current_alignment);
+
+            for (auto& member : type_impl->get_all_members_by_index())
+            {
+
+                auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+                reset_alignment = current_alignment;
+
+                if (ExtensibilityKind::MUTABLE == type_impl->get_descriptor().extensibility_kind() ||
+                        member->get_descriptor().is_optional())
+                {
+                    // If member is from a MUTABLE type (or it is optional member) the maximum is XCDR1 LongMemberHeader.
+                    // << ALIGN(4)
+                    // << { FLAG_I + FLAG_M + PID_EXTENDED : UInt16 }
+                    // << { slength=8 : UInt16 }
+                    // << { M.id : <<: UInt32 }
+                    // << { M.value.ssize : UInt32 }
+                    reset_alignment += 4 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+                }
+
+                reset_alignment += calculate_max_serialized_size(member_impl->get_descriptor().type(), reset_alignment);
+
+                if (union_max_size_serialized < reset_alignment)
+                {
+                    union_max_size_serialized = reset_alignment;
+                }
+            }
+
+            current_alignment = union_max_size_serialized;
+
+            if (ExtensibilityKind::MUTABLE != type_impl->get_descriptor().extensibility_kind())
+            {
+                // For MUTABLE, extra alignment for the PID_SENTINAL.
+                current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+            break;
+        }
+        case TK_BITSET:
+        {
+            auto sum =
+                    std::accumulate(type_impl->get_descriptor().bound().begin(),
+                            type_impl->get_descriptor().bound().end(), 0);
+            if (9 > sum)
+            {
+                current_alignment += 1;
+            }
+            else if (17 > sum)
+            {
+                current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            }
+            else if (33 > sum)
+            {
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+            else
+            {
+                current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+            break;
+        }
+        case TK_STRUCTURE:
+        {
+            if (ExtensibilityKind::FINAL != type_impl->get_descriptor().extensibility_kind())
+            {
+                // For APPENDABLE and MUTABLE, the maximum is the XCDR2 header (DHEADER(0) : Int32).
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+            for (auto& member : type_impl->get_all_members_by_index())
+            {
+                auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+
+                if (ExtensibilityKind::MUTABLE == type_impl->get_descriptor().extensibility_kind() ||
+                        member->get_descriptor().is_optional())
+                {
+                    // If member is from a MUTABLE type (or it is optional member) the maximum is XCDR1 LongMemberHeader.
+                    // << ALIGN(4)
+                    // << { FLAG_I + FLAG_M + PID_EXTENDED : UInt16 }
+                    // << { slength=8 : UInt16 }
+                    // << { M.id : <<: UInt32 }
+                    // << { M.value.ssize : UInt32 }
+                    current_alignment += 4 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+                }
+
+                current_alignment += calculate_max_serialized_size(
+                    member_impl->get_descriptor().type(), current_alignment);
+            }
+
+            if (ExtensibilityKind::MUTABLE != type_impl->get_descriptor().extensibility_kind())
+            {
+                // For MUTABLE, extra alignment for the PID_SENTINAL.
+                current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+            break;
+        }
+        case TK_ARRAY:
+        {
+            TypeKind element_kind =
+                    get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type_impl->get_descriptor().element_type()));
+
+            if (is_complex_kind(element_kind) ||
+                    TK_STRING8 == element_kind ||
+                    TK_STRING16 == element_kind)
+            {
+                // DHEADER if XCDRv2
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+            auto dimension {std::accumulate(type_impl->get_descriptor().bound().begin(),
+                                    type_impl->get_descriptor().bound().end(), 1, std::multiplies<uint32_t>())};
+
+            if (0 < dimension)
+            {
+                current_alignment += calculate_max_serialized_size(
+                    type_impl->get_descriptor().element_type(), current_alignment);
+
+                if (1 < dimension)
+                {
+                    auto element_size_after_first = calculate_max_serialized_size(
+                        type_impl->get_descriptor().element_type(), current_alignment);
+                    current_alignment += element_size_after_first * (dimension - 1);
+                }
+            }
+
+            break;
+        }
+        case TK_SEQUENCE:
+        {
+            TypeKind element_kind =
+                    get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type_impl->get_descriptor().element_type()));
+
+            if (is_complex_kind(element_kind) ||
+                    TK_STRING8 == element_kind ||
+                    TK_STRING16 == element_kind)
+            {
+                // DHEADER if XCDRv2
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+            // Sequence length.
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            auto bound {type_impl->get_descriptor().bound().at(0)};
+
+            if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound)
+            {
+                current_alignment += calculate_max_serialized_size(
+                    type_impl->get_descriptor().element_type(), current_alignment);
+
+                if (1 < bound)
+                {
+                    auto element_size_after_first = calculate_max_serialized_size(
+                        type_impl->get_descriptor().element_type(), current_alignment);
+                    current_alignment += element_size_after_first * (bound - 1);
+                }
+            }
+
+
+            break;
+        }
+        case TK_MAP:
+        {
+            TypeKind element_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                                type_impl->get_descriptor().element_type()))};
+
+            if (is_complex_kind(element_kind) ||
+                    TK_STRING8 == element_kind ||
+                    TK_STRING16 == element_kind)
+            {
+                // DHEADER if XCDRv2
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+
+            // Map length
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+            auto bound {type_impl->get_descriptor().bound().at(0)};
+
+            if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound)
+            {
+                current_alignment += calculate_max_serialized_size(
+                    type_impl->get_descriptor().key_element_type(), current_alignment);
+                current_alignment += calculate_max_serialized_size(
+                    type_impl->get_descriptor().element_type(), current_alignment);
+
+                if (1 < bound)
+                {
+                    auto element_size_after_first = calculate_max_serialized_size(
+                        type_impl->get_descriptor().key_element_type(), current_alignment);
+                    element_size_after_first += calculate_max_serialized_size(
+                        type_impl->get_descriptor().element_type(), current_alignment);
+                    current_alignment += element_size_after_first * (bound - 1);
+                }
+            }
+
+            break;
+        }
+        case TK_BITMASK:
+        {
+            auto bound = type_impl->get_descriptor().bound().at(0);
+
+            if (9 > bound)
+            {
+                current_alignment += 1;
+            }
+            else if (17 > bound)
+            {
+                current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+            }
+            else if (33 > bound)
+            {
+                current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
+            else
+            {
+                current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+            }
+        }
+        break;
+        default:
+            break;
+    }
+
+    return current_alignment - initial_alignment;
 }
 
 } // namespace dds
+
 } // namespace fastdds
 } // namespace eprosima

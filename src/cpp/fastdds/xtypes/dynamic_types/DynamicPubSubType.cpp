@@ -23,6 +23,7 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
+#include "DynamicTypeImpl.hpp"
 #include "DynamicDataImpl.hpp"
 
 namespace eprosima {
@@ -75,8 +76,9 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return RETCODE_BAD_PARAMETER;
     }
+
+    return RETCODE_BAD_PARAMETER;
 }
 
 void* DynamicPubSubType::createData()
@@ -132,14 +134,17 @@ bool DynamicPubSubType::getKey(
         eprosima::fastrtps::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
-    if (dynamic_type_ != nullptr || !m_isGetKeyDefined)
+    if (!dynamic_type_ || !m_isGetKeyDefined)
     {
         return false;
     }
     traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
-    size_t keyBufferSize = static_cast<uint32_t>(DynamicDataImpl::get_key_max_cdr_serialized_size(dynamic_type_));
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
+    size_t keyBufferSize =
+            static_cast<uint32_t>((*data_ptr)->calculate_key_serialized_size(calculator, current_alignment));
 
-    if (m_keyBuffer == nullptr)
+    if (nullptr == m_keyBuffer)
     {
         m_keyBuffer = (unsigned char*)malloc(keyBufferSize > 16 ? keyBufferSize : 16);
         memset(m_keyBuffer, 0, keyBufferSize > 16 ? keyBufferSize : 16);
@@ -147,7 +152,7 @@ bool DynamicPubSubType::getKey(
 
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
-            eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);  // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2);  // Object that serializes the data.
     (*data_ptr)->serialize_key(ser);
     if (force_md5 || keyBufferSize > 16)
     {
@@ -216,11 +221,31 @@ bool DynamicPubSubType::serialize(
                     XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    //TODO (richiware)
-    ser.set_encoding_flag(
-        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR  :
-        eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+    auto type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type_);
+    eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+    if (DataRepresentationId_t::XCDR2_DATA_REPRESENTATION == data_representation)
+    {
+        switch (type_impl->get_descriptor().extensibility_kind())
+        {
+            case ExtensibilityKind::MUTABLE:
+                encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                break;
+            case ExtensibilityKind::APPENDABLE:
+                encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                break;
+            case ExtensibilityKind::FINAL:
+                encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                break;
+        }
+    }
+    else
+    {
+        if (ExtensibilityKind::MUTABLE == type_impl->get_descriptor().extensibility_kind())
+        {
+            encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+        }
+    }
+    ser.set_encoding_flag(encoding);
 
     try
     {
@@ -247,10 +272,22 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
         return;
     }
 
-    m_typeSize = static_cast<uint32_t>(DynamicDataImpl::get_max_cdr_serialized_size(dynamic_type_) + 4);
+    m_typeSize = static_cast<uint32_t>(DynamicDataImpl::calculate_max_serialized_size(dynamic_type_) + 4);
     setName(dynamic_type_->get_name());
 
-    //TODO(richiware) m_isGetKeyDefined = dynamic_type_->key_annotation();
+    if (TK_STRUCTURE == dynamic_type_->get_kind())
+    {
+        auto type_impl = traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type_);
+        for (auto& member : type_impl->get_all_members_by_index())
+        {
+            auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+            if (member_impl->get_descriptor().is_key())
+            {
+                m_isGetKeyDefined = true;
+                break;
+            }
+        }
+    }
 }
 
 } // namespace dds
