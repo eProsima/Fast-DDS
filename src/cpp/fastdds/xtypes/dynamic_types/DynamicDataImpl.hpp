@@ -380,11 +380,11 @@ public:
     void serialize_key(
             eprosima::fastcdr::Cdr& cdr) const noexcept;
 
-    static size_t get_key_max_cdr_serialized_size(
-            traits<DynamicType>::ref_type type,
-            size_t current_alignment = 0);
+    size_t calculate_key_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
+            size_t& current_alignment) const noexcept;
 
-    static size_t get_max_cdr_serialized_size(
+    static size_t calculate_max_serialized_size(
             traits<DynamicType>::ref_type type,
             size_t current_alignment = 0);
 
@@ -517,14 +517,14 @@ private:
     /*!
      * @brief Given a type, returns the enclosing type if exists.
      */
-    traits<DynamicTypeImpl>::ref_type get_enclosing_type(
-            traits<DynamicTypeImpl>::ref_type type) const noexcept;
+    static traits<DynamicTypeImpl>::ref_type get_enclosing_type(
+            traits<DynamicTypeImpl>::ref_type type) noexcept;
 
     /*!
      * @brief Given a type, returns the enclosing type kind if exists.
      */
-    TypeKind get_enclosing_typekind(
-            traits<DynamicTypeImpl>::ref_type type) const noexcept;
+    static TypeKind get_enclosing_typekind(
+            traits<DynamicTypeImpl>::ref_type type) noexcept;
 
     template<TypeKind TK >
     ReturnCode_t get_primitive_value(
