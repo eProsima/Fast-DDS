@@ -30,14 +30,13 @@ class TCPChannelResourceSecure : public TCPChannelResource
 {
 public:
 
-    // Constructor called when trying to connect to a remote server OR when using LARGE_DATA topology (secure versions)
+    // Constructor called when trying to connect to a remote server (secure version)
     TCPChannelResourceSecure(
             TCPTransportInterface* parent,
             asio::io_service& service,
             asio::ssl::context& ssl_context,
             const Locator& locator,
-            uint32_t maxMsgSize,
-            TCPConnectionType tcp_connection_type = TCPConnectionType::TCP_CONNECT_TYPE);
+            uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection (secure version)
     TCPChannelResourceSecure(
