@@ -760,7 +760,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
         // and the locator added to the send_resource_list.
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
-        if (IPLocator::getPhysicalPort(physical_locator) < listening_port)
+        if (IPLocator::getPhysicalPort(physical_locator) > listening_port)
         {
             // Client side (either Server-Client or LARGE_DATA)
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
