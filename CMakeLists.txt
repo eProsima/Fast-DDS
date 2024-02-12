@@ -497,7 +497,6 @@ if(BUILD_DOCUMENTATION)
         set(README_INSTALL_LOCATION "${DOC_INSTALL_DIR}")
     endif()
 
-    configure_file(doc/README.html.in ${README_LOCATION}/README.html @ONLY IMMEDIATE)
 
     ### ReadTheDocs ########################
     if(NOT CHECK_DOCUMENTATION)
@@ -594,11 +593,6 @@ if(BUILD_DOCUMENTATION)
     # Instalation of doxygen files
     install(DIRECTORY ${PROJECT_BINARY_DIR}/doc/api_reference
         DESTINATION ${DOC_INSTALL_DIR}
-        COMPONENT documentation
-        )
-
-    install(FILES "${README_LOCATION}/README.html"
-        DESTINATION ${README_INSTALL_LOCATION}
         COMPONENT documentation
         )
 
