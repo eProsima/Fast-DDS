@@ -73,7 +73,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     auto type_ids_result = local_type_identifiers_.insert({type_name, type_ids});
     auto min_entry_result = type_registry_entries_.insert({type_ids.type_identifier1(), minimal_entry});
     auto max_entry_result = type_registry_entries_.insert({type_ids.type_identifier2(), complete_entry});
-    if (!type_ids_result.second || !min_entry_result.second || !max_entry_result.second)
+    if (!type_ids_result.second || !max_entry_result.second)
     {
         if (local_type_identifiers_[type_name] != type_ids ||
                 type_registry_entries_[type_ids.type_identifier1()] != minimal_entry ||

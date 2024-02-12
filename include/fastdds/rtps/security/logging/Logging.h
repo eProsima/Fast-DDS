@@ -243,22 +243,22 @@ bool Logging::compose_header(
                     MESSAGE,                                          \
                     std::string(CLASS ",") + __func__,                \
                     EXCEPTION);                                       \
-        } \
-        else {                                                      \
+        }                                                             \
+        else {                                                        \
             switch (LEVEL){                                           \
                 case LoggingLevel::EMERGENCY_LEVEL:                   \
                 case LoggingLevel::ALERT_LEVEL:                       \
                 case LoggingLevel::CRITICAL_LEVEL:                    \
                 case LoggingLevel::ERROR_LEVEL:                       \
-                    EPROSIMA_LOG_ERROR(SECURITY, MESSAGE);                      \
+                    EPROSIMA_LOG_ERROR(SECURITY, MESSAGE);            \
                     break;                                            \
                 case LoggingLevel::WARNING_LEVEL:                     \
-                    EPROSIMA_LOG_WARNING(SECURITY, MESSAGE);                    \
+                    EPROSIMA_LOG_WARNING(SECURITY, MESSAGE);          \
                     break;                                            \
                 case LoggingLevel::NOTICE_LEVEL:                      \
                 case LoggingLevel::INFORMATIONAL_LEVEL:               \
                 case LoggingLevel::DEBUG_LEVEL:                       \
-                    EPROSIMA_LOG_INFO(SECURITY, MESSAGE);                       \
+                    EPROSIMA_LOG_INFO(SECURITY, MESSAGE);             \
                     break;                                            \
             }                                                         \
         }                                                             \

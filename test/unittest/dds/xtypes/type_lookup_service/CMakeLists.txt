@@ -16,19 +16,18 @@ file(GLOB DDSSQLFILTER_SOURCES ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/DDSSQ
 
 set(TYPELOOKUPSERVICETESTS_SOURCE TypeLookupServiceTests.cpp
 ${DDSSQLFILTER_SOURCES}
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderPtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypePtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/type_lookup_service/TypeLookupReplyListener.cpp
