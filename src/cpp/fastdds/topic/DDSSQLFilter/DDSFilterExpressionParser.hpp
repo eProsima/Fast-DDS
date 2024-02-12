@@ -42,7 +42,7 @@ namespace parser {
  */
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
-        const std::shared_ptr<eprosima::fastdds::dds::xtypes::TypeObject> type_object);
+        const std::shared_ptr<eprosima::fastdds::dds::xtypes::TypeObject>& type_object);
 
 /**
  * Performs parsing of a string containing a literal value.

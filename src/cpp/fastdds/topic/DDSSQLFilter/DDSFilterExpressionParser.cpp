@@ -93,12 +93,12 @@ using selector = parse_tree::selector <
 
 std::unique_ptr<ParseNode> parse_filter_expression(
         const char* expression,
-        const std::shared_ptr<TypeObject> type_object)
+        const std::shared_ptr<TypeObject>& type_object)
 {
     memory_input<> in(expression, "");
     try
     {
-        CurrentIdentifierState identifier_state { type_object, nullptr, {} };
+        CurrentIdentifierState identifier_state { type_object, std::make_shared<xtypes::TypeIdentifier>(), {} };
         return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in, identifier_state);
     }
     catch (const parse_error& e)

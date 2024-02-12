@@ -456,14 +456,14 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_annot
     for (const xtypes::CompleteAnnotationParameter& parameter : annotation_type.member_seq())
     {
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        traits<DynamicType>::ref_type base_type = base_type_from_type_identifier(parameter.common().member_type_id());
-        if (!base_type)
+        traits<DynamicType>::ref_type type = base_type_from_type_identifier(parameter.common().member_type_id());
+        if (!type)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent annotation parameter TypeIdentifier " + parameter.name().to_string());
             ret_val.reset();
             break;
         }
-        member_descriptor->type(base_type);
+        member_descriptor->type(type);
         member_descriptor->name(parameter.name());
         member_descriptor->default_value(get_annotation_parameter_value(parameter.default_value()));
         if (RETCODE_OK != ret_val->add_member(member_descriptor))
@@ -495,14 +495,14 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_annot
     {
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         member_descriptor->name(get_string_from_name_hash(parameter.name_hash()));
-        traits<DynamicType>::ref_type base_type = base_type_from_type_identifier(parameter.common().member_type_id());
-        if (!base_type)
+        traits<DynamicType>::ref_type type = base_type_from_type_identifier(parameter.common().member_type_id());
+        if (!type)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent annotation parameter TypeIdentifier " + member_descriptor->name().to_string());
             ret_val.reset();
             break;
         }
-        member_descriptor->type(base_type);
+        member_descriptor->type(type);
         member_descriptor->default_value(get_annotation_parameter_value(parameter.default_value()));
         if (RETCODE_OK != ret_val->add_member(member_descriptor))
         {
@@ -665,15 +665,14 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_union
     type_descriptor.is_nested(union_type.union_flags() & xtypes::IS_NESTED);
     type_descriptor.extensibility_kind(union_type.union_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
         (union_type.union_flags() & xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
-
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
-    apply_builtin_type_annotations(ret_val, union_type.header().detail().ann_builtin());
-    if (apply_custom_annotations(ret_val, union_type.header().detail().ann_custom()))
+    traits<DynamicType>::ref_type discriminator_type = base_type_from_type_identifier(union_type.discriminator().common().type_id());
+    if (discriminator_type)
     {
-        traits<DynamicType>::ref_type discriminator_type = base_type_from_type_identifier(union_type.discriminator().common().type_id());
-        if (discriminator_type)
+        type_descriptor.discriminator_type(discriminator_type);
+        ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
+        apply_builtin_type_annotations(ret_val, union_type.header().detail().ann_builtin());
+        if (apply_custom_annotations(ret_val, union_type.header().detail().ann_custom()))
         {
-            ret_val->type_descriptor_.discriminator_type(discriminator_type);
             apply_builtin_type_annotations(ret_val, union_type.discriminator().ann_builtin());
             if (apply_custom_annotations(ret_val, union_type.discriminator().ann_custom(), 0))
             {
@@ -707,11 +706,11 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_union
                 }
             }
         }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent discriminator TypeIdentifier");
-            ret_val.reset();
-        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent discriminator TypeIdentifier");
+        ret_val.reset();
     }
 
     if (ret_val && !ret_val->type_descriptor_.is_consistent())
@@ -731,12 +730,11 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_union
     type_descriptor.is_nested(union_type.union_flags() & xtypes::IS_NESTED);
     type_descriptor.extensibility_kind(union_type.union_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
         (union_type.union_flags() & xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
-
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
     traits<DynamicType>::ref_type discriminator_type = base_type_from_type_identifier(union_type.discriminator().common().type_id());
     if (discriminator_type)
     {
-        ret_val->type_descriptor_.discriminator_type(discriminator_type);
+        type_descriptor.discriminator_type(discriminator_type);
+        ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
         for (const xtypes::MinimalUnionMember& member : union_type.member_seq())
         {
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1282,10 +1280,12 @@ traits<DynamicType>::ref_type DynamicTypeBuilderFactoryImpl::base_type_from_type
             ret_val = get_primitive_type(TK_CHAR16);
             break;
         case xtypes::TI_STRING8_SMALL:
-            ret_val = create_string_type(type_identifier.string_sdefn().bound())->build();
+            ret_val = create_string_type(type_identifier.string_sdefn().bound() != xtypes::INVALID_LBOUND ?
+                    type_identifier.string_sdefn().bound() : LENGTH_UNLIMITED)->build();
             break;
         case xtypes::TI_STRING16_SMALL:
-            ret_val = create_wstring_type(type_identifier.string_sdefn().bound())->build();
+            ret_val = create_wstring_type(type_identifier.string_sdefn().bound() != xtypes::INVALID_LBOUND ?
+                    type_identifier.string_sdefn().bound() : LENGTH_UNLIMITED)->build();
             break;
         case xtypes::TI_STRING8_LARGE:
             ret_val = create_string_type(type_identifier.string_ldefn().bound())->build();
@@ -1311,18 +1311,14 @@ traits<DynamicType>::ref_type DynamicTypeBuilderFactoryImpl::base_type_from_type
         }
         case xtypes::TI_PLAIN_ARRAY_SMALL:
         {
-            TypeDescriptorImpl small_array_descriptor {TK_ARRAY, ""};
-            traits<DynamicType>::ref_type element_type = base_type_from_type_identifier(
-                    *type_identifier.array_sdefn().element_identifier());
-            small_array_descriptor.element_type(element_type);
+            BoundSeq array_bound_seq;
             for (xtypes::SBound bound : type_identifier.array_sdefn().array_bound_seq())
             {
-                small_array_descriptor.bound().push_back(bound);
+               array_bound_seq.push_back(bound);
             }
-            if (small_array_descriptor.is_consistent())
-            {
-                ret_val = std::make_shared<DynamicTypeBuilderImpl>(small_array_descriptor)->build();
-            }
+            traits<DynamicType>::ref_type element_type = base_type_from_type_identifier(
+                    *type_identifier.array_sdefn().element_identifier());
+            ret_val = create_array_type(element_type, array_bound_seq)->build();
             break;
         }
         case xtypes::TI_PLAIN_ARRAY_LARGE:
@@ -1393,6 +1389,7 @@ bool DynamicTypeBuilderFactoryImpl::apply_custom_annotations(
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Given annotation type identifier unknown to TypeObjectRegistry");
                 ret_val.reset();
+                break;
             }
             traits<AnnotationDescriptor>::ref_type annotation_descriptor {traits<AnnotationDescriptor>::make_shared()};
             annotation_descriptor->type(create_type_w_type_object(annotation_type_object)->build());
@@ -1409,12 +1406,14 @@ bool DynamicTypeBuilderFactoryImpl::apply_custom_annotations(
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent member applied annotation");
                 ret_val.reset();
+                break;
             }
             if (member_id == MEMBER_ID_INVALID &&
                     ret_val && RETCODE_OK != ret_val->apply_annotation(annotation_descriptor))
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistent type applied annotation");
                 ret_val.reset();
+                break;
             }
         }
     }
@@ -1451,13 +1450,13 @@ void DynamicTypeBuilderFactoryImpl::apply_try_construct_flag(
         MemberDescriptor::_ref_type& ret_val,
         const xtypes::MemberFlag& flags)
 {
-    if (flags & xtypes::TRY_CONSTRUCT2)
-    {
-        ret_val->try_construct_kind(TryConstructKind::USE_DEFAULT);
-    }
-    else if (flags & xtypes::TRY_CONSTRUCT1 && flags & xtypes::TRY_CONSTRUCT2)
+    if (flags & xtypes::TRY_CONSTRUCT1 && flags & xtypes::TRY_CONSTRUCT2)
     {
         ret_val->try_construct_kind(TryConstructKind::TRIM);
+    }
+    else if (flags & xtypes::TRY_CONSTRUCT2)
+    {
+        ret_val->try_construct_kind(TryConstructKind::USE_DEFAULT);
     }
     else
     {
@@ -1523,7 +1522,8 @@ std::string DynamicTypeBuilderFactoryImpl::get_annotation_parameter_value(
             ret_val = value.string8_value().to_string();
             break;
         case xtypes::TK_STRING16:
-            ret_val = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(value.string16_value());
+            // There is no official support in the STL to convert from wstring to string.
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "No support to create DynamicTypeBuilder with a TypeObject using custom annotations with wstring parameter");
             break;
         default:
             break;

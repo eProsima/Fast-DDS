@@ -181,16 +181,19 @@ struct identifier_processor
             case xtypes::EK_COMPLETE:
             {
                 std::shared_ptr<xtypes::TypeObject> type_object = std::make_shared<xtypes::TypeObject>();
-                DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(ti, *type_object);
-                if (xtypes::TK_ENUM == type_object->complete()._d())
+                if (RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                        ti, *type_object) && xtypes::EK_COMPLETE == type_object->_d())
                 {
-                    return DDSFilterValue::ValueKind::ENUM;
-                }
-                if (xtypes::TK_ALIAS == type_object->complete()._d())
-                {
-                    const xtypes::TypeIdentifier& aliasedId =
-                            type_object->complete().alias_type().body().common().related_type();
-                    return get_value_kind(aliasedId, pos);
+                    if (xtypes::TK_ENUM == type_object->complete()._d())
+                    {
+                        return DDSFilterValue::ValueKind::ENUM;
+                    }
+                    if (xtypes::TK_ALIAS == type_object->complete()._d())
+                    {
+                        const xtypes::TypeIdentifier& aliasedId =
+                                type_object->complete().alias_type().body().common().related_type();
+                        return get_value_kind(aliasedId, pos);
+                    }
                 }
             }
             break;

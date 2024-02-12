@@ -54,19 +54,22 @@ namespace DDSSQLFilter {
 
 static ReturnCode_t transform_enum(
         std::shared_ptr<DDSFilterValue>& value,
-        const std::shared_ptr<xtypes::TypeIdentifier> type,
+        const std::shared_ptr<xtypes::TypeIdentifier>& type,
         const eprosima::fastcdr::string_255& string_value)
 {
     const char* str_value = string_value.c_str();
     std::shared_ptr<xtypes::TypeObject> type_obj = std::make_shared<xtypes::TypeObject>();
-    DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(*type, *type_obj);
-    for (const auto& enum_value : type_obj->complete().enumerated_type().literal_seq())
+    if (RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(*type, *type_obj)
+            && type_obj->_d() == xtypes::EK_COMPLETE && type_obj->complete()._d() == xtypes::TK_ENUM)
     {
-        if (enum_value.detail().name() == str_value)
+        for (const auto& enum_value : type_obj->complete().enumerated_type().literal_seq())
         {
-            value->kind = DDSFilterValue::ValueKind::SIGNED_INTEGER;
-            value->signed_integer_value = enum_value.common().value();
-            return RETCODE_OK;
+            if (enum_value.detail().name() == str_value)
+            {
+                value->kind = DDSFilterValue::ValueKind::SIGNED_INTEGER;
+                value->signed_integer_value = enum_value.common().value();
+                return RETCODE_OK;
+            }
         }
     }
 
@@ -75,9 +78,9 @@ static ReturnCode_t transform_enum(
 
 static ReturnCode_t transform_enums(
         std::shared_ptr<DDSFilterValue>& left_value,
-        const std::shared_ptr<xtypes::TypeIdentifier> left_type,
+        const std::shared_ptr<xtypes::TypeIdentifier>& left_type,
         std::shared_ptr<DDSFilterValue>& right_value,
-        const std::shared_ptr<xtypes::TypeIdentifier> right_type)
+        const std::shared_ptr<xtypes::TypeIdentifier>& right_type)
 {
     if ((DDSFilterValue::ValueKind::ENUM == left_value->kind) &&
             (DDSFilterValue::ValueKind::STRING == right_value->kind))
@@ -199,7 +202,7 @@ static DDSFilterPredicate::OperationKind get_predicate_op(
 
 struct ExpressionParsingState
 {
-    const xtypes::TypeObject* type_object;
+    const std::shared_ptr<xtypes::TypeObject>& type_object;
     const IContentFilterFactory::ParameterSeq& filter_parameters;
     DDSFilterExpression* filter;
 };
@@ -535,24 +538,33 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
             {
                 DynamicType::_ref_type dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
                     type_objects->complete_type_object)->build();
-                DDSFilterExpression* expr = get_expression();
-                expr->set_type(dyn_type);
-                size_t n_params = filter_parameters.length();
-                expr->parameters.reserve(n_params);
-                while (expr->parameters.size() < n_params)
+                if (nullptr != dyn_type)
                 {
-                    expr->parameters.emplace_back();
-                }
-                ExpressionParsingState state{ &type_objects->complete_type_object, filter_parameters, expr };
-                ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
-                if (RETCODE_OK == ret)
-                {
-                    delete_content_filter(filter_class_name, filter_instance);
-                    filter_instance = expr;
+                    DDSFilterExpression* expr = get_expression();
+                    expr->set_type(dyn_type);
+                    size_t n_params = filter_parameters.length();
+                    expr->parameters.reserve(n_params);
+                    while (expr->parameters.size() < n_params)
+                    {
+                        expr->parameters.emplace_back();
+                    }
+                    ExpressionParsingState state{ std::make_shared<xtypes::TypeObject>(
+                                                      type_objects->complete_type_object),
+                                                  filter_parameters, expr };
+                    ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
+                    if (RETCODE_OK == ret)
+                    {
+                        delete_content_filter(filter_class_name, filter_instance);
+                        filter_instance = expr;
+                    }
+                    else
+                    {
+                        delete_content_filter(filter_class_name, expr);
+                    }
                 }
                 else
                 {
-                    delete_content_filter(filter_class_name, expr);
+                    ret = RETCODE_BAD_PARAMETER;
                 }
             }
             else
