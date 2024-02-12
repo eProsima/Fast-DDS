@@ -769,15 +769,15 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
                 .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
                 .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
-                .resource_limits_max_instances(n_participants)
-                .resource_limits_max_samples_per_instance(n_participants * samples_per_participant);
+                .resource_limits_max_instances(1)
+                .resource_limits_max_samples_per_instance(samples_per_participant);
 
         readers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
                 .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
                 .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
                 .resource_limits_max_instances(n_participants)
-                .resource_limits_max_samples_per_instance(n_participants * samples_per_participant);
+                .resource_limits_max_samples_per_instance(samples_per_participant);
 
         // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
         writers[i]->setup_large_data_tcp(use_v6, ports[i]);
@@ -879,15 +879,15 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
                 .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
                 .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
-                .resource_limits_max_instances(n_participants)
-                .resource_limits_max_samples_per_instance(n_participants * samples_per_participant);
+                .resource_limits_max_instances(1)
+                .resource_limits_max_samples_per_instance(samples_per_participant);
 
         readers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
                 .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
                 .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
                 .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
                 .resource_limits_max_instances(n_participants)
-                .resource_limits_max_samples_per_instance(n_participants * samples_per_participant);
+                .resource_limits_max_samples_per_instance(samples_per_participant);
 
         // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
         writers[i]->setup_large_data_tcp(use_v6, ports[i]);
