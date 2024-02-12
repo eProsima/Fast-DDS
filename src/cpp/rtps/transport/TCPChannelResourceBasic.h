@@ -37,8 +37,7 @@ public:
             TCPTransportInterface* parent,
             asio::io_service& service,
             const Locator& locator,
-            uint32_t maxMsgSize,
-            TCPConnectionType tcp_connection_type = TCPConnectionType::TCP_CONNECT_TYPE);
+            uint32_t maxMsgSize);
 
     // Constructor called when local server accepted connection
     TCPChannelResourceBasic(

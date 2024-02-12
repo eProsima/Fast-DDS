@@ -48,14 +48,13 @@ static uint16_t GetBaseAutoPort(
 TCPChannelResource::TCPChannelResource(
         TCPTransportInterface* parent,
         const Locator& locator,
-        uint32_t maxMsgSize,
-        TCPConnectionType tcp_connection_type)
+        uint32_t maxMsgSize)
     : ChannelResource(maxMsgSize)
     , parent_ (parent)
     , locator_(locator)
     , waiting_for_keep_alive_(false)
     , connection_status_(eConnectionStatus::eDisconnected)
-    , tcp_connection_type_(tcp_connection_type)
+    , tcp_connection_type_(TCPConnectionType::TCP_CONNECT_TYPE)
 {
 }
 

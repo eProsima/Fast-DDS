@@ -35,9 +35,8 @@ TCPChannelResourceBasic::TCPChannelResourceBasic(
         TCPTransportInterface* parent,
         asio::io_service& service,
         const Locator& locator,
-        uint32_t maxMsgSize,
-        TCPConnectionType tcp_connection_type)
-    : TCPChannelResource(parent, locator, maxMsgSize, tcp_connection_type)
+        uint32_t maxMsgSize)
+    : TCPChannelResource(parent, locator, maxMsgSize)
     , service_(service)
 {
 }
