@@ -52,7 +52,7 @@ using xmlfile_map_iterator_t = xmlfiles_map_t::iterator;
 
 /**
  * Class XMLProfileManager, used to make available profiles from XML file.
- * @ingroup XMLPROFILEMANAGER_MODULE
+ * @ingroup XMLPARSER_MODULE
  */
 class XMLProfileManager
 {

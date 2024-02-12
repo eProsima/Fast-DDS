@@ -141,4 +141,14 @@
  *  @ingroup UTILITIES_MODULE
  */
 
+/** @defgroup TYPES_MODULE Types
+ * @namespace eprosima::fastrtps::types
+ * @ingroup FASTRTPS_MODULE
+ */
+
+/** @defgroup XMLPARSER_MODULE Contains all the modules related with the XMLParser
+ * @namespace eprosima::fastrtps::xmlparser
+ * @ingroup FASTRTPS_MODULE
+ */
+
 #endif /* RTPS_DOXYGEN_MODULES_H_ */
