@@ -143,68 +143,60 @@ struct identifier_processor
             const xtypes::TypeIdentifier& ti,
             const position& pos)
     {
-        DDSFilterValue::ValueKind res{ DDSFilterValue::ValueKind::BOOLEAN};
-
         switch (ti._d())
         {
             case xtypes::TK_BOOLEAN:
-                res = DDSFilterValue::ValueKind::BOOLEAN;
-                break;
+                return DDSFilterValue::ValueKind::BOOLEAN;
+
             case xtypes::TK_CHAR8:
-                res = DDSFilterValue::ValueKind::CHAR;
-                break;
+                return DDSFilterValue::ValueKind::CHAR;
+
             case xtypes::TK_STRING8:
             case xtypes::TI_STRING8_SMALL:
             case xtypes::TI_STRING8_LARGE:
-                res = DDSFilterValue::ValueKind::STRING;
-                break;
+                return DDSFilterValue::ValueKind::STRING;
 
             case xtypes::TK_INT8:
             case xtypes::TK_INT16:
             case xtypes::TK_INT32:
             case xtypes::TK_INT64:
-                res = DDSFilterValue::ValueKind::SIGNED_INTEGER;
-                break;
+                return DDSFilterValue::ValueKind::SIGNED_INTEGER;
+
             case xtypes::TK_BYTE:
             case xtypes::TK_UINT8:
             case xtypes::TK_UINT16:
             case xtypes::TK_UINT32:
             case xtypes::TK_UINT64:
-                res = DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
-                break;
+                return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
+
             case xtypes::TK_FLOAT32:
-                res = DDSFilterValue::ValueKind::FLOAT_FIELD;
-                break;
+                return DDSFilterValue::ValueKind::FLOAT_FIELD;
+
             case xtypes::TK_FLOAT64:
-                res = DDSFilterValue::ValueKind::DOUBLE_FIELD;
-                break;
+                return DDSFilterValue::ValueKind::DOUBLE_FIELD;
+
             case xtypes::TK_FLOAT128:
-                res = DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
-                break;
+                return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
+
             case xtypes::EK_COMPLETE:
             {
                 std::shared_ptr<xtypes::TypeObject> type_object = std::make_shared<xtypes::TypeObject>();
                 DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(ti, *type_object);
                 if (xtypes::TK_ENUM == type_object->complete()._d())
                 {
-                    res = DDSFilterValue::ValueKind::ENUM;
-                    break;
+                    return DDSFilterValue::ValueKind::ENUM;
                 }
                 if (xtypes::TK_ALIAS == type_object->complete()._d())
                 {
                     const xtypes::TypeIdentifier& aliasedId =
                             type_object->complete().alias_type().body().common().related_type();
-                    res = get_value_kind(aliasedId, pos);
+                    return get_value_kind(aliasedId, pos);
                 }
             }
             break;
 
-            default:
-                throw parse_error("type is not primitive", pos);
-                break;
         }
-
-        return res;
+        throw parse_error("type is not primitive", pos);
     }
 
     template< typename ... States >
