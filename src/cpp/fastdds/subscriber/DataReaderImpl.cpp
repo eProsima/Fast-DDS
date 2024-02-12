@@ -1506,6 +1506,14 @@ ReturnCode_t DataReaderImpl::check_qos(
         EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "HISTORY DEPTH must be higher than 0 if HISTORY KIND is KEEP_LAST.");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos.history().kind == KEEP_LAST_HISTORY_QOS && qos.history().depth > 0 &&
+            qos.resource_limits().max_samples_per_instance > 0 &&
+            qos.history().depth > qos.resource_limits().max_samples_per_instance)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK,
+                "HISTORY DEPTH must be lower or equal to the max_samples_per_instance value.");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
