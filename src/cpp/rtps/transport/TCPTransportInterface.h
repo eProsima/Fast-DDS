@@ -220,7 +220,7 @@ protected:
     bool send(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
-            eprosima::fastrtps::rtps::Locator_t& locator,
+            const eprosima::fastrtps::rtps::Locator_t& locator,
             const Locator& remote_locator);
 
     void create_listening_thread(
@@ -372,7 +372,7 @@ public:
     bool send(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
-            fastrtps::rtps::Locator_t& locator,
+            const fastrtps::rtps::Locator_t& locator,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end);
 

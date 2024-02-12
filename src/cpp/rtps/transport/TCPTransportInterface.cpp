@@ -1236,7 +1236,7 @@ bool TCPTransportInterface::Receive(
 bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
-        fastrtps::rtps::Locator_t& locator,
+        const fastrtps::rtps::Locator_t& locator,
         fastrtps::rtps::LocatorsIterator* destination_locators_begin,
         fastrtps::rtps::LocatorsIterator* destination_locators_end)
 {
@@ -1260,7 +1260,7 @@ bool TCPTransportInterface::send(
 bool TCPTransportInterface::send(
         const octet* send_buffer,
         uint32_t send_buffer_size,
-        fastrtps::rtps::Locator_t& locator,
+        const fastrtps::rtps::Locator_t& locator,
         const Locator& remote_locator)
 {
     using namespace eprosima::fastdds::statistics::rtps;
@@ -1291,9 +1291,8 @@ bool TCPTransportInterface::send(
 
     bool success = false;
 
-    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+    std::lock_guard<std::mutex> scoped_lock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(locator);
-
     if (channel_resource == channel_resources_.end())
     {
         // There is no channel for this locator. Skip send

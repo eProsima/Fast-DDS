@@ -106,7 +106,7 @@ void TCPChannelResourceBasic::disconnect()
 {
     if (eConnecting < change_status(eConnectionStatus::eDisconnected) && alive())
     {
-        std::unique_lock<std::mutex> read_lock(read_mutex_);
+        std::lock_guard<std::mutex> read_lock(read_mutex_);
         auto socket = socket_;
 
         std::error_code ec;
