@@ -739,8 +739,8 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
     // Limited to 12 readers and 12 writers so as not to exceed the system's file descriptor limit.
-    int n_participants = 12;
-    size_t samples_per_participant = 10;
+    uint16_t n_participants = 12;
+    constexpr uint32_t samples_per_participant = 10;
     bool use_v6 = false;
 
     /* Test configuration */
@@ -824,7 +824,7 @@ TEST_P(TransportTCP, TCPv4_large_data_topology)
         auto start = std::next(data.begin(), i * samples_per_participant );
         auto end = std::next(start, samples_per_participant);
         auto writer_data(std::list<KeyedHelloWorld>(start, end));
-        validate_key(writer_data, i);
+        validate_key(writer_data, (uint16_t)i);
         writers[i]->send(writer_data);
         EXPECT_TRUE(writer_data.empty());
     }
@@ -849,8 +849,8 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
     // Limited to 12 readers and 12 writers so as not to exceed the system's file descriptor limit.
-    int n_participants = 12;
-    size_t samples_per_participant = 10;
+    uint16_t n_participants = 12;
+    constexpr uint32_t samples_per_participant = 10;
     bool use_v6 = true;
 
     /* Test configuration */
@@ -934,7 +934,7 @@ TEST_P(TransportTCP, TCPv6_large_data_topology)
         auto start = std::next(data.begin(), i * samples_per_participant );
         auto end = std::next(start, samples_per_participant);
         auto writer_data(std::list<KeyedHelloWorld>(start, end));
-        validate_key(writer_data, i);
+        validate_key(writer_data, (uint16_t)i);
         writers[i]->send(writer_data);
         EXPECT_TRUE(writer_data.empty());
     }
