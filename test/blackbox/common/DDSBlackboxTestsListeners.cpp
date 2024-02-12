@@ -684,7 +684,8 @@ void sample_lost_test_dw_init(
                 uint32_t old_pos = msg.pos;
 
                 // see RTPS DDS 9.4.5.3 Data Submessage
-                EntityId_t readerID, writerID;
+                EntityId_t readerID;
+                EntityId_t writerID;
                 SequenceNumber_t sn;
 
                 msg.pos += 2; // flags
@@ -717,7 +718,8 @@ void sample_lost_test_dw_init(
                 uint32_t old_pos = msg.pos;
 
                 // see RTPS DDS 9.4.5.4 DataFrag Submessage
-                EntityId_t readerID, writerID;
+                EntityId_t readerID;
+                EntityId_t writerID;
                 SequenceNumber_t sn;
                 uint32_t first_fragment = 0;
 
@@ -763,6 +765,9 @@ void sample_lost_test_dr_init(
         PubSubReader<T>& reader,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
+    // We want to ensure that samples are only lost due to the custom filter we have set in sample_lost_test_dw_init.
+    // Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
+    // other possible loss.
     reader.socket_buffer_size(20 * 1024 * 1024);
     reader.sample_lost_status_functor(functor)
             .init();
