@@ -2667,7 +2667,7 @@ protected:
      *
      * @param[in] minimal_alias_type Instance to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
-     *            CompleteAliasType is not consistent.
+     *            MinimalAliasType is not consistent.
      */
     static void minimal_alias_type_consistency(
             const MinimalAliasType& minimal_alias_type);
