@@ -1872,6 +1872,11 @@ ReturnCode_t DataWriterImpl::check_qos(
         EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "DATA_SHARING cannot be used with memory policies other than PREALLOCATED.");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos.history().kind == KEEP_LAST_HISTORY_QOS && qos.history().depth <= 0)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "HISTORY DEPTH must be higher than 0 if HISTORY KIND is KEEP_LAST.");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 
