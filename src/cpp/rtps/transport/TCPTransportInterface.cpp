@@ -1356,7 +1356,6 @@ bool TCPTransportInterface::send(
             TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
     {
         channel->set_all_ports_pending();
-        std::unique_lock<std::mutex> lock(sockets_map_mutex_);
         channel->connect(channel_resources_[channel->locator()]);
     }
 
