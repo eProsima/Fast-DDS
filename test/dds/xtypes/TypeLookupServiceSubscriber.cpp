@@ -457,9 +457,8 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
     // Check if the type is already created
     if (participant_->find_type(discovered_writer_type_name) == nullptr)
     {
-        // Check type registration
+        // Check for TypeObjectRegistry inconsistency
         const bool should_be_registered = discovered_writer_type_name.find("NoTypeObject") == std::string::npos;
-
         if ((should_be_registered && !check_registered_type(info.info.type_information())) ||
                 (!should_be_registered && check_registered_type(info.info.type_information())))
         {
@@ -471,6 +470,11 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
         if (should_be_registered)
         {
             create_types_threads.emplace_back(&TypeLookupServiceSubscriber::create_discovered_type, this, info);
+        }
+        else
+        {
+            create_types_threads.emplace_back(
+                &TypeLookupServiceSubscriber::create_known_type, this, discovered_writer_type_name);
         }
     }
 }
