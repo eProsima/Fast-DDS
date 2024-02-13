@@ -67,7 +67,7 @@ class TCPTransportInterface : public TransportInterface
     {
     public:
 
-        bool in_use = false;
+        uint16_t in_use = 0;
 
         std::condition_variable cv;
     };

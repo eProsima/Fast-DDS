@@ -663,7 +663,7 @@ bool TCPTransportInterface::CloseInputChannel(
 
             receiver_in_use->cv.wait(scopedLock, [&]()
                     {
-                        return receiver_in_use->in_use == false;
+                        return receiver_in_use->in_use == 0;
                     });
             delete receiver_in_use;
         }
@@ -956,16 +956,15 @@ void TCPTransportInterface::perform_listen_operation(
             logicalPort = IPLocator::getLogicalPort(remote_locator);
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
             auto it = receiver_resources_.find(logicalPort);
-            //TransportReceiverInterface* receiver = channel->GetMessageReceiver(logicalPort);
             if (it != receiver_resources_.end())
             {
                 TransportReceiverInterface* receiver = it->second.first;
                 ReceiverInUseCV* receiver_in_use = it->second.second;
-                receiver_in_use->in_use = true;
+                receiver_in_use->in_use++;
                 scopedLock.unlock();
                 receiver->OnDataReceived(msg.buffer, msg.length, channel->locator(), remote_locator);
                 scopedLock.lock();
-                receiver_in_use->in_use = false;
+                receiver_in_use->in_use--;
                 receiver_in_use->cv.notify_one();
             }
             else
