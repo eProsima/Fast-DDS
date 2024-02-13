@@ -7,6 +7,8 @@ files_not_needing_typeobject=(
     './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
+    './thirdparty/dds-types-test/IDL/declarations.idl'
+    './thirdparty/dds-types-test/IDL/external.idl'
     )
 
 files_needing_case_sensitive=(
@@ -16,6 +18,29 @@ files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
     './include/fastdds/statistics/monitorservice_types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
     './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
+    './thirdparty/dds-types-test/IDL/aliases.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/annotations.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/appendable.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/arrays.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/bitsets.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/constants.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/declarations.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/enumerations.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/external.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/final.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/helpers/basic_inner_types.idl|../../../../test/unittest/dynamic_types/idl/dds-types-test/helpers'
+    './thirdparty/dds-types-test/IDL/inheritance.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/key.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/maps.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/member_id.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/mutable.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/optional.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/primitives.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/relative_path_include.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/sequences.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/strings.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/structures.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
+    './thirdparty/dds-types-test/IDL/unions.idl|../../../test/unittest/dynamic_types/idl/dds-types-test'
     )
 
 files_needing_no_typesupport=(
