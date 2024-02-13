@@ -3208,8 +3208,11 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING8>(
         const TypeForKind<TK_STRING8>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    auto type = get_enclosing_type(type_);
 
-    if (TK_STRING8 == element_kind)
+    if (TK_STRING8 == element_kind && (
+                static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
+                value.size() <= type->get_descriptor().bound().at(0)))
     {
         *std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
@@ -3225,8 +3228,11 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING16>(
         const TypeForKind<TK_STRING16>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    auto type = get_enclosing_type(type_);
 
-    if (TK_STRING16 == element_kind)
+    if (TK_STRING16 == element_kind && (
+                static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
+                value.size() <= type->get_descriptor().bound().at(0)))
     {
         *std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
@@ -5712,7 +5718,7 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
             {
                 max_size = 255;
             }
-            current_alignment = 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + max_size + 1;
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + max_size + 1;
             break;
         }
         case TK_STRING16:
@@ -5722,7 +5728,7 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
             {
                 max_size = 255;
             }
-            current_alignment = 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (max_size * 2);
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + (max_size * 2);
             break;
         }
         case TK_UNION:
