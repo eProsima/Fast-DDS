@@ -131,16 +131,16 @@ public:
 
     MOCK_CONST_METHOD2(get_type_dependencies, SampleIdentity(
                 const xtypes::TypeIdentifierSeq&,
-                const fastdds::rtps::GuidPrefix_t&));
+                const fastdds::rtps::GUID_t&));
 
     MOCK_CONST_METHOD3(get_type_dependencies, SampleIdentity(
                 const xtypes::TypeIdentifierSeq&,
-                const fastdds::rtps::GuidPrefix_t&,
+                const fastdds::rtps::GUID_t&,
                 const std::vector<uint8_t>&));
 
     MOCK_CONST_METHOD2(get_types, SampleIdentity(
                 const xtypes::TypeIdentifierSeq&,
-                const fastdds::rtps::GuidPrefix_t&));
+                const fastdds::rtps::GUID_t&));
 
     MOCK_METHOD2(async_get_type, ReturnCode_t(
                 eprosima::ProxyPool<eprosima::fastdds::rtps::WriterProxyData>::smart_ptr&,
@@ -178,6 +178,11 @@ public:
     MOCK_METHOD1(remove_remote_endpoints, void(
                 fastdds::rtps::ParticipantProxyData*));
 
+    MOCK_METHOD1(remove_builtin_request_writer_history_change, void(
+                fastdds::rtps::CacheChange_t*));
+
+    MOCK_METHOD1(remove_builtin_reply_writer_history_change, void(
+                fastdds::rtps::CacheChange_t*));
     // *INDENT-ON*
 
     fastdds::rtps::RTPSParticipantImpl* participant_ = nullptr;
