@@ -97,6 +97,6 @@ target_link_libraries(DynamicTypesDDSTypesTest GTest::gtest
     fastcdr
     fastrtps
     )
-add_gtest(DynamicTypesDDSTypesTest SOURCES ${DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE})
+gtest_discover_tests(DynamicTypesDDSTypesTest)
 
 configure_file("types_profile.xml" "types_profile.xml" COPYONLY)
