@@ -196,8 +196,8 @@ void PDPListener::process_alive_data(
 
         if (old_data != nullptr)
         {
+            // Copy proxy to be passed forward before releasing PDP mutex
             ParticipantProxyData old_data_copy(*old_data);
-            old_data_copy.copy(*old_data);
 
             reader->getMutex().unlock();
             lock.unlock();
@@ -225,20 +225,20 @@ void PDPListener::process_alive_data(
         old_data->updateData(new_data);
         old_data->isAlive = true;
 
-        ParticipantProxyData old_data_copy(*old_data);
-        old_data_copy.copy(*old_data);
-
         reader->getMutex().unlock();
 
         EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "Update participant "
-                << old_data_copy.m_guid << " at "
-                << "MTTLoc: " << old_data_copy.metatraffic_locators
-                << " DefLoc:" << old_data_copy.default_locators);
+                << old_data->m_guid << " at "
+                << "MTTLoc: " << old_data->metatraffic_locators
+                << " DefLoc:" << old_data->default_locators);
 
         if (parent_pdp_->updateInfoMatchesEDP())
         {
-            parent_pdp_->mp_EDP->assignRemoteEndpoints(old_data_copy, true);
+            parent_pdp_->mp_EDP->assignRemoteEndpoints(*old_data, true);
         }
+
+        // Copy proxy to be passed forward before releasing PDP mutex
+        ParticipantProxyData old_data_copy(*old_data);
 
         lock.unlock();
 
