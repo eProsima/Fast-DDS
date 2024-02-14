@@ -175,6 +175,17 @@ jobs:
           ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
           packages_names: fastrtps
           workspace: ${{ github.workspace }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+
+      - name: Test summary
+        uses: eProsima/eProsima-CI/windows/junit_summary@v0
+        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        with:
+          junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
+          print_summary: 'True'
+          show_failed: 'True'
+          show_disabled: 'False'
+          show_skipped: 'False'
 
       - name: Test Report
         uses: eProsima/eProsima-CI/external/test-reporter@main
