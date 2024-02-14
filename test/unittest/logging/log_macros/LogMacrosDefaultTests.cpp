@@ -28,7 +28,9 @@ TEST_F(LogMacrosTests, default_macros_test)
 {
     std::cout << std::endl << "EPROSIMA_LOG_INFO #define'd related constants:" << std::endl;
     macro_print(HAVE_LOG_NO_INFO);
+#if !defined(_MSC_VER)
     macro_print(FASTDDS_ENFORCE_LOG_INFO);
+#endif // Visual Studio seems to have issues with macro expansion
     macro_print(__INTERNALDEBUG);
     macro_print(_INTERNALDEBUG);
     macro_print(_DEBUG);
