@@ -3976,6 +3976,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 
     {
@@ -4003,6 +4004,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 
     {
@@ -4030,7 +4032,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
-
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 
     {
@@ -4058,6 +4060,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 
     {
@@ -4085,6 +4088,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 
     {
@@ -4126,6 +4130,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 
     {
@@ -4167,6 +4172,7 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
                 };
         EXPECT_TRUE(transport_check(attributes_));
         EXPECT_FALSE(attributes_.useBuiltinTransports);
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
     }
 }
 
