@@ -243,9 +243,9 @@ private:
             case BuiltinTransportsTestCase::ENV:
             {
 #ifdef _WIN32
-                _putenv_s(env_var_name_.c_str(), env_var_name_.c_str());
+                _putenv_s(env_var_name_.c_str(), env_var_value.c_str());
 #else
-                setenv(env_var_name_.c_str(), env_var_name_.c_str(), 1);
+                setenv(env_var_name_.c_str(), env_var_value.c_str(), 1);
 #endif // _WIN32
                 break;
             }
