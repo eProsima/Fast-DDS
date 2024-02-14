@@ -1,24 +1,32 @@
-{
-    "names":
-    {
-        "fastrtps" :
-        {
-            "cmake-args": [
-                "-DEPROSIMA_BUILD=ON",
-                "-DINTERNAL_DEBUG=ON",
-                "-DGTEST_INDIVIDUAL=ON",
-                "-DFASTRTPS_API_TESTS=OFF",
-                "-DFASTDDS_PIM_API_TESTS=ON",
-                "-DPERFORMANCE_TESTS=ON",
-                "-DNO_TLS=OFF",
-                "-DMEMORYCHECK_COMMAND_OPTIONS=-q --tool=memcheck --leak-check=yes --show-reachable=yes
-                    --num-callers=50 --log-fd=2 --error-exitcode=1",
-                "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastrtps/valgrind.supp"
-            ]
-        },
-        "googletest-distribution" :
-        {
-            "cmake-args" : ["-Dgtest_force_shared_crt=ON"]
-        }
-    }
-}
+names:
+    fastrtps:
+        cmake-args:
+            - "-DBUILD_DOCUMENTATION=OFF"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DCOMPILE_EXAMPLES=ON"
+            - "-DEPROSIMA_BUILD_TESTS=ON"
+            - "-DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS=/MP /WX"
+            - "-DFASTDDS_ENFORCE_LOG_INFO=ON"
+            - "-DFASTDDS_PIM_API_TESTS=ON"
+            - "-DFASTDDS_STATISTICS=ON"
+            - "-DFASTRTPS_API_TESTS=OFF"
+            - "-DINSTALL_EXAMPLES=ON"
+            - "-DINSTALL_TOOLS=ON"
+            - "-DINTERNAL_DEBUG=ON"
+            - "-DNO_TLS=OFF"
+            - "-DPERFORMANCE_TESTS=ON"
+            - "-DPROFILING_TESTS=OFF"
+            - "-DSHM_TRANSPORT_DEFAULT=ON"
+            - "-DSTRICT_REALTIME=OFF"
+            - "-DSYSTEM_TESTS=ON"
+            - "-DTHIRDPARTY_Asio=FORCE"
+            - "-DTHIRDPARTY_fastcdr=OFF"
+            - "-DTHIRDPARTY_TinyXML2=FORCE"
+            - "-DTHIRDPARTY_UPDATE=ON"
+            - "-DMEMORYCHECK_COMMAND_OPTIONS=-q --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --log-fd=2 --error-exitcode=1"
+            - "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastrtps/valgrind.supp"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"
