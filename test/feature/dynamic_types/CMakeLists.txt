@@ -21,51 +21,52 @@ endif()
 
 set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     DynamicTypesDDSTypesTest.cpp
-    idl/dds-types-test/helpers/basic_inner_types.cxx
-    idl/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
-    idl/dds-types-test/helpers/basic_inner_typesTypeObject.cxx
-    idl/dds-types-test/aliases.cxx
+    dds_types_tests/DynamicTypesAliasesDDSTypesTests.cpp
+    dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
     idl/dds-types-test/aliasesPubSubTypes.cxx
-    idl/dds-types-test/aliasesTypeObject.cxx
-    idl/dds-types-test/appendable.cxx
-    idl/dds-types-test/appendablePubSubTypes.cxx
-    idl/dds-types-test/appendableTypeObject.cxx
-    idl/dds-types-test/arrays.cxx
-    idl/dds-types-test/arraysPubSubTypes.cxx
-    idl/dds-types-test/arraysTypeObject.cxx
-    idl/dds-types-test/bitsets.cxx
-    idl/dds-types-test/bitsetsPubSubTypes.cxx
-    idl/dds-types-test/bitsetsTypeObject.cxx
-    idl/dds-types-test/declarations.cxx
-    idl/dds-types-test/declarationsPubSubTypes.cxx
-    idl/dds-types-test/declarationsTypeObject.cxx
-    idl/dds-types-test/enumerations.cxx
-    idl/dds-types-test/enumerationsPubSubTypes.cxx
-    idl/dds-types-test/enumerationsTypeObject.cxx
-    idl/dds-types-test/final.cxx
-    idl/dds-types-test/finalPubSubTypes.cxx
-    idl/dds-types-test/finalTypeObject.cxx
-    idl/dds-types-test/inheritance.cxx
-    idl/dds-types-test/inheritancePubSubTypes.cxx
-    idl/dds-types-test/inheritanceTypeObject.cxx
-    idl/dds-types-test/maps.cxx
-    idl/dds-types-test/mapsPubSubTypes.cxx
-    idl/dds-types-test/mapsTypeObject.cxx
-    idl/dds-types-test/primitives.cxx
-    idl/dds-types-test/primitivesPubSubTypes.cxx
-    idl/dds-types-test/primitivesTypeObject.cxx
-    idl/dds-types-test/sequences.cxx
-    idl/dds-types-test/sequencesPubSubTypes.cxx
-    idl/dds-types-test/sequencesTypeObject.cxx
-    idl/dds-types-test/strings.cxx
-    idl/dds-types-test/stringsPubSubTypes.cxx
-    idl/dds-types-test/stringsTypeObject.cxx
-    idl/dds-types-test/structures.cxx
-    idl/dds-types-test/structuresPubSubTypes.cxx
-    idl/dds-types-test/structuresTypeObject.cxx
-    idl/dds-types-test/unions.cxx
-    idl/dds-types-test/unionsPubSubTypes.cxx
-    idl/dds-types-test/unionsTypeObject.cxx
+    idl/dds-types-test/aliasesTypeObjectSupport.cxx
+    idl/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
+    idl/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
+    # idl/dds-types-test/annotationsPubSubTypes.cxx
+    # idl/dds-types-test/annotationsTypeObjectSupport.cxx
+    # idl/dds-types-test/appendablePubSubTypes.cxx
+    # idl/dds-types-test/appendableTypeObjectSupport.cxx
+    # idl/dds-types-test/arraysPubSubTypes.cxx
+    # idl/dds-types-test/arraysTypeObjectSupport.cxx
+    # idl/dds-types-test/bitsetsPubSubTypes.cxx
+    # idl/dds-types-test/bitsetsTypeObjectSupport.cxx
+    # idl/dds-types-test/constantsPubSubTypes.cxx
+    # idl/dds-types-test/constantsTypeObjectSupport.cxx
+    # idl/dds-types-test/declarationsPubSubTypes.cxx
+    # idl/dds-types-test/enumerationsPubSubTypes.cxx
+    # idl/dds-types-test/enumerationsTypeObjectSupport.cxx
+    # idl/dds-types-test/externalPubSubTypes.cxx
+    # idl/dds-types-test/finalPubSubTypes.cxx
+    # idl/dds-types-test/finalTypeObjectSupport.cxx
+    # idl/dds-types-test/inheritancePubSubTypes.cxx
+    # idl/dds-types-test/inheritanceTypeObjectSupport.cxx
+    # idl/dds-types-test/keyPubSubTypes.cxx
+    # idl/dds-types-test/keyTypeObjectSupport.cxx
+    # idl/dds-types-test/mapsPubSubTypes.cxx
+    # idl/dds-types-test/mapsTypeObjectSupport.cxx
+    # idl/dds-types-test/member_idPubSubTypes.cxx
+    # idl/dds-types-test/member_idTypeObjectSupport.cxx
+    # idl/dds-types-test/mutablePubSubTypes.cxx
+    # idl/dds-types-test/mutableTypeObjectSupport.cxx
+    # idl/dds-types-test/optionalPubSubTypes.cxx
+    # idl/dds-types-test/optionalTypeObjectSupport.cxx
+    # idl/dds-types-test/primitivesPubSubTypes.cxx
+    # idl/dds-types-test/primitivesTypeObjectSupport.cxx
+    # idl/dds-types-test/relative_path_includePubSubTypes.cxx
+    # idl/dds-types-test/relative_path_includeTypeObjectSupport.cxx
+    # idl/dds-types-test/sequencesPubSubTypes.cxx
+    # idl/dds-types-test/sequencesTypeObjectSupport.cxx
+    # idl/dds-types-test/stringsPubSubTypes.cxx
+    # idl/dds-types-test/stringsTypeObjectSupport.cxx
+    # idl/dds-types-test/structuresPubSubTypes.cxx
+    # idl/dds-types-test/structuresTypeObjectSupport.cxx
+    # idl/dds-types-test/unionsPubSubTypes.cxx
+    # idl/dds-types-test/unionsTypeObjectSupport.cxx
     )
 
 add_executable(DynamicTypesTests DynamicTypesTests.cpp)
