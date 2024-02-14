@@ -497,6 +497,7 @@
             </matchedSubscribersAllocation>
         </data_writer>
 
+        <!-- This profile has been updated to ensure that HistoryQoS and ResourceLimitQoS constraints are met (#20401) -->
         <data_reader profile_name="test_subscriber_profile">
             <topic>
                 <historyQos>
@@ -504,9 +505,9 @@
                     <depth>500</depth>
                 </historyQos>
                 <resourceLimitsQos>
-                    <max_samples>10</max_samples>
+                    <max_samples>2500</max_samples>
                     <max_instances>5</max_instances>
-                    <max_samples_per_instance>2</max_samples_per_instance>
+                    <max_samples_per_instance>500</max_samples_per_instance>
                     <allocated_samples>10</allocated_samples>
                 </resourceLimitsQos>
             </topic>
