@@ -593,7 +593,7 @@ bool DynamicDataImpl::equals(
 {
     auto other_data = traits<DynamicData>::narrow<DynamicDataImpl>(other);
 
-    if (type_->equals(other_data->type_))
+    if (type_ && other_data->type_ && type_->equals(other_data->type_))
     {
         TypeKind type_kind = get_enclosing_typekind(type_);
 
@@ -1536,8 +1536,64 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
 
 traits<DynamicData>::ref_type DynamicDataImpl::clone() noexcept
 {
-    //TODO(richiware)
-    return {};
+    traits<DynamicDataImpl>::ref_type ret_value = std::make_shared<DynamicDataImpl>();
+    ret_value->type_ = type_;
+
+    TypeKind type_kind = get_enclosing_typekind(type_);
+
+    if (TK_ANNOTATION == type_kind ||
+            TK_BITSET == type_kind ||
+            TK_STRUCTURE == type_kind ||
+            TK_UNION == type_kind)
+    {
+        for (const auto& value : value_)
+        {
+            ret_value->value_.emplace(value.first, std::static_pointer_cast<DynamicDataImpl>(value.second)->clone());
+
+        }
+    }
+    else if (TK_ARRAY == type_kind ||
+            TK_SEQUENCE == type_kind)
+    {
+        TypeKind element_kind =
+                get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                            type_->get_descriptor().element_type()));
+
+        ret_value->value_.emplace(value_.cbegin()->first, clone_sequence(element_kind, value_.cbegin()->second));
+    }
+    else if (TK_MAP == type_kind)
+    {
+        ret_value->key_to_id_ = key_to_id_;
+
+        TypeKind element_kind =
+                get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                            type_->get_descriptor().element_type()));
+
+        for (const auto& value : value_)
+        {
+            if (is_complex_kind(element_kind))
+            {
+                ret_value->value_.emplace(value.first,
+                        std::static_pointer_cast<DynamicDataImpl>(value.second)->clone());
+            }
+            else
+            {
+                ret_value->value_.emplace(value.first, clone_primitive(element_kind, value.second));
+            }
+        }
+    }
+    else if (TK_BITMASK == type_kind)
+    {
+        ret_value->value_.emplace(value_.cbegin()->first,
+                std::make_shared<std::vector<bool>>(*std::static_pointer_cast<std::vector<bool>>(
+                    value_.cbegin()->second)));
+    }
+    else    // Primitives
+    {
+        ret_value->value_.emplace(value_.cbegin()->first, clone_primitive(type_kind, value_.cbegin()->second));
+    }
+
+    return ret_value;
 }
 
 ReturnCode_t DynamicDataImpl::get_int32_value(
@@ -2236,6 +2292,173 @@ void DynamicDataImpl::apply_bitset_mask<TK_STRING16>(
     assert(false);
 }
 
+std::shared_ptr<void> DynamicDataImpl::clone_primitive(
+        TypeKind type_kind,
+        const std::shared_ptr<void>& primitive) const noexcept
+{
+    switch (type_kind)
+    {
+        case TK_INT32:      {
+            return std::make_shared<TypeForKind<TK_INT32>>(*std::static_pointer_cast<TypeForKind<TK_INT32>>(
+                               primitive));
+        }
+        case TK_UINT32:     {
+            return std::make_shared<TypeForKind<TK_UINT32>>(*std::static_pointer_cast<TypeForKind<TK_UINT32>>(
+                               primitive));
+        }
+        case TK_INT8:      {
+            return std::make_shared<TypeForKind<TK_INT8>>(*std::static_pointer_cast<TypeForKind<TK_INT8>>(
+                               primitive));
+        }
+        case TK_INT16:      {
+            return std::make_shared<TypeForKind<TK_INT16>>(*std::static_pointer_cast<TypeForKind<TK_INT16>>(
+                               primitive));
+        }
+        case TK_UINT16:     {
+            return std::make_shared<TypeForKind<TK_UINT16>>(*std::static_pointer_cast<TypeForKind<TK_UINT16>>(
+                               primitive));
+        }
+        case TK_INT64:      {
+            return std::make_shared<TypeForKind<TK_INT64>>(*std::static_pointer_cast<TypeForKind<TK_INT64>>(
+                               primitive));
+        }
+        case TK_UINT64:     {
+            return std::make_shared<TypeForKind<TK_UINT64>>(*std::static_pointer_cast<TypeForKind<TK_UINT64>>(
+                               primitive));
+        }
+        case TK_FLOAT32:    {
+            return std::make_shared<TypeForKind<TK_FLOAT32>>(*std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(
+                               primitive));
+        }
+        case TK_FLOAT64:    {
+            return std::make_shared<TypeForKind<TK_FLOAT64>>(*std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(
+                               primitive));
+        }
+        case TK_FLOAT128:   {
+            return std::make_shared<TypeForKind<TK_FLOAT128>>(*std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(
+                               primitive));
+        }
+        case TK_CHAR8:      {
+            return std::make_shared<TypeForKind<TK_CHAR8>>(*std::static_pointer_cast<TypeForKind<TK_CHAR8>>(
+                               primitive));
+        }
+        case TK_CHAR16:     {
+            return std::make_shared<TypeForKind<TK_CHAR16>>(*std::static_pointer_cast<TypeForKind<TK_CHAR16>>(
+                               primitive));
+        }
+        case TK_BOOLEAN:    {
+            return std::make_shared<TypeForKind<TK_BOOLEAN>>(*std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(
+                               primitive));
+        }
+        case TK_BYTE:
+        case TK_UINT8:      {
+            return std::make_shared<TypeForKind<TK_UINT8>>(*std::static_pointer_cast<TypeForKind<TK_UINT8>>(
+                               primitive));
+        }
+        case TK_STRING8:    {
+            return std::make_shared<TypeForKind<TK_STRING8>>(*std::static_pointer_cast<TypeForKind<TK_STRING8>>(
+                               primitive));
+        }
+        case TK_STRING16:   {
+            return std::make_shared<TypeForKind<TK_STRING16>>(*std::static_pointer_cast<TypeForKind<TK_STRING16>>(
+                               primitive));
+        }
+        default:            {
+            assert(false);
+            break;
+        }
+            return {};
+    }
+}
+
+std::shared_ptr<void> DynamicDataImpl::clone_sequence(
+        TypeKind element_kind,
+        const std::shared_ptr<void>& sequence) const noexcept
+{
+    switch (element_kind)
+    {
+        case TK_INT32:      {
+            return std::make_shared<SequenceTypeForKind<TK_INT32>>(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(
+                               sequence));
+        }
+        case TK_UINT32:     {
+            return std::make_shared<SequenceTypeForKind<TK_UINT32>>(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(
+                               sequence));
+        }
+        case TK_INT8:      {
+            return std::make_shared<SequenceTypeForKind<TK_INT8>>(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(
+                               sequence));
+        }
+        case TK_INT16:      {
+            return std::make_shared<SequenceTypeForKind<TK_INT16>>(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(
+                               sequence));
+        }
+        case TK_UINT16:     {
+            return std::make_shared<SequenceTypeForKind<TK_UINT16>>(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(
+                               sequence));
+        }
+        case TK_INT64:      {
+            return std::make_shared<SequenceTypeForKind<TK_INT64>>(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(
+                               sequence));
+        }
+        case TK_UINT64:     {
+            return std::make_shared<SequenceTypeForKind<TK_UINT64>>(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(
+                               sequence));
+        }
+        case TK_FLOAT32:    {
+            return std::make_shared<SequenceTypeForKind<TK_FLOAT32>>(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(
+                               sequence));
+        }
+        case TK_FLOAT64:    {
+            return std::make_shared<SequenceTypeForKind<TK_FLOAT64>>(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(
+                               sequence));
+        }
+        case TK_FLOAT128:   {
+            return std::make_shared<SequenceTypeForKind<TK_FLOAT128>>(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(
+                               sequence));
+        }
+        case TK_CHAR8:      {
+            return std::make_shared<SequenceTypeForKind<TK_CHAR8>>(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(
+                               sequence));
+        }
+        case TK_CHAR16:     {
+            return std::make_shared<SequenceTypeForKind<TK_CHAR16>>(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(
+                               sequence));
+        }
+        case TK_BOOLEAN:    {
+            return std::make_shared<SequenceTypeForKind<TK_BOOLEAN>>(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(
+                               sequence));
+        }
+        case TK_BYTE:
+        case TK_UINT8:      {
+            return std::make_shared<SequenceTypeForKind<TK_UINT8>>(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(
+                               sequence));
+        }
+        case TK_STRING8:    {
+            return std::make_shared<SequenceTypeForKind<TK_STRING8>>(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(
+                               sequence));
+        }
+        case TK_STRING16:   {
+            return std::make_shared<SequenceTypeForKind<TK_STRING16>>(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(
+                               sequence));
+        }
+        default:            {
+            auto ret_value = std::make_shared<std::vector<traits<DynamicData>::ref_type>>();
+            const auto& sequence_complex =
+                    *std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(sequence);
+
+            for (const auto& element : sequence_complex)
+            {
+                ret_value->push_back(element->clone());
+            }
+
+            return ret_value;
+        }
+        break;
+    }
+    return {};
+}
+
 bool DynamicDataImpl::compare_sequence_values(
         TypeKind kind,
         std::shared_ptr<void> l,
@@ -2932,7 +3155,7 @@ ReturnCode_t DynamicDataImpl::get_value(
     {
         ret_value = get_bitmask_bit<TK>(value, id);
     }
-    else // Primitives
+    else     // Primitives
     {
         if (MEMBER_ID_INVALID == id || TK_STRING8 == type_kind || TK_STRING16 == type_kind)
         {
@@ -3416,7 +3639,7 @@ ReturnCode_t DynamicDataImpl::set_value(
     {
         ret_value = set_bitmask_bit<TK>(id, value);
     }
-    else // Primitives
+    else     // Primitives
     {
         if (MEMBER_ID_INVALID == id)
         {
@@ -3712,24 +3935,28 @@ void DynamicDataImpl::serialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->
+                                    second));
                     break;
                 case TK_UINT32:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(
                                 value_.begin()->second));
                     break;
                 case TK_INT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->
+                                    second));
                     break;
                 case TK_INT16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->
+                                    second));
                     break;
                 case TK_UINT16:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(
                                 value_.begin()->second));
                     break;
                 case TK_INT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->
+                                    second));
                     break;
                 case TK_UINT64:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(
@@ -3748,7 +3975,8 @@ void DynamicDataImpl::serialize(
                                     second));
                     break;
                 case TK_CHAR8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->
+                                    second));
                     break;
                 case TK_CHAR16:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(
@@ -3760,7 +3988,8 @@ void DynamicDataImpl::serialize(
                     break;
                 case TK_BYTE:
                 case TK_UINT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->
+                                    second));
                     break;
                 case TK_STRING8:
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->
@@ -4270,7 +4499,8 @@ bool DynamicDataImpl::deserialize(
         {
             std::bitset<64> bitset;
             auto sum =
-                    std::accumulate(type_->get_descriptor().bound().begin(), type_->get_descriptor().bound().end(), 0);
+                    std::accumulate(type_->get_descriptor().bound().begin(),
+                            type_->get_descriptor().bound().end(), 0);
 
             if (9 > sum)
             {
@@ -4467,11 +4697,13 @@ bool DynamicDataImpl::deserialize(
                                     second));
                     break;
                 case TK_FLOAT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()
+                                    ->
                                     second));
                     break;
                 case TK_FLOAT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()
+                                    ->
                                     second));
                     break;
                 case TK_FLOAT128:
@@ -4487,7 +4719,8 @@ bool DynamicDataImpl::deserialize(
                                     second));
                     break;
                 case TK_BOOLEAN:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()
+                                    ->
                                     second));
                     break;
                 case TK_BYTE:
@@ -4500,7 +4733,8 @@ bool DynamicDataImpl::deserialize(
                                 value_.begin()->second));
                     break;
                 case TK_STRING16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()
+                                    ->
                                     second));
                     break;
                 default:
@@ -4871,7 +5105,8 @@ bool DynamicDataImpl::deserialize(
                             cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING16>>(insert_it->second);
                             break;
                         default:
-                            traits<DynamicDataImpl>::ref_type member_data = std::static_pointer_cast<DynamicDataImpl>(
+                            traits<DynamicDataImpl>::ref_type member_data =
+                                    std::static_pointer_cast<DynamicDataImpl>(
                                 insert_it->second);
                             cdr >> member_data;
                             break;
@@ -5074,7 +5309,8 @@ size_t DynamicDataImpl::calculate_serialized_size(
         case TK_BITSET:
         {
             auto sum =
-                    std::accumulate(type_->get_descriptor().bound().begin(), type_->get_descriptor().bound().end(), 0);
+                    std::accumulate(type_->get_descriptor().bound().begin(),
+                            type_->get_descriptor().bound().end(), 0);
             if (9 > sum)
             {
                 std::bitset<8> bitset;
@@ -5382,47 +5618,56 @@ size_t DynamicDataImpl::calculate_serialized_size(
                     case TK_INT32:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT32>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_UINT32:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT32>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_INT8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT8>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_INT16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT16>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_UINT16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT16>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_INT64:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT64>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_UINT64:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT64>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_FLOAT32:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_FLOAT64:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_FLOAT128:
                         calculated_size +=
@@ -5433,28 +5678,33 @@ size_t DynamicDataImpl::calculate_serialized_size(
                     case TK_CHAR8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR8>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_CHAR16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR16>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_BOOLEAN:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_BYTE:
                     case TK_UINT8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT8>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_STRING8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_STRING8>>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(
+                                                it->second)->second), current_alignment);
                         break;
                     case TK_STRING16:
                         calculated_size +=
@@ -5762,7 +6012,8 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
                     reset_alignment += 4 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
                 }
 
-                reset_alignment += calculate_max_serialized_size(member_impl->get_descriptor().type(), reset_alignment);
+                reset_alignment += calculate_max_serialized_size(
+                    member_impl->get_descriptor().type(), reset_alignment);
 
                 if (union_max_size_serialized < reset_alignment)
                 {

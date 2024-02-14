@@ -49,6 +49,8 @@ class DynamicDataImpl : public traits<DynamicData>::base_type
 
 public:
 
+    DynamicDataImpl() noexcept = default;
+
     DynamicDataImpl(
             traits<DynamicType>::ref_type type) noexcept;
 
@@ -488,6 +490,20 @@ private:
     ReturnCode_t clear_sequence_element(
             TypeKind type_kind,
             MemberId id) noexcept;
+
+    /*!
+     * Auxiliary function to clone a primitive.
+     */
+    std::shared_ptr<void> clone_primitive(
+            TypeKind type_kind,
+            const std::shared_ptr<void>& primitive) const noexcept;
+
+    /*!
+     * Auxiliary function to clone a array/sequence.
+     */
+    std::shared_ptr<void> clone_sequence(
+            TypeKind element_kind,
+            const std::shared_ptr<void>& sequence) const noexcept;
 
     /*!
      * Auxiliary function to compare two sequence values.
