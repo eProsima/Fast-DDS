@@ -2148,8 +2148,8 @@ TEST_F(TCPv4Tests, opening_output_channel_with_same_locator_as_local_listening_p
     // Two locators with the same port as the local listening port, but different addresses
     Locator_t lowerOutputChannelLocator;
     lowerOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
-    lowerOutputChannelLocator.port = g_output_port;
-    IPLocator::setLogicalPort(lowerOutputChannelLocator, g_output_port);
+    lowerOutputChannelLocator.port = g_default_port;
+    IPLocator::setLogicalPort(lowerOutputChannelLocator, g_default_port);
     Locator_t higherOutputChannelLocator = lowerOutputChannelLocator;
     IPLocator::setIPv4(lowerOutputChannelLocator, 1, 1, 1, 1);
     IPLocator::setIPv4(higherOutputChannelLocator, 255, 255, 255, 255);
