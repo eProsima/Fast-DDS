@@ -983,20 +983,20 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
     t_end_ = std::chrono::steady_clock::now();
 
     double ser_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
-
-    std::cout << "Serialized time is: " << ser_time << std::endl;
+    // if(big_message) std::cout << "Serialized time is: " << ser_time << std::endl;
 
     CacheChange_t* ch = writer_->new_change(change_kind, handle);
     if (ch != nullptr)
     {
         t_start_ = std::chrono::steady_clock::now();
         payload.move_into_change(*ch);
+        bool big_message = ch->serializedPayload.length > 800000;
 
         t_end_ = std::chrono::steady_clock::now();
 
         double m_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
 
-        std::cout << "Move_into_change time is: " << m_time << std::endl;
+        if(big_message)  std::cout << "Move_into_change time is: " << m_time << std::endl;
 
         bool added = false;
         if (reader_filters_)
@@ -1014,7 +1014,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
             double ap_change_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
 
-            std::cout << "Add_pub_change time is: " << ap_change_time << std::endl;
+            if(big_message)  std::cout << "Add_pub_change time is: " << ap_change_time << std::endl;
         }
         else
         {
@@ -1024,7 +1024,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
             double ap_change_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
 
-            std::cout << "Add_pub_change time is: " << ap_change_time << std::endl;
+            if(big_message)  std::cout << "Add_pub_change time is: " << ap_change_time << std::endl;
         }
 
         if (!added)
@@ -1070,7 +1070,7 @@ ReturnCode_t DataWriterImpl::perform_create_new_change(
 
         double total_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_global).count();
 
-        std::cout << "TOTAL time is: " << total_time << std::endl;
+        if(big_message)  std::cout << "TOTAL time is: " << total_time << std::endl;
 
         return ReturnCode_t::RETCODE_OK;
     }
