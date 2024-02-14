@@ -482,6 +482,11 @@ TEST_F(DynamicTypesTests, DynamicType_int32)
     std::wstring wsTest;
     ASSERT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -623,6 +628,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -768,6 +778,11 @@ TEST_F(DynamicTypesTests, DynamicType_int16)
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -909,6 +924,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1055,6 +1075,11 @@ TEST_F(DynamicTypesTests, DynamicType_int64)
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1195,6 +1220,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1343,6 +1373,11 @@ TEST_F(DynamicTypesTests, DynamicType_float32)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1496,6 +1531,11 @@ TEST_F(DynamicTypesTests, DynamicType_float64)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1655,6 +1695,11 @@ TEST_F(DynamicTypesTests, DynamicType_float128)
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1793,6 +1838,11 @@ TEST_F(DynamicTypesTests, DynamicType_char8)
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1929,6 +1979,11 @@ TEST_F(DynamicTypesTests, DynamicType_char16)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2072,6 +2127,11 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2212,6 +2272,11 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
     ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2393,6 +2458,11 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     std::wstring wsTest;
     ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2568,6 +2638,11 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     ASSERT_EQ(10, data->get_member_id_at_index(10));
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2740,6 +2815,11 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
     ASSERT_EQ(10, data->get_member_id_at_index(10));
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2840,6 +2920,11 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     uint32_t test2 = 0;
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
     ASSERT_EQ(test1, test2);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2964,6 +3049,11 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
         ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID,
                 "TEST_OVER_LENGTH_LIMITS"), RETCODE_OK);
     }
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -3099,6 +3189,11 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     ASSERT_NE(data->get_int32_value(get_test_field_2, 5), RETCODE_OK);
     ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), RETCODE_OK);
     ASSERT_EQ(set_test_field_2, get_test_field_2);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));
@@ -3254,6 +3349,11 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(false, bit_get);
     ASSERT_EQ(data->get_boolean_value(bit_get, 4), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));
@@ -3424,6 +3524,11 @@ TEST_F(DynamicTypesTests, DynamicType_sequence)
     ASSERT_EQ(4, data->get_member_id_at_index(4));
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -3555,6 +3660,11 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(0, data->get_member_id_at_index(0));
     ASSERT_EQ(1, data->get_member_id_at_index(1));
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test get_item_count().
     ASSERT_EQ(2, data->get_item_count());
@@ -3724,6 +3834,11 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     Int32Seq test_less {{3, 4, 5, 6, 7, 0}};
     ASSERT_EQ(test2, test_less);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -3886,6 +4001,11 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
     ASSERT_EQ(good_seq, Int32Seq({1, 0}));
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test get_item_count().
     ASSERT_EQ(4, data->get_item_count());
@@ -4180,6 +4300,11 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     ASSERT_EQ(data->get_int32_value(test4, 1), RETCODE_OK);
     ASSERT_EQ(test3, test4);
 
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
+
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -4343,6 +4468,11 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
             loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("2")));
     ASSERT_EQ(test1, test_get);
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+
+    // Test clone.
+    auto clone = data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(data->equals(clone));
 
     // Test get_item_count().
     ASSERT_EQ(2, data->get_item_count());
@@ -4544,6 +4674,11 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     int64_t test4 {0};
     ASSERT_EQ(struct_data->get_int64_value(test4, 1), RETCODE_OK);
     ASSERT_EQ(test3, test4);
+
+    // Test clone.
+    auto clone = struct_data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(struct_data->equals(clone));
 
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
@@ -4803,6 +4938,11 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     std::string test6;
     ASSERT_EQ(struct_data->get_string_value(test6, 4), RETCODE_OK);
 
+    // Test clone.
+    auto clone = struct_data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(struct_data->equals(clone));
+
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
     ASSERT_TRUE(loan_data);
@@ -5001,6 +5141,11 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(test5, test6);
 
     ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+
+    // Test clone.
+    auto clone = struct_data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(struct_data->equals(clone));
 
     // Testing get_item_count.
     ASSERT_EQ(2, struct_data->get_item_count());
@@ -5229,6 +5374,11 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_NE(union_data->set_int32_value(0, 1), RETCODE_OK);
     ASSERT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
 
+    // Test clone.
+    auto clone = union_data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(union_data->equals(clone));
+
     // Testing loan_value.
     DynamicData::_ref_type loan_data = union_data->loan_value(1);
     ASSERT_TRUE(loan_data);
@@ -5423,6 +5573,11 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
 
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_EQ(4, discriminator_value);
+
+    // Test clone.
+    auto clone = union_data->clone();
+    ASSERT_TRUE(clone);
+    ASSERT_TRUE(union_data->equals(clone));
 
     // Testing get_item_count.
     ASSERT_EQ(2, union_data->get_item_count());
