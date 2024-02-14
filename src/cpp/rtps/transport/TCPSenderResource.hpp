@@ -32,14 +32,14 @@ public:
 
     TCPSenderResource(
             TCPTransportInterface& transport,
-            std::shared_ptr<TCPChannelResource>& channel)
+            eprosima::fastrtps::rtps::Locator_t& locator)
         : fastrtps::rtps::SenderResource(transport.kind())
-        , channel_(channel)
+        , locator_(locator)
     {
         // Implementation functions are bound to the right transport parameters
         clean_up = [this, &transport]()
                 {
-                    transport.CloseOutputChannel(channel_);
+                    transport.CloseOutputChannel(locator_);
                 };
 
         send_lambda_ = [this, &transport](
@@ -49,7 +49,7 @@ public:
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point&) -> bool
                 {
-                    return transport.send(data, dataSize, channel_, destination_locators_begin,
+                    return transport.send(data, dataSize, locator_, destination_locators_begin,
                                    destination_locators_end);
                 };
     }
@@ -62,9 +62,9 @@ public:
         }
     }
 
-    std::shared_ptr<TCPChannelResource>& channel()
+    fastrtps::rtps::Locator_t& locator()
     {
-        return channel_;
+        return locator_;
     }
 
     static TCPSenderResource* cast(
@@ -102,7 +102,7 @@ private:
     TCPSenderResource& operator =(
             const SenderResource&) = delete;
 
-    std::shared_ptr<TCPChannelResource> channel_;
+    fastrtps::rtps::Locator_t locator_;
 };
 
 } // namespace rtps

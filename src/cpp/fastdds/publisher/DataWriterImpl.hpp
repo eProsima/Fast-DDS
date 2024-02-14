@@ -334,6 +334,12 @@ protected:
 
     DataWriterQos qos_;
 
+    //! DataWriterListener
+    DataWriterListener* listener_ = nullptr;
+
+    //! Mutex to protect listener_
+    std::mutex listener_mutex_;
+
     //!History
     DataWriterHistory history_;
 

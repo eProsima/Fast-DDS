@@ -253,6 +253,7 @@ static void setup_transports_large_datav6(
     {
         Locator_t pdp_locator;
         pdp_locator.kind = LOCATOR_KIND_UDPv6;
+        IPLocator::setIPv6(pdp_locator, "ff1e::ffff:efff:1");
         att.builtin.metatrafficMulticastLocatorList.push_back(pdp_locator);
     }
 }
