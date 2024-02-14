@@ -134,9 +134,6 @@ void PDPListener::onNewCacheChangeAdded(
                 // Create a new one when not found
                 pdata = parent_pdp_->createParticipantProxyData(temp_participant_data_, writer_guid);
 
-                reader->getMutex().unlock();
-                lock.unlock();
-
                 if (pdata != nullptr)
                 {
                     EPROSIMA_LOG_INFO(RTPS_PDP_DISCOVERY, "New participant "
@@ -144,11 +141,17 @@ void PDPListener::onNewCacheChangeAdded(
                             << "MTTLoc: " << pdata->metatraffic_locators
                             << " DefLoc:" << pdata->default_locators);
 
+                    // Copy proxy to be passed forward before releasing PDP mutex
+                    ParticipantProxyData pdata_copy(*pdata);
+
+                    reader->getMutex().unlock();
+                    lock.unlock();
+
                     RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                     if (listener != nullptr)
                     {
                         std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                        ParticipantDiscoveryInfo info(*pdata);
+                        ParticipantDiscoveryInfo info(pdata_copy);
                         info.status = status;
 
                         listener->onParticipantDiscovery(
@@ -166,7 +169,12 @@ void PDPListener::onNewCacheChangeAdded(
                     // participant is discovered in the middle of BuiltinProtocols::initBuiltinProtocols, which will
                     // create the first DATA(p) upon finishing, thus triggering the sent to all fixed and matched
                     // readers anyways.
-                    parent_pdp_->assignRemoteEndpoints(pdata);
+                    parent_pdp_->assignRemoteEndpoints(&pdata_copy);
+                }
+                else
+                {
+                    reader->getMutex().unlock();
+                    lock.unlock();
                 }
             }
             else
@@ -185,13 +193,16 @@ void PDPListener::onNewCacheChangeAdded(
                     parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
                 }
 
+                // Copy proxy to be passed forward before releasing PDP mutex
+                ParticipantProxyData pdata_copy(*pdata);
+
                 lock.unlock();
 
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
                     std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                    ParticipantDiscoveryInfo info(*pdata);
+                    ParticipantDiscoveryInfo info(pdata_copy);
                     info.status = status;
 
                     listener->onParticipantDiscovery(
