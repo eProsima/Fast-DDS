@@ -72,6 +72,14 @@ History::iterator History::remove_change_nts(
         const_iterator removal,
         bool release)
 {
+    return History::remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24), release);
+}
+
+History::iterator History::remove_change_nts(
+        const_iterator removal,
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        bool release)
+{
     if (nullptr == mp_mutex)
     {
         return changesEnd();
@@ -97,20 +105,26 @@ History::iterator History::remove_change_nts(
 bool History::remove_change(
         CacheChange_t* ch)
 {
+    return History::remove_change(ch, std::chrono::steady_clock::now() + std::chrono::hours(24));
+}
+
+bool History::remove_change(
+        CacheChange_t* ch,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
 
     const_iterator it = find_change_nts(ch);
+    const_iterator end_it = changesEnd();
 
-    if (it == changesEnd())
+    if (it == end_it)
     {
         EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 
     // remove using the virtual method
-    remove_change_nts(it);
-
-    return true;
+    return end_it != remove_change_nts(it, max_blocking_time);
 }
 
 bool History::remove_all_changes()
