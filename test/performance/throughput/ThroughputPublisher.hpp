@@ -77,7 +77,7 @@ public:
             uint32_t test_time,
             uint32_t recovery_time_ms,
             int demand,
-            int msg_size,
+            uint32_t msg_size,
             uint32_t subscribers);
 
 private:
