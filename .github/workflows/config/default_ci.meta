@@ -10,6 +10,7 @@ names:
             - "-DFASTDDS_PIM_API_TESTS=ON"
             - "-DFASTDDS_STATISTICS=ON"
             - "-DFASTRTPS_API_TESTS=OFF"
+            - "-DGTEST_INDIVIDUAL=ON"
             - "-DINSTALL_EXAMPLES=ON"
             - "-DINSTALL_TOOLS=ON"
             - "-DINTERNAL_DEBUG=ON"
