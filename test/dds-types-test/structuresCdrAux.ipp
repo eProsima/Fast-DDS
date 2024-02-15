@@ -2136,33 +2136,39 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.var_StructWString(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
-                data.var_StructEnum(), current_alignment);
+                data.var_StructBoundedString(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
-                data.var_StructBitMask(), current_alignment);
+                data.var_StructBoundedWString(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
-                data.var_StructAlias(), current_alignment);
+                data.var_StructEnum(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
-                data.var_StructShortArray(), current_alignment);
+                data.var_StructBitMask(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(19),
-                data.var_StructSequence(), current_alignment);
+                data.var_StructAlias(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(20),
-                data.var_StructMap(), current_alignment);
+                data.var_StructShortArray(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(21),
-                data.var_StructUnion(), current_alignment);
+                data.var_StructSequence(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(22),
-                data.var_StructStructure(), current_alignment);
+                data.var_StructMap(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(23),
-                data.var_StructBitset(), current_alignment);
+                data.var_StructUnion(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(24),
+                data.var_StructStructure(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(25),
+                data.var_StructBitset(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(26),
                 data.var_StructEmpty(), current_alignment);
 
 
@@ -2198,16 +2204,18 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(12) << data.var_StructChar16()
         << eprosima::fastcdr::MemberId(13) << data.var_StructString()
         << eprosima::fastcdr::MemberId(14) << data.var_StructWString()
-        << eprosima::fastcdr::MemberId(15) << data.var_StructEnum()
-        << eprosima::fastcdr::MemberId(16) << data.var_StructBitMask()
-        << eprosima::fastcdr::MemberId(17) << data.var_StructAlias()
-        << eprosima::fastcdr::MemberId(18) << data.var_StructShortArray()
-        << eprosima::fastcdr::MemberId(19) << data.var_StructSequence()
-        << eprosima::fastcdr::MemberId(20) << data.var_StructMap()
-        << eprosima::fastcdr::MemberId(21) << data.var_StructUnion()
-        << eprosima::fastcdr::MemberId(22) << data.var_StructStructure()
-        << eprosima::fastcdr::MemberId(23) << data.var_StructBitset()
-        << eprosima::fastcdr::MemberId(24) << data.var_StructEmpty()
+        << eprosima::fastcdr::MemberId(15) << data.var_StructBoundedString()
+        << eprosima::fastcdr::MemberId(16) << data.var_StructBoundedWString()
+        << eprosima::fastcdr::MemberId(17) << data.var_StructEnum()
+        << eprosima::fastcdr::MemberId(18) << data.var_StructBitMask()
+        << eprosima::fastcdr::MemberId(19) << data.var_StructAlias()
+        << eprosima::fastcdr::MemberId(20) << data.var_StructShortArray()
+        << eprosima::fastcdr::MemberId(21) << data.var_StructSequence()
+        << eprosima::fastcdr::MemberId(22) << data.var_StructMap()
+        << eprosima::fastcdr::MemberId(23) << data.var_StructUnion()
+        << eprosima::fastcdr::MemberId(24) << data.var_StructStructure()
+        << eprosima::fastcdr::MemberId(25) << data.var_StructBitset()
+        << eprosima::fastcdr::MemberId(26) << data.var_StructEmpty()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -2286,42 +2294,50 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 15:
-                                                dcdr >> data.var_StructEnum();
+                                                dcdr >> data.var_StructBoundedString();
                                             break;
 
                                         case 16:
-                                                dcdr >> data.var_StructBitMask();
+                                                dcdr >> data.var_StructBoundedWString();
                                             break;
 
                                         case 17:
-                                                dcdr >> data.var_StructAlias();
+                                                dcdr >> data.var_StructEnum();
                                             break;
 
                                         case 18:
-                                                dcdr >> data.var_StructShortArray();
+                                                dcdr >> data.var_StructBitMask();
                                             break;
 
                                         case 19:
-                                                dcdr >> data.var_StructSequence();
+                                                dcdr >> data.var_StructAlias();
                                             break;
 
                                         case 20:
-                                                dcdr >> data.var_StructMap();
+                                                dcdr >> data.var_StructShortArray();
                                             break;
 
                                         case 21:
-                                                dcdr >> data.var_StructUnion();
+                                                dcdr >> data.var_StructSequence();
                                             break;
 
                                         case 22:
-                                                dcdr >> data.var_StructStructure();
+                                                dcdr >> data.var_StructMap();
                                             break;
 
                                         case 23:
-                                                dcdr >> data.var_StructBitset();
+                                                dcdr >> data.var_StructUnion();
                                             break;
 
                                         case 24:
+                                                dcdr >> data.var_StructStructure();
+                                            break;
+
+                                        case 25:
+                                                dcdr >> data.var_StructBitset();
+                                            break;
+
+                                        case 26:
                                                 dcdr >> data.var_StructEmpty();
                                             break;
 
