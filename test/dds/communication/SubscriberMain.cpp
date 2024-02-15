@@ -31,6 +31,8 @@ using namespace eprosima::fastdds::dds;
  * --magic <str>
  * --xmlfile <path>
  * --publishers <int>
+ * --succeed_on_timeout
+ * --timeout <int>
  */
 
 int main(
