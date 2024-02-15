@@ -42,6 +42,7 @@ public:
     {
         return fastdds::dds::RETCODE_OK;
     }
+
 };
 
 } // xtypes

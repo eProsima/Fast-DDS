@@ -747,6 +747,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_union
     type_descriptor.extensibility_kind(union_type.union_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
             (union_type.union_flags() &
             xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
+
     traits<DynamicType>::ref_type discriminator_type = base_type_from_type_identifier(
         union_type.discriminator().common().type_id());
     if (discriminator_type)

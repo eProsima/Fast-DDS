@@ -182,7 +182,7 @@ struct identifier_processor
             {
                 std::shared_ptr<xtypes::TypeObject> type_object = std::make_shared<xtypes::TypeObject>();
                 if (RETCODE_OK == DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                        ti, *type_object) && xtypes::EK_COMPLETE == type_object->_d())
+                            ti, *type_object) && xtypes::EK_COMPLETE == type_object->_d())
                 {
                     if (xtypes::TK_ENUM == type_object->complete()._d())
                     {

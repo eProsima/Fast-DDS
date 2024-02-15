@@ -3559,7 +3559,7 @@ void TypeObjectUtils::type_object_consistency(
             minimal_type_object_consistency(type_object.minimal());
             break;
         default:
-           throw InvalidArgumentError("Inconsistent TypeObject"); 
+            throw InvalidArgumentError("Inconsistent TypeObject");
     }
 }
 
