@@ -1547,6 +1547,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::clone() noexcept
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
+        ret_value->selected_union_member_ = selected_union_member_;
         for (const auto& value : value_)
         {
             ret_value->value_.emplace(value.first, std::static_pointer_cast<DynamicDataImpl>(value.second)->clone());
@@ -1565,6 +1566,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::clone() noexcept
     else if (TK_MAP == type_kind)
     {
         ret_value->key_to_id_ = key_to_id_;
+        ret_value->next_map_member_id_ = next_map_member_id_;
 
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
@@ -1865,7 +1867,8 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         traits<DynamicData>::ref_type& value,
         MemberId id) noexcept
 {
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    auto type = get_enclosing_type(type_);
+    TypeKind type_kind = type->get_kind();
 
     if (id != MEMBER_ID_INVALID)
     {
@@ -1888,7 +1891,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         {
             auto element_type =
                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                type->get_descriptor().element_type()));
 
             if (is_complex_kind(element_type->get_kind()))
             {
@@ -1900,8 +1903,8 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                 if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
                         (TK_SEQUENCE == type_kind &&
                         (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
-                        type_->get_descriptor().bound().at(0) ||
-                        type_->get_descriptor().bound().at(0) >= id + 1)))
+                        type->get_descriptor().bound().at(0) ||
+                        type->get_descriptor().bound().at(0) >= id + 1)))
                 {
                     if (sequence->size() < id + 1)
                     {
@@ -1928,7 +1931,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         {
             auto element_type =
                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                type->get_descriptor().element_type()));
 
             if (is_complex_kind(element_type->get_kind()))
             {
@@ -1953,67 +1956,101 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
         MemberId id,
         traits<DynamicData>::ref_type value) noexcept
 {
-    // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (MEMBER_ID_INVALID != id && (
-                TK_STRUCTURE == type_->get_kind() ||
-                TK_UNION  == type_->get_kind() ||
-                TK_SEQUENCE == type_->get_kind() ||
-                TK_ARRAY == type_->get_kind() ||
-                TK_MAP  == type_->get_kind() ||
-                TK_BITSET == type_->get_kind()))
+    ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+
+    if (value && id != MEMBER_ID_INVALID)
     {
-        // With containers, check that the index is valid
-        if ((TK_SEQUENCE == type_->get_kind() || TK_ARRAY == type_->get_kind() || TK_MAP == type_->get_kind()) /*TODO(richiware)&&
-                                                                                                                  id < type_->get_total_bounds()*/)
+        auto type = get_enclosing_type(type_);
+        TypeKind type_kind = type->get_kind();
+
+        if (TK_ANNOTATION == type_kind ||
+                TK_BITSET == type_kind ||
+                TK_STRUCTURE == type_kind ||
+                TK_UNION == type_kind)
         {
-            auto it = value_.find(id);
-            if (it != value_.end())
+            if (TK_UNION != type_kind || 0 != id)
             {
-                /*TODO(richiware)
-                   if TK_MAP == type_->get_kind() &&
-                        std::static_pointer_cast<DynamicData>(it->second)->key_element_)
-                   {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
-                    return RETCODE_BAD_PARAMETER;
-                   }
-                   else
-                 */
+                auto it = value_.find(id);
+                if (it != value_.end())
                 {
-                    if (it->second)
+                    auto data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+
+                    if (data->type_->equals(value->type()))
                     {
-                        auto data = std::static_pointer_cast<DynamicData>(it
-                                                ->second);
-                        DynamicDataFactory::get_instance()->delete_data(data);
+                        value_.erase(it);
+                        value_.emplace(id, value->clone());
+                        return RETCODE_OK;
                     }
-                    value_.erase(it);
-                    auto value_copy = value->clone();
-                    value_.emplace(id, value_copy);
-                    /*TODO(richiware)
-                       if (TK_UNION == type_->get_kind() && union_id_ != id)
-                       {
-                        set_union_id(id);
-                       }
-                     */
+                }
+
+                if (RETCODE_OK == ret_value && TK_UNION == type_kind && 0 != id) // Set new discriminator.
+                {
+                    set_discriminator_value(id);
                 }
             }
-            else if (TK_ARRAY == type_->get_kind())
+        }
+        else if (TK_ARRAY == type_kind ||
+                TK_SEQUENCE == type_kind)
+        {
+            TypeKind element_kind =
+                    get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type->get_descriptor().element_type()));
+            if (is_complex_kind(element_kind))
             {
-                auto value_copy = value->clone();
-                value_.emplace(id, value_copy);
+                auto it = value_.cbegin();
+                assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+                auto sequence =
+                        std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
+                assert(sequence);
+                if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                        (TK_SEQUENCE == type_kind &&
+                        (static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
+                        type->get_descriptor().bound().at(0) >= id + 1)))
+                {
+                    if (sequence->size() < id + 1)
+                    {
+                        sequence->resize(id + 1);
+                    }
+
+                    auto pos = sequence->begin() + id;
+                    auto data = std::static_pointer_cast<DynamicDataImpl>(*pos);
+                    if (data->type_->equals(value->type()))
+                    {
+                        pos = sequence->erase(pos);
+                        sequence->emplace(pos, value->clone());
+                        ret_value =  RETCODE_OK;
+                    }
+                }
             }
         }
-        else
+        else if (TK_MAP == type_kind)
         {
-            //EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. id out of bounds.");
-            return RETCODE_BAD_PARAMETER;
+            TypeKind element_kind =
+                    get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type->get_descriptor().element_type()));
+            if (is_complex_kind(element_kind))
+            {
+                auto it = value_.find(id);
+                if (it != value_.end())
+                {
+                    auto data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+
+                    if (data->type_->equals(value->type()))
+                    {
+                        value_.erase(it);
+                        value_.emplace(id, value->clone());
+                        ret_value =  RETCODE_OK;
+                    }
+                }
+            }
         }
-        return RETCODE_OK;
     }
     else
     {
-        //EPROSIMA_LOG_ERROR(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
-        return RETCODE_BAD_PARAMETER;
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting complex value. Invalid MemberId.");
     }
+
+    return ret_value;
 }
 
 ReturnCode_t DynamicDataImpl::get_int32_values(
@@ -3162,7 +3199,8 @@ ReturnCode_t DynamicDataImpl::get_value(
         MemberId id) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    auto type_kind = get_enclosing_typekind(type_);
+    auto type = get_enclosing_type(type_);
+    auto type_kind = type->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -3185,7 +3223,7 @@ ReturnCode_t DynamicDataImpl::get_value(
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type_->get_descriptor().element_type()));
+                            type->get_descriptor().element_type()));
         if (MEMBER_ID_INVALID != id && TK == element_kind)
         {
             auto it = value_.cbegin();
@@ -3208,7 +3246,7 @@ ReturnCode_t DynamicDataImpl::get_value(
             {
                 TypeKind element_kind =
                         get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    type_->get_descriptor().element_type()));
+                                    type->get_descriptor().element_type()));
                 ret_value = get_primitive_value<TK>(element_kind, it, value, MEMBER_ID_INVALID);
             }
         }
@@ -3618,7 +3656,8 @@ ReturnCode_t DynamicDataImpl::set_value(
         const TypeForKind<TK>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    auto type = get_enclosing_type(type_);
+    TypeKind type_kind = type->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -3661,7 +3700,7 @@ ReturnCode_t DynamicDataImpl::set_value(
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type_->get_descriptor().element_type()));
+                            type->get_descriptor().element_type()));
         if (MEMBER_ID_INVALID != id && TK == element_kind)
         {
             auto it = value_.cbegin();
@@ -3670,8 +3709,8 @@ ReturnCode_t DynamicDataImpl::set_value(
             assert(sequence);
             if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
                     (TK_SEQUENCE == type_kind &&
-                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
-                    type_->get_descriptor().bound().at(0) >= id + 1)))
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
+                    type->get_descriptor().bound().at(0) >= id + 1)))
             {
                 if (sequence->size() < id + 1)
                 {
@@ -3692,7 +3731,7 @@ ReturnCode_t DynamicDataImpl::set_value(
             {
                 TypeKind element_kind =
                         get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    type_->get_descriptor().element_type()));
+                                    type->get_descriptor().element_type()));
                 ret_value = set_primitive_value<TK>(element_kind, it, value);
             }
         }
