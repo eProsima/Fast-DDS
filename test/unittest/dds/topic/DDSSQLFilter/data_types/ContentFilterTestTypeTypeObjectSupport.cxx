@@ -9499,7 +9499,7 @@ void register_ContentFilterTestType_type_identifier()
                 std::string type_id_kind_anonymous_sequence_anonymous_string_unbounded_5("TI_PLAIN_SEQUENCE_SMALL");
                 if (type_id_kind_anonymous_sequence_anonymous_string_unbounded_5 == "TI_PLAIN_SEQUENCE_SMALL")
                 {
-                    SBound bound = 0;
+                    SBound bound = static_cast<SBound>(5);
                     PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_anonymous_string_unbounded_5, bound,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_anonymous_string_unbounded_5));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
@@ -9727,7 +9727,7 @@ void register_ContentFilterTestType_type_identifier()
                 std::string type_id_kind_anonymous_sequence_Color_5("TI_PLAIN_SEQUENCE_SMALL");
                 if (type_id_kind_anonymous_sequence_Color_5 == "TI_PLAIN_SEQUENCE_SMALL")
                 {
-                    SBound bound = 0;
+                    SBound bound = static_cast<SBound>(5);
                     PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_Color_5, bound,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_Color_5));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
@@ -9955,7 +9955,7 @@ void register_ContentFilterTestType_type_identifier()
                 std::string type_id_kind_anonymous_sequence_Material_5("TI_PLAIN_SEQUENCE_SMALL");
                 if (type_id_kind_anonymous_sequence_Material_5 == "TI_PLAIN_SEQUENCE_SMALL")
                 {
-                    SBound bound = 0;
+                    SBound bound = static_cast<SBound>(5);
                     PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_Material_5, bound,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_Material_5));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
@@ -11286,7 +11286,7 @@ void register_ContentFilterTestType_type_identifier()
                 std::string type_id_kind_anonymous_sequence_StructType_5("TI_PLAIN_SEQUENCE_SMALL");
                 if (type_id_kind_anonymous_sequence_StructType_5 == "TI_PLAIN_SEQUENCE_SMALL")
                 {
-                    SBound bound = 0;
+                    SBound bound = static_cast<SBound>(5);
                     PlainSequenceSElemDefn seq_sdefn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header_anonymous_sequence_StructType_5, bound,
                                 eprosima::fastcdr::external<TypeIdentifier>(element_identifier_anonymous_sequence_StructType_5));
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
