@@ -492,6 +492,10 @@ TEST_F(DynamicTypesTests, DynamicType_int32)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -643,6 +647,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -798,6 +806,10 @@ TEST_F(DynamicTypesTests, DynamicType_int16)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -949,6 +961,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1105,6 +1121,10 @@ TEST_F(DynamicTypesTests, DynamicType_int64)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1255,6 +1275,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1413,6 +1437,10 @@ TEST_F(DynamicTypesTests, DynamicType_float32)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1576,6 +1604,10 @@ TEST_F(DynamicTypesTests, DynamicType_float64)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1745,6 +1777,10 @@ TEST_F(DynamicTypesTests, DynamicType_float128)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1893,6 +1929,10 @@ TEST_F(DynamicTypesTests, DynamicType_char8)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2039,6 +2079,10 @@ TEST_F(DynamicTypesTests, DynamicType_char16)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2192,6 +2236,10 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2342,6 +2390,10 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2533,6 +2585,10 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2718,6 +2774,10 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2900,6 +2960,10 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -3010,6 +3074,10 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -3144,6 +3212,10 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -3289,6 +3361,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));
@@ -3454,6 +3530,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));
@@ -3634,6 +3714,10 @@ TEST_F(DynamicTypesTests, DynamicType_sequence)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -3779,6 +3863,12 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
     ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
 
+    // Test set_complex_value
+    good_seq = {2, 3, 4};
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(complex_data->set_int32_values(0, good_seq), RETCODE_OK);
+    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
+
     // Test get_item_count().
     ASSERT_EQ(2, data->get_item_count());
 
@@ -3801,7 +3891,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
+        ASSERT_EQ(good_seq, Int32Seq({2, 3, 4}));
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
@@ -3830,7 +3920,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
+        ASSERT_EQ(good_seq, Int32Seq({2, 3, 4}));
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
@@ -3956,6 +4046,10 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -4133,6 +4227,12 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
     ASSERT_EQ(good_seq, Int32Seq({1, 2}));
 
+    // Test set_complex_value
+    good_seq = {2, 3};
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(complex_data->set_int32_values(0, good_seq), RETCODE_OK);
+    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
+
     // Test get_item_count().
     ASSERT_EQ(4, data->get_item_count());
 
@@ -4155,7 +4255,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({1, 2}));
+        ASSERT_EQ(good_seq, Int32Seq({2, 3}));
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
@@ -4194,7 +4294,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
         seq_data = data->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({1, 2}));
+        ASSERT_EQ(good_seq, Int32Seq({2, 3}));
         ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
         seq_data = data->loan_value(1);
         ASSERT_TRUE(seq_data);
@@ -4436,6 +4536,10 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -4618,6 +4722,17 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
             complex_data->get_int32_value(test_get, complex_data->get_member_id_by_name("4")));
     ASSERT_EQ(test2, test_get);
 
+
+    // Test set_complex_value
+    int32_t test3 {456};
+    int32_t test4 {345};
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_OK,
+            complex_data->set_int32_value(complex_data->get_member_id_by_name("3"), test3));
+    ASSERT_EQ(RETCODE_OK,
+            complex_data->set_int32_value(complex_data->get_member_id_by_name("4"), test4));
+    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
+
     // Test get_item_count().
     ASSERT_EQ(2, data->get_item_count());
 
@@ -4641,10 +4756,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
         ASSERT_EQ(2, loan_data->get_item_count());
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
-        ASSERT_EQ(test1, test_get);
+        ASSERT_EQ(test3, test_get);
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("4")));
-        ASSERT_EQ(test2, test_get);
+        ASSERT_EQ(test4, test_get);
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
         loan_data = data2->loan_value(1);
         ASSERT_TRUE(loan_data);
@@ -4678,10 +4793,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
         ASSERT_EQ(2, loan_data->get_item_count());
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
-        ASSERT_EQ(test1, test_get);
+        ASSERT_EQ(test3, test_get);
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("4")));
-        ASSERT_EQ(test2, test_get);
+        ASSERT_EQ(test4, test_get);
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
         loan_data = data2->loan_value(1);
         ASSERT_TRUE(loan_data);
@@ -4831,6 +4946,13 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     ASSERT_TRUE(complex_data);
     ASSERT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
     ASSERT_EQ(test1, test2);
+
+    // Test set_complex_value
+    test1 = 456;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_OK,
+            complex_data->set_int32_value(MEMBER_ID_INVALID, test1));
+    ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
 
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
@@ -5103,6 +5225,13 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
     ASSERT_EQ(test1, test2);
 
+    // Test set_complex_value
+    uint32_t test11 {456};
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_OK,
+            complex_data->set_int32_value(MEMBER_ID_INVALID, test11));
+    ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
+
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
     ASSERT_TRUE(loan_data);
@@ -5131,7 +5260,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(struct_data));
         ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(test11, test2);
         ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
         ASSERT_EQ(test3, test4);
         ASSERT_EQ(data2->get_int32_value(test2, 2), RETCODE_OK);
@@ -5156,7 +5285,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(struct_data));
         ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
+        ASSERT_EQ(test11, test2);
         ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
         ASSERT_EQ(test3, test4);
         ASSERT_EQ(data2->get_int32_value(test2, 2), RETCODE_OK);
@@ -5289,12 +5418,12 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_TRUE(inner_struct_data);
 
     // Set and get the child values.
-    const int32_t test3 {234};
+    int32_t test3 {234};
     ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
     int32_t test4 {0};
     ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
     ASSERT_EQ(test3, test4);
-    const int64_t test5 {234};
+    int64_t test5 {234};
     ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
     int64_t test6 {0};
     ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
@@ -5317,6 +5446,14 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(complex_data->get_int64_value(test6, 1), RETCODE_OK);
     ASSERT_EQ(test5, test6);
 
+    // Test set_complex_value
+    test3 = 456;
+    test5 = 567;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(complex_data->set_int32_value(0, test3), RETCODE_OK);
+    ASSERT_EQ(complex_data->set_int64_value(1, test5), RETCODE_OK);
+    ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
+
     // Testing get_item_count.
     ASSERT_EQ(2, struct_data->get_item_count());
 
@@ -5336,7 +5473,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(struct_data));
         ASSERT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
+        ASSERT_EQ(test1, test2);
         inner_struct_data = struct_data->loan_value(0);
         ASSERT_TRUE(inner_struct_data);
         ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
@@ -5363,7 +5500,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(struct_data));
         ASSERT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
+        ASSERT_EQ(test1, test2);
         inner_struct_data = struct_data->loan_value(0);
         ASSERT_TRUE(inner_struct_data);
         ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
@@ -5534,7 +5671,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_NE(union_data->set_int32_value(0, 4), RETCODE_OK);
     ASSERT_EQ(union_data->set_int32_value(0, 1), RETCODE_OK);
 
-    const std::string string_set {"testing_value"};
+    std::string string_set {"testing_value"};
     ASSERT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
@@ -5557,6 +5694,13 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_TRUE(complex_data);
     ASSERT_EQ(complex_data->get_string_value(string_get, MEMBER_ID_INVALID), RETCODE_OK);
     ASSERT_EQ(string_set, string_get);
+
+    // Test set_complex_value
+    string_set = "retesting";
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(0, complex_data));
+    ASSERT_EQ(complex_data->set_string_value(MEMBER_ID_INVALID, string_set), RETCODE_OK);
+    ASSERT_EQ(RETCODE_OK, union_data->set_complex_value(3, complex_data));
 
     // Testing loan_value.
     DynamicData::_ref_type loan_data = union_data->loan_value(1);
@@ -5764,8 +5908,14 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
     ASSERT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 2));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
+    ASSERT_EQ(complex_data->get_string_value(test3, 2), RETCODE_OK);
     ASSERT_EQ("default", test3);
+
+    // Test set_complex_value
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(0, complex_data));
+    ASSERT_EQ(complex_data->set_string_value(2, "another"), RETCODE_OK);
+    ASSERT_EQ(RETCODE_OK, union_data->set_complex_value(2, complex_data));
 
     // Testing get_item_count.
     ASSERT_EQ(2, union_data->get_item_count());
@@ -5790,7 +5940,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
         child_data = union_data->loan_value(2);
         ASSERT_TRUE(child_data);
         ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
-        ASSERT_EQ("default", test3);
+        ASSERT_EQ("another", test3);
         ASSERT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
@@ -5814,7 +5964,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
         child_data = union_data->loan_value(2);
         ASSERT_TRUE(child_data);
         ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
-        ASSERT_EQ("default", test3);
+        ASSERT_EQ("another", test3);
         ASSERT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
