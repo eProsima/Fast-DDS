@@ -3518,6 +3518,10 @@ public:
 
                     m_var_StructWString = x.m_var_StructWString;
 
+                    m_var_StructBoundedString = x.m_var_StructBoundedString;
+
+                    m_var_StructBoundedWString = x.m_var_StructBoundedWString;
+
                     m_var_StructEnum = x.m_var_StructEnum;
 
                     m_var_StructBitMask = x.m_var_StructBitMask;
@@ -3562,6 +3566,8 @@ public:
         m_var_StructChar16 = std::move(x.m_var_StructChar16);
         m_var_StructString = std::move(x.m_var_StructString);
         m_var_StructWString = std::move(x.m_var_StructWString);
+        m_var_StructBoundedString = std::move(x.m_var_StructBoundedString);
+        m_var_StructBoundedWString = std::move(x.m_var_StructBoundedWString);
         m_var_StructEnum = std::move(x.m_var_StructEnum);
         m_var_StructBitMask = std::move(x.m_var_StructBitMask);
         m_var_StructAlias = std::move(x.m_var_StructAlias);
@@ -3612,6 +3618,10 @@ public:
 
                     m_var_StructWString = x.m_var_StructWString;
 
+                    m_var_StructBoundedString = x.m_var_StructBoundedString;
+
+                    m_var_StructBoundedWString = x.m_var_StructBoundedWString;
+
                     m_var_StructEnum = x.m_var_StructEnum;
 
                     m_var_StructBitMask = x.m_var_StructBitMask;
@@ -3658,6 +3668,8 @@ public:
         m_var_StructChar16 = std::move(x.m_var_StructChar16);
         m_var_StructString = std::move(x.m_var_StructString);
         m_var_StructWString = std::move(x.m_var_StructWString);
+        m_var_StructBoundedString = std::move(x.m_var_StructBoundedString);
+        m_var_StructBoundedWString = std::move(x.m_var_StructBoundedWString);
         m_var_StructEnum = std::move(x.m_var_StructEnum);
         m_var_StructBitMask = std::move(x.m_var_StructBitMask);
         m_var_StructAlias = std::move(x.m_var_StructAlias);
@@ -3693,6 +3705,8 @@ public:
            m_var_StructChar16 == x.m_var_StructChar16 &&
            m_var_StructString == x.m_var_StructString &&
            m_var_StructWString == x.m_var_StructWString &&
+           m_var_StructBoundedString == x.m_var_StructBoundedString &&
+           m_var_StructBoundedWString == x.m_var_StructBoundedWString &&
            m_var_StructEnum == x.m_var_StructEnum &&
            m_var_StructBitMask == x.m_var_StructBitMask &&
            m_var_StructAlias == x.m_var_StructAlias &&
@@ -4301,6 +4315,84 @@ public:
 
 
     /*!
+     * @brief This function copies the value in member var_StructBoundedString
+     * @param _var_StructBoundedString New value to be copied in member var_StructBoundedString
+     */
+    eProsima_user_DllExport void var_StructBoundedString(
+            const StructBoundedString& _var_StructBoundedString)
+    {
+        m_var_StructBoundedString = _var_StructBoundedString;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_StructBoundedString
+     * @param _var_StructBoundedString New value to be moved in member var_StructBoundedString
+     */
+    eProsima_user_DllExport void var_StructBoundedString(
+            StructBoundedString&& _var_StructBoundedString)
+    {
+        m_var_StructBoundedString = std::move(_var_StructBoundedString);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_StructBoundedString
+     * @return Constant reference to member var_StructBoundedString
+     */
+    eProsima_user_DllExport const StructBoundedString& var_StructBoundedString() const
+    {
+        return m_var_StructBoundedString;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_StructBoundedString
+     * @return Reference to member var_StructBoundedString
+     */
+    eProsima_user_DllExport StructBoundedString& var_StructBoundedString()
+    {
+        return m_var_StructBoundedString;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member var_StructBoundedWString
+     * @param _var_StructBoundedWString New value to be copied in member var_StructBoundedWString
+     */
+    eProsima_user_DllExport void var_StructBoundedWString(
+            const StructBoundedWString& _var_StructBoundedWString)
+    {
+        m_var_StructBoundedWString = _var_StructBoundedWString;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_StructBoundedWString
+     * @param _var_StructBoundedWString New value to be moved in member var_StructBoundedWString
+     */
+    eProsima_user_DllExport void var_StructBoundedWString(
+            StructBoundedWString&& _var_StructBoundedWString)
+    {
+        m_var_StructBoundedWString = std::move(_var_StructBoundedWString);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_StructBoundedWString
+     * @return Constant reference to member var_StructBoundedWString
+     */
+    eProsima_user_DllExport const StructBoundedWString& var_StructBoundedWString() const
+    {
+        return m_var_StructBoundedWString;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_StructBoundedWString
+     * @return Reference to member var_StructBoundedWString
+     */
+    eProsima_user_DllExport StructBoundedWString& var_StructBoundedWString()
+    {
+        return m_var_StructBoundedWString;
+    }
+
+
+    /*!
      * @brief This function copies the value in member var_StructEnum
      * @param _var_StructEnum New value to be copied in member var_StructEnum
      */
@@ -4708,6 +4800,8 @@ private:
     StructChar16 m_var_StructChar16;
     StructString m_var_StructString;
     StructWString m_var_StructWString;
+    StructBoundedString m_var_StructBoundedString;
+    StructBoundedWString m_var_StructBoundedWString;
     StructEnum m_var_StructEnum;
     StructBitMask m_var_StructBitMask;
     StructAlias m_var_StructAlias;

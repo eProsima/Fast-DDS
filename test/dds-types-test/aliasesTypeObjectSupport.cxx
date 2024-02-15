@@ -4644,65 +4644,279 @@ void register_AliasUnion_type_identifier()
                 AliasMemberFlag related_flags_alias_union = 0;
                 return_code_AliasUnion =
                     eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                    "InnerEnumHelper", type_ids_AliasUnion);
+                    "InnerUnionHelper", type_ids_AliasUnion);
 
                 if (return_code_AliasUnion != eprosima::fastdds::dds::RETCODE_OK)
                 {
-                    EnumTypeFlag enum_flags_InnerEnumHelper = 0;
-                    BitBound bit_bound_InnerEnumHelper = 32;
-                    CommonEnumeratedHeader common_InnerEnumHelper = TypeObjectUtils::build_common_enumerated_header(bit_bound_InnerEnumHelper);
-                    QualifiedTypeName type_name_InnerEnumHelper = "InnerEnumHelper";
-                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerEnumHelper;
-                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEnumHelper;
-                    CompleteTypeDetail detail_InnerEnumHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEnumHelper, ann_custom_InnerEnumHelper, type_name_InnerEnumHelper.to_string());
-                    CompleteEnumeratedHeader header_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_header(common_InnerEnumHelper, detail_InnerEnumHelper);
-                    CompleteEnumeratedLiteralSeq literal_seq_InnerEnumHelper;
                     {
-                        EnumeratedLiteralFlag flags_ENUM_VALUE_1 = TypeObjectUtils::build_enumerated_literal_flag(false);
-                        CommonEnumeratedLiteral common_ENUM_VALUE_1 = TypeObjectUtils::build_common_enumerated_literal(0, flags_ENUM_VALUE_1);
-                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_1;
-                        ann_custom_InnerEnumHelper.reset();
-                        MemberName name_ENUM_VALUE_1 = "ENUM_VALUE_1";
-                        CompleteMemberDetail detail_ENUM_VALUE_1 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_1, member_ann_builtin_ENUM_VALUE_1, ann_custom_InnerEnumHelper);
-                        CompleteEnumeratedLiteral literal_ENUM_VALUE_1 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_1, detail_ENUM_VALUE_1);
-                        TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_1);
-                    }
-                    {
-                        EnumeratedLiteralFlag flags_ENUM_VALUE_2 = TypeObjectUtils::build_enumerated_literal_flag(false);
-                        CommonEnumeratedLiteral common_ENUM_VALUE_2 = TypeObjectUtils::build_common_enumerated_literal(1, flags_ENUM_VALUE_2);
-                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_2;
-                        ann_custom_InnerEnumHelper.reset();
-                        MemberName name_ENUM_VALUE_2 = "ENUM_VALUE_2";
-                        CompleteMemberDetail detail_ENUM_VALUE_2 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_2, member_ann_builtin_ENUM_VALUE_2, ann_custom_InnerEnumHelper);
-                        CompleteEnumeratedLiteral literal_ENUM_VALUE_2 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_2, detail_ENUM_VALUE_2);
-                        TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_2);
-                    }
-                    {
-                        EnumeratedLiteralFlag flags_ENUM_VALUE_3 = TypeObjectUtils::build_enumerated_literal_flag(false);
-                        CommonEnumeratedLiteral common_ENUM_VALUE_3 = TypeObjectUtils::build_common_enumerated_literal(2, flags_ENUM_VALUE_3);
-                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_ENUM_VALUE_3;
-                        ann_custom_InnerEnumHelper.reset();
-                        MemberName name_ENUM_VALUE_3 = "ENUM_VALUE_3";
-                        CompleteMemberDetail detail_ENUM_VALUE_3 = TypeObjectUtils::build_complete_member_detail(name_ENUM_VALUE_3, member_ann_builtin_ENUM_VALUE_3, ann_custom_InnerEnumHelper);
-                        CompleteEnumeratedLiteral literal_ENUM_VALUE_3 = TypeObjectUtils::build_complete_enumerated_literal(common_ENUM_VALUE_3, detail_ENUM_VALUE_3);
-                        TypeObjectUtils::add_complete_enumerated_literal(literal_seq_InnerEnumHelper, literal_ENUM_VALUE_3);
-                    }
-                    CompleteEnumeratedType enumerated_type_InnerEnumHelper = TypeObjectUtils::build_complete_enumerated_type(enum_flags_InnerEnumHelper, header_InnerEnumHelper,
-                            literal_seq_InnerEnumHelper);
-                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_enumerated_type_object(enumerated_type_InnerEnumHelper, type_name_InnerEnumHelper.to_string()))
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                            "InnerEnumHelper already registered in TypeObjectRegistry for a different type.");
-                    }
-                    return_code_AliasUnion =
-                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                        "InnerEnumHelper", type_ids_AliasUnion);
-                    if (return_code_AliasUnion != eprosima::fastdds::dds::RETCODE_OK)
-                    {
-                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
-                                    "InnerEnumHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
-                        return;
+                        ReturnCode_t return_code_InnerUnionHelper;
+                        TypeIdentifierPair type_ids_InnerUnionHelper;
+                        UnionTypeFlag union_flags_InnerUnionHelper = TypeObjectUtils::build_union_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                true, false);
+                        QualifiedTypeName type_name_InnerUnionHelper = "InnerUnionHelper";
+                        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerUnionHelper;
+                        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerUnionHelper;
+                        AppliedAnnotationSeq tmp_ann_custom_InnerUnionHelper;
+                        eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerUnionHelper;
+                        if (!tmp_ann_custom_InnerUnionHelper.empty())
+                        {
+                            ann_custom_InnerUnionHelper = tmp_ann_custom_InnerUnionHelper;
+                        }
+
+                        CompleteTypeDetail detail_InnerUnionHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerUnionHelper, ann_custom_InnerUnionHelper, type_name_InnerUnionHelper.to_string());
+                        CompleteUnionHeader header_InnerUnionHelper = TypeObjectUtils::build_complete_union_header(detail_InnerUnionHelper);
+                        UnionDiscriminatorFlag member_flags_InnerUnionHelper = TypeObjectUtils::build_union_discriminator_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false);
+                        return_code_InnerUnionHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_int32_t", type_ids_InnerUnionHelper);
+
+                        if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        CommonDiscriminatorMember common_InnerUnionHelper;
+                        if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d())
+                        {
+                            common_InnerUnionHelper = TypeObjectUtils::build_common_discriminator_member(member_flags_InnerUnionHelper, type_ids_InnerUnionHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d())
+                        {
+                            common_InnerUnionHelper = TypeObjectUtils::build_common_discriminator_member(member_flags_InnerUnionHelper, type_ids_InnerUnionHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerUnionHelper discriminator TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        type_ann_builtin_InnerUnionHelper.reset();
+                        ann_custom_InnerUnionHelper.reset();
+                        CompleteDiscriminatorMember discriminator_InnerUnionHelper = TypeObjectUtils::build_complete_discriminator_member(common_InnerUnionHelper,
+                                type_ann_builtin_InnerUnionHelper, ann_custom_InnerUnionHelper);
+                        CompleteUnionMemberSeq member_seq_InnerUnionHelper;
+                        {
+                            return_code_InnerUnionHelper =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "_int32_t", type_ids_InnerUnionHelper);
+
+                            if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "longValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                            UnionMemberFlag member_flags_longValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                    false, false);
+                            UnionCaseLabelSeq label_seq_longValue;
+                            TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
+                            CommonUnionMember common_longValue;
+                            MemberId member_id_longValue = 0x00000000;
+                            if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_longValue = TypeObjectUtils::build_common_union_member(member_id_longValue, member_flags_longValue, type_ids_InnerUnionHelper.type_identifier1(),
+                                        label_seq_longValue);
+                            }
+                            else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_longValue = TypeObjectUtils::build_common_union_member(member_id_longValue, member_flags_longValue, type_ids_InnerUnionHelper.type_identifier2(),
+                                        label_seq_longValue);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Union longValue member TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            MemberName name_longValue = "longValue";
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_longValue;
+                            ann_custom_InnerUnionHelper.reset();
+                            CompleteMemberDetail detail_longValue = TypeObjectUtils::build_complete_member_detail(name_longValue, member_ann_builtin_longValue, ann_custom_InnerUnionHelper);
+                            CompleteUnionMember member_longValue = TypeObjectUtils::build_complete_union_member(common_longValue, detail_longValue);
+                            TypeObjectUtils::add_complete_union_member(member_seq_InnerUnionHelper, member_longValue);
+                        }
+                        {
+                            return_code_InnerUnionHelper =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "_float", type_ids_InnerUnionHelper);
+
+                            if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "floatValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                            UnionMemberFlag member_flags_floatValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                    false, false);
+                            UnionCaseLabelSeq label_seq_floatValue;
+                            TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
+                            CommonUnionMember common_floatValue;
+                            MemberId member_id_floatValue = 0x00000001;
+                            if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_floatValue = TypeObjectUtils::build_common_union_member(member_id_floatValue, member_flags_floatValue, type_ids_InnerUnionHelper.type_identifier1(),
+                                        label_seq_floatValue);
+                            }
+                            else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_floatValue = TypeObjectUtils::build_common_union_member(member_id_floatValue, member_flags_floatValue, type_ids_InnerUnionHelper.type_identifier2(),
+                                        label_seq_floatValue);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Union floatValue member TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            MemberName name_floatValue = "floatValue";
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_floatValue;
+                            ann_custom_InnerUnionHelper.reset();
+                            CompleteMemberDetail detail_floatValue = TypeObjectUtils::build_complete_member_detail(name_floatValue, member_ann_builtin_floatValue, ann_custom_InnerUnionHelper);
+                            CompleteUnionMember member_floatValue = TypeObjectUtils::build_complete_union_member(common_floatValue, detail_floatValue);
+                            TypeObjectUtils::add_complete_union_member(member_seq_InnerUnionHelper, member_floatValue);
+                        }
+                        {
+                            return_code_InnerUnionHelper =
+                                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                "_int16_t", type_ids_InnerUnionHelper);
+
+                            if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "shortValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                                return;
+                            }
+                            UnionMemberFlag member_flags_shortValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                    true, false);
+                            UnionCaseLabelSeq label_seq_shortValue;
+                            CommonUnionMember common_shortValue;
+                            MemberId member_id_shortValue = 0x00000002;
+                            if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier1()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_shortValue = TypeObjectUtils::build_common_union_member(member_id_shortValue, member_flags_shortValue, type_ids_InnerUnionHelper.type_identifier1(),
+                                        label_seq_shortValue);
+                            }
+                            else if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
+                                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_ARRAY_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                    (TI_PLAIN_MAP_SMALL == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                    (TI_PLAIN_MAP_LARGE == type_ids_InnerUnionHelper.type_identifier2()._d() &&
+                                    (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                    EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                            {
+                                common_shortValue = TypeObjectUtils::build_common_union_member(member_id_shortValue, member_flags_shortValue, type_ids_InnerUnionHelper.type_identifier2(),
+                                        label_seq_shortValue);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "Union shortValue member TypeIdentifier inconsistent.");
+                                return;
+                            }
+                            MemberName name_shortValue = "shortValue";
+                            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_shortValue;
+                            ann_custom_InnerUnionHelper.reset();
+                            CompleteMemberDetail detail_shortValue = TypeObjectUtils::build_complete_member_detail(name_shortValue, member_ann_builtin_shortValue, ann_custom_InnerUnionHelper);
+                            CompleteUnionMember member_shortValue = TypeObjectUtils::build_complete_union_member(common_shortValue, detail_shortValue);
+                            TypeObjectUtils::add_complete_union_member(member_seq_InnerUnionHelper, member_shortValue);
+                        }
+                        CompleteUnionType union_type_InnerUnionHelper = TypeObjectUtils::build_complete_union_type(union_flags_InnerUnionHelper, header_InnerUnionHelper, discriminator_InnerUnionHelper,
+                                member_seq_InnerUnionHelper);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_union_type_object(union_type_InnerUnionHelper, type_name_InnerUnionHelper.to_string()))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerUnionHelper already registered in TypeObjectRegistry for a different type.");
+                        }
+                        return_code_InnerUnionHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "InnerUnionHelper", type_ids_InnerUnionHelper);
+                        if (return_code_InnerUnionHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "InnerUnionHelper: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
                     }
                 }
                 CommonAliasBody common_alias_union;

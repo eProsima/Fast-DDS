@@ -69,7 +69,7 @@ constexpr uint32_t StructBitMask_max_key_cdr_typesize {0UL};
 constexpr uint32_t StructLong_max_cdr_typesize {8UL};
 constexpr uint32_t StructLong_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t Structures_max_cdr_typesize {1044UL};
+constexpr uint32_t Structures_max_cdr_typesize {1092UL};
 constexpr uint32_t Structures_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t StructUnsignedLong_max_cdr_typesize {8UL};
