@@ -32,7 +32,7 @@ namespace xtypes {
 class TypeObject;
 } // namespace xtypes
 
-class RTPS_DllAPI DynamicTypeBuilderFactory : public std::enable_shared_from_this<DynamicTypeBuilderFactory>
+class DynamicTypeBuilderFactory : public std::enable_shared_from_this<DynamicTypeBuilderFactory>
 {
 public:
 
@@ -43,7 +43,7 @@ public:
      * @remark This method is non thread-safe.
      * @return @ref DynamicTypeBuilderFactory reference.
      */
-    static traits<DynamicTypeBuilderFactory>::ref_type get_instance();
+    RTPS_DllAPI static traits<DynamicTypeBuilderFactory>::ref_type get_instance();
 
     /*!
      * Resets the singleton reference.
@@ -51,14 +51,14 @@ public:
      * @retval RETCODE_OK is always returned.
      * @retval RETCODE_BAD_PARAMETER if singleton reference is currently nil.
      */
-    static ReturnCode_t delete_instance();
+    RTPS_DllAPI static ReturnCode_t delete_instance();
 
     /*!
      * Retrieves the cached @ref DynamicType reference associated to a given primitive
      * @param[in] kind Type identifying the primitive type to retrieve.
      * @return @ref DynamicType reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicType>::ref_type get_primitive_type(
+    RTPS_DllAPI virtual traits<DynamicType>::ref_type get_primitive_type(
             TypeKind kind) = 0;
 
     /*!
@@ -66,7 +66,7 @@ public:
      * @param[in] descriptor @ref TypeDescriptor to be copied.
      * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_type(
             traits<TypeDescriptor>::ref_type descriptor) = 0;
 
     /*!
@@ -74,7 +74,7 @@ public:
      * @param[in] type @ref DynamicType reference to be used.
      * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_type_copy(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_type_copy(
             traits<DynamicType>::ref_type type) = 0;
 
     /*!
@@ -83,7 +83,7 @@ public:
      * @param[in] type_object @ref TypeObject instance to be used.
      * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_type_w_type_object(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_type_w_type_object(
             const xtypes::TypeObject& type_object) = 0;
 
     /*!
@@ -92,7 +92,7 @@ public:
      * If the value is equal to LENGTH_UNLIMITED, the string type shall be considered to be unbounded.
      * @return new @ref DynamicTypeBuilder reference.. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_string_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_string_type(
             uint32_t bound) = 0;
 
     /*!
@@ -101,7 +101,7 @@ public:
      * If the value is equal to LENGTH_UNLIMITED, the wstring type shall be considered to be unbounded.
      * @return new @ref DynamicTypeBuilder reference.. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_wstring_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_wstring_type(
             uint32_t bound) = 0;
 
     /*!
@@ -111,7 +111,7 @@ public:
      * If the value is equal to LENGTH_UNLIMITED, the sequence type shall be considered to be unbounded.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_sequence_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_sequence_type(
             traits<DynamicType>::ref_type element_type,
             uint32_t bound) = 0;
 
@@ -121,7 +121,7 @@ public:
      * @param[in] bounds `uint32_t` representing the desired dimensions.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_array_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_array_type(
             traits<DynamicType>::ref_type element_type,
             const BoundSeq& bound) = 0;
 
@@ -133,7 +133,7 @@ public:
      * If the value is equal to LENGTH_UNLIMITED, the map type shall be considered to be unbounded.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_map_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_map_type(
             traits<DynamicType>::ref_type key_element_type,
             traits<DynamicType>::ref_type element_type,
             uint32_t bound) = 0;
@@ -143,7 +143,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_bitmask_type(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_bitmask_type(
             uint32_t bound) = 0;
 
     /*!
@@ -155,7 +155,7 @@ public:
      * documents.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_type_w_uri(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_type_w_uri(
             const std::string& document_url,
             const std::string& type_name,
             const IncludePathSeq& include_paths) = 0;
@@ -169,7 +169,7 @@ public:
      * documents.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
-    virtual traits<DynamicTypeBuilder>::ref_type create_type_w_document(
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_type_w_document(
             const std::string& document,
             const std::string& type_name,
             const IncludePathSeq& include_paths) = 0;
@@ -180,7 +180,7 @@ public:
      * @return standard ReturnCode_t
      * @retval RETCODE_OK is always returned.
      */
-    virtual ReturnCode_t delete_type(
+    RTPS_DllAPI virtual ReturnCode_t delete_type(
             traits<DynamicType>::ref_type type) = 0;
 
 protected:

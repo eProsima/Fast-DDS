@@ -723,8 +723,6 @@ bool LatencyTestPublisher::test(
             return false;
         }
 
-        MemberId id_in;
-        MemberId id_out;
         DynamicData::_ref_type data_in = (*dynamic_data_in_)->loan_value(
             (*dynamic_data_in_)->get_member_id_at_index(1));
         DynamicData::_ref_type data_out = (*dynamic_data_out_)->loan_value(
@@ -735,10 +733,8 @@ bool LatencyTestPublisher::test(
 
         for (uint32_t i = 0; i < padding; ++i)
         {
-            //TODO(richiware)data_in->insert_sequence_data(id_in);
-            data_in->set_byte_value(id_in, 0);
-            //TODO(richiware)data_out->insert_sequence_data(id_out);
-            data_out->set_byte_value(id_out, 0);
+            data_in->set_byte_value(i, 0);
+            data_out->set_byte_value(i, 0);
         }
 
         (*dynamic_data_in_)->return_loaned_value(data_in);

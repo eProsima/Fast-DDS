@@ -33,7 +33,7 @@ namespace dds {
  * Represents a "member" of a type. A "member" in this sense may be a member of an aggregated type, a constant within an
  * enumeration, or some other type substructure.
  */
-class RTPS_DllAPI DynamicTypeMember : public std::enable_shared_from_this<DynamicTypeMember>
+class DynamicTypeMember : public std::enable_shared_from_this<DynamicTypeMember>
 {
 public:
 
@@ -46,14 +46,14 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
-    virtual ReturnCode_t get_descriptor(
+    RTPS_DllAPI virtual ReturnCode_t get_descriptor(
             traits<MemberDescriptor>::ref_type& descriptor) = 0;
 
     /*!
      * Returns the number of applied annotations to the member.
      * @return Number of annotations.
      */
-    virtual uint32_t get_annotation_count() = 0;
+    RTPS_DllAPI virtual uint32_t get_annotation_count() = 0;
 
     /*!
      * Returns an applied annotation by index.
@@ -63,7 +63,7 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
-    virtual ReturnCode_t get_annotation(
+    RTPS_DllAPI virtual ReturnCode_t get_annotation(
             traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
@@ -71,7 +71,7 @@ public:
      * Returns the number of applied verbatim text to the member.
      * @return Number of verbatim texts.
      */
-    virtual uint32_t get_verbatim_text_count() = 0;
+    RTPS_DllAPI virtual uint32_t get_verbatim_text_count() = 0;
 
     /*!
      * Returns an applied verbatim text by index.
@@ -81,7 +81,7 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
-    virtual ReturnCode_t get_verbatim_text(
+    RTPS_DllAPI virtual ReturnCode_t get_verbatim_text(
             traits<VerbatimTextDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
@@ -90,20 +90,20 @@ public:
      * @param[in] other @DynamicTypeMember reference to compare to
      * @return \b bool `true` on equality
      */
-    virtual bool equals(
+    RTPS_DllAPI virtual bool equals(
             traits<DynamicTypeMember>::ref_type other) = 0;
 
     /**
      * Getter for @b id property according with the [standard] section \b 7.5.2.6.4
      * @return @ref MemberId
      */
-    virtual MemberId get_id()  = 0;
+    RTPS_DllAPI virtual MemberId get_id()  = 0;
 
     /**
      * Returns the name of this member.
      * @return Member name.
      */
-    virtual ObjectName get_name() = 0;
+    RTPS_DllAPI virtual ObjectName get_name() = 0;
 
 protected:
 

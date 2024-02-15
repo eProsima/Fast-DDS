@@ -651,7 +651,6 @@ bool LatencyTestSubscriber::test(
     if (dynamic_types_)
     {
         // Create the data sample
-        MemberId id;
         dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
 
         if (nullptr == dynamic_data_)
@@ -670,8 +669,7 @@ bool LatencyTestSubscriber::test(
 
         for (uint32_t i = 0; i < padding; ++i)
         {
-            //TODO(richiware)member_data->insert_sequence_data(id);
-            member_data->set_byte_value(id, 0);
+            member_data->set_byte_value(i, 0);
         }
         (*dynamic_data_)->return_loaned_value(member_data);
     }

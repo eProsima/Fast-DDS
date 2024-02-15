@@ -25,7 +25,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class RTPS_DllAPI DynamicDataFactory : public std::enable_shared_from_this<DynamicDataFactory>
+class DynamicDataFactory : public std::enable_shared_from_this<DynamicDataFactory>
 {
 public:
 
@@ -36,7 +36,7 @@ public:
      * @remark This method is non thread-safe.
      * @return @ref DynamicDataFactory reference.
      */
-    static traits<DynamicDataFactory>::ref_type get_instance();
+    RTPS_DllAPI static traits<DynamicDataFactory>::ref_type get_instance();
 
     /*!
      * Resets the singleton reference.
@@ -44,7 +44,7 @@ public:
      * @retval RETCODE_OK is always returned.
      * @todo Improve this documentation.
      */
-    static ReturnCode_t delete_instance();
+    RTPS_DllAPI static ReturnCode_t delete_instance();
 
     /**
      * Creates a new @ref DynamicData reference based on the given @ref DynamicType reference.
@@ -52,7 +52,7 @@ public:
      * @param[in] type @ref DynamicType reference associated.
      * @return new @ref DynamicData reference
      */
-    virtual traits<DynamicData>::ref_type create_data(
+    RTPS_DllAPI virtual traits<DynamicData>::ref_type create_data(
             traits<DynamicType>::ref_type type) = 0;
 
     /**
@@ -62,7 +62,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER if reference is nil.
      * @retval RETCODE_OK is otherwise returned.
      */
-    virtual ReturnCode_t delete_data(
+    RTPS_DllAPI virtual ReturnCode_t delete_data(
             traits<DynamicData>::ref_type data) = 0;
 };
 

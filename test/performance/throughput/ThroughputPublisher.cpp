@@ -425,7 +425,7 @@ void ThroughputPublisher::run(
         uint32_t test_time,
         uint32_t recovery_time_ms,
         int demand,
-        int msg_size,
+        uint32_t msg_size,
         uint32_t subscribers)
 {
     subscribers_ = subscribers;
@@ -546,7 +546,6 @@ void ThroughputPublisher::run(
         {
             assert(nullptr == dynamic_data_);
             // Create the data sample
-            MemberId id;
             dynamic_data_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
 
             if (nullptr == dynamic_data_)
@@ -561,10 +560,9 @@ void ThroughputPublisher::run(
             DynamicData::_ref_type member_data = (*dynamic_data_)->loan_value(
                 (*dynamic_data_)->get_member_id_at_index(1));
 
-            for (int i = 0; i < msg_size; ++i)
+            for (uint32_t i = 0; i < msg_size; ++i)
             {
-                //TODO(richiware)member_data->insert_sequence_data(id);
-                member_data->set_byte_value(id, 0);
+                member_data->set_byte_value(i, 0);
             }
             (*dynamic_data_)->return_loaned_value(member_data);
         }
