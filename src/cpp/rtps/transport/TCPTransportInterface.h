@@ -78,6 +78,19 @@ protected:
     asio::io_service io_service_timers_;
     std::unique_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
     uint16_t initial_peer_local_locator_port_;
+    /**
+     * Whether to use non-blocking calls to send().
+     *
+     * When set to true, calls to send() will return immediately if the send buffer is full.
+     * This may happen when receive buffer on reader's side is full. No error will be returned
+     * to the upper layer. This means that the application will behave
+     * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
+     * specially useful on high-frequency writers.
+     *
+     * When set to false, calls to send() will block until the send buffer has space for the
+     * datagram. This may cause application lock.
+     */
+    bool non_blocking_send_;
 
 #if TLS_FOUND
     asio::ssl::context ssl_context_;
@@ -438,6 +451,12 @@ public:
      */
     void fill_local_physical_port(
             Locator& locator) const;
+
+    bool get_non_blocking_send() const
+    {
+        return non_blocking_send_;
+    }
+
 };
 
 } // namespace rtps
