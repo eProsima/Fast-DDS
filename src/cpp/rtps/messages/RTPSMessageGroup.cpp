@@ -385,8 +385,14 @@ bool RTPSMessageGroup::insert_submessage(
         const GuidPrefix_t& destination_guid_prefix,
         bool is_big_submessage)
 {
+    std::chrono::steady_clock::time_point t_start_;
     uint32_t total_size = submessage_msg_->length + pending_data_size_ + pending_padding_;
     if (full_msg_->pos + total_size > full_msg_->max_size)
+    std::chrono::steady_clock::time_point t_start_;
+    std::chrono::steady_clock::time_point t_end_;
+    bool big_message = (submessage_msg_->length+pending_data_size_+pending_padding_) > 60000;
+    t_start_ = std::chrono::steady_clock::now();
+    if (!append_message(participant_, full_msg_, submessage_msg_))
     {
         octet* backup = pending_data_;
         pending_data_ = nullptr;
@@ -408,6 +414,10 @@ bool RTPSMessageGroup::insert_submessage(
     {
         flush();
     }
+
+    t_end_ = std::chrono::steady_clock::now();
+    double insert_submsg_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+    if(big_message)  std::cout << "[INSERT_SUBMSG] with size: "<< submessage_msg_->length <<" | Send_time is: " << insert_submsg_time << std::endl;
 
     return true;
 }
@@ -618,6 +628,10 @@ bool RTPSMessageGroup::add_data_frag(
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
 
+    std::chrono::steady_clock::time_point t_start_;
+    std::chrono::steady_clock::time_point t_end_;
+    bool big_message = (fragment_size) > 60000;
+
     // TODO (Ricardo). Check to create special wrapper.
     CacheChange_t change_to_add;
     change_to_add.copy_not_memcpy(&change);
@@ -647,7 +661,7 @@ bool RTPSMessageGroup::add_data_frag(
         change_to_add.serializedPayload.length = encrypt_payload.length;
     }
 #endif // if HAVE_SECURITY
-
+    t_start_ = std::chrono::steady_clock::now();
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
             expectsInlineQos, inlineQos, copy_data, pending_data_, pending_data_size_, pending_padding_))
@@ -656,6 +670,10 @@ bool RTPSMessageGroup::add_data_frag(
         change_to_add.serializedPayload.data = nullptr;
         return false;
     }
+    t_end_ = std::chrono::steady_clock::now();
+    double add_submsg_data_frag = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+    // if(big_message)  std::cout << "[ADD_DATA_FRAG] with size: "<< fragment_size <<" | Send_time is: " << add_submsg_data_frag << std::endl;
+
     change_to_add.serializedPayload.data = nullptr;
 
 #if HAVE_SECURITY

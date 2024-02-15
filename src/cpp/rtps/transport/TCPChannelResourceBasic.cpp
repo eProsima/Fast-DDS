@@ -152,17 +152,27 @@ size_t TCPChannelResourceBasic::send(
         std::lock_guard<std::mutex> send_guard(send_mutex_);
         if (header_size > 0)
         {
+            std::chrono::steady_clock::time_point t_start_;
+            std::chrono::steady_clock::time_point t_end_;
             std::array<asio::const_buffer, max_required_buffers + 1> buffers;
             buffers[0] = asio::buffer(header, header_size);
             size_t n = 1;
+            uint32_t total_size = 0;
             for (size_t i = 0; i < max_required_buffers; ++i)
             {
                 if (send_buffers[i].size())
                 {
+                    total_size += buffers[n].size();
                     buffers[n++] = send_buffers[i];
                 }
             }
+            t_start_ = std::chrono::steady_clock::now();
             bytes_sent = socket_->send(buffers, 0, ec);
+            t_end_ = std::chrono::steady_clock::now();
+            bool big_message = (total_size + header_size) > 60000;
+            double send_time = std::chrono::duration<double, std::milli>(t_end_ - t_start_).count();
+            if(big_message)  std::cout << "[TCP WRITE    ] with size: "<< bytes_sent <<" | Send_time is: " << send_time << std::endl;
+
         }
         else
         {
