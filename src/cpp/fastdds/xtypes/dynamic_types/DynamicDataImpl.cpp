@@ -1861,29 +1861,88 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
 }
 
 ReturnCode_t DynamicDataImpl::get_complex_value(
-        traits<DynamicData>::ref_type value,
+        traits<DynamicData>::ref_type& value,
         MemberId id) noexcept
 {
     TypeKind type_kind = get_enclosing_typekind(type_);
 
-    if (MEMBER_ID_INVALID != id)
+    if (id != MEMBER_ID_INVALID)
     {
         if (TK_ANNOTATION == type_kind ||
                 TK_STRUCTURE == type_kind ||
-                (TK_UNION == type_kind && (0 == id || selected_union_member_ == id)))
+                TK_UNION == type_kind)
         {
-            auto it = value_.find(id);
-            if (it != value_.end())
+            if (TK_UNION != type_kind || selected_union_member_ == id)
             {
-                value = std::static_pointer_cast<DynamicData>(it->second)->clone();
-                return RETCODE_OK;
+                auto it = value_.find(id);
+                if (it != value_.end())
+                {
+                    value = std::static_pointer_cast<DynamicData>(it->second)->clone();
+                    return RETCODE_OK;
+                }
+            }
+        }
+        else if (TK_ARRAY == type_kind ||
+                TK_SEQUENCE == type_kind)
+        {
+            auto element_type =
+                    get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type_->get_descriptor().element_type()));
+
+            if (is_complex_kind(element_type->get_kind()))
+            {
+                auto it = value_.cbegin();
+                assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+                auto sequence =
+                        std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
+                assert(sequence);
+                if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                        (TK_SEQUENCE == type_kind &&
+                        (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
+                        type_->get_descriptor().bound().at(0) ||
+                        type_->get_descriptor().bound().at(0) >= id + 1)))
+                {
+                    if (sequence->size() < id + 1)
+                    {
+                        auto last_pos = sequence->size();
+                        sequence->resize(id + 1);
+
+                        for (auto pos = last_pos; pos < sequence->size(); ++pos)
+                        {
+                            sequence->at(pos) = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                DynamicDataFactory::get_instance()->create_data(element_type));
+                        }
+                    }
+
+                    value = std::static_pointer_cast<DynamicDataImpl>(sequence->at(id))->clone();
+                    return RETCODE_OK;
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning a collection of primitives");
+            }
+        }
+        else if (TK_MAP == type_kind)
+        {
+            auto element_type =
+                    get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type_->get_descriptor().element_type()));
+
+            if (is_complex_kind(element_type->get_kind()))
+            {
+                auto it = value_.find(id);
+                if (it != value_.end())
+                {
+                    value = std::static_pointer_cast<DynamicDataImpl>(it->second)->clone();
+                    return RETCODE_OK;
+                }
             }
         }
     }
-    // TODO array and sequences
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting complex value. Invalid MemberId.");
     }
 
     return RETCODE_BAD_PARAMETER;

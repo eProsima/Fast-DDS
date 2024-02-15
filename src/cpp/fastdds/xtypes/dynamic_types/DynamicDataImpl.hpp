@@ -223,7 +223,7 @@ public:
             const std::wstring& value) noexcept override;
 
     ReturnCode_t get_complex_value(
-            traits<DynamicData>::ref_type value,
+            traits<DynamicData>::ref_type& value,
             MemberId id) noexcept override;
 
     ReturnCode_t set_complex_value(

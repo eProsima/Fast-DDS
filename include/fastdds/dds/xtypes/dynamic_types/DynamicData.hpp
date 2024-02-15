@@ -593,7 +593,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
      */
     virtual ReturnCode_t get_complex_value(
-            traits<DynamicData>::ref_type value,
+            traits<DynamicData>::ref_type& value,
             MemberId id) = 0;
 
     /*!
