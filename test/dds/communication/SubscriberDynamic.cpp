@@ -278,7 +278,8 @@ int main(
                 throw 1;
             }
 
-            type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(type_objects.complete_type_object)->build();
+            type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
+                type_objects.complete_type_object)->build();
 
             if (!type)
             {
