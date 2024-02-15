@@ -8,6 +8,15 @@ Forthcoming
 * Added configuration of builtin transports through DomainParticipantQos, environment
   variable and XML.
 
+Version 2.11.3
+--------------
+
+* Support `Autofill port` (automatically set the port) for TCP Transport
+* Define a `Superclient` by environment variable
+* TCP support for Discovery server CLI and environment variable
+* Custom pools on DDS layer
+* Methods to configure transport scenarios
+
 Version 2.11.2
 --------------
 
