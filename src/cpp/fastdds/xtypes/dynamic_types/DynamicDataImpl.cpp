@@ -86,7 +86,8 @@ DynamicDataImpl::DynamicDataImpl(
         traits<DynamicType>::ref_type type) noexcept
     : type_(traits<DynamicType>::narrow<DynamicTypeImpl>(type))
 {
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    auto enclosing_type = get_enclosing_type(type_);
+    TypeKind type_kind = enclosing_type->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -94,7 +95,7 @@ DynamicDataImpl::DynamicDataImpl(
             TK_UNION == type_kind)
     {
         uint32_t index = 0;
-        for (auto& member : type_->get_all_members_by_index())
+        for (auto& member : enclosing_type->get_all_members_by_index())
         {
             traits<DynamicData>::ref_type data = DynamicDataFactory::get_instance()->create_data(
                 member->get_descriptor().type());
@@ -103,10 +104,10 @@ DynamicDataImpl::DynamicDataImpl(
             if (TK_UNION == type_kind && 0 == index)
             {
                 // Set default discriminator value.
-                set_discriminator_value(type_->default_discriminator_value(),
+                set_discriminator_value(enclosing_type->default_discriminator_value(),
                         traits<DynamicType>::narrow<DynamicTypeImpl>(member->get_descriptor().type()),
                         data_impl);
-                selected_union_member_ = type_->default_union_member();
+                selected_union_member_ = enclosing_type->default_union_member();
             }
             else
             {
@@ -125,26 +126,26 @@ DynamicDataImpl::DynamicDataImpl(
 
         if (TK_ARRAY == type_kind)
         {
-            auto bounds_it {type_->get_descriptor().bound().cbegin()};
-            assert(bounds_it != type_->get_descriptor().bound().cend());
+            auto bounds_it {enclosing_type->get_descriptor().bound().cbegin()};
+            assert(bounds_it != enclosing_type->get_descriptor().bound().cend());
             sequence_size = *bounds_it;
 
-            while (++bounds_it != type_->get_descriptor().bound().cend())
+            while (++bounds_it != enclosing_type->get_descriptor().bound().cend())
             {
                 sequence_size *= *bounds_it;
             }
         }
 
         auto sequence_type = get_enclosing_type(
-            traits<DynamicType>::narrow<DynamicTypeImpl>(type_->get_descriptor().element_type()));
+            traits<DynamicType>::narrow<DynamicTypeImpl>(enclosing_type->get_descriptor().element_type()));
 
         add_sequence_value(sequence_type, sequence_size);
     }
     else if (TK_BITMASK == type_kind)
     {
-        assert(1 == type_->get_descriptor().bound().size());
+        assert(1 == enclosing_type->get_descriptor().bound().size());
         value_.emplace(MEMBER_ID_INVALID,
-                std::make_shared<std::vector<bool>>(type_->get_descriptor().bound().at(0), false));
+                std::make_shared<std::vector<bool>>(enclosing_type->get_descriptor().bound().at(0), false));
     }
     else if (TK_MAP != type_kind)     // Primitives
     {
@@ -1980,8 +1981,9 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
                 {
                     if (it->second)
                     {
-                        DynamicDataFactory::get_instance()->delete_data(std::static_pointer_cast<DynamicData>(it
-                                        ->second));
+                        auto data = std::static_pointer_cast<DynamicData>(it
+                                                ->second);
+                        DynamicDataFactory::get_instance()->delete_data(data);
                     }
                     value_.erase(it);
                     auto value_copy = value->clone();
@@ -2701,6 +2703,13 @@ traits<DynamicTypeImpl>::ref_type DynamicDataImpl::get_enclosing_type(
 {
     traits<DynamicTypeImpl>::ref_type ret_value = type;
 
+    if (TK_ALIAS == ret_value->get_kind())     // If alias, get enclosing type.
+    {
+        do {
+            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_descriptor().base_type());
+        } while (TK_ALIAS == ret_value->get_kind());
+    }
+
     if (TK_ENUM == ret_value->get_kind())     // If enum, get enclosing type.
     {
         if (0 == ret_value->get_all_members_by_index().size())
@@ -2710,15 +2719,9 @@ traits<DynamicTypeImpl>::ref_type DynamicDataImpl::get_enclosing_type(
         }
         else
         {
-            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_all_members_by_index().at(
+            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_all_members_by_index().at(
                                 0)->get_descriptor().type());
         }
-    }
-    else if (TK_ALIAS == ret_value->get_kind())     // If alias, get enclosing type.
-    {
-        do {
-            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_descriptor().base_type());
-        } while (TK_ALIAS == ret_value->get_kind());
     }
 
     return ret_value;
