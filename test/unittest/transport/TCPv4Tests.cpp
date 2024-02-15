@@ -1432,7 +1432,8 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     ASSERT_TRUE(sender_unbound_channel_resources.size() == 1u);
     auto sender_channel_resource =
-            std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+            std::static_pointer_cast<eprosima::fastdds::rtps::TCPChannelResourceBasic>(
+        sender_unbound_channel_resources[0]);
 
     // Prepare the message
     asio::error_code ec;
@@ -1930,7 +1931,8 @@ TEST_F(TCPv4Tests, non_blocking_send)
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     ASSERT_TRUE(sender_unbound_channel_resources.size() == 1u);
     auto sender_channel_resource =
-            std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
+            std::static_pointer_cast<eprosima::fastdds::rtps::TCPChannelResourceBasic>(
+        sender_unbound_channel_resources[0]);
 
     // Prepare the message
     asio::error_code ec;
