@@ -41,6 +41,7 @@
 #else
 #define eProsima_user_DllExport
 #endif  // _WIN32
+
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
 #if defined(TEST_SOURCE)
