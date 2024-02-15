@@ -11,7 +11,7 @@ files_not_needing_typeobject=(
     )
 
 files_needing_case_sensitive=(
-    './test/unittest/dynamic_types/idl/new_features_4_2.idl'
+    './test/feature/dynamic_types/idl/new_features_4_2.idl'
     )
 
 files_needing_output_dir=(
