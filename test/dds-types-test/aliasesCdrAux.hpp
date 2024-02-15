@@ -93,7 +93,7 @@ constexpr uint32_t AliasFloat32_max_key_cdr_typesize {0UL};
 constexpr uint32_t AliasBitmask_max_cdr_typesize {8UL};
 constexpr uint32_t AliasBitmask_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t AliasUnion_max_cdr_typesize {8UL};
+constexpr uint32_t AliasUnion_max_cdr_typesize {16UL};
 constexpr uint32_t AliasUnion_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t AliasMultiArray_max_cdr_typesize {12UL};

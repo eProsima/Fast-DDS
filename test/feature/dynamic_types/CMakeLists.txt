@@ -23,10 +23,10 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     DynamicTypesDDSTypesTest.cpp
     dds_types_tests/DynamicTypesAliasesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
-    idl/dds-types-test/aliasesPubSubTypes.cxx
-    idl/dds-types-test/aliasesTypeObjectSupport.cxx
-    idl/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
-    idl/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
     # idl/dds-types-test/annotationsPubSubTypes.cxx
     # idl/dds-types-test/annotationsTypeObjectSupport.cxx
     # idl/dds-types-test/appendablePubSubTypes.cxx

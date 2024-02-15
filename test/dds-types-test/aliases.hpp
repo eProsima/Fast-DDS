@@ -100,7 +100,7 @@ typedef std::vector<int16_t> alias_sequence;
 
 typedef std::map<int16_t, int16_t> alias_map;
 
-typedef InnerEnumHelper alias_union;
+typedef InnerUnionHelper alias_union;
 
 typedef InnerStructureHelper alias_structure;
 
@@ -2922,7 +2922,7 @@ public:
     eProsima_user_DllExport AliasUnion(
             AliasUnion&& x) noexcept
     {
-        m_value = x.m_value;
+        m_value = std::move(x.m_value);
     }
 
     /*!
@@ -2946,7 +2946,7 @@ public:
             AliasUnion&& x) noexcept
     {
 
-        m_value = x.m_value;
+        m_value = std::move(x.m_value);
         return *this;
     }
 
@@ -2971,20 +2971,30 @@ public:
     }
 
     /*!
-     * @brief This function sets a value in member value
-     * @param _value New value for member value
+     * @brief This function copies the value in member value
+     * @param _value New value to be copied in member value
      */
     eProsima_user_DllExport void value(
-            alias_union _value)
+            const alias_union& _value)
     {
         m_value = _value;
     }
 
     /*!
-     * @brief This function returns the value of member value
-     * @return Value of member value
+     * @brief This function moves the value in member value
+     * @param _value New value to be moved in member value
      */
-    eProsima_user_DllExport alias_union value() const
+    eProsima_user_DllExport void value(
+            alias_union&& _value)
+    {
+        m_value = std::move(_value);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member value
+     * @return Constant reference to member value
+     */
+    eProsima_user_DllExport const alias_union& value() const
     {
         return m_value;
     }
@@ -3002,7 +3012,7 @@ public:
 
 private:
 
-    alias_union m_value{InnerEnumHelper::ENUM_VALUE_1};
+    alias_union m_value;
 
 };
 /*!

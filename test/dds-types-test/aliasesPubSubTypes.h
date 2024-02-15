@@ -60,7 +60,7 @@ typedef std::array<int16_t, 2> alias_array;
 typedef std::array<std::array<int16_t, 2>, 2> alias_multiarray;
 typedef std::vector<int16_t> alias_sequence;
 typedef std::map<int16_t, int16_t> alias_map;
-typedef InnerEnumHelper alias_union;
+typedef InnerUnionHelper alias_union;
 typedef InnerStructureHelper alias_structure;
 typedef InnerBitsetHelper alias_bitset;
 
@@ -2122,7 +2122,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return false;
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
