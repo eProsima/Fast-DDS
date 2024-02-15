@@ -488,6 +488,11 @@ TEST_F(DynamicTypesTests, DynamicType_int32)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -634,6 +639,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -784,6 +794,11 @@ TEST_F(DynamicTypesTests, DynamicType_int16)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -930,6 +945,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1081,6 +1101,11 @@ TEST_F(DynamicTypesTests, DynamicType_int64)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1226,6 +1251,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1379,6 +1409,11 @@ TEST_F(DynamicTypesTests, DynamicType_float32)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1537,6 +1572,11 @@ TEST_F(DynamicTypesTests, DynamicType_float64)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -1701,6 +1741,11 @@ TEST_F(DynamicTypesTests, DynamicType_float128)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1844,6 +1889,11 @@ TEST_F(DynamicTypesTests, DynamicType_char8)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -1985,6 +2035,11 @@ TEST_F(DynamicTypesTests, DynamicType_char16)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2133,6 +2188,11 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2278,6 +2338,11 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -2464,6 +2529,11 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2644,6 +2714,11 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2821,6 +2896,11 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -2926,6 +3006,11 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -3055,6 +3140,11 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
@@ -3195,6 +3285,11 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));
@@ -3355,6 +3450,11 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));
@@ -3530,6 +3630,11 @@ TEST_F(DynamicTypesTests, DynamicType_sequence)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -3666,6 +3771,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
 
     // Test get_item_count().
     ASSERT_EQ(2, data->get_item_count());
@@ -3840,6 +3953,11 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Test loan_value
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -4007,6 +4125,14 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
 
     // Test get_item_count().
     ASSERT_EQ(4, data->get_item_count());
@@ -4306,6 +4432,11 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(1));
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
@@ -4474,6 +4605,19 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     auto clone = data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(2, complex_data->get_item_count());
+    ASSERT_EQ(RETCODE_OK,
+            complex_data->get_int32_value(test_get, complex_data->get_member_id_by_name("3")));
+    ASSERT_EQ(test1, test_get);
+    ASSERT_EQ(RETCODE_OK,
+            complex_data->get_int32_value(test_get, complex_data->get_member_id_by_name("4")));
+    ASSERT_EQ(test2, test_get);
 
     // Test get_item_count().
     ASSERT_EQ(2, data->get_item_count());
@@ -4680,6 +4824,14 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     auto clone = struct_data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(struct_data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    ASSERT_EQ(test1, test2);
 
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
@@ -4944,6 +5096,14 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(struct_data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    ASSERT_EQ(test1, test2);
+
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
     ASSERT_TRUE(loan_data);
@@ -5147,6 +5307,16 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     auto clone = struct_data->clone();
     ASSERT_TRUE(clone);
     ASSERT_TRUE(struct_data->equals(clone));
+
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(complex_data->get_int32_value(test4, 0), RETCODE_OK);
+    ASSERT_EQ(test3, test4);
+    ASSERT_EQ(complex_data->get_int64_value(test6, 1), RETCODE_OK);
+    ASSERT_EQ(test5, test6);
 
     // Testing get_item_count.
     ASSERT_EQ(2, struct_data->get_item_count());
@@ -5380,6 +5550,15 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(union_data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
+    ASSERT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 3));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(complex_data->get_string_value(string_get, MEMBER_ID_INVALID), RETCODE_OK);
+    ASSERT_EQ(string_set, string_get);
+
     // Testing loan_value.
     DynamicData::_ref_type loan_data = union_data->loan_value(1);
     ASSERT_TRUE(loan_data);
@@ -5580,6 +5759,15 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_TRUE(clone);
     ASSERT_TRUE(union_data->equals(clone));
 
+    // Test get_complex_value
+    DynamicData::_ref_type complex_data;
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
+    ASSERT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 2));
+    ASSERT_TRUE(complex_data);
+    ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
+    ASSERT_EQ("default", test3);
+
     // Testing get_item_count.
     ASSERT_EQ(2, union_data->get_item_count());
 
@@ -5638,8 +5826,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
-    DynamicData::_ref_type data;
-    ASSERT_NE(union_data->get_complex_value(data, 2), RETCODE_OK);
 
     ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
     ASSERT_EQ(2, union_data->get_item_count());
@@ -5648,7 +5834,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
-    ASSERT_NE(union_data->get_complex_value(data, 2), RETCODE_OK);
 
     ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
     ASSERT_EQ(2, union_data->get_item_count());
@@ -5663,7 +5848,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
-    ASSERT_NE(union_data->get_complex_value(data, 2), RETCODE_OK);
 
     DynamicDataFactory::get_instance()->delete_data(union_data);
 }
