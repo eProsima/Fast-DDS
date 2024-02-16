@@ -46,6 +46,7 @@ jobs:
         with:
           path: src/fastrtps
           submodules: true
+          ref: ${{ inputs.fastdds-branch }}
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest

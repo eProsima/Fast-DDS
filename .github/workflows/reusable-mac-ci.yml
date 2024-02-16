@@ -39,38 +39,38 @@ jobs:
           - 'RelWithDebInfo'
     steps:
       - name: Sync eProsima/Fast-DDS repository
-        uses: actions/checkout@v4
+        uses: eProsima/eProsima-CI/external/checkout@feature/fastdds_mac_ci_support
         with:
           path: src/fastrtps
           ref: ${{ inputs.fastdds-branch }}
 
-      - uses: actions/setup-python@v4
+      - uses: eProsima/eProsima-CI/external/setup-python@feature/fastdds_mac_ci_support
         with:
           python-version: '3.11'
-
-      - name: Install brew dependencies
-        uses: eProsima/eProsima-CI/macos/install_brew_packages@feature/fastdds_mac_ci_support
-        with:
-          packages: llvm asio tinyxml2 openssl
-          update: false
-          upgrade: false
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
         with:
           cmakeVersion: '3.22.6'
 
+      - name: Install brew dependencies
+        uses: eProsima/eProsima-CI/macos/install_brew_packages@feature/fastdds_mac_ci_support
+        with:
+          packages: llvm asio tinyxml2 openssl@3.0
+          update: false
+          upgrade: false
+
       - name: Install colcon
-        uses: eProsima/eProsima-CI/macos/install_colcon@feature/fastdds_mac_ci_support
+        uses: eProsima/eProsima-CI/multiplatform/install_colcon@feature/fastdds_mac_ci_support
 
       - name: Install Python dependencies
-        uses: eProsima/eProsima-CI/macos/install_python_packages@feature/fastdds_mac_ci_support
+        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@feature/fastdds_mac_ci_support
         with:
           packages: vcstool xmlschema
           upgrade: false
 
       - name: Setup CCache
-        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@feature/fastdds_mac_ci_support
 
       # TODO(eduponz)
       # - name: Update known hosts file for DNS resolver testing
@@ -126,32 +126,34 @@ jobs:
           vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
 
       - name: Colcon build
+        continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@feature/fastdds_mac_ci_support
         with:
-          colcon_meta_file: ci.meta
+          colcon_meta_file: ${{ github.workspace }}/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          colcon_build_args_default: --event-handlers=console_direct+
           cmake_args: ${{ inputs.cmake-args }}
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: test
-        continue-on-error: true
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@feature/fastdds_mac_ci_support
         with:
           colcon_test_args: ${{ inputs.colcon-args }}
-          colcon_test_args_default: --packages-select fastrtps --event-handlers=console_direct+
+          colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
-          ctest_args_default: --repeat until-pass:3 --timeout 300 --output-junit junit/junit.xml
+          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
+          packages_names: fastrtps
           workspace: ${{ github.workspace }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
-      - name: Create test summary
-        id: summary
-        run: |
-          python3 src/fastrtps/.github/workflows/utils/junit_summary.py \
-            --junit-report build/fastrtps/junit/junit.xml \
-            --output-file $GITHUB_STEP_SUMMARY \
-            --print-summary \
-            --show-failed
+      - name: Test summary
+        uses: eProsima/eProsima-CI/multiplatform/junit_summary@feature/fastdds_mac_ci_support
+        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        with:
+          junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
+          print_summary: 'True'
+          show_failed: 'True'
+          show_disabled: 'False'
+          show_skipped: 'False'
