@@ -84,7 +84,7 @@ ResponseCode TCPChannelResource::process_bind_request(
     if (connection_status_.compare_exchange_strong(expected, eConnectionStatus::eEstablished))
     {
         locator_ = IPLocator::toPhysicalLocator(locator);
-        logInfo(RTCP_MSG, "Connection Stablished");
+        logInfo(RTCP_MSG, "Connection Established");
         return RETCODE_OK;
     }
     else if (expected == eConnectionStatus::eEstablished)

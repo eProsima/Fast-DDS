@@ -654,10 +654,9 @@ bool TCPTransportInterface::OpenOutputChannel(
     // At this point, if there is no SenderResource to reuse, this is the first call to OpenOutputChannel for this locator.
     // Need to check if a channel already exists for this locator.
 
-        std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-        logInfo(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
-                                                                << IPLocator::getLogicalPort(
-                    locator) << ") @ " << IPLocator::to_string(locator));
+    logInfo(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(locator) << "; logical: "
+                                                            << IPLocator::getLogicalPort(
+                locator) << ") @ " << IPLocator::to_string(locator));
 
     std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(physical_locator);
@@ -725,7 +724,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         {
             // Server side LARGE_DATA
             // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
-            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
+            logInfo(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
         }
@@ -1195,8 +1194,6 @@ bool TCPTransportInterface::send(
 
     if (locator_mismatch || send_buffer_size > configuration()->sendBufferSize)
     {
-        logWarning(RTCP, "SEND [RTPS] Failed: Not connect: " << IPLocator::getLogicalPort(remote_locator) \
-                                                             << " @ IP: " << IPLocator::toIPv4string(remote_locator));
         return false;
     }
 

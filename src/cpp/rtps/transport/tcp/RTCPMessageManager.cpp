@@ -479,7 +479,7 @@ ResponseCode RTCPMessageManager::processOpenLogicalPortRequest(
     if (!channel->connection_established() &&
             channel->connection_status_ != TCPChannelResource::eConnectionStatus::eWaitingForBindResponse)
     {
-        EPROSIMA_LOG_ERROR(RTCP, "Trying to send [OPEN_LOGICAL_PORT_RESPONSE] without connection established.");
+        logError(RTCP, "Trying to send [OPEN_LOGICAL_PORT_RESPONSE] without connection established.");
         sendData(channel, CHECK_LOGICAL_PORT_RESPONSE, transaction_id, nullptr, RETCODE_SERVER_ERROR);
     }
     else if (request.logicalPort() == 0 || !mTransport->is_input_port_open(request.logicalPort()))
