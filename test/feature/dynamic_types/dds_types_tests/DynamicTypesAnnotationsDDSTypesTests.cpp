@@ -14,14 +14,225 @@
 
 #include "../DynamicTypesDDSTypesTest.hpp"
 
+#include <string>
+
 #include <gtest/gtest.h>
+
+#include "../../../dds-types-test/helpers/basic_inner_types.hpp"
+#include "../../../dds-types-test/annotationsPubSubTypes.h"
+#include <fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotationTest)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
 {
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name("AnnotatedStruct");
+    DynamicTypeBuilder::_ref_type type_builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(type_builder);
+
+    AnnotationDescriptor::_ref_type annotation_descriptor {traits<AnnotationDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type annotation_type {traits<TypeDescriptor>::make_shared()};
+    annotation_type->kind(TK_ANNOTATION);
+    annotation_type->name("AnnotationTest");
+    DynamicTypeBuilder::_ref_type annotation_builder {factory->create_type(annotation_type)};
+
+    MemberDescriptor::_ref_type annotation_parameter {traits<MemberDescriptor>::make_shared()};
+    annotation_parameter->name("var_short");
+    annotation_parameter->type(factory->get_primitive_type(TK_INT16));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_ushort");
+    annotation_parameter->type(factory->get_primitive_type(TK_UINT16));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_long");
+    annotation_parameter->type(factory->get_primitive_type(TK_INT32));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_ulong");
+    annotation_parameter->type(factory->get_primitive_type(TK_UINT32));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_longlong");
+    annotation_parameter->type(factory->get_primitive_type(TK_INT64));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_ulonglong");
+    annotation_parameter->type(factory->get_primitive_type(TK_UINT64));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_float");
+    annotation_parameter->type(factory->get_primitive_type(TK_FLOAT32));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_double");
+    annotation_parameter->type(factory->get_primitive_type(TK_FLOAT64));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_boolean");
+    annotation_parameter->type(factory->get_primitive_type(TK_BOOLEAN));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_octet");
+    annotation_parameter->type(factory->get_primitive_type(TK_BYTE));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_char8");
+    annotation_parameter->type(factory->get_primitive_type(TK_CHAR8));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_char16");
+    annotation_parameter->type(factory->get_primitive_type(TK_CHAR16));
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_string");
+    annotation_parameter->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_wstring");
+    annotation_parameter->type(factory->create_wstring_type(LENGTH_UNLIMITED)->build());
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("enum_value");
+    TypeDescriptor::_ref_type enum_type_descriptor {traits<TypeDescriptor>::make_shared()};
+    enum_type_descriptor->name("InnerEnumHelper");
+    enum_type_descriptor->kind(TK_ENUM);
+    DynamicTypeBuilder::_ref_type enum_builder {factory->create_type(enum_type_descriptor)};
+    MemberDescriptor::_ref_type enum_literal {traits<MemberDescriptor>::make_shared()};
+    enum_literal->type(factory->get_primitive_type(TK_UINT32));
+    enum_literal->name("ONE");
+    enum_builder->add_member(enum_literal);
+    enum_literal = traits<MemberDescriptor>::make_shared();
+    enum_literal->type(factory->get_primitive_type(TK_UINT32));
+    enum_literal->name("TWO");
+    enum_builder->add_member(enum_literal);
+    DynamicType::_ref_type enum_type {enum_builder->build()};
+    annotation_parameter->type(enum_type);
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("enum_default_value");
+    annotation_parameter->type(enum_type);
+    annotation_parameter->default_value("TWO");
+    annotation_builder->add_member(annotation_parameter);
+    const int16_t inner_const_helper = 10;
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_string_10");
+    TypeDescriptor::_ref_type alias_type_descriptor {traits<TypeDescriptor>::make_shared()};
+    alias_type_descriptor->kind(TK_ALIAS);
+    alias_type_descriptor->name("Inner_alias_bounded_string_helper");
+    alias_type_descriptor->base_type(factory->create_string_type(inner_const_helper)->build());
+    DynamicType::_ref_type alias_type {factory->create_type(alias_type_descriptor)->build()};
+    annotation_parameter->type(alias_type);
+    annotation_builder->add_member(annotation_parameter);
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    annotation_parameter->name("var_default_string_10");
+    annotation_parameter->type(alias_type);
+    annotation_parameter->default_value("Hello");
+    annotation_parameter = traits<MemberDescriptor>::make_shared();
+    // There is no official support in the STL to convert from wstring to string.
+    /*
+    annotation_parameter->name("var_wstring_alias");
+    alias_type_descriptor = traits<TypeDescriptor>::make_shared();
+    alias_type_descriptor->kind(TK_ALIAS);
+    alias_type_descriptor->name("Inner_alias_bounded_wstring_helper");
+    alias_type_descriptor->base_type(factory->create_wstring_type(10)->build());
+    annotation_parameter->type(factory->create_type(alias_type_descriptor)->build());
+    annotation_builder->add_member(annotation_parameter);
+    */
+
+    annotation_descriptor->type(annotation_builder->build());
+    annotation_descriptor->set_value("var_short", std::to_string(1));
+    annotation_descriptor->set_value("var_ushort", std::to_string(1));
+    annotation_descriptor->set_value("var_long", std::to_string(1));
+    annotation_descriptor->set_value("var_ulong", std::to_string(1));
+    annotation_descriptor->set_value("var_longlong", std::to_string(1));
+    annotation_descriptor->set_value("var_ulonglong", std::to_string(1));
+    annotation_descriptor->set_value("var_float", std::to_string(1));
+    annotation_descriptor->set_value("var_double", std::to_string(1));
+    annotation_descriptor->set_value("var_boolean", std::to_string(true));
+    annotation_descriptor->set_value("var_octet", std::to_string(0));
+    annotation_descriptor->set_value("var_char8", std::to_string('a'));
+    annotation_descriptor->set_value("var_char16", std::to_string(L'a'));
+    annotation_descriptor->set_value("var_string", "a");
+    // There is no official support in the STL to convert from wstring to string.
+    // annotation_descriptor->set_value("var_wstring", L"a");
+    annotation_descriptor->set_value("enum_value", "ONE");
+
+    type_builder->apply_annotation(annotation_descriptor);
+    DynamicType::_ref_type struct_type {type_builder->build()};
+
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(data);
+
+    // XCDRv1
+    {
+        AnnotatedStruct struct_data;
+        AnnotatedStructPubSubType static_pubsubType;
+        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
+    }
+
+    // XCDRv2
+    {
+        AnnotatedStruct struct_data;
+        AnnotatedStructPubSubType static_pubsubType;
+        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+    }
+
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
+}
+
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EmptyAnnotatedStruct)
+{
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name("EmptyAnnotatedStruct");
+    DynamicTypeBuilder::_ref_type type_builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(type_builder);
+
+    AnnotationDescriptor::_ref_type annotation_descriptor {traits<AnnotationDescriptor>::make_shared()};
+    TypeDescriptor::_ref_type annotation_type {traits<TypeDescriptor>::make_shared()};
+    annotation_type->kind(TK_ANNOTATION);
+    annotation_type->name("EmptyAnnotationTest");
+    DynamicTypeBuilder::_ref_type annotation_builder {factory->create_type(annotation_type)};
+    annotation_descriptor->type(annotation_builder->build());
+
+    type_builder->apply_annotation(annotation_descriptor);
+    DynamicType::_ref_type struct_type {type_builder->build()};
+
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
+    ASSERT_TRUE(data);
+
+    // XCDRv1
+    {
+        EmptyAnnotatedStruct struct_data;
+        EmptyAnnotatedStructPubSubType static_pubsubType;
+        check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data, static_pubsubType);
+    }
+
+    // XCDRv2
+    {
+        EmptyAnnotatedStruct struct_data;
+        EmptyAnnotatedStructPubSubType static_pubsubType;
+        check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data, static_pubsubType);
+    }
+
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 } // dds
