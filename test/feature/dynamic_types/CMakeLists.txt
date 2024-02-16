@@ -25,48 +25,48 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/annotationsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/annotationsTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
-    # idl/dds-types-test/annotationsPubSubTypes.cxx
-    # idl/dds-types-test/annotationsTypeObjectSupport.cxx
-    # idl/dds-types-test/appendablePubSubTypes.cxx
-    # idl/dds-types-test/appendableTypeObjectSupport.cxx
-    # idl/dds-types-test/arraysPubSubTypes.cxx
-    # idl/dds-types-test/arraysTypeObjectSupport.cxx
-    # idl/dds-types-test/bitsetsPubSubTypes.cxx
-    # idl/dds-types-test/bitsetsTypeObjectSupport.cxx
-    # idl/dds-types-test/constantsPubSubTypes.cxx
-    # idl/dds-types-test/constantsTypeObjectSupport.cxx
-    # idl/dds-types-test/declarationsPubSubTypes.cxx
-    # idl/dds-types-test/enumerationsPubSubTypes.cxx
-    # idl/dds-types-test/enumerationsTypeObjectSupport.cxx
-    # idl/dds-types-test/externalPubSubTypes.cxx
-    # idl/dds-types-test/finalPubSubTypes.cxx
-    # idl/dds-types-test/finalTypeObjectSupport.cxx
-    # idl/dds-types-test/inheritancePubSubTypes.cxx
-    # idl/dds-types-test/inheritanceTypeObjectSupport.cxx
-    # idl/dds-types-test/keyPubSubTypes.cxx
-    # idl/dds-types-test/keyTypeObjectSupport.cxx
-    # idl/dds-types-test/mapsPubSubTypes.cxx
-    # idl/dds-types-test/mapsTypeObjectSupport.cxx
-    # idl/dds-types-test/member_idPubSubTypes.cxx
-    # idl/dds-types-test/member_idTypeObjectSupport.cxx
-    # idl/dds-types-test/mutablePubSubTypes.cxx
-    # idl/dds-types-test/mutableTypeObjectSupport.cxx
-    # idl/dds-types-test/optionalPubSubTypes.cxx
-    # idl/dds-types-test/optionalTypeObjectSupport.cxx
-    # idl/dds-types-test/primitivesPubSubTypes.cxx
-    # idl/dds-types-test/primitivesTypeObjectSupport.cxx
-    # idl/dds-types-test/relative_path_includePubSubTypes.cxx
-    # idl/dds-types-test/relative_path_includeTypeObjectSupport.cxx
-    # idl/dds-types-test/sequencesPubSubTypes.cxx
-    # idl/dds-types-test/sequencesTypeObjectSupport.cxx
-    # idl/dds-types-test/stringsPubSubTypes.cxx
-    # idl/dds-types-test/stringsTypeObjectSupport.cxx
-    # idl/dds-types-test/structuresPubSubTypes.cxx
-    # idl/dds-types-test/structuresTypeObjectSupport.cxx
-    # idl/dds-types-test/unionsPubSubTypes.cxx
-    # idl/dds-types-test/unionsTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendablePubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendableTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/declarationsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/externalPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritancePubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritanceTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutablePubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutableTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/optionalPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/optionalTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/primitivesPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/primitivesTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/relative_path_includePubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/relative_path_includeTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/structuresPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/structuresTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsPubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsTypeObjectSupport.cxx
     )
 
 add_executable(DynamicTypesTests DynamicTypesTests.cpp)
