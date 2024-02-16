@@ -58,7 +58,7 @@ namespace types {
 
 /*!
  * @brief This class represents the structure ExtendedAnnotationParameterValue defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class ExtendedAnnotationParameterValue
 {
@@ -108,6 +108,12 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
+<<<<<<< HEAD
+=======
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastrtps::types::ExtendedAnnotationParameterValue::getCdrSerializedSize()",
+            "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
+>>>>>>> dcf1c622c (Fix doxygen docs warnings. Prepare for compiling with Doxygen 1.10.0 (#4376))
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const ExtendedAnnotationParameterValue& data,
             size_t current_alignment = 0);
@@ -160,7 +166,7 @@ private:
 };
 /*!
  * @brief This class represents the union AnnotationParameterValue defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class AnnotationParameterValue
 {
@@ -813,7 +819,7 @@ private:
 
 /*!
  * @brief This class represents the structure AppliedAnnotationParameter defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class AppliedAnnotationParameter
 {
@@ -1359,6 +1365,13 @@ public:
         return m_hash_id;
     }
 
+<<<<<<< HEAD
+=======
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations::getCdrSerializedSize()",
+            "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
+>>>>>>> dcf1c622c (Fix doxygen docs warnings. Prepare for compiling with Doxygen 1.10.0 (#4376))
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const AppliedBuiltinMemberAnnotations& data,
             size_t current_alignment = 0);
