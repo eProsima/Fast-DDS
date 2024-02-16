@@ -329,6 +329,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
     // If member_id is MEMBER_ID_INVALID when aggregated type, find a new one.
     if (TK_ANNOTATION == type_descriptor_kind ||
+            TK_BITMASK == type_descriptor_kind ||
             TK_STRUCTURE == type_descriptor_kind ||
             TK_UNION == type_descriptor_kind)
     {
@@ -369,6 +370,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         dyn_member->get_descriptor().index(next_index_++);
         index_reverter.activate = true;
+    }
+
+    if (TK_BITMASK == type_descriptor_kind && member_id >= type_descriptor_.bound().at(0))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The BITMASK member id exceeds the bound.");
+        return RETCODE_BAD_PARAMETER;
     }
 
     // Specific checks for UNION
@@ -498,6 +505,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     member_by_name_.emplace(std::make_pair(member_name, dyn_member));
     if (TK_ANNOTATION == type_descriptor_kind ||
+            TK_BITMASK == type_descriptor_kind ||
             TK_BITSET == type_descriptor_kind ||
             TK_STRUCTURE == type_descriptor_kind ||
             TK_UNION == type_descriptor_kind)
