@@ -85,9 +85,9 @@ bool is_complex_kind(
 DynamicDataImpl::DynamicDataImpl(
         traits<DynamicType>::ref_type type) noexcept
     : type_(traits<DynamicType>::narrow<DynamicTypeImpl>(type))
+    , enclosing_type_(get_enclosing_type(type_))
 {
-    auto enclosing_type = get_enclosing_type(type_);
-    TypeKind type_kind = enclosing_type->get_kind();
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -95,7 +95,7 @@ DynamicDataImpl::DynamicDataImpl(
             TK_UNION == type_kind)
     {
         uint32_t index = 0;
-        for (auto& member : enclosing_type->get_all_members_by_index())
+        for (auto& member : enclosing_type_->get_all_members_by_index())
         {
             traits<DynamicData>::ref_type data = DynamicDataFactory::get_instance()->create_data(
                 member->get_descriptor().type());
@@ -104,10 +104,10 @@ DynamicDataImpl::DynamicDataImpl(
             if (TK_UNION == type_kind && 0 == index)
             {
                 // Set default discriminator value.
-                set_discriminator_value(enclosing_type->default_discriminator_value(),
+                set_discriminator_value(enclosing_type_->default_discriminator_value(),
                         traits<DynamicType>::narrow<DynamicTypeImpl>(member->get_descriptor().type()),
                         data_impl);
-                selected_union_member_ = enclosing_type->default_union_member();
+                selected_union_member_ = enclosing_type_->default_union_member();
             }
             else
             {
@@ -126,26 +126,26 @@ DynamicDataImpl::DynamicDataImpl(
 
         if (TK_ARRAY == type_kind)
         {
-            auto bounds_it {enclosing_type->get_descriptor().bound().cbegin()};
-            assert(bounds_it != enclosing_type->get_descriptor().bound().cend());
+            auto bounds_it {enclosing_type_->get_descriptor().bound().cbegin()};
+            assert(bounds_it != enclosing_type_->get_descriptor().bound().cend());
             sequence_size = *bounds_it;
 
-            while (++bounds_it != enclosing_type->get_descriptor().bound().cend())
+            while (++bounds_it != enclosing_type_->get_descriptor().bound().cend())
             {
                 sequence_size *= *bounds_it;
             }
         }
 
         auto sequence_type = get_enclosing_type(
-            traits<DynamicType>::narrow<DynamicTypeImpl>(enclosing_type->get_descriptor().element_type()));
+            traits<DynamicType>::narrow<DynamicTypeImpl>(enclosing_type_->get_descriptor().element_type()));
 
         add_sequence_value(sequence_type, sequence_size);
     }
     else if (TK_BITMASK == type_kind)
     {
-        assert(1 == enclosing_type->get_descriptor().bound().size());
+        assert(1 == enclosing_type_->get_descriptor().bound().size());
         value_.emplace(MEMBER_ID_INVALID,
-                std::make_shared<std::vector<bool>>(enclosing_type->get_descriptor().bound().at(0), false));
+                std::make_shared<std::vector<bool>>(enclosing_type_->get_descriptor().bound().at(0), false));
     }
     else if (TK_MAP != type_kind)     // Primitives
     {
@@ -363,7 +363,7 @@ std::map<MemberId, std::shared_ptr<void>>::iterator DynamicDataImpl::add_value(
 void DynamicDataImpl::set_value(
         const ObjectName& sValue) noexcept
 {
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     switch (type_kind)
     {
@@ -596,7 +596,7 @@ bool DynamicDataImpl::equals(
 
     if (type_ && other_data->type_ && type_->equals(other_data->type_))
     {
-        TypeKind type_kind = get_enclosing_typekind(type_);
+        TypeKind type_kind = enclosing_type_->get_kind();
 
         if (TK_ANNOTATION == type_kind ||
                 TK_BITSET == type_kind ||
@@ -626,7 +626,7 @@ bool DynamicDataImpl::equals(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                enclosing_type_->get_descriptor().element_type()));
             return compare_sequence_values(element_kind, value_.begin()->second,
                            other_data->value_.begin()->second);
         }
@@ -634,7 +634,7 @@ bool DynamicDataImpl::equals(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                enclosing_type_->get_descriptor().element_type()));
             assert(key_to_id_.size() == value_.size() && other_data->key_to_id_.size() == other_data->value_.size());
 
             return key_to_id_.size() == other_data->key_to_id_.size() &&
@@ -681,7 +681,7 @@ MemberId DynamicDataImpl::get_member_id_by_name(
         const ObjectName& name) noexcept
 {
     MemberId ret_value {MEMBER_ID_INVALID};
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -689,7 +689,7 @@ MemberId DynamicDataImpl::get_member_id_by_name(
             TK_UNION == type_kind)
     {
         traits<DynamicTypeMember>::ref_type member;
-        if (RETCODE_OK == type_->get_member_by_name(member, name))
+        if (RETCODE_OK == enclosing_type_->get_member_by_name(member, name))
         {
             ret_value =  member->get_id();
         }
@@ -697,31 +697,31 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     else if (TK_BITMASK == type_kind)
     {
         traits<DynamicTypeMember>::ref_type member;
-        if (RETCODE_OK == type_->get_member_by_name(member, name))
+        if (RETCODE_OK == enclosing_type_->get_member_by_name(member, name))
         {
             ret_value =  traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)->get_descriptor().index();
         }
     }
     else if (TK_MAP == type_kind)
     {
-        assert(type_->get_descriptor().key_element_type());
+        assert(enclosing_type_->get_descriptor().key_element_type());
         TypeKind key_kind = get_enclosing_typekind(
-            traits<DynamicType>::narrow<DynamicTypeImpl>(type_->get_descriptor().key_element_type()));
+            traits<DynamicType>::narrow<DynamicTypeImpl>(enclosing_type_->get_descriptor().key_element_type()));
         if (TypeValueConverter::is_string_consistent(key_kind, name.to_string()))
         {
             auto it = key_to_id_.find(name.to_string());
 
             if (key_to_id_.end() == it)
             {
-                if (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
-                        type_->get_descriptor().bound().at(0) > key_to_id_.size())
+                if (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                        enclosing_type_->get_descriptor().bound().at(0) > key_to_id_.size())
                 {
                     ret_value = next_map_member_id_++;
                     key_to_id_[name.to_string()] = ret_value;
 
                     TypeKind element_kind =
-                            get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(type_->get_descriptor()
-                                            .element_type()));
+                            get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                        enclosing_type_->get_descriptor().element_type()));
 
                     if (!is_complex_kind(element_kind))
                     {
@@ -749,7 +749,7 @@ MemberId DynamicDataImpl::get_member_id_at_index(
         uint32_t index) noexcept
 {
     MemberId ret_value {MEMBER_ID_INVALID};
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -757,7 +757,7 @@ MemberId DynamicDataImpl::get_member_id_at_index(
             TK_UNION == type_kind)
     {
         traits<DynamicTypeMember>::ref_type member;
-        if (RETCODE_OK == type_->get_member_by_index(member, index))
+        if (RETCODE_OK == enclosing_type_->get_member_by_index(member, index))
         {
             ret_value = member->get_id();
         }
@@ -782,7 +782,7 @@ uint32_t DynamicDataImpl::get_item_count() noexcept
 {
     uint32_t ret_value {0};
 
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
     if (TK_ARRAY == type_kind || TK_SEQUENCE == type_kind)
     {
         ret_value =  get_sequence_length();
@@ -846,17 +846,17 @@ ReturnCode_t DynamicDataImpl::clear_all_sequence(
     assert(TK_ARRAY == type_kind || TK_SEQUENCE == type_kind);
     auto element_type =
             get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                        type_->get_descriptor().element_type()));
+                        enclosing_type_->get_descriptor().element_type()));
 
     uint32_t sequence_size {0};
 
     if (TK_ARRAY == type_kind)
     {
-        auto bounds_it {type_->get_descriptor().bound().cbegin()};
-        assert(bounds_it != type_->get_descriptor().bound().cend());
+        auto bounds_it {enclosing_type_->get_descriptor().bound().cbegin()};
+        assert(bounds_it != enclosing_type_->get_descriptor().bound().cend());
         sequence_size = *bounds_it;
 
-        while (++bounds_it != type_->get_descriptor().bound().cend())
+        while (++bounds_it != enclosing_type_->get_descriptor().bound().cend())
         {
             sequence_size *= *bounds_it;
         }
@@ -962,7 +962,7 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
         bool only_non_keyed) noexcept
 {
     ReturnCode_t ret_val = RETCODE_OK;
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ARRAY == type_kind ||
             TK_SEQUENCE == type_kind)
@@ -978,9 +978,9 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
     else if (TK_BITMASK == type_kind)
     {
         assert(1 == value_.size());
-        assert(1 == type_->get_descriptor().bound().size());
+        assert(1 == enclosing_type_->get_descriptor().bound().size());
         auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
-        assert(sequence->size() == type_->get_descriptor().bound().at(0));
+        assert(sequence->size() == enclosing_type_->get_descriptor().bound().at(0));
         sequence->assign(sequence->size(), false);
     }
     else if (TK_ANNOTATION == type_kind ||
@@ -988,7 +988,7 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
-        const auto& members = type_->get_all_members();
+        const auto& members = enclosing_type_->get_all_members();
         for (auto& e : value_)
         {
             const auto it = members.find(e.first);
@@ -1003,10 +1003,10 @@ ReturnCode_t DynamicDataImpl::clear_all_values(
                 if (TK_UNION == type_kind && 0 == e.first)
                 {
                     // Set default discriminator value.
-                    set_discriminator_value(type_->default_discriminator_value(),
+                    set_discriminator_value(enclosing_type_->default_discriminator_value(),
                             traits<DynamicType>::narrow<DynamicTypeImpl>(member->get_descriptor().type()),
                             data);
-                    selected_union_member_ = type_->default_union_member();
+                    selected_union_member_ = enclosing_type_->default_union_member();
                 }
                 else
                 {
@@ -1033,7 +1033,7 @@ ReturnCode_t DynamicDataImpl::clear_sequence_element(
 
     auto element_type =
             get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                        type_->get_descriptor().element_type()));
+                        enclosing_type_->get_descriptor().element_type()));
 
     switch (element_type->get_kind())
     {
@@ -1286,7 +1286,7 @@ ReturnCode_t DynamicDataImpl::clear_value(
         MemberId id) noexcept
 {
     ReturnCode_t ret_val = RETCODE_BAD_PARAMETER;
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ARRAY == type_kind || TK_SEQUENCE == type_kind)
     {
@@ -1317,9 +1317,9 @@ ReturnCode_t DynamicDataImpl::clear_value(
     else if (TK_BITMASK == type_kind)
     {
         assert(1 == value_.size());
-        assert(1 == type_->get_descriptor().bound().size());
+        assert(1 == enclosing_type_->get_descriptor().bound().size());
         auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
-        assert(sequence->size() == type_->get_descriptor().bound().at(0));
+        assert(sequence->size() == enclosing_type_->get_descriptor().bound().at(0));
 
         if (sequence->size() > id)
         {
@@ -1331,7 +1331,7 @@ ReturnCode_t DynamicDataImpl::clear_value(
             TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind )
     {
-        const auto& members = type_->get_all_members();
+        const auto& members = enclosing_type_->get_all_members();
         auto it_value = value_.find(id);
 
         if (it_value != value_.end())
@@ -1350,7 +1350,7 @@ ReturnCode_t DynamicDataImpl::clear_value(
     {
         if (0 == id || selected_union_member_ == id)
         {
-            const auto& members = type_->get_all_members();
+            const auto& members = enclosing_type_->get_all_members();
             auto it_value = value_.find(id);
 
             if (it_value != value_.end())
@@ -1365,10 +1365,10 @@ ReturnCode_t DynamicDataImpl::clear_value(
                 if (0 == id)
                 {
                     // Set default discriminator value.
-                    set_discriminator_value(type_->default_discriminator_value(),
+                    set_discriminator_value(enclosing_type_->default_discriminator_value(),
                             traits<DynamicType>::narrow<DynamicTypeImpl>(member->get_descriptor().type()),
                             data);
-                    selected_union_member_ = type_->default_union_member();
+                    selected_union_member_ = enclosing_type_->default_union_member();
                 }
                 else
                 {
@@ -1396,7 +1396,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
 {
     if (id != MEMBER_ID_INVALID)
     {
-        TypeKind type_kind = get_enclosing_typekind(type_);
+        TypeKind type_kind = enclosing_type_->get_kind();
 
         if (std::find(loaned_values_.begin(), loaned_values_.end(), id) == loaned_values_.end())
         {
@@ -1423,7 +1423,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
             {
                 auto element_type =
                         get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    type_->get_descriptor().element_type()));
+                                    enclosing_type_->get_descriptor().element_type()));
 
                 if (is_complex_kind(element_type->get_kind()))
                 {
@@ -1435,8 +1435,8 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
                     if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
                             (TK_SEQUENCE == type_kind &&
                             (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
-                            type_->get_descriptor().bound().at(0) ||
-                            type_->get_descriptor().bound().at(0) >= id + 1)))
+                            enclosing_type_->get_descriptor().bound().at(0) ||
+                            enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
                     {
                         if (sequence->size() < id + 1)
                         {
@@ -1463,7 +1463,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
             {
                 auto element_type =
                         get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    type_->get_descriptor().element_type()));
+                                    enclosing_type_->get_descriptor().element_type()));
 
                 if (is_complex_kind(element_type->get_kind()))
                 {
@@ -1493,7 +1493,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
 ReturnCode_t DynamicDataImpl::return_loaned_value(
         traits<DynamicData>::ref_type value) noexcept
 {
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     for (auto loan_it {loaned_values_.begin()}; loan_it != loaned_values_.end(); ++loan_it)
     {
@@ -1518,8 +1518,8 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
                     std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
             assert((TK_ARRAY == type_kind && sequence->size() >= *loan_it + 1) ||
                     (TK_SEQUENCE == type_kind &&
-                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
-                    type_->get_descriptor().bound().at(0) >= *loan_it + 1)));
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                    enclosing_type_->get_descriptor().bound().at(0) >= *loan_it + 1)));
             if (sequence->size() >= *loan_it + 1)
             {
                 if (sequence->at(*loan_it) == value)
@@ -1539,8 +1539,9 @@ traits<DynamicData>::ref_type DynamicDataImpl::clone() noexcept
 {
     traits<DynamicDataImpl>::ref_type ret_value = std::make_shared<DynamicDataImpl>();
     ret_value->type_ = type_;
+    ret_value->enclosing_type_ = enclosing_type_;
 
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -1559,7 +1560,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::clone() noexcept
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type_->get_descriptor().element_type()));
+                            enclosing_type_->get_descriptor().element_type()));
 
         ret_value->value_.emplace(value_.cbegin()->first, clone_sequence(element_kind, value_.cbegin()->second));
     }
@@ -1570,7 +1571,7 @@ traits<DynamicData>::ref_type DynamicDataImpl::clone() noexcept
 
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type_->get_descriptor().element_type()));
+                            enclosing_type_->get_descriptor().element_type()));
 
         for (const auto& value : value_)
         {
@@ -1820,11 +1821,9 @@ ReturnCode_t DynamicDataImpl::set_string_value(
         MemberId id,
         const std::string& value) noexcept
 {
-    auto type = get_enclosing_type(type_);
-
-    if (TK_STRING8 == type->get_kind())
+    if (TK_STRING8 == enclosing_type_->get_kind())
     {
-        auto bound = type->get_descriptor().bound().at(0);
+        auto bound = enclosing_type_->get_descriptor().bound().at(0);
         if (0 != bound && value.length() > bound)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
@@ -1847,11 +1846,9 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
         MemberId id,
         const std::wstring& value) noexcept
 {
-    auto type = get_enclosing_type(type_);
-
-    if (TK_STRING16 == type->get_kind())
+    if (TK_STRING16 == enclosing_type_->get_kind())
     {
-        auto bound = type->get_descriptor().bound().at(0);
+        auto bound = enclosing_type_->get_descriptor().bound().at(0);
         if (0 != bound && value.length() > bound)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
@@ -1867,8 +1864,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         traits<DynamicData>::ref_type& value,
         MemberId id) noexcept
 {
-    auto type = get_enclosing_type(type_);
-    TypeKind type_kind = type->get_kind();
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (id != MEMBER_ID_INVALID)
     {
@@ -1891,7 +1887,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         {
             auto element_type =
                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type->get_descriptor().element_type()));
+                                enclosing_type_->get_descriptor().element_type()));
 
             if (is_complex_kind(element_type->get_kind()))
             {
@@ -1903,8 +1899,8 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                 if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
                         (TK_SEQUENCE == type_kind &&
                         (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
-                        type->get_descriptor().bound().at(0) ||
-                        type->get_descriptor().bound().at(0) >= id + 1)))
+                        enclosing_type_->get_descriptor().bound().at(0) ||
+                        enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
                 {
                     if (sequence->size() < id + 1)
                     {
@@ -1931,7 +1927,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         {
             auto element_type =
                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type->get_descriptor().element_type()));
+                                enclosing_type_->get_descriptor().element_type()));
 
             if (is_complex_kind(element_type->get_kind()))
             {
@@ -1960,8 +1956,7 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
 
     if (value && id != MEMBER_ID_INVALID)
     {
-        auto type = get_enclosing_type(type_);
-        TypeKind type_kind = type->get_kind();
+        TypeKind type_kind = enclosing_type_->get_kind();
 
         if (TK_ANNOTATION == type_kind ||
                 TK_BITSET == type_kind ||
@@ -1994,7 +1989,7 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type->get_descriptor().element_type()));
+                                enclosing_type_->get_descriptor().element_type()));
             if (is_complex_kind(element_kind))
             {
                 auto it = value_.cbegin();
@@ -2004,8 +1999,8 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
                 assert(sequence);
                 if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
                         (TK_SEQUENCE == type_kind &&
-                        (static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
-                        type->get_descriptor().bound().at(0) >= id + 1)))
+                        (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                        enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
                 {
                     if (sequence->size() < id + 1)
                     {
@@ -2027,7 +2022,7 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type->get_descriptor().element_type()));
+                                enclosing_type_->get_descriptor().element_type()));
             if (is_complex_kind(element_kind))
             {
                 auto it = value_.find(id);
@@ -2274,11 +2269,9 @@ ReturnCode_t DynamicDataImpl::set_string_values(
         MemberId id,
         const StringSeq& value) noexcept
 {
-    auto type = get_enclosing_type(type_);
-
-    if (TK_STRING8 == type->get_kind())
+    if (TK_STRING8 == enclosing_type_->get_kind())
     {
-        auto bound = type->get_descriptor().bound().at(0);
+        auto bound = enclosing_type_->get_descriptor().bound().at(0);
         if (0 != bound && value.end() != std::find_if(value.begin(), value.end(), [bound](const std::string& str)
                 {
                     return str.length() > bound;
@@ -2306,11 +2299,9 @@ ReturnCode_t DynamicDataImpl::set_wstring_values(
         MemberId id,
         const WstringSeq& value) noexcept
 {
-    auto type = get_enclosing_type(type_);
-
-    if (TK_STRING16 == type->get_kind())
+    if (TK_STRING16 == enclosing_type_->get_kind())
     {
-        auto bound = type->get_descriptor().bound().at(0);
+        auto bound = enclosing_type_->get_descriptor().bound().at(0);
         if (0 != bound && value.end() != std::find_if(value.begin(), value.end(), [bound](const std::wstring& str)
                 {
                     return str.length() > bound;
@@ -2333,11 +2324,11 @@ void DynamicDataImpl::apply_bitset_mask(
         TypeForKind<TK>& value) const noexcept
 {
     // Get member index.
-    assert(type_->get_all_members().end() != type_->get_all_members().find(member_id));
+    assert(enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(member_id));
     const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                                type_->get_all_members().at(member_id))};
+                                enclosing_type_->get_all_members().at(member_id))};
     const auto member_index {member_impl->get_descriptor().index()};
-    const auto bound {type_->get_descriptor().bound().at(member_index)};
+    const auto bound {enclosing_type_->get_descriptor().bound().at(member_index)};
     uint64_t mask {0XFFFFFFFFFFFFFFFFllu << bound};
     value &= static_cast<TypeForKind<TK>>(~mask);
 }
@@ -3028,14 +3019,14 @@ ReturnCode_t DynamicDataImpl::get_primitive_value<TK_STRING16>(
 
 uint32_t DynamicDataImpl::get_sequence_length()
 {
-    assert(TK_ARRAY == type_->get_kind() || TK_SEQUENCE == type_->get_kind());
-    assert(type_->get_descriptor().element_type());
+    assert(TK_ARRAY == enclosing_type_->get_kind() || TK_SEQUENCE == enclosing_type_->get_kind());
+    assert(enclosing_type_->get_descriptor().element_type());
     assert(1 == value_.size());
 
     size_t ret_value {0};
     TypeKind type_kind =
             get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                        type_->get_descriptor().element_type()));
+                        enclosing_type_->get_descriptor().element_type()));
 
     switch (type_kind)
     {
@@ -3137,7 +3128,7 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
         MemberId id) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    TypeKind type_kind = type_->get_kind();
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_STRUCTURE == type_kind ||
@@ -3165,7 +3156,7 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type_->get_descriptor().element_type()));
+                            enclosing_type_->get_descriptor().element_type()));
         if (MEMBER_ID_INVALID != id && TK == element_kind)
         {
             auto it = value_.cbegin();
@@ -3199,8 +3190,7 @@ ReturnCode_t DynamicDataImpl::get_value(
         MemberId id) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    auto type = get_enclosing_type(type_);
-    auto type_kind = type->get_kind();
+    auto type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -3223,7 +3213,7 @@ ReturnCode_t DynamicDataImpl::get_value(
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type->get_descriptor().element_type()));
+                            enclosing_type_->get_descriptor().element_type()));
         if (MEMBER_ID_INVALID != id && TK == element_kind)
         {
             auto it = value_.cbegin();
@@ -3246,7 +3236,7 @@ ReturnCode_t DynamicDataImpl::get_value(
             {
                 TypeKind element_kind =
                         get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    type->get_descriptor().element_type()));
+                                    enclosing_type_->get_descriptor().element_type()));
                 ret_value = get_primitive_value<TK>(element_kind, it, value, MEMBER_ID_INVALID);
             }
         }
@@ -3307,17 +3297,17 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_STRING16>(
 void DynamicDataImpl::set_discriminator_value(
         MemberId id) noexcept
 {
-    assert(TK_UNION == type_->get_kind());
+    assert(TK_UNION == enclosing_type_->get_kind());
 
     traits<DynamicTypeMember>::ref_type member;
-    type_->get_member(member, id);
+    enclosing_type_->get_member(member, id);
     assert(member);
     auto m_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
     int32_t label {0};
 
     if (m_impl->get_descriptor().is_default_label())
     {
-        label = type_->default_discriminator_value();
+        label = enclosing_type_->default_discriminator_value();
     }
     else
     {
@@ -3330,7 +3320,7 @@ void DynamicDataImpl::set_discriminator_value(
 
     // Set new discriminator value.
     set_discriminator_value(label,
-            traits<DynamicType>::narrow<DynamicTypeImpl>(type_->get_descriptor().discriminator_type()),
+            traits<DynamicType>::narrow<DynamicTypeImpl>(enclosing_type_->get_descriptor().discriminator_type()),
             data_impl);
 
     selected_union_member_ = id;
@@ -3341,7 +3331,7 @@ void DynamicDataImpl::set_discriminator_value(
         const traits<DynamicTypeImpl>::ref_type& discriminator_type,
         traits<DynamicDataImpl>::ref_type& data) noexcept
 {
-    assert(TK_UNION == get_enclosing_typekind(type_));
+    assert(TK_UNION == enclosing_type_->get_kind());
     TypeKind discriminator_kind = get_enclosing_typekind(discriminator_type);
 
     switch (discriminator_kind)
@@ -3531,11 +3521,10 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING8>(
         const TypeForKind<TK_STRING8>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    auto type = get_enclosing_type(type_);
 
     if (TK_STRING8 == element_kind && (
-                static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
-                value.size() <= type->get_descriptor().bound().at(0)))
+                static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                value.size() <= enclosing_type_->get_descriptor().bound().at(0)))
     {
         *std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
@@ -3551,11 +3540,10 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING16>(
         const TypeForKind<TK_STRING16>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    auto type = get_enclosing_type(type_);
 
     if (TK_STRING16 == element_kind && (
-                static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
-                value.size() <= type->get_descriptor().bound().at(0)))
+                static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                value.size() <= enclosing_type_->get_descriptor().bound().at(0)))
     {
         *std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
@@ -3570,7 +3558,7 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
         const SequenceTypeForKind<TK>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_MAP == type_kind ||
@@ -3612,7 +3600,7 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type_->get_descriptor().element_type()));
+                            enclosing_type_->get_descriptor().element_type()));
         if (MEMBER_ID_INVALID != id && TK == element_kind)
         {
             auto it = value_.cbegin();
@@ -3621,8 +3609,8 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
             assert(sequence);
             if ((TK_ARRAY == type_kind && sequence->size() >= id + value.size()) ||
                     (TK_SEQUENCE == type_kind &&
-                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
-                    type_->get_descriptor().bound().at(0) >= id + value.size())))
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                    enclosing_type_->get_descriptor().bound().at(0) >= id + value.size())))
             {
                 if (sequence->size() < id + value.size())
                 {
@@ -3656,8 +3644,7 @@ ReturnCode_t DynamicDataImpl::set_value(
         const TypeForKind<TK>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
-    auto type = get_enclosing_type(type_);
-    TypeKind type_kind = type->get_kind();
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
             TK_BITSET == type_kind ||
@@ -3700,7 +3687,7 @@ ReturnCode_t DynamicDataImpl::set_value(
     {
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                            type->get_descriptor().element_type()));
+                            enclosing_type_->get_descriptor().element_type()));
         if (MEMBER_ID_INVALID != id && TK == element_kind)
         {
             auto it = value_.cbegin();
@@ -3709,8 +3696,8 @@ ReturnCode_t DynamicDataImpl::set_value(
             assert(sequence);
             if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
                     (TK_SEQUENCE == type_kind &&
-                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
-                    type->get_descriptor().bound().at(0) >= id + 1)))
+                    (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+                    enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
             {
                 if (sequence->size() < id + 1)
                 {
@@ -3731,7 +3718,7 @@ ReturnCode_t DynamicDataImpl::set_value(
             {
                 TypeKind element_kind =
                         get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                    type->get_descriptor().element_type()));
+                                    enclosing_type_->get_descriptor().element_type()));
                 ret_value = set_primitive_value<TK>(element_kind, it, value);
             }
         }
@@ -3755,7 +3742,7 @@ ReturnCode_t DynamicDataImpl::set_value(
 void DynamicDataImpl::serialize(
         eprosima::fastcdr::Cdr& cdr) const
 {
-    serialize(cdr, type_);
+    serialize(cdr, enclosing_type_);
 }
 
 void DynamicDataImpl::serialize(
@@ -3768,7 +3755,7 @@ void DynamicDataImpl::serialize(
         return;
        }
      */
-    TypeKind type_kind = get_enclosing_typekind(type);
+    TypeKind type_kind = type->get_kind();
 
     switch (type_kind)
     {
@@ -3877,7 +3864,7 @@ void DynamicDataImpl::serialize(
 
             if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
             {
-                switch (type_->get_descriptor().extensibility_kind())
+                switch (type->get_descriptor().extensibility_kind())
                 {
                     case ExtensibilityKind::MUTABLE:
                         encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
@@ -3892,7 +3879,7 @@ void DynamicDataImpl::serialize(
             }
             else
             {
-                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
                 {
                     encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
                 }
@@ -3932,7 +3919,7 @@ void DynamicDataImpl::serialize(
                     if (RETCODE_OK == member_data->get_value<TK_INT64>(value, MEMBER_ID_INVALID))
                     {
                         auto base {member_id};
-                        auto size {type_->get_descriptor().bound().at(index)};
+                        auto size {type->get_descriptor().bound().at(index)};
                         for (auto i = base; i < base + size; ++i)
                         {
                             bitset.set(i, !!(value & 0x01));
@@ -3982,7 +3969,7 @@ void DynamicDataImpl::serialize(
 
             if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
             {
-                switch (type_->get_descriptor().extensibility_kind())
+                switch (type->get_descriptor().extensibility_kind())
                 {
                     case ExtensibilityKind::MUTABLE:
                         encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
@@ -3997,7 +3984,7 @@ void DynamicDataImpl::serialize(
             }
             else
             {
-                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
                 {
                     encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
                 }
@@ -4032,7 +4019,7 @@ void DynamicDataImpl::serialize(
         case TK_ARRAY:
         {
             TypeKind element_kind {get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                               type_->get_descriptor().element_type()))};
+                                               type->get_descriptor().element_type()))};
             switch (element_kind)
             {
                 case TK_INT32:
@@ -4111,7 +4098,7 @@ void DynamicDataImpl::serialize(
         case TK_SEQUENCE:
         {
             TypeKind element_kind {get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                               type_->get_descriptor().element_type()))};
+                                               type->get_descriptor().element_type()))};
             switch (element_kind)
             {
                 case TK_INT32:
@@ -4174,9 +4161,9 @@ void DynamicDataImpl::serialize(
         case TK_MAP:
         {
             TypeKind key_kind {get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                           type_->get_descriptor().key_element_type()))};
+                                           type->get_descriptor().key_element_type()))};
             TypeKind element_kind {get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                               type_->get_descriptor().element_type()))};
+                                               type->get_descriptor().element_type()))};
             bool is_primitive {!is_complex_kind(element_kind)};
             eprosima::fastcdr::Cdr::state dheader_state{!is_primitive ? cdr.allocate_xcdrv2_dheader() :
                                                         eprosima::fastcdr::Cdr::state{cdr}};
@@ -4360,7 +4347,7 @@ void DynamicDataImpl::serialize(
         {
             uint64_t value {0};
             auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
-            auto bound = type_->get_descriptor().bound().at(0);
+            auto bound = type->get_descriptor().bound().at(0);
 
             for (size_t pos {0}; pos < sequence->size(); ++pos)
             {
@@ -4394,7 +4381,7 @@ void DynamicDataImpl::serialize(
 bool DynamicDataImpl::deserialize(
         eprosima::fastcdr::Cdr& cdr)
 {
-    return deserialize(cdr, type_);
+    return deserialize(cdr, enclosing_type_);
 }
 
 bool DynamicDataImpl::deserialize(
@@ -4410,7 +4397,7 @@ bool DynamicDataImpl::deserialize(
         }
      */
 
-    TypeKind type_kind = get_enclosing_typekind(type);
+    TypeKind type_kind = type->get_kind();
 
     switch (type_kind)
     {
@@ -4517,7 +4504,7 @@ bool DynamicDataImpl::deserialize(
 
             if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
             {
-                switch (type_->get_descriptor().extensibility_kind())
+                switch (type->get_descriptor().extensibility_kind())
                 {
                     case ExtensibilityKind::MUTABLE:
                         encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
@@ -4532,7 +4519,7 @@ bool DynamicDataImpl::deserialize(
             }
             else
             {
-                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
                 {
                     encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
                 }
@@ -4558,7 +4545,7 @@ bool DynamicDataImpl::deserialize(
                                     selected_union_member_ = MEMBER_ID_INVALID;
                                     if (RETCODE_OK == get_int32_value(discriminator, 0))
                                     {
-                                        for (auto member : type_->get_all_members_by_index())
+                                        for (auto member : type->get_all_members_by_index())
                                         {
                                             auto m_impl =
                                             traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
@@ -4575,7 +4562,7 @@ bool DynamicDataImpl::deserialize(
 
                                         if (MEMBER_ID_INVALID == selected_union_member_)
                                         {
-                                            selected_union_member_ = type_->default_union_member();
+                                            selected_union_member_ = type->default_union_member();
                                         }
                                     }
                                 }
@@ -4600,8 +4587,8 @@ bool DynamicDataImpl::deserialize(
         {
             std::bitset<64> bitset;
             auto sum =
-                    std::accumulate(type_->get_descriptor().bound().begin(),
-                            type_->get_descriptor().bound().end(), 0);
+                    std::accumulate(type->get_descriptor().bound().begin(),
+                            type->get_descriptor().bound().end(), 0);
 
             if (9 > sum)
             {
@@ -4636,7 +4623,7 @@ bool DynamicDataImpl::deserialize(
                 {
                     int64_t value {0};
                     auto base {member_id};
-                    auto size {type_->get_descriptor().bound().at(index)};
+                    auto size {type->get_descriptor().bound().at(index)};
                     auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
 
                     for (uint32_t i = 0; i < size; ++i)
@@ -4704,7 +4691,7 @@ bool DynamicDataImpl::deserialize(
 
             if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
             {
-                switch (type_->get_descriptor().extensibility_kind())
+                switch (type->get_descriptor().extensibility_kind())
                 {
                     case ExtensibilityKind::MUTABLE:
                         encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
@@ -4719,7 +4706,7 @@ bool DynamicDataImpl::deserialize(
             }
             else
             {
-                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
                 {
                     encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
                 }
@@ -4732,7 +4719,7 @@ bool DynamicDataImpl::deserialize(
                         traits<DynamicTypeMember>::ref_type member;
 
                         //TODO(richiware) check if mutable extension and use get_member.
-                        if (RETCODE_OK == type_->get_member_by_index(member, mid.id))
+                        if (RETCODE_OK == type->get_member_by_index(member, mid.id))
                         {
                             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
                             traits<DynamicDataImpl>::ref_type member_data;
@@ -4766,7 +4753,7 @@ bool DynamicDataImpl::deserialize(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                type->get_descriptor().element_type()));
             switch (element_kind)
             {
                 case TK_INT32:
@@ -4849,7 +4836,7 @@ bool DynamicDataImpl::deserialize(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                type->get_descriptor().element_type()));
             switch (element_kind)
             {
                 case TK_INT32:
@@ -4924,7 +4911,7 @@ bool DynamicDataImpl::deserialize(
                         {
                             auto element_type =
                                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                                type_->get_descriptor().element_type()));
+                                                type->get_descriptor().element_type()));
 
                             vector_t->resize(sequence_length);
 
@@ -4965,7 +4952,7 @@ bool DynamicDataImpl::deserialize(
                         {
                             auto element_type =
                                     get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                                type_->get_descriptor().element_type()));
+                                                type->get_descriptor().element_type()));
                             try
                             {
                                 vector_t->resize(sequence_length);
@@ -4994,9 +4981,9 @@ bool DynamicDataImpl::deserialize(
         case TK_MAP:
         {
             TypeKind key_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                            type_->get_descriptor().key_element_type()))};
+                                            type->get_descriptor().key_element_type()))};
             TypeKind element_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                                type_->get_descriptor().element_type()))};
+                                                type->get_descriptor().element_type()))};
             bool is_primitive {!is_complex_kind(element_kind)};
             uint32_t dheader {0};
 
@@ -5015,8 +5002,8 @@ bool DynamicDataImpl::deserialize(
                     (is_primitive || eprosima::fastcdr::CdrVersion::XCDRv2 != cdr.get_cdr_version() ||
                     cdr.get_current_position() - offset < dheader) && count < length; ++count)
             {
-                if (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_->get_descriptor().bound().at(0) ||
-                        type_->get_descriptor().bound().at(0) > key_to_id_.size())
+                if (static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
+                        type->get_descriptor().bound().at(0) > key_to_id_.size())
                 {
                     std::string key;
                     switch (key_kind)
@@ -5150,7 +5137,7 @@ bool DynamicDataImpl::deserialize(
                     else
                     {
                         traits<DynamicData>::ref_type data = DynamicDataFactory::get_instance()->create_data(
-                            type_->get_descriptor().element_type());
+                            type->get_descriptor().element_type());
                         insert_it = value_.emplace(id, data).first;
                     }
 
@@ -5230,7 +5217,7 @@ bool DynamicDataImpl::deserialize(
         {
             uint64_t value {0};
             auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
-            auto bound = type_->get_descriptor().bound().at(0);
+            auto bound = type->get_descriptor().bound().at(0);
 
             if (9 > bound)
             {
@@ -5278,6 +5265,13 @@ bool DynamicDataImpl::deserialize(
 
 size_t DynamicDataImpl::calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
+        size_t& current_alignment) const noexcept
+{
+    return calculate_serialized_size(calculator, enclosing_type_, current_alignment);
+}
+
+size_t DynamicDataImpl::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const traits<DynamicTypeImpl>::ref_type type,
         size_t& current_alignment) const noexcept
 {
@@ -5291,7 +5285,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
        }
      */
 
-    TypeKind type_kind = get_enclosing_typekind(type);
+    TypeKind type_kind = type->get_kind();
 
     switch (type_kind)
     {
@@ -5368,7 +5362,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
 
             if (eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
             {
-                switch (type_->get_descriptor().extensibility_kind())
+                switch (type->get_descriptor().extensibility_kind())
                 {
                     case ExtensibilityKind::MUTABLE:
                         encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
@@ -5383,7 +5377,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
             }
             else
             {
-                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
                 {
                     encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
                 }
@@ -5410,8 +5404,8 @@ size_t DynamicDataImpl::calculate_serialized_size(
         case TK_BITSET:
         {
             auto sum =
-                    std::accumulate(type_->get_descriptor().bound().begin(),
-                            type_->get_descriptor().bound().end(), 0);
+                    std::accumulate(type->get_descriptor().bound().begin(),
+                            type->get_descriptor().bound().end(), 0);
             if (9 > sum)
             {
                 std::bitset<8> bitset;
@@ -5440,7 +5434,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
 
             if (eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
             {
-                switch (type_->get_descriptor().extensibility_kind())
+                switch (type->get_descriptor().extensibility_kind())
                 {
                     case ExtensibilityKind::MUTABLE:
                         encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
@@ -5455,7 +5449,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
             }
             else
             {
-                if (ExtensibilityKind::MUTABLE == type_->get_descriptor().extensibility_kind())
+                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
                 {
                     encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
                 }
@@ -5487,7 +5481,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                type_->get_descriptor().element_type()));
+                                type->get_descriptor().element_type()));
             switch (element_kind)
             {
                 case TK_INT32:
@@ -5590,9 +5584,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
         case TK_MAP:
         {
             TypeKind key_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                            type_->get_descriptor().key_element_type()))};
+                                            type->get_descriptor().key_element_type()))};
             TypeKind element_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
-                                                type_->get_descriptor().element_type()))};
+                                                type->get_descriptor().element_type()))};
             bool is_primitive {!is_complex_kind(element_kind) &&
                                TK_STRING8 != element_kind &&
                                TK_STRING16 != element_kind};
@@ -5832,7 +5826,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_BITMASK:
         {
-            auto bound = type_->get_descriptor().bound().at(0);
+            auto bound = type->get_descriptor().bound().at(0);
 
             if (9 > bound)
             {
@@ -5866,7 +5860,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
 void DynamicDataImpl::serialize_key(
         eprosima::fastcdr::Cdr& cdr) const noexcept
 {
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     switch (type_kind)
     {
@@ -5876,7 +5870,7 @@ void DynamicDataImpl::serialize_key(
         case TK_STRUCTURE:
         {
             bool there_is_keyed_member {false};
-            for (auto& member : type_->get_all_members())
+            for (auto& member : enclosing_type_->get_all_members())
             {
                 auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
                 if (member_impl->get_descriptor().is_key())
@@ -5900,7 +5894,7 @@ void DynamicDataImpl::serialize_key(
 
             if (!there_is_keyed_member)
             {
-                for (auto& member : type_->get_all_members())
+                for (auto& member : enclosing_type_->get_all_members())
                 {
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
                     auto it = value_.find(member.first);
@@ -5943,7 +5937,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
 {
     size_t calculated_size {0};
 
-    TypeKind type_kind = get_enclosing_typekind(type_);
+    TypeKind type_kind = enclosing_type_->get_kind();
 
     switch (type_kind)
     {
@@ -5953,7 +5947,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
         case TK_STRUCTURE:
         {
             bool there_is_keyed_member {false};
-            for (auto& member : type_->get_all_members())
+            for (auto& member : enclosing_type_->get_all_members())
             {
                 auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
                 if (member_impl->get_descriptor().is_key())
@@ -5978,7 +5972,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
 
             if (!there_is_keyed_member)
             {
-                for (auto& member : type_->get_all_members())
+                for (auto& member : enclosing_type_->get_all_members())
                 {
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
                     auto it = value_.find(member.first);

@@ -37,6 +37,8 @@ class DynamicDataImpl : public traits<DynamicData>::base_type
 {
     traits<DynamicTypeImpl>::ref_type type_;
 
+    traits<DynamicTypeImpl>::ref_type enclosing_type_;
+
     std::map<MemberId, std::shared_ptr<void>> value_;
 
     std::map<std::string, MemberId> key_to_id_;
@@ -374,10 +376,7 @@ public:
 
     size_t calculate_serialized_size(
             eprosima::fastcdr::CdrSizeCalculator& calculator,
-            size_t& current_alignment) const noexcept
-    {
-        return calculate_serialized_size(calculator, type_, current_alignment);
-    }
+            size_t& current_alignment) const noexcept;
 
     void serialize_key(
             eprosima::fastcdr::Cdr& cdr) const noexcept;
