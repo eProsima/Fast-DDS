@@ -49,7 +49,7 @@ bool DDSFilterField::set_value(
         traits<DynamicData>::ref_type array_data = data->loan_value(member_id);
         if (array_data)
         {
-            member_id = access_path_[n].array_index;
+            member_id = static_cast<MemberId>(access_path_[n].array_index);
             if (array_data->get_item_count() > member_id)
             {
                 if (last_step)

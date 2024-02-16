@@ -71,7 +71,7 @@ template <> inline converter::operator TypeForKind<TK_UINT64>()
 
 template <> inline converter::operator TypeForKind<TK_FLOAT32>()
 {
-    return std::stod(x);
+    return std::stof(x);
 }
 
 template <> inline converter::operator TypeForKind<TK_FLOAT64>()

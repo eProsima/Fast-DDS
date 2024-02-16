@@ -1375,7 +1375,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
     else if (strncmp(memberType, STRING, 7) == 0)
     {
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
-        uint32_t bound = LENGTH_UNLIMITED;
+        uint32_t bound = static_cast<uint32_t>(LENGTH_UNLIMITED);
 
         if (nullptr != boundStr)
         {
@@ -1400,7 +1400,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
     else if (strncmp(memberType, WSTRING, 8) == 0)
     {
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
-        uint32_t bound = LENGTH_UNLIMITED;
+        uint32_t bound = static_cast<uint32_t>(LENGTH_UNLIMITED);
 
         if (nullptr != boundStr)
         {

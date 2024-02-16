@@ -94,7 +94,7 @@ ReturnCode_t DynamicTypeImpl::get_all_members(
 
 uint32_t DynamicTypeImpl::get_member_count() noexcept
 {
-    return members_.size();
+    return static_cast<uint32_t>(members_.size());
 }
 
 ReturnCode_t DynamicTypeImpl::get_member_by_index(

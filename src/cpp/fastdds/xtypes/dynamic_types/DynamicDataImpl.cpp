@@ -790,12 +790,14 @@ uint32_t DynamicDataImpl::get_item_count() noexcept
     else if (TK_STRING8 == type_kind)
     {
         assert(1 == value_.size());
-        ret_value =  std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_.begin()->second)->length();
+        ret_value =  static_cast<uint32_t>(
+            std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_.begin()->second)->length());
     }
     else if (TK_STRING16 == type_kind)
     {
         assert(1 == value_.size());
-        ret_value =  std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_.begin()->second)->length();
+        ret_value =  static_cast<uint32_t>(
+            std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_.begin()->second)->length());
     }
     else if (TK_UNION == type_kind)
     {
@@ -803,7 +805,8 @@ uint32_t DynamicDataImpl::get_item_count() noexcept
     }
     else if (TK_BITMASK == type_kind)
     {
-        ret_value =  std::static_pointer_cast<std::vector<bool>>(value_.begin()->second)->size();
+        ret_value =  static_cast<uint32_t>(
+            std::static_pointer_cast<std::vector<bool>>(value_.begin()->second)->size());
     }
     else
     {
@@ -2947,7 +2950,7 @@ ReturnCode_t DynamicDataImpl::get_primitive_value(
                     auto str = std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_iterator->second);
                     if (member_id < str->length())
                     {
-                        value = str->at(member_id);
+                        value = static_cast<TypeForKind<TK>>(str->at(member_id));
                         ret_value = RETCODE_OK;
                     }
 
@@ -4353,7 +4356,7 @@ void DynamicDataImpl::serialize(
             {
                 if (sequence->at(pos))
                 {
-                    value |= 1 << pos;
+                    value |= 0x1ull << pos;
                 }
             }
 
@@ -4529,7 +4532,6 @@ bool DynamicDataImpl::deserialize(
                     const eprosima::fastcdr::MemberId& mid) -> bool
                     {
                         bool ret_value = true;
-                        traits<DynamicTypeMember>::ref_type member;
 
                         switch (mid.id)
                         {
@@ -4630,7 +4632,7 @@ bool DynamicDataImpl::deserialize(
                     {
                         if (bitset.test(i + base))
                         {
-                            value |= 0x1 << i;
+                            value |= 0x1ull << i;
                         }
                     }
 
@@ -4642,28 +4644,36 @@ bool DynamicDataImpl::deserialize(
                     switch (element_kind)
                     {
                         case TK_INT8:
-                            ret_value = member_data->set_value<TK_INT8>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_INT8>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_INT8>>(value));
                             break;
                         case TK_UINT8:
-                            ret_value = member_data->set_value<TK_UINT8>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_UINT8>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_UINT8>>(value));
                             break;
                         case TK_INT16:
-                            ret_value = member_data->set_value<TK_INT16>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_INT16>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_INT16>>(value));
                             break;
                         case TK_UINT16:
-                            ret_value = member_data->set_value<TK_UINT16>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_UINT16>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_UINT16>>(value));
                             break;
                         case TK_INT32:
-                            ret_value = member_data->set_value<TK_INT32>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_INT32>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_INT32>>(value));
                             break;
                         case TK_UINT32:
-                            ret_value = member_data->set_value<TK_UINT32>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_UINT32>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_UINT32>>(value));
                             break;
                         case TK_INT64:
-                            ret_value = member_data->set_value<TK_INT64>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_INT64>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_INT64>>(value));
                             break;
                         case TK_UINT64:
-                            ret_value = member_data->set_value<TK_UINT64>(MEMBER_ID_INVALID, value);
+                            ret_value = member_data->set_value<TK_UINT64>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_UINT64>>(value));
                             break;
                         default:
                             break;
@@ -5244,7 +5254,7 @@ bool DynamicDataImpl::deserialize(
 
             for (size_t pos {0}; pos < sequence->size(); ++pos)
             {
-                if (value & (1 << pos))
+                if (value & (0x1ull << pos))
                 {
                     sequence->at(pos) = true;
                 }
@@ -5601,7 +5611,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
             calculated_size = current_alignment - initial_alignment;
-            for (auto it = key_to_id_.begin(); it != key_to_id_.end(); ++it)
+            for (auto key_it = key_to_id_.begin(); key_it != key_to_id_.end(); ++key_it)
             {
                 switch (key_kind)
                 {
@@ -5707,110 +5717,110 @@ size_t DynamicDataImpl::calculate_serialized_size(
                         break;
 
                 }
-                assert(value_.end() != value_.find(it->second));
+                assert(value_.end() != value_.find(key_it->second));
                 switch (element_kind)
                 {
                     case TK_INT32:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT32>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_UINT32:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT32>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_INT8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT8>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_INT16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT16>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_UINT16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT16>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_INT64:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT64>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_UINT64:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT64>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_FLOAT32:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_FLOAT64:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_FLOAT128:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_CHAR8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR8>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_CHAR16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR16>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_BOOLEAN:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_BYTE:
                     case TK_UINT8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT8>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_STRING8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_STRING8>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     case TK_STRING16:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_STRING16>>(
                                             value_.find(
-                                                it->second)->second), current_alignment);
+                                                key_it->second)->second), current_alignment);
                         break;
                     default:
                         calculated_size +=
                                 calculator.calculate_serialized_size(std::static_pointer_cast<DynamicDataImpl>(
-                                            value_.find(it->second)->second), current_alignment);
+                                            value_.find(key_it->second)->second), current_alignment);
                         break;
 
                 }
