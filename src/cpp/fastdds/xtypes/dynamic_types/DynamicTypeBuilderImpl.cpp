@@ -49,7 +49,7 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
             next_id_ = member_impl->get_descriptor().id() + 1;
         }
 
-        next_index_ = members_.size();
+        next_index_ = static_cast<uint32_t>(members_.size());
     }
     else if (TK_UNION == type_descriptor_.kind())
     {
@@ -140,7 +140,7 @@ ReturnCode_t DynamicTypeBuilderImpl::get_all_members(
 
 uint32_t DynamicTypeBuilderImpl::get_member_count() noexcept
 {
-    return members_.size();
+    return static_cast<uint32_t>(members_.size());
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::get_member_by_index(
@@ -422,25 +422,25 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
         for (auto member : member_)
         {
-            const MemberId member_id {member.first};
+            const MemberId mid {member.first};
             const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
             const auto member_index {member_impl->get_descriptor().index()};
 
-            assert(member_id != new_member_id);
-            if (member_id < new_member_id)
+            assert(mid != new_member_id);
+            if (mid < new_member_id)
             {
                 const auto bound {type_descriptor_.bound().at(member_index)};
 
-                if (new_member_id < member_id + bound)
+                if (new_member_id < mid + bound)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because is less than MemberId(" <<
-                            member_id << ") + Bound(" << bound << ")");
+                            mid << ") + Bound(" << bound << ")");
                     return RETCODE_BAD_PARAMETER;
                 }
             }
             else
             {
-                if (member_id < new_member_id + new_member_bound)
+                if (mid < new_member_id + new_member_bound)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because exists a member with id "
                             << "less than MemberId(" << new_member_id << ") + Bound(" << new_member_bound << ")");
