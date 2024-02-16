@@ -30,7 +30,13 @@ defaults:
 
 jobs:
   reusable-mac-ci:
-    runs-on: macos-latest
+    # As explained in https://github.com/actions/runner-images/tree/main?tab=readme-ov-file#available-images,
+    # *-latest images are not always the latest available versions. The minimum version of the macOS image
+    # with clang 15 is macos-13 (see
+    # https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md#language-and-runtime),
+    # so we'll use that one for now, as clang 15 is the supported compiler for Fast DDS in macOS.
+    # (see https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#compilers)
+    runs-on: macos-13
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     strategy:
       fail-fast: false
