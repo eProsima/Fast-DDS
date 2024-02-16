@@ -102,10 +102,12 @@ bool MemberDescriptorImpl::is_consistent() noexcept
 
     // Only aggregated types must use the ID value.
     if ((MEMBER_ID_INVALID == id_ && (TK_ANNOTATION == parent_kind_ ||
+            TK_BITMASK == parent_kind_ ||
             TK_BITSET == parent_kind_ ||
             TK_UNION == parent_kind_ ||
             TK_STRUCTURE == parent_kind_)) ||
             (MEMBER_ID_INVALID != id_ && TK_ANNOTATION != parent_kind_ &&
+            TK_BITMASK != parent_kind_ &&
             TK_BITSET != parent_kind_ &&
             TK_UNION != parent_kind_ &&
             TK_STRUCTURE != parent_kind_))

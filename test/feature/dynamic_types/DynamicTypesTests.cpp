@@ -3441,7 +3441,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
-    const uint32_t limit = 5;
+    const uint32_t limit = 6;
 
     DynamicTypeBuilder::_ref_type builder {factory->create_bitmask_type(0)};
     ASSERT_FALSE(builder);
@@ -3470,11 +3470,13 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_BOOLEAN));
-    member_descriptor->name("BIT4");
+    member_descriptor->name("BIT5");
+    member_descriptor->id(5);
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_BOOLEAN));
-    member_descriptor->name("BIT5");
+    member_descriptor->name("BIT6");
+    member_descriptor->id(6);
     ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_BOOLEAN));
@@ -3487,27 +3489,28 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
 
     // Testing get_member_by_name and get_member_id_at_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("BIT5"));
+    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("BIT4"));
     ASSERT_EQ(0, data->get_member_id_by_name("BIT0"));
     ASSERT_EQ(1, data->get_member_id_by_name("BIT1"));
     ASSERT_EQ(2, data->get_member_id_by_name("BIT2"));
     ASSERT_EQ(3, data->get_member_id_by_name("BIT3"));
-    ASSERT_EQ(4, data->get_member_id_by_name("BIT4"));
+    ASSERT_EQ(5, data->get_member_id_by_name("BIT5"));
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(5));
     ASSERT_EQ(0, data->get_member_id_at_index(0));
     ASSERT_EQ(1, data->get_member_id_at_index(1));
     ASSERT_EQ(2, data->get_member_id_at_index(2));
     ASSERT_EQ(3, data->get_member_id_at_index(3));
-    ASSERT_EQ(4, data->get_member_id_at_index(4));
+    ASSERT_EQ(5, data->get_member_id_at_index(4));
 
     // Testing getters and setters.
 
     ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, true), RETCODE_OK);
-    // Over the limit
-    ASSERT_NE(data->set_boolean_value(5, true), RETCODE_OK);
+    ASSERT_NE(data->set_boolean_value(4, true), RETCODE_OK);
+    ASSERT_NE(data->set_boolean_value(6, true), RETCODE_OK);
 
     ASSERT_EQ(data->set_boolean_value(0, true), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(2, true), RETCODE_OK);
+    ASSERT_EQ(data->set_boolean_value(5, true), RETCODE_OK);
 
     bool bit_get {false};
     ASSERT_EQ(data->get_boolean_value(bit_get, 0), RETCODE_OK);
@@ -3518,8 +3521,9 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(true, bit_get);
     ASSERT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
-    ASSERT_EQ(data->get_boolean_value(bit_get, 4), RETCODE_OK);
-    ASSERT_EQ(false, bit_get);
+    ASSERT_NE(data->get_boolean_value(bit_get, 4), RETCODE_OK);
+    ASSERT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
+    ASSERT_EQ(true, bit_get);
 
     // Test clone.
     auto clone = data->clone();
@@ -3562,8 +3566,8 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
         ASSERT_EQ(true, bit_get);
         ASSERT_EQ(data2->get_boolean_value(bit_get, 3), RETCODE_OK);
         ASSERT_EQ(false, bit_get);
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 4), RETCODE_OK);
-        ASSERT_EQ(false, bit_get);
+        ASSERT_EQ(data2->get_boolean_value(bit_get, 5), RETCODE_OK);
+        ASSERT_EQ(true, bit_get);
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
 
@@ -3588,8 +3592,8 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
         ASSERT_EQ(true, bit_get);
         ASSERT_EQ(data2->get_boolean_value(bit_get, 3), RETCODE_OK);
         ASSERT_EQ(false, bit_get);
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 4), RETCODE_OK);
-        ASSERT_EQ(false, bit_get);
+        ASSERT_EQ(data2->get_boolean_value(bit_get, 5), RETCODE_OK);
+        ASSERT_EQ(true, bit_get);
         DynamicDataFactory::get_instance()->delete_data(data2);
     }
 
@@ -3603,11 +3607,12 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(false, bit_get);
     ASSERT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
-    ASSERT_EQ(data->get_boolean_value(bit_get, 4), RETCODE_OK);
+    ASSERT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
 
     ASSERT_EQ(data->set_boolean_value(0, true), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(2, true), RETCODE_OK);
+    ASSERT_EQ(data->set_boolean_value(5, true), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_boolean_value(bit_get, 0), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
@@ -3617,11 +3622,12 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(false, bit_get);
     ASSERT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
-    ASSERT_EQ(data->get_boolean_value(bit_get, 4), RETCODE_OK);
+    ASSERT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
 
     ASSERT_EQ(data->set_boolean_value(0, true), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(2, true), RETCODE_OK);
+    ASSERT_EQ(data->set_boolean_value(5, true), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_value(1));
     ASSERT_EQ(RETCODE_OK, data->clear_value(2));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
@@ -3633,8 +3639,8 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(false, bit_get);
     ASSERT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
     ASSERT_EQ(false, bit_get);
-    ASSERT_EQ(data->get_boolean_value(bit_get, 4), RETCODE_OK);
-    ASSERT_EQ(false, bit_get);
+    ASSERT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
+    ASSERT_EQ(true, bit_get);
 
     DynamicDataFactory::get_instance()->delete_data(data);
 }
@@ -7679,7 +7685,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type((TK_BOOLEAN)));
     member_descriptor->name("flag5");
-    member_descriptor->index(5);
+    member_descriptor->id(5);
     builder->add_member(member_descriptor);
 
     DynamicType::_ref_type type {pbType->GetDynamicType()};

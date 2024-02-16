@@ -199,7 +199,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     }
 
     traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
-    md->index(field_position);
+    md->id(field_position);
     md->name(memberName);
     md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     builder->add_member(md);

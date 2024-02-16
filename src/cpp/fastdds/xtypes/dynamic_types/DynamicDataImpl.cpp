@@ -684,6 +684,7 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITMASK == type_kind ||
             TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
@@ -692,14 +693,6 @@ MemberId DynamicDataImpl::get_member_id_by_name(
         if (RETCODE_OK == enclosing_type_->get_member_by_name(member, name))
         {
             ret_value =  member->get_id();
-        }
-    }
-    else if (TK_BITMASK == type_kind)
-    {
-        traits<DynamicTypeMember>::ref_type member;
-        if (RETCODE_OK == enclosing_type_->get_member_by_name(member, name))
-        {
-            ret_value =  traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)->get_descriptor().index();
         }
     }
     else if (TK_MAP == type_kind)
@@ -752,6 +745,7 @@ MemberId DynamicDataImpl::get_member_id_at_index(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
+            TK_BITMASK == type_kind ||
             TK_BITSET == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
@@ -763,7 +757,6 @@ MemberId DynamicDataImpl::get_member_id_at_index(
         }
     }
     else if (TK_ARRAY == type_kind ||
-            TK_BITMASK == type_kind ||
             TK_SEQUENCE == type_kind ||
             TK_STRING8 == type_kind ||
             TK_STRING16 == type_kind)
@@ -3246,7 +3239,11 @@ ReturnCode_t DynamicDataImpl::get_value(
     }
     else if (TK_BITMASK == type_kind)
     {
-        ret_value = get_bitmask_bit<TK>(value, id);
+        // Check MemberId was defined as a BITMASK member.
+        if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
+        {
+            ret_value = get_bitmask_bit<TK>(value, id);
+        }
     }
     else     // Primitives
     {
@@ -3728,7 +3725,11 @@ ReturnCode_t DynamicDataImpl::set_value(
     }
     else if (TK_BITMASK == type_kind)
     {
-        ret_value = set_bitmask_bit<TK>(id, value);
+        // Check MemberId was defined as a BITMASK member.
+        if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
+        {
+            ret_value = set_bitmask_bit<TK>(id, value);
+        }
     }
     else     // Primitives
     {
