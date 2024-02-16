@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '3.0.x-devel' }}
 
     steps:
       - name: Install wget
