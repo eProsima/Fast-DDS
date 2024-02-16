@@ -58,7 +58,7 @@ namespace types {
 
 /*!
  * @brief This class represents the structure ExtendedAnnotationParameterValue defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class ExtendedAnnotationParameterValue
 {
@@ -108,6 +108,7 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
+
     RTPS_DllAPI static size_t getCdrSerializedSize(
             const ExtendedAnnotationParameterValue& data,
             size_t current_alignment = 0);
@@ -160,7 +161,7 @@ private:
 };
 /*!
  * @brief This class represents the union AnnotationParameterValue defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class AnnotationParameterValue
 {
@@ -813,7 +814,7 @@ private:
 
 /*!
  * @brief This class represents the structure AppliedAnnotationParameter defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class AppliedAnnotationParameter
 {
