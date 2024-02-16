@@ -1201,7 +1201,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitma
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member_descriptor->name(bitflag.detail().name());
             member_descriptor->type(get_primitive_type(TK_BOOLEAN));
-            member_descriptor->default_value(std::to_string(bitflag.common().position()));
+            member_descriptor->id(bitflag.common().position());
             if (RETCODE_OK != ret_val->add_member(member_descriptor))
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding bitflag " + member_descriptor->name().to_string());
@@ -1235,7 +1235,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitma
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         member_descriptor->name(get_string_from_name_hash(bitflag.detail().name_hash()));
         member_descriptor->type(get_primitive_type(TK_BOOLEAN));
-        member_descriptor->default_value(std::to_string(bitflag.common().position()));
+        member_descriptor->id(bitflag.common().position());
         if (RETCODE_OK != ret_val->add_member(member_descriptor))
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error adding bitflag " + member_descriptor->name().to_string());
