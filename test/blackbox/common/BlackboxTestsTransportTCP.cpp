@@ -13,17 +13,15 @@
 // limitations under the License.
 
 #include "BlackboxTests.hpp"
-<<<<<<< HEAD
+
 #include "TCPReqRepHelloWorldRequester.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-=======
 
 #include <chrono>
 #include <thread>
 #include <random>
->>>>>>> 709b1406b (TCP Client&Server Participant Decision-Making (#4277))
 
 #include <gtest/gtest.h>
 
