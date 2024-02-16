@@ -21,15 +21,14 @@
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/aliasesPubSubTypes.h"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
 
 namespace eprosima {
 namespace fastdds {
