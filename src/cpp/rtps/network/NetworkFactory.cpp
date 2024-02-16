@@ -474,17 +474,21 @@ void NetworkFactory::update_network_interfaces()
 bool NetworkFactory::sanitize_transports(
         SendResourceList& send_resource_list) const
 {
+    bool sanitize_result = true;
     for (auto& transport : mRegisteredTransports)
     {
         // TODO: Sanitize all transports
         if (transport->kind() == LOCATOR_KIND_TCPv4 ||
                 transport->kind() == LOCATOR_KIND_TCPv6)
         {
-            TCPTransportInterface* tcp_transport = static_cast<TCPTransportInterface*>(transport.get());
-            return tcp_transport->sanitize_transport(send_resource_list);
+            TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
+            if (tcp_transport)
+            {
+                sanitize_result &= tcp_transport->sanitize_transport(send_resource_list);
+            }
         }
     }
-    return true;
+    return sanitize_result;
 }
 
 } // namespace rtps

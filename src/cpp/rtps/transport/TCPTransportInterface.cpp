@@ -1851,7 +1851,7 @@ bool TCPTransportInterface::sanitize_transport(
             std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
             auto channel = channel_resources_.find(tcp_sender_resource->locator());
             if (channel != channel_resources_.end() &&
-                channel->second->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
+                    channel->second->connection_status() == TCPChannelResource::eConnectionStatus::eDisconnected)
             {
                 scopedLock.unlock();
                 it = send_resource_list.erase(it);
