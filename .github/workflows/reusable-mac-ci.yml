@@ -131,6 +131,10 @@ jobs:
           # Create source dir and download the sources
           vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
 
+      # TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
+      #   - Issue: https://github.com/boostorg/mpl/issues/69. A workaround is proposed here:
+      # We are disabling the warning for now, as the proposed solution does not fix the issue:
+      #   - Not working solution: https://github.com/macports/macports-ports/pull/21839/files
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@feature/fastdds_mac_ci_support
@@ -138,7 +142,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror"
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 

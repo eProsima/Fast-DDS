@@ -1,8 +1,8 @@
 
 // Copyright Aleksey Gurtovoy 2000-2006
 //
-// Distributed under the Boost Software License, Version 1.0. 
-// (See accompanying file LICENSE_1_0.txt or copy at 
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 //
 // See http://www.boost.org/libs/mpl for documentation.
@@ -32,7 +32,7 @@
 #if !defined(AUX_WRAPPER_INST)
 #   if BOOST_WORKAROUND(__MWERKS__, <= 0x2407)
 #       define AUX_WRAPPER_INST(value) AUX_WRAPPER_NAME< value >
-#   else 
+#   else
 #       define AUX_WRAPPER_INST(value) BOOST_MPL_AUX_ADL_BARRIER_NAMESPACE::AUX_WRAPPER_NAME< value >
 #   endif
 #endif
@@ -43,7 +43,7 @@ template< AUX_WRAPPER_PARAMS(N) >
 struct AUX_WRAPPER_NAME
 {
     BOOST_STATIC_CONSTANT(AUX_WRAPPER_VALUE_TYPE, value = N);
-// agurt, 08/mar/03: SGI MIPSpro C++ workaround, have to #ifdef because some 
+// agurt, 08/mar/03: SGI MIPSpro C++ workaround, have to #ifdef because some
 // other compilers (e.g. MSVC) are not particulary happy about it
 #if BOOST_WORKAROUND(__EDG_VERSION__, <= 238)
     typedef struct AUX_WRAPPER_NAME type;
@@ -73,11 +73,11 @@ struct AUX_WRAPPER_NAME
     typedef AUX_WRAPPER_INST( BOOST_MPL_AUX_STATIC_CAST(AUX_WRAPPER_VALUE_TYPE, (value - 1)) ) prior;
 #endif
 
-    // enables uniform function call syntax for families of overloaded 
+    // enables uniform function call syntax for families of overloaded
     // functions that return objects of both arithmetic ('int', 'long',
-    // 'double', etc.) and wrapped integral types (for an example, see 
+    // 'double', etc.) and wrapped integral types (for an example, see
     // "mpl/example/power.cpp")
-    BOOST_CONSTEXPR operator AUX_WRAPPER_VALUE_TYPE() const { return static_cast<AUX_WRAPPER_VALUE_TYPE>(this->value); } 
+    BOOST_CONSTEXPR operator AUX_WRAPPER_VALUE_TYPE() const { return static_cast<AUX_WRAPPER_VALUE_TYPE>(this->value); }
 };
 
 #if !defined(BOOST_NO_INCLASS_MEMBER_INITIALIZATION)
