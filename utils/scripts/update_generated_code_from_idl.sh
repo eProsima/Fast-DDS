@@ -3,6 +3,7 @@
 set -e
 
 files_to_exclude=(
+	'./thirdparty/dds-types-test/IDL/relative_path_include.idl' # Relative path not working in current location.
 )
 
 files_not_needing_typeobject=(

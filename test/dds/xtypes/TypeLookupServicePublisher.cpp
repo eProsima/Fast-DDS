@@ -46,114 +46,6 @@ TypeLookupServicePublisher::~TypeLookupServicePublisher()
     }
 }
 
-void TypeLookupServicePublisher::create_type_creator_functions()
-{
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type1);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type2);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type3);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type3);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type4);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type5);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type6);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type7);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type8);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type9);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type10);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type11);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type12);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type13);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type14);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type15);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type16);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type17);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type18);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type19);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type20);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type21);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type22);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type23);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type24);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type25);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type26);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type27);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type28);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type29);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type30);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type31);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type32);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type33);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type34);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type35);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type36);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type37);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type38);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type39);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type40);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type41);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type42);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type43);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type44);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type45);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type46);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type47);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type48);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type49);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type50);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type51);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type52);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type53);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type54);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type55);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type56);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type57);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type58);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type59);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type60);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type61);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type62);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type63);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type64);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type65);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type66);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type67);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type68);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type69);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type70);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type71);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type72);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type73);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type74);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type75);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type76);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type77);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type78);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type79);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type80);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type81);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type82);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type83);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type84);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type85);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type86);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type87);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type88);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type89);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type90);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type91);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type92);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type93);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type94);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type95);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type96);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type97);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type98);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type99);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(Type100);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(TypeBig);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(TypeDep);
-    PUBLISHER_TYPE_CREATOR_FUNCTION(TypeNoTypeObject);
-}
-
 bool TypeLookupServicePublisher::init(
         std::vector<std::string> known_types)
 {
@@ -250,13 +142,6 @@ bool TypeLookupServicePublisher::create_known_type_impl(
     a_type.type_sup_.reset(new TypePubSubType());
     a_type.type_sup_.register_type(participant_);
 
-    // CREATE SET METHOD
-    a_type.set_values_ = [](void* sample, std::string current_sample)
-            {
-                Type* typed_data = static_cast<Type*>(sample);
-                typed_data->content(current_sample);
-            };
-
     if (!setup_publisher(a_type))
     {
         return false;
@@ -304,12 +189,6 @@ bool TypeLookupServicePublisher::create_discovered_type(
         std::cout << "ERROR: DynamicType cannot be registered for type: " << new_type_name << std::endl;
         return false;
     }
-
-    // CREATE SET METHOD
-    a_type.dyn_set_values_ = [](DynamicData::_ref_type sample, std::string current_sample)
-            {
-                sample->set_string_value(0, current_sample);
-            };
 
     if (!setup_publisher(a_type))
     {
@@ -359,7 +238,7 @@ bool TypeLookupServicePublisher::run(
     bool result = cv_.wait_for(
         lock, std::chrono::seconds(timeout), [&]
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             uint32_t current_sample = 0;
             std::string type_name;
             while (samples > current_sample)
@@ -371,16 +250,14 @@ bool TypeLookupServicePublisher::run(
                     {
                         DynamicData::_ref_type sample =
                         DynamicDataFactory::get_instance()->create_data(known_type.second.dyn_type_);
-                        known_type.second.dyn_set_values_(sample, std::to_string(current_sample));
-                        std::cout << "Publisher dyn_type_" << type_name << ": " << current_sample << std::endl;
+                        //std::cout << "Publisher dyn_type_" << type_name << ": " << current_sample << std::endl;
                         known_type.second.writer_->write(&sample);
                     }
 
                     if (known_type.second.type_)
                     {
                         void* sample = known_type.second.type_sup_.create_data();
-                        known_type.second.set_values_(sample, std::to_string(current_sample));
-                        std::cout << "Publisher type_" << type_name << ": " << current_sample << std::endl;
+                        //std::cout << "Publisher type_" << type_name << ": " << current_sample << std::endl;
                         known_type.second.writer_->write(sample);
                         known_type.second.type_sup_.delete_data(sample);
                     }
@@ -443,16 +320,17 @@ void TypeLookupServicePublisher::on_data_reader_discovery(
         if (nullptr == participant_->find_type(discovered_reader_type_name))
         {
             // Check for TypeObjectRegistry inconsistency
-            const bool should_be_registered = discovered_reader_type_name.find("NoTypeObject") == std::string::npos;
-            if ((should_be_registered && !check_registered_type(info.type_information)) ||
-                    (!should_be_registered && check_registered_type(info.type_information)))
+            const bool has_type_object = types_without_typeobject_.find(discovered_reader_type_name) ==
+                    types_without_typeobject_.end();
+            if ((has_type_object && !check_registered_type(info.type_information)) ||
+                    (!has_type_object && check_registered_type(info.type_information)))
             {
                 throw std::runtime_error(discovered_reader_type_name +
-                              (should_be_registered ? " registered" : " not registered"));
+                              (has_type_object ? " registered" : " not registered"));
             }
 
             // Create new publisher for the type
-            if (should_be_registered)
+            if (has_type_object)
             {
                 create_types_threads.emplace_back(&TypeLookupServicePublisher::create_discovered_type, this, info);
             }

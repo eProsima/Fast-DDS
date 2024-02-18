@@ -46,115 +46,6 @@ TypeLookupServiceSubscriber::~TypeLookupServiceSubscriber()
     }
 }
 
-void TypeLookupServiceSubscriber::create_type_creator_functions()
-{
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type1);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type2);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type3);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type3);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type4);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type5);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type6);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type7);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type8);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type9);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type10);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type11);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type12);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type13);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type14);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type15);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type16);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type17);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type18);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type19);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type20);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type21);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type22);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type23);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type24);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type25);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type26);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type27);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type28);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type29);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type30);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type31);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type32);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type33);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type34);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type35);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type36);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type37);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type38);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type39);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type40);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type41);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type42);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type43);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type44);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type45);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type46);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type47);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type48);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type49);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type50);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type51);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type52);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type53);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type54);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type55);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type56);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type57);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type58);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type59);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type60);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type61);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type62);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type63);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type64);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type65);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type66);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type67);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type68);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type69);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type70);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type71);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type72);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type73);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type74);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type75);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type76);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type77);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type78);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type79);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type80);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type81);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type82);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type83);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type84);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type85);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type86);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type87);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type88);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type89);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type90);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type91);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type92);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type93);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type94);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type95);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type96);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type97);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type98);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type99);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type100);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(TypeBig);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(TypeDep);
-    SUBSCRIBER_TYPE_CREATOR_FUNCTION(TypeNoTypeObject);
-
-}
-
 bool TypeLookupServiceSubscriber::init(
         std::vector<std::string> known_types)
 {
@@ -255,13 +146,6 @@ bool TypeLookupServiceSubscriber::create_known_type_impl(
     a_type.type_sup_.reset(new TypePubSubType());
     a_type.type_sup_.register_type(participant_);
 
-    // CREATE PRINT METHOD
-    a_type.print_values_ = [](void* sample)
-            {
-                Type* typed_data = static_cast<Type*>(sample);
-                std::cout <<  "content(" << typed_data->content() << ")" << std::endl;
-            };
-
     if (!setup_subscriber(a_type))
     {
         return false;
@@ -309,14 +193,6 @@ bool TypeLookupServiceSubscriber::create_discovered_type(
         std::cout << "ERROR: DynamicType cannot be registered for type: " << new_type_name << std::endl;
         return false;
     }
-
-    // CREATE PRINT METHOD
-    a_type.dyn_print_values_ = [](DynamicData::_ref_type sample)
-            {
-                std::string content;
-                sample->get_string_value(content, 0);
-                std::cout <<  "content(" << content << ")" << std::endl;
-            };
 
     if (!setup_subscriber(a_type))
     {
@@ -428,8 +304,7 @@ void TypeLookupServiceSubscriber::on_data_available(
         DynamicData::_ref_type sample = DynamicDataFactory::get_instance()->create_data(known_type.dyn_type_);
         if (reader->take_next_sample(&sample, &info) == RETCODE_OK && info.valid_data)
         {
-            std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": ";
-            known_type.dyn_print_values_(sample);
+            //std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": " << std::endl;
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
@@ -440,8 +315,7 @@ void TypeLookupServiceSubscriber::on_data_available(
         void* sample = known_type.type_;
         if (reader->take_next_sample(sample, &info) == RETCODE_OK && info.valid_data)
         {
-            std::cout << "Subscriber type_" << reader->type().get_type_name() << ": ";
-            known_type.print_values_(sample);
+            //std::cout << "Subscriber type_" << reader->type().get_type_name() << ": " << std::endl;
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
@@ -463,17 +337,17 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
         if (participant_->find_type(discovered_writer_type_name) == nullptr)
         {
             // Check for TypeObjectRegistry inconsistency
-            const bool should_be_registered = discovered_writer_type_name.find("NoTypeObject") == std::string::npos;
-
-            if ((should_be_registered && !check_registered_type(info.type_information)) ||
-                    (!should_be_registered && check_registered_type(info.type_information)))
+            const bool has_type_object = types_without_typeobject_.find(discovered_writer_type_name) ==
+                    types_without_typeobject_.end();
+            if ((has_type_object && !check_registered_type(info.type_information)) ||
+                    (!has_type_object && check_registered_type(info.type_information)))
             {
                 throw std::runtime_error(discovered_writer_type_name +
-                              (should_be_registered ? " registered" : " not registered"));
+                              (has_type_object ? " registered" : " not registered"));
             }
 
             // Create new subscriber for the type
-            if (should_be_registered)
+            if (has_type_object)
             {
                 create_types_threads.emplace_back(&TypeLookupServiceSubscriber::create_discovered_type, this, info);
             }

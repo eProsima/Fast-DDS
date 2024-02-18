@@ -20,11 +20,36 @@
 #ifndef _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_TYPES_H_
 #define _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_TYPES_H_
 
-#include "idl/XtypesTestsType1PubSubTypes.hpp"
-#include "idl/XtypesTestsType2PubSubTypes.hpp"
-#include "idl/XtypesTestsType3PubSubTypes.hpp"
-#include "idl/XtypesTestsTypeBigPubSubTypes.hpp"
-#include "idl/XtypesTestsTypeDepPubSubTypes.hpp"
-#include "idl/XtypesTestsTypeNoTypeObjectPubSubTypes.hpp"
+// This header will include all the headers for the types that will be tested
+// They will be added automatically by the update_headers.py script
+
+#include "../../dds-types-test/aliasesPubSubTypes.hpp"
+#include "../../dds-types-test/annotationsPubSubTypes.hpp"
+#include "../../dds-types-test/appendablePubSubTypes.hpp"
+#include "../../dds-types-test/arraysPubSubTypes.hpp"
+#include "../../dds-types-test/bitsetsPubSubTypes.hpp"
+#include "../../dds-types-test/constantsPubSubTypes.hpp"
+#include "../../dds-types-test/declarationsPubSubTypes.hpp"
+#include "../../dds-types-test/enumerationsPubSubTypes.hpp"
+#include "../../dds-types-test/externalPubSubTypes.hpp"
+#include "../../dds-types-test/finalPubSubTypes.hpp"
+#include "../../dds-types-test/helpers/basic_inner_typesPubSubTypes.hpp"
+#include "../../dds-types-test/inheritancePubSubTypes.hpp"
+#include "../../dds-types-test/keyPubSubTypes.hpp"
+#include "../../dds-types-test/mapsPubSubTypes.hpp"
+#include "../../dds-types-test/member_idPubSubTypes.hpp"
+#include "../../dds-types-test/mutablePubSubTypes.hpp"
+#include "../../dds-types-test/optionalPubSubTypes.hpp"
+#include "../../dds-types-test/primitivesPubSubTypes.hpp"
+#include "../../dds-types-test/sequencesPubSubTypes.hpp"
+#include "../../dds-types-test/stringsPubSubTypes.hpp"
+#include "../../dds-types-test/structuresPubSubTypes.hpp"
+#include "../../dds-types-test/unionsPubSubTypes.hpp"
+#include "BaseCasesIDLs/XtypesTestsType1PubSubTypes.hpp"
+#include "BaseCasesIDLs/XtypesTestsType2PubSubTypes.hpp"
+#include "BaseCasesIDLs/XtypesTestsType3PubSubTypes.hpp"
+#include "BaseCasesIDLs/XtypesTestsTypeBigPubSubTypes.hpp"
+#include "BaseCasesIDLs/XtypesTestsTypeDepPubSubTypes.hpp"
+#include "BaseCasesIDLs/XtypesTestsTypeNoTypeObjectPubSubTypes.hpp"
 
 #endif /* _TEST_DDS_XTYPES_TYPELOOKUPSERVICETEST_TYPES_H_ */
