@@ -2256,10 +2256,10 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, TYPELOOKUP_SERVICE_THREADS) == 0)
+        else if (strcmp(name, TYPELOOKUP_SERVICE_THREAD) == 0)
         {
             if (XMLP_ret::XML_OK !=
-                    getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.typelookup_service_threads))
+                    getXMLThreadSettings(*p_aux0, participant_node.get()->rtps.typelookup_service_thread))
             {
                 return XMLP_ret::XML_ERROR;
             }

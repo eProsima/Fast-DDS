@@ -271,13 +271,15 @@ public:
 
     /**
      * @brief Get Complementary TypeIdentifier.
+     * Meaning that if the given TypeIdentifier is a complete TypeIdentifier,
+     * the returned TypeIdentifier will be the minimal TypeIdentifier and vice versa.
      *
-     * @param type_id Direct hash TypeIdentifier
+     * @param type_id TypeIdentifier of which the complementary is to be obtained.
      * @return TypeIdentifier complementary to the given type_id.
-     *         Same TypeIdentifier if the given TypeIdentifier is not a direct hash TypeIdentifier.
+     *         Same TypeIdentifier if the given TypeIdentifier does not have complementary.
      */
     const TypeIdentifier get_complementary_type_identifier(
-            const TypeIdentifier& minimal_type_id);
+            const TypeIdentifier& type_id);
 
     // Only DomainParticipantFactory is allowed to instantiate the TypeObjectRegistry class.
     // It cannot be protected as the standard library needs to access the constructor to allocate the resources.

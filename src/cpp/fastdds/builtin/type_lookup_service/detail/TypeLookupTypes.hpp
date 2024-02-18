@@ -97,7 +97,7 @@ public:
     eProsima_user_DllExport TypeLookup_getTypes_In(
             const TypeLookup_getTypes_In& x)
     {
-        m_type_ids = x.m_type_ids;
+                    m_type_ids = x.m_type_ids;
 
     }
 
@@ -119,7 +119,7 @@ public:
             const TypeLookup_getTypes_In& x)
     {
 
-        m_type_ids = x.m_type_ids;
+                    m_type_ids = x.m_type_ids;
 
         return *this;
     }
@@ -194,6 +194,8 @@ public:
         return m_type_ids;
     }
 
+
+
 private:
 
     std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifier> m_type_ids;
@@ -228,9 +230,9 @@ public:
     eProsima_user_DllExport TypeLookup_getTypes_Out(
             const TypeLookup_getTypes_Out& x)
     {
-        m_types = x.m_types;
+                    m_types = x.m_types;
 
-        m_complete_to_minimal = x.m_complete_to_minimal;
+                    m_complete_to_minimal = x.m_complete_to_minimal;
 
     }
 
@@ -253,9 +255,9 @@ public:
             const TypeLookup_getTypes_Out& x)
     {
 
-        m_types = x.m_types;
+                    m_types = x.m_types;
 
-        m_complete_to_minimal = x.m_complete_to_minimal;
+                    m_complete_to_minimal = x.m_complete_to_minimal;
 
         return *this;
     }
@@ -281,7 +283,7 @@ public:
             const TypeLookup_getTypes_Out& x) const
     {
         return (m_types == x.m_types &&
-               m_complete_to_minimal == x.m_complete_to_minimal);
+           m_complete_to_minimal == x.m_complete_to_minimal);
     }
 
     /*!
@@ -318,8 +320,7 @@ public:
      * @brief This function returns a constant reference to member types
      * @return Constant reference to member types
      */
-    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair>& types()
-    const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierTypeObjectPair>& types() const
     {
         return m_types;
     }
@@ -332,6 +333,7 @@ public:
     {
         return m_types;
     }
+
 
     /*!
      * @brief This function copies the value in member complete_to_minimal
@@ -357,8 +359,7 @@ public:
      * @brief This function returns a constant reference to member complete_to_minimal
      * @return Constant reference to member complete_to_minimal
      */
-    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair>& complete_to_minimal()
-    const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentifierPair>& complete_to_minimal() const
     {
         return m_complete_to_minimal;
     }
@@ -371,6 +372,8 @@ public:
     {
         return m_complete_to_minimal;
     }
+
+
 
 private:
 
@@ -537,8 +540,7 @@ public:
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -678,9 +680,9 @@ public:
     eProsima_user_DllExport TypeLookup_getTypeDependencies_In(
             const TypeLookup_getTypeDependencies_In& x)
     {
-        m_type_ids = x.m_type_ids;
+                    m_type_ids = x.m_type_ids;
 
-        m_continuation_point = x.m_continuation_point;
+                    m_continuation_point = x.m_continuation_point;
 
     }
 
@@ -703,9 +705,9 @@ public:
             const TypeLookup_getTypeDependencies_In& x)
     {
 
-        m_type_ids = x.m_type_ids;
+                    m_type_ids = x.m_type_ids;
 
-        m_continuation_point = x.m_continuation_point;
+                    m_continuation_point = x.m_continuation_point;
 
         return *this;
     }
@@ -731,7 +733,7 @@ public:
             const TypeLookup_getTypeDependencies_In& x) const
     {
         return (m_type_ids == x.m_type_ids &&
-               m_continuation_point == x.m_continuation_point);
+           m_continuation_point == x.m_continuation_point);
     }
 
     /*!
@@ -782,6 +784,7 @@ public:
         return m_type_ids;
     }
 
+
     /*!
      * @brief This function copies the value in member continuation_point
      * @param _continuation_point New value to be copied in member continuation_point
@@ -819,6 +822,8 @@ public:
     {
         return m_continuation_point;
     }
+
+
 
 private:
 
@@ -855,9 +860,9 @@ public:
     eProsima_user_DllExport TypeLookup_getTypeDependencies_Out(
             const TypeLookup_getTypeDependencies_Out& x)
     {
-        m_dependent_typeids = x.m_dependent_typeids;
+                    m_dependent_typeids = x.m_dependent_typeids;
 
-        m_continuation_point = x.m_continuation_point;
+                    m_continuation_point = x.m_continuation_point;
 
     }
 
@@ -880,9 +885,9 @@ public:
             const TypeLookup_getTypeDependencies_Out& x)
     {
 
-        m_dependent_typeids = x.m_dependent_typeids;
+                    m_dependent_typeids = x.m_dependent_typeids;
 
-        m_continuation_point = x.m_continuation_point;
+                    m_continuation_point = x.m_continuation_point;
 
         return *this;
     }
@@ -908,7 +913,7 @@ public:
             const TypeLookup_getTypeDependencies_Out& x) const
     {
         return (m_dependent_typeids == x.m_dependent_typeids &&
-               m_continuation_point == x.m_continuation_point);
+           m_continuation_point == x.m_continuation_point);
     }
 
     /*!
@@ -945,8 +950,7 @@ public:
      * @brief This function returns a constant reference to member dependent_typeids
      * @return Constant reference to member dependent_typeids
      */
-    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& dependent_typeids()
-    const
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::dds::xtypes::TypeIdentfierWithSize>& dependent_typeids() const
     {
         return m_dependent_typeids;
     }
@@ -959,6 +963,7 @@ public:
     {
         return m_dependent_typeids;
     }
+
 
     /*!
      * @brief This function copies the value in member continuation_point
@@ -997,6 +1002,8 @@ public:
     {
         return m_continuation_point;
     }
+
+
 
 private:
 
@@ -1163,8 +1170,7 @@ public:
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1461,8 +1467,7 @@ public:
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -1528,6 +1533,7 @@ public:
 
         return m_getTypes;
     }
+
 
     /*!
      * @brief This function copies the value in member getTypeDependencies
@@ -1673,9 +1679,9 @@ public:
     eProsima_user_DllExport TypeLookup_Request(
             const TypeLookup_Request& x)
     {
-        m_header = x.m_header;
+                    m_header = x.m_header;
 
-        m_data = x.m_data;
+                    m_data = x.m_data;
 
     }
 
@@ -1698,9 +1704,9 @@ public:
             const TypeLookup_Request& x)
     {
 
-        m_header = x.m_header;
+                    m_header = x.m_header;
 
-        m_data = x.m_data;
+                    m_data = x.m_data;
 
         return *this;
     }
@@ -1726,7 +1732,7 @@ public:
             const TypeLookup_Request& x) const
     {
         return (m_header == x.m_header &&
-               m_data == x.m_data);
+           m_data == x.m_data);
     }
 
     /*!
@@ -1777,6 +1783,7 @@ public:
         return m_header;
     }
 
+
     /*!
      * @brief This function copies the value in member data
      * @param _data New value to be copied in member data
@@ -1814,6 +1821,8 @@ public:
     {
         return m_data;
     }
+
+
 
 private:
 
@@ -2007,8 +2016,7 @@ public:
 
         if (!valid_discriminator)
         {
-            throw eprosima::fastcdr::exception::BadParamException(
-                      "Discriminator doesn't correspond with the selected union member");
+            throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
 
         m__d = __d;
@@ -2074,6 +2082,7 @@ public:
 
         return m_getType;
     }
+
 
     /*!
      * @brief This function copies the value in member getTypeDependencies
@@ -2219,9 +2228,9 @@ public:
     eProsima_user_DllExport TypeLookup_Reply(
             const TypeLookup_Reply& x)
     {
-        m_header = x.m_header;
+                    m_header = x.m_header;
 
-        m_return_value = x.m_return_value;
+                    m_return_value = x.m_return_value;
 
     }
 
@@ -2244,9 +2253,9 @@ public:
             const TypeLookup_Reply& x)
     {
 
-        m_header = x.m_header;
+                    m_header = x.m_header;
 
-        m_return_value = x.m_return_value;
+                    m_return_value = x.m_return_value;
 
         return *this;
     }
@@ -2272,7 +2281,7 @@ public:
             const TypeLookup_Reply& x) const
     {
         return (m_header == x.m_header &&
-               m_return_value == x.m_return_value);
+           m_return_value == x.m_return_value);
     }
 
     /*!
@@ -2323,6 +2332,7 @@ public:
         return m_header;
     }
 
+
     /*!
      * @brief This function copies the value in member return_value
      * @param _return_value New value to be copied in member return_value
@@ -2360,6 +2370,8 @@ public:
     {
         return m_return_value;
     }
+
+
 
 private:
 

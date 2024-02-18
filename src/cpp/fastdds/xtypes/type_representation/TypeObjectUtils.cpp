@@ -1817,6 +1817,22 @@ const NameHash TypeObjectUtils::name_hash(
     return name_hashed;
 }
 
+void TypeObjectUtils::type_object_consistency(
+        const TypeObject& type_object)
+{
+    switch (type_object._d())
+    {
+        case EK_COMPLETE:
+            complete_type_object_consistency(type_object.complete());
+            break;
+        case EK_MINIMAL:
+            minimal_type_object_consistency(type_object.minimal());
+            break;
+        default:
+            throw InvalidArgumentError("Inconsistent TypeObject");
+    }
+}
+
 void TypeObjectUtils::set_try_construct_behavior(
         MemberFlag& member_flag,
         TryConstructKind try_construct_kind)
@@ -3541,22 +3557,6 @@ void TypeObjectUtils::minimal_type_object_consistency(
             break;
         case TK_BITMASK:
             minimal_bitmask_type_consistency(minimal_type_object.bitmask_type());
-            break;
-        default:
-            throw InvalidArgumentError("Inconsistent TypeObject");
-    }
-}
-
-void TypeObjectUtils::type_object_consistency(
-        const TypeObject& type_object)
-{
-    switch (type_object._d())
-    {
-        case EK_COMPLETE:
-            complete_type_object_consistency(type_object.complete());
-            break;
-        case EK_MINIMAL:
-            minimal_type_object_consistency(type_object.minimal());
             break;
         default:
             throw InvalidArgumentError("Inconsistent TypeObject");
