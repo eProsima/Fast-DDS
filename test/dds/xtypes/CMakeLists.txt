@@ -25,21 +25,10 @@ include_directories(${Asio_INCLUDE_DIR})
 # Binaries
 ###############################################################################
 
-# Standar tests
-set(COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType1PubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType1TypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType2PubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType2TypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType3PubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsType3TypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeBigPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeBigTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeDepPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeDepTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/idl/XtypesTestsTypeNoTypeObjectPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/RTPSDomain.cpp
+file(GLOB COMMON_SOURCE
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/*.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/*.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds/xtypes/BaseCasesIDLs/*.cxx
 )
 
 set(DDS_XTYPES_SOURCE ${COMMON_SOURCE}
@@ -56,39 +45,22 @@ target_compile_definitions(DDSXtypesCommunication PRIVATE
 target_include_directories(DDSXtypesCommunication PRIVATE 
     ${PROJECT_SOURCE_DIR}/test/dds/xtypes
 )
+
 target_link_libraries(DDSXtypesCommunication fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
-
-###############################################################################
-# Necessary files
-###############################################################################
-# Standard tests
-list(APPEND TEST_DEFINITIONS
-    Case0
-    Case1
-    Case2
-    Case3
-    Case4
-    Case5
-    Case6
-    Case7
-    Case8
-    Case9
-    Case10
-    )
-    
-# Python file
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
-    ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)
-
-# JSON files
-foreach(TEST_FILE IN LISTS TEST_DEFINITIONS)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${TEST_FILE}.json
-        ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}.json COPYONLY)
-endforeach()
 
 ###############################################################################
 # Tests specification
 ###############################################################################
+# Python script
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
+    ${CMAKE_CURRENT_BINARY_DIR}/test_build.py COPYONLY)
+
+# Get test definitions from the json files
+file(GLOB TEST_DEFINITIONS
+    "BaseCases/Case*"
+    "TypesTestsCases/Case*"
+)
+
 if(PYTHONINTERP_FOUND)
     # Standard types test
     set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
@@ -98,7 +70,7 @@ if(PYTHONINTERP_FOUND)
         add_test(
             NAME ${TEST_NAME}
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
-            ${TEST_DEFINITION}.json
+            ${TEST_DEFINITION}
             )
 
         if(WIN32)

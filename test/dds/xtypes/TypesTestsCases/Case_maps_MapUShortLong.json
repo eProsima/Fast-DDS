@@ -1,0 +1,20 @@
+{
+    "participants": [
+        {
+            "kind": "publisher",
+            "samples": "10",
+            "timeout": "2",
+            "expected_matches": "1",
+            "known_types": [
+                "MapUShortLong"
+            ]
+        },
+        {
+            "kind": "subscriber",
+            "samples": "10",
+            "timeout": "2",
+            "expected_matches": "1",
+            "known_types": []
+        }
+    ]
+}
