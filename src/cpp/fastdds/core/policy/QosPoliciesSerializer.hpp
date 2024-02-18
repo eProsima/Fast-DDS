@@ -1068,7 +1068,7 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_
             eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
+    ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
 
     ser << qos_policy.type_information;
 #if FASTCDR_VERSION_MAJOR == 1

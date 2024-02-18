@@ -1867,6 +1867,16 @@ public:
     FASTDDS_EXPORTED_API static const NameHash name_hash(
             const std::string& name);
 
+    /**
+     * @brief Check TypeObject consistency.
+     *
+     * @param[in] type_object Instance to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
+     *            TypeObject is not consistent.
+     */
+    static void type_object_consistency(
+            const TypeObject& type_object);
+
 private:
 
     friend class TypeObjectRegistry;
@@ -3036,17 +3046,6 @@ protected:
      */
     static void minimal_type_object_consistency(
             const MinimalTypeObject& minimal_type_object);
-
-    /**
-     * @brief Check TypeObject consistency.
-     *
-     * @param[in] type_object Instance to be checked.
-     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
-     *            TypeObject is not consistent.
-     */
-    static void type_object_consistency(
-            const TypeObject& type_object);
-
 };
 
 } // xtypes
