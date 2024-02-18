@@ -583,7 +583,7 @@ TEST_F(DataReaderTests, get_guid)
 
         void on_data_reader_discovery(
                 DomainParticipant*,
-                ReaderDiscoveryInfo&& info)
+                ReaderDiscoveryInfo&& info) override
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (ReaderDiscoveryInfo::DISCOVERED_READER == info.status)

@@ -38,7 +38,7 @@ namespace builtin {
 
 //! Constant that specifies the maximum number of dependent types to be included per reply.
 //! This number is calculated considering the MTU.
-const int MAX_DEPENDENCIES_PER_REPLY = 75;
+const int32_t MAX_DEPENDENCIES_PER_REPLY = 75;
 
 /**
  * @brief Calculates the opaque value of continuation point.
@@ -111,7 +111,7 @@ void TypeLookupRequestListener::start_request_processor_thread()
                 };
         // Create and start the processing thread
         request_processor_thread = eprosima::create_thread(thread_func,
-                        typelookup_manager_->participant_->getAttributes().typelookup_service_threads,
+                        typelookup_manager_->participant_->getAttributes().typelookup_service_thread,
                         "dds.tls.requests.%u");
     }
 }
@@ -169,10 +169,10 @@ void TypeLookupRequestListener::process_requests()
                     }
                     default:
                         // If the type of request is not known, log an error and answer with an exception
-                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Received unknown request type.");
-                        answer_request(
-                            request.header().requestId(),
-                            rpc::RemoteExceptionCode_t::REMOTE_EX_UNSUPPORTED);
+                        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                                "Received unknown request in type lookup service.");
+                        answer_request(request.header().requestId(),
+                                rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_OPERATION);
                         break;
                 }
             }
@@ -230,15 +230,22 @@ void TypeLookupRequestListener::check_get_types_request(
         out.types().push_back(std::move(id_obj_pair));
     }
 
+    // Handle the result based on the type_result
     if (RETCODE_OK == type_result)
     {
-        // Prepare and send the reply
+        // Prepare and send the reply for successful operation
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
     }
-    else
+    else if (RETCODE_NO_DATA == type_result)
     {
-        // If any of the types is not found, log error
-        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Error getting type.");
+        // Log error for type not found and reply with appropriate exception
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not found in the registry.");
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
+    }
+    else if (RETCODE_PRECONDITION_NOT_MET == type_result)
+    {
+        // Log error for invalid argument and reply with appropriate exception
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not a direct hash.");
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
     }
 }
@@ -262,6 +269,13 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
                 type_dependencies = requests_it->second;
                 type_dependencies_result = RETCODE_OK;
             }
+            else
+            {
+                // If the the received request is not found, log error and answer with exception
+                EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                        "Error processing ongoing type dependencies.");
+                answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
+            }
         }
         else
         {
@@ -278,17 +292,24 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
         }
     }
 
+    // Handle the result based on the type_dependencies_result
     if (RETCODE_OK == type_dependencies_result)
     {
-        // Prepare and send the reply
+        // Prepare and send the reply for successful operation
         TypeLookup_getTypeDependencies_Out out = prepare_get_type_dependencies_response(
             request.type_ids(), type_dependencies, request.continuation_point());
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_OK, out);
     }
-    else
+    else if (RETCODE_NO_DATA == type_dependencies_result)
     {
-        // If the type dependencies are not found, log error
-        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "Error getting type dependencies.");
+        // Log error for type not found and reply with appropriate exception
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not found in the registry.");
+        answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
+    }
+    else if (RETCODE_BAD_PARAMETER == type_dependencies_result)
+    {
+        // Log error for invalid argument and reply with appropriate exception
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not a direct hash.");
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
     }
 }
@@ -352,11 +373,7 @@ void TypeLookupRequestListener::answer_request(
         TypeLookup_getTypeDependencies_Out& out)
 {
     TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-
-    TypeLookup_getTypeDependencies_Result result;
-    result.result(out);
-    reply->return_value().getTypeDependencies(result);
-
+    reply->return_value().getTypeDependencies().result(out);
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
@@ -370,11 +387,7 @@ void TypeLookupRequestListener::answer_request(
         TypeLookup_getTypes_Out& out)
 {
     TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-
-    TypeLookup_getTypes_Result result;
-    result.result(out);
-    reply->return_value().getType(result);
-
+    reply->return_value().getType().result(out);
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
@@ -387,7 +400,6 @@ void TypeLookupRequestListener::answer_request(
         rpc::RemoteExceptionCode_t exception_code)
 {
     TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 

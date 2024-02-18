@@ -574,11 +574,11 @@ const TypeIdentifier TypeObjectRegistry::get_complementary_type_identifier(
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     for (const auto& it : local_type_identifiers_)
     {
-        if (it.second.type_identifier1() == type_id)
+        if (it.second.type_identifier1() == type_id && TK_NONE != it.second.type_identifier2()._d())
         {
             return it.second.type_identifier2();
         }
-        else if (it.second.type_identifier2() == type_id)
+        else if (it.second.type_identifier2() == type_id && TK_NONE != it.second.type_identifier1()._d())
         {
             return it.second.type_identifier1();
         }

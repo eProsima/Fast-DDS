@@ -936,12 +936,14 @@ bool ReaderProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_IDV1:
                     {
-                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA, "PID_TYPE_IDV1 not supported");
+                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA,
+                                "Reception of TypeIdentifiers is not supported. They will be ignored.");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_OBJECTV1:
                     {
-                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA, "PID_TYPE_OBJECTV1 not supported");
+                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA,
+                                "Reception of TypeObjects is not supported. They will be ignored.");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:

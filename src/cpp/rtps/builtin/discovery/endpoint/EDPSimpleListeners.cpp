@@ -138,10 +138,10 @@ void EDPBasePUBListener::add_writer_from_change(
                 temp_writer_data,
                 after_typelookup_callback);
         }
-        // If TypeInformation does not exists, try fallbacks
+        // If TypeInformation does not exist, try fallback mechanism
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Using fallbacks");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
             after_typelookup_callback(temp_writer_data);
         }
 
@@ -273,10 +273,10 @@ void EDPBaseSUBListener::add_reader_from_change(
                 temp_reader_data,
                 after_typelookup_callback);
         }
-        // If TypeInformation does not exists, try fallbacks
+        // If TypeInformation does not exist, try fallback mechanism
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Using fallbacks");
+            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
             after_typelookup_callback(temp_reader_data);
         }
 

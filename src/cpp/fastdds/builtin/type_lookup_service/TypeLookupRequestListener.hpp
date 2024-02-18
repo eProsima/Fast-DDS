@@ -140,10 +140,10 @@ protected:
             const std::vector<uint8_t>& continuation_point);
 
     /**
-     * @brief Creates a sends TypeLookup_Reply.
+     * @brief Creates and sends the TypeLookup_Reply.
      * @param request_id[in] The SampleIdentity of the request.
      * @param exception_code[in] The RemoteExceptionCode_t used in the header.
-     * @param out[in] The result of the request being answered.
+     * @param out[in] Reply to the query included in the received request.
      */
     void answer_request(
             SampleIdentity request_id,

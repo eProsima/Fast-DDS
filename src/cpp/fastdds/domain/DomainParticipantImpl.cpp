@@ -1794,11 +1794,11 @@ bool DomainParticipantImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Participant discovery_server_thread cannot be changed after the participant is enabled");
     }
-    if (!(to.typelookup_service_threads() == from.typelookup_service_threads()))
+    if (!(to.typelookup_service_thread() == from.typelookup_service_thread()))
     {
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
-                "Participant typelookup_service_threads cannot be changed after the participant is enabled");
+                "Participant typelookup_service_thread cannot be changed after the participant is enabled");
     }
 #if HAVE_SECURITY
     if (!(to.security_log_thread() == from.security_log_thread()))
