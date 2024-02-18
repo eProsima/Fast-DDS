@@ -9,6 +9,7 @@ files_not_needing_typeobject=(
     './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
     './thirdparty/dds-types-test/IDL/declarations.idl'
     './thirdparty/dds-types-test/IDL/external.idl'
+    './test/dds/xtypes/idl/XtypesTestsTypeNoTypeObject.idl'
     )
 
 files_needing_case_sensitive=(
