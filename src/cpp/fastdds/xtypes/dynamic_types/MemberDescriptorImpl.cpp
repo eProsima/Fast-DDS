@@ -172,6 +172,8 @@ bool MemberDescriptorImpl::is_consistent() noexcept
                 break;
             case TK_INT64:
             case TK_UINT64:
+            case TK_BOOLEAN:
+            case TK_BYTE:
                 if (TK_ENUM == parent_kind_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an ENUM and the enclosing type is not valid");
