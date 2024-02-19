@@ -278,6 +278,13 @@ void register_root1_type_identifier();
  *        indirectly registered as well.
  */
 void register_root2_type_identifier();
+/**
+ * @brief Register root related TypeIdentifier.
+ *        Fully-descriptive TypeIdentifiers are directly registered.
+ *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
+ *        indirectly registered as well.
+ */
+void register_root_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

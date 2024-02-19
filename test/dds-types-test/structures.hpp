@@ -5578,6 +5578,186 @@ private:
     bar m_bar_struct;
 
 };
+/*!
+ * @brief This class represents the structure root defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class root
+{
+public:
+
+    /*!
+     * @brief Default constructor.
+     */
+    eProsima_user_DllExport root()
+    {
+    }
+
+    /*!
+     * @brief Default destructor.
+     */
+    eProsima_user_DllExport ~root()
+    {
+    }
+
+    /*!
+     * @brief Copy constructor.
+     * @param x Reference to the object root that will be copied.
+     */
+    eProsima_user_DllExport root(
+            const root& x)
+    {
+                    m_var_root1 = x.m_var_root1;
+
+                    m_var_root2 = x.m_var_root2;
+
+    }
+
+    /*!
+     * @brief Move constructor.
+     * @param x Reference to the object root that will be copied.
+     */
+    eProsima_user_DllExport root(
+            root&& x) noexcept
+    {
+        m_var_root1 = std::move(x.m_var_root1);
+        m_var_root2 = std::move(x.m_var_root2);
+    }
+
+    /*!
+     * @brief Copy assignment.
+     * @param x Reference to the object root that will be copied.
+     */
+    eProsima_user_DllExport root& operator =(
+            const root& x)
+    {
+
+                    m_var_root1 = x.m_var_root1;
+
+                    m_var_root2 = x.m_var_root2;
+
+        return *this;
+    }
+
+    /*!
+     * @brief Move assignment.
+     * @param x Reference to the object root that will be copied.
+     */
+    eProsima_user_DllExport root& operator =(
+            root&& x) noexcept
+    {
+
+        m_var_root1 = std::move(x.m_var_root1);
+        m_var_root2 = std::move(x.m_var_root2);
+        return *this;
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x root object to compare.
+     */
+    eProsima_user_DllExport bool operator ==(
+            const root& x) const
+    {
+        return (m_var_root1 == x.m_var_root1 &&
+           m_var_root2 == x.m_var_root2);
+    }
+
+    /*!
+     * @brief Comparison operator.
+     * @param x root object to compare.
+     */
+    eProsima_user_DllExport bool operator !=(
+            const root& x) const
+    {
+        return !(*this == x);
+    }
+
+    /*!
+     * @brief This function copies the value in member var_root1
+     * @param _var_root1 New value to be copied in member var_root1
+     */
+    eProsima_user_DllExport void var_root1(
+            const root1& _var_root1)
+    {
+        m_var_root1 = _var_root1;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_root1
+     * @param _var_root1 New value to be moved in member var_root1
+     */
+    eProsima_user_DllExport void var_root1(
+            root1&& _var_root1)
+    {
+        m_var_root1 = std::move(_var_root1);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_root1
+     * @return Constant reference to member var_root1
+     */
+    eProsima_user_DllExport const root1& var_root1() const
+    {
+        return m_var_root1;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_root1
+     * @return Reference to member var_root1
+     */
+    eProsima_user_DllExport root1& var_root1()
+    {
+        return m_var_root1;
+    }
+
+
+    /*!
+     * @brief This function copies the value in member var_root2
+     * @param _var_root2 New value to be copied in member var_root2
+     */
+    eProsima_user_DllExport void var_root2(
+            const root2& _var_root2)
+    {
+        m_var_root2 = _var_root2;
+    }
+
+    /*!
+     * @brief This function moves the value in member var_root2
+     * @param _var_root2 New value to be moved in member var_root2
+     */
+    eProsima_user_DllExport void var_root2(
+            root2&& _var_root2)
+    {
+        m_var_root2 = std::move(_var_root2);
+    }
+
+    /*!
+     * @brief This function returns a constant reference to member var_root2
+     * @return Constant reference to member var_root2
+     */
+    eProsima_user_DllExport const root2& var_root2() const
+    {
+        return m_var_root2;
+    }
+
+    /*!
+     * @brief This function returns a reference to member var_root2
+     * @return Reference to member var_root2
+     */
+    eProsima_user_DllExport root2& var_root2()
+    {
+        return m_var_root2;
+    }
+
+
+
+private:
+
+    root1 m_var_root1;
+    root2 m_var_root2;
+
+};
 
 #endif // _FAST_DDS_GENERATED_STRUCTURES_HPP_
 
