@@ -60,6 +60,20 @@ constexpr const char* bitfield_d = "d";
 constexpr const char* bounded_string_alias = "Inner_alias_bounded_string_helper";
 constexpr const char* bounded_wstring_alias = "Inner_alias_bounded_wstring_helper";
 
+constexpr const char* var_short_name = "var_short";
+constexpr const char* var_ushort_name = "var_ushort";
+constexpr const char* var_long_name = "var_long";
+constexpr const char* var_ulong_name = "var_ulong";
+constexpr const char* var_long_long_name = "var_longlong";
+constexpr const char* var_ulong_long_name = "var_ulonglong";
+constexpr const char* var_float_name = "var_float";
+constexpr const char* var_double_name = "var_double";
+constexpr const char* var_long_double_name = "var_longdouble";
+constexpr const char* var_bool_name = "var_boolean";
+constexpr const char* var_byte_name = "var_octet";
+constexpr const char* var_char_name = "var_char8";
+constexpr const char* var_wchar_name = "var_char16";
+
 class DynamicTypesDDSTypesTest : public ::testing::Test
 {
 public:
