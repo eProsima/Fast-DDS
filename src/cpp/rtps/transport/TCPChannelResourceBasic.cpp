@@ -60,9 +60,11 @@ void TCPChannelResourceBasic::connect(
         const std::shared_ptr<TCPChannelResource>& myself)
 {
     assert(TCPConnectionType::TCP_CONNECT_TYPE == tcp_connection_type_);
-    eConnectionStatus expected = eConnectionStatus::eDisconnected;
 
-    if (connection_status_.compare_exchange_strong(expected, eConnectionStatus::eConnecting))
+    eConnectionStatus expected_disconnected = eConnectionStatus::eDisconnected;
+    eConnectionStatus expected_unbound = eConnectionStatus::eUnbound;
+    if (connection_status_.compare_exchange_strong(expected_disconnected, eConnectionStatus::eConnecting) ||
+        connection_status_.compare_exchange_strong(expected_unbound, eConnectionStatus::eConnecting))
     {
         try
         {
@@ -103,7 +105,7 @@ void TCPChannelResourceBasic::connect(
 
 void TCPChannelResourceBasic::disconnect()
 {
-    if (eConnecting < change_status(eConnectionStatus::eDisconnected) && alive())
+    if (connection_status_ != eUnbound && eConnecting < change_status(eConnectionStatus::eDisconnected) && alive())
     {
         std::lock_guard<std::mutex> read_lock(read_mutex_);
         auto socket = socket_;

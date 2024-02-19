@@ -930,8 +930,8 @@ TEST_P(TransportTCP, multiple_listening_ports)
 }
 
 // Test TCP transport sanitizer. This test matches a server with a client, then releases the
-// client resources and reinstatiates it. The it waits for the sanitizer to remove the first client
-// from the send resource list. Finnally, it checks that the the send_resource_list has size 1.
+// client resources and reinstatiates it. The server waits for the sanitizer to remove the first client
+// from the send resource list. Finally, it checks that the the send_resource_list has size 1.
 TEST_P(TransportTCP, transport_sanitizer)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
@@ -942,13 +942,14 @@ TEST_P(TransportTCP, transport_sanitizer)
     std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
 
     // Server
-    // Create a server with a DatagramInjectionTransportDescriptor which heritates from
-    // ChainingTransportDescriptor. This will allow us to get send_resource_list_ from the
-    // server participant when its transport gets its OpenOutputChannel() method called.
+    // Create a server with two transports, one of which uses a DatagramInjectionTransportDescriptor
+    // which heritates from ChainingTransportDescriptor. This will allow us to get send_resource_list_
+    // from the server participant when its transport gets its OpenOutputChannel() method called.
     uint16_t server_port = 10000;
     test_transport_->add_listener_port(server_port);
-    auto server_transport = std::make_shared<DatagramInjectionTransportDescriptor>(test_transport_);
-    server->disable_builtin_transport().add_user_transport_to_pparams(server_transport).init();
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto server_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(server_chaining_transport).init();
     ASSERT_TRUE(server->isInitialized());
 
     // Client
@@ -984,14 +985,26 @@ TEST_P(TransportTCP, transport_sanitizer)
 
     // We can only update the senders when OpenOutputChannel() is called. If the sanitizer deletes
     // the send resource, senders obtained from get_send_resource_list() won't have changed.
-    auto send_resource_list = server_transport->get_send_resource_list();
-    ASSERT_TRUE(send_resource_list.size() == 1);
+    auto send_resource_list = server_chaining_transport->get_send_resource_list();
+    auto tcp_send_resources = [](const std::set<SenderResource*>& send_resource_list) -> size_t
+            {
+                size_t tcp_send_resources = 0;
+                for (auto& sender_resource : send_resource_list)
+                {
+                    if (sender_resource->kind() == LOCATOR_KIND_TCPv4 || sender_resource->kind() == LOCATOR_KIND_TCPv6)
+                    {
+                        tcp_send_resources++;
+                    }
+                }
+                return tcp_send_resources;
+            };
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
 
     // Release TCP client resources.
     client.reset();
 
     // Wait for sanitizer to remove client from send_resource_list.
-    std::this_thread::sleep_for(std::chrono::milliseconds(20000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(7000));
 
     // Create new TCP client instance.
     client.reset(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
@@ -1004,8 +1017,64 @@ TEST_P(TransportTCP, transport_sanitizer)
 
     // Check that the send_resource_list has size 1. This means that the sanitizer has removed the
     // send resource for the first client and now has a send resource for the second client.
-    send_resource_list = server_transport->get_send_resource_list();
-    ASSERT_TRUE(send_resource_list.size() == 1);
+    send_resource_list = server_chaining_transport->get_send_resource_list();
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    send_resource_list.clear();
+}
+
+// Test TCP late joiner server. Client should try to connect to a server that is not yet listening. In
+// the meantime, transport sanitizer should not remove client's send resource.
+TEST_P(TransportTCP, late_joiner_server)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+
+    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+
+    uint16_t server_port = 10000;
+
+    // Client
+    std::shared_ptr<TCPTransportDescriptor> client_transport;
+    Locator_t initialPeerLocator;
+    if (use_ipv6)
+    {
+        client_transport = std::make_shared<TCPv6TransportDescriptor>();
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(initialPeerLocator, "::1");
+    }
+    else
+    {
+        client_transport = std::make_shared<TCPv4TransportDescriptor>();
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+    }
+    client->disable_builtin_transport().add_user_transport_to_pparams(client_transport);
+    initialPeerLocator.port = server_port;
+    LocatorList_t initial_peer_list;
+    initial_peer_list.push_back(initialPeerLocator);
+    client->initial_peers(initial_peer_list);
+    client->init();
+    ASSERT_TRUE(client->isInitialized());
+
+    // Wait for sanitizer to remove client from send_resource_list.
+    std::this_thread::sleep_for(std::chrono::milliseconds(8000));
+
+    // Server
+    test_transport_->add_listener_port(server_port);
+    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).init();
+    ASSERT_TRUE(server->isInitialized());
+
+    client->wait_discovery();
+    server->wait_discovery();
+
+    // Send and receive data
+    auto data = default_helloworld_data_generator();
+    server->startReception(data);
+    client->send(data);
+    EXPECT_TRUE(data.empty());
+
+    server->block_for_all();
+    EXPECT_TRUE(client->waitForAllAcked(std::chrono::seconds(2)));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

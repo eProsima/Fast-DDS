@@ -54,12 +54,12 @@ protected:
     enum eConnectionStatus
     {
         eDisconnected = 0,
+        eUnbound,
         eConnecting,                // Output -> Trying connection.
         eConnected,                 // Output -> Send bind message.
         eWaitingForBind,            // Input -> Waiting for the bind message.
         eWaitingForBindResponse,    // Output -> Waiting for the bind response message.
-        eEstablished,
-        eUnbinding
+        eEstablished
     };
 
     TCPTransportInterface* parent_;
@@ -99,6 +99,10 @@ public:
         return connection_status_ == eConnectionStatus::eEstablished;
     }
 
+    bool connection_disconnected()
+    {
+        return connection_status_ < eConnectionStatus::eConnecting;
+    }
     eConnectionStatus connection_status()
     {
         return connection_status_;

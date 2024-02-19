@@ -108,10 +108,7 @@ public:
             const Locator& loc) override
     {
         bool ret_val = ChainingTransport::OpenOutputChannel(send_resource_list, loc);
-        if (ret_val)
-        {
-            parent_->update_send_resource_list(send_resource_list);
-        }
+        parent_->update_send_resource_list(send_resource_list);
         return ret_val;
     }
 
