@@ -246,6 +246,8 @@ public:
      */
     void update_network_interfaces();
 
+    size_t get_available_capacity() const;
+
 private:
 
     std::vector<std::unique_ptr<fastdds::rtps::TransportInterface>> mRegisteredTransports;

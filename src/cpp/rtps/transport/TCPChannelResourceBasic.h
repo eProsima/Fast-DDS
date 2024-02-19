@@ -88,12 +88,17 @@ public:
         return socket_;
     }
 
+    asio::ip::tcp::socket::native_handle_type socket_native_handle() const override;
+    size_t send_buffer_size() const override;
+
 private:
 
     TCPChannelResourceBasic(
             const TCPChannelResourceBasic&) = delete;
     TCPChannelResourceBasic& operator =(
             const TCPChannelResourceBasic&) = delete;
+
+    size_t send_buffer_size_;
 };
 
 

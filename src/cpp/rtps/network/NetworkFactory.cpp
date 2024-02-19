@@ -471,6 +471,17 @@ void NetworkFactory::update_network_interfaces()
     }
 }
 
+size_t NetworkFactory::get_available_capacity() const
+{
+    size_t ret = 0;
+    for (auto& transport : mRegisteredTransports)
+    {
+        ret += transport->get_available_capacity();
+    }
+
+    return ret;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

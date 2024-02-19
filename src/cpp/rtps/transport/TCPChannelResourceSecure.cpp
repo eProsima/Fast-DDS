@@ -61,6 +61,10 @@ TCPChannelResourceSecure::TCPChannelResourceSecure(
 {
     set_tls_verify_mode(parent->configuration());
     set_tls_sni(parent->configuration());
+
+    socket_base::send_buffer_size send_buffer_size_conf;
+    secure_socket_->lowest_layer().get_option(send_buffer_size_conf);
+    send_buffer_size_ = send_buffer_size_conf.value();
 }
 
 TCPChannelResourceSecure::~TCPChannelResourceSecure()
@@ -210,12 +214,12 @@ size_t TCPChannelResourceSecure::send(
 
     if (eConnecting < connection_status_)
     {
-        if (parent_->get_non_blocking_send() &&
-                !check_socket_send_buffer(header_size + size,
-                secure_socket_->lowest_layer().native_handle()))
-        {
-            return 0;
-        }
+        // if (parent_->get_non_blocking_send() &&
+        //         !check_socket_send_buffer(header_size + size,
+        //         secure_socket_->lowest_layer().native_handle()))
+        // {
+        //     return 0;
+        // }
 
         std::vector<asio::const_buffer> buffers;
         if (header_size > 0)
@@ -344,6 +348,16 @@ void TCPChannelResourceSecure::shutdown(
         asio::socket_base::shutdown_type)
 {
     secure_socket_->shutdown();
+}
+
+asio::ip::tcp::socket::native_handle_type TCPChannelResourceSecure::socket_native_handle() const
+{
+    return secure_socket_->lowest_layer().native_handle();
+}
+
+size_t TCPChannelResourceSecure::send_buffer_size() const
+{
+    return send_buffer_size_;
 }
 
 } // namespace rtps

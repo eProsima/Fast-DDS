@@ -440,7 +440,8 @@ bool RTPSMessageGroup::add_info_ts_in_buffer(
 
 bool RTPSMessageGroup::add_data(
         const CacheChange_t& change,
-        bool expectsInlineQos)
+        bool expectsInlineQos,
+        size_t available_capacity)
 {
     assert(nullptr != sender_);
 
@@ -507,6 +508,15 @@ bool RTPSMessageGroup::add_data(
     }
     change_to_add.serializedPayload.data = nullptr;
 
+    if (available_capacity > 0)
+    {
+        auto serialized_size = submessage_msg_->length + 14;
+        if (serialized_size > available_capacity)
+        {
+            throw limit_exceeded();
+        }
+    }
+
 #if HAVE_SECURITY
     if (endpoint_->getAttributes().security_attributes().is_submessage_protected)
     {
@@ -539,7 +549,9 @@ bool RTPSMessageGroup::add_data(
 bool RTPSMessageGroup::add_data_frag(
         const CacheChange_t& change,
         const uint32_t fragment_number,
-        bool expectsInlineQos)
+        bool expectsInlineQos,
+        size_t available_capacity,
+        uint32_t n_fragments)
 {
     assert(nullptr != sender_);
 
@@ -609,6 +621,15 @@ bool RTPSMessageGroup::add_data_frag(
         return false;
     }
     change_to_add.serializedPayload.data = nullptr;
+
+    if (fragment_number == 1 && available_capacity > 0)
+    {
+        auto frag_serialized_size = submessage_msg_->length + 14;
+        if ((frag_serialized_size * n_fragments) > available_capacity)
+        {
+            throw limit_exceeded();
+        }
+    }
 
 #if HAVE_SECURITY
     if (endpoint_->getAttributes().security_attributes().is_submessage_protected)

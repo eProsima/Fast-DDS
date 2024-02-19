@@ -117,7 +117,8 @@ public:
      */
     bool add_data(
             const CacheChange_t& change,
-            bool expects_inline_qos);
+            bool expects_inline_qos,
+            size_t available_capacity = 0);
 
     /**
      * Adds a DATA_FRAG message to the group.
@@ -129,7 +130,9 @@ public:
     bool add_data_frag(
             const CacheChange_t& change,
             const uint32_t fragment_number,
-            bool expects_inline_qos);
+            bool expects_inline_qos,
+            size_t available_capacity = 0,
+            uint32_t n_fragments = 0);
 
     /**
      * Adds a HEARTBEAT message to the group.

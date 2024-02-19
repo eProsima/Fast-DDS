@@ -466,6 +466,8 @@ public:
 
     bool is_localhost_allowed() const override;
 
+    size_t get_available_capacity() const override;
+
     /**
      * Method to fill local locator physical port.
      * @param locator locator to be filled.

@@ -787,11 +787,13 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                     size_t num_locators = locator_selector.locator_selector.selected_size();
                     if (num_locators > 0)
                     {
+                        size_t available_capacity = network.get_available_capacity();
                         if (0 < n_fragments)
                         {
                             if (min_unsent_fragment != n_fragments + 1)
                             {
-                                if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
+                                // if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
+                                if (group.add_data_frag(*change, min_unsent_fragment, inline_qos, available_capacity, n_fragments))
                                 {
                                     for (auto remote_reader = first_relevant_reader;
                                             remote_reader != matched_remote_readers_.end();
@@ -831,7 +833,8 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                         }
                         else
                         {
-                            if (group.add_data(*change, inline_qos))
+                            // if (group.add_data(*change, inline_qos))
+                            if (group.add_data(*change, inline_qos, available_capacity))
                             {
                                 for (auto remote_reader = first_relevant_reader;
                                         remote_reader != matched_remote_readers_.end();
@@ -873,11 +876,13 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                         {
                             group.sender(this, (*remote_reader)->message_sender());
 
+                            size_t available_capacity = network.get_available_capacity();
                             if (0 < n_fragments)
                             {
                                 if (min_unsent_fragment != n_fragments + 1)
                                 {
-                                    if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
+                                    // if (group.add_data_frag(*change, min_unsent_fragment, inline_qos))
+                                    if (group.add_data_frag(*change, min_unsent_fragment, inline_qos, available_capacity, n_fragments))
                                     {
                                         bool allFragmentsSent = false;
                                         (*remote_reader)->mark_fragment_as_sent_for_change(
@@ -909,7 +914,8 @@ DeliveryRetCode StatefulWriter::deliver_sample_to_network(
                             }
                             else
                             {
-                                if (group.add_data(*change, (*remote_reader)->expects_inline_qos()))
+                                // if (group.add_data(*change, (*remote_reader)->expects_inline_qos()))
+                                if (group.add_data(*change, (*remote_reader)->expects_inline_qos(), available_capacity))
                                 {
                                     if (!(*remote_reader)->is_reliable())
                                     {

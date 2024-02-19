@@ -220,6 +220,12 @@ protected:
             const size_t& msg_size,
             const asio::ip::tcp::socket::native_handle_type& socket_native_handle);
 
+    size_t get_available_capacity() const;
+
+    virtual asio::ip::tcp::socket::native_handle_type socket_native_handle() const = 0;
+
+    virtual size_t send_buffer_size() const = 0;
+
     TCPConnectionType tcp_connection_type_;
 
     friend class TCPTransportInterface;

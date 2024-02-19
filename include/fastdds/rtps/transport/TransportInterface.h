@@ -276,6 +276,11 @@ public:
         return true;
     }
 
+    virtual size_t get_available_capacity() const
+    {
+        return 0;
+    }
+
 protected:
 
     TransportInterface(

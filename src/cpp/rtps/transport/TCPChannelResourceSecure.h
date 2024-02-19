@@ -94,6 +94,9 @@ public:
         return secure_socket_;
     }
 
+    asio::ip::tcp::socket::native_handle_type socket_native_handle() const override;
+    size_t send_buffer_size() const override;
+
 private:
 
     TCPChannelResourceSecure(
@@ -106,6 +109,8 @@ private:
     asio::io_service::strand strand_read_;
     asio::io_service::strand strand_write_;
     std::shared_ptr<asio::ssl::stream<asio::ip::tcp::socket>> secure_socket_;
+
+    size_t send_buffer_size_;
 };
 
 

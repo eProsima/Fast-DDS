@@ -317,6 +317,22 @@ bool TCPChannelResource::check_socket_send_buffer(
     return true;
 }
 
+size_t TCPChannelResource::get_available_capacity() const
+{
+    int bytesInSendQueue = 0;
+
+#ifndef _WIN32
+    if (ioctl(socket_native_handle(), TIOCOUTQ, &bytesInSendQueue) == -1)
+    {
+        bytesInSendQueue = 0;
+    }
+#else // ifdef _WIN32
+    static_cast<void>(socket_native_handle());
+#endif // ifndef _WIN32
+
+    return send_buffer_size() - size_t(bytesInSendQueue);
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

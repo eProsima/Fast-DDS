@@ -756,6 +756,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
 
         if (m_separateSendingEnabled)
         {
+            size_t available_capacity = network.get_available_capacity();
             if (0 < n_fragments)
             {
                 for (FragmentNumber_t frag = current_fragment_sent_ + 1;
@@ -769,7 +770,8 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                             group.sender(this, &*it);
                             size_t num_locators = it->locators_size();
 
-                            if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
+                            // if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
+                            if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_, available_capacity, n_fragments))
                             {
                                 add_statistics_sent_submessage(cache_change, num_locators);
                             }
@@ -799,7 +801,8 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                         group.sender(this, &*it);
                         size_t num_locators = it->locators_size();
 
-                        if (group.add_data(*cache_change, is_inline_qos_expected_))
+                        // if (group.add_data(*cache_change, is_inline_qos_expected_))
+                        if (group.add_data(*cache_change, is_inline_qos_expected_, available_capacity))
                         {
                             add_statistics_sent_submessage(cache_change, num_locators);
                         }
@@ -842,12 +845,14 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
 
             if (0 < num_locators)
             {
+                size_t available_capacity = network.get_available_capacity();
                 if (0 < n_fragments)
                 {
                     for (FragmentNumber_t frag = current_fragment_sent_ + 1;
                             DeliveryRetCode::DELIVERED == ret_code && frag <= n_fragments; ++frag)
                     {
-                        if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
+                        // if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_))
+                        if (group.add_data_frag(*cache_change, frag, is_inline_qos_expected_, available_capacity, n_fragments))
                         {
                             current_fragment_sent_ = frag;
                             add_statistics_sent_submessage(cache_change, num_locators);
@@ -862,7 +867,8 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
                 }
                 else
                 {
-                    if (group.add_data(*cache_change, is_inline_qos_expected_))
+                    // if (group.add_data(*cache_change, is_inline_qos_expected_))
+                    if (group.add_data(*cache_change, is_inline_qos_expected_, available_capacity))
                     {
                         add_statistics_sent_submessage(cache_change, num_locators);
                     }
@@ -875,6 +881,7 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
             }
         }
 
+        // ANALYZE: this gets executed when not delivered ret_code but not when exception thrown, shouldn't behave similarly?
         // Do not send data without information (submessages)
         if (cache_change->writer_info.num_sent_submessages)
         {

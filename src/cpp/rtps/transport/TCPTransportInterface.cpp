@@ -101,8 +101,8 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
     , enable_tcp_nodelay(false)
     , wait_for_tcp_negotiation(false)
-    , calculate_crc(true)
-    , check_crc(true)
+    , calculate_crc(false) // These take crazy long
+    , check_crc(false)
     , apply_security(false)
 {
 }
@@ -1810,6 +1810,23 @@ void TCPTransportInterface::fill_local_physical_port(
     {
         IPLocator::setPhysicalPort(locator, initial_peer_local_locator_port_);
     }
+}
+
+size_t TCPTransportInterface::get_available_capacity() const
+{
+    if (!non_blocking_send_)
+    {
+        return 0;
+    }
+
+    std::lock_guard<std::mutex> scoped_lock(sockets_map_mutex_);
+    if (channel_resources_.size() == 0)
+    {
+        return 0;
+    }
+
+    std::shared_ptr<TCPChannelResource> channel = channel_resources_.begin()->second; // Assume there is only one
+    return channel->get_available_capacity();
 }
 
 } // namespace rtps
