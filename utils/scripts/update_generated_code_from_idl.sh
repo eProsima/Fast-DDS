@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
 files_to_exclude=(
+    './thirdparty/dds-types-test/IDL/relative_path_include.idl'
     )
 
 files_not_needing_typeobject=(
     './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
     './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
+    './test/dds/xtypes/BaseCasesIDLs/XtypesTestsTypeNoTypeObject.idl'
     './thirdparty/dds-types-test/IDL/declarations.idl'
     './thirdparty/dds-types-test/IDL/external.idl'
-    './test/dds/xtypes/idl/XtypesTestsTypeNoTypeObject.idl'
     )
 
 files_needing_case_sensitive=(
@@ -36,7 +37,6 @@ files_needing_output_dir=(
     './thirdparty/dds-types-test/IDL/mutable.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/optional.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/primitives.idl|../../../test/dds-types-test'
-    './thirdparty/dds-types-test/IDL/relative_path_include.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/sequences.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/strings.idl|../../../test/dds-types-test'
     './thirdparty/dds-types-test/IDL/structures.idl|../../../test/dds-types-test'
