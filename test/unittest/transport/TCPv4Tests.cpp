@@ -600,12 +600,15 @@ TEST_F(TCPv4Tests, check_TCPv4_interface_whitelist_initialization)
     auto check_whitelist = transportUnderTest.get_interface_whitelist();
     for (auto& ip : mock_interfaces)
     {
-        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v4::from_string(ip)), check_whitelist.end());
+        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v4::from_string(
+                    ip)), check_whitelist.end());
     }
 
     // Check that every interface is in the acceptors map
-    for (const auto& test : transportUnderTest.get_acceptors_map()) {
-        ASSERT_NE(std::find(mock_interfaces.begin(), mock_interfaces.end(), IPLocator::toIPv4string(test.first)), mock_interfaces.end());
+    for (const auto& test : transportUnderTest.get_acceptors_map())
+    {
+        ASSERT_NE(std::find(mock_interfaces.begin(), mock_interfaces.end(), IPLocator::toIPv4string(
+                    test.first)), mock_interfaces.end());
     }
 }
 

@@ -268,12 +268,15 @@ TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
     auto check_whitelist = transportUnderTest.get_interface_whitelist();
     for (auto& ip : asio_interfaces)
     {
-        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v6::from_string(ip)), check_whitelist.end());
+        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v6::from_string(
+                    ip)), check_whitelist.end());
     }
 
     // Check that every interface is in the acceptors map
-    for (const auto& test : transportUnderTest.get_acceptors_map()) {
-        ASSERT_NE(std::find(locator_interfaces.begin(), locator_interfaces.end(), IPLocator::toIPv6string(test.first)), locator_interfaces.end());
+    for (const auto& test : transportUnderTest.get_acceptors_map())
+    {
+        ASSERT_NE(std::find(locator_interfaces.begin(), locator_interfaces.end(), IPLocator::toIPv6string(
+                    test.first)), locator_interfaces.end());
     }
 }
 
