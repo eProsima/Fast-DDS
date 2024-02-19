@@ -17,7 +17,7 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastdds/dds/xtypes/Types.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {

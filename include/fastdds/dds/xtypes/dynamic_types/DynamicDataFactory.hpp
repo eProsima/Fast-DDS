@@ -19,7 +19,6 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
