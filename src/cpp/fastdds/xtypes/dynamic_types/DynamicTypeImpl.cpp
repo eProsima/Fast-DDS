@@ -152,9 +152,11 @@ bool DynamicTypeImpl::equals(
     bool ret_value = true;
     auto impl = traits<DynamicType>::narrow<DynamicTypeImpl>(other);
 
-    if (ret_value &= type_descriptor_.equals(impl->type_descriptor_))
+    ret_value &= type_descriptor_.equals(impl->type_descriptor_);
+    if (ret_value)
     {
-        if (ret_value &= annotation_.size() == impl->annotation_.size())
+        ret_value &= annotation_.size() == impl->annotation_.size();
+        if (ret_value)
         {
             for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
             {
@@ -190,7 +192,8 @@ bool DynamicTypeImpl::equals(
 
         assert(member_by_name_.size() == members_.size());
         assert(impl->member_by_name_.size() == impl->members_.size());
-        if (ret_value &= member_by_name_.size() == impl->member_by_name_.size())
+        ret_value &= member_by_name_.size() == impl->member_by_name_.size();
+        if (ret_value)
         {
             auto it = member_by_name_.begin();
             auto impl_it = impl->member_by_name_.begin();
@@ -203,7 +206,8 @@ bool DynamicTypeImpl::equals(
             }
         }
 
-        if (ret_value &= verbatim_.size() == impl->verbatim_.size())
+        ret_value &= verbatim_.size() == impl->verbatim_.size();
+        if (ret_value)
         {
             for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
             {
