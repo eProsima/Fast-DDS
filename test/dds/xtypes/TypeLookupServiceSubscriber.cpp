@@ -29,7 +29,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-static int SUB_DOMAIN_ID_ = 10;
+static int SUB_DOMAIN_ID_ = 173;
 
 TypeLookupServiceSubscriber::~TypeLookupServiceSubscriber()
 {
@@ -260,8 +260,7 @@ bool TypeLookupServiceSubscriber::run(
 
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServiceSubscriber run Timeout" << std::endl;
-
+        std::cout << "ERROR TypeLookupServiceSubscriber" << std::endl;
         if (expected_matches_ != received_samples_.size())
         {
             std::cout << "expected_matches_ = " << expected_matches_ <<
@@ -278,6 +277,7 @@ bool TypeLookupServiceSubscriber::run(
 
         return false;
     }
+    std::cout << "SUCCESS TypeLookupServiceSubscriber" << std::endl;
     return true;
 }
 
@@ -339,11 +339,17 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
             // Check for TypeObjectRegistry inconsistency
             const bool has_type_object = types_without_typeobject_.find(discovered_writer_type_name) ==
                     types_without_typeobject_.end();
-            if ((has_type_object && !check_registered_type(info.type_information)) ||
-                    (!has_type_object && check_registered_type(info.type_information)))
+            const bool is_registered = check_registered_type(info.type_information);
+
+            if ((has_type_object && !is_registered))
             {
-                throw std::runtime_error(discovered_writer_type_name +
-                              (has_type_object ? " registered" : " not registered"));
+                throw std::runtime_error(
+                          "Type '" + discovered_writer_type_name + "' is not registered but it should be.");
+            }
+            if ((!has_type_object && is_registered))
+            {
+                throw std::runtime_error(
+                          "Type '" + discovered_writer_type_name + "' is registered but it should not be.");
             }
 
             // Create new subscriber for the type

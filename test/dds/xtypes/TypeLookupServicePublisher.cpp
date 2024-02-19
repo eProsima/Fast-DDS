@@ -25,11 +25,10 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/LibrarySettings.hpp>
 
-
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-static int PUB_DOMAIN_ID_ = 10;
+static int PUB_DOMAIN_ID_ = 173;
 
 TypeLookupServicePublisher::~TypeLookupServicePublisher()
 {
@@ -272,8 +271,7 @@ bool TypeLookupServicePublisher::run(
 
     if (!result)
     {
-        std::cout << "ERROR TypeLookupServicePublisher run Timeout" << std::endl;
-
+        std::cout << "ERROR TypeLookupServicePublisher" << std::endl;
         if (expected_matches_ != sent_samples_.size())
         {
             std::cout << "expected_matches_ = " << expected_matches_ <<
@@ -290,6 +288,7 @@ bool TypeLookupServicePublisher::run(
         }
         return false;
     }
+    std::cout << "SUCCESS TypeLookupServicePublisher" << std::endl;
     return true;
 }
 
@@ -322,11 +321,17 @@ void TypeLookupServicePublisher::on_data_reader_discovery(
             // Check for TypeObjectRegistry inconsistency
             const bool has_type_object = types_without_typeobject_.find(discovered_reader_type_name) ==
                     types_without_typeobject_.end();
-            if ((has_type_object && !check_registered_type(info.type_information)) ||
-                    (!has_type_object && check_registered_type(info.type_information)))
+            const bool is_registered = check_registered_type(info.type_information);
+
+            if ((has_type_object && !is_registered))
             {
-                throw std::runtime_error(discovered_reader_type_name +
-                              (has_type_object ? " registered" : " not registered"));
+                throw std::runtime_error(
+                          "Type '" + discovered_reader_type_name + "' is not registered but it should be.");
+            }
+            if ((!has_type_object && is_registered))
+            {
+                throw std::runtime_error(
+                          "Type '" + discovered_reader_type_name + "' is registered but it should not be.");
             }
 
             // Create new publisher for the type

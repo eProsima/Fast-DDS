@@ -100,10 +100,39 @@ public:
 
 private:
 
+    bool setup_subscriber(
+            SubKnownType& new_type);
+
+    bool create_known_type(
+            const std::string& type);
+
+    template <typename Type, typename TypePubSubType>
+    bool create_known_type_impl(
+            const std::string& type);
+
+    bool create_discovered_type(
+            const eprosima::fastdds::dds::PublicationBuiltinTopicData& info);
+
+    bool check_registered_type(
+            const xtypes::TypeInformationParameter& type_info);
+
+    DomainParticipant* participant_ = nullptr;
+
+    std::mutex mutex_;
+    std::condition_variable cv_;
+    unsigned int matched_ = 0;
+    unsigned int expected_matches_ = 0;
+    std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> received_samples_;
+
+    std::mutex known_types_mutex_;
+    std::map<std::string, SubKnownType> known_types_;
+    std::unordered_set<std::string> types_without_typeobject_;
+    std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
+    std::vector<std::thread> create_types_threads;
+
+
     void create_type_creator_functions()
     {
-        // IDL file name: helpers/basic_inner_types
-        // IDL file name: declarations
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionWString);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionWChar);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(UnionUShort);
@@ -710,8 +739,6 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BitMaskStructure);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(declarations_module::ModuledForwardStruct);
         types_without_typeobject_.insert("ModuledForwardStruct");
-        SUBSCRIBER_TYPE_CREATOR_FUNCTION(declarations_module::ForwardStruct);
-        types_without_typeobject_.insert("ForwardStruct");
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(ModuledForwardDeclarationsRecursiveStruct);
         types_without_typeobject_.insert("ModuledForwardDeclarationsRecursiveStruct");
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(ModuledCommonNameStructure);
@@ -980,35 +1007,6 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(Type1);
     }
 
-    bool setup_subscriber(
-            SubKnownType& new_type);
-
-    bool create_known_type(
-            const std::string& type);
-
-    template <typename Type, typename TypePubSubType>
-    bool create_known_type_impl(
-            const std::string& type);
-
-    bool create_discovered_type(
-            const eprosima::fastdds::dds::PublicationBuiltinTopicData& info);
-
-    bool check_registered_type(
-            const xtypes::TypeInformationParameter& type_info);
-
-    DomainParticipant* participant_ = nullptr;
-
-    std::mutex mutex_;
-    std::condition_variable cv_;
-    unsigned int matched_ = 0;
-    unsigned int expected_matches_ = 0;
-    std::map<eprosima::fastdds::rtps::GUID_t, uint32_t> received_samples_;
-
-    std::mutex known_types_mutex_;
-    std::map<std::string, SubKnownType> known_types_;
-    std::unordered_set<std::string> types_without_typeobject_;
-    std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
-    std::vector<std::thread> create_types_threads;
 };
 
 } // dds

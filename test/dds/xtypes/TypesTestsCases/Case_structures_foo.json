@@ -6,7 +6,7 @@
             "timeout": "2",
             "expected_matches": "1",
             "known_types": [
-                "foo"
+                "testing_1::foo"
             ]
         },
         {
