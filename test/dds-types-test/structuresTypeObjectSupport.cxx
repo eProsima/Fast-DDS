@@ -116,6 +116,8 @@ void register_structures_type_objects()
 
                 register_root2_type_identifier();
 
+                register_root_type_identifier();
+
             });
 }
 
@@ -10489,6 +10491,808 @@ void register_root2_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "root2: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            return;
+        }
+    }
+}
+void register_root_type_identifier()
+{
+    {
+        StructTypeFlag struct_flags_root = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                false, false);
+        ReturnCode_t return_code_root;
+        TypeIdentifierPair type_ids_root;
+        QualifiedTypeName type_name_root = "root";
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_root;
+        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_root;
+        CompleteTypeDetail detail_root = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_root, ann_custom_root, type_name_root.to_string());
+        CompleteStructHeader header_root;
+        header_root = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_root);
+        CompleteStructMemberSeq member_seq_root;
+        {
+            return_code_root =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "root1", type_ids_root);
+
+            if (return_code_root != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_root1 = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            false, false);
+                    ReturnCode_t return_code_root1;
+                    TypeIdentifierPair type_ids_root1;
+                    QualifiedTypeName type_name_root1 = "root1";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_root1;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_root1;
+                    CompleteTypeDetail detail_root1 = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_root1, ann_custom_root1, type_name_root1.to_string());
+                    CompleteStructHeader header_root1;
+                    header_root1 = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_root1);
+                    CompleteStructMemberSeq member_seq_root1;
+                    {
+                        return_code_root1 =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "testing_1::foo", type_ids_root1);
+
+                        if (return_code_root1 != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_foo = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        false, false);
+                                ReturnCode_t return_code_foo;
+                                TypeIdentifierPair type_ids_foo;
+                                QualifiedTypeName type_name_foo = "testing_1::foo";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_foo;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_foo;
+                                CompleteTypeDetail detail_foo = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_foo, ann_custom_foo, type_name_foo.to_string());
+                                CompleteStructHeader header_foo;
+                                header_foo = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_foo);
+                                CompleteStructMemberSeq member_seq_foo;
+                                {
+                                    return_code_foo =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_int32_t", type_ids_foo);
+
+                                    if (return_code_foo != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "a Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_a = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_a;
+                                    MemberId member_id_a = 0x00000000;
+                                    if (EK_COMPLETE == type_ids_foo.type_identifier1()._d() || TK_NONE == type_ids_foo.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_a = TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, type_ids_foo.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_foo.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_a = TypeObjectUtils::build_common_struct_member(member_id_a, member_flags_a, type_ids_foo.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure a member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_a = "a";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_a;
+                                    ann_custom_foo.reset();
+                                    CompleteMemberDetail detail_a = TypeObjectUtils::build_complete_member_detail(name_a, member_ann_builtin_a, ann_custom_foo);
+                                    CompleteStructMember member_a = TypeObjectUtils::build_complete_struct_member(common_a, detail_a);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_foo, member_a);
+                                }
+                                {
+                                    return_code_foo =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_int32_t", type_ids_foo);
+
+                                    if (return_code_foo != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "b Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_b = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_b;
+                                    MemberId member_id_b = 0x00000001;
+                                    if (EK_COMPLETE == type_ids_foo.type_identifier1()._d() || TK_NONE == type_ids_foo.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_b = TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, type_ids_foo.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_foo.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_b = TypeObjectUtils::build_common_struct_member(member_id_b, member_flags_b, type_ids_foo.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure b member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_b = "b";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_b;
+                                    ann_custom_foo.reset();
+                                    CompleteMemberDetail detail_b = TypeObjectUtils::build_complete_member_detail(name_b, member_ann_builtin_b, ann_custom_foo);
+                                    CompleteStructMember member_b = TypeObjectUtils::build_complete_struct_member(common_b, detail_b);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_foo, member_b);
+                                }
+                                CompleteStructType struct_type_foo = TypeObjectUtils::build_complete_struct_type(struct_flags_foo, header_foo, member_seq_foo);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_foo, type_name_foo.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "testing_1::foo already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_foo =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "testing_1::foo", type_ids_foo);
+                                if (return_code_foo != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "testing_1::foo: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        StructMemberFlag member_flags_foo_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_foo_struct;
+                        MemberId member_id_foo_struct = 0x00000000;
+                        if (EK_COMPLETE == type_ids_root1.type_identifier1()._d() || TK_NONE == type_ids_root1.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root1.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root1.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_foo_struct = TypeObjectUtils::build_common_struct_member(member_id_foo_struct, member_flags_foo_struct, type_ids_root1.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_root1.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root1.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root1.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_foo_struct = TypeObjectUtils::build_common_struct_member(member_id_foo_struct, member_flags_foo_struct, type_ids_root1.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure foo_struct member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_foo_struct = "foo_struct";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_foo_struct;
+                        ann_custom_root1.reset();
+                        CompleteMemberDetail detail_foo_struct = TypeObjectUtils::build_complete_member_detail(name_foo_struct, member_ann_builtin_foo_struct, ann_custom_root1);
+                        CompleteStructMember member_foo_struct = TypeObjectUtils::build_complete_struct_member(common_foo_struct, detail_foo_struct);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_root1, member_foo_struct);
+                    }
+                    {
+                        return_code_root1 =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_float", type_ids_root1);
+
+                        if (return_code_root1 != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_c;
+                        MemberId member_id_c = 0x00000001;
+                        if (EK_COMPLETE == type_ids_root1.type_identifier1()._d() || TK_NONE == type_ids_root1.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root1.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root1.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root1.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_c = TypeObjectUtils::build_common_struct_member(member_id_c, member_flags_c, type_ids_root1.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_root1.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root1.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root1.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root1.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root1.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root1.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root1.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_c = TypeObjectUtils::build_common_struct_member(member_id_c, member_flags_c, type_ids_root1.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure c member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_c = "c";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_c;
+                        ann_custom_root1.reset();
+                        CompleteMemberDetail detail_c = TypeObjectUtils::build_complete_member_detail(name_c, member_ann_builtin_c, ann_custom_root1);
+                        CompleteStructMember member_c = TypeObjectUtils::build_complete_struct_member(common_c, detail_c);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_root1, member_c);
+                    }
+                    CompleteStructType struct_type_root1 = TypeObjectUtils::build_complete_struct_type(struct_flags_root1, header_root1, member_seq_root1);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_root1, type_name_root1.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "root1 already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_root1 =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "root1", type_ids_root1);
+                    if (return_code_root1 != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "root1: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            StructMemberFlag member_flags_var_root1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
+            CommonStructMember common_var_root1;
+            MemberId member_id_var_root1 = 0x00000000;
+            if (EK_COMPLETE == type_ids_root.type_identifier1()._d() || TK_NONE == type_ids_root.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_root.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_root.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_root1 = TypeObjectUtils::build_common_struct_member(member_id_var_root1, member_flags_var_root1, type_ids_root.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_root.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_root.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_root.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_root1 = TypeObjectUtils::build_common_struct_member(member_id_var_root1, member_flags_var_root1, type_ids_root.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Structure var_root1 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_root1 = "var_root1";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_root1;
+            ann_custom_root.reset();
+            CompleteMemberDetail detail_var_root1 = TypeObjectUtils::build_complete_member_detail(name_var_root1, member_ann_builtin_var_root1, ann_custom_root);
+            CompleteStructMember member_var_root1 = TypeObjectUtils::build_complete_struct_member(common_var_root1, detail_var_root1);
+            TypeObjectUtils::add_complete_struct_member(member_seq_root, member_var_root1);
+        }
+        {
+            return_code_root =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "root2", type_ids_root);
+
+            if (return_code_root != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_root2 = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            false, false);
+                    ReturnCode_t return_code_root2;
+                    TypeIdentifierPair type_ids_root2;
+                    QualifiedTypeName type_name_root2 = "root2";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_root2;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_root2;
+                    CompleteTypeDetail detail_root2 = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_root2, ann_custom_root2, type_name_root2.to_string());
+                    CompleteStructHeader header_root2;
+                    header_root2 = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_root2);
+                    CompleteStructMemberSeq member_seq_root2;
+                    {
+                        return_code_root2 =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "testing_2::foo", type_ids_root2);
+
+                        if (return_code_root2 != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_foo = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        false, false);
+                                ReturnCode_t return_code_foo;
+                                TypeIdentifierPair type_ids_foo;
+                                QualifiedTypeName type_name_foo = "testing_2::foo";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_foo;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_foo;
+                                CompleteTypeDetail detail_foo = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_foo, ann_custom_foo, type_name_foo.to_string());
+                                CompleteStructHeader header_foo;
+                                header_foo = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_foo);
+                                CompleteStructMemberSeq member_seq_foo;
+                                {
+                                    return_code_foo =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_bool", type_ids_foo);
+
+                                    if (return_code_foo != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "d Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_d = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_d;
+                                    MemberId member_id_d = 0x00000000;
+                                    if (EK_COMPLETE == type_ids_foo.type_identifier1()._d() || TK_NONE == type_ids_foo.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_foo.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_foo.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_d = TypeObjectUtils::build_common_struct_member(member_id_d, member_flags_d, type_ids_foo.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_foo.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_foo.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_foo.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_foo.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_foo.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_d = TypeObjectUtils::build_common_struct_member(member_id_d, member_flags_d, type_ids_foo.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure d member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_d = "d";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_d;
+                                    ann_custom_foo.reset();
+                                    CompleteMemberDetail detail_d = TypeObjectUtils::build_complete_member_detail(name_d, member_ann_builtin_d, ann_custom_foo);
+                                    CompleteStructMember member_d = TypeObjectUtils::build_complete_struct_member(common_d, detail_d);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_foo, member_d);
+                                }
+                                CompleteStructType struct_type_foo = TypeObjectUtils::build_complete_struct_type(struct_flags_foo, header_foo, member_seq_foo);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_foo, type_name_foo.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "testing_2::foo already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_foo =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "testing_2::foo", type_ids_foo);
+                                if (return_code_foo != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "testing_2::foo: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        StructMemberFlag member_flags_foo_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_foo_struct;
+                        MemberId member_id_foo_struct = 0x00000000;
+                        if (EK_COMPLETE == type_ids_root2.type_identifier1()._d() || TK_NONE == type_ids_root2.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root2.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root2.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_foo_struct = TypeObjectUtils::build_common_struct_member(member_id_foo_struct, member_flags_foo_struct, type_ids_root2.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_root2.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root2.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root2.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_foo_struct = TypeObjectUtils::build_common_struct_member(member_id_foo_struct, member_flags_foo_struct, type_ids_root2.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure foo_struct member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_foo_struct = "foo_struct";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_foo_struct;
+                        ann_custom_root2.reset();
+                        CompleteMemberDetail detail_foo_struct = TypeObjectUtils::build_complete_member_detail(name_foo_struct, member_ann_builtin_foo_struct, ann_custom_root2);
+                        CompleteStructMember member_foo_struct = TypeObjectUtils::build_complete_struct_member(common_foo_struct, detail_foo_struct);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_root2, member_foo_struct);
+                    }
+                    {
+                        return_code_root2 =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "bar", type_ids_root2);
+
+                        if (return_code_root2 != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_bar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        false, false);
+                                ReturnCode_t return_code_bar;
+                                TypeIdentifierPair type_ids_bar;
+                                QualifiedTypeName type_name_bar = "bar";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_bar;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_bar;
+                                CompleteTypeDetail detail_bar = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_bar, ann_custom_bar, type_name_bar.to_string());
+                                CompleteStructHeader header_bar;
+                                header_bar = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_bar);
+                                CompleteStructMemberSeq member_seq_bar;
+                                {
+                                    return_code_bar =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_double", type_ids_bar);
+
+                                    if (return_code_bar != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "e Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_e = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_e;
+                                    MemberId member_id_e = 0x00000000;
+                                    if (EK_COMPLETE == type_ids_bar.type_identifier1()._d() || TK_NONE == type_ids_bar.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_bar.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_bar.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_bar.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_bar.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_bar.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_bar.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_bar.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_bar.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_bar.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_bar.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_e = TypeObjectUtils::build_common_struct_member(member_id_e, member_flags_e, type_ids_bar.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_bar.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_bar.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_bar.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_bar.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_bar.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_bar.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_bar.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_bar.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_bar.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_bar.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_bar.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_bar.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_e = TypeObjectUtils::build_common_struct_member(member_id_e, member_flags_e, type_ids_bar.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure e member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_e = "e";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_e;
+                                    ann_custom_bar.reset();
+                                    CompleteMemberDetail detail_e = TypeObjectUtils::build_complete_member_detail(name_e, member_ann_builtin_e, ann_custom_bar);
+                                    CompleteStructMember member_e = TypeObjectUtils::build_complete_struct_member(common_e, detail_e);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_bar, member_e);
+                                }
+                                CompleteStructType struct_type_bar = TypeObjectUtils::build_complete_struct_type(struct_flags_bar, header_bar, member_seq_bar);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_bar, type_name_bar.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "bar already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_bar =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "bar", type_ids_bar);
+                                if (return_code_bar != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "bar: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        StructMemberFlag member_flags_bar_struct = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_bar_struct;
+                        MemberId member_id_bar_struct = 0x00000001;
+                        if (EK_COMPLETE == type_ids_root2.type_identifier1()._d() || TK_NONE == type_ids_root2.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root2.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root2.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root2.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_bar_struct = TypeObjectUtils::build_common_struct_member(member_id_bar_struct, member_flags_bar_struct, type_ids_root2.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_root2.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_root2.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_root2.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_root2.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_root2.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_root2.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_root2.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_bar_struct = TypeObjectUtils::build_common_struct_member(member_id_bar_struct, member_flags_bar_struct, type_ids_root2.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure bar_struct member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_bar_struct = "bar_struct";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_bar_struct;
+                        ann_custom_root2.reset();
+                        CompleteMemberDetail detail_bar_struct = TypeObjectUtils::build_complete_member_detail(name_bar_struct, member_ann_builtin_bar_struct, ann_custom_root2);
+                        CompleteStructMember member_bar_struct = TypeObjectUtils::build_complete_struct_member(common_bar_struct, detail_bar_struct);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_root2, member_bar_struct);
+                    }
+                    CompleteStructType struct_type_root2 = TypeObjectUtils::build_complete_struct_type(struct_flags_root2, header_root2, member_seq_root2);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_root2, type_name_root2.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "root2 already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_root2 =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "root2", type_ids_root2);
+                    if (return_code_root2 != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "root2: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            StructMemberFlag member_flags_var_root2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                    false, false, false, false);
+            CommonStructMember common_var_root2;
+            MemberId member_id_var_root2 = 0x00000001;
+            if (EK_COMPLETE == type_ids_root.type_identifier1()._d() || TK_NONE == type_ids_root.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_root.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_root.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_root.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_root2 = TypeObjectUtils::build_common_struct_member(member_id_var_root2, member_flags_var_root2, type_ids_root.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_root.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_root.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_root.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_root.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_root.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_root.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_root.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_var_root2 = TypeObjectUtils::build_common_struct_member(member_id_var_root2, member_flags_var_root2, type_ids_root.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "Structure var_root2 member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_var_root2 = "var_root2";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_var_root2;
+            ann_custom_root.reset();
+            CompleteMemberDetail detail_var_root2 = TypeObjectUtils::build_complete_member_detail(name_var_root2, member_ann_builtin_var_root2, ann_custom_root);
+            CompleteStructMember member_var_root2 = TypeObjectUtils::build_complete_struct_member(common_var_root2, detail_var_root2);
+            TypeObjectUtils::add_complete_struct_member(member_seq_root, member_var_root2);
+        }
+        CompleteStructType struct_type_root = TypeObjectUtils::build_complete_struct_type(struct_flags_root, header_root, member_seq_root);
+        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_root, type_name_root.to_string()))
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "root already registered in TypeObjectRegistry for a different type.");
+        }
+        return_code_root =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "root", type_ids_root);
+        if (return_code_root != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "root: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
             return;
         }
     }
