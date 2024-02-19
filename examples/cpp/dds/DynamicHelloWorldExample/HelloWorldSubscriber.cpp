@@ -115,17 +115,14 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 
     if (dit != subscriber_->datas_.end())
     {
-        DynamicData* data {dit->second};
+        DynamicData::_ref_type data {dit->second};
         SampleInfo info;
-        if (reader->take_next_sample(data, &info) == RETCODE_OK)
+        if (reader->take_next_sample(&data, &info) == RETCODE_OK)
         {
             if (info.instance_state == ALIVE_INSTANCE_STATE)
             {
-                const DynamicType* type {subscriber_->readers_[reader]};
+                const DynamicType::_ref_type type {subscriber_->readers_[reader]};
                 this->n_samples++;
-                std::cout << "Received data of type " << type->get_name() << std::endl;
-                // TODO Barro: replace with ostream operator in DynamicData
-                // DynamicDataHelper::print(data);
             }
         }
     }
@@ -135,7 +132,7 @@ void HelloWorldSubscriber::initialize_entities()
 {
     auto type = m_listener.received_type_;
     std::cout << "Initializing DDS entities for type: " << type->get_name() << std::endl;
-    TypeSupport m_type(new DynamicPubSubType(*type));
+    TypeSupport m_type(new DynamicPubSubType(type));
     m_type.register_type(mp_participant);
 
     if (mp_subscriber == nullptr)
@@ -169,7 +166,7 @@ void HelloWorldSubscriber::initialize_entities()
 
     topics_[reader] = topic;
     readers_[reader] = type;
-    DynamicData* data {DynamicDataFactory::get_instance().create_data(*type)};
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(type)};
     datas_[reader] = data;
 }
 

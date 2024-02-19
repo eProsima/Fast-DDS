@@ -60,23 +60,9 @@ bool HelloWorldPublisher::init()
 
     TypeSupport m_type(new DynamicPubSubType(dyn_type));
     m_Hello = DynamicDataFactory::get_instance()->create_data(dyn_type);
-    m_Hello->set_string_value(0, "Hello DDS Dynamic World");
-    m_Hello->set_uint32_value(1, 0);
-
-    DynamicData::_ref_type array {m_Hello->loan_value(2)};
-
-    /*TODO(richiware)
-       array->set_uint32_value(10, array.get_array_index({0, 0}));
-       array->set_uint32_value(20, array.get_array_index({1, 0}));
-       array->set_uint32_value(30, array.get_array_index({2, 0}));
-       array->set_uint32_value(40, array.get_array_index({3, 0}));
-       array->set_uint32_value(50, array.get_array_index({4, 0}));
-       array->set_uint32_value(60, array.get_array_index({0, 1}));
-       array->set_uint32_value(70, array.get_array_index({1, 1}));
-       array->set_uint32_value(80, array.get_array_index({2, 1}));
-       array->set_uint32_value(90, array.get_array_index({3, 1}));
-       array->set_uint32_value(100, array.get_array_index({4, 1}));
-     */
+    m_Hello->set_string_value(m_Hello->get_member_id_by_name("message"), "Hello DDS Dynamic World");
+    m_Hello->set_uint32_value(m_Hello->get_member_id_by_name("index"), 0);
+    m_Hello->set_uint32_values(m_Hello->get_member_id_by_name("array"), {10, 20, 30, 40, 50, 60, 70, 80, 90, 100});
 
     DomainParticipantQos pqos;
     pqos.name("Participant_pub");
@@ -101,7 +87,7 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    topic_ = mp_participant->create_topic("DDSDynHelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = mp_participant->create_topic("DDSDynHelloWorldTopic", m_type->getName(), TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
@@ -170,21 +156,19 @@ void HelloWorldPublisher::runThread(
             if (publish(false))
             {
                 std::string message;
-                m_Hello->get_string_value(message, 0);
+                m_Hello->get_string_value(message, m_Hello->get_member_id_by_name("message"));
                 uint32_t index {0};
-                m_Hello->get_uint32_value(index, 1);
+                m_Hello->get_uint32_value(index, m_Hello->get_member_id_by_name("index"));
+                UInt32Seq array;
+                m_Hello->get_uint32_values(array, m_Hello->get_member_id_by_name("array"));
                 std::string aux_array = "[";
-
-                DynamicData::_ref_type array {m_Hello->loan_value(2)};
 
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
                     for (uint32_t j = 0; j < 2; ++j)
                     {
-                        uint32_t elem;
-                        //TODO(richiware)array->get_uint32_value(elem, array.get_array_index({i, j}));
-                        aux_array += std::to_string(elem) + (j == 1 ? "]" : ", ");
+                        aux_array += std::to_string(array.at((i * 5) + j)) + (j == 1 ? "]" : ", ");
                     }
                     aux_array += (i == 4 ? "]" : "], ");
                 }
@@ -216,9 +200,7 @@ void HelloWorldPublisher::runThread(
                     aux_array += "[";
                     for (uint32_t j = 0; j < 2; ++j)
                     {
-                        uint32_t elem;
-                        //TODO(richiware)array->get_uint32_value(elem, array.get_array_index({i, j}));
-                        aux_array += std::to_string(elem) + (j == 1 ? "]" : ", ");
+                        aux_array += std::to_string((i * 5) + j) + (j == 1 ? "]" : ", ");
                     }
                     aux_array += (i == 4 ? "]" : "], ");
                 }
@@ -255,24 +237,12 @@ bool HelloWorldPublisher::publish(
     if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
-        m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(1, index + 1);
-
-        DynamicData::_ref_type array {m_Hello->loan_value(2)};
-
-        /*TODO(richiware)
-           array->set_uint32_value(10 + index, array.get_array_index({0, 0}));
-           array->set_uint32_value(20 + index, array.get_array_index({1, 0}));
-           array->set_uint32_value(30 + index, array.get_array_index({2, 0}));
-           array->set_uint32_value(40 + index, array.get_array_index({3, 0}));
-           array->set_uint32_value(50 + index, array.get_array_index({4, 0}));
-           array->set_uint32_value(60 + index, array.get_array_index({0, 1}));
-           array->set_uint32_value(70 + index, array.get_array_index({1, 1}));
-           array->set_uint32_value(80 + index, array.get_array_index({2, 1}));
-           array->set_uint32_value(90 + index, array.get_array_index({3, 1}));
-           array->set_uint32_value(100 + index, array.get_array_index({4, 1}));
-         */
-
+        m_Hello->get_uint32_value(index, m_Hello->get_member_id_by_name("index"));
+        m_Hello->set_uint32_value(m_Hello->get_member_id_by_name("index"), index + 1);
+        m_Hello->set_uint32_values(m_Hello->get_member_id_by_name(
+                    "array"),
+                {10 + index, 20 + index, 30 + index, 40 + index, 50 + index, 60 + index, 70 + index, 80 + index, 90 + index,
+                 100 + index});
         writer_->write(&m_Hello);
         return true;
     }
