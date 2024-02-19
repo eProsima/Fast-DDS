@@ -15,6 +15,7 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICDATAIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICDATAIMPL_HPP
 
+#include <fastdds/dds/core/Types.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 
 #include <map>

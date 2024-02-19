@@ -1031,7 +1031,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         }
 
         const char* lengthStr = p_root->Attribute(SEQ_MAXLENGTH);
-        uint32_t length = MAX_ELEMENTS_COUNT;
+        uint32_t length = static_cast<uint32_t>(LENGTH_UNLIMITED);
         if (lengthStr != nullptr)
         {
             try
@@ -1114,7 +1114,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         }
 
         const char* lengthStr = p_root->Attribute(MAP_MAXLENGTH);
-        uint32_t length = MAX_ELEMENTS_COUNT;
+        uint32_t length = static_cast<uint32_t>(LENGTH_UNLIMITED);
         if (lengthStr != nullptr)
         {
             try
