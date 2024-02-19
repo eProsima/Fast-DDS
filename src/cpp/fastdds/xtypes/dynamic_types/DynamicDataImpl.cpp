@@ -2691,19 +2691,82 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
         MemberId id) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
+    assert(sequence);
 
     if (MEMBER_ID_INVALID != id)
     {
-        auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
-        assert(sequence);
-        if (sequence->size() >= id + 1 && (TK_BOOLEAN == TK || TypePromotion<TK_BOOLEAN, TK>::value))
+        // Check MemberId was defined as a BITMASK member.
+        if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
         {
-            value = static_cast<TypeForKind<TK_BOOLEAN>>(sequence->at(id));
-            ret_value =  RETCODE_OK;
+            if (sequence->size() >= id + 1 && (TK_BOOLEAN == TK || TypePromotion<TK_BOOLEAN, TK>::value))
+            {
+                value = static_cast<TypeForKind<TK_BOOLEAN>>(sequence->at(id));
+                ret_value =  RETCODE_OK;
+            }
+        }
+    }
+    else
+    {
+        auto bound {enclosing_type_->get_descriptor().bound().at(0)};
+        bool valid_promotion {false};
+
+        if (9 > bound && TypePromotion<TK_INT8, TK>::value)
+        {
+            valid_promotion = true;
+        }
+        else if (17 > bound && TypePromotion<TK_INT16, TK>::value)
+        {
+            valid_promotion = true;
+        }
+        else if (33 > bound && TypePromotion<TK_INT32, TK>::value)
+        {
+            valid_promotion = true;
+        }
+        else if (TypePromotion<TK, TK_INT64>::value)
+        {
+            valid_promotion = true;
+        }
+
+        if (valid_promotion)
+        {
+            value = 0;
+            for (size_t pos {0}; pos < sequence->size(); ++pos)
+            {
+                if (sequence->at(pos))
+                {
+                    value |= 0x1ull << pos;
+                }
+            }
+            ret_value = RETCODE_OK;
         }
     }
 
     return ret_value;
+}
+
+template<>
+ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_FLOAT32>(
+        TypeForKind<TK_FLOAT32>&,
+        MemberId) noexcept
+{
+    return RETCODE_BAD_PARAMETER;
+}
+
+template<>
+ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_FLOAT64>(
+        TypeForKind<TK_FLOAT64>&,
+        MemberId) noexcept
+{
+    return RETCODE_BAD_PARAMETER;
+}
+
+template<>
+ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_FLOAT128>(
+        TypeForKind<TK_FLOAT128>&,
+        MemberId) noexcept
+{
+    return RETCODE_BAD_PARAMETER;
 }
 
 template<>
@@ -3239,11 +3302,7 @@ ReturnCode_t DynamicDataImpl::get_value(
     }
     else if (TK_BITMASK == type_kind)
     {
-        // Check MemberId was defined as a BITMASK member.
-        if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
-        {
-            ret_value = get_bitmask_bit<TK>(value, id);
-        }
+        ret_value = get_bitmask_bit<TK>(value, id);
     }
     else     // Primitives
     {
@@ -3263,19 +3322,85 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         const TypeForKind<TK>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_UNSUPPORTED;
+    auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
+    assert(sequence);
 
     if (MEMBER_ID_INVALID != id)
     {
-        auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
-        assert(sequence);
-        if (sequence->size() >= id + 1 && (TK_BOOLEAN == TK || TypePromotion<TK, TK_BOOLEAN>::value))
+        // Check MemberId was defined as a BITMASK member.
+        if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
         {
-            sequence->at(id) = static_cast<TypeForKind<TK_BOOLEAN>>(value);
-            ret_value =  RETCODE_OK;
+            if (sequence->size() >= id + 1 && (TK_BOOLEAN == TK || TypePromotion<TK, TK_BOOLEAN>::value))
+            {
+                sequence->at(id) = static_cast<TypeForKind<TK_BOOLEAN>>(value);
+                ret_value =  RETCODE_OK;
+            }
+        }
+    }
+    else
+    {
+        auto bound {enclosing_type_->get_descriptor().bound().at(0)};
+        bool valid_promotion {false};
+
+        if (9 > bound && TypePromotion<TK, TK_INT8>::value)
+        {
+            valid_promotion = true;
+        }
+        else if (17 > bound && TypePromotion<TK, TK_INT16>::value)
+        {
+            valid_promotion = true;
+        }
+        else if (33 > bound && TypePromotion<TK, TK_INT32>::value)
+        {
+            valid_promotion = true;
+        }
+        else if (TypePromotion<TK, TK_INT64>::value)
+        {
+            valid_promotion = true;
+        }
+
+        if (valid_promotion)
+        {
+            for (size_t pos {0}; pos < sequence->size(); ++pos)
+            {
+                if (value & (0x1ull << pos))
+                {
+                    sequence->at(pos) = true;
+                }
+                else
+                {
+                    sequence->at(pos) = false;
+                }
+            }
+            ret_value = RETCODE_OK;
         }
     }
 
     return ret_value;
+}
+
+template<>
+ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_FLOAT32>(
+        MemberId,
+        const TypeForKind<TK_FLOAT32>&) noexcept
+{
+    return RETCODE_BAD_PARAMETER;
+}
+
+template<>
+ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_FLOAT64>(
+        MemberId,
+        const TypeForKind<TK_FLOAT64>&) noexcept
+{
+    return RETCODE_BAD_PARAMETER;
+}
+
+template<>
+ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_FLOAT128>(
+        MemberId,
+        const TypeForKind<TK_FLOAT128>&) noexcept
+{
+    return RETCODE_BAD_PARAMETER;
 }
 
 template<>
@@ -3725,11 +3850,7 @@ ReturnCode_t DynamicDataImpl::set_value(
     }
     else if (TK_BITMASK == type_kind)
     {
-        // Check MemberId was defined as a BITMASK member.
-        if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
-        {
-            ret_value = set_bitmask_bit<TK>(id, value);
-        }
+        ret_value = set_bitmask_bit<TK>(id, value);
     }
     else     // Primitives
     {

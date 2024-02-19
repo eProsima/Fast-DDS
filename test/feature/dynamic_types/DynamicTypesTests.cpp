@@ -3504,11 +3504,12 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
 
     // Testing getters and setters.
 
-    ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, true), RETCODE_OK);
+    const uint8_t bitmask_value_set = 0x1;
+    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, bitmask_value_set), RETCODE_OK);
+
     ASSERT_NE(data->set_boolean_value(4, true), RETCODE_OK);
     ASSERT_NE(data->set_boolean_value(6, true), RETCODE_OK);
 
-    ASSERT_EQ(data->set_boolean_value(0, true), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(2, true), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(5, true), RETCODE_OK);
 
@@ -3524,6 +3525,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_NE(data->get_boolean_value(bit_get, 4), RETCODE_OK);
     ASSERT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
     ASSERT_EQ(true, bit_get);
+
+    uint8_t bitmask_value_get {0};
+    ASSERT_EQ(data->get_uint8_value(bitmask_value_get, MEMBER_ID_INVALID), RETCODE_OK);
+    ASSERT_EQ(bitmask_value_get, 0x25);
 
     // Test clone.
     auto clone = data->clone();
