@@ -78,25 +78,9 @@ jobs:
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@feature/fastdds_mac_ci_support
 
-      # TODO(eduponz)
-      # - name: Update known hosts file for DNS resolver testing
-      #   if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-      #   run: |
-      #     sudo echo ""                                                >> /etc/hosts
-      #     sudo echo "# Hosts for Fast DDS testing of DNS feature"     >> /etc/hosts
-      #     sudo echo "127.0.0.1                 localhost.test"        >> /etc/hosts
-      #     sudo echo "::1                       localhost.test"        >> /etc/hosts
-      #     sudo echo "154.56.134.194            www.eprosima.com.test" >> /etc/hosts
-      #     sudo echo "216.58.215.164            www.acme.com.test"     >> /etc/hosts
-      #     sudo echo "2a00:1450:400e:803::2004  www.acme.com.test"     >> /etc/hosts
-      #     sudo echo "140.82.121.4              www.foo.com.test"      >> /etc/hosts
-      #     sudo echo "140.82.121.3              www.foo.com.test"      >> /etc/hosts
-      #     sudo echo "ff1e::ffff:efff:1         acme.org.test"         >> /etc/hosts
-
-      # TODO(eduponz)
-      # - name: Set up libp11 and SoftHSM
-      #   continue-on-error: true
-      #   run: |
+      # TODO(eduponz): Update known hosts file for DNS resolver testing. NOTE: The runner cannot modify /etc/hosts.
+      # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
+      #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
       - name: Prepare colcon workspace
         id: colcon_ws_setup
@@ -132,7 +116,7 @@ jobs:
           vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
 
       # TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
-      #   - Issue: https://github.com/boostorg/mpl/issues/69. A workaround is proposed here:
+      #   - Issue: https://github.com/boostorg/mpl/issues/69.
       # We are disabling the warning for now, as the proposed solution does not fix the issue:
       #   - Not working solution: https://github.com/macports/macports-ports/pull/21839/files
       - name: Colcon build
