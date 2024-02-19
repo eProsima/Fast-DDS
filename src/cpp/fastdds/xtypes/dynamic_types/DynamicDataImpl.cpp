@@ -4052,7 +4052,8 @@ void DynamicDataImpl::serialize(
                             bitset.set(i, !!(value & 0x01));
                             value = value >> 1;
                         }
-                        sum += size;
+                        assert(sum <= base);
+                        sum = base + size;
                     }
                     else
                     {
@@ -4712,9 +4713,12 @@ bool DynamicDataImpl::deserialize(
         case TK_BITSET:
         {
             std::bitset<64> bitset;
-            auto sum =
-                    std::accumulate(type->get_descriptor().bound().begin(),
-                            type->get_descriptor().bound().end(), 0);
+            auto sum {0};
+            if (0 < type->get_all_members_by_index().size())
+            {
+                sum = type->get_all_members_by_index().rbegin()->get()->get_id() +
+                        *type->get_descriptor().bound().rbegin();
+            }
 
             if (9 > sum)
             {
@@ -4736,7 +4740,7 @@ bool DynamicDataImpl::deserialize(
             }
             else
             {
-                cdr << bitset;
+                cdr >> bitset;
             }
 
             size_t index = 0;
@@ -4767,6 +4771,14 @@ bool DynamicDataImpl::deserialize(
 
                     switch (element_kind)
                     {
+                        case TK_BOOLEAN:
+                            ret_value = member_data->set_value<TK_BOOLEAN>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_BOOLEAN>>(value));
+                            break;
+                        case TK_BYTE:
+                            ret_value = member_data->set_value<TK_BYTE>(MEMBER_ID_INVALID,
+                                            static_cast<TypeForKind<TK_BYTE>>(value));
+                            break;
                         case TK_INT8:
                             ret_value = member_data->set_value<TK_INT8>(MEMBER_ID_INVALID,
                                             static_cast<TypeForKind<TK_INT8>>(value));
@@ -5531,9 +5543,13 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_BITSET:
         {
-            auto sum =
-                    std::accumulate(type->get_descriptor().bound().begin(),
-                            type->get_descriptor().bound().end(), 0);
+            auto sum {0};
+            if (0 < type->get_all_members_by_index().size())
+            {
+                sum = type->get_all_members_by_index().rbegin()->get()->get_id() +
+                        *type->get_descriptor().bound().rbegin();
+            }
+
             if (9 > sum)
             {
                 std::bitset<8> bitset;
@@ -6255,9 +6271,13 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
         }
         case TK_BITSET:
         {
-            auto sum =
-                    std::accumulate(type_impl->get_descriptor().bound().begin(),
-                            type_impl->get_descriptor().bound().end(), 0);
+            auto sum {0};
+            if (0 < type_impl->get_all_members_by_index().size())
+            {
+                sum = type_impl->get_all_members_by_index().rbegin()->get()->get_id() +
+                        *type_impl->get_descriptor().bound().rbegin();
+            }
+
             if (9 > sum)
             {
                 current_alignment += 1;

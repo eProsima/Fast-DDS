@@ -177,18 +177,6 @@ bool DynamicTypeImpl::equals(
                 TK_STRUCTURE == impl->type_descriptor_.kind() ||
                 TK_UNION ==  impl->type_descriptor_.kind() ||
                 0 == impl->member_.size());
-        assert((TK_ANNOTATION != type_descriptor_.kind() &&
-                TK_BITMASK != type_descriptor_.kind() &&
-                TK_BITSET != type_descriptor_.kind() &&
-                TK_STRUCTURE != type_descriptor_.kind() &&
-                TK_UNION != type_descriptor_.kind()) ||
-                0 < member_.size());
-        assert((TK_ANNOTATION != type_descriptor_.kind() &&
-                TK_BITMASK != impl->type_descriptor_.kind() &&
-                TK_BITSET != impl->type_descriptor_.kind() &&
-                TK_STRUCTURE != impl->type_descriptor_.kind() &&
-                TK_UNION != impl->type_descriptor_.kind()) ||
-                0 < member_.size());
 
         assert(member_by_name_.size() == members_.size());
         assert(impl->member_by_name_.size() == impl->members_.size());
