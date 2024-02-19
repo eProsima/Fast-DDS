@@ -81,8 +81,6 @@ protected:
     asio::io_service io_service_timers_;
     std::unique_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
     uint16_t initial_peer_local_locator_port_;
-    // List of initial peers (physical locators only)
-    mutable LocatorList initial_peers_;
 
 #if TLS_FOUND
     asio::ssl::context ssl_context_;

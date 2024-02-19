@@ -105,10 +105,17 @@ TCPv6Transport::TCPv6Transport(
         }
     }
 
-    for (uint16_t& port : configuration_.listening_ports)
+    if (!configuration_.listening_ports.empty())
     {
-        Locator locator(LOCATOR_KIND_TCPv6, port);
-        port = create_acceptor_socket(locator);
+        if (configuration_.listening_ports.size() > 1)
+        {
+            EPROSIMA_LOG_ERROR(RTCP,
+                    "Only one listening port is allowed for TCP transport. Only the first port will be used.");
+            configuration_.listening_ports.erase(
+                configuration_.listening_ports.begin() + 1, configuration_.listening_ports.end());
+        }
+        Locator locator(LOCATOR_KIND_TCPv6, configuration_.listening_ports.front());
+        configuration_.listening_ports.front() = create_acceptor_socket(locator);
     }
 
 #if !TLS_FOUND
