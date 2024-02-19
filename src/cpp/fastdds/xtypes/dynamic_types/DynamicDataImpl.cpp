@@ -2452,8 +2452,8 @@ std::shared_ptr<void> DynamicDataImpl::clone_primitive(
             assert(false);
             break;
         }
-            return {};
     }
+    return {};
 }
 
 std::shared_ptr<void> DynamicDataImpl::clone_sequence(
@@ -2541,7 +2541,6 @@ std::shared_ptr<void> DynamicDataImpl::clone_sequence(
         }
         break;
     }
-    return {};
 }
 
 bool DynamicDataImpl::compare_sequence_values(
@@ -2730,15 +2729,16 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
 
         if (valid_promotion)
         {
-            value = 0;
-            TypeForKind<TK> check_value {0x1};
+            uint64_t value_set {0};
             for (size_t pos {0}; pos < sequence->size(); ++pos)
             {
                 if (sequence->at(pos))
                 {
-                    value |= check_value << pos;
+                    value_set |= 0x1ull << pos;
                 }
             }
+
+            value = static_cast<TypeForKind<TK>>(value_set);
             ret_value = RETCODE_OK;
         }
     }
@@ -3364,8 +3364,8 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         {
             for (size_t pos {0}; pos < sequence->size(); ++pos)
             {
-                TypeForKind<TK> check_value {0x1};
-                if (value & (check_value << pos))
+                uint64_t check_value = static_cast<uint64_t>(value);
+                if (check_value & (0x1ull << pos))
                 {
                     sequence->at(pos) = true;
                 }
@@ -5248,13 +5248,7 @@ bool DynamicDataImpl::deserialize(
                             key = value;
                         }
                         break;
-                        case TK_STRING16:
-                        {
-                            TypeForKind<TK_STRING16> value;
-                            cdr >> value;
-                            key = std::string(value.begin(), value.end());
-                        }
-                        break;
+                            break;
                         default:
                             assert(false);
                             break;
