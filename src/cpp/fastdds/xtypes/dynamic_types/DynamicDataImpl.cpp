@@ -2731,11 +2731,12 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
         if (valid_promotion)
         {
             value = 0;
+            TypeForKind<TK> check_value {0x1};
             for (size_t pos {0}; pos < sequence->size(); ++pos)
             {
                 if (sequence->at(pos))
                 {
-                    value |= 0x1ull << pos;
+                    value |= check_value << pos;
                 }
             }
             ret_value = RETCODE_OK;
@@ -3363,7 +3364,8 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         {
             for (size_t pos {0}; pos < sequence->size(); ++pos)
             {
-                if (value & (0x1ull << pos))
+                TypeForKind<TK> check_value {0x1};
+                if (value & (check_value << pos))
                 {
                     sequence->at(pos) = true;
                 }
