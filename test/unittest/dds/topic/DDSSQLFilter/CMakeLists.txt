@@ -22,7 +22,6 @@ file(GLOB DDSSQLFILTER_SOURCES
 file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx
@@ -53,7 +52,10 @@ target_include_directories(DDSSQLFilterTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
-target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
+target_link_libraries(DDSSQLFilterTests
+    fastcdr
+    fastdds::xtypes::dynamic-types::impl
+    foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
     )

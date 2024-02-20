@@ -68,7 +68,6 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
     )
 target_link_libraries(BuiltinDataSerializationTests foonathan_memory
     GTest::gmock
-    fastdds::xtypes
     ${CMAKE_DL_LIBS})
 if(QNX)
     target_link_libraries(BuiltinDataSerializationTests socket)
