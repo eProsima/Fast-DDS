@@ -14,34 +14,9 @@
 
 include(CheckCXXSourceCompiles)
 
-# xtypes is introduced as an interface library to simplify management
-add_library(xtypes INTERFACE)
-
-# introduce an alias to make even external and internal linking
-add_library(fastdds::xtypes ALIAS xtypes)
-
-target_compile_features(xtypes INTERFACE cxx_std_11)
-
-target_sources(xtypes INTERFACE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
-)
-
-target_include_directories(xtypes INTERFACE ${PROJECT_SOURCE_DIR}/src/cpp)
+add_subdirectory(fastdds/xtypes)
 
 # Set source files
-
 if(WIN32)
 
 file(GLOB_RECURSE ALL_HEADERS
@@ -483,14 +458,17 @@ else()
 endif()
 
 # Link library to external libraries.
-target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
+target_link_libraries(${PROJECT_NAME}
+    ${PRIVACY}
+    fastcdr
+    foonathan_memory
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
     ${TINYXML2_LIBRARY}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
     PRIVATE eProsima_atomic
-    PRIVATE fastdds::xtypes
+    PRIVATE fastdds::xtypes::dynamic-types::impl
     )
 
 if(MSVC OR MSVC_IDE)

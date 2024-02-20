@@ -121,7 +121,6 @@ target_link_libraries(DynamicComplexTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
-    fastdds::xtypes
     )
 if(QNX)
     target_link_libraries(DynamicComplexTypesTests socket)
@@ -152,7 +151,6 @@ target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
     fastcdr
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
-target_link_libraries(DynamicTypes_4_2_Tests fastdds::xtypes)
 if(QNX)
     target_link_libraries(DynamicTypes_4_2_Tests socket)
 endif()

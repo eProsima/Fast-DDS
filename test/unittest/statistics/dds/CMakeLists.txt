@@ -465,7 +465,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic
-        fastdds::xtypes
         )
     if(MSVC OR MSVC_IDE)
         target_link_libraries(StatisticsDomainParticipantMockTests ${PRIVACY}

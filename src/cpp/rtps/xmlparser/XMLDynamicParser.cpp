@@ -27,14 +27,13 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 
-#include "../../fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp"
-#include "../../fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp"
-#include "../../fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -198,7 +197,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
+    MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
     md->id(field_position);
     md->name(memberName);
     md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
@@ -358,8 +357,9 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             if (name != nullptr)
             {
 
-                traits<TypeDescriptorImpl>::ref_type alias_descriptor {std::make_shared<TypeDescriptorImpl>(TK_ALIAS,
-                                                                               name)};
+                TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
+                alias_descriptor->kind(TK_ALIAS);
+                alias_descriptor->name(name);
                 alias_descriptor->base_type(value_type);
                 traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                                   alias_descriptor)};
@@ -417,7 +417,9 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    traits<TypeDescriptorImpl>::ref_type bitset_descriptor {std::make_shared<TypeDescriptorImpl>(TK_BITSET, name)};
+    TypeDescriptor::_ref_type bitset_descriptor {traits<TypeDescriptor>::make_shared()};
+    bitset_descriptor->kind(TK_BITSET);
+    bitset_descriptor->name(name);
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
@@ -598,7 +600,7 @@ traits<eprosima::fastdds::dds::DynamicType>::ref_type XMLParser::parseXMLBitfiel
         EPROSIMA_LOG_ERROR(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
     }
 
-    traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
+    MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
     md->id(mId);
     md->name(memberName);
     md->type(member_type);
@@ -659,7 +661,9 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     {
         return XMLP_ret::XML_ERROR;
     }
-    traits<TypeDescriptorImpl>::ref_type bitmask_descriptor {std::make_shared<TypeDescriptorImpl>(TK_BITMASK, name)};
+    TypeDescriptor::_ref_type bitmask_descriptor {traits<TypeDescriptor>::make_shared()};
+    bitmask_descriptor->kind(TK_BITMASK);
+    bitmask_descriptor->name(name);
     bitmask_descriptor->element_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     bitmask_descriptor->bound().push_back(bit_bound);
     traits<DynamicTypeBuilder>::ref_type type_builder {
@@ -717,9 +721,11 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     }
 
 
-    traits<TypeDescriptorImpl>::ref_type enum_descriptor {std::make_shared<TypeDescriptorImpl>(TK_ENUM, enumName)};
-    traits<DynamicTypeBuilder>::ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                           enum_descriptor)};
+    TypeDescriptor::_ref_type enum_descriptor {traits<TypeDescriptor>::make_shared()};
+    enum_descriptor->kind(TK_ENUM);
+    enum_descriptor->name(enumName);
+    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                    enum_descriptor)};
 
     for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
             literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))
@@ -739,7 +745,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
            }
          */
 
-        traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
+        MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
         md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
         md->name(name);
         type_builder->add_member(md);
@@ -767,8 +773,9 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     const char* name = p_root->Attribute(NAME);
     MemberId mId{0};
 
-    traits<TypeDescriptorImpl>::ref_type structure_descriptor {std::make_shared<TypeDescriptorImpl>(TK_STRUCTURE,
-                                                                       name)};
+    TypeDescriptor::_ref_type structure_descriptor {traits<TypeDescriptor>::make_shared()};
+    structure_descriptor->kind(TK_STRUCTURE);
+    structure_descriptor->name(name);
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
@@ -852,8 +859,9 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
         }
         else
         {
-            traits<TypeDescriptorImpl>::ref_type union_descriptor {std::make_shared<TypeDescriptorImpl>(TK_UNION,
-                                                                           name)};
+            TypeDescriptor::_ref_type union_descriptor {traits<TypeDescriptor>::make_shared()};
+            union_descriptor->kind(TK_UNION);
+            union_descriptor->name(name);
             union_descriptor->discriminator_type(disc_type);
             traits<DynamicTypeBuilder>::ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->
                                                                        create_type(union_descriptor)};
@@ -1520,7 +1528,7 @@ traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
 
     const char* memberName = p_root->Attribute(NAME);
 
-    traits<MemberDescriptorImpl>::ref_type md {std::make_shared<MemberDescriptorImpl>()};
+    MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
     md->id(mId);
     md->name(memberName);
     md->type(member);
