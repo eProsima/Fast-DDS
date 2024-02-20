@@ -671,6 +671,15 @@ TEST(DataWriterTests, InvalidQos)
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
 
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    qos.history().depth = 0;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos)); // KEEP LAST 0 is inconsistent
+    qos.history().depth = 2;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos)); // KEEP LAST 2 is OK
+    qos.resource_limits().max_samples_per_instance = 1;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos)); // KEEP LAST 2 but max_samples_per_instance 1 is inconsistent
+
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
