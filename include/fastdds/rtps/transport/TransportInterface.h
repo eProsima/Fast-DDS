@@ -135,6 +135,18 @@ public:
             SendResourceList& sender_resource_list,
             const Locator&) = 0;
 
+    //! Must open the channel that maps to/from the given locator selector entry. This method must allocate,
+    //! reserve and mark any resources that are needed for said channel.
+    virtual bool OpenOutputChannel(
+            SendResourceList& sender_resource_list,
+            const fastrtps::rtps::LocatorSelectorEntry&);
+
+
+    //! Close the channel that maps to/from the given locator selector entry.
+    virtual void CloseOutputChannel(
+            SendResourceList& sender_resource_list,
+            const fastrtps::rtps::LocatorSelectorEntry&);
+
     /** Opens an input channel to receive incoming connections.
      *   If there is an existing channel it registers the receiver interface.
      */
