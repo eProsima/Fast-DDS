@@ -5621,6 +5621,104 @@ size_t DynamicDataImpl::calculate_serialized_size(
             break;
         }
         case TK_ARRAY:
+        {
+            TypeKind element_kind =
+                    get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                                type->get_descriptor().element_type()));
+            switch (element_kind)
+            {
+                case TK_INT32:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_UINT32:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_INT8:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_INT16:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_UINT16:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_INT64:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_UINT64:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_FLOAT32:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_FLOAT64:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_FLOAT128:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_CHAR8:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_CHAR16:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_BOOLEAN:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_BYTE:
+                case TK_UINT8:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_STRING8:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                case TK_STRING16:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(
+                                        value_.begin()->second), current_alignment);
+                    break;
+                default:
+                    calculated_size =
+                            calculator.calculate_array_serialized_size(
+                        *std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
+                            value_.begin()->second), current_alignment);
+                    break;
+
+            }
+
+            break;
+        }
         case TK_SEQUENCE:
         {
             TypeKind element_kind =
@@ -5716,11 +5814,6 @@ size_t DynamicDataImpl::calculate_serialized_size(
                             value_.begin()->second), current_alignment);
                     break;
 
-            }
-
-            if (TK_ARRAY == type_kind)
-            {
-                calculated_size -= 4;
             }
 
             break;
