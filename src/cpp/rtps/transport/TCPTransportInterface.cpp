@@ -775,7 +775,15 @@ bool TCPTransportInterface::OpenOutputChannel(
             for (const auto& infoIP : locNames)
             {
                 Locator newloc(physical_locator);
-                IPLocator::setIPv4(newloc, infoIP.locator);
+                if (transport_kind_ == LOCATOR_KIND_TCPv4)
+                {
+                    IPLocator::setIPv4(newloc, infoIP.locator);
+                }
+                else
+                {
+                    IPLocator::setIPv6(newloc, infoIP.locator);
+                }
+
                 if (is_interface_allowed(newloc))
                 {
                     list.push_back(newloc);
