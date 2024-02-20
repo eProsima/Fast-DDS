@@ -1,0 +1,18 @@
+{
+    "description" : "Test to check that Data Sharing correctly behaves under stress",
+    "participants" : [
+        {
+            "kind" : "subscriber",
+            "fixed_type" : true,
+            "samples" : "1000000",
+            "timeout" : "20000",
+            "succeed_on_timeout" : true
+        },
+        {
+            "kind" : "publisher",
+            "fixed_type" : true,
+            "interval" : "0",
+            "sleep_before_exec" : "1"
+        }
+    ]
+}
