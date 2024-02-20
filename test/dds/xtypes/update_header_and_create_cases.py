@@ -2,6 +2,7 @@ import json
 import os
 import re
 import sys
+import fnmatch
 
 class IDLProcessor:
     def __init__(self):
@@ -11,19 +12,21 @@ class IDLProcessor:
         self.idl_without_typeobjects = {"XtypesTestsTypeNoTypeObject", "declarations", "external"}
         self.struct_info = set()
 
+
     def extract_structures(self, idl_text):
+        # Regular expressions for module and struct extraction
         module_regexp = r'module\s+(\w+)\s*{((?:.|[\r\n])*?)\};\s*\};'
         struct_regexp = r'struct\s+(\w+)(\s*:\s*\w+)?\s*\{([^}]+)'
 
+        # Extract structures within modules
         modules = re.findall(module_regexp, idl_text, re.DOTALL)        
         module_structures = {}
         for module_match in modules:
             module_name, module_content = module_match
-            # Extract structures within the module
             structures = re.findall(struct_regexp, module_content)
             module_structures[module_name] = structures
 
-        # Regular expression to find structures outside modules
+        # Find structures outside modules
         outside_structures = re.findall(struct_regexp, idl_text)
         
         # Remove duplicate structures
@@ -34,21 +37,19 @@ class IDLProcessor:
 
         return module_structures, outside_structures
 
+
     def process_idl_files(self, idls_path):
         # Search for .idl files in the specified folder and its subdirectories
         print("Searching for .idl files...")
         for root, dirs, files in os.walk(idls_path):
             for file_name in files:
-                if file_name.endswith('.idl') and file_name not in self.files_to_ignore:  # Check if the file should be ignored
+                if file_name.endswith('.idl') and file_name not in self.files_to_ignore:
                     file_path = os.path.join(root, file_name)
                     print(f"Found .idl file: {file_path}")
-                    # Get the relative path of the .idl file from the specified folder
                     idl_file_relative_path = os.path.relpath(file_path, idls_path)
-                    # Remove the file extension to get the IDL file name
                     idl_file_name = os.path.splitext(idl_file_relative_path)[0]
                     with open(file_path, 'r') as file:
                         content = file.read()
-                        # Extract structures from IDL content
                         module_structures, outside_structures = self.extract_structures(content)
                         
                         # Store struct information along with the IDL file name and module name
@@ -68,39 +69,49 @@ def create_case_files(struct_info):
         os.makedirs(cases_folder)
         print(f"Created 'TypesTestsCases' folder: {cases_folder}")
 
-    # Generate case files for each struct
+    # Aggregate test cases for each IDL file
+    idl_test_cases = {}
+    for struct_name, idl_file_name, _, idls_path in struct_info:
+        if idls_path != "BaseCasesIDLs/":
+            if idl_file_name not in idl_test_cases:
+                idl_test_cases[idl_file_name] = []
+
+            # Ignore cases for maps that use WString as keys
+            if (not fnmatch.fnmatch(struct_name, "MapWString*") and not 
+                fnmatch.fnmatch(struct_name, "MapInnerAliasBoundedWStringHelper*")):
+                idl_test_cases[idl_file_name].append({
+                    "TestCase": f"Case_{idl_file_name}_{struct_name}",
+                    "participants": [
+                        {
+                            "kind": "publisher",
+                            "samples": "10",
+                            "timeout": "2",
+                            "expected_matches": "1",
+                            "known_types": [f"{struct_name}"]
+                        },
+                        {
+                            "kind": "subscriber",
+                            "samples": "10",
+                            "timeout": "2",
+                            "expected_matches": "1",
+                            "known_types": []
+                        }
+                    ]
+                })
+
+    # Generate case files for each IDL file
     print("Creating case files...")
-    for struct_name, idl_file_name, module_name, idls_path in struct_info:
-        if idls_path != "BaseCasesIDLs/": # Ignore cases for the IDL files in the 'BaseCasesIDLs' folder
-            idl_file_name = idl_file_name.replace("/", "_")  # Replace "/" with "_"
-            case_data = {
-                "participants": [
-                    {
-                        "kind": "publisher",
-                        "samples": "10",
-                        "timeout": "2",
-                        "expected_matches": "1",
-                        "known_types": [
-                            f"{module_name}::{struct_name}" if module_name else struct_name
-                        ]
-                    },
-                    {
-                        "kind": "subscriber",
-                        "samples": "10",
-                        "timeout": "2",
-                        "expected_matches": "1",
-                        "known_types": []
-                    }
-                ]
-            }
+    for idl_file_name, test_cases in idl_test_cases.items():
+        idl_file_name = idl_file_name.replace("/", "_")
+        test_cases.sort(key=lambda x: x["TestCase"])
+        case_data = {"test_cases": test_cases}
+        file_name = f"Cases_{idl_file_name}.json"
+        file_path = os.path.join(cases_folder, file_name)
+        with open(file_path, 'w') as f:
+            json.dump(case_data, f, indent=4)
+        print(f"Created case file: {file_path}")
 
-            file_name = f"Case_{idl_file_name}_{struct_name}.json"
-            file_path = os.path.join(cases_folder, file_name)
-            with open(file_path, 'w') as f:
-                json.dump(case_data, f, indent=4)
-            print(f"Created case file: {file_path}")
-
-
+        
 def update_types_header_file(struct_info, typecode_path):
     # Update types header file with necessary includes
     header_file_path = os.path.join(os.path.dirname(__file__), 'TypeLookupServiceTestsTypes.h')
@@ -116,7 +127,7 @@ def update_types_header_file(struct_info, typecode_path):
     # Add new include lines before the #endif directive
     new_include_lines = set()
     for _, idl_file_name, _, idls_path in struct_info:
-        if idls_path != "BaseCasesIDLs/": # Ignore cases for the IDL files in the 'BaseCasesIDLs' folder
+        if idls_path != "BaseCasesIDLs/":
             include_line = f'#include "{typecode_path}{idl_file_name}PubSubTypes.h"\n'
             new_include_lines.add(include_line)
         else:
@@ -160,14 +171,12 @@ def update_participant_headers_file(file_name, macro_name, struct_info, idl_with
 def insert_macros(func_declaration, macro_name, struct_info, idl_without_typeobjects):
     # Insert macros into the function declaration
     lines = func_declaration.split('\n')
-    # Remove all lines starting with the macro_name
-    lines = [line for line in lines if not re.match(rf'\s*{macro_name}\((\w+|\w+::\w+)\);', line)]
+    lines = [line for line in lines if not re.match(rf'\s*{macro_name}\((\w+|\w+::\w+)\);', line)]  # Remove existing macro lines
     updated_func = '\n'.join(lines)
     
     idx = updated_func.rfind('    }')
     if idx != -1:
-        # Convert struct_info to a list and sort it alphabetically by idl_file_name and then by struct_name
-        struct_info = sorted(list(struct_info), key=lambda x: (x[1], x[2], x[0]))
+        struct_info = sorted(list(struct_info), key=lambda x: (x[1], x[2], x[0]))  # Sort struct_info alphabetically
         for struct_name, idl_file_name, module_name, _ in struct_info:
             if idl_file_name in idl_without_typeobjects:
                 if module_name:
@@ -221,7 +230,6 @@ def main():
         print(f"The directory '{typecode_path}' does not exist.")
         return
 
-
     processor = IDLProcessor()
     processor.process_idl_files("BaseCasesIDLs/")
     processor.process_idl_files(idls_path)
@@ -230,10 +238,8 @@ def main():
         print("No structures found in the IDL files.")
         return
 
-    # Delete files before creating new ones
-    delete_files_in_cases_folder()  
+    delete_files_in_cases_folder()
 
-    # Perform necessary operations
     create_case_files(processor.struct_info)
     update_types_header_file(processor.struct_info, typecode_path)
     update_participant_headers_file("TypeLookupServicePublisher.h", "PUBLISHER_TYPE_CREATOR_FUNCTION",

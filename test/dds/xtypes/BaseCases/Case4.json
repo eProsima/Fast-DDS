@@ -1,23 +1,28 @@
 {
-    "participants": [
+    "test_cases": [
         {
-            "kind": "publisher",
-            "samples": "10",
-            "timeout": "3",
-            "expected_matches": "3",
-            "known_types": [
-                "Type1",
-                "Type2"
-            ]
-        },
-        {
-            "kind": "subscriber",
-            "samples": "10",
-            "timeout": "3",
-            "expected_matches": "3",
-            "known_types": [
-                "Type1",
-                "Type3"
+            "TestCase": "Case_4",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "3",
+                    "expected_matches": "3",
+                    "known_types": [
+                        "Type1",
+                        "Type2"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "3",
+                    "expected_matches": "3",
+                    "known_types": [
+                        "Type1",
+                        "Type3"
+                    ]
+                }
             ]
         }
     ]

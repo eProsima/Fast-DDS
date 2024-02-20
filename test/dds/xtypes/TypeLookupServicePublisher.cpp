@@ -288,7 +288,6 @@ bool TypeLookupServicePublisher::run(
         }
         return false;
     }
-    std::cout << "SUCCESS TypeLookupServicePublisher" << std::endl;
     return true;
 }
 
