@@ -251,7 +251,6 @@ TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
     asio_interfaces.push_back("::1");
     locator_interfaces.push_back("::1");
 
-    TCPv6TransportDescriptor descriptor;
     for (auto& ip : locator_interfaces)
     {
         descriptor.interfaceWhiteList.emplace_back(ip);

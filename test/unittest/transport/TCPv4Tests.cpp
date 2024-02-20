@@ -583,7 +583,6 @@ TEST_F(TCPv4Tests, check_TCPv4_interface_whitelist_initialization)
     // Add manually localhost to test adding multiple interfaces
     mock_interfaces.push_back("127.0.0.1");
 
-    TCPv4TransportDescriptor descriptor;
     for (auto& ip : mock_interfaces)
     {
         descriptor.interfaceWhiteList.emplace_back(ip);
