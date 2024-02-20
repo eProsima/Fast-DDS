@@ -587,7 +587,6 @@ TEST_F(TCPv4Tests, check_TCPv4_interface_whitelist_initialization)
     {
         descriptor.interfaceWhiteList.emplace_back(ip);
     }
-    descriptor.add_listener_port(g_default_port);
     MockTCPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
