@@ -46,6 +46,7 @@ jobs:
         with:
           path: src/fastrtps
           submodules: true
+          ref: ${{ inputs.fastdds-branch }}
 
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
@@ -160,7 +161,9 @@ jobs:
         with:
           colcon_meta_file: ${{ github.workspace }}/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
-          cmake_args_default: ${{ inputs.cmake-args }}
+          # The following Fast DDS CMake options need to be specified here instead of in the ci.meta file
+          # because they vary from platform to platform
+          cmake_args_default: ${{ inputs.cmake-args }} -DTHIRDPARTY_Asio=FORCE -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_fastcdr=OFF -DTHIRDPARTY_UPDATE=ON -DEPROSIMA_EXTRA_CMAKE_CXX_FLAGS="/MP /WX"
           cmake_build_type: ${{ matrix.cmake-config }}
           workspace: ${{ github.workspace }}
 
