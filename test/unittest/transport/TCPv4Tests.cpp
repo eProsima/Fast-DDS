@@ -2140,7 +2140,6 @@ TEST_F(TCPv4Tests, reconnect_after_open_port_failure)
 // same physical port as the local listening port.
 TEST_F(TCPv4Tests, opening_output_channel_with_same_locator_as_local_listening_port)
 {
-    descriptor.add_listener_port(g_default_port);
     TCPv4Transport transportUnderTest(descriptor);
     transportUnderTest.init();
 
