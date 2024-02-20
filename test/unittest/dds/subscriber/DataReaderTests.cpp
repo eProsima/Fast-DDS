@@ -679,6 +679,14 @@ TEST_F(DataReaderTests, InvalidQos)
     qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
     EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
 
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    qos.history().depth = 0;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 0 is inconsistent
+    qos.history().depth = 2;
+    qos.resource_limits().max_samples_per_instance = 1;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 2 but max_samples_per_instance 1 is inconsistent
+
     /* Inmutable QoS */
     const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
 

@@ -480,9 +480,16 @@
                 <maximum>10</maximum>
                 <increment>0</increment>
             </matchedSubscribersAllocation>
+<<<<<<< HEAD:test/unittest/dds/profiles/test_xml_profiles.xml
         </publisher>
         
         <subscriber profile_name="test_subscriber_profile">
+=======
+        </data_writer>
+
+        <!-- This profile has been updated to ensure that HistoryQoS and ResourceLimitQoS constraints are met (#20401) -->
+        <data_reader profile_name="test_subscriber_profile">
+>>>>>>> 68acb5a6c (Check History QoS inconsistencies (#4375)):test/unittest/dds/profiles/test_xml_profile.xml
             <topic>
                 <kind>NO_KEY</kind>
                 <name>otherSamplePubSubTopic</name>
@@ -492,9 +499,9 @@
                     <depth>500</depth>
                 </historyQos>
                 <resourceLimitsQos>
-                    <max_samples>10</max_samples>
+                    <max_samples>2500</max_samples>
                     <max_instances>5</max_instances>
-                    <max_samples_per_instance>2</max_samples_per_instance>
+                    <max_samples_per_instance>500</max_samples_per_instance>
                     <allocated_samples>10</allocated_samples>
                 </resourceLimitsQos>
             </topic>
