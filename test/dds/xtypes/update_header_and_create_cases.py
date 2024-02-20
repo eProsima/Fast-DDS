@@ -71,7 +71,7 @@ def create_case_files(struct_info):
 
     # Aggregate test cases for each IDL file
     idl_test_cases = {}
-    for struct_name, idl_file_name, _, idls_path in struct_info:
+    for struct_name, idl_file_name, module_name, idls_path in struct_info:
         if idls_path != "BaseCasesIDLs/":
             if idl_file_name not in idl_test_cases:
                 idl_test_cases[idl_file_name] = []
@@ -79,6 +79,11 @@ def create_case_files(struct_info):
             # Ignore cases for maps that use WString as keys
             if (not fnmatch.fnmatch(struct_name, "MapWString*") and not 
                 fnmatch.fnmatch(struct_name, "MapInnerAliasBoundedWStringHelper*")):
+
+                known_types = [struct_name]
+                if module_name:
+                    known_types = [f"{module_name}::{struct_name}"]
+
                 idl_test_cases[idl_file_name].append({
                     "TestCase": f"Case_{idl_file_name}_{struct_name}",
                     "participants": [
@@ -87,7 +92,7 @@ def create_case_files(struct_info):
                             "samples": "10",
                             "timeout": "2",
                             "expected_matches": "1",
-                            "known_types": [f"{struct_name}"]
+                            "known_types": known_types
                         },
                         {
                             "kind": "subscriber",
@@ -182,7 +187,7 @@ def insert_macros(func_declaration, macro_name, struct_info, idl_without_typeobj
                 if module_name:
                     updated_func = (updated_func[:idx] +
                                     f"        {macro_name}({module_name}::{struct_name});\n"
-                                    f"        types_without_typeobject_.insert(\"{struct_name}\");\n" +
+                                    f"        types_without_typeobject_.insert(\"{module_name}__{struct_name}\");\n" +
                                     updated_func[idx:])
                 else:
                     updated_func = (updated_func[:idx] +
