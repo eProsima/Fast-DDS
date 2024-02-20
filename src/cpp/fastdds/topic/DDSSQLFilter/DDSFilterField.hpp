@@ -140,7 +140,7 @@ private:
 
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;
-    const std::shared_ptr<xtypes::TypeIdentifier>& type_id_;
+    const std::shared_ptr<xtypes::TypeIdentifier> type_id_;
     std::unordered_set<DDSFilterPredicate*> parents_;
 };
 

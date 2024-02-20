@@ -98,7 +98,7 @@ std::unique_ptr<ParseNode> parse_filter_expression(
     memory_input<> in(expression, "");
     try
     {
-        CurrentIdentifierState identifier_state { type_object, std::make_shared<xtypes::TypeIdentifier>(), {} };
+        CurrentIdentifierState identifier_state { type_object, {}, {} };
         return parse_tree::parse< FilterExpressionGrammar, ParseNode, selector >(in, identifier_state);
     }
     catch (const parse_error& e)
