@@ -217,11 +217,11 @@ struct identifier_processor
 
             // Reset parser state
             state.access_path.clear();
-            state.current_type = nullptr;
+            state.current_type.reset();
         }
         else
         {
-            if (nullptr == state.current_type)
+            if (!state.current_type)
             {
                 add_member_access(n, state, state.type_object->complete());
             }
