@@ -1,0 +1,23 @@
+name: Fast-DDS MacOS CI (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  nightly-sec-mac-ci:
+    uses: ./.github/workflows/reusable-mac-ci.yml
+    with:
+      label: 'nightly-sec-mac-ci'
+      cmake-args: "-DSECURITY=ON"
+      ctest-args: "-LE xfail"
+      fastdds-branch: 'master'
+
+  nightly-nosec-mac-ci:
+    uses: ./.github/workflows/reusable-mac-ci.yml
+    with:
+      label: 'nightly-nosec-mac-ci'
+      cmake-args: "-DSECURITY=OFF"
+      ctest-args: "-LE xfail"
+      fastdds-branch: 'master'

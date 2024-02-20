@@ -1,0 +1,154 @@
+name: Fast-DDS MacOS CI reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds-branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  reusable-mac-ci:
+    # As explained in https://github.com/actions/runner-images/tree/main?tab=readme-ov-file#available-images,
+    # *-latest images are not always the latest available versions. The minimum version of the macOS image
+    # with clang 15 is macos-13 (see
+    # https://github.com/actions/runner-images/blob/main/images/macos/macos-13-Readme.md#language-and-runtime),
+    # so we'll use that one for now, as clang 15 is the supported compiler for Fast DDS in macOS.
+    # (see https://github.com/eProsima/Fast-DDS/blob/master/PLATFORM_SUPPORT.md#compilers)
+    runs-on: macos-13
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
+    strategy:
+      fail-fast: false
+      matrix:
+        cmake-build-type:
+          - 'RelWithDebInfo'
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastrtps
+          ref: ${{ inputs.fastdds-branch }}
+
+      - uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
+      - name: Get minimum supported version of CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install brew dependencies
+        uses: eProsima/eProsima-CI/macos/install_brew_packages@v0
+        with:
+          packages: llvm asio tinyxml2 openssl@3.0
+          update: false
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/multiplatform/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema
+          upgrade: false
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      # TODO(eduponz): Update known hosts file for DNS resolver testing. NOTE: The runner cannot modify /etc/hosts.
+      # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
+      #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
+
+      - name: Prepare colcon workspace
+        id: colcon_ws_setup
+        run: |
+          # Nightly job
+          if [[ "${{ inputs.label }}" == *"nightly"* ]]
+          then
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
+            if [ ! -f ${DEPENDS_REPOS_PATH} ]
+            then
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
+            fi
+            META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
+
+          # Either PR or manual
+          else
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
+            if [ ! -f ${DEPENDS_REPOS_PATH} ]
+            then
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
+            fi
+            META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
+          fi
+
+          echo "Selected repos files: ${DEPENDS_REPOS_PATH}"
+          cat ${DEPENDS_REPOS_PATH}
+
+          echo "Selected metas files: ${META_PATH}"
+          cp ${META_PATH} ci.meta
+          cat ci.meta
+
+          # Create source dir and download the sources
+          vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
+
+      # TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
+      #   - Issue: https://github.com/boostorg/mpl/issues/69.
+      # We are disabling the warning for now, as the proposed solution does not fix the issue:
+      #   - Not working solution: https://github.com/macports/macports-ports/pull/21839/files
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion"
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Colcon test
+        id: test
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args_default: --event-handlers=console_direct+
+          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
+          packages_names: fastrtps
+          workspace: ${{ github.workspace }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+
+      - name: Test summary
+        uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
+        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        with:
+          junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
+          print_summary: 'True'
+          show_failed: 'True'
+          show_disabled: 'False'
+          show_skipped: 'False'

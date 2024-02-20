@@ -1,10 +1,10 @@
-name: Fast-DDS Windows CI
+name: Fast-DDS MacOS CI
 
 on:
   workflow_dispatch:
     inputs:
       label:
-        description: 'ID associated to the workflow. Must univocally identify artifacts.'
+        description: 'ID associated to the workflow'
         required: true
         type: string
       colcon-args:
@@ -26,6 +26,8 @@ on:
 
   push:
     branches:
+      - 'master'
+      - '2.12.x'
       - '2.10.x'
       - '2.6.x'
     paths-ignore:
@@ -43,16 +45,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  windows-ci:
-    uses: ./.github/workflows/reusable-windows-ci.yml
+  mac-ci:
+    uses: ./.github/workflows/reusable-mac-ci.yml
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-ci') }}
     with:
-      label: ${{ inputs.label || 'windows-ci' }}
+      label: ${{ inputs.label || 'mac-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args }}
-<<<<<<< HEAD
-      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || '2.10.x' }}
-=======
-      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
->>>>>>> 8cff0ca30 (Add macOS Github CI (#4100))
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
