@@ -261,7 +261,7 @@
                 <name>default_name</name>
             </rtps>
         </participant>
-        
+
         <publisher profile_name="test_publisher_profile">
             <topic>
                 <kind>NO_KEY</kind>
@@ -480,16 +480,10 @@
                 <maximum>10</maximum>
                 <increment>0</increment>
             </matchedSubscribersAllocation>
-<<<<<<< HEAD:test/unittest/dds/profiles/test_xml_profiles.xml
         </publisher>
-        
-        <subscriber profile_name="test_subscriber_profile">
-=======
-        </data_writer>
 
         <!-- This profile has been updated to ensure that HistoryQoS and ResourceLimitQoS constraints are met (#20401) -->
-        <data_reader profile_name="test_subscriber_profile">
->>>>>>> 68acb5a6c (Check History QoS inconsistencies (#4375)):test/unittest/dds/profiles/test_xml_profile.xml
+        <subscriber profile_name="test_subscriber_profile">
             <topic>
                 <kind>NO_KEY</kind>
                 <name>otherSamplePubSubTopic</name>
@@ -585,7 +579,7 @@
                 <increment>5</increment>
             </matchedPublishersAllocation>
         </subscriber>
-        
+
         <subscriber profile_name="test_default_subscriber_profile" is_default_profile="true">
             <topic>
                 <kind>WITH_KEY</kind>
