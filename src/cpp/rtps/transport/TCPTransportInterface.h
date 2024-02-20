@@ -158,7 +158,7 @@ protected:
 
     //! Creates a TCP acceptor to wait for incoming connections by the given locator.
     uint16_t create_acceptor_socket(
-            Locator& locator);
+            const Locator& locator);
 
     virtual void get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& loc_names,
