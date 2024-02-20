@@ -263,8 +263,8 @@ bool TypeLookupServiceSubscriber::run(
         std::cout << "ERROR TypeLookupServiceSubscriber" << std::endl;
         if (expected_matches_ != received_samples_.size())
         {
-            std::cout << "expected_matches_ = " << expected_matches_ <<
-                " matched_ = " << received_samples_.size() << std::endl;
+            std::cout << "Expected_matches_ = " << expected_matches_ <<
+                " Working_writers_ = " << received_samples_.size() << std::endl;
         }
         for (auto& received_sample : received_samples_)
         {
@@ -336,19 +336,21 @@ void TypeLookupServiceSubscriber::on_data_writer_discovery(
         if (participant_->find_type(discovered_writer_type_name) == nullptr)
         {
             // Check for TypeObjectRegistry inconsistency
-            const bool has_type_object = types_without_typeobject_.find(discovered_writer_type_name) ==
+            std::string modified_type_name = discovered_writer_type_name;
+            std::replace(modified_type_name.begin(), modified_type_name.end(), ':', '_');
+            const bool has_type_object = types_without_typeobject_.find(modified_type_name) ==
                     types_without_typeobject_.end();
             const bool is_registered = check_registered_type(info.type_information);
 
             if ((has_type_object && !is_registered))
             {
-                throw std::runtime_error(
-                          "Type '" + discovered_writer_type_name + "' is not registered but it should be.");
+                throw std::runtime_error("TypeLookupServiceSubscriber: Type '" +
+                              discovered_writer_type_name + "' is not registered but it should be.");
             }
             if ((!has_type_object && is_registered))
             {
-                throw std::runtime_error(
-                          "Type '" + discovered_writer_type_name + "' is registered but it should not be.");
+                throw std::runtime_error("TypeLookupServiceSubscriber: Type '" +
+                              discovered_writer_type_name + "' is registered but it should not be.");
             }
 
             // Create new subscriber for the type

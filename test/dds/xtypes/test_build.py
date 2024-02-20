@@ -90,7 +90,8 @@ if __name__ == '__main__':
     test_cases = read_json(args[0])['test_cases']
 
     total_test_value = 0
-    failed_tests = []
+    successful_cases = []
+    failling_cases = []
 
     for test_case in test_cases:
         # Define commands for each test case
@@ -98,16 +99,24 @@ if __name__ == '__main__':
         # Execute the commands and get the return value
         test_value = execute_commands(commands)
         total_test_value += test_value
-        if test_value != 0:
-            failed_tests.append(f"Test {test_case.get('TestCase')} failed!!!")
+        if test_value == 0:
+            successful_cases.append(f"Test {test_case.get('TestCase')}")
+        else:
+            failling_cases.append(f"Test {test_case.get('TestCase')}")
+
+    # Print the results
+    if successful_cases.__len__() > 0:
+        print("---------- SUCCESSFUL CASES ----------")
+        for successful_test in successful_cases:
+            print(successful_test)
+
+    if failling_cases.__len__() > 0:
+        print("----------- FAILLING CASES -----------")
+        for failed_test in failling_cases:
+            print(failed_test)
 
     # Exit with appropriate exit code based on total test value
     if total_test_value != 0:
-        print("SOME TESTS FAILED!!!")
-        print("---------------------------------------------------")
-        for failed_test in failed_tests:
-            print(failed_test)
-        print("---------------------------------------------------")
         sys.exit(1)
     else:
         sys.exit(0)

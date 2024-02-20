@@ -738,7 +738,7 @@ private:
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BoundedBitMaskStructure);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(BitMaskStructure);
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(declarations_module::ModuledForwardStruct);
-        types_without_typeobject_.insert("ModuledForwardStruct");
+        types_without_typeobject_.insert("declarations_module__ModuledForwardStruct");
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(ModuledForwardDeclarationsRecursiveStruct);
         types_without_typeobject_.insert("ModuledForwardDeclarationsRecursiveStruct");
         SUBSCRIBER_TYPE_CREATOR_FUNCTION(ModuledCommonNameStructure);

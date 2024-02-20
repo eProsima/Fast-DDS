@@ -738,7 +738,7 @@ private:
         PUBLISHER_TYPE_CREATOR_FUNCTION(BoundedBitMaskStructure);
         PUBLISHER_TYPE_CREATOR_FUNCTION(BitMaskStructure);
         PUBLISHER_TYPE_CREATOR_FUNCTION(declarations_module::ModuledForwardStruct);
-        types_without_typeobject_.insert("ModuledForwardStruct");
+        types_without_typeobject_.insert("declarations_module__ModuledForwardStruct");
         PUBLISHER_TYPE_CREATOR_FUNCTION(ModuledForwardDeclarationsRecursiveStruct);
         types_without_typeobject_.insert("ModuledForwardDeclarationsRecursiveStruct");
         PUBLISHER_TYPE_CREATOR_FUNCTION(ModuledCommonNameStructure);

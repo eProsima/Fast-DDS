@@ -93,7 +93,7 @@
                     "timeout": "2",
                     "expected_matches": "1",
                     "known_types": [
-                        "ModuledForwardStruct"
+                        "declarations_module::ModuledForwardStruct"
                     ]
                 },
                 {
