@@ -24,8 +24,8 @@ namespace rtps {
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 
 bool TransportInterface::OpenOutputChannel(
-            SendResourceList& send_resource_list,
-            const LocatorSelectorEntry& locator_selector_entry)
+        SendResourceList& send_resource_list,
+        const LocatorSelectorEntry& locator_selector_entry)
 {
     bool success = false;
     for (size_t i = 0; i < locator_selector_entry.state.multicast.size(); ++i)
@@ -42,8 +42,8 @@ bool TransportInterface::OpenOutputChannel(
 }
 
 void TransportInterface::CloseOutputChannel(
-            SendResourceList& sender_resource_list,
-            const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry)
+        SendResourceList& sender_resource_list,
+        const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry)
 {
     static_cast<void>(sender_resource_list);
     static_cast<void>(locator_selector_entry);
