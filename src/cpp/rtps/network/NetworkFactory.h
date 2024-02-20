@@ -247,10 +247,11 @@ public:
     void update_network_interfaces();
 
     /**
-     * Sanitize registered transports on the periodical time event.
+     * Remove the given participants from the send resource list
      */
-    bool sanitize_transports(
-            fastdds::rtps::SendResourceList& send_resource_list) const;
+    void remove_from_send_resource_list(
+            fastdds::rtps::SendResourceList& send_resource_list,
+            std::set<Locator_t>& remote_participant_physical_locators) const;
 
 private:
 

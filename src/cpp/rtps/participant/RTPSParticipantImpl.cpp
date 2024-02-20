@@ -270,15 +270,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         return;
     }
-    else
-    {
-        sanitize_transports_timer_.reset(new TimedEvent(mp_event_thr, [&]()
-                {
-                    return sanitize_transports();
-                }, SANITIZE_TRANSPORTS_INTERVAL_MS));
-
-        sanitize_transports_timer_->restart_timer();
-    }
 
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
@@ -2991,10 +2982,24 @@ bool RTPSParticipantImpl::should_match_local_endpoints(
     return should_match_local_endpoints;
 }
 
-bool RTPSParticipantImpl::sanitize_transports()
+void RTPSParticipantImpl::remove_from_send_resource_list(
+    std::set<Locator_t>& remote_participant_physical_locators)
 {
-    std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
-    return m_network_Factory.sanitize_transports(send_resource_list_);
+    // Exlude initial peer locators from remote_participant_physical_locators
+    for (auto& initial_peer : m_att.builtin.initialPeersList)
+    {
+        Locator_t initial_peer_physical_locator = IPLocator::toPhysicalLocator(initial_peer);
+        if (std::find(remote_participant_physical_locators.begin(), remote_participant_physical_locators.end(),
+                initial_peer_physical_locator) != remote_participant_physical_locators.end())
+        {
+            remote_participant_physical_locators.erase(initial_peer_physical_locator);
+        }
+    }
+    if(!remote_participant_physical_locators.empty())
+    {
+        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
+        m_network_Factory.remove_from_send_resource_list(send_resource_list_, remote_participant_physical_locators);        
+    }
 }
 
 } /* namespace rtps */

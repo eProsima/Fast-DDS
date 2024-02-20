@@ -1239,6 +1239,20 @@ bool PDP::remove_remote_participant(
 
         this->mp_mutex->lock();
 
+        // Delete from sender resource list (TCP only)
+        std::set<Locator_t> remote_participant_physical_locators;
+        for(auto& remote_participant_locator : pdata->default_locators.unicast)
+        {
+            if (remote_participant_locator.kind == LOCATOR_KIND_TCPv4 || remote_participant_locator.kind == LOCATOR_KIND_TCPv6)
+            {
+                remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
+            }
+        }
+        if (!remote_participant_physical_locators.empty())
+        {
+            mp_RTPSParticipant->remove_from_send_resource_list(remote_participant_physical_locators);
+        }
+
         // Return reader proxy objects to pool
         for (auto pit : *pdata->m_readers)
         {
@@ -1266,6 +1280,7 @@ bool PDP::remove_remote_participant(
         participant_proxies_pool_.push_back(pdata);
 
         this->mp_mutex->unlock();
+
         return true;
     }
 

@@ -44,7 +44,6 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastrtps/utils/Semaphore.h>
@@ -782,13 +781,6 @@ private:
     bool should_match_local_endpoints(
             const RTPSParticipantAttributes& att);
 
-    //! Timed event to check the liveliness of the SendResources.
-    std::unique_ptr<fastrtps::rtps::TimedEvent> sanitize_transports_timer_;
-    static constexpr uint16_t SANITIZE_TRANSPORTS_INTERVAL_MS = 7000;
-
-    //! Timed event callback to sanitize the transports.
-    bool sanitize_transports();
-
 public:
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
@@ -1273,6 +1265,10 @@ public:
     {
         return match_local_endpoints_;
     }
+
+    //! Remove participants from send resource list
+    void remove_from_send_resource_list(
+                std::set<Locator_t>& remote_participant_physical_locators);
 
 };
 } // namespace rtps

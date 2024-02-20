@@ -471,24 +471,22 @@ void NetworkFactory::update_network_interfaces()
     }
 }
 
-bool NetworkFactory::sanitize_transports(
-        SendResourceList& send_resource_list) const
+void NetworkFactory::remove_from_send_resource_list(
+        SendResourceList& send_resource_list,
+        std::set<Locator_t>& remote_participant_physical_locators) const
 {
-    bool sanitize_result = true;
     for (auto& transport : mRegisteredTransports)
     {
-        // TODO: Sanitize all transports
         if (transport->kind() == LOCATOR_KIND_TCPv4 ||
                 transport->kind() == LOCATOR_KIND_TCPv6)
         {
             TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
             if (tcp_transport)
             {
-                sanitize_result &= tcp_transport->sanitize_transport(send_resource_list);
+                tcp_transport->remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
             }
         }
     }
-    return sanitize_result;
 }
 
 } // namespace rtps

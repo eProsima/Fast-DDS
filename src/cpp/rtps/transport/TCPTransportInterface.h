@@ -461,10 +461,11 @@ public:
             Locator& locator) const;
 
     /**
-     * Check and update send resource list.
+     * Remove the given physical locators from the send resource list.
      */
-    bool sanitize_transport(
-            SendResourceList& send_resource_list) const;
+    void remove_from_send_resource_list(
+            SendResourceList& send_resource_list,
+            std::set<Locator>& remote_participant_physical_locators) const;
 };
 
 } // namespace rtps

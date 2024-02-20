@@ -929,16 +929,17 @@ TEST_P(TransportTCP, multiple_listening_ports)
     delete client_2;
 }
 
-// Test TCP transport sanitizer. This test matches a server with a client, then releases the
-// client resources and reinstatiates it. The server waits for the sanitizer to remove the first client
-// from the send resource list. Finally, it checks that the the send_resource_list has size 1.
-TEST_P(TransportTCP, transport_sanitizer)
+// Test TCP send resource cleaning. This test matches a server with a client and then releases the
+// client resources. After PDP unbind message, the server removes the client
+// from the send resource list.
+TEST_P(TransportTCP, send_resource_cleanup)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
     using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
 
     std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> udp_participant(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
     std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
 
     // Server
@@ -976,15 +977,27 @@ TEST_P(TransportTCP, transport_sanitizer)
                 client->initial_peers(initial_peer_list);
                 client->init();
             };
+    auto initialize_udp_participant = [&](PubSubWriter<HelloWorldPubSubType>* udp_participant)
+            {
+                auto udp_participant_transport = std::make_shared<UDPv4TransportDescriptor>();
+                udp_participant->disable_builtin_transport().add_user_transport_to_pparams(udp_participant_transport);
+                udp_participant->init();
+            };
     initialize_client(client.get());
     ASSERT_TRUE(client->isInitialized());
 
-    // Wait for discovery. OpenOutputChannel() is called.
-    client->wait_discovery();
-    server->wait_discovery();
+    // Wait for discovery. OpenOutputChannel() is called. We create a udp participant after to guarantee
+    // that the TCP participants have been mutually discovered when OpenOutputChannel() is called.
+    server->wait_discovery(std::chrono::seconds(0), 1);
+    client->wait_discovery(1, std::chrono::seconds(0));
 
-    // We can only update the senders when OpenOutputChannel() is called. If the sanitizer deletes
-    // the send resource, senders obtained from get_send_resource_list() won't have changed.
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    server->wait_discovery(std::chrono::seconds(0), 2);
+    udp_participant->wait_discovery(1, std::chrono::seconds(0));
+
+    // We can only update the senders when OpenOutputChannel() is called. If the send resource
+    // is deleted later, senders obtained from get_send_resource_list() won't have changed.
     auto send_resource_list = server_chaining_transport->get_send_resource_list();
     auto tcp_send_resources = [](const std::set<SenderResource*>& send_resource_list) -> size_t
             {
@@ -1002,79 +1015,145 @@ TEST_P(TransportTCP, transport_sanitizer)
 
     // Release TCP client resources.
     client.reset();
+    udp_participant.reset();
 
-    // Wait for sanitizer to remove client from send_resource_list.
-    std::this_thread::sleep_for(std::chrono::milliseconds(7000));
+    // Wait for undiscovery.
+    server->wait_writer_undiscovery();
 
-    // Create new TCP client instance.
-    client.reset(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
-    initialize_client(client.get());
-    ASSERT_TRUE(client->isInitialized());
+    // Create new udp client.
+    udp_participant.reset(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
 
     // Wait for discovery. OpenOutputChannel() is called and we can update the senders.
-    client->wait_discovery();
-    server->wait_discovery();
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    server->wait_discovery(std::chrono::seconds(0), 1);
+    udp_participant->wait_discovery(1, std::chrono::seconds(0));
 
-    // Check that the send_resource_list has size 1. This means that the sanitizer has removed the
-    // send resource for the first client and now has a send resource for the second client.
+    // Check that the send_resource_list has size 0. This means that the send resource 
+    // for the  client has been removed.
     send_resource_list = server_chaining_transport->get_send_resource_list();
-    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 0);
     send_resource_list.clear();
 }
 
-// Test TCP late joiner server. Client should try to connect to a server that is not yet listening. In
-// the meantime, transport sanitizer should not remove client's send resource.
-TEST_P(TransportTCP, late_joiner_server)
+// Test TCP send resource cleaning. In this case, since the send resource has been created from an initial_peer,
+// the send resource should not be removed.
+TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
+    using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
+
     std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> udp_participant(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
     std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
 
-    uint16_t server_port = 10000;
-
     // Client
-    std::shared_ptr<TCPTransportDescriptor> client_transport;
+    // Create a client with two transports, one of which uses a DatagramInjectionTransportDescriptor
+    // which heritates from ChainingTransportDescriptor. This will allow us to get send_resource_list_
+    // from the client participant when its transport gets its OpenOutputChannel() method called.
+    uint16_t server_port = 10000;
+    LocatorList_t initial_peer_list;
     Locator_t initialPeerLocator;
     if (use_ipv6)
     {
-        client_transport = std::make_shared<TCPv6TransportDescriptor>();
         initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
         IPLocator::setIPv6(initialPeerLocator, "::1");
     }
     else
     {
-        client_transport = std::make_shared<TCPv4TransportDescriptor>();
         initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
         IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
     }
-    client->disable_builtin_transport().add_user_transport_to_pparams(client_transport);
     initialPeerLocator.port = server_port;
-    LocatorList_t initial_peer_list;
     initial_peer_list.push_back(initialPeerLocator);
     client->initial_peers(initial_peer_list);
-    client->init();
+
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto client_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
+    client->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(client_chaining_transport).init();
     ASSERT_TRUE(client->isInitialized());
 
-    // Wait for sanitizer to remove client from send_resource_list.
-    std::this_thread::sleep_for(std::chrono::milliseconds(8000));
-
     // Server
-    test_transport_->add_listener_port(server_port);
-    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).init();
+    auto initialize_server = [&](PubSubReader<HelloWorldPubSubType>* server)
+            {
+                std::shared_ptr<TCPTransportDescriptor> server_transport;
+                if (use_ipv6)
+                {
+                    server_transport = std::make_shared<TCPv6TransportDescriptor>();
+                }
+                else
+                {
+                    server_transport = std::make_shared<TCPv4TransportDescriptor>();
+                }
+                server_transport->add_listener_port(server_port);
+                server->disable_builtin_transport().add_user_transport_to_pparams(server_transport);
+                server->init();
+            };
+    auto initialize_udp_participant = [&](PubSubReader<HelloWorldPubSubType>* udp_participant)
+            {
+                auto udp_participant_transport = std::make_shared<UDPv4TransportDescriptor>();
+                udp_participant->disable_builtin_transport().add_user_transport_to_pparams(udp_participant_transport);
+                udp_participant->init();
+            };
+    initialize_server(server.get());
     ASSERT_TRUE(server->isInitialized());
 
-    client->wait_discovery();
-    server->wait_discovery();
+    // Wait for discovery. OpenOutputChannel() is called. We create a udp participant after to guarantee
+    // that the TCP participants have been mutually discovered when OpenOutputChannel() is called.
+    client->wait_discovery(1, std::chrono::seconds(0));
+    server->wait_discovery(std::chrono::seconds(0), 1);
 
-    // Send and receive data
-    auto data = default_helloworld_data_generator();
-    server->startReception(data);
-    client->send(data);
-    EXPECT_TRUE(data.empty());
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    client->wait_discovery(2, std::chrono::seconds(0));
+    udp_participant->wait_discovery(std::chrono::seconds(0), 1);
 
-    server->block_for_all();
-    EXPECT_TRUE(client->waitForAllAcked(std::chrono::seconds(2)));
+    // We can only update the senders when OpenOutputChannel() is called. If the send resource
+    // is deleted later, senders obtained from get_send_resource_list() won't have changed.
+    auto send_resource_list = client_chaining_transport->get_send_resource_list();
+    auto tcp_send_resources = [](const std::set<SenderResource*>& send_resource_list) -> size_t
+            {
+                size_t tcp_send_resources = 0;
+                for (auto& sender_resource : send_resource_list)
+                {
+                    if (sender_resource->kind() == LOCATOR_KIND_TCPv4 || sender_resource->kind() == LOCATOR_KIND_TCPv6)
+                    {
+                        tcp_send_resources++;
+                    }
+                }
+                return tcp_send_resources;
+            };
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+
+    // Release TCP client resources.
+    server.reset();
+    udp_participant.reset();
+
+    // Wait for undiscovery.
+    client->wait_reader_undiscovery();
+
+    // Create new client instances.
+    udp_participant.reset(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+
+    // Wait for discovery. OpenOutputChannel() is called and we can update the senders.
+    initialize_udp_participant(udp_participant.get());
+    ASSERT_TRUE(udp_participant->isInitialized());
+    client->wait_discovery(1, std::chrono::seconds(0));
+    udp_participant->wait_discovery(std::chrono::seconds(0), 1);
+
+    // Check that the send_resource_list has size 1. This means that the send resource 
+    // for the first client hasn't been removed because it was created from an initial_peer.
+    send_resource_list = client_chaining_transport->get_send_resource_list();
+    EXPECT_EQ(tcp_send_resources(send_resource_list), 1);
+    send_resource_list.clear();
+
+    // If relaunching the server, the client should connect again.
+    server.reset(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    initialize_server(server.get());
+    ASSERT_TRUE(server->isInitialized());
+    server->wait_discovery(std::chrono::seconds(0), 1);
+    client->wait_discovery(2, std::chrono::seconds(0));
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

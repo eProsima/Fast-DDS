@@ -331,7 +331,7 @@ public:
 
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
 
-    MOCK_METHOD(bool, sanitize_transports, ());
+    MOCK_METHOD(bool, remove_from_send_resource_list, (std::set<Locator_t>&));
 
 private:
 

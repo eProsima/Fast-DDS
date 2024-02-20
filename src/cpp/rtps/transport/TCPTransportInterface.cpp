@@ -637,8 +637,12 @@ bool TCPTransportInterface::transform_remote_locator(
 void TCPTransportInterface::CloseOutputChannel(
         fastrtps::rtps::Locator_t& locator)
 {
-    locator.set_Invalid_Address();
-    locator.port = 0;
+    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
+    auto channel = channel_resources_.find(locator);
+    if (channel != channel_resources_.end())
+    {
+        close_tcp_socket(channel->second);
+    }
 }
 
 bool TCPTransportInterface::CloseInputChannel(
@@ -1186,7 +1190,7 @@ bool TCPTransportInterface::Receive(
                     if (tcp_header.logical_port == 0)
                     {
                         std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
-                        if (!channel->connection_disconnected())
+                        if (TCPChannelResource::eConnectionStatus::eDisconnected != channel->connection_status())
                         {
                             std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
                             rtcp_message_manager = rtcp_manager.lock();
@@ -1376,7 +1380,7 @@ bool TCPTransportInterface::send(
         }
     }
     else if (TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel->tcp_connection_type() &&
-            channel->connection_disconnected())
+            TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
     {
         channel->set_all_ports_pending();
         channel->connect(channel_resources_[channel->locator()]);
@@ -1516,7 +1520,7 @@ void TCPTransportInterface::SocketConnected(
         {
             if (!error)
             {
-                if (!channel->connection_disconnected())
+                if (TCPChannelResource::eConnectionStatus::eDisconnected < channel->connection_status())
                 {
                     channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
                     channel->set_options(configuration());
@@ -1836,36 +1840,28 @@ void TCPTransportInterface::fill_local_physical_port(
     }
 }
 
-bool TCPTransportInterface::sanitize_transport(
-        SendResourceList& send_resource_list) const
+void TCPTransportInterface::remove_from_send_resource_list(
+        SendResourceList& send_resource_list,
+        std::set<Locator>& remote_participant_physical_locators) const
 {
-    // Remove send resources with disconnected channels
-    for (auto it = send_resource_list.begin(); it != send_resource_list.end();)
+    for(auto& remote_participant_physical_locator : remote_participant_physical_locators)
     {
-
-        TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
-
-        if (tcp_sender_resource)
+        // Remove send resources for the associated remote participant locator
+        for (auto it = send_resource_list.begin(); it != send_resource_list.end();)
         {
-            std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-            auto channel = channel_resources_.find(tcp_sender_resource->locator());
-            if (channel != channel_resources_.end() &&
-                    channel->second->connection_status() == TCPChannelResource::eConnectionStatus::eUnbound)
+            TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
+
+            if (tcp_sender_resource)
             {
-                scopedLock.unlock();
-                it = send_resource_list.erase(it);
+                if (tcp_sender_resource->locator() == remote_participant_physical_locator)
+                {
+                    it = send_resource_list.erase(it);
+                    continue;
+                }
             }
-            else
-            {
-                ++it;
-            }
-        }
-        else
-        {
             ++it;
         }
     }
-    return true;
 }
 
 } // namespace rtps

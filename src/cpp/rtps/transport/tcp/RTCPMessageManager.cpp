@@ -119,7 +119,7 @@ bool RTCPMessageManager::sendData(
     }
 
     if (TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE == channel->tcp_connection_type() &&
-            channel->connection_disconnected())
+            TCPChannelResource::eConnectionStatus::eDisconnected == channel->connection_status())
     {
         channel->set_all_ports_pending();
         channel->connect(channel);
@@ -819,7 +819,6 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
             if (alive())
             {
                 mTransport->close_tcp_socket(channel);
-                channel->change_status(TCPChannelResource::eConnectionStatus::eUnbound);
                 //channel.reset();
             }
             responseCode = RETCODE_OK;
