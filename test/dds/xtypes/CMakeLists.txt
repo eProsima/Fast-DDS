@@ -63,7 +63,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_build.py
 # Get test definitions from the json files
 file(GLOB TEST_DEFINITIONS
     "BaseCases/Case*"
-    "TypesTestsCases/Case*"
+    "TypesTestsCases/Cases*"
 )
 
 if(PYTHONINTERP_FOUND)

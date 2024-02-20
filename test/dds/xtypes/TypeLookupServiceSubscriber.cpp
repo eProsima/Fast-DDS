@@ -277,7 +277,6 @@ bool TypeLookupServiceSubscriber::run(
 
         return false;
     }
-    std::cout << "SUCCESS TypeLookupServiceSubscriber" << std::endl;
     return true;
 }
 

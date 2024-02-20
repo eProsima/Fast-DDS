@@ -1,31 +1,36 @@
 {
-    "participants": [
+    "test_cases": [
         {
-            "kind": "publisher",
-            "samples": "10",
-            "timeout": "3",
-            "expected_matches": "2",
-            "known_types": [
-                "Type2"
-            ]
-        },
-        {
-            "kind": "publisher",
-            "samples": "10",
-            "timeout": "3",
-            "expected_matches": "2",
-            "known_types": [
-                "Type1"
-            ]
-        },
-        {
-            "kind": "subscriber",
-            "samples": "10",
-            "timeout": "3",
-            "expected_matches": "4",
-            "known_types": [
-                "Type1",
-                "Type2"
+            "TestCase": "Case_10",
+            "participants": [
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "3",
+                    "expected_matches": "2",
+                    "known_types": [
+                        "Type2"
+                    ]
+                },
+                {
+                    "kind": "publisher",
+                    "samples": "10",
+                    "timeout": "3",
+                    "expected_matches": "2",
+                    "known_types": [
+                        "Type1"
+                    ]
+                },
+                {
+                    "kind": "subscriber",
+                    "samples": "10",
+                    "timeout": "3",
+                    "expected_matches": "4",
+                    "known_types": [
+                        "Type1",
+                        "Type2"
+                    ]
+                }
             ]
         }
     ]

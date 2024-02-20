@@ -1,11 +1,11 @@
 import json
-import logging
 import os
 import shutil
 import subprocess
 import sys
 import time
 
+# Define the directory of the script
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -17,11 +17,6 @@ def read_json(file_name):
     return structure_dic
 
 
-def participants_definition(file_name):
-    """Return a list with each participant defined in dictionary."""
-    return read_json(file_name)['participants']
-
-
 def define_args(participant):
     """Use dictionary to get command args for each participant."""
     args = []
@@ -30,12 +25,14 @@ def define_args(participant):
     args.extend([f"timeout={participant.get('timeout', 10)}"])
     args.extend([f"expected_matches={participant.get('expected_matches', 1)}"])
 
+    # Check if 'known_types' key exists and is a list
     if 'known_types' in participant and isinstance(participant['known_types'], list):
         args.append(f'known_types={",".join(participant["known_types"])}')
     else:
         print(f'ARGUMENT ERROR: For {participant["kind"]}s, <known_types> should be a list of types')
 
     return args
+
 
 def find_executable(executable_name):
     """Find the full path of an executable file by name."""
@@ -48,57 +45,69 @@ def find_executable(executable_name):
     return executable_path
 
 
-def define_commands(participants):
+def define_commands(test_cases):
     """Create commands for each participant adding executable to args."""
     executable_path = find_executable('DDSXtypesCommunication')
     if not executable_path:
         print("ERROR: Executable 'DDSXtypesCommunication' not found in the system PATH or is not executable.")
         sys.exit(1)
 
-    commands = [[executable_path] + define_args(participant) for participant in participants]
+    all_commands = []
+    for test_case in test_cases:
+        # For each test case, create commands for all participants
+        commands = [[executable_path] + define_args(participant) for participant in test_case['participants']]
+        all_commands.extend(commands)
 
-    return commands
+    return all_commands
 
 
-def execute_commands(commands, logger):
-    """Get test definitions in command lists and execute each process."""
+def execute_commands(commands):
+    """Execute each process with the given commands."""
     processes = []
 
     for command in commands:
-        logger.info(f'Executing: {command}')
         processes.append(subprocess.Popen(command))
         time.sleep(0.1)  # Delay for consistency
 
     ret_value = 0
 
     for proc in processes:
-        proc.communicate()
+        proc.communicate()  # Wait for the process to finish
         ret_value += proc.returncode
-        # time.sleep(1)  # Delay for consistency
 
     return ret_value
 
 
 if __name__ == '__main__':
-
-    logger = logging.getLogger('XTYPES COMMUNICATION TEST')
-    logger.setLevel(logging.INFO)
-
     args = sys.argv[1:]
 
+    # Check if the number of arguments is correct
     if len(args) != 1:
-        logger.error('ARGUMENTS ERROR : 1 argument required: path to .json file with test definition')
+        ('ARGUMENTS ERROR: 1 argument required: path to .json file with test definition')
         sys.exit(1)
 
-    participants = participants_definition(args[0])
+    # Read test cases from the provided JSON file
+    test_cases = read_json(args[0])['test_cases']
 
-    commands = define_commands(participants)
+    total_test_value = 0
+    failed_tests = []
 
-    test_value = execute_commands(commands, logger)
+    for test_case in test_cases:
+        # Define commands for each test case
+        commands = define_commands([test_case])
+        # Execute the commands and get the return value
+        test_value = execute_commands(commands)
+        total_test_value += test_value
+        if test_value != 0:
+            failed_tests.append(f"Test {test_case.get('TestCase')} failed!!!")
 
-    logger.error(test_value)
-
-    if test_value != 0:
+    # Exit with appropriate exit code based on total test value
+    if total_test_value != 0:
+        print("SOME TESTS FAILED!!!")
+        print("---------------------------------------------------")
+        for failed_test in failed_tests:
+            print(failed_test)
+        print("---------------------------------------------------")
         sys.exit(1)
     else:
         sys.exit(0)
