@@ -37,6 +37,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
@@ -440,13 +441,13 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
                 {
                     delete remote_participant_info;
                 }
-                remote_participant_info = new ParticipantDiscoveryInfo(info);
+                remote_participant_info = new ParticipantProxyData(info.info);
                 found_->store(true);
                 cv_->notify_one();
             }
         }
 
-        ParticipantDiscoveryInfo* remote_participant_info;
+        ParticipantProxyData* remote_participant_info;
 
     private:
 
@@ -498,7 +499,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         participant_found.store(false);
 
         // Prevent assertion on spurious discovery of a participant from elsewhere
-        if (part_1->guid() == listener.remote_participant_info->info.m_guid)
+        if (part_1->guid() == listener.remote_participant_info->m_guid)
         {
             // Check that all three properties are present in the ParticipantProxyData, and that their value
             // is that of the property in part_1 (the original property value)
@@ -506,13 +507,13 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
             {
                 // Find property in ParticipantProxyData
                 auto received_property = std::find_if(
-                    listener.remote_participant_info->info.m_properties.begin(),
-                    listener.remote_participant_info->info.m_properties.end(),
+                    listener.remote_participant_info->m_properties.begin(),
+                    listener.remote_participant_info->m_properties.end(),
                     [&](const ParameterProperty_t& property)
                     {
                         return property.first() == physical_property_name;
                     });
-                ASSERT_NE(received_property, listener.remote_participant_info->info.m_properties.end());
+                ASSERT_NE(received_property, listener.remote_participant_info->m_properties.end());
 
                 // Find property in first participant
                 auto part_1_property = PropertyPolicyHelper::find_property(
@@ -558,20 +559,20 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         participant_found.store(false);
 
         // Prevent assertion on spurious discovery of a participant from elsewhere
-        if (part_1->guid() == listener.remote_participant_info->info.m_guid)
+        if (part_1->guid() == listener.remote_participant_info->m_guid)
         {
             // Check that none of the three properties are present in the ParticipantProxyData.
             for (auto physical_property_name : physical_property_names)
             {
                 // Look for property in ParticipantProxyData
                 auto received_property = std::find_if(
-                    listener.remote_participant_info->info.m_properties.begin(),
-                    listener.remote_participant_info->info.m_properties.end(),
+                    listener.remote_participant_info->m_properties.begin(),
+                    listener.remote_participant_info->m_properties.end(),
                     [&](const ParameterProperty_t& property)
                     {
                         return property.first() == physical_property_name;
                     });
-                ASSERT_EQ(received_property, listener.remote_participant_info->info.m_properties.end());
+                ASSERT_EQ(received_property, listener.remote_participant_info->m_properties.end());
             }
             break;
         }
