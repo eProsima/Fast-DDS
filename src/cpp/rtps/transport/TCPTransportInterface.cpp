@@ -298,11 +298,20 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
             std::vector<std::string> vInterfaces = get_binding_interfaces_list();
             for (std::string& sInterface : vInterfaces)
             {
+                Locator loc = locator;
+                if (loc.kind == LOCATOR_KIND_TCPv4)
+                {
+                    IPLocator::setIPv4(loc, sInterface);
+                }
+                else if (loc.kind == LOCATOR_KIND_TCPv6)
+                {
+                    IPLocator::setIPv6(loc, sInterface);
+                }
 #if TLS_FOUND
                 if (configuration()->apply_security)
                 {
                     std::shared_ptr<TCPAcceptorSecure> acceptor =
-                            std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, locator);
+                            std::make_shared<TCPAcceptorSecure>(io_service_, sInterface, loc);
                     acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this, ssl_context_);
                     final_port = static_cast<uint16_t>(acceptor->locator().port);
@@ -311,7 +320,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
 #endif // if TLS_FOUND
                 {
                     std::shared_ptr<TCPAcceptorBasic> acceptor =
-                            std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, locator);
+                            std::make_shared<TCPAcceptorBasic>(io_service_, sInterface, loc);
                     acceptors_[acceptor->locator()] = acceptor;
                     acceptor->accept(this);
                     final_port = static_cast<uint16_t>(acceptor->locator().port);
