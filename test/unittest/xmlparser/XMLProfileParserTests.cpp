@@ -987,9 +987,9 @@ TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
         transport);
 
     ASSERT_NE(descriptor, nullptr);
-    ASSERT_EQ(descriptor->segment_size(), std::numeric_limits<uint32_t>::max());
-    ASSERT_EQ(descriptor->port_queue_capacity(), std::numeric_limits<uint32_t>::max());
-    ASSERT_EQ(descriptor->healthy_check_timeout_ms(), std::numeric_limits<uint32_t>::max());
+    ASSERT_EQ(descriptor->segment_size(), (std::numeric_limits<uint32_t>::max)());
+    ASSERT_EQ(descriptor->port_queue_capacity(), (std::numeric_limits<uint32_t>::max)());
+    ASSERT_EQ(descriptor->healthy_check_timeout_ms(), (std::numeric_limits<uint32_t>::max)());
     ASSERT_EQ(descriptor->rtps_dump_file(), "test_file.dump");
     ASSERT_EQ(descriptor->maxMessageSize, 128000u);
     ASSERT_EQ(descriptor->max_message_size(), 128000u);

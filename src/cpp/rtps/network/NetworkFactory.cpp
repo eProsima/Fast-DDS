@@ -36,8 +36,8 @@ using SendResourceList = fastdds::rtps::SendResourceList;
 
 NetworkFactory::NetworkFactory(
         const RTPSParticipantAttributes& PParam)
-    : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max())
-    , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
+    : maxMessageSizeBetweenTransports_((std::numeric_limits<uint32_t>::max)())
+    , minSendBufferSize_((std::numeric_limits<uint32_t>::max)())
 {
     const std::string* enforce_metatraffic = nullptr;
     enforce_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.enforce_metatraffic");
@@ -120,7 +120,7 @@ bool NetworkFactory::RegisterTransport(
 {
     bool wasRegistered = false;
 
-    uint32_t minSendBufferSize = std::numeric_limits<uint32_t>::max();
+    uint32_t minSendBufferSize = (std::numeric_limits<uint32_t>::max)();
 
     std::unique_ptr<TransportInterface> transport(descriptor->create_transport());
 

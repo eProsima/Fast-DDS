@@ -754,7 +754,7 @@ private:
             std::array<ContentFilterTestType, 5>& data)
     {
         constexpr uint32_t min = std::numeric_limits<uint32_t>::lowest();
-        constexpr uint32_t max = std::numeric_limits<uint32_t>::max();
+        constexpr uint32_t max = (std::numeric_limits<uint32_t>::max)();
 
         std::array<uint32_t, 5> values{ min, max / 4, max / 3, max / 2, max };
 

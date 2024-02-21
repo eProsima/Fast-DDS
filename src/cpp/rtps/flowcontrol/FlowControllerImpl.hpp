@@ -929,7 +929,7 @@ public:
     {
         uint32_t limitation = get_max_payload();
 
-        if (std::numeric_limits<uint32_t>::max() != limitation)
+        if ((std::numeric_limits<uint32_t>::max)() != limitation)
         {
             sched.set_bandwith_limitation(limitation);
         }
@@ -1393,7 +1393,7 @@ private:
     typename std::enable_if<!std::is_base_of<FlowControllerLimitedAsyncPublishMode, PubMode>::value, uint32_t>::type
     constexpr get_max_payload_impl() const
     {
-        return std::numeric_limits<uint32_t>::max();
+        return (std::numeric_limits<uint32_t>::max)();
     }
 
     std::mutex mutex_;

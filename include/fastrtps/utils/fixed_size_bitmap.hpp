@@ -324,7 +324,7 @@ public:
             const T& from,
             const T& to)
     {
-        constexpr uint32_t full_mask = std::numeric_limits<uint32_t>::max();
+        constexpr uint32_t full_mask = (std::numeric_limits<uint32_t>::max)();
 
         // Adapt incoming range to range limits
         T min = (base_ >= from) ? base_ : from;
@@ -431,7 +431,7 @@ public:
         short shift = num_bits & 31u;
         if (0 < num_bits && shift != 0)
         {
-            bitmap_[num_items - 1] &= ~(std::numeric_limits<uint32_t>::max() >> shift);
+            bitmap_[num_items - 1] &= ~((std::numeric_limits<uint32_t>::max)() >> shift);
         }
         calc_maximum_bit_set(num_items, 0);
     }

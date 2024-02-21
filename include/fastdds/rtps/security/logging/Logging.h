@@ -188,7 +188,7 @@ private:
     LogOptions log_options_;
     GUID_t guid_;
     std::string guid_str_;
-    uint32_t domain_id_ = std::numeric_limits<uint32_t>::max();
+    uint32_t domain_id_ = (std::numeric_limits<uint32_t>::max)();
     std::string domain_id_str_;
 };
 
@@ -243,7 +243,8 @@ bool Logging::compose_header(
                     MESSAGE,                                          \
                     std::string(CLASS ",") + __func__,                \
                     EXCEPTION);                                       \
-        } else {                                                      \
+        } \
+        else {                                                      \
             switch (LEVEL){                                           \
                 case LoggingLevel::EMERGENCY_LEVEL:                   \
                 case LoggingLevel::ALERT_LEVEL:                       \
@@ -276,7 +277,7 @@ bool Logging::compose_header(
         __FASTRTPS_MACRO_SELECTOR(__VA_ARGS__,  \
         __FASTRTPS_SECURITY_LOGGING,            \
         __FASTRTPS_SECURITY_LOGGING_EX,         \
-        _UNUSED)(__VA_ARGS__) )
+        _UNUSED)(__VA_ARGS__))
 
 #define EMERGENCY_SECURITY_LOGGING(...)     SECURITY_LOGGING(LoggingLevel::EMERGENCY_LEVEL, __VA_ARGS__)
 #define ALERT_SECURITY_LOGGING(...)         SECURITY_LOGGING(LoggingLevel::ALERT_LEVEL, __VA_ARGS__)
