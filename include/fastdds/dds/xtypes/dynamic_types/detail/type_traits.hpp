@@ -17,6 +17,8 @@
 
 #include <memory>
 
+#include <fastrtps/fastrtps_dll.h>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -35,7 +37,7 @@ struct traits
         return std::dynamic_pointer_cast<_Tp>(obj);
     }
 
-    static std::shared_ptr<T> make_shared();
+    RTPS_DllAPI static std::shared_ptr<T> make_shared();
 
 };
 

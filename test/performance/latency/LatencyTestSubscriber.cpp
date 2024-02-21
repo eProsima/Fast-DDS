@@ -807,7 +807,7 @@ bool LatencyTestSubscriber::init_dynamic_types()
     struct_type_builder->add_member(member_descriptor);
     member_descriptor->name("data");
     member_descriptor->type(factory->create_sequence_type(
-                factory->get_primitive_type(TK_UINT32), LENGTH_UNLIMITED)->build());
+                factory->get_primitive_type(TK_UINT32), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     struct_type_builder->add_member(member_descriptor);
     dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 

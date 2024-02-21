@@ -126,6 +126,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
         const xtypes::TypeObject& type_object) noexcept
 {
     traits<DynamicTypeBuilder>::ref_type nil;
+    static_cast<void>(type_object);
     return nil;
 }
 
@@ -240,6 +241,9 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
         const IncludePathSeq& include_paths) noexcept
 {
     traits<DynamicTypeBuilder>::ref_type nil;
+    static_cast<void>(document_url);
+    static_cast<void>(type_name);
+    static_cast<void>(include_paths);
     return nil;
 }
 
@@ -249,6 +253,9 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_
         const IncludePathSeq& include_paths) noexcept
 {
     traits<DynamicTypeBuilder>::ref_type nil;
+    static_cast<void>(document);
+    static_cast<void>(type_name);
+    static_cast<void>(include_paths);
     return nil;
 }
 

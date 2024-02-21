@@ -16,7 +16,6 @@
 #include <fastcdr/Cdr.h>
 
 #include <gtest/gtest.h>
-#include <tinyxml2.h>
 
 #include <algorithm>
 #include <array>
@@ -374,7 +373,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory)
 
     // Try to create with invalid values
     // • strings
-    DynamicTypeBuilder::_ref_type created_builder {factory->create_string_type(LENGTH_UNLIMITED)};
+    DynamicTypeBuilder::_ref_type created_builder {factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))};
     ASSERT_TRUE(created_builder);
 
     DynamicType::_ref_type type {created_builder->build()};
@@ -385,7 +384,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory)
     ASSERT_TRUE(type->equals(type2));
 
     // • wstrings
-    created_builder = factory->create_wstring_type(LENGTH_UNLIMITED);
+    created_builder = factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED));
     ASSERT_TRUE(created_builder);
 
     type = created_builder->build();
@@ -2656,7 +2655,7 @@ TEST_F(DynamicTypesTests, DynamicType_string)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
-    DynamicTypeBuilder::_ref_type builder {factory->create_string_type(LENGTH_UNLIMITED)};
+    DynamicTypeBuilder::_ref_type builder {factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))};
     ASSERT_TRUE(builder);
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
@@ -5103,7 +5102,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
-    member_descriptor->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("child_string");
     member_descriptor->id(4);
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
@@ -5161,7 +5160,8 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_EQ(descriptor->name(), "child_string");
     ASSERT_EQ(descriptor->index(), 3u);
     ASSERT_EQ(descriptor->id(), 4);
-    ASSERT_TRUE(descriptor->type()->equals(factory->create_string_type(LENGTH_UNLIMITED)->build()));
+    ASSERT_TRUE(descriptor->type()->equals(factory->create_string_type(
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build()));
     ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
     ASSERT_TRUE(member->equals(member_aux));
@@ -5602,7 +5602,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
-    member_descriptor->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("second");
     member_descriptor->id(3);
     member_descriptor->label({4});
@@ -5830,7 +5830,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
-    member_descriptor->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("second");
     member_descriptor->id(2);
     member_descriptor->label({4});
@@ -6756,7 +6756,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_string)
     type_descriptor->name("StringStruct");
     DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
     MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
-    member_descriptor->type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("my_string");
     builder->add_member(member_descriptor);
 
@@ -6784,7 +6784,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wstring)
     type_descriptor->name("WStringStruct");
     DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
     MemberDescriptor::_ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
-    member_descriptor->type(factory->create_wstring_type(LENGTH_UNLIMITED)->build());
+    member_descriptor->type(factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("my_wstring");
     builder->add_member(member_descriptor);
 
@@ -6920,7 +6920,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_string)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
     type_descriptor->name("MyAliasString");
-    type_descriptor->base_type(factory->create_string_type(LENGTH_UNLIMITED)->build());
+    type_descriptor->base_type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
 
     // Struct StructAliasString
@@ -6955,7 +6955,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_wstring)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(eprosima::fastdds::dds::TK_ALIAS);
     type_descriptor->name("MyAliasWString");
-    type_descriptor->base_type(factory->create_wstring_type(LENGTH_UNLIMITED)->build());
+    type_descriptor->base_type(factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     DynamicTypeBuilder::_ref_type alias_builder {factory->create_type(type_descriptor)};
 
     // Struct StructAliasWString

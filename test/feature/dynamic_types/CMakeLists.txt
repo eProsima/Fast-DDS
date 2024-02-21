@@ -19,45 +19,6 @@ if(WIN32)
         )
 endif()
 
-file(GLOB DYNAMIC_TYPES_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/*.cpp
-    )
-
-# External sources
-if(TINYXML2_SOURCE_DIR)
-    list(APPEND DYNAMIC_TYPES_SOURCE
-        ${TINYXML2_SOURCE_DIR}/tinyxml2.cpp
-        )
-endif()
-
-if(ANDROID)
-    if (ANDROID_NATIVE_API_LEVEL LESS 24)
-        list(APPEND DYNAMIC_TYPES_SOURCE
-            ${ANDROID_IFADDRS_SOURCE_DIR}/ifaddrs.c
-            )
-    endif()
-endif()
-
-if (IS_THIRDPARTY_BOOST_OK)
-    set(DYNAMIC_TYPES_ADDITIONAL_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
-        )
-endif()
-
-if (TLS_FOUND)
-    list(APPEND DYNAMIC_TYPES_ADDITIONAL_SOURCE
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
-        )
-endif()
-
 set(DYNAMIC_TYPES_TEST_SOURCE
     DynamicTypesTests.cpp
     idl/BasicPubSubTypes.cxx
@@ -68,14 +29,12 @@ set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
     DynamicComplexTypesTests.cpp
     idl/TestPubSubTypes.cxx
     idl/TestTypeObjectSupport.cxx
-    ${DYNAMIC_TYPES_SOURCE}
     )
 
 set(DYNAMIC_TYPES_4_2_TEST_SOURCE
     DynamicTypes_4_2_Tests.cpp
     idl/new_features_4_2PubSubTypes.cxx
     idl/new_features_4_2TypeObjectSupport.cxx
-    ${DYNAMIC_TYPES_SOURCE}
     )
 
 include_directories(mock/)
@@ -85,12 +44,11 @@ target_compile_definitions(DynamicTypesTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DynamicTypesTests GTest::gtest
+target_link_libraries(DynamicTypesTests
+    GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
-    ${TINYXML2_LIBRARY}
-    foonathan_memory
     fastcdr
     fastrtps
     )
@@ -101,26 +59,16 @@ gtest_discover_tests(DynamicTypesTests)
 
 add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicComplexTypesTests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    ENABLE_DYNAMIC_MEMORY_CHECK
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DynamicComplexTypesTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-    )
 
-target_link_libraries(DynamicComplexTypesTests GTest::gtest
+target_link_libraries(DynamicComplexTypesTests
+    GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
-    ${TINYXML2_LIBRARY}
     fastcdr
+    fastrtps
     )
 if(QNX)
     target_link_libraries(DynamicComplexTypesTests socket)
@@ -130,26 +78,16 @@ gtest_discover_tests(DynamicComplexTypesTests)
 
 add_executable(DynamicTypes_4_2_Tests ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
 target_compile_definitions(DynamicTypes_4_2_Tests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    ENABLE_DYNAMIC_MEMORY_CHECK
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DynamicTypes_4_2_Tests PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    )
 
-target_link_libraries(DynamicTypes_4_2_Tests GTest::gtest
+target_link_libraries(DynamicTypes_4_2_Tests
+    GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
-    ${TINYXML2_LIBRARY}
     fastcdr
-    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
+    fastrtps
     )
 if(QNX)
     target_link_libraries(DynamicTypes_4_2_Tests socket)
