@@ -104,6 +104,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , calculate_crc(true)
     , check_crc(true)
     , apply_security(false)
+    , non_blocking_send(false)
 {
 }
 
@@ -125,6 +126,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , tls_config(t.tls_config)
     , keep_alive_thread(t.keep_alive_thread)
     , accept_thread(t.accept_thread)
+    , non_blocking_send(t.non_blocking_send)
 {
 }
 
@@ -152,6 +154,7 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     tls_config = t.tls_config;
     keep_alive_thread = t.keep_alive_thread;
     accept_thread = t.accept_thread;
+    non_blocking_send = t.non_blocking_send;
     return *this;
 }
 
@@ -173,6 +176,7 @@ bool TCPTransportDescriptor::operator ==(
            this->tls_config == t.tls_config &&
            this->keep_alive_thread == t.keep_alive_thread &&
            this->accept_thread == t.accept_thread &&
+           this->non_blocking_send == t.non_blocking_send &&
            SocketTransportDescriptor::operator ==(t));
 }
 
@@ -180,7 +184,6 @@ TCPTransportInterface::TCPTransportInterface(
         int32_t transport_kind)
     : TransportInterface(transport_kind)
     , alive_(true)
-    , non_blocking_send_(false)
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
@@ -422,7 +425,7 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
 }
 
 bool TCPTransportInterface::init(
-        const fastrtps::rtps::PropertyPolicy* properties)
+        const fastrtps::rtps::PropertyPolicy*)
 {
     if (!apply_tls_config())
     {
@@ -446,14 +449,6 @@ bool TCPTransportInterface::init(
 
     ip::tcp::endpoint local_endpoint = initial_peer_local_locator_socket_->local_endpoint();
     initial_peer_local_locator_port_ = local_endpoint.port();
-
-    // Get non_blocking_send property
-    if (properties)
-    {
-        auto s_non_blocking_send = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(*properties,
-                        "fastdds.tcp_transport.non_blocking_send");
-        non_blocking_send_ = s_non_blocking_send && *s_non_blocking_send == "true"? true : false;
-    }
 
     // Check system buffer sizes.
     if (configuration()->sendBufferSize == 0)

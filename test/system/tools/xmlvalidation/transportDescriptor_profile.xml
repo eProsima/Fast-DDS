@@ -86,6 +86,7 @@
                 <calculate_crc>false</calculate_crc>
                 <check_crc>false</check_crc>
                 <enable_tcp_nodelay>false</enable_tcp_nodelay>
+                <non_blocking_send>false</non_blocking_send>
             </transport_descriptor>
 
             <transport_descriptor>
