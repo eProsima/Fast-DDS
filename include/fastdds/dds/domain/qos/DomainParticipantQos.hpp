@@ -350,12 +350,15 @@ public:
     }
 
     /**
-     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios.
+     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios with
+     * certain options.
      *
      * @param transports Defines the transport configuration scenario to setup.
+     * @param options Defines the options to be used in the transport configuration.
      */
     RTPS_DllAPI void setup_transports(
-            rtps::BuiltinTransports transports);
+            rtps::BuiltinTransports transports,
+            const rtps::BuiltinTransportsOptions& options = rtps::BuiltinTransportsOptions());
 
     /**
      * Setter for the builtin flow controllers sender threads ThreadSettings
