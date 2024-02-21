@@ -500,6 +500,21 @@ public:
         useBuiltinTransports = false;
     }
 
+    /**
+     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios with
+     * certain options. Options only take effect if the selected builtin transport is LARGE_DATA.
+     *
+     * @param transports Defines the transport configuration scenario to setup.
+     * @param options Defines the options to be used in the transport configuration.
+     */
+    void setup_transports(
+            fastdds::rtps::BuiltinTransports /*transports*/, fastdds::rtps::BuiltinTransportsOptions& /*options*/)
+    {
+        // Only include UDPv4 behavior for mock tests, ignore options
+        setup_transports_default(*this);
+        useBuiltinTransports = false;
+    }
+
     static void setup_transports_default(
             RTPSParticipantAttributes& att)
     {
@@ -625,10 +640,17 @@ public:
     fastdds::rtps::ThreadSettings security_log_thread;
 #endif // if HAVE_SECURITY
 
+    /*! Maximum message size used to avoid fragmentation, setted ONLY in LARGE_DATA. If this value is
+     * not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
+     * higher than 65500K.
+     */
+    uint32_t max_msg_size_no_frag = 0;
+
 private:
 
     //! Name of the participant.
     string_255 name{"RTPSParticipant"};
+
 };
 
 }  // namespace rtps
