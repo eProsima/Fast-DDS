@@ -1268,7 +1268,7 @@ public:
 
     //! Remove participants from send resource list
     void remove_from_send_resource_list(
-                std::set<Locator_t>& remote_participant_physical_locators);
+            std::set<Locator_t>& remote_participant_physical_locators);
 
 };
 } // namespace rtps

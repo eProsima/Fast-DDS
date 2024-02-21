@@ -939,7 +939,8 @@ TEST_P(TransportTCP, send_resource_cleanup)
     using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
 
     std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
-    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> udp_participant(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> udp_participant(new PubSubWriter<HelloWorldPubSubType>(
+                TEST_TOPIC_NAME));
     std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
 
     // Server
@@ -950,7 +951,8 @@ TEST_P(TransportTCP, send_resource_cleanup)
     test_transport_->add_listener_port(server_port);
     auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
     auto server_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
-    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(server_chaining_transport).init();
+    server->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(
+        server_chaining_transport).init();
     ASSERT_TRUE(server->isInitialized());
 
     // Client
@@ -1029,7 +1031,7 @@ TEST_P(TransportTCP, send_resource_cleanup)
     server->wait_discovery(std::chrono::seconds(0), 1);
     udp_participant->wait_discovery(1, std::chrono::seconds(0));
 
-    // Check that the send_resource_list has size 0. This means that the send resource 
+    // Check that the send_resource_list has size 0. This means that the send resource
     // for the  client has been removed.
     send_resource_list = server_chaining_transport->get_send_resource_list();
     EXPECT_EQ(tcp_send_resources(send_resource_list), 0);
@@ -1045,7 +1047,8 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
     using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
 
     std::unique_ptr<PubSubWriter<HelloWorldPubSubType>> client(new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME));
-    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> udp_participant(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
+    std::unique_ptr<PubSubReader<HelloWorldPubSubType>> udp_participant(new PubSubReader<HelloWorldPubSubType>(
+                TEST_TOPIC_NAME));
     std::unique_ptr<PubSubReader<HelloWorldPubSubType>> server(new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME));
 
     // Client
@@ -1071,7 +1074,8 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
 
     auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
     auto client_chaining_transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
-    client->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(client_chaining_transport).init();
+    client->disable_builtin_transport().add_user_transport_to_pparams(test_transport_).add_user_transport_to_pparams(
+        client_chaining_transport).init();
     ASSERT_TRUE(client->isInitialized());
 
     // Server
@@ -1142,7 +1146,7 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
     client->wait_discovery(1, std::chrono::seconds(0));
     udp_participant->wait_discovery(std::chrono::seconds(0), 1);
 
-    // Check that the send_resource_list has size 1. This means that the send resource 
+    // Check that the send_resource_list has size 1. This means that the send resource
     // for the first client hasn't been removed because it was created from an initial_peer.
     send_resource_list = client_chaining_transport->get_send_resource_list();
     EXPECT_EQ(tcp_send_resources(send_resource_list), 1);

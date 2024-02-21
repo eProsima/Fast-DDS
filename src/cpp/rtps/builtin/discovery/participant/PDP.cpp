@@ -1241,9 +1241,10 @@ bool PDP::remove_remote_participant(
 
         // Delete from sender resource list (TCP only)
         std::set<Locator_t> remote_participant_physical_locators;
-        for(auto& remote_participant_locator : pdata->default_locators.unicast)
+        for (auto& remote_participant_locator : pdata->default_locators.unicast)
         {
-            if (remote_participant_locator.kind == LOCATOR_KIND_TCPv4 || remote_participant_locator.kind == LOCATOR_KIND_TCPv6)
+            if (remote_participant_locator.kind == LOCATOR_KIND_TCPv4 ||
+                    remote_participant_locator.kind == LOCATOR_KIND_TCPv6)
             {
                 remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
             }

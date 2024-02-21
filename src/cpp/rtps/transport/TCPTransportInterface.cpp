@@ -1844,7 +1844,7 @@ void TCPTransportInterface::remove_from_send_resource_list(
         SendResourceList& send_resource_list,
         std::set<Locator>& remote_participant_physical_locators) const
 {
-    for(auto& remote_participant_physical_locator : remote_participant_physical_locators)
+    for (auto& remote_participant_physical_locator : remote_participant_physical_locators)
     {
         // Remove send resources for the associated remote participant locator
         for (auto it = send_resource_list.begin(); it != send_resource_list.end();)

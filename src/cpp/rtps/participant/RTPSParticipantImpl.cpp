@@ -2983,7 +2983,7 @@ bool RTPSParticipantImpl::should_match_local_endpoints(
 }
 
 void RTPSParticipantImpl::remove_from_send_resource_list(
-    std::set<Locator_t>& remote_participant_physical_locators)
+        std::set<Locator_t>& remote_participant_physical_locators)
 {
     // Exlude initial peer locators from remote_participant_physical_locators
     for (auto& initial_peer : m_att.builtin.initialPeersList)
@@ -2995,10 +2995,10 @@ void RTPSParticipantImpl::remove_from_send_resource_list(
             remote_participant_physical_locators.erase(initial_peer_physical_locator);
         }
     }
-    if(!remote_participant_physical_locators.empty())
+    if (!remote_participant_physical_locators.empty())
     {
         std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
-        m_network_Factory.remove_from_send_resource_list(send_resource_list_, remote_participant_physical_locators);        
+        m_network_Factory.remove_from_send_resource_list(send_resource_list_, remote_participant_physical_locators);
     }
 }
 
