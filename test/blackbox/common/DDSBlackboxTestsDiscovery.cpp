@@ -1651,7 +1651,7 @@ TEST(DDSDiscovery, DataracePDP)
 
     class CustomDomainParticipantListener : public DomainParticipantListener
     {
-        public:
+    public:
 
         CustomDomainParticipantListener()
             : DomainParticipantListener()
@@ -1725,7 +1725,8 @@ TEST(DDSDiscovery, DataracePDP)
 
         // Create discoverer participant (the one where a data race on PDP might occur)
         CustomDomainParticipantListener participant_listener;
-        DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(DOMAIN_ID, qos, &participant_listener);
+        DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(DOMAIN_ID, qos,
+                        &participant_listener);
 
         DomainParticipantQos aux_qos;
         aux_qos.transport().use_builtin_transports = false;
@@ -1735,7 +1736,8 @@ TEST(DDSDiscovery, DataracePDP)
         // Create auxiliary participant to be discovered
         aux_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
         aux_qos.wire_protocol().builtin.discovery_config.leaseDuration = Duration_t(1, 10);
-        DomainParticipant* aux_participant = DomainParticipantFactory::get_instance()->create_participant(DOMAIN_ID, aux_qos);
+        DomainParticipant* aux_participant = DomainParticipantFactory::get_instance()->create_participant(DOMAIN_ID,
+                        aux_qos);
 
         // Wait for discovery
         participant_listener.discovery_future.wait();
