@@ -24,6 +24,7 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,7 +36,7 @@ namespace rtps {
  * This class holds the locators of a remote endpoint along with data required for the locator selection algorithm.
  * Can be easily integrated inside other classes, such as @ref ReaderProxyData and @ref WriterProxyData.
  */
-struct LocatorSelectorEntry
+struct RTPS_DllAPI LocatorSelectorEntry
 {
     /**
      * Holds the selection state of the locators held by a LocatorSelectorEntry
