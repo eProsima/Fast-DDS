@@ -508,7 +508,7 @@ public:
      * @param options Defines the options to be used in the transport configuration.
      */
     void setup_transports(
-            fastdds::rtps::BuiltinTransports /*transports*/, fastdds::rtps::BuiltinTransportsOptions& /*options*/)
+            fastdds::rtps::BuiltinTransports /*transports*/, const fastdds::rtps::BuiltinTransportsOptions& /*options*/)
     {
         // Only include UDPv4 behavior for mock tests, ignore options
         setup_transports_default(*this);
