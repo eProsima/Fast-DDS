@@ -55,7 +55,7 @@ public:
     {
         return acceptors_;
     }
-    
+
     bool send(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
