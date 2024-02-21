@@ -506,7 +506,7 @@ TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_p
     // If the remote address is lower than the local one, no channel must be created but it must be added to the send_resource_list
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, lowerOutputChannelLocator));
     ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(lowerOutputChannelLocator));
-    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_EQ(send_resource_list.size(), 1);
     // If the remote address is higher than the local one, a CONNECT channel must be created and added to the send_resource_list
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, higherOutputChannelLocator));
     ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(higherOutputChannelLocator));
