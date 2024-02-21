@@ -770,31 +770,18 @@ bool TCPTransportInterface::OpenOutputChannel(
         if (IPLocator::getPhysicalPort(physical_locator) == listening_port)
         {
             std::vector<Locator> list;
-            std::vector<fastrtps::rtps::IPFinder::info_IP> locNames;
-            get_ips(locNames);
-            for (const auto& infoIP : locNames)
+            std::vector<fastrtps::rtps::IPFinder::info_IP> local_interfaces;
+            get_ips(local_interfaces);
+            for (const auto& interface : local_interfaces)
             {
-                Locator newloc(physical_locator);
-                if (transport_kind_ == LOCATOR_KIND_TCPv4)
+                Locator interface_loc(interface.locator);
+                interface_loc.port = physical_locator.port;
+                if (is_interface_allowed(interface_loc))
                 {
-                    IPLocator::setIPv4(newloc, infoIP.locator);
-                }
-                else
-                {
-                    IPLocator::setIPv6(newloc, infoIP.locator);
-                }
-
-                if (is_interface_allowed(newloc))
-                {
-                    list.push_back(newloc);
+                    list.push_back(interface_loc);
                 }
             }
-            if (list.empty())
-            {
-                EPROSIMA_LOG_ERROR(RTCP, "Could not find a valid local interface to connect to " << physical_locator);
-                return false;
-            }
-            else if (list.front() < physical_locator)
+            if (!list.empty() && (list.front() < physical_locator))
             {
                 local_lower_interface = true;
             }
