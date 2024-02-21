@@ -50,8 +50,4 @@ jobs:
       colcon-args: ${{ inputs.colcon-args }}
       cmake-args: ${{ inputs.cmake-args }}
       ctest-args: ${{ inputs.ctest-args }}
-<<<<<<< HEAD
-      fastdds_branch: ${{ inputs.fastdds_branch || github.base_ref || github.ref || '2.6.x' }}
-=======
-      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
->>>>>>> 8cff0ca30 (Add macOS Github CI (#4100))
+      fastdds_branch: ${{ inputs.fastdds_branch || github.ref || '2.6.x' }}
