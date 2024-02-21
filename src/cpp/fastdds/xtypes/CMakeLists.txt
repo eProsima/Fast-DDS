@@ -37,11 +37,10 @@ target_sources(xtypes-dynamic-types-api INTERFACE
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp
 
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp
-    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.idl
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp
 
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
+    dynamic_types/DynamicDataFactory.cpp
+    dynamic_types/DynamicTypeBuilderFactory.cpp
     )
 
 #}}}
@@ -56,27 +55,27 @@ target_compile_features(xtypes-dynamic-types-impl INTERFACE cxx_std_11)
 
 target_sources(xtypes-dynamic-types-impl INTERFACE
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.hpp
+    dynamic_types/AnnotationDescriptorImpl.cpp
+    dynamic_types/AnnotationDescriptorImpl.hpp
+    dynamic_types/DynamicDataImpl.cpp
+    dynamic_types/DynamicDataImpl.hpp
+    dynamic_types/DynamicDataFactoryImpl.cpp
+    dynamic_types/DynamicDataFactoryImpl.hpp
+    dynamic_types/DynamicPubSubType.cpp
+    dynamic_types/DynamicTypeImpl.cpp
+    dynamic_types/DynamicTypeImpl.hpp
+    dynamic_types/DynamicTypeBuilderImpl.cpp
+    dynamic_types/DynamicTypeBuilderImpl.hpp
+    dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
+    dynamic_types/DynamicTypeBuilderFactoryImpl.hpp
+    dynamic_types/DynamicTypeMemberImpl.cpp
+    dynamic_types/DynamicTypeMemberImpl.hpp
+    dynamic_types/MemberDescriptorImpl.cpp
+    dynamic_types/MemberDescriptorImpl.hpp
+    dynamic_types/TypeDescriptorImpl.cpp
+    dynamic_types/TypeDescriptorImpl.hpp
+    dynamic_types/VerbatimTextDescriptorImpl.cpp
+    dynamic_types/VerbatimTextDescriptorImpl.hpp
     )
 
 target_link_libraries(xtypes-dynamic-types-impl INTERFACE xtypes-dynamic-types-api)

@@ -17,6 +17,8 @@
 
 #include <memory>
 
+#include <fastdds/fastdds_dll.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -35,7 +37,7 @@ struct traits
         return std::dynamic_pointer_cast<_Tp>(obj);
     }
 
-    static std::shared_ptr<T> make_shared();
+    FASTDDS_EXPORTED_API static std::shared_ptr<T> make_shared();
 
 };
 

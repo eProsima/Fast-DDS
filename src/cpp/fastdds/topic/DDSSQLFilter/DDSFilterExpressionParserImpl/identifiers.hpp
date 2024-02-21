@@ -143,7 +143,7 @@ struct identifier_processor
             const TypeIdentifier& ti,
             const position& pos)
     {
-        DDSFilterValue::ValueKind res;
+        DDSFilterValue::ValueKind res{ DDSFilterValue::ValueKind::BOOLEAN};
 
         switch (ti._d())
         {
