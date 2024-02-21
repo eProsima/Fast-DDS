@@ -2069,9 +2069,7 @@ TEST_F(TCPv4Tests, reconnect_after_open_port_failure)
 
     // Add initial peer to the client
     Locator_t initialPeerLocator;
-    initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
-    IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
-    initialPeerLocator.port = port;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", port, initialPeerLocator);
     IPLocator::setLogicalPort(initialPeerLocator, 7410);
 
     // Connect client to server

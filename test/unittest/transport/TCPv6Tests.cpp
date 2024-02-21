@@ -419,9 +419,7 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
 
     // Add initial peer to the client
     Locator_t initialPeerLocator;
-    initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
-    IPLocator::setIPv6(initialPeerLocator, "::1");
-    initialPeerLocator.port = port;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", port, initialPeerLocator);
     IPLocator::setLogicalPort(initialPeerLocator, 7410);
 
     // Connect client to server
