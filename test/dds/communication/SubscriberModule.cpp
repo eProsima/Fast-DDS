@@ -154,7 +154,7 @@ bool SubscriberModule::run_for(
         std::unique_lock<std::mutex> lock(mutex_);
         returned_value = cv_.wait_for(lock, timeout, [&]
                         {
-                            if (succeeed_on_timeout_ && (std::chrono::steady_clock::now() - t0) > timeout)
+                            if (succeed_on_timeout_ && (std::chrono::steady_clock::now() - t0) > timeout)
                             {
                                 return true;
                             }
@@ -262,6 +262,11 @@ void SubscriberModule::on_subscription_matched(
 void SubscriberModule::on_data_available(
         DataReader* reader)
 {
+    if (die_on_data_received_)
+    {
+        std::abort();
+    }
+
     EPROSIMA_LOG_INFO(SUBSCRIBER_MODULE, "Subscriber on_data_available from :" << participant_->guid());
 
     if (zero_copy_)

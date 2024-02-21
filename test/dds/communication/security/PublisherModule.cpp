@@ -134,7 +134,8 @@ void PublisherModule::wait_discovery(
 
 void PublisherModule::run(
         uint32_t samples,
-        const uint32_t loops)
+        const uint32_t loops,
+        uint32_t interval)
 {
     uint32_t current_loop = 0;
     uint16_t index = 1;
@@ -184,7 +185,7 @@ void PublisherModule::run(
             type_.delete_data(sample);
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(interval));
     }
 }
 

@@ -45,11 +45,13 @@ public:
             const uint32_t publishers,
             const uint32_t max_number_samples,
             bool fixed_type = false,
-            bool zero_copy = false)
+            bool zero_copy = false,
+            bool die_on_data_received = false)
         : publishers_(publishers)
         , max_number_samples_(max_number_samples)
         , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
+        , die_on_data_received_(die_on_data_received)
     {
     }
 
@@ -102,6 +104,7 @@ private:
     Subscriber* subscriber_ = nullptr;
     DataReader* reader_ = nullptr;
     Topic* topic_ = nullptr;
+    bool die_on_data_received_ = false;
 };
 
 } // dds

@@ -29,7 +29,7 @@ set(COMMON_SOURCE
 
 set(DDS_PUBLISHER_SOURCE ${COMMON_SOURCE}
     PublisherModule.cpp
-    ${PROJECT_SOURCE_DIR}/test/dds/communication/PublisherMain.cpp
+    PublisherMain.cpp
     )
 add_executable(CommunicationPublisher ${DDS_PUBLISHER_SOURCE})
 target_compile_definitions(CommunicationPublisher PRIVATE
@@ -41,7 +41,7 @@ target_link_libraries(CommunicationPublisher fastrtps fastcdr foonathan_memory $
 
 set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
     SubscriberModule.cpp
-    ${PROJECT_SOURCE_DIR}/test/dds/communication/SubscriberMain.cpp
+    SubscriberMain.cpp
     )
 add_executable(CommunicationSubscriber ${DDS_SUBSCRIBER_SOURCE})
 target_compile_definitions(CommunicationSubscriber PRIVATE

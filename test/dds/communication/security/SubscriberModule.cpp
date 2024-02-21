@@ -254,6 +254,10 @@ void SubscriberModule::on_subscription_matched(
 void SubscriberModule::on_data_available(
         DataReader* reader)
 {
+    if (die_on_data_received_)
+    {
+        std::abort();
+    }
     std::cout << "Subscriber on_data_available from :" << participant_->guid() << std::endl;
 
     if (zero_copy_)
