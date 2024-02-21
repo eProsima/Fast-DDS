@@ -57,7 +57,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.16.3'
 
       - name: Install brew dependencies
         uses: eProsima/eProsima-CI/macos/install_brew_packages@v0
@@ -91,7 +91,7 @@ jobs:
             DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
             if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_2.10.x.repos"
             fi
             META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
 
@@ -100,7 +100,7 @@ jobs:
             DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
             if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_2.10.x.repos"
             fi
             META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
           fi
