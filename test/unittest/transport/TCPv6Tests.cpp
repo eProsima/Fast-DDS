@@ -496,6 +496,41 @@ TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_p
     ASSERT_EQ(send_resource_list.size(), 2u);
 }
 
+// This test verifies that the send resource list is correctly cleaned and the channel resource is removed
+// from the channel_resources_map.
+TEST_F(TCPv6Tests, remove_from_send_resource_list)
+{
+    TCPv6TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    MockTCPv6Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv6TransportDescriptor sendDescriptor;
+    MockTCPv6Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t outputLocator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", g_default_port, outputLocator);
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 1);
+
+    // Using a wrong locator (for example the non-physical locator) should not remove the channel resource
+    std::set<Locator_t> remote_participant_physical_locators;
+    remote_participant_physical_locators.insert(outputLocator);
+    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
+    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 1);
+    // Using the correct locator should remove the channel resource
+    remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(outputLocator));
+    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
+    ASSERT_TRUE(send_resource_list.empty());
+    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 0);
+}
+
 /*
    TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
    {

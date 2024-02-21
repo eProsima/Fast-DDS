@@ -642,6 +642,7 @@ void TCPTransportInterface::CloseOutputChannel(
     if (channel != channel_resources_.end())
     {
         close_tcp_socket(channel->second);
+        channel_resources_.erase(channel->second->locator());
     }
 }
 
@@ -1856,6 +1857,7 @@ void TCPTransportInterface::remove_from_send_resource_list(
                 if (tcp_sender_resource->locator() == remote_participant_physical_locator)
                 {
                     it = send_resource_list.erase(it);
+                    std::cout << "size of send_resource_list: " << send_resource_list.size() << std::endl;
                     continue;
                 }
             }

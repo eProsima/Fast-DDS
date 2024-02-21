@@ -2145,6 +2145,41 @@ TEST_F(TCPv4Tests, opening_output_channel_with_same_locator_as_local_listening_p
     ASSERT_EQ(send_resource_list.size(), 2u);
 }
 
+// This test verifies that the send resource list is correctly cleaned and the channel resource is removed
+// from the channel_resources_map.
+TEST_F(TCPv4Tests, remove_from_send_resource_list)
+{
+    TCPv4TransportDescriptor recvDescriptor;
+    recvDescriptor.add_listener_port(g_default_port);
+    MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
+    receiveTransportUnderTest.init();
+
+    TCPv4TransportDescriptor sendDescriptor;
+    MockTCPv4Transport sendTransportUnderTest(sendDescriptor);
+    sendTransportUnderTest.init();
+
+    Locator_t outputLocator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port, outputLocator);
+    IPLocator::setLogicalPort(outputLocator, 7410);
+
+    SendResourceList send_resource_list;
+    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 1);
+
+    // Using a wrong locator (for example the non-physical locator) should not remove the channel resource
+    std::set<Locator_t> remote_participant_physical_locators;
+    remote_participant_physical_locators.insert(outputLocator);
+    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
+    ASSERT_FALSE(send_resource_list.empty());
+    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 1);
+    // Using the correct locator should remove the channel resource
+    remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(outputLocator));
+    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
+    ASSERT_TRUE(send_resource_list.empty());
+    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 0);
+}
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
