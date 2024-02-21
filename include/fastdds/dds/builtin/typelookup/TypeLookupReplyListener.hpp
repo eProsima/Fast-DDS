@@ -49,7 +49,7 @@ class TypeLookupManager;
  * Class TypeLookupReplyListener that receives the typelookup request messages of remote endpoints.
  * @ingroup TYPES_MODULE
  */
-class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener
+class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener, public fastrtps::rtps::WriterListener
 {
 public:
 
@@ -74,31 +74,11 @@ public:
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 
-private:
-
-    //! A pointer to the typelookup manager
-    TypeLookupManager* tlm_;
-
-    //! A pointer to the TypeObject factory.
-    fastrtps::types::TypeObjectFactory* factory_;
-};
-
-class TypeLookupReplyWListener : public fastrtps::rtps::WriterListener
-{
-public:
-
     /**
-     * @brief Constructor
-     * @param pwlp Pointer to the writer liveliness protocol
+     * @brief This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param change The cache change
      */
-    TypeLookupReplyWListener(
-            TypeLookupManager* pwlp);
-
-    /**
-     * @brief Destructor
-     */
-    virtual ~TypeLookupReplyWListener() override;
-
     void onWriterChangeReceivedByAll(
             fastrtps::rtps::RTPSWriter*,
             fastrtps::rtps::CacheChange_t* change) override;
@@ -110,7 +90,6 @@ private:
 
     //! A pointer to the TypeObject factory.
     fastrtps::types::TypeObjectFactory* factory_;
-
 };
 
 } /* namespace builtin */

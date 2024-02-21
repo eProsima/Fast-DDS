@@ -150,18 +150,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
     reader->getHistory()->remove_change(change);
 }
 
-TypeLookupRequestWListener::TypeLookupRequestWListener(
-        TypeLookupManager* manager)
-    : tlm_(manager)
-    , factory_(TypeObjectFactory::get_instance())
-{
-}
-
-TypeLookupRequestWListener::~TypeLookupRequestWListener()
-{
-}
-
-void TypeLookupRequestWListener::onWriterChangeReceivedByAll(
+void TypeLookupRequestListener::onWriterChangeReceivedByAll(
         fastrtps::rtps::RTPSWriter*,
         fastrtps::rtps::CacheChange_t* change)
 {

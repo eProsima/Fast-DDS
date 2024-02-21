@@ -68,9 +68,7 @@ TypeLookupManager::TypeLookupManager(
     , builtin_request_reader_history_(nullptr)
     , builtin_reply_reader_history_(nullptr)
     , request_listener_(nullptr)
-    , request_wlistener_(nullptr)
     , reply_listener_(nullptr)
-    , reply_wlistener_(nullptr)
     , temp_reader_proxy_data_(
         prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
         prot->mp_participantImpl->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators)
@@ -126,9 +124,6 @@ TypeLookupManager::~TypeLookupManager()
     delete builtin_reply_writer_history_;
     delete builtin_request_reader_history_;
     delete builtin_reply_reader_history_;
-
-    delete request_wlistener_;
-    delete reply_wlistener_;
 
     delete reply_listener_;
     delete request_listener_;
@@ -353,7 +348,7 @@ bool TypeLookupManager::create_endpoints()
     // Built-in request writer
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
-        request_wlistener_ = new TypeLookupRequestWListener(this);
+        request_listener_ = new TypeLookupRequestListener(this);
         builtin_request_writer_history_ = new WriterHistory(hatt);
 
         RTPSWriter* req_writer;
@@ -361,7 +356,7 @@ bool TypeLookupManager::create_endpoints()
                     &req_writer,
                     watt,
                     builtin_request_writer_history_,
-                    request_wlistener_,
+                    request_listener_,
                     fastrtps::rtps::c_EntityId_TypeLookup_request_writer,
                     true))
         {
@@ -373,8 +368,8 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
             delete builtin_request_writer_history_;
             builtin_request_writer_history_ = nullptr;
-            delete request_wlistener_;
-            request_wlistener_ = nullptr;
+            delete request_listener_;
+            request_listener_ = nullptr;
             return false;
         }
     }
@@ -382,7 +377,7 @@ bool TypeLookupManager::create_endpoints()
     // Built-in reply writer
     if (builtin_protocols_->m_att.typelookup_config.use_server)
     {
-        reply_wlistener_ = new TypeLookupReplyWListener(this);
+        reply_listener_ = new TypeLookupReplyListener(this);
         builtin_reply_writer_history_ = new WriterHistory(hatt);
 
         RTPSWriter* rep_writer;
@@ -390,7 +385,7 @@ bool TypeLookupManager::create_endpoints()
                     &rep_writer,
                     watt,
                     builtin_reply_writer_history_,
-                    reply_wlistener_,
+                    reply_listener_,
                     fastrtps::rtps::c_EntityId_TypeLookup_reply_writer,
                     true))
         {
@@ -402,8 +397,8 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
             delete builtin_reply_writer_history_;
             builtin_reply_writer_history_ = nullptr;
-            delete reply_wlistener_;
-            reply_wlistener_ = nullptr;
+            delete reply_listener_;
+            reply_listener_ = nullptr;
             return false;
         }
     }
@@ -579,7 +574,7 @@ bool TypeLookupManager::send_request(
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
 
-        bool serialize_ret = request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+        bool serialize_ret = request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
         if (!serialize_ret)
         {
             payload.data = nullptr;
@@ -628,7 +623,7 @@ bool TypeLookupManager::send_reply(
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
 
-        bool serialize_ret = reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+        bool serialize_ret = reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
         if (!serialize_ret)
         {
             payload.data = nullptr;

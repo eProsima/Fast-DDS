@@ -60,9 +60,7 @@ extern const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
 class TypeLookupManager
 {
     friend class TypeLookupRequestListener;
-    friend class TypeLookupRequestWListener;
     friend class TypeLookupReplyListener;
-    friend class TypeLookupReplyWListener;
 
 public:
 
@@ -245,11 +243,9 @@ private:
 
     //!Request Listener object.
     TypeLookupRequestListener* request_listener_;
-    TypeLookupRequestWListener* request_wlistener_;
 
     //!Reply Listener object.
     TypeLookupReplyListener* reply_listener_;
-    TypeLookupReplyWListener* reply_wlistener_;
 
     std::mutex temp_data_lock_;
     fastrtps::rtps::ReaderProxyData temp_reader_proxy_data_;
