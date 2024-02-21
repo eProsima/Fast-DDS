@@ -44,7 +44,8 @@ static bool is_intraprocess_only(
 }
 
 static std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> create_shm_transport(
-        const RTPSParticipantAttributes& att)
+        const RTPSParticipantAttributes& att,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     auto descriptor = std::make_shared<fastdds::rtps::SharedMemTransportDescriptor>();
 
@@ -53,17 +54,22 @@ static std::shared_ptr<fastdds::rtps::SharedMemTransportDescriptor> create_shm_t
     auto segment_size_udp_equivalent =
             std::max(att.sendSocketBufferSize, att.listenSocketBufferSize) * 2;
     descriptor->segment_size(segment_size_udp_equivalent);
+    // Needed for the maxMessageSizeBetweenTransports
+    descriptor->maxMessageSize = options.maxMessageSize;
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     return descriptor;
 }
 
 static std::shared_ptr<fastdds::rtps::UDPv4TransportDescriptor> create_udpv4_transport(
         const RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     auto descriptor = std::make_shared<fastdds::rtps::UDPv4TransportDescriptor>();
+    descriptor->maxMessageSize = options.maxMessageSize;
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->non_blocking_send = options.non_blocking_send;
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     if (intraprocess_only)
     {
@@ -75,11 +81,14 @@ static std::shared_ptr<fastdds::rtps::UDPv4TransportDescriptor> create_udpv4_tra
 
 static std::shared_ptr<fastdds::rtps::UDPv6TransportDescriptor> create_udpv6_transport(
         const RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     auto descriptor = std::make_shared<fastdds::rtps::UDPv6TransportDescriptor>();
+    descriptor->maxMessageSize = options.maxMessageSize;
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->non_blocking_send = options.non_blocking_send;
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     if (intraprocess_only)
     {
@@ -90,12 +99,15 @@ static std::shared_ptr<fastdds::rtps::UDPv6TransportDescriptor> create_udpv6_tra
 }
 
 static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_transport(
-        const RTPSParticipantAttributes& att)
+        const RTPSParticipantAttributes& att,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     auto descriptor = std::make_shared<fastdds::rtps::TCPv4TransportDescriptor>();
     descriptor->add_listener_port(0);
+    descriptor->maxMessageSize = options.maxMessageSize;
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->non_blocking_send = options.non_blocking_send;
 
     descriptor->calculate_crc = false;
     descriptor->check_crc = false;
@@ -110,12 +122,15 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
 }
 
 static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_transport(
-        const RTPSParticipantAttributes& att)
+        const RTPSParticipantAttributes& att,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     auto descriptor = std::make_shared<fastdds::rtps::TCPv6TransportDescriptor>();
     descriptor->add_listener_port(0);
+    descriptor->maxMessageSize = options.maxMessageSize;
     descriptor->sendBufferSize = att.sendSocketBufferSize;
     descriptor->receiveBufferSize = att.listenSocketBufferSize;
+    descriptor->non_blocking_send = options.non_blocking_send;
 
     descriptor->calculate_crc = false;
     descriptor->check_crc = false;
@@ -131,14 +146,15 @@ static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_tra
 
 static void setup_transports_default(
         RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
-    auto descriptor = create_udpv4_transport(att, intraprocess_only);
+    auto descriptor = create_udpv4_transport(att, intraprocess_only, options);
 
 #ifdef SHM_TRANSPORT_BUILTIN
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att);
+        auto shm_transport = create_shm_transport(att, options);
         // Use same default max_message_size on both UDP and SHM
         shm_transport->max_message_size(descriptor->max_message_size());
         att.userTransports.push_back(shm_transport);
@@ -150,14 +166,15 @@ static void setup_transports_default(
 
 static void setup_transports_defaultv6(
         RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
-    auto descriptor = create_udpv6_transport(att, intraprocess_only);
+    auto descriptor = create_udpv6_transport(att, intraprocess_only, options);
 
 #ifdef SHM_TRANSPORT_BUILTIN
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att);
+        auto shm_transport = create_shm_transport(att, options);
         // Use same default max_message_size on both UDP and SHM
         shm_transport->max_message_size(descriptor->max_message_size());
         att.userTransports.push_back(shm_transport);
@@ -168,47 +185,51 @@ static void setup_transports_defaultv6(
 }
 
 static void setup_transports_shm(
-        RTPSParticipantAttributes& att)
+        RTPSParticipantAttributes& att,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
 #ifdef FASTDDS_SHM_TRANSPORT_DISABLED
     static_cast<void>(att);
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Trying to configure SHM transport only, " <<
             "but Fast DDS was built without SHM transport support.");
 #else
-    auto descriptor = create_shm_transport(att);
+    auto descriptor = create_shm_transport(att, options);
     att.userTransports.push_back(descriptor);
 #endif  // FASTDDS_SHM_TRANSPORT_DISABLED
 }
 
 static void setup_transports_udpv4(
         RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
-    auto descriptor = create_udpv4_transport(att, intraprocess_only);
+    auto descriptor = create_udpv4_transport(att, intraprocess_only, options);
     att.userTransports.push_back(descriptor);
 }
 
 static void setup_transports_udpv6(
         RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
-    auto descriptor = create_udpv6_transport(att, intraprocess_only);
+    auto descriptor = create_udpv6_transport(att, intraprocess_only, options);
     att.userTransports.push_back(descriptor);
 }
 
 static void setup_transports_large_data(
         RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att);
+        auto shm_transport = create_shm_transport(att, options);
         att.userTransports.push_back(shm_transport);
 
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
         att.defaultUnicastLocatorList.push_back(shm_loc);
 
-        auto tcp_transport = create_tcpv4_transport(att);
+        auto tcp_transport = create_tcpv4_transport(att, options);
         att.userTransports.push_back(tcp_transport);
 
         Locator_t tcp_loc;
@@ -220,7 +241,7 @@ static void setup_transports_large_data(
         att.defaultUnicastLocatorList.push_back(tcp_loc);
     }
 
-    auto udp_descriptor = create_udpv4_transport(att, intraprocess_only);
+    auto udp_descriptor = create_udpv4_transport(att, intraprocess_only, options);
     att.userTransports.push_back(udp_descriptor);
 
     if (!intraprocess_only)
@@ -234,17 +255,18 @@ static void setup_transports_large_data(
 
 static void setup_transports_large_datav6(
         RTPSParticipantAttributes& att,
-        bool intraprocess_only)
+        bool intraprocess_only,
+        const fastdds::rtps::BuiltinTransportsOptions& options)
 {
     if (!intraprocess_only)
     {
-        auto shm_transport = create_shm_transport(att);
+        auto shm_transport = create_shm_transport(att, options);
         att.userTransports.push_back(shm_transport);
 
         auto shm_loc = fastdds::rtps::SHMLocator::create_locator(0, fastdds::rtps::SHMLocator::Type::UNICAST);
         att.defaultUnicastLocatorList.push_back(shm_loc);
 
-        auto tcp_transport = create_tcpv6_transport(att);
+        auto tcp_transport = create_tcpv6_transport(att, options);
         att.userTransports.push_back(tcp_transport);
 
         Locator_t tcp_loc;
@@ -256,7 +278,7 @@ static void setup_transports_large_datav6(
         att.defaultUnicastLocatorList.push_back(tcp_loc);
     }
 
-    auto udp_descriptor = create_udpv6_transport(att, intraprocess_only);
+    auto udp_descriptor = create_udpv6_transport(att, intraprocess_only, options);
     att.userTransports.push_back(udp_descriptor);
 
     if (!intraprocess_only)
