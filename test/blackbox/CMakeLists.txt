@@ -234,13 +234,6 @@ if(NOT LibP11_FOUND)
     endif() # GTEST_INDIVIDUAL
 endif() # LibP11_FOUND
 
-<<<<<<< HEAD
-=======
-if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(dns_filter "-*ServerClientEnvironmentSetUpDNS*")
-endif()
-
->>>>>>> 8cff0ca30 (Add macOS Github CI (#4100))
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cxx
