@@ -12,21 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "fastdds/rtps/common/Types.h"
-#include "fastrtps/qos/QosPolicies.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
+#include "fastdds/rtps/common/Types.h"
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
 
+#include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/PoolConfig.h>
-
-#include <rtps/DataSharing/WriterPool.hpp>
 
 namespace eprosima {
 namespace fastrtps {

@@ -536,7 +536,7 @@ bool MonitorService::create_endpoint()
         status_writer_ = dynamic_cast<StatefulWriter*>(tmp_writer);
 
         //! Register the writer in the participant
-        WriterQos wqos;
+        fastdds::dds::WriterQos wqos;
 
         wqos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
         wqos.m_durability.kind = dds::TRANSIENT_LOCAL_DURABILITY_QOS;

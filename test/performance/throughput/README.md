@@ -56,7 +56,7 @@ The columns show the next information:
 
 This utility can be enabled by using the CMake option `PERFORMANCE_TESTS`.
 Following the Fast DDS [*Installation from sources* guide](https://fast-dds.docs.eprosima.com/en/latest/installation/sources/sources_linux.html),
- Fast-DDS and this utility can be compiled executing the next command.
+ Fast DDS and this utility can be compiled executing the next command.
 
 ```
 colcon build --cmake-args -DPERFORMANCE_TESTS=ON
@@ -65,7 +65,7 @@ colcon build --cmake-args -DPERFORMANCE_TESTS=ON
 The throughput test executable can be found in the `build` directory.
 
 ```
-build/fastrtps/test/performance/throughput
+build/fastdds/test/performance/throughput
 ├── CMakeFiles
 ├── cmake_install.cmake
 ├── CTestTestfile.cmake
@@ -98,9 +98,9 @@ The utility offers several options:
 | -                                   | -                                                                                                                                          |
 | --reliability=[reliable/besteffort] | Set the Reliability QoS of the DDS entity                                                                                                  |
 | --domain \<domain_id>               | Set the DDS domain to be used. Default domain is a random one. If testing in separate processes, always set the domain using this argument |
-| --data_sharing=[on/off]             | Explicitly enable/disable Data Sharing feature. Fast-DDS default is *auto*                                                                 |
+| --data_sharing=[on/off]             | Explicitly enable/disable Data Sharing feature. Fast DDS default is *auto*                                                                 |
 | --data_load                         | Enables the use of Data Loans feature                                                                                                      |
-| --shared_memory                     | Explicitly enable/disable Shared Memory transport. Fast-DDS default is *on*                                                                |
+| --shared_memory                     | Explicitly enable/disable Shared Memory transport. Fast DDS default is *on*                                                                |
 | --security=[true/false]             | Enable/disable DDS security                                                                                                                |
 | --certs=\<directory>                | Directory with the certificates. Used when security is enable                                                                              |
 
@@ -167,10 +167,10 @@ The directory also comes with a Python script which automates the execution of t
 
 ```batch
 # Indicate where is the utility executable
-export THROUGHPUT_TEST_BIN=build/fastrtps/test/performance/throughtput/ThroughputTest
+export THROUGHPUT_TEST_BIN=build/fastdds/test/performance/throughtput/ThroughputTest
 
 # Call python script to run tests.
-python3 src/fastrtps/test/performance/throughput/throughput_tests.py
+python3 src/fastdds/test/performance/throughput/throughput_tests.py
 ```
 
 The python scripts offers several options:
@@ -179,7 +179,7 @@ The python scripts offers several options:
 | -                                   | -                                                                                                                                          |
 | --reliability                       | Set the Reliability QoS of the DDS entities to reliable. Default Reliability is best-effort                                                |
 | --data_loans                        | Enable the use of the loan sample API. Default is disable                                                                                  |
-| --shared_memory [on/off]            | Explicitly enable/disable shared memory transport. Fast-DDS default is *on*                                                                |
+| --shared_memory [on/off]            | Explicitly enable/disable shared memory transport. Fast DDS default is *on*                                                                |
 | --interprocess                      | Publisher and subscriber in separate processes. Default is both in the sample process and using intraprocess communications                |
 | --security                          | Enable security. Default disable                                                                                                           |
 | -t \<seconds>                       | Test time in seconds. Default is *1 second*                                                                                                |

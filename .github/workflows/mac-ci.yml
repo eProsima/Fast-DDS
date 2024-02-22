@@ -1,4 +1,4 @@
-name: Fast-DDS MacOS CI
+name: Fast DDS MacOS CI
 
 on:
   workflow_dispatch:
@@ -26,7 +26,7 @@ on:
 
   pull_request:
     branches:
-      - 'master'
+      - '3.0.x-devel'
     paths-ignore:
       - '**.md'
       - '**.txt'

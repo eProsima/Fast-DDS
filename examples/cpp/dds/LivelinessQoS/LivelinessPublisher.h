@@ -20,16 +20,16 @@
 #ifndef LivelinessPublisher_H_
 #define LivelinessPublisher_H_
 
-#include "TopicPubSubTypes.h"
-#include "Topic.h"
+#include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include <mutex>
+#include "Topic.h"
+#include "TopicPubSubTypes.h"
 
 class LivelinessPublisher
 {
@@ -43,7 +43,7 @@ public:
 
     //! Initialize
     bool init(
-            eprosima::fastrtps::LivelinessQosPolicyKind kind,
+            eprosima::fastdds::dds::LivelinessQosPolicyKind kind,
             int liveliness_ms);
 
     //! Publish a sample
@@ -90,7 +90,7 @@ private:
 
         void on_liveliness_lost(
                 eprosima::fastdds::dds::DataWriter* writer,
-                const eprosima::fastrtps::LivelinessLostStatus& status) override;
+                const eprosima::fastdds::dds::LivelinessLostStatus& status) override;
 
         int n_matched;
 
