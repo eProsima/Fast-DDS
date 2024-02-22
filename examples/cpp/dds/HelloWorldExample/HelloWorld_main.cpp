@@ -20,13 +20,12 @@
 #include <limits>
 #include <sstream>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <optionparser.hpp>
+
 #include "HelloWorldPublisher.h"
 #include "HelloWorldSubscriber.h"
-
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/log/Log.h>
-
-#include <optionparser.hpp>
 
 using eprosima::fastdds::dds::Log;
 

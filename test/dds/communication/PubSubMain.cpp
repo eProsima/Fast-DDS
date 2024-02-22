@@ -15,13 +15,12 @@
 /**
  * @file PubSubMain.cpp
  */
-#include "SubscriberModule.hpp"
-#include "PublisherModule.hpp"
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/Domain.h>
 
-#include <thread>
+#include "PublisherModule.hpp"
+#include "SubscriberModule.hpp"
 
 using namespace eprosima::fastdds::dds;
 

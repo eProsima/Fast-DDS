@@ -46,7 +46,8 @@ public:
 
     void on_participant_discovery(
             DomainParticipant* participant,
-            ParticipantDiscoveryInfo&& info) override;
+            ParticipantDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 
     bool init();
 

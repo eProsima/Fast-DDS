@@ -17,30 +17,35 @@
  *
  */
 
+#include <fastdds/dds/log/Log.hpp>
+
 #include "AllocTestPublisher.h"
 #include "AllocTestSubscriber.h"
-
-#include <fastrtps/Domain.h>
-#include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
 
-int main(int argc, char** argv)
+int main(
+        int argc,
+        char** argv)
 {
-    std::cout << "Starting "<< std::endl;
+    std::cout << "Starting " << std::endl;
     int type = 1;
     int domain = 1;
     bool wait_unmatch = false;
     const char* profile = "tl_be";
     std::string outputFile = "";
-    if(argc > 2)
+    if (argc > 2)
     {
-        if(strcmp(argv[1],"publisher")==0)
+        if (strcmp(argv[1], "publisher") == 0)
+        {
             type = 1;
-        else if(strcmp(argv[1],"subscriber")==0)
+        }
+        else if (strcmp(argv[1], "subscriber") == 0)
+        {
             type = 2;
+        }
 
         profile = argv[2];
 
@@ -57,7 +62,7 @@ int main(int argc, char** argv)
     }
     else
     {
-        std::cout 
+        std::cout
             << "Syntax is AllocationTestExample <kind> <profile>, where:" << std::endl
             << "    kind:" << std::endl
             << "        publisher OR subscriber" << std::endl
@@ -71,29 +76,28 @@ int main(int argc, char** argv)
     }
 
 
-    switch(type)
+    switch (type)
     {
         case 1:
+        {
+            AllocTestPublisher mypub;
+            if (mypub.init(profile, domain, outputFile))
             {
-                AllocTestPublisher mypub;
-                if(mypub.init(profile, domain, outputFile))
-                {
-                    mypub.run(60, wait_unmatch);
-                }
-                break;
+                mypub.run(60, wait_unmatch);
             }
+            break;
+        }
         case 2:
+        {
+            AllocTestSubscriber mysub;
+            if (mysub.init(profile, domain, outputFile))
             {
-                AllocTestSubscriber mysub;
-                if(mysub.init(profile, domain, outputFile))
-                {
-                    mysub.run(wait_unmatch);
-                }
-                break;
+                mysub.run(wait_unmatch);
             }
+            break;
+        }
     }
 
-    Domain::stopAll();
     eprosima::fastdds::dds::Log::Reset();
 
     return 0;

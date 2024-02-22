@@ -12,23 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "LatencyTestPublisher.hpp"
-#include "LatencyTestSubscriber.hpp"
-#include "../optionarg.hpp"
-
-#include <stdio.h>
-#include <string>
-#include <iostream>
-#include <iomanip>
 #include <bitset>
 #include <cstdint>
+#include <cstdio>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
 
-#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/Colors.hpp>
-#include <fastrtps/Domain.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "../optionarg.hpp"
+#include "LatencyTestPublisher.hpp"
+#include "LatencyTestSubscriber.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning (push)

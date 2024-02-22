@@ -22,7 +22,6 @@
 #include <thread>
 
 #include <asio.hpp>
-
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -31,13 +30,10 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/Domain.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -72,7 +68,7 @@ bool TestPublisher::init(
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
+        const eprosima::fastdds::dds::DataRepresentationQosPolicy* dataRepresentationQos,
         bool use_typelookup)
 {
     m_Name = name;

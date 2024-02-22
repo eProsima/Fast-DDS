@@ -128,7 +128,7 @@ int fastdds_discovery_server(
             {
                 // Set environment variables to prevent loading the default XML file
 #ifdef _WIN32
-                if (0 != _putenv_s("FASTRTPS_DEFAULT_PROFILES_FILE", "") ||
+                if (0 != _putenv_s("FASTDDS_DEFAULT_PROFILES_FILE", "") ||
                         0 != _putenv_s("SKIP_DEFAULT_XML_FILE", "1"))
                 {
                     char errmsg[1024];
@@ -137,7 +137,7 @@ int fastdds_discovery_server(
                     return 1;
                 }
 #else
-                if (0 != unsetenv(fastrtps::xmlparser::DEFAULT_FASTRTPS_ENV_VARIABLE) ||
+                if (0 != unsetenv(fastrtps::xmlparser::DEFAULT_FASTDDS_ENV_VARIABLE) ||
                         0 != setenv(fastrtps::xmlparser::SKIP_DEFAULT_XML_FILE, "1", 1))
                 {
                     std::cout << "Error setting environment variables: " << std::strerror(errno) << std::endl;

@@ -15,10 +15,10 @@
 /**
  * @file PublisherMain.cpp
  */
-#include "PublisherModule.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/Domain.h>
+
+#include "PublisherModule.hpp"
 
 using namespace eprosima::fastdds::dds;
 

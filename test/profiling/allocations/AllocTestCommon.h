@@ -17,13 +17,12 @@
  *
  */
 
-#ifndef FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
-#define FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
+#ifndef FASTDDS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
+#define FASTDDS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
 
 #include <string>
 
-namespace eprosima_profiling
-{
+namespace eprosima_profiling {
 
 /**
  * Used to run callgrind with --zero-before=callgrind_zero_count.
@@ -77,4 +76,4 @@ void print_results(
 
 }   // namespace eprosima_profiling
 
-#endif   // FASTRTPS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_
+#endif   // FASTDDS_TEST_PROFILING_ALLOCATIONS_ALLOCTESTCOMMON_H_

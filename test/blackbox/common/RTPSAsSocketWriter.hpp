@@ -20,25 +20,24 @@
 #ifndef _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
 #define _TEST_BLACKBOX_RTPSASSOCKETWRITER_HPP_
 
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/history/WriterHistory.h>
-#include <fastrtps/rtps/rtps_fwd.h>
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/utils/IPLocator.h>
-
-#include <fastcdr/FastBuffer.h>
-#include <fastcdr/Cdr.h>
-
-#include <string>
-#include <list>
 #include <asio.hpp>
 #include <gtest/gtest.h>
+#include <list>
+#include <string>
+
+#include <fastcdr/Cdr.h>
+#include <fastcdr/FastBuffer.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastrtps/rtps/rtps_fwd.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
 
@@ -237,7 +236,7 @@ public:
 
         if (writer_attr_.endpoint.reliabilityKind == eprosima::fastrtps::rtps::RELIABLE)
         {
-            rattr.m_qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            rattr.m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         }
 
         // Check disable_positive_acks_ attribute

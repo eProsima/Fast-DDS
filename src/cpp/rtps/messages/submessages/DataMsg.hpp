@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/qos/ParameterTypes.h>
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/core/policy/ParameterList.hpp>
@@ -124,19 +124,21 @@ struct DataMsgUtils
     {
         if (change->write_params.related_sample_identity() != SampleIdentity::unknown())
         {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sample_identity(msg,
                     change->write_params.related_sample_identity());
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_custom_related_sample_identity(msg,
-                    change->write_params.related_sample_identity());
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_custom_related_sample_identity(
+                msg,
+                change->write_params.related_sample_identity());
         }
 
         if (WITH_KEY == topicKind && (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
         {
-            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
+            fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
+                    change->instanceHandle);
 
             if (ALIVE != change->kind)
             {
-                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
+                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg, status);
             }
         }
 
@@ -145,7 +147,7 @@ struct DataMsgUtils
             inlineQos->writeQosToCDRMessage(msg);
         }
 
-        fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+        fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sentinel(msg);
     }
 
 };
@@ -250,10 +252,12 @@ bool RTPSMessageCreator::addSubmessageData(
 
         added_no_error &= CDRMessage::addUInt16(msg, 0); //ENCAPSULATION OPTIONS
         added_no_error &=
-                fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg,
+                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_key(msg,
                         change->instanceHandle);
-        added_no_error &= fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_status(msg, status);
-        added_no_error &= fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
+        added_no_error &=
+                fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_status(msg,
+                        status);
+        added_no_error &= fastdds::dds::ParameterSerializer<fastdds::dds::Parameter_t>::add_parameter_sentinel(msg);
     }
 
     // Align submessage to rtps alignment (4).

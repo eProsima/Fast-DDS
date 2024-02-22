@@ -15,8 +15,7 @@
 #include <thread>
 
 #include <gtest/gtest.h>
-
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
@@ -1252,13 +1251,13 @@ void exclusive_kind_non_keyed_lost_liveliness(
     PubSubWriter<HelloWorldPubSubType> writer3(TEST_TOPIC_NAME);
 
     std::atomic<bool> drop_messages1(false);
-    auto testTransport1 = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport1 = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport1->messages_filter_ = [&drop_messages1](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
                 return drop_messages1.load();
             };
     std::atomic<bool> drop_messages3(false);
-    auto testTransport3 = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport3 = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport3->messages_filter_ = [&drop_messages3](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
                 return drop_messages3.load();
@@ -1410,19 +1409,19 @@ void exclusive_kind_keyed_lost_liveliness(
     PubSubWriter<KeyedHelloWorldPubSubType> writer4(TEST_TOPIC_NAME);
 
     std::atomic<bool> drop_messages2(false);
-    auto testTransport2 = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport2 = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport2->messages_filter_ = [&drop_messages2](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
                 return drop_messages2.load();
             };
     std::atomic<bool> drop_messages3(false);
-    auto testTransport3 = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport3 = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport3->messages_filter_ = [&drop_messages3](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
                 return drop_messages3.load();
             };
     std::atomic<bool> drop_messages4(false);
-    auto testTransport4 = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport4 = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport4->messages_filter_ = [&drop_messages4](eprosima::fastrtps::rtps::CDRMessage_t&)
             {
                 return drop_messages4.load();

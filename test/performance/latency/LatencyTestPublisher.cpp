@@ -269,7 +269,7 @@ bool LatencyTestPublisher::init(
             ReliabilityQosPolicy rp;
             if (reliable)
             {
-                rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+                rp.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
 
                 RTPSReliableWriterQos rw_qos;
                 rw_qos.times.heartbeatPeriod.seconds = 0;
@@ -278,7 +278,7 @@ bool LatencyTestPublisher::init(
             }
             else
             {
-                rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+                rp.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
             }
 
             dw_qos_.reliability(rp);

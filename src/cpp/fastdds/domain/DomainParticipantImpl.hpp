@@ -77,7 +77,7 @@ class ReaderFilterCollection;
 
 /**
  * This is the implementation class of the DomainParticipant.
- * @ingroup FASTRTPS_MODULE
+ * @ingroup FASTDDS_MODULE
  */
 class DomainParticipantImpl
 {
@@ -468,7 +468,7 @@ public:
 
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
-     * included in FastRTPS, for example when communicating with other implementations.
+     * included in Fast DDS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
      * should be activated.
      * @param partguid Participant GUID_t.
