@@ -15,12 +15,13 @@
 #ifndef _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
 #define  _TEST_RTPS_RESOURCES_TIMEDEVENT_MOCKEVENT_H_
 
-#include <fastrtps/rtps/resources/TimedEvent.h>
-
 #include <atomic>
 #include <condition_variable>
-#include <asio.hpp>
 #include <thread>
+
+#include <asio.hpp>
+
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 class MockEvent
 {

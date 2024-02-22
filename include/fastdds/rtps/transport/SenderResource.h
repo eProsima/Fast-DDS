@@ -21,7 +21,8 @@
 #include <vector>
 #include <chrono>
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/common/LocatorsIterator.hpp>
 
 namespace eprosima {
 namespace fastrtps {

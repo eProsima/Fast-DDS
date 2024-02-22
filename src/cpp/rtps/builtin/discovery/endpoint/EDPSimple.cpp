@@ -17,32 +17,29 @@
  *
  */
 
+#include <algorithm>
+#include <forward_list>
+#include <mutex>
+
 #include <fastdds/core/policy/ParameterSerializer.hpp>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/dds/log/Log.hpp>
-
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
-
+#include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 #include <rtps/builtin/discovery/endpoint/EDPUtils.hpp>
-
-#include <mutex>
-#include <forward_list>
-#include <algorithm>
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 

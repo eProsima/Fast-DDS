@@ -195,7 +195,7 @@ void BuiltinProtocols::filter_server_remote_locators(
 bool BuiltinProtocols::addLocalWriter(
         RTPSWriter* w,
         const fastrtps::TopicAttributes& topicAtt,
-        const fastrtps::WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     bool ok = true;
 
@@ -229,7 +229,7 @@ bool BuiltinProtocols::addLocalWriter(
 bool BuiltinProtocols::addLocalReader(
         RTPSReader* R,
         const fastrtps::TopicAttributes& topicAtt,
-        const fastrtps::ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = true;
@@ -260,7 +260,7 @@ bool BuiltinProtocols::addLocalReader(
 bool BuiltinProtocols::updateLocalWriter(
         RTPSWriter* W,
         const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     bool ok = false;
     if (mp_PDP != nullptr && mp_PDP->getEDP() != nullptr)
@@ -273,7 +273,7 @@ bool BuiltinProtocols::updateLocalWriter(
 bool BuiltinProtocols::updateLocalReader(
         RTPSReader* R,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     bool ok = false;

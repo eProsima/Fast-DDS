@@ -17,17 +17,15 @@
  *
  */
 
-#include <csignal>
-
 #include "CustomPayloadPoolDataSubscriber.h"
 
+#include <csignal>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 
 using namespace eprosima::fastdds::dds;
 

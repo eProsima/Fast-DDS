@@ -44,7 +44,7 @@ target_compile_definitions(CommunicationPublisher PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(CommunicationPublisher PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(CommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(CommunicationPublisher fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 set(DDS_SUBSCRIBER_SOURCE ${COMMON_SOURCE}
     SubscriberModule.cpp
@@ -56,7 +56,7 @@ target_compile_definitions(CommunicationSubscriber PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(CommunicationSubscriber PRIVATE ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(CommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(CommunicationSubscriber fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 ###############################################################################
 # Necessary files

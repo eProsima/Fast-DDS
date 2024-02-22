@@ -36,43 +36,133 @@ set(${PROJECT_NAME}_source_files
 
     ${DDSSQLFILTER_SOURCES}
 
+    dynamic-types/AnnotationDescriptor.cpp
+    dynamic-types/AnnotationParameterValue.cpp
+    dynamic-types/BuiltinAnnotationsTypeObject.cpp
+    dynamic-types/DynamicData.cpp
+    dynamic-types/DynamicDataFactory.cpp
+    dynamic-types/DynamicDataHelper.cpp
+    dynamic-types/DynamicDataPtr.cpp
+    dynamic-types/DynamicPubSubType.cpp
+    dynamic-types/DynamicType.cpp
+    dynamic-types/DynamicTypeBuilder.cpp
+    dynamic-types/DynamicTypeBuilderFactory.cpp
+    dynamic-types/DynamicTypeBuilderPtr.cpp
+    dynamic-types/DynamicTypeMember.cpp
+    dynamic-types/DynamicTypePtr.cpp
+    dynamic-types/MemberDescriptor.cpp
+    dynamic-types/TypeDescriptor.cpp
+    dynamic-types/TypeIdentifier.cpp
+    dynamic-types/TypeIdentifierTypes.cpp
+    dynamic-types/TypeNamesGenerator.cpp
+    dynamic-types/TypeObject.cpp
+    dynamic-types/TypeObjectFactory.cpp
+    dynamic-types/TypeObjectHashId.cpp
+    dynamic-types/TypesBase.cpp
+    fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
+    fastdds/builtin/typelookup/TypeLookupManager.cpp
+    fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
+    fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
+    fastdds/core/condition/Condition.cpp
+    fastdds/core/condition/ConditionNotifier.cpp
+    fastdds/core/condition/GuardCondition.cpp
+    fastdds/core/condition/StatusCondition.cpp
+    fastdds/core/condition/StatusConditionImpl.cpp
+    fastdds/core/condition/WaitSet.cpp
+    fastdds/core/condition/WaitSetImpl.cpp
+    fastdds/core/Entity.cpp
+    fastdds/core/policy/ParameterList.cpp
+    fastdds/core/policy/QosPolicyUtils.cpp
+    fastdds/domain/DomainParticipant.cpp
+    fastdds/domain/DomainParticipantFactory.cpp
+    fastdds/domain/DomainParticipantImpl.cpp
+    fastdds/domain/qos/DomainParticipantFactoryQos.cpp
+    fastdds/domain/qos/DomainParticipantQos.cpp
+    fastdds/log/FileConsumer.cpp
     fastdds/log/Log.cpp
     fastdds/log/OStreamConsumer.cpp
-    fastdds/log/StdoutErrConsumer.cpp
     fastdds/log/StdoutConsumer.cpp
-    fastdds/log/FileConsumer.cpp
-
+    fastdds/log/StdoutErrConsumer.cpp
+    fastdds/publisher/DataWriter.cpp
+    fastdds/publisher/DataWriterHistory.cpp
+    fastdds/publisher/DataWriterImpl.cpp
+    fastdds/publisher/Publisher.cpp
+    fastdds/publisher/PublisherImpl.cpp
+    fastdds/publisher/qos/DataWriterQos.cpp
+    fastdds/publisher/qos/PublisherQos.cpp
+    fastdds/publisher/qos/WriterQos.cpp
+    fastdds/subscriber/DataReader.cpp
+    fastdds/subscriber/DataReaderImpl.cpp
+    fastdds/subscriber/history/DataReaderHistory.cpp
+    fastdds/subscriber/qos/DataReaderQos.cpp
+    fastdds/subscriber/qos/ReaderQos.cpp
+    fastdds/subscriber/qos/SubscriberQos.cpp
+    fastdds/subscriber/ReadCondition.cpp
+    fastdds/subscriber/Subscriber.cpp
+    fastdds/subscriber/SubscriberImpl.cpp
+    fastdds/topic/ContentFilteredTopic.cpp
+    fastdds/topic/ContentFilteredTopicImpl.cpp
+    fastdds/topic/qos/TopicQos.cpp
+    fastdds/topic/Topic.cpp
+    fastdds/topic/TopicDataType.cpp
+    fastdds/topic/TopicImpl.cpp
+    fastdds/topic/TopicProxyFactory.cpp
+    fastdds/topic/TypeSupport.cpp
+    fastdds/utils/QosConverters.cpp
+    rtps/attributes/PropertyPolicy.cpp
+    rtps/attributes/RTPSParticipantAttributes.cpp
+    rtps/attributes/ThreadSettings.cpp
+    rtps/attributes/TopicAttributes.cpp
+    rtps/builtin/BuiltinProtocols.cpp
+    rtps/builtin/data/ParticipantProxyData.cpp
+    rtps/builtin/data/ReaderProxyData.cpp
+    rtps/builtin/data/WriterProxyData.cpp
+    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
+    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
+    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
+    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
+    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
+    rtps/builtin/discovery/endpoint/EDP.cpp
+    rtps/builtin/discovery/endpoint/EDPClient.cpp
+    rtps/builtin/discovery/endpoint/EDPServer.cpp
+    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPSimple.cpp
+    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
+    rtps/builtin/discovery/endpoint/EDPStatic.cpp
+    rtps/builtin/discovery/participant/DirectMessageSender.cpp
+    rtps/builtin/discovery/participant/PDP.cpp
+    rtps/builtin/discovery/participant/PDPClient.cpp
+    rtps/builtin/discovery/participant/PDPListener.cpp
+    rtps/builtin/discovery/participant/PDPServer.cpp
+    rtps/builtin/discovery/participant/PDPServerListener.cpp
+    rtps/builtin/discovery/participant/PDPSimple.cpp
+    rtps/builtin/discovery/participant/ServerAttributes.cpp
+    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
+    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
+    rtps/builtin/liveliness/WLP.cpp
+    rtps/builtin/liveliness/WLPListener.cpp
     rtps/common/GuidPrefix_t.cpp
     rtps/common/LocatorWithMask.cpp
     rtps/common/Time_t.cpp
-    rtps/resources/ResourceEvent.cpp
-    rtps/resources/TimedEvent.cpp
-    rtps/resources/TimedEventImpl.cpp
-    rtps/writer/LivelinessManager.cpp
-    rtps/writer/LocatorSelectorSender.cpp
-    rtps/writer/RTPSWriter.cpp
-    rtps/writer/StatefulWriter.cpp
-    rtps/writer/ReaderProxy.cpp
-    rtps/writer/StatelessWriter.cpp
-    rtps/writer/ReaderLocator.cpp
+    rtps/common/Token.cpp
+    rtps/DataSharing/DataSharingListener.cpp
+    rtps/DataSharing/DataSharingNotification.cpp
+    rtps/DataSharing/DataSharingPayloadPool.cpp
+    rtps/exceptions/Exception.cpp
+    rtps/flowcontrol/FlowControllerConsts.cpp
+    rtps/flowcontrol/FlowControllerFactory.cpp
+    rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     rtps/history/CacheChangePool.cpp
     rtps/history/History.cpp
-    rtps/history/WriterHistory.cpp
     rtps/history/ReaderHistory.cpp
     rtps/history/TopicPayloadPool.cpp
     rtps/history/TopicPayloadPoolRegistry.cpp
-    rtps/DataSharing/DataSharingPayloadPool.cpp
-    rtps/DataSharing/DataSharingListener.cpp
-    rtps/DataSharing/DataSharingNotification.cpp
-    rtps/reader/WriterProxy.cpp
-    rtps/reader/StatefulReader.cpp
-    rtps/reader/StatelessReader.cpp
-    rtps/reader/RTPSReader.cpp
+    rtps/history/WriterHistory.cpp
+    rtps/messages/MessageReceiver.cpp
+    rtps/messages/RTPSGapBuilder.cpp
     rtps/messages/RTPSMessageCreator.cpp
     rtps/messages/RTPSMessageGroup.cpp
-    rtps/messages/RTPSGapBuilder.cpp
     rtps/messages/SendBuffersManager.cpp
-    rtps/messages/MessageReceiver.cpp
     rtps/messages/submessages/AckNackMsg.hpp
     rtps/messages/submessages/DataMsg.hpp
     rtps/messages/submessages/GapMsg.hpp
@@ -82,53 +172,19 @@ set(${PROJECT_NAME}_source_files
     rtps/network/utils/external_locators.cpp
     rtps/network/utils/netmask_filter.cpp
     rtps/network/utils/network.cpp
-    rtps/attributes/RTPSParticipantAttributes.cpp
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
+    rtps/persistence/PersistenceFactory.cpp
+    rtps/reader/RTPSReader.cpp
+    rtps/reader/StatefulPersistentReader.cpp
+    rtps/reader/StatefulReader.cpp
+    rtps/reader/StatelessPersistentReader.cpp
+    rtps/reader/StatelessReader.cpp
+    rtps/reader/WriterProxy.cpp
+    rtps/resources/ResourceEvent.cpp
+    rtps/resources/TimedEvent.cpp
+    rtps/resources/TimedEventImpl.cpp
     rtps/RTPSDomain.cpp
-    fastrtps_deprecated/Domain.cpp
-    fastrtps_deprecated/participant/Participant.cpp
-    fastrtps_deprecated/participant/ParticipantImpl.cpp
-    fastrtps_deprecated/publisher/Publisher.cpp
-    fastrtps_deprecated/publisher/PublisherImpl.cpp
-    fastrtps_deprecated/publisher/PublisherHistory.cpp
-    fastrtps_deprecated/subscriber/Subscriber.cpp
-    fastrtps_deprecated/subscriber/SubscriberImpl.cpp
-    fastrtps_deprecated/subscriber/SubscriberHistory.cpp
-    fastdds/publisher/DataWriter.cpp
-    fastdds/publisher/DataWriterImpl.cpp
-    fastdds/publisher/DataWriterHistory.cpp
-    fastdds/topic/ContentFilteredTopic.cpp
-    fastdds/topic/ContentFilteredTopicImpl.cpp
-    fastdds/topic/Topic.cpp
-    fastdds/topic/TopicImpl.cpp
-    fastdds/topic/TopicProxyFactory.cpp
-    fastdds/topic/TypeSupport.cpp
-    fastdds/topic/TopicDataType.cpp
-    fastdds/topic/qos/TopicQos.cpp
-    fastdds/publisher/qos/DataWriterQos.cpp
-    fastdds/subscriber/qos/DataReaderQos.cpp
-    fastdds/publisher/PublisherImpl.cpp
-    fastdds/publisher/qos/PublisherQos.cpp
-    fastdds/publisher/Publisher.cpp
-    fastdds/subscriber/SubscriberImpl.cpp
-    fastdds/subscriber/qos/SubscriberQos.cpp
-    fastdds/subscriber/Subscriber.cpp
-    fastdds/subscriber/DataReader.cpp
-    fastdds/subscriber/DataReaderImpl.cpp
-    fastdds/subscriber/ReadCondition.cpp
-    fastdds/subscriber/history/DataReaderHistory.cpp
-    fastdds/domain/DomainParticipantFactory.cpp
-    fastdds/domain/DomainParticipantImpl.cpp
-    fastdds/domain/DomainParticipant.cpp
-    fastdds/domain/qos/DomainParticipantQos.cpp
-    fastdds/domain/qos/DomainParticipantFactoryQos.cpp
-    fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
-    fastdds/builtin/common/RPCHeadersImpl.cpp
-    fastdds/builtin/typelookup/TypeLookupManager.cpp
-    fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
-    fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
-    rtps/transport/TransportInterface.cpp
     rtps/transport/ChainingTransport.cpp
     rtps/transport/ChannelResource.cpp
     rtps/transport/network/NetmaskFilterKind.cpp
@@ -146,121 +202,38 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/TCPv4Transport.cpp
     rtps/transport/TCPv6Transport.cpp
     rtps/transport/test_UDPv4Transport.cpp
+    rtps/transport/TransportInterface.cpp
     rtps/transport/UDPChannelResource.cpp
     rtps/transport/UDPTransportInterface.cpp
     rtps/transport/UDPv4Transport.cpp
     rtps/transport/UDPv6Transport.cpp
-
-    dynamic-types/AnnotationDescriptor.cpp
-    dynamic-types/AnnotationParameterValue.cpp
-    dynamic-types/DynamicData.cpp
-    dynamic-types/DynamicDataFactory.cpp
-    dynamic-types/DynamicType.cpp
-    dynamic-types/DynamicPubSubType.cpp
-    dynamic-types/DynamicTypePtr.cpp
-    dynamic-types/DynamicDataPtr.cpp
-    dynamic-types/DynamicTypeBuilder.cpp
-    dynamic-types/DynamicTypeBuilderPtr.cpp
-    dynamic-types/DynamicTypeBuilderFactory.cpp
-    dynamic-types/DynamicTypeMember.cpp
-    dynamic-types/MemberDescriptor.cpp
-    dynamic-types/TypeDescriptor.cpp
-    dynamic-types/TypeIdentifier.cpp
-    dynamic-types/TypeIdentifierTypes.cpp
-    dynamic-types/TypeObject.cpp
-    dynamic-types/TypeObjectHashId.cpp
-    dynamic-types/TypeObjectFactory.cpp
-    dynamic-types/TypeNamesGenerator.cpp
-    dynamic-types/TypesBase.cpp
-    dynamic-types/BuiltinAnnotationsTypeObject.cpp
-    dynamic-types/DynamicDataHelper.cpp
-
-    fastrtps_deprecated/attributes/TopicAttributes.cpp
-    fastdds/core/Entity.cpp
-    fastdds/core/condition/Condition.cpp
-    fastdds/core/condition/ConditionNotifier.cpp
-    fastdds/core/condition/GuardCondition.cpp
-    fastdds/core/condition/StatusCondition.cpp
-    fastdds/core/condition/StatusConditionImpl.cpp
-    fastdds/core/condition/WaitSet.cpp
-    fastdds/core/condition/WaitSetImpl.cpp
-    fastdds/core/policy/ParameterList.cpp
-    fastdds/core/policy/QosPolicyUtils.cpp
-    fastdds/publisher/qos/WriterQos.cpp
-    fastdds/subscriber/qos/ReaderQos.cpp
-    fastdds/utils/QosConverters.cpp
-    rtps/builtin/BuiltinProtocols.cpp
-    rtps/builtin/discovery/participant/DirectMessageSender.cpp
-    rtps/builtin/discovery/participant/PDP.cpp
-    rtps/builtin/discovery/participant/ServerAttributes.cpp
-    rtps/builtin/discovery/participant/PDPSimple.cpp
-    rtps/builtin/discovery/participant/PDPListener.cpp
-    rtps/builtin/discovery/endpoint/EDP.cpp
-    rtps/builtin/discovery/endpoint/EDPSimple.cpp
-    rtps/builtin/discovery/endpoint/EDPSimpleListeners.cpp
-    rtps/builtin/discovery/endpoint/EDPStatic.cpp
-    rtps/builtin/liveliness/WLP.cpp
-    rtps/builtin/liveliness/WLPListener.cpp
-    rtps/builtin/data/ParticipantProxyData.cpp
-    rtps/builtin/data/WriterProxyData.cpp
-    rtps/builtin/data/ReaderProxyData.cpp
-    rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-    rtps/flowcontrol/FlowControllerConsts.cpp
-    rtps/flowcontrol/FlowControllerFactory.cpp
-    rtps/exceptions/Exception.cpp
-    rtps/attributes/PropertyPolicy.cpp
-    rtps/attributes/ThreadSettings.cpp
-    rtps/common/Token.cpp
-    rtps/xmlparser/XMLParserCommon.cpp
-    rtps/xmlparser/XMLElementParser.cpp
+    rtps/writer/LivelinessManager.cpp
+    rtps/writer/LocatorSelectorSender.cpp
+    rtps/writer/PersistentWriter.cpp
+    rtps/writer/ReaderLocator.cpp
+    rtps/writer/ReaderProxy.cpp
+    rtps/writer/RTPSWriter.cpp
+    rtps/writer/StatefulPersistentWriter.cpp
+    rtps/writer/StatefulWriter.cpp
+    rtps/writer/StatelessPersistentWriter.cpp
+    rtps/writer/StatelessWriter.cpp
     rtps/xmlparser/XMLDynamicParser.cpp
+    rtps/xmlparser/XMLElementParser.cpp
     rtps/xmlparser/XMLEndpointParser.cpp
     rtps/xmlparser/XMLParser.cpp
+    rtps/xmlparser/XMLParserCommon.cpp
     rtps/xmlparser/XMLProfileManager.cpp
-    rtps/writer/PersistentWriter.cpp
-    rtps/writer/StatelessPersistentWriter.cpp
-    rtps/writer/StatefulPersistentWriter.cpp
-    rtps/reader/StatelessPersistentReader.cpp
-    rtps/reader/StatefulPersistentReader.cpp
-    rtps/persistence/PersistenceFactory.cpp
-
-    rtps/builtin/discovery/database/backup/SharedBackupFunctions.cpp
-    rtps/builtin/discovery/endpoint/EDPClient.cpp
-    rtps/builtin/discovery/endpoint/EDPServer.cpp
-    rtps/builtin/discovery/endpoint/EDPServerListeners.cpp
-    rtps/builtin/discovery/database/DiscoveryDataBase.cpp
-    rtps/builtin/discovery/database/DiscoveryParticipantInfo.cpp
-    rtps/builtin/discovery/database/DiscoveryParticipantsAckStatus.cpp
-    rtps/builtin/discovery/database/DiscoverySharedInfo.cpp
-    rtps/builtin/discovery/participant/PDPClient.cpp
-    rtps/builtin/discovery/participant/PDPServer.cpp
-    rtps/builtin/discovery/participant/PDPServerListener.cpp
-    rtps/builtin/discovery/participant/timedevent/DSClientEvent.cpp
-    rtps/builtin/discovery/participant/timedevent/DServerEvent.cpp
-
-    utils/IPFinder.cpp
-    utils/md5.cpp
-    utils/StringMatching.cpp
-    utils/IPLocator.cpp
-    utils/System.cpp
-    utils/SystemInfo.cpp
-    utils/TimedConditionVariable.cpp
-    utils/string_convert.cpp
-    utils/UnitsParser.cpp
-
-    dds/core/types.cpp
-    dds/core/Exception.cpp
-    dds/domain/DomainParticipant.cpp
-    dds/pub/Publisher.cpp
-    dds/pub/AnyDataWriter.cpp
-    dds/pub/DataWriter.cpp
-    dds/sub/Subscriber.cpp
-    dds/sub/DataReader.cpp
-    dds/topic/Topic.cpp
-
     statistics/fastdds/domain/DomainParticipant.cpp
     statistics/fastdds/publisher/qos/DataWriterQos.cpp
     statistics/fastdds/subscriber/qos/DataReaderQos.cpp
+    utils/IPFinder.cpp
+    utils/IPLocator.cpp
+    utils/md5.cpp
+    utils/string_convert.cpp
+    utils/StringMatching.cpp
+    utils/SystemInfo.cpp
+    utils/TimedConditionVariable.cpp
+    utils/UnitsParser.cpp
     )
 
 # Statistics support
@@ -524,14 +497,14 @@ if(MSVC OR MSVC_IDE)
     # On installed binaries use manifest to specify dependencies
     if(INSTALLER_PLATFORM AND OPENSSL_FOUND)
 
-        # Get Fast-DDS version suitable manifest format
-        set(FASTDDS_CANONICAL_VERSION ${fastrtps_VERSION})
+        # Get Fast DDS version suitable manifest format
+        set(FASTDDS_CANONICAL_VERSION ${fastdds_VERSION})
 
         if( NOT FASTDDS_CANONICAL_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
-            message(FATAL_ERROR "Fast-DDS version number ${fastrtps_VERSION} must include major, minor and patch.")
+            message(FATAL_ERROR "Fast DDS version number ${fastdds_VERSION} must include major, minor and patch.")
         endif()
 
-        if( NOT fastrtps_VERSION_TWEAK)
+        if( NOT fastdds_VERSION_TWEAK)
             set(FASTDDS_CANONICAL_VERSION "${FASTDDS_CANONICAL_VERSION}.0")
         endif()
 
@@ -588,7 +561,7 @@ if(MSVC OR MSVC_IDE)
         set_target_properties(${PROJECT_NAME} PROPERTIES VS_WINRT_COMPONENT "true")
     endif()
 elseif(BUILD_SHARED_LIBS)
-    set(VERSION_SCRIPT_SUPPORT_FLAGS -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfastrtps.version)
+    set(VERSION_SCRIPT_SUPPORT_FLAGS -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfastdds.version)
     set(OLD_CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS})
     set(CMAKE_REQUIRED_FLAGS ${CMAKE_REQUIRED_FLAGS} ${VERSION_SCRIPT_SUPPORT_FLAGS})
     CHECK_CXX_SOURCE_COMPILES("int main(int, char**){return 0;}" HAS_VERSION_SCRIPT_SUPPORT)
@@ -615,7 +588,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
     PATTERN "*.ipp"
     )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastdds
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/fastrtps
     DESTINATION ${INCLUDE_INSTALL_DIR}
     COMPONENT headers
     FILES_MATCHING
@@ -699,9 +672,9 @@ endif()
 include(CMakePackageConfigHelpers)
 
 if(BUILD_SHARED_LIBS)
-    set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
+    set(FASTDDS_PACKAGE_OPT_BIN_DIR_CONDITION "if(MSVC OR MSVC_IDE)")
 else()
-    set(FASTRTPS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
+    set(FASTDDS_PACKAGE_OPT_BIN_DIR_CONDITION "if(0)")
 endif()
 
 # include the option parser targets
@@ -712,32 +685,32 @@ if(COMPILE_TOOLS)
     set(INCLUDE_FASTDDS_TARGETS "${INCLUDE_FASTDDS_TARGETS}\ninclude(\${CMAKE_CURRENT_LIST_DIR}/fast-discovery-server-targets.cmake)")
 endif()
 
-# Add fastrtps dependencies in its CMake config file.
+# Add fastdds dependencies in its CMake config file.
 if(LINK_SSL)
     if(INSTALLER_PLATFORM)
         # OpenSSL dependency is only propagated on static linking
         # We must use the deployed OpenSSL binaries to prevent compatibility issues
-        set(FASTRTPS_INSTALLER_DEPS_ANCILLARY "\
+        set(FASTDDS_INSTALLER_DEPS_ANCILLARY "\
         function(find_fastdds_deployed_openssl)\n\
             if(OPENSSL_FOUND AND NOT(OPENSSL_VERSION STREQUAL \"${OPENSSL_VERSION}\") )\n\
-                message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast-DDS binaries building, ABI issues may arise\")\n\
+                message(WARNING \"OpenSSL already loaded. Version \${OPENSSL_VERSION} differs from version ${OPENSSL_VERSION}, used in Fast DDS binaries building, ABI issues may arise\")\n\
             endif()\n\
             set(OPENSSL_USE_STATIC_LIBS TRUE)\n\
             set(OPENSSL_ROOT_DIR  \"\${PACKAGE_PREFIX_DIR}/lib/${INSTALLER_PLATFORM}\")\n\
             find_package(OpenSSL REQUIRED)\n\
         endfunction()"
         )
-        set(FASTRTPS_INSTALLER_OPT_DEPS "\
+        set(FASTDDS_INSTALLER_OPT_DEPS "\
         if (\${type} STREQUAL \"static\")\n\
             find_fastdds_deployed_openssl()\n\
         endif()")
 
     elseif(WIN32)
         # windows from sources only requires OpenSSL on static libraries
-        set(FASTRTPS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+        set(FASTDDS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     else()
         # linux from sources requires OpenSSL always
-        set(FASTRTPS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
+        set(FASTDDS_PACKAGE_UNIX_OPT_DEPS "find_package(OpenSSL REQUIRED)")
     endif()
 endif()
 

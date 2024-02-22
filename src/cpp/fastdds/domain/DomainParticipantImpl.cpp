@@ -1560,10 +1560,6 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
     {
         participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info),
                 should_be_ignored);
-        if (!should_be_ignored)
-        {
-            participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));
-        }
     }
 }
 

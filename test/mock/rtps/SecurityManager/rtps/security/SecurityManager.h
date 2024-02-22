@@ -18,10 +18,10 @@
 #ifndef _RTPS_SECURITY_SECURITYMANAGER_H_
 #define _RTPS_SECURITY_SECURITYMANAGER_H_
 
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -24,7 +24,6 @@
 #include <thread>
 
 #include <asio.hpp>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -33,8 +32,6 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -66,7 +63,8 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info) override
+            rtps::ParticipantDiscoveryInfo&& info,
+            bool& /*should_be_ignored*/) override
     {
         if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
