@@ -19,6 +19,7 @@
 
 #include "TypeLookupServiceSubscriber.h"
 
+#include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -153,6 +154,85 @@ bool TypeLookupServiceSubscriber::create_known_type_impl(
 
     std::lock_guard<std::mutex> guard(known_types_mutex_);
     known_types_.emplace(type, a_type);
+    return true;
+}
+
+template <typename Type>
+bool TypeLookupServiceSubscriber::process_type_impl(
+        DataReader* reader)
+{
+    eprosima::fastdds::dds::LoanableSequence<Type> datas;
+    eprosima::fastdds::dds::SampleInfoSeq infos;
+
+    ReturnCode_t success = reader->take(datas, infos);
+    if (eprosima::fastdds::dds::RETCODE_OK != success)
+    {
+        std::cout << "ERROR TypeLookupServiceSubscriber: error taking samples: " <<
+            reader->type().get_type_name() << std::endl;
+        return false;
+    }
+
+    for (int32_t i = 0; i < datas.length(); ++i)
+    {
+        Type& data = datas[i];
+        eprosima::fastdds::dds::SampleInfo& info = infos[i];
+
+        if (info.valid_data && reader->is_sample_valid(&data, &info))
+        {
+            std::lock_guard<std::mutex> guard(known_types_mutex_);
+            std::cout << "Subscriber type_" << reader->type().get_type_name() << ": " << std::endl;
+            received_samples_[info.sample_identity.writer_guid()]++;
+            cv_.notify_all();
+        }
+        else
+        {
+            std::cout << "ERROR TypeLookupServiceSubscriber: sample invalid " <<
+                reader->type().get_type_name() << std::endl;
+            return false;
+        }
+    }
+    reader->return_loan(datas, infos);
+    return true;
+}
+
+bool TypeLookupServiceSubscriber::process_dyn_type_impl(
+        DataReader* reader)
+{
+    eprosima::fastdds::dds::LoanableSequence<DynamicPubSubType> datas;
+    eprosima::fastdds::dds::SampleInfoSeq infos;
+
+    ReturnCode_t success = reader->take(datas, infos);
+    if (eprosima::fastdds::dds::RETCODE_OK != success)
+    {
+        std::cout << "ERROR TypeLookupServiceSubscriber: Error taking dynamic samples: " <<
+            reader->type().get_type_name() << std::endl;
+        return false;
+    }
+
+    for (int32_t i = 0; i < datas.length(); ++i)
+    {
+        DynamicPubSubType& data = datas[i];
+        eprosima::fastdds::dds::SampleInfo& info = infos[i];
+
+        if (info.valid_data && reader->is_sample_valid(&data, &info))
+        {
+            std::lock_guard<std::mutex> guard(known_types_mutex_);
+            std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": " << std::endl;
+            received_samples_[info.sample_identity.writer_guid()]++;
+            cv_.notify_all();
+        }
+        else
+        {
+            std::cout << "ERROR TypeLookupServiceSubscriber: Dynamic sample invalid " <<
+                reader->type().get_type_name() << std::endl;
+            return false;
+        }
+    }
+
+    if (RETCODE_OK != reader->return_loan(datas, infos))
+    {
+        return false;
+    }
     return true;
 }
 
@@ -295,29 +375,33 @@ void TypeLookupServiceSubscriber::on_subscription_matched(
 void TypeLookupServiceSubscriber::on_data_available(
         DataReader* reader)
 {
-    SampleInfo info;
+    bool data_correct = false;
     auto& known_type = known_types_[reader->type().get_type_name()];
 
     if (known_type.dyn_type_)
     {
-        DynamicData::_ref_type sample = DynamicDataFactory::get_instance()->create_data(known_type.dyn_type_);
-        if (reader->take_next_sample(&sample, &info) == RETCODE_OK && info.valid_data)
+        data_correct = process_dyn_type_impl(reader);
+    }
+    if (known_type.type_)
+    {
+        // Find the type processor in the map
+        auto it = type_processor_functions_.find(reader->type().get_type_name());
+        if (it != type_processor_functions_.end())
         {
-            //std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": " << std::endl;
-            received_samples_[info.sample_identity.writer_guid()]++;
-            cv_.notify_all();
+            // Call the associated type processor function
+            data_correct = it->second(reader);
+        }
+        else
+        {
+            std::cout << "ERROR TypeLookupServiceSubscriber: Processed unknown type: " <<
+                reader->type().get_type_name() << std::endl;
         }
     }
 
-    if (known_type.type_)
+    if (!data_correct)
     {
-        void* sample = known_type.type_;
-        if (reader->take_next_sample(sample, &info) == RETCODE_OK && info.valid_data)
-        {
-            //std::cout << "Subscriber type_" << reader->type().get_type_name() << ": " << std::endl;
-            received_samples_[info.sample_identity.writer_guid()]++;
-            cv_.notify_all();
-        }
+        throw std::runtime_error("TypeLookupServiceSubscriber: Wrong data on_data_available: " +
+                      reader->type().get_type_name());
     }
 }
 
