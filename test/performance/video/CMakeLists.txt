@@ -108,7 +108,7 @@ if(GST_FOUND)
     if (WIN32)
         target_link_libraries(
             VideoTest
-            fastrtps
+            fastdds
             fastcdr
             foonathan_memory
             fastdds::optionparser
@@ -125,7 +125,7 @@ if(GST_FOUND)
     else()
         target_link_libraries(
             VideoTest
-            fastrtps
+            fastdds
             fastcdr
             foonathan_memory
             fastdds::optionparser

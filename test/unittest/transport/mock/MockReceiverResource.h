@@ -17,7 +17,7 @@
 
 #include <functional>
 
-#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 
 #include <rtps/network/ReceiverResource.h>
 
@@ -42,7 +42,7 @@ public:
             const Locator_t&,
             const Locator_t&) override;
     MockReceiverResource(
-            TransportInterface& transport,
+            eprosima::fastdds::rtps::TransportInterface& transport,
             const Locator_t& locator);
     ~MockReceiverResource();
     MessageReceiver* CreateMessageReceiver() override;

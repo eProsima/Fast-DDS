@@ -108,4 +108,4 @@ class XMLParser:
         """
         tool_path = Path(os.path.dirname(os.path.realpath(__file__)))
         # We assume the schema path is relative to our installation path
-        return tool_path / '../../../share/fastRTPS_profiles.xsd'
+        return tool_path / '../../../share/fastdds_profiles.xsd'

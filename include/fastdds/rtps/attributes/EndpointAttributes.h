@@ -19,12 +19,11 @@
 #ifndef _FASTDDS_ENDPOINTATTRIBUTES_H_
 #define _FASTDDS_ENDPOINTATTRIBUTES_H_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps/qos/QosPolicies.h>
-
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 #if HAVE_SECURITY
@@ -77,7 +76,7 @@ public:
     PropertyPolicy properties;
 
     //!Ownership
-    OwnershipQosPolicyKind ownershipKind = SHARED_OWNERSHIP_QOS;
+    fastdds::dds::OwnershipQosPolicyKind ownershipKind = fastdds::dds::OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
 
     EndpointAttributes()
     {
@@ -129,7 +128,7 @@ public:
      * @param cfg Configuration to be set
      */
     inline void set_data_sharing_configuration(
-            DataSharingQosPolicy cfg)
+            fastdds::dds::DataSharingQosPolicy cfg)
     {
         datasharing_ = cfg;
     }
@@ -138,7 +137,7 @@ public:
      * Get the DataSharing configuration
      * @return Configuration of data sharing
      */
-    inline const DataSharingQosPolicy& data_sharing_configuration() const
+    inline const fastdds::dds::DataSharingQosPolicy& data_sharing_configuration() const
     {
         return datasharing_;
     }
@@ -170,7 +169,7 @@ private:
 #endif // HAVE_SECURITY
 
     //! Settings for datasharing
-    DataSharingQosPolicy datasharing_;
+    fastdds::dds::DataSharingQosPolicy datasharing_;
 };
 
 } /* namespace rtps */

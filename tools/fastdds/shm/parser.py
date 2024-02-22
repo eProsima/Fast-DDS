@@ -15,7 +15,7 @@
 """
 fastdds shm sub-command.
 
-This verb provides maintenance tasks related with Fast-DDS shared-memory
+This verb provides maintenance tasks related with Fast DDS shared-memory
 transport.
 
 usage: fastdds shm [<shm-command>]

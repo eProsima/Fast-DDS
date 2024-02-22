@@ -16,8 +16,8 @@
  * @file ReaderHistoryState.hpp
  */
 
-#ifndef FASTRTPS_RTPS_READER_READERHISTORYSTATE_HPP_
-#define FASTRTPS_RTPS_READER_READERHISTORYSTATE_HPP_
+#ifndef FASTDDS_RTPS_READER_READERHISTORYSTATE_HPP_
+#define FASTDDS_RTPS_READER_READERHISTORYSTATE_HPP_
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
@@ -79,4 +79,4 @@ struct ReaderHistoryState
 } /* namespace fastrtps */
 } /* namespace eprosima */
 
-#endif /* FASTRTPS_RTPS_READER_READERHISTORYSTATE_HPP_ */
+#endif /* FASTDDS_RTPS_READER_READERHISTORYSTATE_HPP_ */

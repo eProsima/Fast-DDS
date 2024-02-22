@@ -5,7 +5,7 @@ on:
       fastdds_branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-        default: 'master'
+        default: '3.0.x-devel'
       optional_cmake_args:
         description: 'Optional CMake Compilation Flags'
         required: false
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '3.0.x-devel' }}
         TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
         # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
         # These issues were fixed in GCC 12 so we upgrade to that version.
@@ -85,23 +85,23 @@ jobs:
         with:
           packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
 
-      - name: Get fastrtps.repos file
+      - name: Get fastdds.repos file
         uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
         with:
           source_repository: eProsima/Fast-DDS
           source_repository_branch: ${{ env.FASTDDS_BRANCH }}
-          file_name: fastrtps.repos
-          file_result: fastrtps.repos
+          file_name: fastdds.repos
+          file_result: fastdds.repos
 
       - name: Fetch Fast DDS & dependencies
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
-          vcs_repos_file: fastrtps.repos
+          vcs_repos_file: fastdds.repos
           destination_workspace: src
 
       - name: Checkout Fast DDS branch
         run: |
-          cd ./src/fastrtps
+          cd ./src/fastdds
           git checkout ${{ env.FASTDDS_BRANCH }}
 
       - name: Fetch Fast DDS CI dependencies
@@ -113,17 +113,17 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/fastrtps/.github/workflows/config/tsan_colcon.meta
+          cat src/fastdds/.github/workflows/config/tsan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/config/tsan_colcon.meta \
+            --metas src/fastdds/.github/workflows/config/tsan_colcon.meta \
             --cmake-args -DCMAKE_BUILD_TYPE=Debug ${{ inputs.optional_cmake_args }}
 
       - name: Run tests Fast DDS
         run: |
           source install/setup.bash && \
           colcon test \
-            --packages-select fastrtps \
+            --packages-select fastdds \
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
             --ctest-args \
@@ -146,7 +146,7 @@ jobs:
           # Create a dir for the exports
           $exports = New-Item -ItemType Directory -Path ./exports
           # Move to the reports dir
-          pushd ./log/latest_test/fastrtps
+          pushd ./log/latest_test/fastdds
           # Install the report parser module
           Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
           # Parse the report files

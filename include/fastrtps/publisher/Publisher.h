@@ -63,8 +63,6 @@ public:
      * @return true when operation works successfully.
      * @note This method is blocked for a period of time.
      * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
-     * @par Calling example:
-     * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
     bool write(
             void* sample);
@@ -76,8 +74,6 @@ public:
      * @return true when operation works successfully.
      * @note This method is blocked for a period of time.
      * ReliabilityQosPolicy.max_blocking_time on PublisherAttributes defines this period of time.
-     * @par Calling example:
-     * @snippet fastrtps_example.cpp ex_PublisherWrite
      */
     bool write(
             void* sample,

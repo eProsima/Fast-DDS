@@ -783,5 +783,5 @@ NetmaskFilterInfo UDPTransportInterface::netmask_filter_info() const
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
