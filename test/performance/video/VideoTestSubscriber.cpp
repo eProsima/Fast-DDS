@@ -252,7 +252,7 @@ void VideoTestSubscriber::init(
     }
     else
     {
-        datareader_qos_data.reliability().kind =eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+        datareader_qos_data.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
     datareader_qos_data.properties(property_policy);
     //SubDataparam.properties = property_policy;

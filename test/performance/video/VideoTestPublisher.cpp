@@ -232,7 +232,7 @@ void VideoTestPublisher::init(
 
     if (!reliable)
     {
-        PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        PubDataparam.qos.m_reliability.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
     PubDataparam.properties = property_policy;
     if (large_data)

@@ -22,7 +22,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool VideoDataType::serialize(void*data, SerializedPayload_t* payload)
+bool VideoDataType::serialize(void*data, eprosima::fastrtps::rtps::SerializedPayload_t* payload)
 {
     VideoType* lt = (VideoType*)data;
 
@@ -37,7 +37,7 @@ bool VideoDataType::serialize(void*data, SerializedPayload_t* payload)
     return true;
 }
 
-bool VideoDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool VideoDataType::deserialize(eprosima::fastrtps::rtps::SerializedPayload_t* payload,void * data)
 {
     VideoType* lt = (VideoType*)data;
     lt->seqnum = *(uint32_t*)payload->data;

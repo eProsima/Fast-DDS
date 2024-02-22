@@ -22,19 +22,23 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/all_common.h>
@@ -84,7 +88,7 @@ inline bool operator==(const VideoType& lt1, const VideoType& lt2)
     return true;
 }
 
-class VideoDataType : public eprosima::fastrtps::TopicDataType
+class VideoDataType : public eprosima::fastdds::dds::TopicDataType
 {
     public:
         VideoDataType()
@@ -122,7 +126,7 @@ typedef struct TestCommandType
     TestCommandType(TESTCOMMAND com):m_command(com){}
 }TestCommandType;
 
-class TestCommandDataType : public eprosima::fastrtps::TopicDataType
+class TestCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
     public:
         TestCommandDataType()
