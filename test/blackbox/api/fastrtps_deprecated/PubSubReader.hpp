@@ -353,6 +353,8 @@ public:
             eprosima::fastrtps::Domain::removeParticipant(participant_);
             participant_ = nullptr;
         }
+
+        initialized_ = false;
     }
 
     std::list<type> data_not_received()

@@ -4817,6 +4817,116 @@ TEST_P(Security, MaliciousParticipantRemovalIgnore)
     reader.block_for_all();
 }
 
+TEST(Security, ValidateAuthenticationHandshakePropertiesParsing)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy property_policy;
+
+    property_policy.properties().emplace_back(Property("dds.sec.auth.plugin",
+            "builtin.PKI-DH"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_ca",
+            "file://" + std::string(certs_path) + "/maincacert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.identity_certificate",
+            "file://" + std::string(certs_path) + "/mainsubcert.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.private_key",
+            "file://" + std::string(certs_path) + "/mainsubkey.pem"));
+    property_policy.properties().emplace_back(Property("dds.sec.crypto.plugin",
+            "builtin.AES-GCM-GMAC"));
+
+    // max_handshake_requests out of bounds
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.max_handshake_requests",
+            "0"));
+
+    writer.property_policy(property_policy).init();
+
+    // Writer creation should fail
+    ASSERT_FALSE(writer.isInitialized());
+
+    writer.destroy();
+
+    property_policy.properties().pop_back();
+
+    // initial_handshake_resend_period out of bounds
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period",
+            "-200"));
+
+    writer.property_policy(property_policy).init();
+
+    // Writer creation should fail
+    ASSERT_FALSE(writer.isInitialized());
+
+    writer.destroy();
+
+    property_policy.properties().pop_back();
+
+    // handshake_resend_period_gain out of bounds
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.handshake_resend_period_gain",
+            "0.5"));
+
+    writer.property_policy(property_policy).init();
+
+    // Writer creation should fail
+    ASSERT_FALSE(writer.isInitialized());
+
+    writer.destroy();
+
+    property_policy.properties().pop_back();
+
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.max_handshake_requests",
+            "5"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.initial_handshake_resend_period",
+            "200"));
+    property_policy.properties().emplace_back(Property("dds.sec.auth.builtin.PKI-DH.handshake_resend_period_gain",
+            "1.75"));
+
+    writer.property_policy(property_policy).init();
+
+    // Writer should correctly initialize
+    ASSERT_TRUE(writer.isInitialized());
+}
+
+TEST(Security, ValidateAuthenticationHandshakeProperties)
+{
+    // Create
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    PropertyPolicy property_policy;
+    std::string xml_file = "auth_handshake_props_profile.xml";
+    std::string profile_name = "auth_handshake_props";
+
+    // Set a configuration that makes participant authentication
+    // to be performed quickly so that we receive handshake
+    // in 0.15 secs approx
+    writer.set_xml_filename(xml_file);
+    writer.set_participant_profile(profile_name);
+
+    reader.set_xml_filename(xml_file);
+    reader.set_participant_profile(profile_name);
+
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // If the settings were correctly applied
+    // we expect to be authorized in less than 0.5 seconds
+    // In reality, this time could be 0.2 perfectly,
+    // but some padding is left because of the ci
+    // or slower platforms
+    auto t0 = std::chrono::steady_clock::now();
+    reader.waitAuthorized();
+    double auth_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(
+        std::chrono::steady_clock::now() - t0).count();
+
+    // Both should be authorized
+    writer.waitAuthorized();
+
+    ASSERT_TRUE(auth_elapsed_time < 0.5);
+}
+
 
 void blackbox_security_init()
 {
