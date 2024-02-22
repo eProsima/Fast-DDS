@@ -3440,22 +3440,6 @@ void TypeObjectUtils::minimal_type_object_consistency(
     }
 }
 
-void TypeObjectUtils::type_object_consistency(
-        const TypeObject& type_object)
-{
-    switch (type_object._d())
-    {
-        case EK_COMPLETE:
-            complete_type_object_consistency(type_object.complete());
-            break;
-        case EK_MINIMAL:
-            minimal_type_object_consistency(type_object.minimal());
-            break;
-        default:
-            throw InvalidArgumentError("Inconsistent TypeObject");
-    }
-}
-
 } // xtypes
 } // dds
 } // fastdds
