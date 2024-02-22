@@ -17,17 +17,18 @@
  *
  */
 
-#include "HelloWorldPublisher.h"
-#include "HelloWorldSubscriber.h"
-
 #include <thread>
 
-#include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
+#include <fastdds/dds/log/Log.hpp>
+
+#include "HelloWorldPublisher.h"
+#include "HelloWorldSubscriber.h"
 
 using namespace eprosima;
 using namespace fastrtps;
 using namespace rtps;
+using namespace eprosima::fastdds::dds;
+
 int main(
         int argc,
         char** argv)
@@ -112,7 +113,6 @@ int main(
             break;
         }
     }
-    Domain::stopAll();
     Log::Reset();
     return 0;
 }

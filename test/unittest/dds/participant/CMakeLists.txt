@@ -42,7 +42,7 @@ target_include_directories(ParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
+target_link_libraries(ParticipantTests fastdds fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 

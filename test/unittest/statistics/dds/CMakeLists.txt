@@ -39,7 +39,7 @@ target_compile_definitions(StatisticsDomainParticipantTests PRIVATE
     )
 target_include_directories(StatisticsDomainParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
+target_link_libraries(StatisticsDomainParticipantTests fastdds fastcdr GTest::gtest)
 gtest_discover_tests(StatisticsDomainParticipantTests)
 
 ## StatisticsQosTests
@@ -63,7 +63,7 @@ target_compile_definitions(StatisticsQosTests PRIVATE BOOST_ASIO_STANDALONE ASIO
     )
 target_include_directories(StatisticsQosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${THIRDPARTY_BOOST_INCLUDE_DIR})
-target_link_libraries(StatisticsQosTests fastrtps fastcdr ${TINYXML2_LIBRARY} foonathan_memory GTest::gtest)
+target_link_libraries(StatisticsQosTests fastdds fastcdr ${TINYXML2_LIBRARY} foonathan_memory GTest::gtest)
 gtest_discover_tests(StatisticsQosTests)
 
 ## StatisticsDomainParticipantListenerTests
@@ -126,7 +126,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/common/RPCHeadersImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupManager.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
@@ -329,7 +328,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/common/RPCHeadersImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupManager.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
@@ -341,7 +339,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/condition/WaitSetImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/Entity.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicyUtils.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/QosPolicyUtils.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipant.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/domain/DomainParticipantFactory.cpp
@@ -489,7 +486,6 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/reader/StatisticsReaderImpl.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/StatisticsBase.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/StatisticsBase.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/writer/StatisticsWriterImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
@@ -644,7 +640,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
     gtest_discover_tests(StatisticsDomainParticipantMockTests)
 
     add_executable(StatisticsDomainParticipantStatusQueryableTests ${STATISTICS_DOMAINPARTICIPANT_STATUS_QUERYABLE_TESTS_SOURCE})
-    target_compile_definitions(StatisticsDomainParticipantStatusQueryableTests PRIVATE FASTRTPS_NO_LIB
+    target_compile_definitions(StatisticsDomainParticipantStatusQueryableTests PRIVATE FASTDDS_NO_LIB
         BOOST_ASIO_STANDALONE
         ASIO_STANDALONE
         SQLITE_WIN32_GETVERSIONEX=0

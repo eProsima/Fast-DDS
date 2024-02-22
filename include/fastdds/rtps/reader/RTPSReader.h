@@ -21,6 +21,7 @@
 
 #include <functional>
 
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
@@ -31,7 +32,6 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
@@ -285,7 +285,7 @@ public:
     virtual bool isInCleanState() = 0;
 
     //! The liveliness changed status struct as defined in the DDS
-    LivelinessChangedStatus liveliness_changed_status_;
+    fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     inline void enableMessagesFromUnkownWriters(
             bool enable)

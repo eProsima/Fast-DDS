@@ -162,7 +162,7 @@ TEST(KeyedTopic, UnregisterWhenHistoryKeepAll)
     PubSubWriter<KeyedHelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     writer.
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
             init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -290,14 +290,14 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
     writer.
     resource_limits_max_instances(1).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
     init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     reader.
     resource_limits_max_instances(1).
-    reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS).
+    reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS).
     init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -341,14 +341,14 @@ TEST(KeyedTopic, DataWriterAlwaysSendTheSerializedKeyViaInlineQoS)
 
     writer.
     resource_limits_max_instances(1).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
     init();
 
     ASSERT_TRUE(writer.isInitialized());
 
     reader.
     resource_limits_max_instances(1).
-    reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
+    reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
     init();
 
     ASSERT_TRUE(reader.isInitialized());

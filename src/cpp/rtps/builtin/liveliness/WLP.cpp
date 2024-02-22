@@ -618,7 +618,7 @@ void WLP::removeRemoteEndpoints(
 
 bool WLP::add_local_writer(
         RTPSWriter* W,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
@@ -821,7 +821,7 @@ bool WLP::remove_local_writer(
 
 bool WLP::add_local_reader(
         RTPSReader* reader,
-        const ReaderQos& rqos)
+        const fastdds::dds::ReaderQos& rqos)
 {
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
 

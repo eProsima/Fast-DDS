@@ -19,7 +19,7 @@ Contains a package of system test for fastdds tool
 
 usage: test.py <install_path> <test_name>
 
-install_path: Fast-DDS base path installation
+install_path: Fast DDS base path installation
 
 test_name: Test to run.
 
@@ -62,7 +62,7 @@ def cmd(install_path, setup_script_path=Path(), args=''):
     Build the command line to run for the current platform.
 
     install_path Path:
-        Fast-DDS instalation path.
+        Fast DDS instalation path.
 
     setup_script_path Path:
         Path to the setup script if necessary.
@@ -148,7 +148,7 @@ def get_paths(install_path):
     Adjust the install path when --merge-install has been used.
 
     param install_path Path:
-        Path to the Fast-DDS installation path
+        Path to the Fast DDS installation path
 
     return Path:
         Adjusted path to the installation path where fastdds tool

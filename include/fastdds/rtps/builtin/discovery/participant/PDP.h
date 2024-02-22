@@ -26,6 +26,7 @@
 #include <memory>
 #include <mutex>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -34,7 +35,6 @@
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
-#include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/ProxyPool.hpp>
 

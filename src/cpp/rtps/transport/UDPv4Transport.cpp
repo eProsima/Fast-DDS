@@ -720,5 +720,5 @@ void UDPv4Transport::update_network_interfaces()
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

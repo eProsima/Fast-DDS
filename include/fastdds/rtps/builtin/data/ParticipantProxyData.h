@@ -21,6 +21,10 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_PARTICIPANTPROXYDATA_H_
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+#include <chrono>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
@@ -31,10 +35,6 @@
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-#include <fastrtps/qos/QosPolicies.h>
-
-
-#include <chrono>
 
 #define BUILTIN_PARTICIPANT_DATA_MAX_SIZE 100
 #define TYPELOOKUP_DATA_MAX_SIZE 5000
@@ -108,9 +108,9 @@ public:
     //!
     bool isAlive;
     //!
-    ParameterPropertyList_t m_properties;
+    fastdds::dds::ParameterPropertyList_t m_properties;
     //!
-    UserDataQosPolicy m_userData;
+    fastdds::dds::UserDataQosPolicy m_userData;
     //!
     TimedEvent* lease_duration_event;
     //!

@@ -90,7 +90,7 @@ bool OwnershipStrengthSubscriber::init()
 
     //Create DataReader
     DataReaderQos rqos;
-    rqos.reliability().kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+    rqos.reliability().kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
 
     reader_ = subscriber_->create_datareader(topic_, rqos, &m_listener);
 

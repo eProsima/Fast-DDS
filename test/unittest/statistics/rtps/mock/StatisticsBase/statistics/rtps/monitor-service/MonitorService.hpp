@@ -27,6 +27,7 @@
 #include <mutex>
 #include <vector>
 
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
@@ -63,7 +64,7 @@ public:
     using endpoint_registrator_t = std::function<bool (
                         fastrtps::rtps::RTPSWriter*,
                         const fastrtps::TopicAttributes&,
-                        const fastrtps::WriterQos&)>;
+                        const fastdds::dds::WriterQos&)>;
 
     MonitorService(
             const fastrtps::rtps::GUID_t& guid,

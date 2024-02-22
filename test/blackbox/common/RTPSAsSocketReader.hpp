@@ -20,29 +20,9 @@
 #ifndef _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_
 #define _TEST_BLACKBOX_RTPSASSOCKETREADER_HPP_
 
-#include <fastrtps/rtps/rtps_fwd.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/common/SequenceNumber.h>
-#include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/utils/TimedMutex.hpp>
-
-#include <fastcdr/FastBuffer.h>
-#include <fastcdr/Cdr.h>
-
-#include <string>
-#include <list>
 #include <condition_variable>
-#include <asio.hpp>
-#include <gtest/gtest.h>
-
+#include <list>
+#include <string>
 
 #if defined(_WIN32)
 #include <process.h>
@@ -50,6 +30,24 @@
 #else
 #define GET_PID getpid
 #endif // if defined(_WIN32)
+
+#include <asio.hpp>
+#include <fastcdr/Cdr.h>
+#include <fastcdr/FastBuffer.h>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastrtps/rtps/rtps_fwd.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/TimedMutex.hpp>
+#include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
 
@@ -299,7 +297,7 @@ public:
             IPLocator::setIPv4(loc, ip_);
             loc.port = static_cast<uint16_t>(port_);
             wattr.add_multicast_locator(loc);
-            wattr.m_qos.m_reliability.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+            wattr.m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
             wattr.guid().guidPrefix.value[0] = guid.guidPrefix.value[0];
             wattr.guid().guidPrefix.value[1] = guid.guidPrefix.value[1];
             wattr.guid().guidPrefix.value[2] = guid.guidPrefix.value[2];
