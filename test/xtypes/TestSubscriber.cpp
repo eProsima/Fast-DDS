@@ -18,26 +18,23 @@
  */
 
 #include "TestSubscriber.h"
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastrtps/utils/IPLocator.h>
+
 #include <gtest/gtest.h>
 #include <asio.hpp>
 
-
-#include <fastrtps/Domain.h>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -67,8 +64,8 @@ bool TestSubscriber::init(
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
-        const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
+        const eprosima::fastdds::dds::DataRepresentationQosPolicy* dataRepresentationQos,
+        const eprosima::fastdds::dds::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos,
         bool use_typelookup)
 {
     dataRepresentationQos_ = dataRepresentationQos;

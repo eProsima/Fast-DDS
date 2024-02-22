@@ -53,7 +53,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/common/RPCHeadersImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/common/TypeLookupTypes.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
@@ -307,7 +306,6 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     endif(TINYXML2_INCLUDE_DIR)
 
     set(PUBLISHERTESTS_SOURCE PublisherTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dds/pub/DataWriter.cpp
     )
 
 if(WIN32)
@@ -342,7 +340,7 @@ target_include_directories(PublisherTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
-target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
+target_link_libraries(PublisherTests fastdds fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 if(QNX)

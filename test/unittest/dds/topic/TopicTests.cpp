@@ -15,20 +15,15 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/core/types.hpp>
-#include <dds/topic/Topic.hpp>
-
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
 
 namespace eprosima {
 namespace fastdds {

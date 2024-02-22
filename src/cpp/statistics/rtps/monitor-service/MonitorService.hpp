@@ -83,7 +83,7 @@ public:
     using endpoint_registrator_t = std::function<bool (
                         fastrtps::rtps::RTPSWriter*,
                         const fastrtps::TopicAttributes&,
-                        const fastrtps::WriterQos&)>;
+                        const fastdds::dds::WriterQos&)>;
 
     MonitorService(
             const fastrtps::rtps::GUID_t& guid,

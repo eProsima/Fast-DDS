@@ -23,6 +23,7 @@
 #include <mutex>
 #include <vector>
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
@@ -37,7 +38,6 @@
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
 namespace fastrtps {

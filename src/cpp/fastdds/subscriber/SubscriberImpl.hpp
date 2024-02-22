@@ -30,10 +30,8 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
-
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -62,7 +60,7 @@ class TypeSupport;
 
 /**
  * Class SubscriberImpl, contains the actual implementation of the behaviour of the Subscriber.
- *  @ingroup FASTRTPS_MODULE
+ *  @ingroup FASTDDS_MODULE
  */
 class SubscriberImpl
 {
@@ -272,15 +270,15 @@ protected:
 
         void on_requested_deadline_missed(
                 DataReader* reader,
-                const fastrtps::RequestedDeadlineMissedStatus& status) override;
+                const RequestedDeadlineMissedStatus& status) override;
 
         void on_liveliness_changed(
                 DataReader* reader,
-                const fastrtps::LivelinessChangedStatus& status) override;
+                const LivelinessChangedStatus& status) override;
 
         void on_sample_rejected(
                 DataReader* reader,
-                const fastrtps::SampleRejectedStatus& status) override;
+                const SampleRejectedStatus& status) override;
 
         void on_requested_incompatible_qos(
                 DataReader* reader,

@@ -79,7 +79,8 @@ endif()
 if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
     find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
     if(CTEST_MEMORYCHECK_COMMAND)
-        add_subdirectory(profiling)
+        # TODO(jlbueno) Migrate tests to Fast DDS API
+        # add_subdirectory(profiling)
     endif()
 endif()
 

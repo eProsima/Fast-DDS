@@ -326,32 +326,6 @@ public:
         }
     }
 
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::rtps::LocatorList::contains(const Locator&)",
-            "Unused method.")
-    RTPS_DllAPI bool contains(
-            const Locator& loc)
-    {
-        for (LocatorListIterator it = this->begin(); it != this->end(); ++it)
-        {
-            if (IsAddressDefined(*it))
-            {
-                if (loc == *it)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (loc.kind == (*it).kind && loc.port == (*it).port)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     /**
      * @brief Check that every locator contained in the list is not LOCATOR_KIND_INVALID.
      *
@@ -484,6 +458,15 @@ inline std::istream& operator >>(
 
 } // namespace rtps
 } // namespace fastdds
+
+namespace fastrtps {
+namespace rtps {
+
+using Locators = eprosima::fastdds::rtps::Locators;
+using LocatorList_t = eprosima::fastdds::rtps::LocatorList;
+
+} // namespace rtps
+} // namespace fastrtps
 } // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_ */

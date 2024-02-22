@@ -24,16 +24,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <dds/core/types.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/qos/DomainParticipantQos.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/sub/Subscriber.hpp>
-#include <dds/sub/qos/SubscriberQos.hpp>
-#include <dds/topic/Topic.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -42,18 +35,18 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -67,9 +60,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
 
-#include "../../common/GTestPrinters.hpp"
 #include "../../logging/mock/MockConsumer.h"
-#include "fastdds/dds/domain/DomainParticipant.hpp"
 
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
@@ -548,14 +539,6 @@ TEST(ParticipantTests, GetParticipantProfileQos)
 }
 
 
-TEST(ParticipantTests, CreatePSMDomainParticipant)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::core::null;
-    participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-
-    ASSERT_NE(participant, ::dds::core::null);
-}
-
 TEST(ParticipantTests, DeleteDomainParticipant)
 {
     DomainParticipant* participant =
@@ -625,27 +608,6 @@ TEST(ParticipantTests, ChangeDefaultParticipantQos)
                 PARTICIPANT_QOS_DEFAULT) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, ChangePSMDefaultParticipantQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-
-    ::dds::domain::qos::DomainParticipantQos qos = participant.default_participant_qos();
-
-    ASSERT_EQ(qos, PARTICIPANT_QOS_DEFAULT);
-
-    EntityFactoryQosPolicy entity_factory = qos.entity_factory();
-    entity_factory.autoenable_created_entities = false;
-    qos.entity_factory(entity_factory);
-
-    ASSERT_NO_THROW(participant.default_participant_qos(qos));
-    ::dds::domain::qos::DomainParticipantQos pqos = participant.default_participant_qos();
-
-    ASSERT_EQ(qos, pqos);
-    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
-
-    ASSERT_NO_THROW(participant.default_participant_qos(PARTICIPANT_QOS_DEFAULT));
-}
-
 TEST(ParticipantTests, ChangeDomainParticipantQos)
 {
     DomainParticipant* participant =
@@ -666,25 +628,6 @@ TEST(ParticipantTests, ChangeDomainParticipantQos)
     ASSERT_EQ(qos.entity_factory().autoenable_created_entities, false);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-
-}
-
-TEST(ParticipantTests, ChangePSMDomainParticipantQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::core::null;
-    participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::domain::qos::DomainParticipantQos qos = participant.qos();
-
-    check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
-
-    qos.entity_factory().autoenable_created_entities = false;
-    ASSERT_NO_THROW(participant.qos(qos));
-    ::dds::domain::qos::DomainParticipantQos pqos;
-    pqos = participant.qos();
-
-    ASSERT_FALSE(pqos == PARTICIPANT_QOS_DEFAULT);
-    ASSERT_EQ(qos, pqos);
-    ASSERT_EQ(qos.entity_factory().autoenable_created_entities, false);
 
 }
 
@@ -1827,15 +1770,6 @@ TEST(ParticipantTests, CreatePublisherWithProfile)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, CreatePSMPublisher)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::pub::Publisher publisher = ::dds::core::null;
-    publisher = ::dds::pub::Publisher(participant);
-
-    ASSERT_NE(publisher, ::dds::core::null);
-}
-
 TEST(ParticipantTests, ChangeDefaultPublisherQos)
 {
     DomainParticipant* participant =
@@ -1860,22 +1794,6 @@ TEST(ParticipantTests, ChangeDefaultPublisherQos)
     ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-}
-
-TEST(ParticipantTests, ChangePSMDefaultPublisherQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::pub::qos::PublisherQos qos = participant.default_publisher_qos();
-    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
-
-    qos.entity_factory().autoenable_created_entities = false;
-
-    ASSERT_NO_THROW(participant.default_publisher_qos(qos));
-
-    ::dds::pub::qos::PublisherQos pqos = participant.default_publisher_qos();
-
-    ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(ParticipantTests, CreateSubscriber)
@@ -1991,16 +1909,6 @@ TEST(ParticipantTests, GetPublisherProfileQos)
 }
 
 
-TEST(ParticipantTests, CreatePSMSubscriber)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-    ::dds::sub::Subscriber subscriber = ::dds::core::null;
-    subscriber = ::dds::sub::Subscriber(participant, SUBSCRIBER_QOS_DEFAULT);
-
-    ASSERT_NE(subscriber, ::dds::core::null);
-}
-
 TEST(ParticipantTests, DeletePublisher)
 {
     DomainParticipant* participant =
@@ -2053,22 +1961,6 @@ TEST(ParticipantTests, ChangeDefaultSubscriberQos)
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 }
 
-TEST(ParticipantTests, ChangePSMDefaultSubscriberQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::sub::qos::SubscriberQos qos = participant.default_subscriber_qos();
-    ASSERT_EQ(qos, SUBSCRIBER_QOS_DEFAULT);
-
-    qos.entity_factory().autoenable_created_entities = false;
-
-    ASSERT_NO_THROW(participant.default_subscriber_qos(qos));
-
-    ::dds::sub::qos::SubscriberQos pqos = participant.default_subscriber_qos();
-
-    ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
-}
-
 TEST(ParticipantTests, ChangeDefaultTopicQos)
 {
     DomainParticipant* participant =
@@ -2096,22 +1988,6 @@ TEST(ParticipantTests, ChangeDefaultTopicQos)
     ASSERT_FALSE(participant->set_default_topic_qos(qos) == ReturnCode_t::RETCODE_OK);
 
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-}
-
-TEST(ParticipantTests, ChangePSMDefaultTopicQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::topic::qos::TopicQos qos = participant.default_topic_qos();
-
-    ASSERT_EQ(qos, TOPIC_QOS_DEFAULT);
-
-    qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
-
-    ASSERT_NO_THROW(participant.default_topic_qos(qos));
-
-    ::dds::topic::qos::TopicQos tqos = participant.default_topic_qos();
-    ASSERT_EQ(qos, tqos);
-    ASSERT_EQ(tqos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
 }
 
 void check_topic_with_profile (
@@ -2243,19 +2119,6 @@ TEST(ParticipantTests, CreateTopicWithDifferentTypeName_negative)
         Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
         ASSERT_EQ(topic, nullptr);
     }
-}
-
-TEST(ParticipantTests, PSMCreateTopic)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-
-    TypeSupport type(new TopicDataTypeMock());
-    type.register_type(participant.delegate().get(), "footype");
-
-    ::dds::topic::Topic topic = ::dds::core::null;
-    topic = ::dds::topic::Topic(participant, "footopic", "footype", TOPIC_QOS_DEFAULT);
-
-    ASSERT_NE(topic, ::dds::core::null);
 }
 
 TEST(ParticipantTests, DeleteTopic)
@@ -2502,8 +2365,10 @@ public:
 
     void on_participant_discovery(
             eprosima::fastdds::dds::DomainParticipant*,
-            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&) override
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&,
+            bool& should_be_ignored) override
     {
+        static_cast<void>(should_be_ignored);
         try
         {
             promise_.set_value();

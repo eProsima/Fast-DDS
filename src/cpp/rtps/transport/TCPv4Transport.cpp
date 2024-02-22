@@ -540,5 +540,5 @@ bool TCPv4Transport::fillUnicastLocator(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

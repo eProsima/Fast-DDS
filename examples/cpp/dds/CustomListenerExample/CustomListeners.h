@@ -20,24 +20,18 @@
 #ifndef CUSTOMLISTENERS_H_
 #define CUSTOMLISTENERS_H_
 
-#include "TopicPubSubTypes.h"
-
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-
-#include <fastdds/dds/publisher/PublisherListener.hpp>
-
-#include <fastdds/dds/topic/TopicListener.hpp>
-
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastrtps/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-
-#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
+#include "TopicPubSubTypes.h"
 
 class CustomDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
 {

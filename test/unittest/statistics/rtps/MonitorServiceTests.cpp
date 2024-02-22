@@ -80,7 +80,7 @@ public:
             [&](
                 fastrtps::rtps::RTPSWriter*,
                 const fastrtps::TopicAttributes&,
-                const fastrtps::WriterQos&)->bool
+                const fastdds::dds::WriterQos&)->bool
             {
                 return true;
             },
