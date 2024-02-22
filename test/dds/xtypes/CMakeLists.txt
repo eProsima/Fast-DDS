@@ -26,8 +26,50 @@ include_directories(${Asio_INCLUDE_DIR})
 ###############################################################################
 
 file(GLOB COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/*.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/*.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/annotationsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/annotationsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendablePubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendableTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/declarationsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/externalPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritancePubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritanceTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutablePubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutableTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/optionalPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/optionalTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/primitivesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/primitivesTypeObjectSupport.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/relative_path_includePubSubTypes.cxx
+    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/relative_path_includeTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/structuresPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/structuresTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds/xtypes/BaseCasesIDLs/*.cxx
 )
 
