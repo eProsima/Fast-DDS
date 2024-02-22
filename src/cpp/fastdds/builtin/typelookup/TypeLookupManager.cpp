@@ -326,6 +326,8 @@ ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
  */
 bool TypeLookupManager::create_endpoints()
 {
+    bool ret = true;
+
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
     // Built-in history attributes.
@@ -348,6 +350,7 @@ bool TypeLookupManager::create_endpoints()
     // Built-in request writer
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
+        request_listener_ = new TypeLookupRequestListener(this);
         builtin_request_writer_history_ = new WriterHistory(hatt);
 
         RTPSWriter* req_writer;
@@ -355,7 +358,7 @@ bool TypeLookupManager::create_endpoints()
                     &req_writer,
                     watt,
                     builtin_request_writer_history_,
-                    nullptr,
+                    request_listener_,
                     fastrtps::rtps::c_EntityId_TypeLookup_request_writer,
                     true))
         {
@@ -365,15 +368,14 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
-            delete builtin_request_writer_history_;
-            builtin_request_writer_history_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
     // Built-in reply writer
-    if (builtin_protocols_->m_att.typelookup_config.use_server)
+    if (ret && builtin_protocols_->m_att.typelookup_config.use_server)
     {
+        reply_listener_ = new TypeLookupReplyListener(this);
         builtin_reply_writer_history_ = new WriterHistory(hatt);
 
         RTPSWriter* rep_writer;
@@ -381,7 +383,7 @@ bool TypeLookupManager::create_endpoints()
                     &rep_writer,
                     watt,
                     builtin_reply_writer_history_,
-                    nullptr,
+                    reply_listener_,
                     fastrtps::rtps::c_EntityId_TypeLookup_reply_writer,
                     true))
         {
@@ -391,9 +393,7 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
-            delete builtin_reply_writer_history_;
-            builtin_reply_writer_history_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
@@ -410,9 +410,12 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
 
     // Built-in request reader
-    if (builtin_protocols_->m_att.typelookup_config.use_server)
+    if (ret && builtin_protocols_->m_att.typelookup_config.use_server)
     {
-        request_listener_ = new TypeLookupRequestListener(this);
+        if (nullptr == request_listener_)
+        {
+            request_listener_ = new TypeLookupRequestListener(this);
+        }
         builtin_request_reader_history_ = new ReaderHistory(hatt);
 
         RTPSReader* req_reader;
@@ -430,18 +433,17 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
-            delete builtin_request_reader_history_;
-            builtin_request_reader_history_ = nullptr;
-            delete request_listener_;
-            request_listener_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
     // Built-in reply reader
-    if (builtin_protocols_->m_att.typelookup_config.use_client)
+    if (ret && builtin_protocols_->m_att.typelookup_config.use_client)
     {
-        reply_listener_ = new TypeLookupReplyListener(this);
+        if (nullptr == reply_listener_)
+        {
+            reply_listener_ = new TypeLookupReplyListener(this);
+        }
         builtin_reply_reader_history_ = new ReaderHistory(hatt);
 
         RTPSReader* rep_reader;
@@ -459,15 +461,50 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
-            delete builtin_reply_reader_history_;
-            builtin_reply_reader_history_ = nullptr;
-            delete reply_listener_;
-            reply_listener_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
-    return true;
+    // Clean up if something failed.
+    if (!ret)
+    {
+        if (nullptr != builtin_request_writer_history_)
+        {
+            delete builtin_request_writer_history_;
+            builtin_request_writer_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_reply_writer_history_)
+        {
+            delete builtin_reply_writer_history_;
+            builtin_reply_writer_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_request_reader_history_)
+        {
+            delete builtin_request_reader_history_;
+            builtin_request_reader_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_reply_reader_history_)
+        {
+            delete builtin_reply_reader_history_;
+            builtin_reply_reader_history_ = nullptr;
+        }
+
+        if (nullptr != request_listener_)
+        {
+            delete request_listener_;
+            request_listener_ = nullptr;
+        }
+        if (nullptr != reply_listener_)
+        {
+            delete reply_listener_;
+            reply_listener_ = nullptr;
+        }
+    }
+
+    return ret;
 }
 
 /* TODO Implement if security is needed.
@@ -567,7 +604,13 @@ bool TypeLookupManager::send_request(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
+
+        bool serialize_ret = request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        if (!serialize_ret)
+        {
+            payload.data = nullptr;
+        }
+        else if (valid)
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -610,7 +653,13 @@ bool TypeLookupManager::send_reply(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
+
+        bool serialize_ret = reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        if (!serialize_ret)
+        {
+            payload.data = nullptr;
+        }
+        else if (valid)
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -693,6 +742,18 @@ const fastrtps::rtps::GUID_t& TypeLookupManager::get_builtin_request_writer_guid
         return builtin_request_writer_->getGuid();
     }
     return c_Guid_Unknown;
+}
+
+void TypeLookupManager::request_cache_change_acked(
+        fastrtps::rtps::CacheChange_t* change)
+{
+    builtin_request_writer_history_->remove_change(change);
+}
+
+void TypeLookupManager::reply_cache_change_acked(
+        fastrtps::rtps::CacheChange_t* change)
+{
+    builtin_reply_writer_history_->remove_change(change);
 }
 
 } // namespace builtin
