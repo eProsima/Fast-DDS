@@ -21,6 +21,8 @@
 #define TYPELOOKUP_REPLY_LISTENER_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
+
 
 namespace eprosima {
 namespace fastrtps {
@@ -47,7 +49,7 @@ class TypeLookupManager;
  * Class TypeLookupReplyListener that receives the typelookup request messages of remote endpoints.
  * @ingroup TYPES_MODULE
  */
-class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener
+class TypeLookupReplyListener : public fastrtps::rtps::ReaderListener, public fastrtps::rtps::WriterListener
 {
 public:
 
@@ -70,7 +72,16 @@ public:
      */
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
-            const fastrtps::rtps::CacheChange_t* const  change) override;
+            const fastrtps::rtps::CacheChange_t* const change) override;
+
+    /**
+     * @brief This method is called when all the readers matched with this Writer acknowledge that a cache
+     * change has been received.
+     * @param change The cache change
+     */
+    void onWriterChangeReceivedByAll(
+            fastrtps::rtps::RTPSWriter*,
+            fastrtps::rtps::CacheChange_t* change) override;
 
 private:
 
@@ -85,5 +96,5 @@ private:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* TYPELOOKUP_REPLY_LISTENER_HPP_*/
