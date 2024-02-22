@@ -15,12 +15,10 @@
 #ifndef UTILS_HOST_HPP_
 #define UTILS_HOST_HPP_
 
-#include <fastdds/rtps/common/Locator.h>
-
-#include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/IPFinder.h>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastrtps/utils/IPFinder.h>
+#include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 

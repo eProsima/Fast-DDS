@@ -2992,7 +2992,7 @@ const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_mo
                 },
                 [&](RTPSWriter* w,
                 const fastrtps::TopicAttributes& topicAtt,
-                const fastrtps::WriterQos& wqos) -> bool
+                const fastdds::dds::WriterQos& wqos) -> bool
                 {
                     return this->registerWriter(w, topicAtt, wqos);
                 },

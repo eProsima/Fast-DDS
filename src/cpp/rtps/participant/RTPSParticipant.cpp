@@ -78,7 +78,7 @@ uint32_t RTPSParticipant::getRTPSParticipantID() const
 bool RTPSParticipant::registerWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     return mp_impl->registerWriter(Writer, topicAtt, wqos);
 }
@@ -86,7 +86,7 @@ bool RTPSParticipant::registerWriter(
 bool RTPSParticipant::registerReader(
         RTPSReader* Reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     return mp_impl->registerReader(Reader, topicAtt, rqos, content_filter);
@@ -101,7 +101,7 @@ void RTPSParticipant::update_attributes(
 bool RTPSParticipant::updateWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     return mp_impl->updateLocalWriter(Writer, topicAtt, wqos);
 }
@@ -109,7 +109,7 @@ bool RTPSParticipant::updateWriter(
 bool RTPSParticipant::updateReader(
         RTPSReader* Reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     return mp_impl->updateLocalReader(Reader, topicAtt, rqos, content_filter);

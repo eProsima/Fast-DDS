@@ -17,6 +17,8 @@
  *
  */
 
+#include "DiscoveryServerPublisher.h"
+
 #include <csignal>
 #include <thread>
 
@@ -30,11 +32,7 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/utils/IPLocator.h>
-
-#include "DiscoveryServerPublisher.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -257,8 +255,10 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 
 void HelloWorldPublisher::PubListener::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    static_cast<void>(should_be_ignored);
     if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;

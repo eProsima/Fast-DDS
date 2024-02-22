@@ -1,5 +1,5 @@
 names:
-    fastrtps:
+    fastdds:
         cmake-args:
             - "-DNO_TLS=OFF"
             - "-DSECURITY=ON"
@@ -14,4 +14,3 @@ names:
             - "-Dgtest_force_shared_crt=ON"
             - "-DBUILD_SHARED_LIBS=ON"
             - "-DBUILD_GMOCK=ON"
-

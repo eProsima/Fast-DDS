@@ -588,7 +588,7 @@ using std::swap;
     !(defined(HAVE_CXX17) && HAVE_CXX17) &&  __cplusplus < 201703 )
 
 /*
-    Fast-DDS defaults to PTHREAD_RWLOCK_PREFER_READER_NP for two main reasons:
+    Fast DDS defaults to PTHREAD_RWLOCK_PREFER_READER_NP for two main reasons:
 
     - It allows reader side recursiveness.  If we have two threads (T1, T2) and
       called S a shared lock and E and exclusive one.

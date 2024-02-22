@@ -510,5 +510,5 @@ bool TCPv6Transport::compare_ips(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

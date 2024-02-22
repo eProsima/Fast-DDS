@@ -87,8 +87,10 @@ bool ParticipantModule::init()
 
 void ParticipantModule::on_participant_discovery(
         DomainParticipant* participant,
-        ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    static_cast<void>(should_be_ignored);
     if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant " << participant->guid() << " discovered participant " << info.info.m_guid << ": "

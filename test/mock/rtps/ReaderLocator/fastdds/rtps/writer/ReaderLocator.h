@@ -23,13 +23,13 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <vector>
-#include <fastrtps/rtps/common/Locator.h>
-#include <fastrtps/rtps/common/Guid.h>
-#include <fastrtps/rtps/common/SequenceNumber.h>
-#include <fastrtps/rtps/messages/RTPSMessageGroup.h>
-#include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
-#include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
 
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/SequenceNumber.h>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
+#include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 
 namespace eprosima {
 namespace fastrtps {

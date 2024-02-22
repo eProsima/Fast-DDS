@@ -20,12 +20,11 @@
 #ifndef IPFINDER_H_
 #define IPFINDER_H_
 
-
-
-#include <vector>
 #include <string>
+#include <vector>
 
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 
 namespace eprosima {

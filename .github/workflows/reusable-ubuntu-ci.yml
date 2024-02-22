@@ -1,4 +1,4 @@
-name: Fast-DDS Ubuntu CI reusable workflow
+name: Fast DDS Ubuntu CI reusable workflow
 
 on:
   workflow_call:
@@ -53,7 +53,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          path: src/fastrtps
+          path: src/fastdds
           ref: ${{ inputs.fastdds-branch }}
 
       - name: Get minimum supported version of CMake
@@ -87,14 +87,14 @@ jobs:
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
 
@@ -102,7 +102,7 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
@@ -118,7 +118,7 @@ jobs:
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
           ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
-          packages_names: fastrtps
+          packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 

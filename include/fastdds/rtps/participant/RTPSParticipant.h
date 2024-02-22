@@ -23,13 +23,13 @@
 #include <cstdlib>
 #include <memory>
 
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/qos/ReaderQos.h>
-#include <fastrtps/qos/WriterQos.h>
 
 namespace eprosima {
 
@@ -155,7 +155,7 @@ public:
     bool registerWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
 
     /**
      * Register a RTPSReader in the builtin Protocols.
@@ -168,7 +168,7 @@ public:
     bool registerReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**
@@ -188,7 +188,7 @@ public:
     bool updateWriter(
             RTPSWriter* Writer,
             const TopicAttributes& topicAtt,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
 
     /**
      * Update reader QOS
@@ -201,7 +201,7 @@ public:
     bool updateReader(
             RTPSReader* Reader,
             const TopicAttributes& topicAtt,
-            const ReaderQos& rqos,
+            const fastdds::dds::ReaderQos& rqos,
             const fastdds::rtps::ContentFilterProperty* content_filter = nullptr);
 
     /**

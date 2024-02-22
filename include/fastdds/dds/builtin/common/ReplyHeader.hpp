@@ -20,8 +20,8 @@
 #ifndef REPLYHEADER_HPP
 #define REPLYHEADER_HPP
 
-#include <fastrtps/rtps/common/SampleIdentity.h>
 #include <fastdds/dds/builtin/common/Types.hpp>
+#include <fastdds/rtps/common/SampleIdentity.h>
 
 namespace eprosima {
 
@@ -38,24 +38,6 @@ struct ReplyHeader
     fastrtps::rtps::SampleIdentity relatedRequestId;
 
     RemoteExceptionCode_t remoteEx;
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::ReplyHeader::getCdrSerializedSize()",
-            "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const ReplyHeader& data,
-            size_t current_alignment = 0);
-
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::ReplyHeader::serialize()",
-            "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::rpc::ReplyHeader::deserialize()",
-            "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI static bool isKeyDefined()
     {

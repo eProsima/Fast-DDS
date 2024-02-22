@@ -351,8 +351,8 @@ TEST(DDSDiscovery, DDSNetworkInterfaceChangesAtRunTime)
     PubSubReader<HelloWorldPubSubType> datareader(TEST_TOPIC_NAME);
 
     // datareader is initialized with all the network interfaces
-    datareader.durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+    datareader.durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).history_depth(100).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(datareader.isInitialized());
 
     // datawriter: launch without interfaces
@@ -568,8 +568,10 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 
         void on_participant_discovery(
                 DomainParticipant* participant,
-                ParticipantDiscoveryInfo&& info)
+                ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored)
         {
+            static_cast<void>(should_be_ignored);
             std::unique_lock<std::mutex> lck(*mtx_);
             if (info.status ==
                     eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERY_STATUS::DISCOVERED_PARTICIPANT)
@@ -747,8 +749,10 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                ParticipantDiscoveryInfo&& info) override
+                ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override
         {
+            static_cast<void>(should_be_ignored);
             if (info.status == info.DISCOVERED_PARTICIPANT)
             {
                 std::lock_guard<std::mutex> guard(mtx);
@@ -1807,7 +1811,8 @@ TEST(DDSDiscovery, DataracePDP)
 
         void on_participant_discovery(
                 DomainParticipant* /*participant*/,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {

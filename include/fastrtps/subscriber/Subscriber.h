@@ -37,8 +37,6 @@ class SampleInfo_t;
  * Class Subscriber, contains the public API that allows the user to control the reception of messages.
  * This class should not be instantiated directly.
  * DomainRTPSParticipant class should be used to correctly create this element.
- * @ingroup FASTRTPS_MODULE
- * @snippet fastrtps_example.cpp ex_Subscriber
  */
 class RTPS_DllAPI Subscriber
 {

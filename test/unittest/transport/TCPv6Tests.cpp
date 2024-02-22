@@ -21,7 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
@@ -78,7 +78,7 @@ public:
 
     void HELPER_SetDescriptorDefaults();
 
-    TCPv6TransportDescriptor descriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor descriptor;
     std::unique_ptr<std::thread> senderThread;
     std::unique_ptr<std::thread> receiverThread;
 };
@@ -164,7 +164,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
 
     RTPSParticipantAttributes p_attr{};
     NetworkFactory factory{p_attr};
-    factory.RegisterTransport<TCPv6Transport, TCPv6TransportDescriptor>(descriptor);
+    factory.RegisterTransport<TCPv6Transport, eprosima::fastdds::rtps::TCPv6TransportDescriptor>(descriptor);
     std::vector<std::shared_ptr<ReceiverResource>> receivers;
     factory.BuildReceiverResources(multicastFilterLocator, receivers, 0x8FFF);
     ReceiverResource* receiver = receivers.back().get();
@@ -183,7 +183,7 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
 TEST_F(TCPv6Tests, autofill_port)
 {
     // Check normal port assignation
-    TCPv6TransportDescriptor test_descriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor test_descriptor;
     test_descriptor.add_listener_port(g_default_port);
     TCPv6Transport transportUnderTest(test_descriptor);
     transportUnderTest.init();
@@ -191,7 +191,7 @@ TEST_F(TCPv6Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest.configuration()->listening_ports[0] == g_default_port);
 
     // Check default port assignation
-    TCPv6TransportDescriptor test_descriptor_autofill;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor test_descriptor_autofill;
     test_descriptor_autofill.add_listener_port(0);
     TCPv6Transport transportUnderTest_autofill(test_descriptor_autofill);
     transportUnderTest_autofill.init();
@@ -269,16 +269,16 @@ TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
 // process this lead to overwriting server's channel resources map elements.
 TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 {
-    TCPv6TransportDescriptor recvDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor recvDescriptor;
     recvDescriptor.add_listener_port(g_default_port);
     MockTCPv6Transport receiveTransportUnderTest(recvDescriptor);
     receiveTransportUnderTest.init();
 
-    TCPv6TransportDescriptor sendDescriptor_1;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor sendDescriptor_1;
     TCPv6Transport sendTransportUnderTest_1(sendDescriptor_1);
     sendTransportUnderTest_1.init();
 
-    TCPv6TransportDescriptor sendDescriptor_2;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor sendDescriptor_2;
     TCPv6Transport sendTransportUnderTest_2(sendDescriptor_2);
     sendTransportUnderTest_2.init();
 
@@ -288,11 +288,11 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
     outputLocator.port = g_default_port;
     IPLocator::setLogicalPort(outputLocator, 7610);
 
-    SendResourceList send_resource_list_1;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list_1;
     ASSERT_TRUE(sendTransportUnderTest_1.OpenOutputChannel(send_resource_list_1, outputLocator));
     ASSERT_FALSE(send_resource_list_1.empty());
 
-    SendResourceList send_resource_list_2;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list_2;
     ASSERT_TRUE(sendTransportUnderTest_2.OpenOutputChannel(send_resource_list_2, outputLocator));
     ASSERT_FALSE(send_resource_list_2.empty());
 
@@ -309,7 +309,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
     uint16_t port = g_default_port;
     uint32_t msg_size = eprosima::fastdds::rtps::s_minimumSocketBuffer;
     // Create a TCP Server transport
-    TCPv6TransportDescriptor senderDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
     senderDescriptor.non_blocking_send = true;
     senderDescriptor.sendBufferSize = msg_size;
@@ -402,13 +402,13 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
     uint16_t port = g_default_port;
     // Create a TCP Server transport
-    TCPv6TransportDescriptor serverDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor serverDescriptor;
     serverDescriptor.add_listener_port(port);
     std::unique_ptr<TCPv6Transport> serverTransportUnderTest(new TCPv6Transport(serverDescriptor));
     serverTransportUnderTest->init();
 
     // Create a TCP Client transport
-    TCPv6TransportDescriptor clientDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor clientDescriptor;
     std::unique_ptr<MockTCPv6Transport> clientTransportUnderTest(new MockTCPv6Transport(clientDescriptor));
     clientTransportUnderTest->init();
 
@@ -419,7 +419,7 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
 
     // Connect client to server
     EXPECT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
-    SendResourceList client_resource_list;
+    eprosima::fastdds::rtps::SendResourceList client_resource_list;
     ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
     ASSERT_FALSE(client_resource_list.empty());
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -496,7 +496,7 @@ TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_p
     IPLocator::setIPv6(lowerOutputChannelLocator, "::");
     IPLocator::setIPv6(higherOutputChannelLocator, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
 
     // If the remote address is lower than the local one, no channel must be created but it must be added to the send_resource_list
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, lowerOutputChannelLocator));
@@ -512,7 +512,7 @@ TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_p
 // from the channel_resources_map.
 TEST_F(TCPv6Tests, remove_from_send_resource_list)
 {
-    TCPv6TransportDescriptor send_descriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor send_descriptor;
     MockTCPv6Transport send_transport_under_test(send_descriptor);
     send_transport_under_test.init();
 
@@ -527,7 +527,7 @@ TEST_F(TCPv6Tests, remove_from_send_resource_list)
     LocatorList_t initial_peer_list;
     initial_peer_list.push_back(output_locator_2);
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_1));
     ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_2));
     ASSERT_EQ(send_resource_list.size(), 2u);
@@ -572,7 +572,7 @@ TEST_F(TCPv6Tests, add_logical_port_on_send_resource_creation)
     // TCP Client
     {
         uint16_t port = 12345;
-        TCPv6TransportDescriptor clientDescriptor;
+        eprosima::fastdds::rtps::TCPv6TransportDescriptor clientDescriptor;
         std::unique_ptr<MockTCPv6Transport> clientTransportUnderTest(new MockTCPv6Transport(clientDescriptor));
         clientTransportUnderTest->init();
 
@@ -582,7 +582,7 @@ TEST_F(TCPv6Tests, add_logical_port_on_send_resource_creation)
         IPLocator::setLogicalPort(initialPeerLocator, 7410);
 
         // OpenOutputChannel
-        SendResourceList client_resource_list;
+        eprosima::fastdds::rtps::SendResourceList client_resource_list;
         ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
         IPLocator::setLogicalPort(initialPeerLocator, 7411);
         ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
@@ -602,7 +602,7 @@ TEST_F(TCPv6Tests, add_logical_port_on_send_resource_creation)
         // Discovered participant physical port has to have a lower value than the listening port to behave as a server
         uint16_t participantPhysicalLocator = 12344;
         // Create a TCP Server transport
-        TCPv6TransportDescriptor serverDescriptor;
+        eprosima::fastdds::rtps::TCPv6TransportDescriptor serverDescriptor;
         serverDescriptor.add_listener_port(port);
         std::unique_ptr<MockTCPv6Transport> serverTransportUnderTest(new MockTCPv6Transport(serverDescriptor));
         serverTransportUnderTest->init();
@@ -613,7 +613,7 @@ TEST_F(TCPv6Tests, add_logical_port_on_send_resource_creation)
         IPLocator::setLogicalPort(discoveredParticipantLocator, 7410);
 
         // OpenOutputChannel
-        SendResourceList server_resource_list;
+        eprosima::fastdds::rtps::SendResourceList server_resource_list;
         ASSERT_TRUE(serverTransportUnderTest->OpenOutputChannel(server_resource_list, discoveredParticipantLocator));
         IPLocator::setLogicalPort(discoveredParticipantLocator, 7411);
         ASSERT_TRUE(serverTransportUnderTest->OpenOutputChannel(server_resource_list, discoveredParticipantLocator));
@@ -636,7 +636,7 @@ TEST_F(TCPv6Tests, add_logical_port_on_send_resource_creation)
         // Discovered participant physical port has to have a larger value than the listening port to behave as a client
         uint16_t participantPhysicalLocator = 12346;
         // Create a TCP Client transport
-        TCPv6TransportDescriptor clientDescriptor;
+        eprosima::fastdds::rtps::TCPv6TransportDescriptor clientDescriptor;
         clientDescriptor.add_listener_port(port);
         std::unique_ptr<MockTCPv6Transport> clientTransportUnderTest(new MockTCPv6Transport(clientDescriptor));
         clientTransportUnderTest->init();
@@ -647,7 +647,7 @@ TEST_F(TCPv6Tests, add_logical_port_on_send_resource_creation)
         IPLocator::setLogicalPort(discoveredParticipantLocator, 7410);
 
         // OpenOutputChannel
-        SendResourceList client_resource_list;
+        eprosima::fastdds::rtps::SendResourceList client_resource_list;
         ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, discoveredParticipantLocator));
         IPLocator::setLogicalPort(discoveredParticipantLocator, 7411);
         ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, discoveredParticipantLocator));
