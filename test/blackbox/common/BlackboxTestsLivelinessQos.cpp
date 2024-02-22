@@ -1717,7 +1717,7 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_NotAlive)
     writer.wait_discovery();
     reader.wait_discovery();
 
-    LivelinessChangedStatus status = reader.liveliness_changed_status();
+    eprosima::fastdds::dds::LivelinessChangedStatus status = reader.liveliness_changed_status();
     EXPECT_EQ(status.alive_count, 0);
     EXPECT_EQ(status.alive_count_change, 0);
     EXPECT_EQ(status.not_alive_count, 0);
@@ -1780,7 +1780,7 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_Alive_Unmatched)
     writer.assert_liveliness();
     reader.wait_liveliness_recovered();
 
-    LivelinessChangedStatus status = reader.liveliness_changed_status();
+    eprosima::fastdds::dds::LivelinessChangedStatus status = reader.liveliness_changed_status();
     EXPECT_EQ(status.alive_count, 1);
     EXPECT_EQ(status.alive_count_change, 1);
     EXPECT_EQ(status.not_alive_count, 0);
@@ -1833,7 +1833,7 @@ TEST_P(LivelinessQos, LivelinessChangedStatus_NotAlive_Unmatched)
     writer.assert_liveliness();
     reader.wait_liveliness_recovered();
 
-    LivelinessChangedStatus status = reader.liveliness_changed_status();
+    eprosima::fastdds::dds::LivelinessChangedStatus status = reader.liveliness_changed_status();
     EXPECT_EQ(status.alive_count, 1);
     EXPECT_EQ(status.alive_count_change, 1);
     EXPECT_EQ(status.not_alive_count, 0);

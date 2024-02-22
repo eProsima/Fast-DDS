@@ -25,8 +25,8 @@ if(NOT foonathan_memory_FOUND)
     find_package(foonathan_memory REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -46,7 +46,7 @@ target_compile_definitions(DDSDeadlineQoSExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSDeadlineQoSExample fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSDeadlineQoSExample fastdds fastcdr foonathan_memory)
 if(UNIX AND NOT(QNXNTO) AND NOT(ANDROID))
     target_link_libraries(DDSDeadlineQoSExample pthread)
 endif()

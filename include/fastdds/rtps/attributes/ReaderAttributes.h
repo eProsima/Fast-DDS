@@ -20,10 +20,10 @@
 #ifndef _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 #define _FASTDDS_RTPS_ATTRIBUTES_READERATTRIBUTES_H_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
@@ -70,7 +70,7 @@ class ReaderAttributes
 public:
 
     ReaderAttributes()
-        : liveliness_kind_(AUTOMATIC_LIVELINESS_QOS)
+        : liveliness_kind_(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , expectsInlineQos(false)
         , disable_positive_acks(false)
@@ -91,7 +91,7 @@ public:
     ReaderTimes times;
 
     //! Liveliness kind
-    LivelinessQosPolicyKind liveliness_kind_;
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind_;
 
     //! Liveliness lease duration
     Duration_t liveliness_lease_duration;

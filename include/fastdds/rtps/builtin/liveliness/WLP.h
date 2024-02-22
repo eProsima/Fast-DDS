@@ -21,16 +21,15 @@
 #define _FASTDDS_RTPS_WLP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <vector>
 #include <mutex>
+#include <vector>
 
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastrtps/qos/QosPolicies.h>
-
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -101,7 +100,7 @@ public:
      */
     bool add_local_writer(
             RTPSWriter* W,
-            const WriterQos& wqos);
+            const fastdds::dds::WriterQos& wqos);
     /**
      * Remove a local writer from the liveliness protocol.
      * @param W Pointer to the RTPSWriter.
@@ -118,7 +117,7 @@ public:
      */
     bool add_local_reader(
             RTPSReader* reader,
-            const ReaderQos& rqos);
+            const fastdds::dds::ReaderQos& rqos);
 
     /**
      * @brief Removes a local reader from the livliness protocol

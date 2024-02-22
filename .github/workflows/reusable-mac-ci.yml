@@ -47,7 +47,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          path: src/fastrtps
+          path: src/fastdds
           ref: ${{ inputs.fastdds-branch }}
 
       - uses: eProsima/eProsima-CI/external/setup-python@v0
@@ -88,21 +88,21 @@ jobs:
           # Nightly job
           if [[ "${{ inputs.label }}" == *"nightly"* ]]
           then
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
+            DEPENDS_REPOS_PATH="./src/fastdds/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
             if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastdds/.github/workflows/config/nightly_master.repos"
             fi
-            META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
+            META_PATH="./src/fastdds/.github/workflows/config/nightly.meta"
 
           # Either PR or manual
           else
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
+            DEPENDS_REPOS_PATH="./src/fastdds/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
             if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastdds/.github/workflows/config/default_ci_master.repos"
             fi
-            META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
+            META_PATH="./src/fastdds/.github/workflows/config/default_ci.meta"
           fi
 
           echo "Selected repos files: ${DEPENDS_REPOS_PATH}"
@@ -139,7 +139,7 @@ jobs:
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
           ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
-          packages_names: fastrtps
+          packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 

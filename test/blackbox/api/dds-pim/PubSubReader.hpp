@@ -90,8 +90,10 @@ protected:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override
         {
+            static_cast<void>(should_be_ignored);
             if (reader_.onDiscovery_ != nullptr)
             {
                 std::unique_lock<std::mutex> lock(reader_.mutexDiscovery_);
@@ -202,7 +204,7 @@ protected:
 
         void on_requested_deadline_missed(
                 eprosima::fastdds::dds::DataReader* datareader,
-                const eprosima::fastrtps::RequestedDeadlineMissedStatus& status) override
+                const eprosima::fastdds::dds::RequestedDeadlineMissedStatus& status) override
         {
             (void)datareader;
 
@@ -219,7 +221,7 @@ protected:
 
         void on_liveliness_changed(
                 eprosima::fastdds::dds::DataReader* datareader,
-                const eprosima::fastrtps::LivelinessChangedStatus& status) override
+                const eprosima::fastdds::dds::LivelinessChangedStatus& status) override
         {
             (void)datareader;
 
@@ -875,7 +877,7 @@ public:
 
     /*** Function to change QoS ***/
     PubSubReader& reliability(
-            const eprosima::fastrtps::ReliabilityQosPolicyKind kind)
+            const eprosima::fastdds::dds::ReliabilityQosPolicyKind kind)
     {
         datareader_qos_.reliability().kind = kind;
         return *this;
@@ -906,7 +908,7 @@ public:
     }
 
     PubSubReader& liveliness_kind(
-            const eprosima::fastrtps::LivelinessQosPolicyKind& kind)
+            const eprosima::fastdds::dds::LivelinessQosPolicyKind& kind)
     {
         datareader_qos_.liveliness().kind = kind;
         return *this;
@@ -947,7 +949,7 @@ public:
     }
 
     PubSubReader& history_kind(
-            const eprosima::fastrtps::HistoryQosPolicyKind kind)
+            const eprosima::fastdds::dds::HistoryQosPolicyKind kind)
     {
         datareader_qos_.history().kind = kind;
         return *this;
@@ -1303,7 +1305,7 @@ public:
     }
 
     PubSubReader& durability_kind(
-            const eprosima::fastrtps::DurabilityQosPolicyKind kind)
+            const eprosima::fastdds::dds::DurabilityQosPolicyKind kind)
     {
         datareader_qos_.durability().kind = kind;
         return *this;
@@ -1561,7 +1563,7 @@ public:
     {
         participant_qos_.properties().properties().emplace_back("dds.persistence.plugin", "builtin.SQLITE3");
         participant_qos_.properties().properties().emplace_back("dds.persistence.sqlite3.filename", filename);
-        datareader_qos_.durability().kind = eprosima::fastrtps::TRANSIENT_DURABILITY_QOS;
+        datareader_qos_.durability().kind = eprosima::fastdds::dds::TRANSIENT_DURABILITY_QOS;
         datareader_qos_.properties().properties().emplace_back("dds.persistence.guid", persistence_guid);
 
         return *this;
@@ -1675,7 +1677,7 @@ public:
     }
 
     void set_liveliness_changed_status(
-            const eprosima::fastrtps::LivelinessChangedStatus& status)
+            const eprosima::fastdds::dds::LivelinessChangedStatus& status)
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
@@ -1717,7 +1719,7 @@ public:
         return status;
     }
 
-    const eprosima::fastrtps::LivelinessChangedStatus& liveliness_changed_status()
+    const eprosima::fastdds::dds::LivelinessChangedStatus& liveliness_changed_status()
     {
         std::unique_lock<std::mutex> lock(liveliness_mutex_);
 
@@ -2047,7 +2049,7 @@ protected:
     //! Number of times liveliness was recovered
     unsigned int times_liveliness_recovered_;
     //! The liveliness changed status
-    eprosima::fastrtps::LivelinessChangedStatus liveliness_changed_status_;
+    eprosima::fastdds::dds::LivelinessChangedStatus liveliness_changed_status_;
 
     //! A mutex for incompatible_qos status
     std::mutex incompatible_qos_mutex_;

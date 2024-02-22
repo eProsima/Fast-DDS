@@ -94,7 +94,7 @@ target_compile_definitions(BlackboxTests_RTPS PRIVATE
     )
 target_include_directories(BlackboxTests_RTPS PRIVATE
     ${Asio_INCLUDE_DIR})
-target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
+target_link_libraries(BlackboxTests_RTPS fastdds fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
     TEST_PREFIX "BlackboxTests_RTPS."
     TEST_FILTER ${pkcs_filter}
@@ -260,7 +260,7 @@ if(FASTDDS_PIM_API_TESTS)
         ${Asio_INCLUDE_DIR}
         api/dds-pim)
     target_link_libraries(BlackboxTests_DDS_PIM
-        fastrtps
+        fastdds
         fastcdr
         foonathan_memory
         GTest::gtest

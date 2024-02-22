@@ -50,7 +50,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(3).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -59,7 +59,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     writer.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs);
 
     writer.history_depth(3).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -86,7 +86,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     PubSubWriter<Data64kbPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(3).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -99,7 +99,7 @@ TEST_P(PubSubFlowControllers, AsyncPubSubAsReliableData64kbWithParticipantFlowCo
     writer.add_user_transport_to_pparams(testTransport);
 
     writer.history_depth(3).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).init();
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -126,14 +126,14 @@ TEST_P(PubSubFlowControllers, AsyncPubSubWithFlowController64kb)
     PubSubWriter<Data64kbPubSubType> slowWriter(TEST_TOPIC_NAME);
 
     reader.history_depth(2).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).init();
     ASSERT_TRUE(reader.isInitialized());
 
     uint32_t sizeToClear = 68000; //68kb
     uint32_t periodInMs = 1000; //1sec
 
     slowWriter.history_depth(2).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE).
             add_throughput_controller_descriptor_to_pparams(scheduler_policy_, sizeToClear, periodInMs).init();
     ASSERT_TRUE(slowWriter.isInitialized());
 
@@ -165,17 +165,17 @@ TEST_P(PubSubFlowControllers, AsyncMultipleWritersFlowController64kb)
 
     // Readers configuration
     entities.sub_history_depth(3).
-            sub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-            sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+            sub_durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).
+            sub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
 
     // Writers configuration.
     uint32_t bytesPerPeriod = 68000;
     uint32_t periodInMs = 500;
     entities.add_throughput_controller_descriptor_to_pparams(scheduler_policy_, bytesPerPeriod, periodInMs).
             pub_history_depth(3).
-            pub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-            pub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            asynchronously(eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE);
+            pub_durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).
+            pub_reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            asynchronously(eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
 
     // Creation.
     entities.init();
