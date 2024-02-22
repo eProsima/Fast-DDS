@@ -103,7 +103,7 @@ TEST_P(PubSubHistory, PubSubAsNonReliableKeepLastReaderSmallDepth)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+    reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).
             history_depth(2).
             resource_limits_allocated_samples(2).
             resource_limits_max_samples(2).mem_policy(mem_policy_).init();
@@ -112,7 +112,7 @@ TEST_P(PubSubHistory, PubSubAsNonReliableKeepLastReaderSmallDepth)
 
     // Needs a deeper pool for datasharing
     // because reader does not process anything until everything is sent
-    writer.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS)
+    writer.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS)
             .resource_limits_extra_samples(10).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -150,8 +150,8 @@ TEST_P(PubSubHistory, CacheChangeReleaseTest)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     //Reader Config
-    reader.reliability(eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS);
-    reader.history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS);
+    reader.reliability(eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
+    reader.history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
     reader.history_depth(1);
     reader.resource_limits_allocated_samples(1);
     reader.resource_limits_max_samples(1);
@@ -190,7 +190,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepth)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.reliability(RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).
             history_depth(2).
             resource_limits_allocated_samples(2).
             resource_limits_max_samples(2).mem_policy(mem_policy_).init();
@@ -251,7 +251,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWriterSmallDepth)
     ASSERT_TRUE(reader.isInitialized());
 
     writer.
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).
             history_depth(2).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -279,14 +279,14 @@ TEST(PubSubHistory, PubSubKeepAll)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
             resource_limits_allocated_samples(2).
             resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
             max_blocking_time({0, 0}).
             resource_limits_allocated_samples(2).
             resource_limits_max_samples(2).init();
@@ -337,15 +337,15 @@ TEST(PubSubHistory, PubSubKeepAllTransient)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
             resource_limits_allocated_samples(2).
             resource_limits_max_samples(2).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
+            durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).
             max_blocking_time({0, 0}).
             resource_limits_allocated_samples(2).
             resource_limits_max_samples(2).init();
@@ -399,8 +399,8 @@ TEST_P(PubSubHistory, PubReliableKeepAllSubNonReliable)
 
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).
             resource_limits_allocated_samples(1).
             resource_limits_max_samples(1).mem_policy(mem_policy_).init();
 
@@ -428,10 +428,10 @@ TEST_P(PubSubHistory, StatefulReaderCacheChangeRelease)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(2).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
     ASSERT_TRUE(reader.isInitialized());
     writer.history_depth(2).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
     ASSERT_TRUE(writer.isInitialized());
 
     writer.wait_discovery();
@@ -474,7 +474,7 @@ TEST_P(PubSubHistory, PubSubAsReliableMultithreadKeepLast1)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     reader.history_depth(1).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -522,7 +522,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthTwoPublishers)
 
     reader
             .reliability(RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(1)
             .resource_limits_allocated_samples(1)
             .resource_limits_max_samples(1);
@@ -591,13 +591,13 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKey)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -624,15 +624,15 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstance)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys)
             .resource_limits_max_samples_per_instance(1)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -670,8 +670,8 @@ TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLif
     constexpr uint32_t samples_per_instance = 2;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -682,8 +682,8 @@ TEST(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamplesPerInstanceAndLif
 
     writer.resource_limits_max_instances(keys)
             .resource_limits_max_samples_per_instance(samples_per_instance)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .max_blocking_time(max_block_time_ms * 1e-3)
             .lifespan_period(lifespan_ms * 1e-3)
             .disable_builtin_transport()
@@ -730,16 +730,16 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxSamplesPerInst
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_instances(keys)
             .resource_limits_max_samples(0)
             .resource_limits_max_samples_per_instance(0)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -776,15 +776,15 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndInfiniteMaxInstances)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_samples(0)
             .resource_limits_max_instances(0)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -821,8 +821,8 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
     uint32_t keys = 2;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -830,8 +830,8 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithKeyAndMaxSamples)
             .resource_limits_max_samples(4)
             .resource_limits_allocated_samples(2)
             .resource_limits_max_samples_per_instance(2)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -865,15 +865,15 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepAllWithoutKeyAndMaxSamples)
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
     writer.resource_limits_max_samples(2)
             .resource_limits_allocated_samples(2)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
@@ -915,8 +915,8 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
             resource_limits_allocated_samples(keys * depth).
             resource_limits_max_instances(keys).
             resource_limits_max_samples_per_instance(depth).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
@@ -925,7 +925,7 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastReaderSmallDepthWithKey)
             resource_limits_allocated_samples(keys * depth).
             resource_limits_max_instances(keys).
             resource_limits_max_samples_per_instance(depth).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -964,8 +964,8 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     uint32_t depth = 10;
 
     reader.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).
             history_depth(depth).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -974,8 +974,8 @@ TEST_P(PubSubHistory, PubSubAsReliableKeepLastWithKeyUnorderedReception)
     testTransport->dropDataMessagesPercentage = 25;
 
     writer.resource_limits_max_instances(keys).
-            reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).
+            reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).
             history_depth(depth).mem_policy(mem_policy_).
             disable_builtin_transport().add_user_transport_to_pparams(testTransport).
             init();
@@ -1026,9 +1026,9 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1)
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
 
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(10)
             .resource_limits_allocated_samples(10)
             .resource_limits_max_samples(10).mem_policy(mem_policy_).init();
@@ -1039,9 +1039,9 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1)
     auto expected_data = data;
     writer.send(data);
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(1).mem_policy(mem_policy_).init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1071,8 +1071,8 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
 
     writer
             .history_depth(static_cast<int32_t>(data.size()))
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .disable_builtin_transport().add_user_transport_to_pparams(transport)
             .mem_policy(mem_policy_).init();
 
@@ -1084,10 +1084,10 @@ TEST_P(PubSubHistory, ReliableTransientLocalKeepLast1Data300Kb)
     ASSERT_FALSE(reader_data.empty());
 
     reader
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(1)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS)
             .disable_builtin_transport().add_user_transport_to_pparams(transport)
             .mem_policy(mem_policy_).init();
 
@@ -1180,7 +1180,7 @@ TEST_P(PubSubHistory, WriterUnmatchClearsHistory)
     reader.history_depth(2).reliability(RELIABLE_RELIABILITY_QOS).mem_policy(mem_policy_).init();
     ASSERT_TRUE(reader.isInitialized());
 
-    writer.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).mem_policy(mem_policy_).init();
+    writer.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).mem_policy(mem_policy_).init();
     ASSERT_TRUE(writer.isInitialized());
 
     // Wait for discovery.
@@ -1201,7 +1201,7 @@ TEST_P(PubSubHistory, WriterUnmatchClearsHistory)
 
     // Create another writer and send more data
     // Reader should be able to get the new data
-    writer2.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS).mem_policy(mem_policy_).init();
+    writer2.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS).mem_policy(mem_policy_).init();
     ASSERT_TRUE(writer2.isInitialized());
     writer2.wait_discovery();
     reader.wait_discovery();
@@ -1236,7 +1236,7 @@ TEST_P(PubSubHistory, KeepAllWriterContinueSendingAfterReaderMatched)
     reader.reliability(RELIABLE_RELIABILITY_QOS);
 
     writer.reliability(RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
             .resource_limits_allocated_samples(1)
             .resource_limits_max_samples(1);
 
@@ -1317,9 +1317,9 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
 
     const uint32_t depth = 10;
 
-    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).history_depth(depth).
+    reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).history_depth(depth).
             init();
 
     ASSERT_TRUE(reader.isInitialized());
@@ -1355,8 +1355,8 @@ TEST(PubSubHistory, ReliableUnmatchWithFutureChanges)
                 return drop_heartbeat && !writer_guid.is_builtin();
             };
 
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).
-            history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS).history_depth(depth).
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS).
+            history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS).history_depth(depth).
             disable_builtin_transport().add_user_transport_to_pparams(testTransport).
             init();
 

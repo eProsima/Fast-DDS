@@ -18,10 +18,11 @@
  */
 
 #include <fastdds/rtps/writer/PersistentWriter.h>
+
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <rtps/persistence/PersistenceService.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+
 #include <rtps/DataSharing/WriterPool.hpp>
+#include <rtps/persistence/PersistenceService.h>
 
 namespace eprosima {
 namespace fastrtps {

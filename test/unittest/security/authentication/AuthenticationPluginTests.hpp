@@ -15,17 +15,16 @@
 #ifndef _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 #define _UNITTEST_SECURITY_AUTHENTICATION_AUTHENTICATIONPLUGINTESTS_HPP_
 
-#include <security/authentication/PKIDH.h>
-#include <security/OpenSSLInit.hpp>
+#include <gtest/gtest.h>
 
 // Include first necessary mocks
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
-#include <gtest/gtest.h>
+#include <security/authentication/PKIDH.h>
+#include <security/OpenSSLInit.hpp>
 
 class AuthenticationPluginTest : public ::testing::Test
 {

@@ -189,7 +189,8 @@ bool SubscriberModule::run_for(
 
 void SubscriberModule::on_participant_discovery(
         DomainParticipant* /*participant*/,
-        ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info,
+        bool& /*should_be_ignored*/)
 {
     if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {

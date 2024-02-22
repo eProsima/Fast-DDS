@@ -19,15 +19,15 @@
 #ifndef _FASTDDS_WRITERATTRIBUTES_H_
 #define _FASTDDS_WRITERATTRIBUTES_H_
 
-#include <fastdds/rtps/common/Time_t.h>
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastdds/rtps/attributes/EndpointAttributes.h>
-#include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
-#include <fastrtps/qos/QosPolicies.h>
-
 #include <functional>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/EndpointAttributes.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
+#include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
+#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -88,7 +88,7 @@ class WriterAttributes
 public:
 
     WriterAttributes()
-        : liveliness_kind(AUTOMATIC_LIVELINESS_QOS)
+        : liveliness_kind(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , liveliness_lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , liveliness_announcement_period(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , mode(SYNCHRONOUS_WRITER)
@@ -112,7 +112,7 @@ public:
     WriterTimes times;
 
     //! Liveliness kind
-    fastrtps::LivelinessQosPolicyKind liveliness_kind;
+    fastdds::dds::LivelinessQosPolicyKind liveliness_kind;
 
     //! Liveliness lease duration
     Duration_t liveliness_lease_duration;

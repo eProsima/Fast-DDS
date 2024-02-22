@@ -162,8 +162,10 @@ private:
 
         void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored)
         {
+            static_cast<void>(should_be_ignored);
             bool expected = false;
             if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
             {

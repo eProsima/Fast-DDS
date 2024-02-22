@@ -16,8 +16,8 @@
  * @file DataWriterListener.hpp
  */
 
-#ifndef _FASTRTPS_DATAWRITERLISTENER_HPP_
-#define _FASTRTPS_DATAWRITERLISTENER_HPP_
+#ifndef _FASTDDS_DATAWRITERLISTENER_HPP_
+#define _FASTDDS_DATAWRITERLISTENER_HPP_
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
@@ -129,4 +129,4 @@ public:
 } /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* _FASTRTPS_DATAWRITERLISTENER_HPP_ */
+#endif /* _FASTDDS_DATAWRITERLISTENER_HPP_ */

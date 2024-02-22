@@ -1,4 +1,4 @@
-name: Fast-DDS Windows CI (nightly)
+name: Fast DDS Windows CI (nightly)
 
 on:
   workflow_dispatch:

@@ -161,7 +161,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 return;
             }
 
-            fastrtps::ParameterPropertyList_t properties = participant_data.m_properties;
+            fastdds::dds::ParameterPropertyList_t properties = participant_data.m_properties;
 
             /* Check DS_VERSION */
             auto ds_version = std::find_if(

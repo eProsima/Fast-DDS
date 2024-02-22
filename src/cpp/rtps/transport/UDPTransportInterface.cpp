@@ -744,5 +744,5 @@ bool UDPTransportInterface::is_localhost_allowed() const
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

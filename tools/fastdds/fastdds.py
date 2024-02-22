@@ -17,7 +17,7 @@
 """
 fastdds CLI tool.
 
-This CLI tool provide a set commands and sub-commands to perform, Fast-DDS
+This CLI tool provide a set commands and sub-commands to perform, Fast DDS
 related, maintenance / configuration tasks.
 
 usage: fastdds <command> [<command-args>]

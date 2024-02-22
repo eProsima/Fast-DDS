@@ -1,8 +1,8 @@
 /***
- * Use Case Demonstrator for eProsima Fast RTPS
+ * Use Case Demonstrator for eProsima Fast DDS
  * --------------------------------------------
  *
- *  This is an interactive program designed to show the effect of different configuration parameters on the behaviour of eProsima Fast RTPS
+ *  This is an interactive program designed to show the effect of different configuration parameters on the behaviour of eProsima Fast DDS
  *
  ***/
 
