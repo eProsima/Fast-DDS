@@ -171,6 +171,7 @@ void TCPReqRepHelloWorldReplier::init(
 
     //Create datareader
     datareader_qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    //Increase default max_blocking_time to 1s in case the CPU is overhead
     datareader_qos_.reliability().max_blocking_time = Duration_t(1, 0);
     request_datareader_ = request_subscriber_->create_datareader(request_topic_, datareader_qos_,
                     &request_listener_);

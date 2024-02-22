@@ -66,7 +66,6 @@ public:
     std::shared_ptr<TCPTransportDescriptor> test_transport_;
 };
 
-
 // TCP and Domain management with logical ports tests
 TEST_P(TransportTCP, TCPDomainHelloWorld_P0_P1_D0_D0)
 {
@@ -402,9 +401,7 @@ TEST_P(TransportTCP, TCPMaxInitialPeer_P0_5_P4)
     ASSERT_TRUE(replier.is_matched());
 }
 
-
 #if TLS_FOUND
-
 TEST_P(TransportTCP, TCP_TLS)
 {
     TCPReqRepHelloWorldRequester requester;

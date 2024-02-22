@@ -100,7 +100,6 @@ void TCPReqRepHelloWorldRequester::init(
         bool force_localhost)
 {
     DomainParticipantQos participant_qos;
-    //    ParticipantAttributes pattr;
 
     int32_t kind;
     LocatorList_t loc;
@@ -216,6 +215,7 @@ void TCPReqRepHelloWorldRequester::init(
 
     //Create DataReader
     datareader_qos_.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    //Increase default max_blocking_time to 1s in case the CPU is overhead
     datareader_qos_.reliability().max_blocking_time = Duration_t(1, 0);
     reply_datareader_ = reply_subscriber_->create_datareader(reply_topic_, datareader_qos_, &reply_listener_);
     ASSERT_NE(reply_datareader_, nullptr);

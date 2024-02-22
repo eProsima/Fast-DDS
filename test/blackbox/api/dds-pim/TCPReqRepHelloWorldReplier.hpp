@@ -189,7 +189,7 @@ private:
     bool initialized_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    unsigned int matched_;
+    std::atomic<unsigned int> matched_;
     eprosima::fastdds::dds::TypeSupport type_;
 };
 

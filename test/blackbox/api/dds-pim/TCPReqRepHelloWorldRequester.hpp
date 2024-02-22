@@ -73,6 +73,10 @@ public:
             {
                 requester_.matched();
             }
+            else if (0 > info.current_count_change)
+            {
+                requester_.unmatched();
+            }
         }
 
     private:
@@ -190,7 +194,7 @@ private:
     std::condition_variable cv_;
     std::mutex mutexDiscovery_;
     std::condition_variable cvDiscovery_;
-    unsigned int matched_;
+    std::atomic<unsigned int> matched_;
     eprosima::fastdds::dds::TypeSupport type_;
     eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
     eprosima::fastrtps::rtps::SampleIdentity received_sample_identity_;
