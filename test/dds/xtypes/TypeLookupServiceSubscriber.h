@@ -61,6 +61,9 @@ struct SubKnownType
     type_creator_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::create_known_type_impl<Type, \
                     Type ## PubSubType>, \
                     this, \
+                    std::placeholders::_1); \
+    type_processor_functions_[#Type] = std::bind(&TypeLookupServiceSubscriber::process_type_impl<Type>, \
+                    this, \
                     std::placeholders::_1)
 
 class TypeLookupServiceSubscriber
@@ -110,6 +113,13 @@ private:
     bool create_known_type_impl(
             const std::string& type);
 
+    template <typename Type>
+    bool process_type_impl(
+            DataReader* reader);
+
+    bool process_dyn_type_impl(
+            DataReader* reader);
+
     bool create_discovered_type(
             const eprosima::fastdds::dds::PublicationBuiltinTopicData& info);
 
@@ -128,6 +138,7 @@ private:
     std::map<std::string, SubKnownType> known_types_;
     std::unordered_set<std::string> types_without_typeobject_;
     std::map<std::string, std::function<bool(const std::string&)>> type_creator_functions_;
+    std::map<std::string, std::function<bool(DataReader*)>> type_processor_functions_;
     std::vector<std::thread> create_types_threads;
 
 
