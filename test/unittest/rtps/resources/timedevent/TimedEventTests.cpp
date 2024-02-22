@@ -12,11 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "mock/MockEvent.h"
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <thread>
 #include <random>
+#include <thread>
+
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/resources/ResourceEvent.h>
+
+#include "mock/MockEvent.h"
 
 class TimedEventEnvironment : public ::testing::Environment
 {

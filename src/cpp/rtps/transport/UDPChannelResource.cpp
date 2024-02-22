@@ -137,5 +137,5 @@ void UDPChannelResource::release()
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

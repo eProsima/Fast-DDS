@@ -21,8 +21,8 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr 2 REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 # Check C++11
@@ -44,6 +44,6 @@ target_compile_definitions(DDSCustomListenerExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCustomListenerExample fastrtps fastcdr)
+target_link_libraries(DDSCustomListenerExample fastdds fastcdr)
 install(TARGETS DDSCustomListenerExample
     RUNTIME DESTINATION examples/cpp/dds/CustomListenerExample/${BIN_INSTALL_DIR})

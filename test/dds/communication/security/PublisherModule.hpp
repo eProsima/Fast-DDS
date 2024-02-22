@@ -58,12 +58,14 @@ public:
     /**
      * This method is called when a new Participant is discovered, or a previously discovered participant
      * changes its QOS or is removed.
-     * @param p Pointer to the Participant
+     * @param participant Pointer to the Participant
      * @param info DiscoveryInfo.
+     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     void on_participant_discovery(
-            DomainParticipant* /*participant*/,
-            fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+            DomainParticipant* participant,
+            fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(

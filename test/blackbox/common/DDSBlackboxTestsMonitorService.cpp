@@ -13,19 +13,18 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
-
-#include "BlackboxTests.hpp"
-#include "../dds-pim/PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/types/monitorservice_typesPubSubTypes.h>
+
+#include "BlackboxTests.hpp"
+#include "../dds-pim/PubSubReader.hpp"
+#include "PubSubWriter.hpp"
 
 using namespace eprosima::fastdds;
 using namespace eprosima::fastdds::dds;
@@ -1737,7 +1736,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
     //! Procedure
     DomainParticipantQos dqos;
 
-    auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
     testTransport->drop_data_messages_filter_ = [](eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
             {
                 uint32_t old_pos = msg.pos;
@@ -2315,7 +2314,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
 
     // Setup participant with monitor service enabled
     MonitorServiceParticipant MSP;
-    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     std::atomic<uint8_t> n_gap_messages{0};
 

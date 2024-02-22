@@ -44,7 +44,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          path: src/fastrtps
+          path: src/fastdds
           submodules: true
 
       - name: Get minimum supported version of CMake
@@ -74,14 +74,14 @@ jobs:
       - name: Download Fast DDS .repos
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
-          vcs_repos_file: ./src/fastrtps/fastrtps.repos
+          vcs_repos_file: ./src/fastdds/fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
 
@@ -123,7 +123,7 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: './src/fastrtps/.github/workflows/config/documentation.meta'
+          colcon_meta_file: './src/fastdds/.github/workflows/config/documentation.meta'
           colcon_build_args: ''
           colcon_build_args_default: ''
           cmake_args: ''
