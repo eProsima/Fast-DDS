@@ -523,19 +523,4 @@ using Locator = eprosima::fastrtps::rtps::Locator_t;
 } // namespace fastdds
 } // namespace eprosima
 
-#include <fastdds/rtps/common/LocatorsIterator.hpp>
-#include <fastdds/rtps/common/LocatorList.hpp>
-
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-
-using LocatorsIterator = eprosima::fastdds::rtps::LocatorsIterator;
-using Locators = eprosima::fastdds::rtps::Locators;
-using LocatorList_t = eprosima::fastdds::rtps::LocatorList;
-
-} // namespace rtps
-} // namespace fastrtps
-} // namespace eprosima
-
 #endif /* _FASTDDS_RTPS_ELEM_LOCATOR_H_ */

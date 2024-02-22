@@ -30,8 +30,6 @@ class Publisher;
 
 /**
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
- * @ingroup FASTRTPS_MODULE
- * @snippet fastrtps_example.cpp ex_PublisherListener
  */
 class RTPS_DllAPI PublisherListener
 {

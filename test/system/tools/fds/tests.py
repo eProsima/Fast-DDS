@@ -19,7 +19,7 @@
 
     usage: test.py <binary_path> <test_name>
 
-    binary_path: Fast-DDS binary path
+    binary_path: Fast DDS binary path
 
     test_name: Test to run.
 

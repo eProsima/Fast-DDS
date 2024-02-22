@@ -239,7 +239,7 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscovery options:"},
     { TTL, 0, "", "ttl",         Arg::NumericRange<1, 255>,
       "\t--ttl \tSet multicast discovery Time To Live on IPv4 or Hop Limit for IPv6."
-      " If not set, uses Fast-DDS default (1 hop). Increase it to avoid discovery issues"
+      " If not set, uses Fast DDS default (1 hop). Increase it to avoid discovery issues"
       " on scenarios with several routers. Maximum: 255."},
 
     { 0, 0, 0, 0, 0, 0 }

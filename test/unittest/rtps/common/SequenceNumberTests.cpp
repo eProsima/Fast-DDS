@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/common/SequenceNumber.h>
-
 #include <climits>
+
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/common/SequenceNumber.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -445,7 +446,7 @@ TEST(SequenceNumberSet, AddOperation)
     ASSERT_TRUE(set.add(seq));
 
     seq += 3;
-    
+
     ASSERT_FALSE(set.add(seq));
 
 }
@@ -490,7 +491,9 @@ TEST(SequenceNumberSet, GetMaxSeqNumOperation)
     ASSERT_EQ(set.max(), expected_seq);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

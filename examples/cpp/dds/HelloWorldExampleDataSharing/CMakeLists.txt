@@ -21,8 +21,8 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr 2 REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -41,6 +41,6 @@ file(GLOB DDS_HELLOWORLD_EXAMPLE_DATASHARING_SOURCES_CPP "*.cpp")
 add_executable(DDSHelloWorldExampleDataSharing
     ${DDS_HELLOWORLD_EXAMPLE_DATASHARING_SOURCES_CXX}
     ${DDS_HELLOWORLD_EXAMPLE_DATASHARING_SOURCES_CPP})
-target_link_libraries(DDSHelloWorldExampleDataSharing fastrtps fastcdr)
+target_link_libraries(DDSHelloWorldExampleDataSharing fastdds fastcdr)
 install(TARGETS DDSHelloWorldExampleDataSharing
     RUNTIME DESTINATION examples/cpp/dds/HelloWorldExampleDataSharing/${BIN_INSTALL_DIR})

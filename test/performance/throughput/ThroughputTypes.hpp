@@ -20,11 +20,11 @@
 #ifndef THROUGHPUTTYPES_H_
 #define THROUGHPUTTYPES_H_
 
-#include <fastrtps/TopicDataType.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/log/Colors.hpp>
-
 #include <chrono>
+
+#include <fastdds/dds/log/Colors.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 struct TroughputResults
 {
@@ -113,7 +113,7 @@ typedef struct alignas(4) ThroughputType
 
 } ThroughputType;
 
-class ThroughputDataType : public eprosima::fastrtps::TopicDataType
+class ThroughputDataType : public eprosima::fastdds::dds::TopicDataType
 {
     // Buffer size for the manage type
     const uint32_t buffer_size_;
@@ -247,7 +247,7 @@ inline std::ostream& operator <<(
     return output;
 }
 
-class ThroughputCommandDataType : public eprosima::fastrtps::TopicDataType
+class ThroughputCommandDataType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 

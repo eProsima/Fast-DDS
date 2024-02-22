@@ -12,17 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/DomainParticipant.hpp>
-#include <dds/pub/DataWriter.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/Publisher.hpp>
-#include <dds/pub/qos/DataWriterQos.hpp>
-#include <dds/pub/qos/PublisherQos.hpp>
-#include <dds/topic/Topic.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -30,14 +23,9 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fstream>
-
 
 namespace eprosima {
 namespace fastdds {
@@ -207,15 +195,6 @@ TEST(PublisherTests, GetPublisherParticipant)
 
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
-}
-
-TEST(PublisherTests, GetPSMPublisherParticipant)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant, PUBLISHER_QOS_DEFAULT);
-
-    ASSERT_EQ(publisher.participant().delegate().get(), participant.delegate().get());
-
 }
 
 TEST(PublisherTests, ChangeDefaultDataWriterQos)
@@ -442,23 +421,6 @@ TEST(PublisherTests, ChangeDefaultDataWriterQos)
 }
 
 
-TEST(PublisherTests, ChangePSMDefaultDataWriterQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
-
-    ::dds::pub::qos::DataWriterQos qos = publisher.default_datawriter_qos();
-    ASSERT_EQ(qos, DATAWRITER_QOS_DEFAULT);
-
-    qos.deadline().period = 540;
-
-    ASSERT_NO_THROW(publisher.default_datawriter_qos(qos));
-    ::dds::pub::qos::DataWriterQos wqos = publisher.default_datawriter_qos();
-
-    ASSERT_TRUE(qos == wqos);
-    ASSERT_EQ(wqos.deadline().period, 540);
-}
-
 TEST(PublisherTests, ChangePublisherQos)
 {
     DomainParticipant* participant =
@@ -484,22 +446,6 @@ TEST(PublisherTests, ChangePublisherQos)
     ASSERT_TRUE(participant->delete_publisher(publisher) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
 
-}
-
-TEST(PublisherTests, ChangePSMPublisherQos)
-{
-    ::dds::domain::DomainParticipant participant = ::dds::domain::DomainParticipant(0, PARTICIPANT_QOS_DEFAULT);
-    ::dds::pub::Publisher publisher = ::dds::pub::Publisher(participant);
-
-    ::dds::pub::qos::PublisherQos qos = publisher.qos();
-    ASSERT_EQ(qos, PUBLISHER_QOS_DEFAULT);
-
-    qos.entity_factory().autoenable_created_entities = false;
-    publisher.qos(qos);
-    ::dds::pub::qos::PublisherQos pqos = publisher.qos();
-
-    ASSERT_TRUE(qos == pqos);
-    ASSERT_EQ(pqos.entity_factory().autoenable_created_entities, false);
 }
 
 TEST(PublisherTests, CreateDataWriter)

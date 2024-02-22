@@ -18,7 +18,6 @@
 #include "SubscriberModule.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastrtps/Domain.h>
 
 using namespace eprosima::fastdds::dds;
 

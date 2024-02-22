@@ -266,10 +266,6 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     //! Enables the TCP_NODELAY socket option
     bool enable_tcp_nodelay;
-
-    FASTDDS_TODO_BEFORE(3, 0, "Eliminate wait_for_tcp_negotiation, variable not in use.");
-    bool wait_for_tcp_negotiation;
-
     //! Enables the calculation and sending of CRC on message headers
     bool calculate_crc;
     //! Enables checking the CRC of incoming message headers

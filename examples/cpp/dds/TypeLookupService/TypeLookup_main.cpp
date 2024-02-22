@@ -17,12 +17,13 @@
  *
  */
 
+#include <fastdds/dds/log/Log.hpp>
+
 #include "TypeLookupPublisher.h"
 #include "TypeLookupSubscriber.h"
 
-#include <fastrtps/log/Log.h>
-
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 int main(
         int argc,
