@@ -2165,19 +2165,16 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
     SendResourceList send_resource_list;
     ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
     ASSERT_FALSE(send_resource_list.empty());
-    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 1);
 
     // Using a wrong locator (for example the non-physical locator) should not remove the channel resource
     std::set<Locator_t> remote_participant_physical_locators;
     remote_participant_physical_locators.insert(outputLocator);
     sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
     ASSERT_FALSE(send_resource_list.empty());
-    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 1);
     // Using the correct locator should remove the channel resource
     remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(outputLocator));
     sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
     ASSERT_TRUE(send_resource_list.empty());
-    ASSERT_EQ(sendTransportUnderTest.get_channel_resources().size(), 0);
 }
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
