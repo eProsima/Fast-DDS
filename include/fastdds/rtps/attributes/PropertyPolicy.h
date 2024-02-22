@@ -132,11 +132,11 @@ public:
             const std::string& name);
 
     /**
-    * @brief Retrieves a property by name
-    * @param property_policy PropertyPolicy where the property will be searched.
-    * @param name Name of the property to be searched.
-    * @return A pointer to the property if found, nullptr otherwise.
-    */
+     * @brief Retrieves a property by name
+     * @param property_policy PropertyPolicy where the property will be searched.
+     * @param name Name of the property to be searched.
+     * @return A pointer to the property if found, nullptr otherwise.
+     */
     RTPS_DllAPI static const Property* get_property(
             const PropertyPolicy& property_policy,
             const std::string& name);
