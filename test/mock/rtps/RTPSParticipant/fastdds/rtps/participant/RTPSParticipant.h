@@ -19,16 +19,16 @@
 #include <cstdlib>
 #include <memory>
 
+#include <gmock/gmock.h>
+
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/qos/ReaderQos.h>
-#include <fastrtps/qos/WriterQos.h>
-
-#include <gmock/gmock.h>
 
 namespace eprosima {
 
@@ -187,28 +187,28 @@ public:
     MOCK_METHOD3(registerWriter, bool(
                 RTPSWriter * Writer,
                 const TopicAttributes& topicAtt,
-                const WriterQos& wqos));
+                const fastdds::dds::WriterQos& wqos));
 
     MOCK_METHOD3(updateWriter, bool(
                 RTPSWriter * Writer,
                 const TopicAttributes& topicAtt,
-                const WriterQos& wqos));
+                const fastdds::dds::WriterQos& wqos));
 
     MOCK_METHOD3(registerReader, bool(
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
-                const ReaderQos& rqos));
+                const fastdds::dds::ReaderQos& rqos));
 
     MOCK_METHOD4(registerReader, bool(
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
-                const ReaderQos& rqos,
+                const fastdds::dds::ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
     MOCK_METHOD3(updateReader, bool(
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
-                const ReaderQos& rqos));
+                const fastdds::dds::ReaderQos& rqos));
 
     MOCK_METHOD1(ignore_participant, bool(
                 const GuidPrefix_t& participant_guid));
@@ -216,7 +216,7 @@ public:
     MOCK_METHOD4(updateReader, bool(
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
-                const ReaderQos& rqos,
+                const fastdds::dds::ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()

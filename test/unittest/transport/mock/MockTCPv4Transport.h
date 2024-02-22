@@ -15,7 +15,8 @@
 #ifndef MOCK_TRANSPORT_TCP4_STUFF_H
 #define MOCK_TRANSPORT_TCP4_STUFF_H
 
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+
 #include <rtps/transport/TCPv4Transport.h>
 
 namespace eprosima {
@@ -31,7 +32,7 @@ class MockTCPv4Transport : public TCPv4Transport
 public:
 
     MockTCPv4Transport(
-            const TCPv4TransportDescriptor& descriptor)
+            const eprosima::fastdds::rtps::TCPv4TransportDescriptor& descriptor)
         : TCPv4Transport(descriptor)
     {
     }

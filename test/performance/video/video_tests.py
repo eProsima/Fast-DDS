@@ -46,7 +46,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-x',
         '--xml_file',
-        help='A Fast-RTPS XML configuration file',
+        help='A Fast DDS XML configuration file',
         required=False
     )
     parser.add_argument(

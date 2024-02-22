@@ -21,17 +21,15 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-
-#include <fastdds/rtps/common/RemoteLocators.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -387,7 +385,7 @@ public:
     }
 
     //!WriterQOS
-    WriterQos m_qos;
+    fastdds::dds::WriterQos m_qos;
 
     /**
      * Set participant client server sample identity

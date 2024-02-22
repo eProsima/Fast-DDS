@@ -252,7 +252,7 @@ bool ThroughputPublisher::init(
     ReliabilityQosPolicy rp;
     if (reliable_)
     {
-        rp.kind = eprosima::fastrtps::RELIABLE_RELIABILITY_QOS;
+        rp.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
         dw_qos_.reliability(rp);
 
         RTPSReliableWriterQos rw_qos;
@@ -265,7 +265,7 @@ bool ThroughputPublisher::init(
     }
     else
     {
-        rp.kind = eprosima::fastrtps::BEST_EFFORT_RELIABILITY_QOS;
+        rp.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
         dw_qos_.reliability(rp);
     }
 

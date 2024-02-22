@@ -15,7 +15,7 @@
 #ifndef MOCK_TRANSPORT_TCP6_STUFF_H
 #define MOCK_TRANSPORT_TCP6_STUFF_H
 
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <rtps/transport/TCPv6Transport.h>
 
 namespace eprosima {
@@ -31,7 +31,7 @@ class MockTCPv6Transport : public TCPv6Transport
 public:
 
     MockTCPv6Transport(
-            const TCPv6TransportDescriptor& descriptor)
+            const fastdds::rtps::TCPv6TransportDescriptor& descriptor)
         : TCPv6Transport(descriptor)
     {
     }

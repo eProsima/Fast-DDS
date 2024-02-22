@@ -21,10 +21,11 @@
 
 // TODO(Ricardo) Change when GMock supports r-values.
 
-#include <fastrtps/rtps/security/authentication/Authentication.h>
-#include <security/authentication/PKIIdentityHandle.h>
-
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/security/authentication/Authentication.h>
+
+#include <security/authentication/PKIIdentityHandle.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4373)

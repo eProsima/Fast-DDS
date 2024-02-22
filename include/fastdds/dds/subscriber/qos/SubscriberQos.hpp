@@ -21,7 +21,6 @@
 #define _FASTDDS_SUBSCRIBERQOS_HPP_
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 
 namespace eprosima {
 namespace fastdds {

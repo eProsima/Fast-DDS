@@ -65,7 +65,7 @@ target_include_directories(SubscriberTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(SubscriberTests fastrtps fastcdr foonathan_memory
+target_link_libraries(SubscriberTests fastdds fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(SubscriberTests)
@@ -83,7 +83,7 @@ target_include_directories(DataReaderTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}
     )
-target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
+target_link_libraries(DataReaderTests fastdds fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(DataReaderTests)

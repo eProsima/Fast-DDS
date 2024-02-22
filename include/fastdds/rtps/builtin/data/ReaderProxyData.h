@@ -21,13 +21,12 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_READERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/ReaderQos.h>
-
-#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
@@ -442,7 +441,7 @@ public:
     //!
     bool m_expectsInlineQos;
     //!Reader Qos
-    ReaderQos m_qos;
+    fastdds::dds::ReaderQos m_qos;
 
 #if HAVE_SECURITY
     //!EndpointSecurityInfo.endpoint_security_attributes
