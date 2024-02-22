@@ -12,26 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "idl/TypesPubSubTypes.h"
-#include "idl/TypesTypeObject.h"
-
-#include <thread>
-
-#include "TestPublisher.h"
-#include "TestSubscriber.h"
-
-#include <fastrtps/Domain.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/qos/QosPolicies.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
-#include <thread>
-#include <memory>
 #include <cstdlib>
-#include <string>
 #include <gtest/gtest.h>
+#include <memory>
+#include <string>
+#include <thread>
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -41,6 +26,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 #endif // if defined(_WIN32)
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/types/TypeObjectFactory.h>
+
+#include "idl/TypesPubSubTypes.h"
+#include "idl/TypesTypeObject.h"
+#include "TestPublisher.h"
+#include "TestSubscriber.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
@@ -66,7 +62,6 @@ public:
     {
         //Log::Reset();
         eprosima::fastdds::dds::Log::KillThread();
-        eprosima::fastrtps::Domain::stopAll();
         ++DOMAIN_ID_;
         DOMAIN_ID_ %= 230;
     }

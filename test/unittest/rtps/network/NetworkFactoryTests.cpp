@@ -17,10 +17,10 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/IPLocator.h>
 
@@ -65,7 +65,7 @@ TEST_F(NetworkTests, build_sender_resource_returns_send_resource_for_a_kind_comp
     int ArbitraryKind = 1;
     HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
 
     Locator_t kindCompatibleLocator;
     kindCompatibleLocator.kind = ArbitraryKind;
@@ -121,7 +121,7 @@ TEST_F(NetworkTests, build_sender_resource_returns_multiple_resources_if_multipl
     HELPER_RegisterTransportWithKindAndChannels(2, 10);
     HELPER_RegisterTransportWithKindAndChannels(2, 10);
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
 
     Locator_t locatorCompatibleWithTwoTransports;
     locatorCompatibleWithTwoTransports.kind = 2;
@@ -223,7 +223,7 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_no_registered_
     mockTransportDescriptor.maximumChannels = 10;
     networkFactoryUnderTest.RegisterTransport<MockTransport, MockTransportDescriptor>(mockTransportDescriptor);
 
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
 
     Locator_t locatorOfDifferentKind;
     locatorOfDifferentKind.kind = 2;
@@ -242,7 +242,7 @@ TEST_F(NetworkTests, BuildSenderResources_returns_empty_vector_if_all_compatible
     // Given
     int ArbitraryKind = 1;
     HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-    SendResourceList send_resource_list;
+    eprosima::fastdds::rtps::SendResourceList send_resource_list;
     Locator_t locator;
     locator.kind = ArbitraryKind;
 
@@ -288,7 +288,7 @@ TEST_F(NetworkTests, A_receiver_resource_accurately_reports_whether_it_supports_
    // Given
    int ArbitraryKind = 1;
    HELPER_RegisterTransportWithKindAndChannels(ArbitraryKind, 10);
-   SendResourceList send_resource_list;
+   eprosima::fastdds::rtps::SendResourceList send_resource_list;
    Locator_t locator;
    locator.kind = ArbitraryKind;
    ASSERT_TRUE(networkFactoryUnderTest.build_send_resources(send_resource_list, locator));
@@ -651,7 +651,7 @@ TEST_F(NetworkTests, LocatorShrink)
     fill_blackbox_locators_test_cases(test_cases);
 
     NetworkFactory f{pattr};
-    UDPv4TransportDescriptor udpv4;
+    eprosima::fastdds::rtps::UDPv4TransportDescriptor udpv4;
     f.RegisterTransport(&udpv4);
     // TODO: Register more transports
 

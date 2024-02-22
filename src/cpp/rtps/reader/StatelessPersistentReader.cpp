@@ -18,9 +18,10 @@
  */
 
 #include <fastdds/rtps/reader/StatelessPersistentReader.h>
+
 #include <fastdds/rtps/history/ReaderHistory.h>
+
 #include <rtps/persistence/PersistenceService.h>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <rtps/reader/ReaderHistoryState.hpp>
 
 namespace eprosima {

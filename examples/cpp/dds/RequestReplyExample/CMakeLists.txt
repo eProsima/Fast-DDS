@@ -21,8 +21,8 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr 2 REQUIRED)
 endif()
 
-if(NOT fastrtps_FOUND)
-    find_package(fastrtps 2.12 REQUIRED)
+if(NOT fastdds_FOUND)
+    find_package(fastdds 3 REQUIRED)
 endif()
 
 #Check C++11
@@ -55,7 +55,7 @@ target_compile_definitions(DDSCalculatorClient PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCalculatorClient fastrtps fastcdr)
+target_link_libraries(DDSCalculatorClient fastdds fastcdr)
 install(TARGETS DDSCalculatorClient
     RUNTIME DESTINATION examples/cpp/dds/RequestReplyExample/${BIN_INSTALL_DIR})
 
@@ -67,6 +67,6 @@ target_compile_definitions(DDSCalculatorServer PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCalculatorServer fastrtps fastcdr)
+target_link_libraries(DDSCalculatorServer fastdds fastcdr)
 install(TARGETS DDSCalculatorServer
     RUNTIME DESTINATION examples/cpp/dds/RequestReplyExample/${BIN_INSTALL_DIR})

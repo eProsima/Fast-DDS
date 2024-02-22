@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef _FASTRTPS_UTILS_CONCURRENT_QUEUE_H_
-#define _FASTRTPS_UTILS_CONCURRENT_QUEUE_H_
+#ifndef _FASTDDS_UTILS_CONCURRENT_QUEUE_H_
+#define _FASTDDS_UTILS_CONCURRENT_QUEUE_H_
 
 #include <queue>
 #include <mutex>
@@ -31,7 +31,7 @@ namespace fastrtps {
  *
  * Based on std::queue<T>.
  */
-template<typename T, typename Sequence = std::deque<T> >
+template<typename T, typename Sequence = std::deque<T>>
 class ConcurrentQueue final
 {
     using Queue = std::queue<T, Sequence>;
@@ -113,7 +113,8 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
 
-        has_data_.wait(lock, [&](){
+        has_data_.wait(lock, [&]()
+                {
                     return !queue_.empty();
                 });
 
@@ -153,4 +154,4 @@ protected:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // _FASTRTPS_UTILS_CONCURRENT_QUEUE_H_
+#endif // _FASTDDS_UTILS_CONCURRENT_QUEUE_H_

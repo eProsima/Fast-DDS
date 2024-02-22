@@ -1,5 +1,5 @@
 names:
-    fastrtps:
+    fastdds:
         cmake-args:
             - "-DBUILD_DOCUMENTATION=OFF"
             - "-DBUILD_SHARED_LIBS=ON"
@@ -19,7 +19,7 @@ names:
             - "-DSTRICT_REALTIME=OFF"
             - "-DSYSTEM_TESTS=ON"
             - "-DMEMORYCHECK_COMMAND_OPTIONS=-q --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=50 --log-fd=2 --error-exitcode=1"
-            - "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastrtps/valgrind.supp"
+            - "-DMEMORYCHECK_SUPPRESSIONS_FILE=../../src/fastdds/valgrind.supp"
     googletest-distribution:
         cmake-args:
             - "-Dgtest_force_shared_crt=ON"

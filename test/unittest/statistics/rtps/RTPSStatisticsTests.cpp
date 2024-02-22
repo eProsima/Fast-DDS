@@ -14,6 +14,7 @@
 
 #include <map>
 #include <thread>
+
 #if defined(_WIN32)
 #include <process.h>
 #else
@@ -36,22 +37,18 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <statistics/types/monitorservice_types.h>
-#include <statistics/types/types.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/types.h>
 #include <statistics/types/types.h>
 #include <utils/SystemInfo.hpp>
 

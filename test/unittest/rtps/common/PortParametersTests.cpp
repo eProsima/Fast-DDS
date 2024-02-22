@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/rtps/common/PortParameters.h>
-
 #include <climits>
+
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/common/PortParameters.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -88,7 +89,9 @@ TEST(PortParametersDeathTest, Limit_Multicast_Domain_FAIL)
     ASSERT_EXIT( { params.getMulticastPort(233); }, ::testing::ExitedWithCode(EXIT_FAILURE), "");
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

@@ -19,18 +19,15 @@
 
 #include "TestReaderPersistent.h"
 
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/participant/RTPSParticipant.h>
-#include <fastrtps/rtps/RTPSDomain.h>
-
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/rtps/attributes/HistoryAttributes.h>
-
-#include <fastrtps/rtps/history/ReaderHistory.h>
-
+#include <fastdds/dds/subscriber/qos/ReaderQos.hpp>
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/ReaderQos.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -94,7 +91,7 @@ bool TestReaderPersistent::reg()
     Tatt.topicKind = NO_KEY;
     Tatt.topicDataType = "string";
     Tatt.topicName = "exampleTopic";
-    ReaderQos Rqos;
+    eprosima::fastdds::dds::ReaderQos Rqos;
     return mp_participant->registerReader(mp_reader, Tatt, Rqos);
 }
 

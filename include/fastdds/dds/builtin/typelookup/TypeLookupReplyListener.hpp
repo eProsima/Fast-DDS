@@ -20,9 +20,9 @@
 #ifndef TYPELOOKUP_REPLY_LISTENER_HPP_
 #define TYPELOOKUP_REPLY_LISTENER_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
 
+#include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
 namespace eprosima {
 namespace fastrtps {

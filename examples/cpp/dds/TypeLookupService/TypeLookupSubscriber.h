@@ -20,19 +20,16 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
+#include <map>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/rtps/common/Types.h>
-
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/rtps/common/Types.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
-
-#include <fastrtps/attributes/SubscriberAttributes.h>
-
-#include <map>
 
 class TypeLookupSubscriber
 {
@@ -63,8 +60,6 @@ private:
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
 
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
-
-    eprosima::fastrtps::SubscriberAttributes att_;
 
     eprosima::fastdds::dds::DataReaderQos qos_;
 

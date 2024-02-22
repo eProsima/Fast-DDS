@@ -19,16 +19,15 @@
 #ifndef _FASTDDS_RTPS_READER_RTPSREADER_H_
 #define _FASTDDS_RTPS_READER_RTPSREADER_H_
 
-#include <fastdds/rtps/writer/IReaderDataFilter.hpp>
-
-#include <fastrtps/rtps/Endpoint.h>
-#include <fastrtps/rtps/history/ReaderHistory.h>
-#include <fastrtps/rtps/reader/ReaderListener.h>
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
-
 #include <gmock/gmock.h>
+
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/Endpoint.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/reader/ReaderListener.h>
 
 namespace eprosima {
 namespace fastrtps {

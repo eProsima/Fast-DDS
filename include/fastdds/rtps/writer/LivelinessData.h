@@ -18,10 +18,10 @@
 #ifndef _FASTDDS_RTPS_LIVELINESS_DATA_H_
 #define _FASTDDS_RTPS_LIVELINESS_DATA_H_
 
-#include <fastrtps/qos/QosPolicies.h>
-#include <fastdds/rtps/common/Time_t.h>
-
 #include <chrono>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/Time_t.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,30 +51,33 @@ struct LivelinessData
      */
     LivelinessData(
             GUID_t guid_in,
-            LivelinessQosPolicyKind kind_in,
+            fastdds::dds::LivelinessQosPolicyKind kind_in,
             Duration_t lease_duration_in)
         : guid(guid_in)
         , kind(kind_in)
         , lease_duration(lease_duration_in)
         , status(WriterStatus::NOT_ASSERTED)
-    {}
+    {
+    }
 
     LivelinessData()
         : guid()
-        , kind(LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
+        , kind(fastdds::dds::LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS)
         , lease_duration(TIME_T_INFINITE_SECONDS, TIME_T_INFINITE_NANOSECONDS)
         , status(WriterStatus::NOT_ASSERTED)
-    {}
+    {
+    }
 
     ~LivelinessData()
-    {}
+    {
+    }
 
     /**
      * @brief Equality operator
      * @param other Liveliness data to compare to
      * @return True if equal
      */
-    bool operator==(
+    bool operator ==(
             const LivelinessData& other) const
     {
         return ((guid == other.guid) &&
@@ -87,17 +90,17 @@ struct LivelinessData
      * @param other Liveliness data to compare to
      * @return True if different
      */
-    bool operator!=(
+    bool operator !=(
             const LivelinessData& other) const
     {
-        return (!operator==(other));
+        return (!operator ==(other));
     }
 
     //! GUID of the writer
     GUID_t guid;
 
     //! Writer liveliness kind
-    LivelinessQosPolicyKind kind;
+    fastdds::dds::LivelinessQosPolicyKind kind;
 
     //! The lease duration
     Duration_t lease_duration;
