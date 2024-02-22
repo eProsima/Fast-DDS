@@ -772,9 +772,9 @@ bool TCPTransportInterface::OpenOutputChannel(
             std::vector<Locator> list;
             std::vector<fastrtps::rtps::IPFinder::info_IP> local_interfaces;
             get_ips(local_interfaces);
-            for (const auto& interface : local_interfaces)
+            for (const auto& interface_it : local_interfaces)
             {
-                Locator interface_loc(interface.locator);
+                Locator interface_loc(interface_it.locator);
                 interface_loc.port = physical_locator.port;
                 if (is_interface_allowed(interface_loc))
                 {
