@@ -63,28 +63,9 @@ endif()
 set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     MonitorServiceTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactoryImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactoryImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeMemberImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/MemberDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/TypeDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/VerbatimTextDescriptorImpl.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectRegistry.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/TypeObjectUtils.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -110,7 +91,6 @@ set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${TCPTransportInterface_SOURCE}
     )
 
@@ -152,9 +132,13 @@ target_include_directories(MonitorServiceTests PRIVATE
 
 target_link_libraries(MonitorServiceTests
     fastcdr
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     GTest::gtest
     GTest::gmock
-    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
+    )
 
 gtest_discover_tests(MonitorServiceTests)
 

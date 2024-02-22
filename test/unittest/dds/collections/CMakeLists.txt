@@ -17,10 +17,6 @@ if(WIN32)
 endif()
 
 set(LOANABLE_SEQUENCE_TESTS_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     LoanableSequenceTests.cpp)
 
@@ -34,6 +30,7 @@ target_include_directories(LoanableSequenceTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LoanableSequenceTests
     fastcdr
+    fastdds::log
     GTest::gtest
     )
 gtest_discover_tests(LoanableSequenceTests)

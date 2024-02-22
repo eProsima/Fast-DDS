@@ -22,9 +22,6 @@ file(GLOB DDSSQLFILTER_SOURCES
 file(GLOB DDSSQLFILTER_LIB_SOURCES
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/type_representation/*.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
@@ -55,6 +52,7 @@ target_include_directories(DDSSQLFilterTests PRIVATE
 target_link_libraries(DDSSQLFilterTests
     fastcdr
     fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
