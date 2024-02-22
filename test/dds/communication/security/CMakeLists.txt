@@ -14,6 +14,13 @@
 
 find_package(PythonInterp 3)
 
+add_definitions(
+    -DBOOST_ASIO_STANDALONE
+    -DASIO_STANDALONE
+    )
+    
+include_directories(${Asio_INCLUDE_DIR})
+
 ###############################################################################
 # Binaries
 ###############################################################################

@@ -200,7 +200,6 @@ if(Python3_Interpreter_FOUND)
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
-
     # Standard types test
     set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)
 
@@ -227,7 +226,6 @@ if(Python3_Interpreter_FOUND)
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
     endforeach()
-
 
     # Liveliness tests
     add_test(NAME LivelinessAssertion
