@@ -407,13 +407,13 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
     uint16_t port = g_default_port;
     // Create a TCP Server transport
-    TCPv6TransportDescriptor serverDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor serverDescriptor;
     serverDescriptor.add_listener_port(port);
     std::unique_ptr<TCPv6Transport> serverTransportUnderTest(new TCPv6Transport(serverDescriptor));
     serverTransportUnderTest->init();
 
     // Create a TCP Client transport
-    TCPv6TransportDescriptor clientDescriptor;
+    eprosima::fastdds::rtps::TCPv6TransportDescriptor clientDescriptor;
     std::unique_ptr<MockTCPv6Transport> clientTransportUnderTest(new MockTCPv6Transport(clientDescriptor));
     clientTransportUnderTest->init();
 
@@ -424,7 +424,7 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
 
     // Connect client to server
     EXPECT_TRUE(serverTransportUnderTest->OpenInputChannel(initialPeerLocator, nullptr, 0x00FF));
-    SendResourceList client_resource_list;
+    eprosima::fastdds::rtps::SendResourceList client_resource_list;
     ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
     ASSERT_FALSE(client_resource_list.empty());
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
