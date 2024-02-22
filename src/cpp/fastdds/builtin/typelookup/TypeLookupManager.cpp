@@ -326,6 +326,8 @@ ReaderHistory* TypeLookupManager::get_builtin_reply_reader_history()
  */
 bool TypeLookupManager::create_endpoints()
 {
+    bool ret = true;
+
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
     // Built-in history attributes.
@@ -368,9 +370,7 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
             delete builtin_request_writer_history_;
             builtin_request_writer_history_ = nullptr;
-            delete request_listener_;
-            request_listener_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
@@ -397,9 +397,7 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
             delete builtin_reply_writer_history_;
             builtin_reply_writer_history_ = nullptr;
-            delete reply_listener_;
-            reply_listener_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
@@ -418,7 +416,10 @@ bool TypeLookupManager::create_endpoints()
     // Built-in request reader
     if (builtin_protocols_->m_att.typelookup_config.use_server)
     {
-        request_listener_ = new TypeLookupRequestListener(this);
+        if (nullptr == request_listener_)
+        {
+            request_listener_ = new TypeLookupRequestListener(this);
+        }
         builtin_request_reader_history_ = new ReaderHistory(hatt);
 
         RTPSReader* req_reader;
@@ -438,16 +439,17 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
             delete builtin_request_reader_history_;
             builtin_request_reader_history_ = nullptr;
-            delete request_listener_;
-            request_listener_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
     // Built-in reply reader
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
-        reply_listener_ = new TypeLookupReplyListener(this);
+        if (nullptr == reply_listener_)
+        {
+            reply_listener_ = new TypeLookupReplyListener(this);
+        }
         builtin_reply_reader_history_ = new ReaderHistory(hatt);
 
         RTPSReader* rep_reader;
@@ -467,13 +469,24 @@ bool TypeLookupManager::create_endpoints()
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
             delete builtin_reply_reader_history_;
             builtin_reply_reader_history_ = nullptr;
-            delete reply_listener_;
-            reply_listener_ = nullptr;
-            return false;
+            ret = false;
         }
     }
 
-    return true;
+    if (!ret)
+    {
+        if (request_listener_ != nullptr)
+        {
+            delete request_listener_;
+            request_listener_ = nullptr;
+        }
+        if (reply_listener_ != nullptr)
+        {
+            delete reply_listener_;
+            reply_listener_ = nullptr;
+        }
+    }
+    return ret;
 }
 
 /* TODO Implement if security is needed.
