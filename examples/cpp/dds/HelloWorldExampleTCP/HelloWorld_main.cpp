@@ -17,15 +17,12 @@
  *
  */
 
-#include "HelloWorldPublisher.h"
-#include "HelloWorldSubscriber.h"
-
-#include <fastrtps/Domain.h>
-#include <fastrtps/log/Log.h>
-
 #include <string>
 
 #include <optionparser.hpp>
+
+#include "HelloWorldPublisher.h"
+#include "HelloWorldSubscriber.h"
 
 namespace option = eprosima::option;
 
@@ -311,6 +308,5 @@ int main(
             break;
         }
     }
-    Domain::stopAll();
     return 0;
 }

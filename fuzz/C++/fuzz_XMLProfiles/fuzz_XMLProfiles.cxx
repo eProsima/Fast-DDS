@@ -1,4 +1,3 @@
-#include <fastrtps/Domain.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "fuzz_utils.h"

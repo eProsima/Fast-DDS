@@ -22,8 +22,8 @@
 #include <thread>
 
 #include <dds/core/LengthUnlimited.hpp>
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/log/Colors.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -180,7 +180,7 @@ bool MemoryTestSubscriber::init(
     PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    PubCommandParam.qos.m_publishMode.kind = eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE;
+    PubCommandParam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
 
     mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
 

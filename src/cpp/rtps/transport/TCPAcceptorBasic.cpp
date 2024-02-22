@@ -63,5 +63,5 @@ void TCPAcceptorBasic::accept(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

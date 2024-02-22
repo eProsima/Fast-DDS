@@ -19,18 +19,15 @@
 
 #include "TestWriterSocket.h"
 
-#include "fastrtps/rtps/writer/RTPSWriter.h"
-#include "fastrtps/rtps/participant/RTPSParticipant.h"
-#include "fastrtps/rtps/RTPSDomain.h"
-
-#include "fastrtps/rtps/attributes/RTPSParticipantAttributes.h"
-#include "fastrtps/rtps/attributes/WriterAttributes.h"
-#include "fastrtps/rtps/attributes/HistoryAttributes.h"
-
-#include "fastrtps/rtps/builtin/data/ReaderProxyData.h"
-
-#include "fastrtps/rtps/history/WriterHistory.h"
-#include "fastrtps/utils/IPLocator.h"
+#include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/utils/IPLocator.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

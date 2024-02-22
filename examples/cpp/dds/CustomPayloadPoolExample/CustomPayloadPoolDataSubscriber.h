@@ -23,13 +23,13 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "CustomPayloadPoolDataPubSubTypes.h"
-#include "CustomPayloadPool.hpp"
-
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+
+#include "CustomPayloadPool.hpp"
+#include "CustomPayloadPoolDataPubSubTypes.h"
 
 class CustomPayloadPoolDataSubscriber : private eprosima::fastdds::dds::DataReaderListener
 {

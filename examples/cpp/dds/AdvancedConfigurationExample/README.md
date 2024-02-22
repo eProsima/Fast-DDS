@@ -85,7 +85,7 @@ QoS options:
 Discovery options:
                   --ttl
                     Set multicast discovery Time To Live on IPv4 or Hop Limit
-                    for IPv6. If not set, uses Fast-DDS default (1 hop).
+                    for IPv6. If not set, uses Fast DDS default (1 hop).
                     Increase it to avoid discovery issues on scenarios with
                     several routers. Maximum: 255.
 ```
@@ -100,5 +100,5 @@ This code presents how to run a publisher with this example without Shared Memor
 
 ```sh
 # From AdvancedConfigurationExample installation dir
-FASTRTPS_DEFAULT_PROFILES_FILE=shm_off.xml ./AdvancedConfigurationExample publisher --xml-profile no_shm_participant_profile
+FASTDDS_DEFAULT_PROFILES_FILE=shm_off.xml ./AdvancedConfigurationExample publisher --xml-profile no_shm_participant_profile
 ```

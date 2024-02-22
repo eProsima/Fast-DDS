@@ -22,17 +22,14 @@
 #include <fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
+#include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-
 #include <fastrtps/fastrtps_dll.h>
-
-#include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -187,15 +184,6 @@ public:
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::write_w_timestamp()",
-            "In favor of version using eprosima::fastrtps::Time_t.")
-    RTPS_DllAPI ReturnCode_t write_w_timestamp(
-            void* data,
-            const InstanceHandle_t& handle,
-            const fastrtps::rtps::Time_t& timestamp);
-#endif // DOXYGEN_SHOULD_SKIP_THIS
-
     /*!
      * @brief Informs that the application will be modifying a particular instance.
      * It gives an opportunity to the middleware to pre-configure itself to improve performance.
@@ -229,14 +217,6 @@ public:
     RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
             void* instance,
             const fastrtps::Time_t& timestamp);
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::register_instance_w_timestamp()",
-            "In favor of version using eprosima::fastrtps::Time_t.")
-    RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
-            void* instance,
-            const fastrtps::rtps::Time_t& timestamp);
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /*!
      * @brief This operation reverses the action of `register_instance`.
@@ -276,15 +256,6 @@ public:
             void* instance,
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::unregister_instance_w_timestamp()",
-            "In favor of version using eprosima::fastrtps::Time_t.")
-    RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
-            void* instance,
-            const InstanceHandle_t& handle,
-            const fastrtps::rtps::Time_t& timestamp);
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * This operation can be used to retrieve the instance key that corresponds to an
@@ -529,13 +500,6 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t>& subscription_handles) const;
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds:DataWriter::get_matched_subscriptions()",
-            "In favor of version using std::vector<fastrtps::rtps::InstanceHandle_t>.")
-    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
-            std::vector<InstanceHandle_t*>& subscription_handles) const;
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     /**
      * @brief Clears the DataWriter history

@@ -16,8 +16,8 @@
  * @file WriterProxy.h
  */
 
-#ifndef FASTRTPS_RTPS_READER_WRITERPROXY_H_
-#define FASTRTPS_RTPS_READER_WRITERPROXY_H_
+#ifndef FASTDDS_RTPS_READER_WRITERPROXY_H_
+#define FASTDDS_RTPS_READER_WRITERPROXY_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/common/Types.h>
@@ -420,11 +420,11 @@ private:
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 
-#if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
+#if !defined(NDEBUG) && defined(FASTDDS_SOURCE) && defined(__unix__)
     int get_mutex_owner() const;
 
     int get_thread_id() const;
-#endif // if !defined(NDEBUG) && defined(FASTRTPS_SOURCE) && defined(__unix__)
+#endif // if !defined(NDEBUG) && defined(FASTDDS_SOURCE) && defined(__unix__)
 };
 
 } /* namespace rtps */
@@ -432,4 +432,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* FASTRTPS_RTPS_READER_WRITERPROXY_H_ */
+#endif /* FASTDDS_RTPS_READER_WRITERPROXY_H_ */

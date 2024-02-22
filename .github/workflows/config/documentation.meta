@@ -1,5 +1,5 @@
 names:
-    fastrtps:
+    fastdds:
         cmake-args:
             - "-DBUILD_SHARED_LIBS=ON"
             - "-DSECURITY=ON"

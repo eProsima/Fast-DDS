@@ -233,9 +233,9 @@ bool Logging::compose_header(
 // gcc expands __VA_ARGS___ before passing it into the macro.
 // Visual Studio expands __VA_ARGS__ after passing it.
 // This macro is a workaround to support both
-#define __FASTRTPS_EXPAND(x) x
+#define __FASTDDS_EXPAND(x) x
 
-#define __FASTRTPS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, EXCEPTION) \
+#define __FASTDDS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, EXCEPTION) \
     do {                                                              \
         auto logger = get_logger();                                   \
         if (logger){                                                  \
@@ -264,19 +264,19 @@ bool Logging::compose_header(
         }                                                             \
     } while (0);
 
-#define __FASTRTPS_SECURITY_LOGGING_EX(LEVEL, CLASS, MESSAGE)             \
+#define __FASTDDS_SECURITY_LOGGING_EX(LEVEL, CLASS, MESSAGE)             \
     do {                                                                  \
         eprosima::fastrtps::rtps::security::SecurityException lexception; \
-        __FASTRTPS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, lexception);   \
+        __FASTDDS_SECURITY_LOGGING(LEVEL, CLASS, MESSAGE, lexception);   \
     } while (0);
 
-#define __FASTRTPS_MACRO_SELECTOR(_1, _2, _3, _4, NAME, ...) NAME
+#define __FASTDDS_MACRO_SELECTOR(_1, _2, _3, _4, NAME, ...) NAME
 
 #define SECURITY_LOGGING(...)                   \
-    __FASTRTPS_EXPAND(                          \
-        __FASTRTPS_MACRO_SELECTOR(__VA_ARGS__,  \
-        __FASTRTPS_SECURITY_LOGGING,            \
-        __FASTRTPS_SECURITY_LOGGING_EX,         \
+    __FASTDDS_EXPAND(                          \
+        __FASTDDS_MACRO_SELECTOR(__VA_ARGS__,  \
+        __FASTDDS_SECURITY_LOGGING,            \
+        __FASTDDS_SECURITY_LOGGING_EX,         \
         _UNUSED)(__VA_ARGS__))
 
 #define EMERGENCY_SECURITY_LOGGING(...)     SECURITY_LOGGING(LoggingLevel::EMERGENCY_LEVEL, __VA_ARGS__)

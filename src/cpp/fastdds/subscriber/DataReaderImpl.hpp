@@ -17,39 +17,36 @@
  *
  */
 
-#ifndef _FASTRTPS_DATAREADERIMPL_HPP_
-#define _FASTRTPS_DATAREADERIMPL_HPP_
+#ifndef _FASTDDS_DATAREADERIMPL_HPP_
+#define _FASTDDS_DATAREADERIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <mutex>
 
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
+#include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/subscriber/ReadCondition.hpp>
-
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
-#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
-
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleInfoPool.hpp>
 #include <fastdds/subscriber/DataReaderImpl/SampleLoanManager.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
+#include <fastdds/subscriber/history/DataReaderHistory.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
-
-#include <fastdds/subscriber/history/DataReaderHistory.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -240,7 +237,7 @@ public:
             SubscriptionMatchedStatus& status);
 
     ReturnCode_t get_requested_deadline_missed_status(
-            fastrtps::RequestedDeadlineMissedStatus& status);
+            RequestedDeadlineMissedStatus& status);
 
     ReturnCode_t set_qos(
             const DataReaderQos& qos);
@@ -259,7 +256,7 @@ public:
      */
 
     ReturnCode_t get_liveliness_changed_status(
-            fastrtps::LivelinessChangedStatus& status);
+            LivelinessChangedStatus& status);
 
     ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status);
@@ -282,7 +279,7 @@ public:
      * @return RETCODE_OK
      */
     ReturnCode_t get_sample_rejected_status(
-            fastrtps::SampleRejectedStatus& status);
+            SampleRejectedStatus& status);
 
     const Subscriber* get_subscriber() const;
 
@@ -430,7 +427,7 @@ protected:
 
         void on_liveliness_changed(
                 fastrtps::rtps::RTPSReader* reader,
-                const fastrtps::LivelinessChangedStatus& status) override;
+                const LivelinessChangedStatus& status) override;
 
         void on_requested_incompatible_qos(
                 fastrtps::rtps::RTPSReader* reader,
@@ -470,7 +467,7 @@ protected:
     LivelinessChangedStatus liveliness_changed_status_;
 
     //! Requested deadline missed status
-    fastrtps::RequestedDeadlineMissedStatus deadline_missed_status_;
+    RequestedDeadlineMissedStatus deadline_missed_status_;
 
     //! Requested incompatible QoS status
     RequestedIncompatibleQosStatus requested_incompatible_qos_status_;
@@ -611,7 +608,7 @@ protected:
             PolicyMask incompatible_policies);
 
     LivelinessChangedStatus& update_liveliness_status(
-            const fastrtps::LivelinessChangedStatus& status);
+            const LivelinessChangedStatus& status);
 
     const SampleLostStatus& update_sample_lost_status(
             int32_t sample_lost_since_last_update);
@@ -654,4 +651,4 @@ private:
 } /* namespace eprosima */
 
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* _FASTRTPS_DATAREADERIMPL_HPP_*/
+#endif /* _FASTDDS_DATAREADERIMPL_HPP_*/

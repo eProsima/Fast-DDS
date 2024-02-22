@@ -17,6 +17,8 @@
  *
  */
 
+#include "DiscoveryServerServer.h"
+
 #include <condition_variable>
 #include <csignal>
 #include <mutex>
@@ -24,13 +26,10 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-
-#include "DiscoveryServerServer.h"
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
+#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -251,8 +250,10 @@ DiscoveryServer::~DiscoveryServer()
 
 void DiscoveryServer::ServerListener::on_participant_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
+    static_cast<void>(should_be_ignored);
     if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Discovered Participant with GUID " << info.info.m_guid << std::endl;
