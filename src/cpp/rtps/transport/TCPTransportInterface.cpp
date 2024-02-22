@@ -276,6 +276,19 @@ Locator TCPTransportInterface::remote_endpoint_to_locator(
     return locator;
 }
 
+Locator TCPTransportInterface::local_endpoint_to_locator(
+        const std::shared_ptr<TCPChannelResource>& channel) const
+{
+    Locator locator;
+    asio::error_code ec;
+    endpoint_to_locator(channel->local_endpoint(ec), locator);
+    if (ec)
+    {
+        LOCATOR_INVALID(locator);
+    }
+    return locator;
+}
+
 void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
@@ -1448,10 +1461,8 @@ void TCPTransportInterface::SocketAccepted(
             create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << channel->local_endpoint().address() << ":"
-                    << channel->local_endpoint().port() << "), remote: "
-                    << channel->remote_endpoint().address() << ":"
-                    << channel->remote_endpoint().port() << ")");
+                    << local_endpoint_to_locator(channel) << ", remote: "
+                    << remote_endpoint_to_locator(channel) << ")");
         }
         else
         {
@@ -1493,10 +1504,8 @@ void TCPTransportInterface::SecureSocketAccepted(
             create_listening_thread(secure_channel);
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
-                    << socket->lowest_layer().local_endpoint().address() << ":"
-                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
-                    << socket->lowest_layer().remote_endpoint().address() << ":"
-                    << socket->lowest_layer().remote_endpoint().port() << ")");
+                    << local_endpoint_to_locator(secure_channel) << ", remote: "
+                    << remote_endpoint_to_locator(secure_channel) << ")");
         }
         else
         {

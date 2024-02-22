@@ -2164,6 +2164,9 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
 
     SendResourceList send_resource_list;
     ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
     ASSERT_FALSE(send_resource_list.empty());
 
     // Using a wrong locator (for example the non-physical locator) should not remove the channel resource
