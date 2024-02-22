@@ -368,14 +368,12 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
-            delete builtin_request_writer_history_;
-            builtin_request_writer_history_ = nullptr;
             ret = false;
         }
     }
 
     // Built-in reply writer
-    if (builtin_protocols_->m_att.typelookup_config.use_server)
+    if (ret && builtin_protocols_->m_att.typelookup_config.use_server)
     {
         reply_listener_ = new TypeLookupReplyListener(this);
         builtin_reply_writer_history_ = new WriterHistory(hatt);
@@ -395,8 +393,6 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
-            delete builtin_reply_writer_history_;
-            builtin_reply_writer_history_ = nullptr;
             ret = false;
         }
     }
@@ -414,7 +410,7 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
 
     // Built-in request reader
-    if (builtin_protocols_->m_att.typelookup_config.use_server)
+    if (ret && builtin_protocols_->m_att.typelookup_config.use_server)
     {
         if (nullptr == request_listener_)
         {
@@ -437,14 +433,12 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
-            delete builtin_request_reader_history_;
-            builtin_request_reader_history_ = nullptr;
             ret = false;
         }
     }
 
     // Built-in reply reader
-    if (builtin_protocols_->m_att.typelookup_config.use_client)
+    if (ret && builtin_protocols_->m_att.typelookup_config.use_client)
     {
         if (nullptr == reply_listener_)
         {
@@ -467,25 +461,49 @@ bool TypeLookupManager::create_endpoints()
         else
         {
             EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
-            delete builtin_reply_reader_history_;
-            builtin_reply_reader_history_ = nullptr;
             ret = false;
         }
     }
 
+    // Clean up if something failed.
     if (!ret)
     {
-        if (request_listener_ != nullptr)
+        if (nullptr != builtin_request_writer_history_)
+        {
+            delete builtin_request_writer_history_;
+            builtin_request_writer_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_reply_writer_history_)
+        {
+            delete builtin_reply_writer_history_;
+            builtin_reply_writer_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_request_reader_history_)
+        {
+            delete builtin_request_reader_history_;
+            builtin_request_reader_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_reply_reader_history_)
+        {
+            delete builtin_reply_reader_history_;
+            builtin_reply_reader_history_ = nullptr;
+        }
+
+        if (nullptr != request_listener_)
         {
             delete request_listener_;
             request_listener_ = nullptr;
         }
-        if (reply_listener_ != nullptr)
+        if (nullptr != reply_listener_)
         {
             delete reply_listener_;
             reply_listener_ = nullptr;
         }
     }
+
     return ret;
 }
 
