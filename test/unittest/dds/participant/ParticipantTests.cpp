@@ -4301,7 +4301,239 @@ TEST(ParticipantTests, ParticipantCreationWithBuiltinTransport)
     }
 }
 
+class BuiltinTransportsOptionsTest
+{
+public:
 
+    static void test_correct_participant_with_env(
+            const std::string& options_str,
+            const rtps::BuiltinTransportsOptions& options)
+    {
+        apply_option_to_env(options_str);
+        DomainParticipantQos qos;
+        DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, qos);
+        ASSERT_NE(nullptr, participant_);
+
+        fastrtps::rtps::RTPSParticipantAttributes attr;
+        get_rtps_attributes(participant_, attr);
+        EXPECT_TRUE(check_options_attr(attr, options));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
+    }
+
+    static void test_wrong_participant_with_env(
+            const std::string& options_str)
+    {
+        apply_option_to_env(options_str);
+        DomainParticipantQos qos;
+        DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, qos);
+        ASSERT_NE(nullptr, participant_);
+
+        fastrtps::rtps::RTPSParticipantAttributes attr;
+        get_rtps_attributes(participant_, attr);
+        EXPECT_TRUE(check_default_participant(attr));
+        EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
+    }
+
+    static void apply_option_to_env(
+            const std::string& options)
+    {
+        set_env(env_var_large_data_ + options);
+    }
+
+    static bool check_options_attr(
+        const fastrtps::rtps::RTPSParticipantAttributes& attr,
+        const rtps::BuiltinTransportsOptions& options)
+        {
+            bool udp_ok = false;
+            bool tcp_ok = false;
+            for (auto& transportDescriptor : attr.userTransports)
+            {
+                if ( fastdds::rtps::UDPv4TransportDescriptor*  udp_ptr =
+                        dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
+                {
+                    if (udp_ptr &&
+                        udp_ptr->maxMessageSize == 65500 && // LARGE_DATA config does not affect UDP maxMessageSize
+                        udp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        udp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        udp_ptr->non_blocking_send == options.non_blocking_send)
+                    {
+                        udp_ok = true;
+                    }
+                }
+                else if ( fastdds::rtps::TCPv4TransportDescriptor* tcp_ptr =
+                        dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
+                {
+                    if (tcp_ptr &&
+                        tcp_ptr->maxMessageSize == options.maxMessageSize &&
+                        tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->non_blocking_send == options.non_blocking_send)
+                    {
+                        tcp_ok = true;
+                    }
+                }
+            }
+            EXPECT_EQ(attr.userTransports.size(), 3u);
+            return (udp_ok && tcp_ok);
+        };
+
+    static bool check_options_qos(
+        const DomainParticipantQos& qos,
+        const rtps::BuiltinTransportsOptions& options)
+        {
+            bool udp_ok = false;
+            bool tcp_ok = false;
+            for (auto& transportDescriptor : qos.transport().user_transports)
+            {
+                if ( fastdds::rtps::UDPv4TransportDescriptor*  udp_ptr =
+                        dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
+                {
+                    if (udp_ptr &&
+                        udp_ptr->maxMessageSize == 65500 && // LARGE_DATA config does not affect UDP maxMessageSize
+                        udp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        udp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        udp_ptr->non_blocking_send == options.non_blocking_send)
+                    {
+                        udp_ok = true;
+                    }
+                }
+                else if ( fastdds::rtps::TCPv4TransportDescriptor* tcp_ptr =
+                        dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
+                {
+                    if (tcp_ptr &&
+                        tcp_ptr->maxMessageSize == options.maxMessageSize &&
+                        tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->non_blocking_send == options.non_blocking_send)
+                    {
+                        tcp_ok = true;
+                    }
+                }
+            }
+            EXPECT_EQ(qos.transport().user_transports.size(), 3u);
+            return (udp_ok && tcp_ok);
+        };
+
+    static bool check_default_participant(
+        const fastrtps::rtps::RTPSParticipantAttributes& attr)
+        {
+            bool udp_ok = false;
+            bool shm_ok = false;
+            for (auto& transportDescriptor : attr.userTransports)
+            {
+                if ( nullptr !=
+                        dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()))
+                {
+                    shm_ok = true;
+                }
+                else if ( nullptr !=
+                        dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
+                {
+                    udp_ok = true;
+                }
+            }
+            EXPECT_EQ(attr.userTransports.size(), 2u);
+            return (udp_ok && shm_ok);
+        };
+
+private:
+
+    static const std::string env_var_name_;
+    static const std::string env_var_large_data_;
+
+    static void set_env(
+        const std::string& value)
+        {
+#ifdef _WIN32
+            ASSERT_EQ(0, _putenv_s(env_var_name_.c_str(), value.c_str()));
+#else
+            ASSERT_EQ(0, setenv(env_var_name_.c_str(), value.c_str(), 1));
+#endif // _WIN32
+        };
+};
+
+// Static const member of non-integral types cannot be in-class initialized
+const std::string BuiltinTransportsOptionsTest::env_var_name_ = "FASTDDS_BUILTIN_TRANSPORTS";
+const std::string BuiltinTransportsOptionsTest::env_var_large_data_ = "LARGE_DATA";
+
+TEST(ParticipantTests, ParticipantCreationWithLargeDataOptions)
+{
+    // Default configuration
+    DomainParticipantQos qos;
+    rtps::BuiltinTransportsOptions options;
+
+    qos.setup_transports(rtps::BuiltinTransports::LARGE_DATA);
+    EXPECT_TRUE(BuiltinTransportsOptionsTest::check_options_qos(qos, options));
+
+    // Custom configuration
+    options.maxMessageSize = 40000;
+    options.sockets_buffer_size = 60000;
+    options.non_blocking_send = true;
+    qos = DomainParticipantQos();
+    qos.setup_transports(rtps::BuiltinTransports::LARGE_DATA, options);
+    EXPECT_TRUE(BuiltinTransportsOptionsTest::check_options_qos(qos, options));
+
+    // Check participant is correctly created
+    DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, qos);
+    ASSERT_NE(nullptr, participant_);
+
+    fastrtps::rtps::RTPSParticipantAttributes attr;
+    get_rtps_attributes(participant_, attr);
+
+    EXPECT_TRUE(BuiltinTransportsOptionsTest::check_options_attr(attr, options));
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant_));
+}
+
+TEST(ParticipantTests, ParticipantCreationWithLargeDataOptionsThroughEnvVar)
+{
+    // Default configuration
+    rtps::BuiltinTransportsOptions options;
+    std::string config_options = "";
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // Custom configurations
+    // 1. Only max_msg_size
+    config_options = "?max_msg_size=40KB";
+    options.maxMessageSize = 40000;
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // 2. Only sockets_buffers_size
+    config_options = "?sockets_size=70KB";
+    options = rtps::BuiltinTransportsOptions();
+    options.sockets_buffer_size = 70000;
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // 3. Only non_blocking_send
+    config_options = "?non_blocking=true";
+    options = rtps::BuiltinTransportsOptions();
+    options.non_blocking_send = true;
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // 4. All options
+    config_options = "?max_msg_size=70KB&non_blocking=true&sockets_size=70KB";
+    options = rtps::BuiltinTransportsOptions();
+    options.maxMessageSize = 70000;
+    options.sockets_buffer_size = 70000;
+    options.non_blocking_send = true;
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // 5. Wrong units defaults to LARGE_DATA with default config options
+    config_options = "?max_msg_size=70TB&non_blocking=true&sockets_size=70Byte";
+    options = rtps::BuiltinTransportsOptions();
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // 6. Exceed maximum defaults to LARGE_DATA with default config options
+    config_options = "?max_msg_size=5000000000&non_blocking=false&sockets_size=5000000000";
+    options = rtps::BuiltinTransportsOptions();
+    BuiltinTransportsOptionsTest::test_correct_participant_with_env(config_options, options);
+
+    // 7. Wrong spelling defaults to DEFAULT builtin transports
+    config_options = "?max_message_size=70TB&no_blokcing=true&sokcets_saze=70Byte";
+    BuiltinTransportsOptionsTest::test_wrong_participant_with_env(config_options);
+}
 
 } // namespace dds
 } // namespace fastdds
