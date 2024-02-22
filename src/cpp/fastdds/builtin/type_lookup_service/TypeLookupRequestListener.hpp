@@ -20,11 +20,11 @@
 #ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_
 #define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REQUEST_LISTENER_HPP_
 
+#include <condition_variable>
 #include <mutex>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
-#include <condition_variable>
 
 #include <fastrtps/rtps/reader/ReaderListener.h>
 #include <fastrtps/rtps/writer/WriterListener.h>
@@ -166,6 +166,10 @@ protected:
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 
+    void onWriterChangeReceivedByAll(
+            fastrtps::rtps::RTPSWriter*,
+            fastrtps::rtps::CacheChange_t* change) override;
+
     //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
 
@@ -180,39 +184,8 @@ protected:
     std::queue<TypeLookup_Request> requests_queue_;
     std::mutex request_processor_cv_mutex_;
     std::condition_variable request_processor_cv_;
-    bool processing_;
+    bool processing_ = false;
     rtps::ThreadSettings request_processor_thread_settings_;
-};
-
-class TypeLookupRequestWListener : public fastrtps::rtps::WriterListener
-{
-public:
-
-    /**
-     * @brief Constructor
-     * @param pwlp Pointer to the TypeLookupManager
-     */
-    TypeLookupRequestWListener(
-            TypeLookupManager* manager)
-        : typelookup_manager_(manager)
-    {
-    }
-
-    /**
-     * @brief Destructor
-     */
-    virtual ~TypeLookupRequestWListener() override
-    {
-    }
-
-    void onWriterChangeReceivedByAll(
-            fastrtps::rtps::RTPSWriter*,
-            fastrtps::rtps::CacheChange_t* change) override;
-
-private:
-
-    //! A pointer to the typelookup manager
-    TypeLookupManager* typelookup_manager_;
 };
 
 } /* namespace builtin */

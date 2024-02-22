@@ -248,7 +248,7 @@ protected:
             SampleIdentity request);
 
     /**
-     * Creates a TypeLookup_Request with for the choosen type_server.
+     * Creates a TypeLookup_Request with for the given type_server.
      * @param type_server[in] GUID corresponding to the remote participant.
      * @param pupsubtype[out] PubSubType in charge of TypeLookup_Request .
      * @return the TypeLookup_Request created.
@@ -289,7 +289,7 @@ protected:
             fastrtps::rtps::WriterHistory* writer_history) const;
 
     /**
-     * Prepares the the received payload of a CacheChange before deserializing.
+     * Prepares the received payload of a CacheChange before deserializing.
      * @param change[in] CacheChange_t received.
      * @param payload[out] SerializedPayload_t prepared.
      * @return true if received payload is prepared, false otherwise.
@@ -299,7 +299,7 @@ protected:
             fastrtps::rtps::SerializedPayload_t& payload) const;
 
     /**
-     * Uses the send_impl with the appropriate parameters and checks if it is directed to the local DomainParticipant.
+     * Uses the receive_impl with the appropriate parameters and checks if it is directed to the local DomainParticipant.
      * @param change[in] CacheChange_t of the request.
      * @param request[out] TypeLookup_Request after deserialization.
      * @return true if the request is deserialized and directed to the local participant, false otherwise.
@@ -309,9 +309,9 @@ protected:
             TypeLookup_Request& request) const;
 
     /**
-     * Uses the send_impl with the appropriate parameters and checks if that the reply's recipient is the local participant.
+     * Uses the receive_impl with the appropriate parameters and checks if the reply's recipient is the local participant.
      * @param change[in] CacheChange_t of the reply.
-     * @param reply[out] TypeLookup_Reply after deserialize.
+     * @param reply[out] TypeLookup_Reply after deserialization.
      * @return true if the request is deserialized and the reply's recipient is us, false otherwise.
      */
     bool receive(
@@ -404,11 +404,9 @@ protected:
 
     //! Request Listener object.
     TypeLookupRequestListener* request_listener_ = nullptr;
-    TypeLookupRequestWListener* request_wlistener_ = nullptr;
 
     //! Reply Listener object.
     TypeLookupReplyListener* reply_listener_ = nullptr;
-    TypeLookupReplyWListener* reply_wlistener_ = nullptr;
 
     //! Mutex to protect access to temp_reader_proxy_data_ and temp_writer_proxy_data_.
     std::mutex temp_data_lock_;
@@ -436,7 +434,7 @@ protected:
             std::vector<std::pair<eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr,
             AsyncGetTypeReaderCallback>>> async_get_type_reader_callbacks_;
 
-    //! Collection SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
+    //! Collection of all SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
     std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
 
     void request_cache_change_acked(

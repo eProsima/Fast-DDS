@@ -122,7 +122,7 @@ void TypeLookupReplyListener::process_reply()
                     default:
                         // If the type of request is not known, log an error
                         EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
-                                "Received unknown request in type lookup service.");
+                                "Received unknown reply operation type in type lookup service.");
                         break;
                 }
             }
@@ -141,38 +141,48 @@ void TypeLookupReplyListener::check_get_types_reply(
     auto requests_it = typelookup_manager_->async_get_type_requests_.find(request_id);
     if (requests_it != typelookup_manager_->async_get_type_requests_.end())
     {
-        ReturnCode_t register_result = RETCODE_ERROR;
+        ReturnCode_t register_result = RETCODE_OK;
         for (xtypes::TypeIdentifierTypeObjectPair pair : reply.types())
         {
-            register_result = fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                            register_type_object(pair.type_identifier(), pair.type_object());
-            if (RETCODE_OK != register_result)
+            if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
+                            register_type_object(pair.type_identifier(), pair.type_object()))
             {
-                // If registration fails for any type, break out of the loop
-                break;
+                // If any of the types is not registered, log error
+                EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                        "Error registering type: the discriminators differ");
+                register_result = RETCODE_ERROR;
             }
         }
 
         if (RETCODE_OK == register_result)
         {
-            // Check if this reply has a continuation_point
+            // Check if this reply requires a continuation_point
             std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
             auto it = std::find(replies_with_continuation_.begin(), replies_with_continuation_.end(), related_request);
             if (it != replies_with_continuation_.end())
             {
-                // If it is, remove it from the list and continue
+                // If it does, remove it from the list and continue
                 replies_with_continuation_.erase(it);
             }
             else
             {
-                // If it is not, notify the callbacks associated with the request
-                typelookup_manager_->notify_callbacks(requests_it->second);
+                // If it does not, check that the type that originated the request is consistent
+                // before notifying the callbacks associated with the request
+                try
+                {
+                    xtypes::TypeObject type_object;
+                    fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().get_type_object(
+                        requests_it->second.type_id(), type_object);
+                    xtypes::TypeObjectUtils::type_object_consistency(type_object);
+
+                    typelookup_manager_->notify_callbacks(requests_it->second);
+                }
+                catch (const std::exception& exception)
+                {
+                    EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
+                            "Error registering type: " << exception.what());
+                }
             }
-        }
-        else
-        {
-            // If any of the types is not registered, log error
-            EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER, "Error registering type.");
         }
 
         // Remove the processed SampleIdentity from the outstanding requests
@@ -303,7 +313,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     reader->getHistory()->remove_change(change);
 }
 
-void TypeLookupReplyWListener::onWriterChangeReceivedByAll(
+void TypeLookupReplyListener::onWriterChangeReceivedByAll(
         fastrtps::rtps::RTPSWriter*,
         fastrtps::rtps::CacheChange_t* change)
 {

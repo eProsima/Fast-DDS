@@ -97,9 +97,7 @@ TypeLookupManager::~TypeLookupManager()
     delete builtin_reply_reader_history_;
 
     delete reply_listener_;
-    delete reply_wlistener_;
     delete request_listener_;
-    delete request_wlistener_;
 
     delete temp_reader_proxy_data_;
     delete temp_writer_proxy_data_;
@@ -383,7 +381,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 void TypeLookupManager::notify_callbacks(
         xtypes::TypeIdentfierWithSize type_identifier_with_size)
 {
-    // Check that type is not solved
+    // Check that type is pending to be resolved
     auto writer_callbacks_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
     if (writer_callbacks_it != async_get_type_writer_callbacks_.end())
     {
@@ -506,6 +504,21 @@ bool TypeLookupManager::create_endpoints()
     watt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
     watt.mode = fastrtps::rtps::ASYNCHRONOUS_WRITER;
 
+    ReaderAttributes ratt;
+    ratt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
+    ratt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
+    ratt.endpoint.external_unicast_locators = builtin_protocols_->m_att.metatraffic_external_unicast_locators;
+    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
+    ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
+    ratt.matched_writers_allocation = pattr.allocation.participants;
+    ratt.expectsInlineQos = true;
+    ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
+    ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
+    ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
+
+    request_listener_ = new TypeLookupRequestListener(this);
+    builtin_request_reader_history_ = new ReaderHistory(hatt);
+
     // Built-in request writer
     request_listener_ = new TypeLookupRequestListener(this);
     builtin_request_writer_history_ = new WriterHistory(hatt);
@@ -560,18 +573,6 @@ bool TypeLookupManager::create_endpoints()
         return false;
     }
 
-    ReaderAttributes ratt;
-    ratt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
-    ratt.endpoint.multicastLocatorList = builtin_protocols_->m_metatrafficMulticastLocatorList;
-    ratt.endpoint.external_unicast_locators = builtin_protocols_->m_att.metatraffic_external_unicast_locators;
-    ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
-    ratt.endpoint.remoteLocatorList = builtin_protocols_->m_initialPeersList;
-    ratt.matched_writers_allocation = pattr.allocation.participants;
-    ratt.expectsInlineQos = true;
-    ratt.endpoint.topicKind = fastrtps::rtps::NO_KEY;
-    ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
-    ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
-
     // Built-in request reader
     builtin_request_reader_history_ = new ReaderHistory(hatt);
 
@@ -598,8 +599,33 @@ bool TypeLookupManager::create_endpoints()
     }
 
     // Built-in reply reader
+    reply_listener_ = new TypeLookupReplyListener(this);
     builtin_reply_reader_history_ = new ReaderHistory(hatt);
 
+    // Built-in request writer
+    RTPSWriter* rep_writer;
+    if (participant_->createWriter(
+                &rep_writer,
+                watt,
+                builtin_request_writer_history_,
+                reply_listener_,
+                fastrtps::rtps::c_EntityId_TypeLookup_request_writer,
+                true))
+    {
+        builtin_request_writer_ = dynamic_cast<StatefulWriter*>(rep_writer);
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup request writer created.");
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
+        delete builtin_request_writer_history_;
+        builtin_request_writer_history_ = nullptr;
+        delete reply_listener_;
+        reply_listener_ = nullptr;
+        return false;
+    }
+
+    // Built-in reply reader
     RTPSReader* rep_reader;
     if (participant_->createReader(
                 &rep_reader,
@@ -754,27 +780,10 @@ bool TypeLookupManager::prepare_receive_payload(
 {
     CDRMessage_t msg(change.serializedPayload);
     msg.pos += 1;
-    octet encapsulation = 0;
-    CDRMessage::readOctet(&msg, &encapsulation);
-    if (encapsulation == PL_CDR_BE)
-    {
-        msg.msg_endian = BIGEND;
-    }
-    else if (encapsulation == PL_CDR_LE)
-    {
-        msg.msg_endian = LITTLEEND;
-    }
-    else
-    {
-        return false;
-    }
-    change.serializedPayload.encapsulation = static_cast<uint16_t>(encapsulation);
-    msg.pos += 2; // Skip encapsulation options.
 
-    //SerializedPayload_t payload;
-    payload.max_size = change.serializedPayload.max_size - 4;
-    payload.length = change.serializedPayload.length - 4;
-    payload.data = change.serializedPayload.data + 4;
+    payload.max_size = change.serializedPayload.max_size;
+    payload.length = change.serializedPayload.length;
+    payload.data = change.serializedPayload.data;
     return true;
 }
 
@@ -788,7 +797,8 @@ bool TypeLookupManager::receive(
         return false;
     }
 
-    if (request.header().instanceName() != local_instance_name_)
+    //Compare only the guid.guidPrefix
+    if ((request.header().instanceName().to_string()).substr(0, 24) != local_instance_name_.substr(0, 24))
     {
         // Ignore request
         return false;
