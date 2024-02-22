@@ -17,10 +17,6 @@ if(WIN32)
 endif()
 
 set(COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Token.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -52,7 +48,12 @@ target_include_directories(BuiltinAESGCMGMAC PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 
-target_link_libraries(BuiltinAESGCMGMAC fastcdr GTest::gmock ${OPENSSL_LIBRARIES})
+target_link_libraries(BuiltinAESGCMGMAC
+    fastcdr
+    fastdds::log
+    GTest::gmock
+    ${OPENSSL_LIBRARIES}
+    )
 
 gtest_discover_tests(BuiltinAESGCMGMAC SOURCES ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
     PROPERTIES ENVIRONMENT "CERTS_PATH=${PROJECT_SOURCE_DIR}/test/certs")

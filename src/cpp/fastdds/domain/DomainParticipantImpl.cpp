@@ -1574,7 +1574,7 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 }
 
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
-        traits<DynamicType>::ref_type dyn_type)
+        DynamicType::_ref_type dyn_type)
 {
     TypeSupport type(new DynamicPubSubType(dyn_type));
     return get_participant()->register_type(type);

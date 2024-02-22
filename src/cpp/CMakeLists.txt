@@ -14,6 +14,7 @@
 
 include(CheckCXXSourceCompiles)
 
+add_subdirectory(fastdds/log)
 add_subdirectory(fastdds/xtypes)
 
 # Set source files
@@ -432,7 +433,6 @@ target_compile_definitions(${PROJECT_NAME}
     $<$<BOOL:${WIN32}>:${PROJECT_NAME_UPPER}_NO_LIB>
     PUBLIC
     $<$<STREQUAL:$<TARGET_PROPERTY:${PROJECT_NAME},TYPE>,SHARED_LIBRARY>:${PROJECT_NAME_UPPER}_DYN_LINK>
-    DYNAMIC_TYPES_CHECKING # TODO
     )
 
 # Define public headers
@@ -467,8 +467,12 @@ target_link_libraries(${PROJECT_NAME}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
-    PRIVATE eProsima_atomic
-    PRIVATE fastdds::xtypes::dynamic-types::impl
+
+    PRIVATE
+    eProsima_atomic
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     )
 
 if(MSVC OR MSVC_IDE)

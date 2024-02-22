@@ -17,10 +17,6 @@ if(WIN32)
 endif()
 
 set(LOG_COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
@@ -41,6 +37,7 @@ target_include_directories(LogMacrosAllActiveTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosAllActiveTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -65,6 +62,7 @@ target_include_directories(LogMacrosNoInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoInfoTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -89,6 +87,7 @@ target_include_directories(LogMacrosNoWarningTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoWarningTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -113,6 +112,7 @@ target_include_directories(LogMacrosNoErrorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoErrorTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -137,6 +137,7 @@ target_include_directories(LogMacrosDefaultTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosDefaultTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -163,6 +164,7 @@ target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosInternalDebugOffTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -186,6 +188,7 @@ target_include_directories(OldLogMacrosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
@@ -210,6 +213,7 @@ target_include_directories(OldLogMacrosDisableTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosDisableTests
     fastcdr
+    fastdds::log
     GTest::gtest
     ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>

@@ -21,10 +21,6 @@ if(WIN32)
 endif()
 
 set(COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/data/ParticipantProxyData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
@@ -69,6 +65,7 @@ target_link_libraries(BuiltinPKIDH
     GTest::gtest
     ${OPENSSL_LIBRARIES}
     fastcdr
+    fastdds::log
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>

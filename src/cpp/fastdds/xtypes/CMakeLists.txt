@@ -16,13 +16,13 @@
 
 #{{{ API
 
-add_library(xtypes-dynamic-types-api INTERFACE)
+add_library(fastdds-xtypes-dynamic-types-api INTERFACE)
 
-add_library(fastdds::xtypes::dynamic-types::api ALIAS xtypes-dynamic-types-api)
+add_library(fastdds::xtypes::dynamic-types::api ALIAS fastdds-xtypes-dynamic-types-api)
 
-target_compile_features(xtypes-dynamic-types-api INTERFACE cxx_std_11)
+target_compile_features(fastdds-xtypes-dynamic-types-api INTERFACE cxx_std_11)
 
-target_sources(xtypes-dynamic-types-api INTERFACE
+target_sources(fastdds-xtypes-dynamic-types-api INTERFACE
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicData.hpp
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp
@@ -47,13 +47,13 @@ target_sources(xtypes-dynamic-types-api INTERFACE
 
 #{{{ Implementation
 
-add_library(xtypes-dynamic-types-impl INTERFACE)
+add_library(fastdds-xtypes-dynamic-types-impl INTERFACE)
 
-add_library(fastdds::xtypes::dynamic-types::impl ALIAS xtypes-dynamic-types-impl)
+add_library(fastdds::xtypes::dynamic-types::impl ALIAS fastdds-xtypes-dynamic-types-impl)
 
-target_compile_features(xtypes-dynamic-types-impl INTERFACE cxx_std_11)
+target_compile_features(fastdds-xtypes-dynamic-types-impl INTERFACE cxx_std_11)
 
-target_sources(xtypes-dynamic-types-impl INTERFACE
+target_sources(fastdds-xtypes-dynamic-types-impl INTERFACE
     ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp
     dynamic_types/AnnotationDescriptorImpl.cpp
     dynamic_types/AnnotationDescriptorImpl.hpp
@@ -78,8 +78,37 @@ target_sources(xtypes-dynamic-types-impl INTERFACE
     dynamic_types/VerbatimTextDescriptorImpl.hpp
     )
 
-target_link_libraries(xtypes-dynamic-types-impl INTERFACE xtypes-dynamic-types-api)
+target_link_libraries(fastdds-xtypes-dynamic-types-impl INTERFACE fastdds-xtypes-dynamic-types-api)
 
 #}}}
+
+#}}}
+
+#{{{ Interface library for grouping the TypeObject Representation source code.
+
+add_library(fastdds-xtypes-type-representation INTERFACE)
+
+add_library(fastdds::xtypes::type-representation ALIAS fastdds-xtypes-type-representation)
+
+target_compile_features(fastdds-xtypes-type-representation INTERFACE cxx_std_11)
+
+target_sources(fastdds-xtypes-type-representation INTERFACE
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/exception/Exception.hpp
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/TypeObject.hpp
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp
+
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp
+    ${PROJECT_SOURCE_DIR}/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h
+
+    exception/Exception.cpp
+    type_representation/dds_xtypes_typeobjectCdrAux.ipp
+    type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+    type_representation/TypeIdentifierWithSizeHashSpecialization.h
+    type_representation/TypeObjectRegistry.cpp
+    type_representation/TypeObjectRegistry.hpp
+    type_representation/TypeObjectUtils.cpp
+    )
 
 #}}}

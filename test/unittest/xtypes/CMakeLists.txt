@@ -21,7 +21,6 @@ endif()
 
 file(GLOB XTYPES_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/*.cpp
@@ -55,7 +54,10 @@ target_include_directories(XTypesTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(XTypesTests GTest::gtest ${MOCKS} ${THIRDPARTY_BOOST_LINK_LIBS})
+target_link_libraries(XTypesTests
+    GTest::gtest
+    ${MOCKS}
+    ${THIRDPARTY_BOOST_LINK_LIBS})
 if(MSVC OR MSVC_IDE)
     target_link_libraries(XTypesTests ${PRIVACY} fastcdr foonathan_memory iphlpapi Shlwapi ws2_32)
 else()
