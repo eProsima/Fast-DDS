@@ -704,9 +704,13 @@ TEST_F(DataReaderTests, InvalidQos)
     qos.history().kind = KEEP_LAST_HISTORY_QOS;
     qos.history().depth = 0;
     EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 0 is inconsistent
-    qos.history().depth = 2;
-    qos.resource_limits().max_samples_per_instance = 1;
-    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 2 but max_samples_per_instance 1 is inconsistent
+    // KEEP LAST 2000 but max_samples_per_instance default (400) is inconsistent but right now it only shows a warning
+    // In the reader, this returns RETCODE_INMUTABLE_POLICY, because the depth cannot be changed on run time.
+    // Because of the implementation, we know de consistency is checked before the inmutability, so by checking the
+    // return against RETCODE_INMUTABLE_POLICY we are testing that the setting are not considered inconsistent yet.
+    // This test will fail whenever we enforce the consistency between depth and max_samples_per_instance.
+    qos.history().depth = 2000;
+    EXPECT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader_->set_qos(qos));
 
     /* Inmutable QoS */
     const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
