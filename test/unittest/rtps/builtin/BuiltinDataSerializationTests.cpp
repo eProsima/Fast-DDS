@@ -20,16 +20,16 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-#include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 
 #include <rtps/network/NetworkFactory.h>
 

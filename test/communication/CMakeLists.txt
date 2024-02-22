@@ -41,7 +41,7 @@ target_compile_definitions(SimpleCommunicationPublisher PRIVATE
 target_include_directories(SimpleCommunicationPublisher PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(SimpleCommunicationPublisher fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(SimpleCommunicationPublisher fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 set(SUBSCRIBER_SOURCE ${COMMON_SOURCE}
     Subscriber.cpp
@@ -57,7 +57,7 @@ target_compile_definitions(SimpleCommunicationSubscriber PRIVATE
 target_include_directories(SimpleCommunicationSubscriber PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(SimpleCommunicationSubscriber fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(SimpleCommunicationSubscriber fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 set(PUBSUB_SOURCE ${COMMON_SOURCE}
     Publisher.cpp
@@ -75,7 +75,7 @@ target_compile_definitions(SimpleCommunicationPubSub PRIVATE
 target_include_directories(SimpleCommunicationPubSub PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/blackbox)
-target_link_libraries(SimpleCommunicationPubSub fastrtps fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+target_link_libraries(SimpleCommunicationPubSub fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 ###############################################################################
 # Necessary files

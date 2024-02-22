@@ -48,7 +48,6 @@ if(EPROSIMA_BUILD_TESTS)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
     add_subdirectory(blackbox)
-    add_subdirectory(communication)
     add_subdirectory(unittest)
     add_subdirectory(xtypes)
     add_subdirectory(dds/communication)
@@ -65,7 +64,8 @@ endif()
 if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
     find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
     if(CTEST_MEMORYCHECK_COMMAND)
-        add_subdirectory(profiling)
+        # TODO(jlbueno) Migrate tests to Fast DDS API
+        # add_subdirectory(profiling)
     endif()
 endif()
 

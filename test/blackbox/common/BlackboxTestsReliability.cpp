@@ -57,8 +57,8 @@ void reliability_disable_heartbeat_piggyback(
                 return false;
             };
 
-    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_LAST_HISTORY_QOS)
+    writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
             .history_depth(1)
             .heartbeat_period_seconds(180000)
             .disable_heartbeat_piggyback(disable_heartbeat_piggyback)
@@ -67,8 +67,8 @@ void reliability_disable_heartbeat_piggyback(
             .init();
     writer_id = writer.datawriter_guid().entityId;
 
-    reader.history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+    reader.history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
             .init();
 
     ASSERT_TRUE(reader.isInitialized());

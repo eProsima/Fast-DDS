@@ -33,7 +33,7 @@ namespace rtps {
 class RTPSParticipantAttributes;
 
 /**
- * Provides the FastRTPS library with abstract resources, which
+ * Provides the Fast DDS library with abstract resources, which
  * in turn manage the SEND and RECEIVE operations over some transport.
  * Once a transport is registered, it becomes invisible to the library
  * and is abstracted away for good.

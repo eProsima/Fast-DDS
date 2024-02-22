@@ -1,4 +1,4 @@
-name: Fast-DDS Windows CI reusable workflow
+name: Fast DDS Windows CI reusable workflow
 
 on:
   workflow_call:
@@ -44,7 +44,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          path: src/fastrtps
+          path: src/fastdds
           submodules: true
           ref: ${{ inputs.fastdds-branch }}
 
@@ -125,22 +125,22 @@ jobs:
           # Nightly job
           if ("${{ inputs.label }}".Contains("nightly"))
           {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
+              $depends_repos_path = ".\src\fastdds\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
               if (!(Test-Path -Path $depends_repos_path))
               {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_master.repos"
+                $depends_repos_path = ".\src\fastdds\.github\workflows\config\nightly_master.repos"
               }
-              $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
+              $meta_path = ".\src\fastdds\.github\workflows\config\nightly.meta"
           }
           # Either PR or manual
           else
           {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
+              $depends_repos_path = ".\src\fastdds\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
               if (!(Test-Path -Path $depends_repos_path))
               {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_master.repos"
+                $depends_repos_path = ".\src\fastdds\.github\workflows\config\default_ci_master.repos"
               }
-              $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
+              $meta_path = ".\src\fastdds\.github\workflows\config\default_ci.meta"
           }
           Write-Output "Selected repos files: $depends_repos_path"
           Write-Output "Selected metas files: $meta_path"
@@ -176,7 +176,7 @@ jobs:
           colcon_test_args_default: --event-handlers=console_direct+
           ctest_args: ${{ inputs.ctest-args }}
           ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
-          packages_names: fastrtps
+          packages_names: fastdds
           workspace: ${{ github.workspace }}
           test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 
@@ -196,6 +196,6 @@ jobs:
         with:
           name: "Report: ${{ matrix.cmake-config }} | ${{ matrix.vs-toolset }} "
           path: "${{ steps.test.outputs.ctest_results_path }}*.xml"
-          working-directory: 'src/fastrtps'
+          working-directory: 'src/fastdds'
           path-replace-backslashes: 'true'
           list-tests: 'failed'

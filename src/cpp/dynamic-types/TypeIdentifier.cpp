@@ -1087,27 +1087,6 @@ ExtendedTypeDefn& TypeIdentifier::extended_defn()
 //     return union_max_size_serialized - initial_alignment;
 // }
 
-size_t TypeIdentifier::getCdrSerializedSize(
-        const TypeIdentifier& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
-    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
-}
-
-void TypeIdentifier::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::serialize(scdr, *this);
-}
-
-void TypeIdentifier::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    eprosima::fastcdr::deserialize(dcdr, *this);
-}
-
 bool TypeIdentifier::operator ==(
         const TypeIdentifier& other) const
 {

@@ -20,11 +20,12 @@
 #ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 #define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 
-#include <vector>
 #include <bitset>
-#include <fastrtps/rtps/common/Types.h>
-#include <fastrtps/rtps/common/Time_t.h>
-#include <fastrtps/qos/ParameterTypes.h>
+#include <vector>
+
+#include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {

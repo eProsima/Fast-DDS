@@ -890,7 +890,7 @@ private:
         std::map<GUID_t, std::tuple<WriterProxyData, DatawriterCryptoHandle*>> associated_writers;
     };
 
-    // TODO(Ricardo) Temporal. Store individual in FastRTPS code.
+    // TODO(Ricardo) Temporal. Store individual in Fast DDS code.
     std::map<GUID_t, DatawriterAssociations> writer_handles_;
     std::map<GUID_t, DatareaderAssociations> reader_handles_;
 

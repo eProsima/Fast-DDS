@@ -222,5 +222,5 @@ void TCPChannelResourceBasic::shutdown(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

@@ -512,5 +512,5 @@ bool test_UDPv4Transport::should_be_dropped(
 }
 
 } // namespace rtps
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima

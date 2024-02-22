@@ -19,23 +19,25 @@
 #ifndef _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 #define _RTPS_PARTICIPANT_RTPSPARTICIPANTIMPL_H_
 
+#include <atomic>
+#include <map>
+#include <sstream>
+
+#include <gmock/gmock.h>
+
 // Include first possible mocks (depending on include on CMakeLists.txt)
-#include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+
 #include <rtps/network/NetworkFactory.h>
-#include <fastrtps/rtps/participant/RTPSParticipantListener.h>
-#include <fastrtps/rtps/reader/RTPSReader.h>
-#include <fastrtps/rtps/resources/ResourceEvent.h>
-#include <fastrtps/rtps/writer/RTPSWriter.h>
 
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
 
-#include <gmock/gmock.h>
-
-#include <atomic>
-#include <map>
-#include <sstream>
 
 namespace eprosima {
 namespace fastrtps {

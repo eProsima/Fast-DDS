@@ -198,7 +198,7 @@ void PublisherImpl::PublisherWriterListener::on_liveliness_lost(
 
 void PublisherImpl::PublisherWriterListener::on_offered_deadline_missed(
         DataWriter* writer,
-        const fastrtps::OfferedDeadlineMissedStatus& status)
+        const OfferedDeadlineMissedStatus& status)
 {
     if (publisher_->listener_ != nullptr)
     {

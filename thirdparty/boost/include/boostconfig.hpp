@@ -42,7 +42,7 @@
 #include <stdexcept>
 
 // TODO(Adolfo): This will fail if windows system without program data in C: drive
-#define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastrtps_interprocess"
+#define BOOST_INTERPROCESS_SHARED_DIR_PATH "C:\\ProgramData\\eprosima\\fastdds_interprocess"
 
 // Check that generic emulation has not been accidentally enabled
 #include <boost/interprocess/detail/workaround.hpp>

@@ -12,23 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
+#include <cstdlib>
+#include <memory>
+#include <string>
+#include <thread>
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
+
+#include "BlackboxTests.hpp"
 #include "RTPSAsSocketReader.hpp"
 #include "RTPSAsSocketWriter.hpp"
 #include "RTPSWithRegistrationReader.hpp"
 #include "RTPSWithRegistrationWriter.hpp"
-
-#include <gtest/gtest.h>
-
-#include <fastrtps/rtps/RTPSDomain.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastdds/dds/log/Log.hpp>
-
-#include <thread>
-#include <memory>
-#include <cstdlib>
-#include <string>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
