@@ -18,6 +18,7 @@
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <future>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -36,9 +37,11 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <utils/SystemInfo.hpp>
 
@@ -438,13 +441,13 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
                 {
                     delete remote_participant_info;
                 }
-                remote_participant_info = new ParticipantDiscoveryInfo(info);
+                remote_participant_info = new ParticipantProxyData(info.info);
                 found_->store(true);
                 cv_->notify_one();
             }
         }
 
-        ParticipantDiscoveryInfo* remote_participant_info;
+        ParticipantProxyData* remote_participant_info;
 
     private:
 
@@ -496,7 +499,7 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         participant_found.store(false);
 
         // Prevent assertion on spurious discovery of a participant from elsewhere
-        if (part_1->guid() == listener.remote_participant_info->info.m_guid)
+        if (part_1->guid() == listener.remote_participant_info->m_guid)
         {
             // Check that all three properties are present in the ParticipantProxyData, and that their value
             // is that of the property in part_1 (the original property value)
@@ -504,13 +507,13 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
             {
                 // Find property in ParticipantProxyData
                 auto received_property = std::find_if(
-                    listener.remote_participant_info->info.m_properties.begin(),
-                    listener.remote_participant_info->info.m_properties.end(),
+                    listener.remote_participant_info->m_properties.begin(),
+                    listener.remote_participant_info->m_properties.end(),
                     [&](const ParameterProperty_t& property)
                     {
                         return property.first() == physical_property_name;
                     });
-                ASSERT_NE(received_property, listener.remote_participant_info->info.m_properties.end());
+                ASSERT_NE(received_property, listener.remote_participant_info->m_properties.end());
 
                 // Find property in first participant
                 auto part_1_property = PropertyPolicyHelper::find_property(
@@ -556,20 +559,20 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
         participant_found.store(false);
 
         // Prevent assertion on spurious discovery of a participant from elsewhere
-        if (part_1->guid() == listener.remote_participant_info->info.m_guid)
+        if (part_1->guid() == listener.remote_participant_info->m_guid)
         {
             // Check that none of the three properties are present in the ParticipantProxyData.
             for (auto physical_property_name : physical_property_names)
             {
                 // Look for property in ParticipantProxyData
                 auto received_property = std::find_if(
-                    listener.remote_participant_info->info.m_properties.begin(),
-                    listener.remote_participant_info->info.m_properties.end(),
+                    listener.remote_participant_info->m_properties.begin(),
+                    listener.remote_participant_info->m_properties.end(),
                     [&](const ParameterProperty_t& property)
                     {
                         return property.first() == physical_property_name;
                     });
-                ASSERT_EQ(received_property, listener.remote_participant_info->info.m_properties.end());
+                ASSERT_EQ(received_property, listener.remote_participant_info->m_properties.end());
             }
             break;
         }
@@ -1637,4 +1640,138 @@ TEST(DDSDiscovery, WaitSetMatchedStatus)
 {
     test_DDSDiscovery_WaitSetMatchedStatus(false);
     test_DDSDiscovery_WaitSetMatchedStatus(true);
+}
+
+// Regression test for redmine issue 20409
+TEST(DDSDiscovery, DataracePDP)
+{
+    using namespace eprosima;
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastdds::rtps;
+
+    class CustomDomainParticipantListener : public DomainParticipantListener
+    {
+    public:
+
+        CustomDomainParticipantListener()
+            : DomainParticipantListener()
+            , discovery_future(discovery_promise.get_future())
+            , destruction_future(destruction_promise.get_future())
+            , undiscovery_future(undiscovery_promise.get_future())
+        {
+        }
+
+        void on_participant_discovery(
+                DomainParticipant* /*participant*/,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override
+        {
+            if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+            {
+                try
+                {
+                    discovery_promise.set_value();
+                }
+                catch (std::future_error&)
+                {
+                    // do nothing
+                }
+                destruction_future.wait();
+            }
+            else if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT ||
+                    info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+            {
+                try
+                {
+                    undiscovery_promise.set_value();
+                }
+                catch (std::future_error&)
+                {
+                    // do nothing
+                }
+            }
+        }
+
+        std::promise<void> discovery_promise;
+        std::future<void> discovery_future;
+
+        std::promise<void> destruction_promise;
+        std::future<void> destruction_future;
+
+        std::promise<void> undiscovery_promise;
+        std::future<void> undiscovery_future;
+    };
+
+    // Disable intraprocess
+    auto settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
+    auto prev_intraprocess_delivery = settings.intraprocess_delivery;
+    settings.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
+    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
+
+    // DDS Domain Id
+    const unsigned int DOMAIN_ID = (uint32_t)GET_PID() % 230;
+
+    // This is a non deterministic test, so we will run it several times to increase probability of data race detection
+    // if it exists.
+    const unsigned int N_ITER = 10;
+    unsigned int iter_idx = 0;
+    while (iter_idx < N_ITER)
+    {
+        iter_idx++;
+
+        DomainParticipantQos qos;
+        qos.transport().use_builtin_transports = false;
+        auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+        qos.transport().user_transports.push_back(udp_transport);
+
+        // Create discoverer participant (the one where a data race on PDP might occur)
+        CustomDomainParticipantListener participant_listener;
+        DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(DOMAIN_ID, qos,
+                        &participant_listener);
+
+        DomainParticipantQos aux_qos;
+        aux_qos.transport().use_builtin_transports = false;
+        auto aux_udp_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+        aux_qos.transport().user_transports.push_back(aux_udp_transport);
+
+        // Create auxiliary participant to be discovered
+        aux_qos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
+        aux_qos.wire_protocol().builtin.discovery_config.leaseDuration = Duration_t(1, 10);
+        DomainParticipant* aux_participant = DomainParticipantFactory::get_instance()->create_participant(DOMAIN_ID,
+                        aux_qos);
+
+        // Wait for discovery
+        participant_listener.discovery_future.wait();
+
+        // Shutdown auxiliary participant's network, so it will be removed after lease duration
+        test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+        DomainParticipantFactory::get_instance()->delete_participant(aux_participant);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500)); // Wait for longer than lease duration
+
+        try
+        {
+            // NOTE: at this point, the discoverer participant is stuck in a UDP discovery thread (unicast or multicast).
+            // At the same time, the events thread is stuck at PDP::remove_remote_participant (lease duration expired
+            // and so the discovered participant is removed), trying to acquire the callback mutex taken by the
+            // discovery thread.
+
+            // If we now signal the discovery thread to continue, a data race might occur if the received
+            // ParticipantProxyData, which is further being processed in the discovery thread (assignRemoteEndpoints),
+            // gets deleted/cleared by the events thread at the same time.
+            // Note that a similar situation might arise in other scenarios, such as on the concurrent reception of a
+            // data P and data uP each on a different thread (unicast and multicast), however these are harder to
+            // reproduce in a regression test.
+            participant_listener.destruction_promise.set_value();
+        }
+        catch (std::future_error&)
+        {
+            // do nothing
+        }
+
+        participant_listener.undiscovery_future.wait();
+        DomainParticipantFactory::get_instance()->delete_participant(participant);
+    }
+
+    // Reestablish previous intraprocess configuration
+    settings.intraprocess_delivery = prev_intraprocess_delivery;
+    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
 }
