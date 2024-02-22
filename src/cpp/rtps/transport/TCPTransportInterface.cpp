@@ -637,13 +637,21 @@ bool TCPTransportInterface::transform_remote_locator(
 void TCPTransportInterface::CloseOutputChannel(
         fastrtps::rtps::Locator_t& locator)
 {
+    // The TCPSendResource associated channel cannot be removed from the channel_resources_ map. On transport's destruction
+    // this map is consulted to send the unbind requests. If not sending it, the other participant wouldn't disconnect the
+    // socket and keep a connection status of eEstablished. This would prevent new connect calls since it thinks it's already
+    // connected.
+    // If moving this unbind send with the respective channel disconnection to this point, the following problem arises:
+    // If receiving a CloseOutputChannel call after receiving an unbinding message from a remote participant (our participant
+    // isn't disconnecting but we want to erase this send resource), the channel cannot be disconnected here since the listening thread is
+    // taken the read mutex (permanently waiting at read asio layer). This mutex is also needed to disconnect the socket (deadlock).
+    // Socket disconnection should always be done in the listening thread (or in the transport cleanup, when receiver resources have
+    // already been destroyed and the listening thread had consequently finished).
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-    auto channel = channel_resources_.find(locator);
-    if (channel != channel_resources_.end())
-    {
-        close_tcp_socket(channel->second);
-        channel_resources_.erase(channel->second->locator());
-    }
+    auto channel_resource = channel_resources_.find(locator);
+    assert(channel_resource != channel_resources_.end());
+    (void)channel_resource;
+    LOCATOR_INVALID(locator);
 }
 
 bool TCPTransportInterface::CloseInputChannel(
