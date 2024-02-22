@@ -205,6 +205,70 @@ TEST_F(TCPv6Tests, autofill_port)
     EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
 }
 
+static void GetIP6s(
+        std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+                    interfaces.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP6 && ip.type != IPFinder::IP6_LOCAL;
+                    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
+            {
+                loc.locator.kind = LOCATOR_KIND_TCPv6;
+            });
+}
+
+TEST_F(TCPv6Tests, check_TCPv6_interface_whitelist_initialization)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+
+    GetIP6s(interfaces);
+
+    // asio::ip::addres_v6 appends the interface name to the IP address, but the locator does not
+    // Create two different vectors to compare them
+    std::vector<std::string> asio_interfaces;
+    std::vector<std::string> locator_interfaces;
+    for (auto& ip : interfaces)
+    {
+        asio_interfaces.push_back(ip.name);
+        locator_interfaces.push_back(IPLocator::toIPv6string(ip.locator));
+    }
+    // Add manually localhost to test adding multiple interfaces
+    asio_interfaces.push_back("::1");
+    locator_interfaces.push_back("::1");
+
+    for (auto& ip : locator_interfaces)
+    {
+        descriptor.interfaceWhiteList.emplace_back(ip);
+    }
+    descriptor.add_listener_port(g_default_port);
+    MockTCPv6Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    // Check that the transport whitelist and the acceptors map is the same size as the locator_interfaces
+    ASSERT_EQ(transportUnderTest.get_interface_whitelist().size(), descriptor.interfaceWhiteList.size());
+    ASSERT_EQ(transportUnderTest.get_acceptors_map().size(), descriptor.interfaceWhiteList.size());
+
+    // Check that every interface is in the whitelist
+    auto check_whitelist = transportUnderTest.get_interface_whitelist();
+    for (auto& ip : asio_interfaces)
+    {
+        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v6::from_string(
+                    ip)), check_whitelist.end());
+    }
+
+    // Check that every interface is in the acceptors map
+    for (const auto& test : transportUnderTest.get_acceptors_map())
+    {
+        ASSERT_NE(std::find(locator_interfaces.begin(), locator_interfaces.end(), IPLocator::toIPv6string(
+                    test.first)), locator_interfaces.end());
+    }
+}
+
 // This test verifies server's channel resources mapping keys uniqueness, where keys are clients locators.
 // Clients typically communicated its PID as its locator port. When having several clients in the same
 // process this lead to overwriting server's channel resources map elements.
@@ -410,6 +474,33 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     // Clear test
     EXPECT_TRUE(serverTransportUnderTest->CloseInputChannel(initialPeerLocator));
     client_resource_list.clear();
+}
+
+TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_port)
+{
+    descriptor.add_listener_port(g_default_port);
+    TCPv6Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    // Two locators with the same port as the local listening port, but different addresses
+    Locator_t lowerOutputChannelLocator;
+    lowerOutputChannelLocator.kind = LOCATOR_KIND_TCPv6;
+    lowerOutputChannelLocator.port = g_default_port;
+    IPLocator::setLogicalPort(lowerOutputChannelLocator, g_default_port);
+    Locator_t higherOutputChannelLocator = lowerOutputChannelLocator;
+    IPLocator::setIPv6(lowerOutputChannelLocator, "::");
+    IPLocator::setIPv6(higherOutputChannelLocator, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");
+
+    SendResourceList send_resource_list;
+
+    // If the remote address is lower than the local one, no channel must be created but it must be added to the send_resource_list
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, lowerOutputChannelLocator));
+    ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(lowerOutputChannelLocator));
+    ASSERT_EQ(send_resource_list.size(), 1);
+    // If the remote address is higher than the local one, a CONNECT channel must be created and added to the send_resource_list
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, higherOutputChannelLocator));
+    ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(higherOutputChannelLocator));
+    ASSERT_EQ(send_resource_list.size(), 2);
 }
 
 /*
