@@ -59,6 +59,7 @@ constexpr const char* bitfield_d = "d";
 
 constexpr const char* bounded_string_alias = "Inner_alias_bounded_string_helper";
 constexpr const char* bounded_wstring_alias = "Inner_alias_bounded_wstring_helper";
+constexpr const char* array_alias = "Inner_alias_array_helper";
 
 constexpr const char* var_short_name = "var_short";
 constexpr const char* var_ushort_name = "var_ushort";
@@ -133,6 +134,7 @@ public:
     static DynamicType::_ref_type create_inner_bitset_helper();
     static DynamicType::_ref_type create_inner_alias_bounded_string_helper();
     static DynamicType::_ref_type create_inner_alias_bounded_wstring_helper();
+    static DynamicType::_ref_type create_inner_alias_array_helper();
 
 };
 
