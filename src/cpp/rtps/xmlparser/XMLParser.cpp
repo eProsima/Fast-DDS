@@ -2207,11 +2207,12 @@ XMLP_ret XMLParser::fillDataNode(
         {
             // builtinTransports
             eprosima::fastdds::rtps::BuiltinTransports bt;
-            if (XMLP_ret::XML_OK != getXMLBuiltinTransports(p_aux0, &bt, ident))
+            eprosima::fastdds::rtps::BuiltinTransportsOptions bt_opts;
+            if (XMLP_ret::XML_OK != getXMLBuiltinTransports(p_aux0, &bt, &bt_opts, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
-            participant_node.get()->rtps.setup_transports(bt);
+            participant_node.get()->rtps.setup_transports(bt, bt_opts);
         }
         else if (strcmp(name, PROPERTIES_POLICY) == 0)
         {

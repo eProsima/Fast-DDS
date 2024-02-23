@@ -673,6 +673,7 @@ protected:
     RTPS_DllAPI static XMLP_ret getXMLBuiltinTransports(
             tinyxml2::XMLElement* elem,
             eprosima::fastdds::rtps::BuiltinTransports* bt,
+            eprosima::fastdds::rtps::BuiltinTransportsOptions* bt_opts,
             uint8_t ident);
 };
 
