@@ -95,9 +95,6 @@ if(QNX)
 endif()
 add_executable(ExternalLocatorsProcessorTests
     ExternalLocatorsProcessorTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/dynamic_types/DynamicTypeBuilderFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
@@ -132,6 +129,7 @@ target_include_directories(ExternalLocatorsProcessorTests PRIVATE
 target_link_libraries(ExternalLocatorsProcessorTests
     fastcdr
     fastdds::log
+    fastdds::xtypes::dynamic-types::impl
     GTest::gtest ${MOCKS}
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
