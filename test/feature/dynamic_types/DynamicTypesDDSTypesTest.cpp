@@ -206,6 +206,16 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_bounded_wstr
     return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
 }
 
+DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_array_helper()
+{
+    TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(array_alias);
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {2})->build());
+
+    return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
+}
+
 // /********
 //  * ARRAYS
 // *********/

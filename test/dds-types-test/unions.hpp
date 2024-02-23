@@ -10461,7 +10461,7 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_wchar()
     {
-        m__d = 'a';
+        m__d = L'a';
     }
 
     /*!
@@ -10482,12 +10482,12 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 m_first = x.m_first;
                 break;
 
 
-            case 'b':
+            case L'b':
                 m_second = x.m_second;
                 break;
 
@@ -10507,12 +10507,12 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 m_first = x.m_first;
                 break;
 
 
-            case 'b':
+            case L'b':
                 m_second = x.m_second;
                 break;
 
@@ -10532,12 +10532,12 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 m_first = x.m_first;
                 break;
 
 
-            case 'b':
+            case L'b':
                 m_second = x.m_second;
                 break;
 
@@ -10559,12 +10559,12 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 m_first = x.m_first;
                 break;
 
 
-            case 'b':
+            case L'b':
                 m_second = x.m_second;
                 break;
 
@@ -10589,12 +10589,12 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 return (m_first == x.m_first);
                 break;
 
 
-            case 'b':
+            case L'b':
                 return (m_second == x.m_second);
                 break;
 
@@ -10626,10 +10626,10 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 switch (__d)
                 {
-                    case 'a':
+                    case L'a':
                         b = true;
                         break;
                     default:
@@ -10638,10 +10638,10 @@ public:
                 break;
 
 
-            case 'b':
+            case L'b':
                 switch (__d)
                 {
-                    case 'b':
+                    case L'b':
                         b = true;
                         break;
                     default:
@@ -10687,7 +10687,7 @@ public:
             int32_t _first)
     {
         m_first = _first;
-        m__d = 'a';
+        m__d = L'a';
 
     }
 
@@ -10702,7 +10702,7 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 b = true;
                 break;
             default:
@@ -10728,7 +10728,7 @@ public:
 
         switch (m__d)
         {
-            case 'a':
+            case L'a':
                 b = true;
                 break;
             default:
@@ -10752,7 +10752,7 @@ public:
             int64_t _second)
     {
         m_second = _second;
-        m__d = 'b';
+        m__d = L'b';
 
     }
 
@@ -10767,7 +10767,7 @@ public:
 
         switch (m__d)
         {
-            case 'b':
+            case L'b':
                 b = true;
                 break;
             default:
@@ -10793,7 +10793,7 @@ public:
 
         switch (m__d)
         {
-            case 'b':
+            case L'b':
                 b = true;
                 break;
             default:
@@ -16175,7 +16175,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorULongLong(
             const UnionDiscriminatorULongLong& x)
     {
-                    m_var_union_discriminator_ulong_long_long = x.m_var_union_discriminator_ulong_long_long;
+                    m_var_union_discriminator_ulong_long = x.m_var_union_discriminator_ulong_long;
 
     }
 
@@ -16186,7 +16186,7 @@ public:
     eProsima_user_DllExport UnionDiscriminatorULongLong(
             UnionDiscriminatorULongLong&& x) noexcept
     {
-        m_var_union_discriminator_ulong_long_long = std::move(x.m_var_union_discriminator_ulong_long_long);
+        m_var_union_discriminator_ulong_long = std::move(x.m_var_union_discriminator_ulong_long);
     }
 
     /*!
@@ -16197,7 +16197,7 @@ public:
             const UnionDiscriminatorULongLong& x)
     {
 
-                    m_var_union_discriminator_ulong_long_long = x.m_var_union_discriminator_ulong_long_long;
+                    m_var_union_discriminator_ulong_long = x.m_var_union_discriminator_ulong_long;
 
         return *this;
     }
@@ -16210,7 +16210,7 @@ public:
             UnionDiscriminatorULongLong&& x) noexcept
     {
 
-        m_var_union_discriminator_ulong_long_long = std::move(x.m_var_union_discriminator_ulong_long_long);
+        m_var_union_discriminator_ulong_long = std::move(x.m_var_union_discriminator_ulong_long);
         return *this;
     }
 
@@ -16221,7 +16221,7 @@ public:
     eProsima_user_DllExport bool operator ==(
             const UnionDiscriminatorULongLong& x) const
     {
-        return (m_var_union_discriminator_ulong_long_long == x.m_var_union_discriminator_ulong_long_long);
+        return (m_var_union_discriminator_ulong_long == x.m_var_union_discriminator_ulong_long);
     }
 
     /*!
@@ -16235,48 +16235,48 @@ public:
     }
 
     /*!
-     * @brief This function copies the value in member var_union_discriminator_ulong_long_long
-     * @param _var_union_discriminator_ulong_long_long New value to be copied in member var_union_discriminator_ulong_long_long
+     * @brief This function copies the value in member var_union_discriminator_ulong_long
+     * @param _var_union_discriminator_ulong_long New value to be copied in member var_union_discriminator_ulong_long
      */
-    eProsima_user_DllExport void var_union_discriminator_ulong_long_long(
-            const Union_Discriminator_unsigned_long_long& _var_union_discriminator_ulong_long_long)
+    eProsima_user_DllExport void var_union_discriminator_ulong_long(
+            const Union_Discriminator_unsigned_long_long& _var_union_discriminator_ulong_long)
     {
-        m_var_union_discriminator_ulong_long_long = _var_union_discriminator_ulong_long_long;
+        m_var_union_discriminator_ulong_long = _var_union_discriminator_ulong_long;
     }
 
     /*!
-     * @brief This function moves the value in member var_union_discriminator_ulong_long_long
-     * @param _var_union_discriminator_ulong_long_long New value to be moved in member var_union_discriminator_ulong_long_long
+     * @brief This function moves the value in member var_union_discriminator_ulong_long
+     * @param _var_union_discriminator_ulong_long New value to be moved in member var_union_discriminator_ulong_long
      */
-    eProsima_user_DllExport void var_union_discriminator_ulong_long_long(
-            Union_Discriminator_unsigned_long_long&& _var_union_discriminator_ulong_long_long)
+    eProsima_user_DllExport void var_union_discriminator_ulong_long(
+            Union_Discriminator_unsigned_long_long&& _var_union_discriminator_ulong_long)
     {
-        m_var_union_discriminator_ulong_long_long = std::move(_var_union_discriminator_ulong_long_long);
+        m_var_union_discriminator_ulong_long = std::move(_var_union_discriminator_ulong_long);
     }
 
     /*!
-     * @brief This function returns a constant reference to member var_union_discriminator_ulong_long_long
-     * @return Constant reference to member var_union_discriminator_ulong_long_long
+     * @brief This function returns a constant reference to member var_union_discriminator_ulong_long
+     * @return Constant reference to member var_union_discriminator_ulong_long
      */
-    eProsima_user_DllExport const Union_Discriminator_unsigned_long_long& var_union_discriminator_ulong_long_long() const
+    eProsima_user_DllExport const Union_Discriminator_unsigned_long_long& var_union_discriminator_ulong_long() const
     {
-        return m_var_union_discriminator_ulong_long_long;
+        return m_var_union_discriminator_ulong_long;
     }
 
     /*!
-     * @brief This function returns a reference to member var_union_discriminator_ulong_long_long
-     * @return Reference to member var_union_discriminator_ulong_long_long
+     * @brief This function returns a reference to member var_union_discriminator_ulong_long
+     * @return Reference to member var_union_discriminator_ulong_long
      */
-    eProsima_user_DllExport Union_Discriminator_unsigned_long_long& var_union_discriminator_ulong_long_long()
+    eProsima_user_DllExport Union_Discriminator_unsigned_long_long& var_union_discriminator_ulong_long()
     {
-        return m_var_union_discriminator_ulong_long_long;
+        return m_var_union_discriminator_ulong_long;
     }
 
 
 
 private:
 
-    Union_Discriminator_unsigned_long_long m_var_union_discriminator_ulong_long_long;
+    Union_Discriminator_unsigned_long_long m_var_union_discriminator_ulong_long;
 
 };
 /*!
