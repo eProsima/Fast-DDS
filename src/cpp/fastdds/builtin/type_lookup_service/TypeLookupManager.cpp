@@ -517,7 +517,6 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
 
     request_listener_ = new TypeLookupRequestListener(this);
-    builtin_request_reader_history_ = new ReaderHistory(hatt);
 
     // Built-in request writer
     request_listener_ = new TypeLookupRequestListener(this);
@@ -600,32 +599,33 @@ bool TypeLookupManager::create_endpoints()
 
     // Built-in reply reader
     reply_listener_ = new TypeLookupReplyListener(this);
-    builtin_reply_reader_history_ = new ReaderHistory(hatt);
 
-    // Built-in request writer
+    // Built-in reply writer
+    builtin_reply_writer_history_ = new WriterHistory(hatt);
     RTPSWriter* rep_writer;
     if (participant_->createWriter(
                 &rep_writer,
                 watt,
-                builtin_request_writer_history_,
+                builtin_reply_writer_history_,
                 reply_listener_,
-                fastrtps::rtps::c_EntityId_TypeLookup_request_writer,
+                fastrtps::rtps::c_EntityId_TypeLookup_reply_writer,
                 true))
     {
-        builtin_request_writer_ = dynamic_cast<StatefulWriter*>(rep_writer);
-        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup request writer created.");
+        builtin_reply_writer_ = dynamic_cast<StatefulWriter*>(rep_writer);
+        EPROSIMA_LOG_INFO(TYPELOOKUP_SERVICE, "Builtin Typelookup reply writer created.");
     }
     else
     {
-        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
-        delete builtin_request_writer_history_;
-        builtin_request_writer_history_ = nullptr;
+        EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
+        delete builtin_reply_writer_history_;
+        builtin_reply_writer_history_ = nullptr;
         delete reply_listener_;
         reply_listener_ = nullptr;
         return false;
     }
 
     // Built-in reply reader
+    builtin_reply_reader_history_ = new ReaderHistory(hatt);
     RTPSReader* rep_reader;
     if (participant_->createReader(
                 &rep_reader,
