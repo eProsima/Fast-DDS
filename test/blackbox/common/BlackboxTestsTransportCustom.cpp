@@ -656,6 +656,21 @@ TEST(ChainingTransportTests, builtin_transports_xml_large_data)
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata");
 }
 
+TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_max_msg_size)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata_max_msg_size");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_non_blocking_send)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata_non_blocking_send");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_all_options)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata_all_options");
+}
+
 #ifndef __APPLE__
 TEST(ChainingTransportTests, builtin_transports_xml_large_datav6)
 {
