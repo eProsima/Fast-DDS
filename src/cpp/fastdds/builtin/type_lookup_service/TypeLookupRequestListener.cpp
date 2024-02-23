@@ -373,7 +373,9 @@ void TypeLookupRequestListener::answer_request(
         TypeLookup_getTypeDependencies_Out& out)
 {
     TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-    reply->return_value().getTypeDependencies().result(out);
+    TypeLookup_getTypeDependencies_Result result;
+    result.result(out);
+    reply->return_value().getTypeDependencies(result);
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
@@ -387,7 +389,9 @@ void TypeLookupRequestListener::answer_request(
         TypeLookup_getTypes_Out& out)
 {
     TypeLookup_Reply* reply = static_cast<TypeLookup_Reply*>(typelookup_manager_->reply_type_.createData());
-    reply->return_value().getType().result(out);
+    TypeLookup_getTypes_Result result;
+    result.result(out);
+    reply->return_value().getType(result);
     reply->header().relatedRequestId(request_id);
     reply->header().remoteEx(exception_code);
 
