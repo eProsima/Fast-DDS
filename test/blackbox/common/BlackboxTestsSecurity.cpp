@@ -4916,15 +4916,16 @@ TEST(Security, ValidateAuthenticationHandshakeProperties)
     // In reality, this time could be 0.2 perfectly,
     // but some padding is left because of the ci
     // or slower platforms
+    std::chrono::duration<double, std::milli> max_time(500);
     auto t0 = std::chrono::steady_clock::now();
     reader.waitAuthorized();
-    double auth_elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(
-        std::chrono::steady_clock::now() - t0).count();
+    auto auth_elapsed_time = std::chrono::duration<double, std::milli>(
+        std::chrono::steady_clock::now() - t0);
 
     // Both should be authorized
     writer.waitAuthorized();
 
-    ASSERT_TRUE(auth_elapsed_time < 0.5);
+    ASSERT_TRUE(auth_elapsed_time < max_time);
 }
 
 
