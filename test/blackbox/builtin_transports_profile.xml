@@ -12,7 +12,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_none</name>
-                <builtinTransports>NONE</builtinTransports>
+                <builtinTransports>
+                    <mode>NONE</mode>
+                </builtinTransports>
                 <!--
                     Need to add at least one transport in
                     order to be able to create the participant
@@ -27,7 +29,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_default</name>
-                <builtinTransports>DEFAULT</builtinTransports>
+                <builtinTransports>
+                    <mode>DEFAULT</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
@@ -35,7 +39,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_defaultv6</name>
-                <builtinTransports>DEFAULTv6</builtinTransports>
+                <builtinTransports>
+                    <mode>DEFAULTv6</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
@@ -43,7 +49,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_shm</name>
-                <builtinTransports>SHM</builtinTransports>
+                <builtinTransports>
+                    <mode>SHM</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
@@ -51,7 +59,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_udp</name>
-                <builtinTransports>UDPv4</builtinTransports>
+                <builtinTransports>
+                    <mode>UDPv4</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
@@ -59,7 +69,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_udpv6</name>
-                <builtinTransports>UDPv6</builtinTransports>
+                <builtinTransports>
+                    <mode>UDPv6</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
@@ -67,7 +79,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata</name>
-                <builtinTransports>LARGE_DATA</builtinTransports>
+                <builtinTransports>
+                    <mode>LARGE_DATA</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
@@ -75,7 +89,9 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedatav6</name>
-                <builtinTransports>LARGE_DATAv6</builtinTransports>
+                <builtinTransports>
+                    <mode>LARGE_DATAv6</mode>
+                </builtinTransports>
             </rtps>
         </participant>
 
