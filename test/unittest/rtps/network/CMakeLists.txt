@@ -99,6 +99,7 @@ add_executable(ExternalLocatorsProcessorTests
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/xtypes/exception/Exception.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
@@ -117,8 +118,11 @@ target_compile_definitions(ExternalLocatorsProcessorTests PRIVATE
     )
 target_include_directories(ExternalLocatorsProcessorTests PRIVATE
     ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectUtils
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl # Dependency of fastdds::xtypes::type_representation
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
@@ -126,6 +130,7 @@ target_include_directories(ExternalLocatorsProcessorTests PRIVATE
 target_link_libraries(ExternalLocatorsProcessorTests
     fastcdr
     fastdds::log
+    fastdds::xtypes::dynamic-types::impl
     GTest::gtest ${MOCKS}
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
