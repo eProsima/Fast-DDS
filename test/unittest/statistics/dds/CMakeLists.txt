@@ -296,6 +296,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
         )
 
     set(STATISTICS_DOMAINPARTICIPANT_STATUS_QUERYABLE_TESTS_SOURCE
@@ -490,6 +491,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/TimedConditionVariable.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
         )
 
     # SHM Transport
