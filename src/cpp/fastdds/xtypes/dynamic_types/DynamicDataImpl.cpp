@@ -4674,8 +4674,8 @@ bool DynamicDataImpl::deserialize(
                                     {
                                         for (auto member : type->get_all_members_by_index())
                                         {
-                                            auto m_impl =
-                                            traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
+                                            auto m_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                                                             member)};
 
                                             for (auto label : m_impl->get_descriptor().label())
                                             {
@@ -4697,10 +4697,13 @@ bool DynamicDataImpl::deserialize(
                             default:
                                 {
                                     // Check MemberId in mutable case.
-                                    traits<DynamicDataImpl>::ref_type member_data =
-                                    std::static_pointer_cast<DynamicDataImpl>(value_.at(
-                                        selected_union_member_));
+                                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
+                                                          selected_union_member_))};
                                     dcdr >> member_data;
+                                    if (ExtensibilityKind::MUTABLE != type->get_descriptor().extensibility_kind())
+                                    {
+                                        ret_value = false;
+                                    }
                                 }
                                 break;
                         }
