@@ -421,6 +421,17 @@ TEST(DDSDataWriter, HeartbeatWhileDestruction)
     }
 }
 
+/**
+ * This is a regression test for issue https://eprosima.easyredmine.com/issues/20504.
+ * It checks that a DataWriter be created with default Qos and a large history depth.
+ */
+TEST(DDSDataWriter, default_qos_large_history_depth)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.history_depth(1000).init();
+    ASSERT_TRUE(writer.isInitialized());
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
