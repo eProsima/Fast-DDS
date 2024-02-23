@@ -164,20 +164,7 @@
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="builtinTransports" minOccurs="0" maxOccurs="1">
-                            <xs:simpleType>
-                                <xs:restriction base="xs:string">
-                                    <xs:enumeration value="NONE"/>
-                                    <xs:enumeration value="DEFAULT"/>
-                                    <xs:enumeration value="DEFAULTv6"/>
-                                    <xs:enumeration value="SHM"/>
-                                    <xs:enumeration value="UDPv4"/>
-                                    <xs:enumeration value="UDPv6"/>
-                                    <xs:enumeration value="LARGE_DATA"/>
-                                    <xs:enumeration value="LARGE_DATAv6"/>
-                                </xs:restriction>
-                            </xs:simpleType>
-                        </xs:element>
+                        <xs:element name="builtinTransports" type="builtinTransportsEnumType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -193,6 +180,35 @@
         </xs:all>
         <xs:attribute name="profile_name" type="string" use="required"/>
         <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
+    <!--Builtin Transports Enum Type:
+        | ╠ att. max_msg_size  [uint32],
+        | ╠ att. sockets_size  [uint32],
+        | ╚ att. non_blocking  [bool]
+        |
+        └ mode         [int32]-->
+
+    <xs:complexType name="builtinTransportsEnumType">
+        <xs:all>
+            <xs:element name="mode" minOccurs="1" maxOccurs="1">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="NONE" />
+                        <xs:enumeration value="DEFAULT" />
+                        <xs:enumeration value="DEFAULTv6" />
+                        <xs:enumeration value="SHM" />
+                        <xs:enumeration value="UDPv4" />
+                        <xs:enumeration value="UDPv6" />
+                        <xs:enumeration value="LARGE_DATA" />
+                        <xs:enumeration value="LARGE_DATAv6" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="max_msg_size" type="uint32" use="optional"/>
+        <xs:attribute name="sockets_size" type="uint32" use="optional"/>
+        <xs:attribute name="non_blocking" type="boolean" use="optional"/>
     </xs:complexType>
 
     <!--Data writer / publisher:
