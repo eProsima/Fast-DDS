@@ -16,9 +16,9 @@
 # Create tests                                                            #
 ###########################################################################
 
-find_package(PythonInterp 3 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
 
     set(TESTS
         test_fastdds_installed
@@ -31,7 +31,7 @@ if(PYTHONINTERP_FOUND)
     foreach(TEST IN LISTS TESTS)
         add_test(
                 NAME system.tools.fastdds.${TEST}
-                COMMAND ${PYTHON_EXECUTABLE}
+                COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_CURRENT_SOURCE_DIR}/tests.py
                 ${CMAKE_INSTALL_PREFIX}
                 ${TEST}

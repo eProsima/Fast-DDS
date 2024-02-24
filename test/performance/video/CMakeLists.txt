@@ -160,15 +160,15 @@ if(GST_FOUND)
     ###########################################################################
     # Create tests                                                            #
     ###########################################################################
-    find_package(PythonInterp 3 REQUIRED)
-    if(PYTHONINTERP_FOUND)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    if(Python3_Interpreter_FOUND)
         if(GST_FOUND)
             # Loop over the test names
             foreach(video_test_name ${VIDEO_TEST_LIST})
                 # Add the test
                 add_test(
                     NAME performance.video.${video_test_name}
-                    COMMAND ${PYTHON_EXECUTABLE}
+                    COMMAND ${Python3_EXECUTABLE}
                     ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py
                     --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${video_test_name}.xml
                 )
@@ -209,7 +209,7 @@ if(GST_FOUND)
                     # Add the secure verison
                     add_test(
                         NAME performance.video.${video_test_name}_security
-                        COMMAND ${PYTHON_EXECUTABLE}
+                        COMMAND ${Python3_EXECUTABLE}
                         ${CMAKE_CURRENT_SOURCE_DIR}/video_tests.py
                         --xml_file ${CMAKE_CURRENT_SOURCE_DIR}/xml/${video_test_name}.xml
                     )
