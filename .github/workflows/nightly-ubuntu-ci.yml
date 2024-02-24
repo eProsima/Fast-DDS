@@ -7,17 +7,17 @@ on:
 
 jobs:
   nightly-sec-ubuntu-ci:
-    uses: ./.github/workflows/reusable-ubuntu-ci.yml
-    with:
-      label: 'nightly-sec-ubuntu-ci'
-      cmake-args: "-DSECURITY=ON"
-      ctest-args: "-LE xfail"
-      fastdds-branch: 'master'
 
-  nightly-nosec-ubuntu-ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
-      label: 'nightly-nosec-ubuntu-ci'
-      cmake-args: "-DSECURITY=OFF"
+      os-image: ${{ matrix.os-image }}
+      label: '${{ matrix.os-image }}-nightly-sec-ubuntu-ci'
+      cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
       fastdds-branch: 'master'
