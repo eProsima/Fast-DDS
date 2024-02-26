@@ -134,7 +134,7 @@ jobs:
 
     env:
       FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '3.0.x-devel' }}
-      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.head_ref || github.event.inputs.discovery_server_branch || '3.0.x-devel' }}
+      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || '3.0.x-devel' }}
 
     steps:
       # https://github.com/actions/runner-images/issues/9491
