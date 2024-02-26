@@ -6256,7 +6256,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)
     member_descriptor->name("my_enum");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6309,7 +6309,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias)
     member_descriptor->name("my_alias");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6368,7 +6368,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_with_alias)
     member_descriptor->name("my_alias_alias");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6396,7 +6396,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_boolean)
     member_descriptor->name("my_bool");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6424,7 +6424,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_octet)
     member_descriptor->name("my_octet");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6452,7 +6452,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short)
     member_descriptor->name("my_int16");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6480,7 +6480,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_long)
     member_descriptor->name("my_int32");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6508,7 +6508,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_longlong)
     member_descriptor->name("my_int64");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6536,7 +6536,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ushort)
     member_descriptor->name("my_uint16");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6564,7 +6564,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ulong)
     member_descriptor->name("my_uint32");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6592,7 +6592,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_ulonglong)
     member_descriptor->name("my_uint64");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6620,7 +6620,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_float)
     member_descriptor->name("my_float32");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6648,7 +6648,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_double)
     member_descriptor->name("my_float64");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6676,7 +6676,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_longdouble)
     member_descriptor->name("my_float128");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6704,7 +6704,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_char)
     member_descriptor->name("my_char");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6732,7 +6732,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wchar)
     member_descriptor->name("my_wchar");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6760,7 +6760,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_string)
     member_descriptor->name("my_string");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6788,7 +6788,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_wstring)
     member_descriptor->name("my_wstring");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6817,7 +6817,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_large_string)
     member_descriptor->name("my_large_string");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6845,7 +6845,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_large_wstring)
     member_descriptor->name("my_large_wstring");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6898,7 +6898,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_short_wstring)
     member_descriptor->name("my_short_wstring");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6933,7 +6933,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_string)
     member_descriptor->name("my_alias_string");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -6968,7 +6968,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_alias_of_wstring)
     member_descriptor->name("my_alias_wstring");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7000,7 +7000,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array)
     member_descriptor->name("my_array");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7039,7 +7039,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array_of_arrays)
     member_descriptor->name("my_array_array");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7091,7 +7091,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_array_struct_with_array_of
     member_descriptor->name("my_array_array_array");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7120,7 +7120,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence)
     member_descriptor->name("my_sequence");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7159,7 +7159,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_sequence_of_sequences)
     member_descriptor->name("my_sequence_sequence");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7189,7 +7189,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map)
     member_descriptor->name("my_map");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7227,7 +7227,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_map_of_maps)
     member_descriptor->name("my_map_map");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7258,7 +7258,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_two_members)
     member_descriptor->name("b");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7302,7 +7302,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_struct)
     member_descriptor->name("child_int64");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7346,7 +7346,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_union)
     member_descriptor->name("my_union");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7407,7 +7407,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_union_with_union)
     member_descriptor->name("my_union");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7451,7 +7451,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     member_descriptor->name("my_union");
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);
@@ -7693,7 +7693,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     member_descriptor->id(5);
     builder->add_member(member_descriptor);
 
-    DynamicType::_ref_type type {pbType->GetDynamicType()};
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
     ASSERT_TRUE(type->equals(builder->build()));
 
     delete(pbType);

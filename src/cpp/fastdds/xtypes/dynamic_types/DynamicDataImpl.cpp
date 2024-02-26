@@ -1559,13 +1559,6 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
 {
     size_t initial_alignment {current_alignment};
 
-    /*TODO(richiware)
-       if (data.type_ && annotation_is_non_serialized())
-       {
-        return 0;
-       }
-     */
-
     auto type_impl = get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(type));
 
     switch (type_impl->get_kind())
@@ -4398,13 +4391,6 @@ size_t DynamicDataImpl::calculate_serialized_size(
     size_t calculated_size {0};
     auto it = value_.begin();
 
-    /*TODO(richiware)
-       if (data.type_ && annotation_is_non_serialized())
-       {
-        return 0;
-       }
-     */
-
     TypeKind type_kind = type->get_kind();
 
     switch (type_kind)
@@ -4584,16 +4570,13 @@ size_t DynamicDataImpl::calculate_serialized_size(
 
             for (auto& member : type->get_all_members_by_index())
             {
-                //TODO(richiware) if (!m.annotation_is_non_serialized())
-                {
-                    it = value_.find(member->get_id());
+                it = value_.find(member->get_id());
 
-                    if (it != value_.end())
-                    {
-                        auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-                        calculated_size += calculator.calculate_member_serialized_size(
-                            member->get_id(), member_data, current_alignment);
-                    }
+                if (it != value_.end())
+                {
+                    auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
+                    calculated_size += calculator.calculate_member_serialized_size(
+                        member->get_id(), member_data, current_alignment);
                 }
             }
 
@@ -5080,13 +5063,6 @@ bool DynamicDataImpl::deserialize(
 {
     bool res = true;
 
-    /*TODO(richiware)
-        if (annotation_is_non_serialized())
-        {
-            return res;
-        }
-     */
-
     TypeKind type_kind = type->get_kind();
 
     switch (type_kind)
@@ -5429,8 +5405,16 @@ bool DynamicDataImpl::deserialize(
 
                         traits<DynamicTypeMember>::ref_type member;
 
-                        //TODO(richiware) check if mutable extension and use get_member.
-                        if (RETCODE_OK == type->get_member_by_index(member, mid.id))
+                        if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
+                        {
+                            ret_value = (RETCODE_OK == type->get_member(member, mid.id));
+                        }
+                        else
+                        {
+                            ret_value = (RETCODE_OK == type->get_member_by_index(member, mid.id));
+                        }
+
+                        if (ret_value)
                         {
                             auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
                             traits<DynamicDataImpl>::ref_type member_data;
@@ -5450,10 +5434,6 @@ bool DynamicDataImpl::deserialize(
                             }
 
                             dcdr >> member_data;
-                        }
-                        else
-                        {
-                            ret_value = false;
                         }
 
                         return ret_value;
@@ -5972,12 +5952,6 @@ void DynamicDataImpl::serialize(
         eprosima::fastcdr::Cdr& cdr,
         const traits<DynamicTypeImpl>::ref_type type) const
 {
-    /*TODO(richware)
-       if (annotation_is_non_serialized())
-       {
-        return;
-       }
-     */
     TypeKind type_kind = type->get_kind();
 
     switch (type_kind)
@@ -6219,21 +6193,18 @@ void DynamicDataImpl::serialize(
 
             for (auto& member : type->get_all_members_by_index())
             {
-                //TODO(richiware) if (!m.annotation_is_non_serialized())
+                auto it = value_.find(member->get_id());
+
+                if (it != value_.end())
                 {
-                    auto it = value_.find(member->get_id());
+                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
 
-                    if (it != value_.end())
-                    {
-                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
-
-                        cdr << eprosima::fastcdr::MemberId{member->get_id()} << member_data;
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Error serializing structure member because not found on DynamicData");
-                    }
+                    cdr << eprosima::fastcdr::MemberId{member->get_id()} << member_data;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES,
+                            "Error serializing structure member because not found on DynamicData");
                 }
             }
 
