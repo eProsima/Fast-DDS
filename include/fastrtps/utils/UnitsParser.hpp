@@ -28,6 +28,7 @@
 #include <regex>
 #include <stdexcept>
 #include <string>
+#include <ctype.h>
 
 namespace eprosima {
 namespace fastdds {

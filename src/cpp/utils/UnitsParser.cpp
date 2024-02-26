@@ -28,10 +28,7 @@ void to_uppercase(
         std::string& st) noexcept
 {
     std::transform(st.begin(), st.end(), st.begin(),
-            [](unsigned char c)
-            {
-                return std::toupper(c);
-            });
+            ::toupper);
 }
 
 uint32_t parse_value_and_units(std::string& value, std::string units)
