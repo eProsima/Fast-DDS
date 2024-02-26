@@ -727,6 +727,8 @@ bool TCPTransportInterface::OpenOutputChannel(
 
     Locator physical_locator = IPLocator::toPhysicalLocator(locator);
 
+    std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
+
     // We try to find a SenderResource that has this locator.
     // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
     // already reuses a SenderResource.
@@ -739,7 +741,26 @@ bool TCPTransportInterface::OpenOutputChannel(
                 IPLocator::WanToLanLocator(physical_locator) ==
                 tcp_sender_resource->locator())))
         {
-            // If missing, logical port will be added in first send()
+            // Add logical port to channel if it's not there yet
+            auto channel_resource = channel_resources_.find(physical_locator);
+
+            // Maybe as WAN?
+            if (channel_resource == channel_resources_.end() && IPLocator::hasWan(locator))
+            {
+                Locator wan_locator = IPLocator::WanToLanLocator(locator);
+                channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(wan_locator));
+            }
+
+            if (channel_resource != channel_resources_.end())
+            {
+                channel_resource->second->add_logical_port(logical_port, rtcp_message_manager_.get());
+            }
+            else
+            {
+                std::lock_guard<std::mutex> socketsLock(pending_channel_logical_ports_mutex_);
+                pending_channel_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].push_back(logical_port);
+            }
+
             statistics_info_.add_entry(locator);
             return true;
         }
@@ -753,7 +774,6 @@ bool TCPTransportInterface::OpenOutputChannel(
                                                                       << IPLocator::getLogicalPort(
                 locator) << ") @ " << IPLocator::to_string(locator));
 
-    std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(physical_locator);
 
     // Maybe as WAN?
@@ -843,6 +863,8 @@ bool TCPTransportInterface::OpenOutputChannel(
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+            std::lock_guard<std::mutex> socketsLock(pending_channel_logical_ports_mutex_);
+            pending_channel_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].push_back(logical_port);
         }
     }
 
