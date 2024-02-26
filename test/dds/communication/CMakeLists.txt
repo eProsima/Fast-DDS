@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(PythonInterp 3)
+find_package(Python3 COMPONENTS Interpreter)
 
 add_definitions(
     -DBOOST_ASIO_STANDALONE
@@ -165,10 +165,10 @@ endif()
 ###############################################################################
 # Tests specification
 ###############################################################################
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
     # Dynamic types test
     add_test(NAME DDSSimpleCommunicationTypeDiscovery
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
@@ -190,7 +190,7 @@ if(PYTHONINTERP_FOUND)
         set(TEST_NAME DDSCommunication_${TEST_DEFINITION})
         add_test(
             NAME ${TEST_NAME}
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_BUILDER}
             ${TEST_DEFINITION}.json
             )
 
