@@ -507,7 +507,8 @@ bool WriterProxy::perform_initial_ack_nack()
             if (writer)
             {
                 bool tmp;
-                writer->process_acknack(guid(), reader_->getGuid(), 1, SequenceNumberSet_t(), false, tmp);
+                writer->process_acknack(guid(), reader_->getGuid(), 1,
+                        SequenceNumberSet_t(), false, tmp, c_VendorId_eProsima);
             }
         }
         else

@@ -17,12 +17,12 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
 #include <rtps/network/NetworkFactory.h>
 
 #include "ProxyDataFilters.hpp"
@@ -32,6 +32,8 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using ::operator <<;
 
 WriterProxyData::WriterProxyData(
         const size_t max_unicast_locators,
@@ -622,9 +624,10 @@ bool WriterProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         const NetworkFactory& network,
         bool is_shm_transport_available,
-        bool should_filter_locators)
+        bool should_filter_locators,
+        fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators](
+    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
@@ -834,6 +837,15 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_PERSISTENCE_GUID:
                     {
+                        // Ignore custom PID when coming from other vendors except RTI Connext
+                        if ((c_VendorId_eProsima != source_vendor_id) &&
+                                (fastdds::rtps::c_VendorId_rti_connext != source_vendor_id))
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         ParameterGuid_t p(pid, plength);
                         if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::read_from_cdr_message(p, msg, plength))
                         {
@@ -845,6 +857,14 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != source_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         ParameterNetworkConfigSet_t p(pid, plength);
                         if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::read_from_cdr_message(p,
                                 msg, plength))
@@ -950,6 +970,15 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_DISABLE_POSITIVE_ACKS:
                     {
+                        // Ignore custom PID when coming from other vendors except RTI Connext
+                        if ((c_VendorId_eProsima != source_vendor_id) &&
+                                (fastdds::rtps::c_VendorId_rti_connext != source_vendor_id))
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         if (!fastdds::dds::QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::read_from_cdr_message(
                                     m_qos.m_disablePositiveACKs, msg, plength))
                         {
@@ -1000,6 +1029,14 @@ bool WriterProxyData::readFromCDRMessage(
 
                     case fastdds::dds::PID_DATASHARING:
                     {
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != source_vendor_id)
+                        {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                            return true;
+                        }
+
                         if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::read_from_cdr_message(
                                     m_qos.data_sharing, msg, plength))
                         {

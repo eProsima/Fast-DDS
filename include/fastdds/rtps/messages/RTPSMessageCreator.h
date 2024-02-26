@@ -19,11 +19,12 @@
 #define _FASTDDS_RTPS_CDRMESSAGECREATOR_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/FragmentNumber.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
-#include <fastdds/rtps/common/FragmentNumber.h>
-#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -68,7 +69,7 @@ public:
             CDRMessage_t* msg,
             const GuidPrefix_t& Prefix,
             const ProtocolVersion_t& version,
-            const VendorId_t& vendorId);
+            const fastdds::rtps::VendorId_t& vendorId);
 
     /**
      * Create a Header to the serialized message.
@@ -261,7 +262,7 @@ public:
     static bool addSubmessageInfoSRC(
             CDRMessage_t* msg,
             const ProtocolVersion_t& version,
-            const VendorId_t& vendorId,
+            const fastdds::rtps::VendorId_t& vendorId,
             const GuidPrefix_t& guidP);
     static bool addSubmessageInfoDST(
             CDRMessage_t* msg,

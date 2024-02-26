@@ -107,6 +107,7 @@ struct RTPS_DllAPI ProtocolVersion_t
 {
     octet m_major;
     octet m_minor;
+
     ProtocolVersion_t():
 #if HAVE_SECURITY
         // As imposed by DDSSEC11-93
@@ -162,6 +163,7 @@ const ProtocolVersion_t c_ProtocolVersion_2_3{2, 3};
 const ProtocolVersion_t c_ProtocolVersion;
 
 //!@brief Structure VendorId_t, specifying the vendor Id of the implementation.
+FASTDDS_TODO_BEFORE(3, 0, "Remove eprosima::fastrtps::rtps::VendorId_t usings");
 using VendorId_t = eprosima::fastdds::rtps::VendorId_t;
 using eprosima::fastdds::rtps::c_VendorId_Unknown;
 using eprosima::fastdds::rtps::c_VendorId_eProsima;

@@ -22,16 +22,17 @@
 #include <chrono>
 #include <mutex>
 
+#include <fastdds/core/policy/ParameterList.hpp>
+#include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <fastdds/core/policy/ParameterList.hpp>
-#include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 
@@ -44,6 +45,8 @@ using ParameterList = eprosima::fastdds::dds::ParameterList;
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
+
+using ::operator <<;
 
 ParticipantProxyData::ParticipantProxyData(
         const RTPSParticipantAllocationAttributes& allocation)
@@ -388,9 +391,10 @@ bool ParticipantProxyData::readFromCDRMessage(
         bool use_encapsulation,
         const NetworkFactory& network,
         bool is_shm_transport_available,
-        bool should_filter_locators)
+        bool should_filter_locators,
+        fastdds::rtps::VendorId_t source_vendor_id)
 {
-    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators](
+    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators, source_vendor_id](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
@@ -464,13 +468,11 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
-                        // This is a custom PID defined by eProsima, so if the DATA(p)'s
-                        // vendor ID is not ours we need just ignore it.
-                        // TODO(eduponz): This is a workaround for the moment, as it is implicitly assuming
-                        // that the vendor ID parameter came before this one. In the future, we should propagate
-                        // the vendor ID from the RTPS message header using the CacheChange and check it here.
-                        if (c_VendorId_eProsima != m_VendorId)
+                        // Ignore custom PID when coming from other vendors
+                        if (c_VendorId_eProsima != source_vendor_id)
                         {
+                            EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
+                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
                             return true;
                         }
 

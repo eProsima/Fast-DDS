@@ -21,17 +21,15 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-
-#include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
-
+#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-
-#include <fastdds/rtps/common/RemoteLocators.hpp>
+#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/qos/WriterQos.h>
+#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -456,7 +454,8 @@ public:
             CDRMessage_t* msg,
             const NetworkFactory& network,
             bool is_shm_transport_possible,
-            bool should_filter_locators);
+            bool should_filter_locators,
+            fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
 private:
 

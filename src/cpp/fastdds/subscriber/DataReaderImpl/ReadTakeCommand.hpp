@@ -238,9 +238,17 @@ struct ReadTakeCommand
         info.reception_timestamp = item->reader_info.receptionTimestamp;
         info.instance_handle = item->instanceHandle;
         info.publication_handle = InstanceHandle_t(item->writerGUID);
+
+        /*
+         * TODO(eduponz): The sample identity should be taken from the sample identity parameter.
+         * More importantly, the related sample identity should be taken from the related sample identity
+         * in write_params.
+         */
+        FASTDDS_TODO_BEFORE(3, 0, "Fill both sample_identity and related_sample_identity with write_params");
         info.sample_identity.writer_guid(item->writerGUID);
         info.sample_identity.sequence_number(item->sequenceNumber);
         info.related_sample_identity = item->write_params.sample_identity();
+
         info.valid_data = true;
 
         switch (item->kind)

@@ -19,8 +19,8 @@
 #ifndef _FASTDDS_RTPS_CACHECHANGE_H_
 #define _FASTDDS_RTPS_CACHECHANGE_H_
 
-#include <cassert>
 #include <atomic>
+#include <cassert>
 
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/FragmentNumber.h>
@@ -28,8 +28,8 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/common/WriteParams.h>
-
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 namespace eprosima {
@@ -90,6 +90,9 @@ struct RTPS_DllAPI CacheChange_t
     bool isRead = false;
     //!Source TimeStamp
     Time_t sourceTimestamp{};
+    //! Vendor Id of the writer that generated this change.
+    fastdds::rtps::VendorId_t vendor_id = c_VendorId_Unknown;
+
     union
     {
         CacheChangeReaderInfo_t reader_info;
@@ -143,6 +146,7 @@ struct RTPS_DllAPI CacheChange_t
         reader_info.receptionTimestamp = ch_ptr->reader_info.receptionTimestamp;
         write_params = ch_ptr->write_params;
         isRead = ch_ptr->isRead;
+        vendor_id = ch_ptr->vendor_id;
         fragment_size_ = ch_ptr->fragment_size_;
         fragment_count_ = ch_ptr->fragment_count_;
         first_missing_fragment_ = ch_ptr->first_missing_fragment_;
@@ -166,6 +170,7 @@ struct RTPS_DllAPI CacheChange_t
         reader_info.receptionTimestamp = ch_ptr->reader_info.receptionTimestamp;
         write_params = ch_ptr->write_params;
         isRead = ch_ptr->isRead;
+        vendor_id = ch_ptr->vendor_id;
 
         // Copy certain values from serializedPayload
         serializedPayload.encapsulation = ch_ptr->serializedPayload.encapsulation;

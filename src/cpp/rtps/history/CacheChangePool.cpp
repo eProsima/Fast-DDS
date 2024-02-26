@@ -108,6 +108,7 @@ void CacheChangePool::return_cache_to_pool(
     ch->write_params.sample_identity(SampleIdentity::unknown());
     ch->write_params.related_sample_identity(SampleIdentity::unknown());
     ch->setFragmentSize(0);
+    ch->vendor_id = c_VendorId_Unknown;
     assert(free_caches_.end() == std::find(free_caches_.begin(), free_caches_.end(), ch));
     free_caches_.push_back(ch);
 }

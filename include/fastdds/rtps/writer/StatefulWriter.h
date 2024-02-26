@@ -21,13 +21,15 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/history/IChangePool.h>
-#include <fastdds/rtps/history/IPayloadPool.h>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <condition_variable>
 #include <mutex>
+
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/history/IChangePool.h>
+#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -366,6 +368,7 @@ public:
      * @param[in] final_flag       Final flag field of the submessage.
      * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
+     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     bool process_acknack(
@@ -374,7 +377,8 @@ public:
             uint32_t ack_count,
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
-            bool& result) override;
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
     /**
      * Process an incoming NACKFRAG submessage.
@@ -385,6 +389,7 @@ public:
      * @param[in] fragments_state  Sequence number field of the submessage.
      * @param[out] result          true if the writer could process the submessage.
      *                             Only valid when returned value is true.
+     * @param[in] origin_vendor_id VendorId of the source participant from which the message was received
      * @return true when the submessage was destinated to this writer, false otherwise.
      */
     virtual bool process_nack_frag(
@@ -393,7 +398,8 @@ public:
             uint32_t ack_count,
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t fragments_state,
-            bool& result) override;
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
     /**
      * @brief Set a content filter to perform content filtering on this writer.

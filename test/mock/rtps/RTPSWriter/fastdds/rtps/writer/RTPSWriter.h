@@ -19,17 +19,19 @@
 #ifndef _FASTDDS_RTPS_RTPSWRITER_H_
 #define _FASTDDS_RTPS_RTPSWRITER_H_
 
-#include <fastrtps/rtps/attributes/WriterAttributes.h>
-#include <fastrtps/rtps/writer/WriterListener.h>
-#include <fastrtps/rtps/Endpoint.h>
-#include <fastrtps/rtps/common/CacheChange.h>
+#include <condition_variable>
+
+#include <gmock/gmock.h>
+
+#include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
-
-#include <condition_variable>
-#include <gmock/gmock.h>
+#include <fastrtps/rtps/attributes/WriterAttributes.h>
+#include <fastrtps/rtps/common/CacheChange.h>
+#include <fastrtps/rtps/Endpoint.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -227,9 +229,15 @@ public:
             uint32_t ack_count,
             const SequenceNumberSet_t& sn_set,
             bool final_flag,
-            bool& result)
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
     {
-        (void)writer_guid; (void)reader_guid; (void)ack_count; (void)sn_set; (void)final_flag;
+        static_cast<void>(writer_guid);
+        static_cast<void>(reader_guid);
+        static_cast<void>(ack_count);
+        static_cast<void>(sn_set);
+        static_cast<void>(final_flag);
+        static_cast<void>(origin_vendor_id);
 
         result = false;
         return true;
@@ -241,9 +249,14 @@ public:
             uint32_t ack_count,
             const SequenceNumber_t& seq_num,
             const FragmentNumberSet_t fragments_state,
-            bool& result)
+            bool& result,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown)
     {
-        (void)reader_guid; (void)ack_count; (void)seq_num; (void)fragments_state;
+        static_cast<void>(reader_guid);
+        static_cast<void>(ack_count);
+        static_cast<void>(seq_num);
+        static_cast<void>(fragments_state);
+        static_cast<void>(origin_vendor_id);
 
         result = false;
         return writer_guid == m_guid;

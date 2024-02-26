@@ -20,14 +20,16 @@
 #define _FASTDDS_RTPS_RTPS_MESSAGES_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/common/Guid.h>
-
 #include <iostream>
- #include <bitset>
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+#include <bitset>
+
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 // //!@brief Enumeration of the different Submessages types
 enum SubmessageId : uint8_t
@@ -49,68 +51,81 @@ enum SubmessageId : uint8_t
 
 //!@brief Structure Header_t, RTPS Message Header Structure.
 //!@ingroup COMMON_MODULE
- struct Header_t{
-     //!Protocol version
-     ProtocolVersion_t version;
-     //!Vendor ID
-     VendorId_t vendorId;
-     //!GUID prefix
-     GuidPrefix_t guidPrefix;
-     Header_t():
-         version(c_ProtocolVersion)
-         , vendorId(c_VendorId_eProsima)
-     {
-     }
-     ~Header_t(){
-     }
- };
+struct Header_t
+{
+    //!Protocol version
+    ProtocolVersion_t version;
+    //!Vendor ID
+    fastdds::rtps::VendorId_t vendorId;
+    //!GUID prefix
+    GuidPrefix_t guidPrefix;
+    Header_t()
+        : version(c_ProtocolVersion)
+        , vendorId(c_VendorId_eProsima)
+    {
+    }
 
- /**
-  * @param output
-  * @param h
-  * @return
-  */
- inline std::ostream& operator<<(std::ostream& output,const Header_t& h){
-     output << "RTPS HEADER of Version: " << (int)h.version.m_major << "." << (int)h.version.m_minor;
-     output << "  || VendorId: " <<std::hex<< (int)h.vendorId[0] << "." <<(int)h.vendorId[1] << std::dec;
-     output << "GuidPrefix: " << h.guidPrefix;
-     return output;
- }
+    ~Header_t()
+    {
+    }
 
- //!@brief Structure SubmessageHeader_t, used to contain the header information of a submessage.
- struct SubmessageHeader_t
- {
-     octet submessageId;
-     uint32_t submessageLength;
-     SubmessageFlag flags;
-     bool is_last;
+};
 
-     SubmessageHeader_t()
-         : submessageId(0)
-         , submessageLength(0)
-         , flags(0)
-         , is_last(false)
-     {}
- };
-
- using std::cout;
- using std::endl;
- using std::bitset;
-
- /**
-  * @param output
-  * @param sh
-  * @return
-  */
- inline std::ostream& operator<<(std::ostream& output,const SubmessageHeader_t& sh){
-     output << "Submessage Header, ID: " <<std::hex<< (int)sh.submessageId << std::dec;
-     output << " length: " << (int)sh.submessageLength << " flags " << (bitset<8>) sh.flags;
-     return output;
- }
-}
-}
+/**
+ * @param output
+ * @param h
+ * @return
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const Header_t& h)
+{
+    output << "RTPS HEADER of Version: " << (int)h.version.m_major << "." << (int)h.version.m_minor;
+    output << "  || VendorId: " << std::hex << (int)h.vendorId[0] << "." << (int)h.vendorId[1] << std::dec;
+    output << "GuidPrefix: " << h.guidPrefix;
+    return output;
 }
 
+//!@brief Structure SubmessageHeader_t, used to contain the header information of a submessage.
+struct SubmessageHeader_t
+{
+    octet submessageId;
+    uint32_t submessageLength;
+    SubmessageFlag flags;
+    bool is_last;
 
-#endif
+    SubmessageHeader_t()
+        : submessageId(0)
+        , submessageLength(0)
+        , flags(0)
+        , is_last(false)
+    {
+    }
+
+};
+
+using std::cout;
+using std::endl;
+using std::bitset;
+
+/**
+ * @param output
+ * @param sh
+ * @return
+ */
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const SubmessageHeader_t& sh)
+{
+    output << "Submessage Header, ID: " << std::hex << (int)sh.submessageId << std::dec;
+    output << " length: " << (int)sh.submessageLength << " flags " << (bitset<8>)sh.flags;
+    return output;
+}
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
+
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_RTPS_MESSAGES_H_ */

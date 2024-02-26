@@ -21,22 +21,21 @@
 
 #include <functional>
 
-#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastrtps/qos/LivelinessChangedStatus.h>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
-
-#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
 #endif // ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -153,6 +152,7 @@ public:
      * @param lastSN
      * @param finalFlag
      * @param livelinessFlag
+     * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
     RTPS_DllAPI virtual bool processHeartbeatMsg(
@@ -161,19 +161,22 @@ public:
             const SequenceNumber_t& firstSN,
             const SequenceNumber_t& lastSN,
             bool finalFlag,
-            bool livelinessFlag) = 0;
+            bool livelinessFlag,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
 
     /**
      * Processes a new GAP message.
      * @param writerGUID
      * @param gapStart
      * @param gapList
+     * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
     RTPS_DllAPI virtual bool processGapMsg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
-            const SequenceNumberSet_t& gapList) = 0;
+            const SequenceNumberSet_t& gapList,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) = 0;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.

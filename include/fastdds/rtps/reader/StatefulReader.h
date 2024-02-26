@@ -21,12 +21,13 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <mutex>
+
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
-
-#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {
@@ -145,12 +146,14 @@ public:
             const SequenceNumber_t& firstSN,
             const SequenceNumber_t& lastSN,
             bool finalFlag,
-            bool livelinessFlag) override;
+            bool livelinessFlag,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
     bool processGapMsg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
-            const SequenceNumberSet_t& gapList) override;
+            const SequenceNumberSet_t& gapList,
+            fastdds::rtps::VendorId_t origin_vendor_id = c_VendorId_Unknown) override;
 
     /**
      * Method to indicate the reader that some change has been removed due to HistoryQos requirements.
