@@ -2148,6 +2148,101 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
     }
 }
 
+// This test verifies the logical port passed to OpenOutputChannel is correctly added to the channel pending list or the
+// trasnport's pending channel logical ports map.
+TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+    uint16_t port = g_default_port;
+
+    // TCP Client
+    {
+        TCPv4TransportDescriptor clientDescriptor;
+        std::unique_ptr<MockTCPv4Transport> clientTransportUnderTest(new MockTCPv4Transport(clientDescriptor));
+        clientTransportUnderTest->init();
+
+        // Add initial peer to the client
+        Locator_t initialPeerLocator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", port, initialPeerLocator);
+        IPLocator::setLogicalPort(initialPeerLocator, 7410);
+
+        // OpenOutputChannel
+        SendResourceList client_resource_list;
+        ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
+        IPLocator::setLogicalPort(initialPeerLocator, 7411);
+        ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, initialPeerLocator));
+        ASSERT_FALSE(client_resource_list.empty());
+        auto channel = clientTransportUnderTest->get_channel_resources().begin()->second;
+        ASSERT_TRUE(channel->is_logical_port_added(7410));
+        ASSERT_TRUE(channel->is_logical_port_added(7411));
+        auto pending_channel_logical_ports = clientTransportUnderTest->get_pending_channel_logical_ports();
+        ASSERT_TRUE(pending_channel_logical_ports.empty());
+
+        client_resource_list.clear();
+    }
+
+    // TCP Server - LARGE_DATA
+    {
+        uint16_t port = 12345;
+        // Discovered participant physical port has to have a lower value than the listening port to behave as a server
+        uint16_t participantPhysicalLocator = 12344;
+        // Create a TCP Server transport
+        TCPv4TransportDescriptor serverDescriptor;
+        serverDescriptor.add_listener_port(port);
+        std::unique_ptr<MockTCPv4Transport> serverTransportUnderTest(new MockTCPv4Transport(serverDescriptor));
+        serverTransportUnderTest->init();
+
+        // Add participant discovered (from UDP discovery for example)
+        Locator_t discoveredParticipantLocator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", participantPhysicalLocator, discoveredParticipantLocator);
+        IPLocator::setLogicalPort(discoveredParticipantLocator, 7410);
+
+        // OpenOutputChannel
+        SendResourceList server_resource_list;
+        ASSERT_TRUE(serverTransportUnderTest->OpenOutputChannel(server_resource_list, discoveredParticipantLocator));
+        IPLocator::setLogicalPort(discoveredParticipantLocator, 7411);
+        ASSERT_TRUE(serverTransportUnderTest->OpenOutputChannel(server_resource_list, discoveredParticipantLocator));
+        ASSERT_FALSE(server_resource_list.empty());
+        ASSERT_TRUE(serverTransportUnderTest->get_channel_resources().empty());
+        auto pending_channel_logical_ports = serverTransportUnderTest->get_pending_channel_logical_ports();
+        ASSERT_EQ(pending_channel_logical_ports[participantPhysicalLocator][0], 7410);
+        ASSERT_EQ(pending_channel_logical_ports[participantPhysicalLocator][1], 7411);
+
+        server_resource_list.clear();
+    }
+
+    // TCP Client - LARGE_DATA
+    {
+        uint16_t port = 12345;
+        // Discovered participant physical port has to have a larger value than the listening port to behave as a client
+        uint16_t participantPhysicalLocator = 12346;
+        // Create a TCP Client transport
+        TCPv4TransportDescriptor clientDescriptor;
+        clientDescriptor.add_listener_port(port);
+        std::unique_ptr<MockTCPv4Transport> clientTransportUnderTest(new MockTCPv4Transport(clientDescriptor));
+        clientTransportUnderTest->init();
+
+        // Add participant discovered (from UDP discovery for example)
+        Locator_t discoveredParticipantLocator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", participantPhysicalLocator, discoveredParticipantLocator);
+        IPLocator::setLogicalPort(discoveredParticipantLocator, 7410);
+
+        // OpenOutputChannel
+        SendResourceList client_resource_list;
+        ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, discoveredParticipantLocator));
+        IPLocator::setLogicalPort(discoveredParticipantLocator, 7411);
+        ASSERT_TRUE(clientTransportUnderTest->OpenOutputChannel(client_resource_list, discoveredParticipantLocator));
+        ASSERT_FALSE(client_resource_list.empty());
+        auto channel = clientTransportUnderTest->get_channel_resources().begin()->second;
+        ASSERT_TRUE(channel->is_logical_port_added(7410));
+        ASSERT_TRUE(channel->is_logical_port_added(7411));
+        auto pending_channel_logical_ports = clientTransportUnderTest->get_pending_channel_logical_ports();
+        ASSERT_TRUE(pending_channel_logical_ports.empty());
+
+        client_resource_list.clear();
+    }
+}
+
 void TCPv4Tests::HELPER_SetDescriptorDefaults()
 {
     descriptor.add_listener_port(g_default_port);
