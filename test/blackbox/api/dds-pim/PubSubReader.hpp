@@ -575,7 +575,7 @@ public:
                 {
                     return current_unread_count_ >= n_unread;
                 });
-        return current_unread_count_;
+        return static_cast<size_t>(current_unread_count_);
     }
 
     void block(
