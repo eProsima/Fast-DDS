@@ -4343,100 +4343,100 @@ public:
     }
 
     static bool check_options_attr(
-        const fastrtps::rtps::RTPSParticipantAttributes& attr,
-        const rtps::BuiltinTransportsOptions& options)
+            const fastrtps::rtps::RTPSParticipantAttributes& attr,
+            const rtps::BuiltinTransportsOptions& options)
+    {
+        bool udp_ok = false;
+        bool tcp_ok = false;
+        for (auto& transportDescriptor : attr.userTransports)
         {
-            bool udp_ok = false;
-            bool tcp_ok = false;
-            for (auto& transportDescriptor : attr.userTransports)
+            if ( fastdds::rtps::UDPv4TransportDescriptor*  udp_ptr =
+                    dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
             {
-                if ( fastdds::rtps::UDPv4TransportDescriptor*  udp_ptr =
-                        dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
-                {
-                    if (udp_ptr &&
+                if (udp_ptr &&
                         udp_ptr->maxMessageSize == 65500 && // LARGE_DATA config does not affect UDP maxMessageSize
                         udp_ptr->sendBufferSize == options.sockets_buffer_size &&
                         udp_ptr->receiveBufferSize == options.sockets_buffer_size &&
                         udp_ptr->non_blocking_send == options.non_blocking_send)
-                    {
-                        udp_ok = true;
-                    }
-                }
-                else if ( fastdds::rtps::TCPv4TransportDescriptor* tcp_ptr =
-                        dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
-                {
-                    if (tcp_ptr &&
-                        tcp_ptr->maxMessageSize == options.maxMessageSize &&
-                        tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
-                        tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
-                        tcp_ptr->non_blocking_send == options.non_blocking_send)
-                    {
-                        tcp_ok = true;
-                    }
-                }
-            }
-            EXPECT_EQ(attr.userTransports.size(), 3u);
-            return (udp_ok && tcp_ok);
-        };
-
-    static bool check_options_qos(
-        const DomainParticipantQos& qos,
-        const rtps::BuiltinTransportsOptions& options)
-        {
-            bool udp_ok = false;
-            bool tcp_ok = false;
-            for (auto& transportDescriptor : qos.transport().user_transports)
-            {
-                if ( fastdds::rtps::UDPv4TransportDescriptor*  udp_ptr =
-                        dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
-                {
-                    if (udp_ptr &&
-                        udp_ptr->maxMessageSize == 65500 && // LARGE_DATA config does not affect UDP maxMessageSize
-                        udp_ptr->sendBufferSize == options.sockets_buffer_size &&
-                        udp_ptr->receiveBufferSize == options.sockets_buffer_size &&
-                        udp_ptr->non_blocking_send == options.non_blocking_send)
-                    {
-                        udp_ok = true;
-                    }
-                }
-                else if ( fastdds::rtps::TCPv4TransportDescriptor* tcp_ptr =
-                        dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
-                {
-                    if (tcp_ptr &&
-                        tcp_ptr->maxMessageSize == options.maxMessageSize &&
-                        tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
-                        tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
-                        tcp_ptr->non_blocking_send == options.non_blocking_send)
-                    {
-                        tcp_ok = true;
-                    }
-                }
-            }
-            EXPECT_EQ(qos.transport().user_transports.size(), 3u);
-            return (udp_ok && tcp_ok);
-        };
-
-    static bool check_default_participant(
-        const fastrtps::rtps::RTPSParticipantAttributes& attr)
-        {
-            bool udp_ok = false;
-            bool shm_ok = false;
-            for (auto& transportDescriptor : attr.userTransports)
-            {
-                if ( nullptr !=
-                        dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()))
-                {
-                    shm_ok = true;
-                }
-                else if ( nullptr !=
-                        dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
                 {
                     udp_ok = true;
                 }
             }
-            EXPECT_EQ(attr.userTransports.size(), 2u);
-            return (udp_ok && shm_ok);
-        };
+            else if ( fastdds::rtps::TCPv4TransportDescriptor* tcp_ptr =
+                    dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
+            {
+                if (tcp_ptr &&
+                        tcp_ptr->maxMessageSize == options.maxMessageSize &&
+                        tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->non_blocking_send == options.non_blocking_send)
+                {
+                    tcp_ok = true;
+                }
+            }
+        }
+        EXPECT_EQ(attr.userTransports.size(), 3u);
+        return (udp_ok && tcp_ok);
+    }
+
+    static bool check_options_qos(
+            const DomainParticipantQos& qos,
+            const rtps::BuiltinTransportsOptions& options)
+    {
+        bool udp_ok = false;
+        bool tcp_ok = false;
+        for (auto& transportDescriptor : qos.transport().user_transports)
+        {
+            if ( fastdds::rtps::UDPv4TransportDescriptor*  udp_ptr =
+                    dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
+            {
+                if (udp_ptr &&
+                        udp_ptr->maxMessageSize == 65500 && // LARGE_DATA config does not affect UDP maxMessageSize
+                        udp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        udp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        udp_ptr->non_blocking_send == options.non_blocking_send)
+                {
+                    udp_ok = true;
+                }
+            }
+            else if ( fastdds::rtps::TCPv4TransportDescriptor* tcp_ptr =
+                    dynamic_cast<fastdds::rtps::TCPv4TransportDescriptor*>(transportDescriptor.get()))
+            {
+                if (tcp_ptr &&
+                        tcp_ptr->maxMessageSize == options.maxMessageSize &&
+                        tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
+                        tcp_ptr->non_blocking_send == options.non_blocking_send)
+                {
+                    tcp_ok = true;
+                }
+            }
+        }
+        EXPECT_EQ(qos.transport().user_transports.size(), 3u);
+        return (udp_ok && tcp_ok);
+    }
+
+    static bool check_default_participant(
+            const fastrtps::rtps::RTPSParticipantAttributes& attr)
+    {
+        bool udp_ok = false;
+        bool shm_ok = false;
+        for (auto& transportDescriptor : attr.userTransports)
+        {
+            if ( nullptr !=
+                    dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()))
+            {
+                shm_ok = true;
+            }
+            else if ( nullptr !=
+                    dynamic_cast<fastdds::rtps::UDPv4TransportDescriptor*>(transportDescriptor.get()))
+            {
+                udp_ok = true;
+            }
+        }
+        EXPECT_EQ(attr.userTransports.size(), 2u);
+        return (udp_ok && shm_ok);
+    }
 
 private:
 
@@ -4444,14 +4444,15 @@ private:
     static const std::string env_var_large_data_;
 
     static void set_env(
-        const std::string& value)
-        {
+            const std::string& value)
+    {
 #ifdef _WIN32
-            ASSERT_EQ(0, _putenv_s(env_var_name_.c_str(), value.c_str()));
+        ASSERT_EQ(0, _putenv_s(env_var_name_.c_str(), value.c_str()));
 #else
-            ASSERT_EQ(0, setenv(env_var_name_.c_str(), value.c_str(), 1));
+        ASSERT_EQ(0, setenv(env_var_name_.c_str(), value.c_str(), 1));
 #endif // _WIN32
-        };
+    }
+
 };
 
 // Static const member of non-integral types cannot be in-class initialized
@@ -4477,7 +4478,7 @@ TEST(ParticipantTests, ParticipantCreationWithLargeDataOptions)
 
     // Check participant is correctly created
     DomainParticipant* participant_ = DomainParticipantFactory::get_instance()->create_participant(
-            (uint32_t)GET_PID() % 230, qos);
+        (uint32_t)GET_PID() % 230, qos);
     ASSERT_NE(nullptr, participant_);
 
     fastrtps::rtps::RTPSParticipantAttributes attr;

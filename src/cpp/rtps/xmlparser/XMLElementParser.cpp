@@ -4741,7 +4741,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             <xs:attribute name="sockets_size" type="uint32" use="optional"/>
             <xs:attribute name="non_blocking" type="boolean" use="optional"/>
         </xs:complexType>
-    */
+     */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     for (const tinyxml2::XMLAttribute* attrib = elem->FirstAttribute(); attrib != nullptr; attrib = attrib->Next())

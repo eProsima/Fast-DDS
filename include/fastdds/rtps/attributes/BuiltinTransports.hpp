@@ -57,31 +57,31 @@ struct RTPS_DllAPI BuiltinTransportsOptions
 };
 
 /**
-     * @brief Equal to operator.
-     *
-     * @param bto1 Left hand side BuiltinTransportsOptions being compared.
-     * @param bto2 Right hand side BuiltinTransportsOptions being compared.
-     * @return true if \c bto1 is equal to  \c bto2.
-     * @return false otherwise.
-     */
-    inline bool operator ==(
-            const BuiltinTransportsOptions& bto1,
-            const BuiltinTransportsOptions& bto2)
+ * @brief Equal to operator.
+ *
+ * @param bto1 Left hand side BuiltinTransportsOptions being compared.
+ * @param bto2 Right hand side BuiltinTransportsOptions being compared.
+ * @return true if \c bto1 is equal to  \c bto2.
+ * @return false otherwise.
+ */
+inline bool operator ==(
+        const BuiltinTransportsOptions& bto1,
+        const BuiltinTransportsOptions& bto2)
+{
+    if (bto1.non_blocking_send != bto2.non_blocking_send)
     {
-        if (bto1.non_blocking_send != bto2.non_blocking_send)
-        {
-            return false;
-        }
-        if (bto1.maxMessageSize != bto2.maxMessageSize)
-        {
-            return false;
-        }
-        if (bto1.sockets_buffer_size != bto2.sockets_buffer_size)
-        {
-            return false;
-        }
-        return true;
+        return false;
     }
+    if (bto1.maxMessageSize != bto2.maxMessageSize)
+    {
+        return false;
+    }
+    if (bto1.sockets_buffer_size != bto2.sockets_buffer_size)
+    {
+        return false;
+    }
+    return true;
+}
 
 /**
  * Defines the kind of transports automatically instantiated upon the creation of a participant

@@ -90,7 +90,8 @@ using BuiltinTransports = fastdds::rtps::BuiltinTransports;
  * Parse the environment variable specifying the transports to instantiate and optional configuration options
  * if the transport selected is LARGE_DATA.
  */
-static void set_builtin_transports_from_env_var(RTPSParticipantAttributes& attr)
+static void set_builtin_transports_from_env_var(
+        RTPSParticipantAttributes& attr)
 {
     static constexpr const char* env_var_name = "FASTDDS_BUILTIN_TRANSPORTS";
 
@@ -106,14 +107,14 @@ static void set_builtin_transports_from_env_var(RTPSParticipantAttributes& attr)
         {
             // Only transport mode is specified
             if (!get_element_enum_value(env_value.c_str(), ret_val,
-                "NONE", BuiltinTransports::NONE,
-                "DEFAULT", BuiltinTransports::DEFAULT,
-                "DEFAULTv6", BuiltinTransports::DEFAULTv6,
-                "SHM", BuiltinTransports::SHM,
-                "UDPv4", BuiltinTransports::UDPv4,
-                "UDPv6", BuiltinTransports::UDPv6,
-                "LARGE_DATA", BuiltinTransports::LARGE_DATA,
-                "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
+                    "NONE", BuiltinTransports::NONE,
+                    "DEFAULT", BuiltinTransports::DEFAULT,
+                    "DEFAULTv6", BuiltinTransports::DEFAULTv6,
+                    "SHM", BuiltinTransports::SHM,
+                    "UDPv4", BuiltinTransports::UDPv4,
+                    "UDPv6", BuiltinTransports::UDPv6,
+                    "LARGE_DATA", BuiltinTransports::LARGE_DATA,
+                    "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
                         env_var_name << "'. Leaving as DEFAULT");

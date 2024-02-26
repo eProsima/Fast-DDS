@@ -218,7 +218,9 @@ private:
             ASSERT_EQ(profiles_file, "");
             ASSERT_EQ(participant_profile, "");
             ASSERT_EQ(env_var_value, "");
-            test_case = (builtin_transports_options != nullptr) ? BuiltinTransportsTestCase::API_OPTIONS : BuiltinTransportsTestCase::API;
+            test_case =
+                    (builtin_transports_options !=
+                    nullptr) ? BuiltinTransportsTestCase::API_OPTIONS : BuiltinTransportsTestCase::API;
         }
 
         ASSERT_NE(test_case, BuiltinTransportsTestCase::NONE);
