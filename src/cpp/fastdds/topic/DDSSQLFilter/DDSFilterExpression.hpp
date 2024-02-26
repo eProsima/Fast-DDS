@@ -63,7 +63,7 @@ public:
      * @param [in] type  The DynamicType to assign.
      */
     void set_type(
-            traits<DynamicType>::ref_type type);
+            DynamicType::_ref_type type);
 
     /// The root condition of the expression tree.
     std::unique_ptr<DDSFilterCondition> root;
@@ -75,7 +75,7 @@ public:
 private:
 
     /// The Dynamic type used to deserialize the payloads
-    traits<DynamicType>::ref_type dyn_type_;
+    DynamicType::_ref_type dyn_type_;
     /// The Dynamic data used to deserialize the payloads
     traits<DynamicDataImpl>::ref_type dyn_data_;
 };

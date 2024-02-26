@@ -36,7 +36,7 @@ namespace dds {
 namespace DDSSQLFilter {
 
 bool DDSFilterField::set_value(
-        traits<DynamicData>::ref_type data,
+        DynamicData::_ref_type data,
         size_t n)
 {
     uint32_t index = static_cast<uint32_t>(access_path_[n].member_index);
@@ -46,7 +46,7 @@ bool DDSFilterField::set_value(
 
     if (access_path_[n].array_index != MEMBER_ID_INVALID)
     {
-        traits<DynamicData>::ref_type array_data = data->loan_value(member_id);
+        DynamicData::_ref_type array_data = data->loan_value(member_id);
         if (array_data)
         {
             member_id = static_cast<MemberId>(access_path_[n].array_index);
@@ -58,7 +58,7 @@ bool DDSFilterField::set_value(
                 }
                 else
                 {
-                    traits<DynamicData>::ref_type struct_data = array_data->loan_value(member_id);
+                    DynamicData::_ref_type struct_data = array_data->loan_value(member_id);
                     if (struct_data)
                     {
                         ret = set_value(struct_data, n + 1);
@@ -77,7 +77,7 @@ bool DDSFilterField::set_value(
         }
         else
         {
-            traits<DynamicData>::ref_type struct_data = data->loan_value(member_id);
+            DynamicData::_ref_type struct_data = data->loan_value(member_id);
             if (struct_data)
             {
                 ret = set_value(struct_data, n + 1);
@@ -102,7 +102,7 @@ bool DDSFilterField::set_value(
 }
 
 bool DDSFilterField::set_value_using_member_id(
-        traits<DynamicData>::ref_type data,
+        DynamicData::_ref_type data,
         MemberId member_id)
 {
     bool ret = false;
