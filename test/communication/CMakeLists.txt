@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-find_package(PythonInterp 3)
+find_package(Python3 COMPONENTS Interpreter)
 
 ###############################################################################
 # Binaries
@@ -196,7 +196,7 @@ if(SECURITY)
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
 endif()
 
-if(PYTHONINTERP_FOUND)
+if(Python3_Interpreter_FOUND)
     add_test(NAME SimpleCommunicationBestEffort
         COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py)
 
@@ -311,7 +311,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SimpleCommunicationSecureMsgCryptoBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_msg_crypto_besteffort_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -328,7 +328,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SimpleCommunicationSecureMsgSubmsgCryptoBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_msg_submsg_crypto_besteffort_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -345,7 +345,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SimpleCommunicationSecureSubmsgCryptoBestEffort
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_submsg_crypto_besteffort_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -362,7 +362,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SecureDiscoverServerSimplePubSubSecureMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_msg_crypto_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -382,7 +382,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SecureDiscoverServerSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -402,7 +402,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SecureDiscoverServerSimplePubSubSecureNoDiscoveryProtectionMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_no_discovery_protection_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -422,7 +422,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME SecureDiscoverServerSimplePubSubSecureNoRTPSProtectionMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_no_rtps_protection_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -442,7 +442,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_msg_crypto_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -461,7 +461,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -480,7 +480,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryProtectionMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_no_discovery_protection_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -499,7 +499,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureNoRTPSProtectionMsgCrypto
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub secure_ds_simple_secure_no_rtps_protection_pub_profile.xml
             --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
@@ -518,7 +518,7 @@ if(PYTHONINTERP_FOUND)
         endif()
 
         add_test(NAME AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure
-            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
             --n-subs 1
             --pub $<TARGET_FILE:SimpleCommunicationPublisher>
             --xml-pub simple_secure_allow_unauthenticated_pub_profile.xml
@@ -587,7 +587,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME TwoPublishersCommunicationReliable
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py)
 
     # Set test with label NoMemoryCheck
     set_property(TEST TwoPublishersCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
