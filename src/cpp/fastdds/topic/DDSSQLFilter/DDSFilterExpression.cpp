@@ -32,8 +32,10 @@
 #include "DDSFilterField.hpp"
 #include "DDSFilterParameter.hpp"
 
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::dds::DDSSQLFilter;
+namespace eprosima {
+namespace fastdds {
+namespace dds {
+namespace DDSSQLFilter {
 
 bool DDSFilterExpression::evaluate(
         const IContentFilter::SerializedPayload& payload,
@@ -88,8 +90,13 @@ void DDSFilterExpression::clear()
 }
 
 void DDSFilterExpression::set_type(
-        traits<DynamicType>::ref_type type)
+        DynamicType::_ref_type type)
 {
     dyn_type_ = type;
     dyn_data_ = traits<DynamicData>::narrow<DynamicDataImpl>(DynamicDataFactory::get_instance()->create_data(type));
 }
+
+} // namespace DDSSQLFilter
+} // namespace dds
+} // namespace fastdds
+} // namespace eprosima
