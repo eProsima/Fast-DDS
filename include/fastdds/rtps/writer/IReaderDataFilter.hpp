@@ -19,4 +19,4 @@
 // This file was moved as part of the implementation of content filtered topics
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 
-FASTDDS_TODO_BEFORE(3, 0, "This header should be removed")
+FASTDDS_TODO_BEFORE(3, 0, "This header should be removed");

@@ -70,7 +70,7 @@ public:
      * @param[out] participant Pointer to the Participant which discovered the remote participant.
      * @param[out] info Remote participant information. User can take ownership of the object.
      */
-    FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
+    FASTDDS_TODO_BEFORE(3, 0, "Remove this overload");
     virtual void on_participant_discovery(
             DomainParticipant* participant,
             fastrtps::rtps::ParticipantDiscoveryInfo&& info)

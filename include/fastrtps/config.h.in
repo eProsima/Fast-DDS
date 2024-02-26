@@ -122,7 +122,7 @@
 #define FASTDDS_TODO_BEFORE(major, minor, msg)                                          \
     static_assert((FASTRTPS_VERSION_MAJOR < major) ||                                   \
             (FASTRTPS_VERSION_MAJOR == major && FASTRTPS_VERSION_MINOR < minor),  \
-            "TODO before version " #major "." #minor " : " #msg);
+            "TODO before version " #major "." #minor " : " #msg)
 
 #if FASTCDR_VERSION_MAJOR > 1
 #define FASTDDS_SER_METHOD_DEPRECATED(major, entity_name, msg) FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg)
