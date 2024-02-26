@@ -4295,7 +4295,7 @@ void SecurityManager::AuthenticationHandshakeProperties::parse_from_property_pol
         max_handshake_requests_ = PropertyParser::as_int(
             *max_handshake_requests,
             false, 0,
-            true, 0,
+            true, 1,
             SecurityException("Error parsing max_handshake_requests property value."));
     }
 
@@ -4307,7 +4307,7 @@ void SecurityManager::AuthenticationHandshakeProperties::parse_from_property_pol
         initial_handshake_resend_period_ms_ = PropertyParser::as_int(
             *initial_handshake_resend_period,
             false, 0,
-            true, 0,
+            true, 1,
             SecurityException("Error parsing initial_handshake_resend_period property value."));
     }
 

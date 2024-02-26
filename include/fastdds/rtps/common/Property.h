@@ -265,8 +265,8 @@ struct PropertyParser
      * @param upper_bound Upper bound to check
      * @param check_lower_bound If true, check that the value is greater than lower_bound
      * @param lower_bound Lower bound to check
-     * @param exception Exception to throw if the value is not a valid integer or if it is out of bounds
-     * @return The parsed integer value
+     * @param exception Exception to throw if the value is not a valid double or if it is out of bounds
+     * @return The parsed double value
      *
      * @warning May throw an exception_t if the value is not a valid double
      *  or if it is out of bounds.
@@ -312,16 +312,18 @@ private:
         {
             value_t converted_value = conversor(property);
 
-            if (check_lower_bound && converted_value <= lower_bound)
+            if (check_lower_bound && converted_value < lower_bound)
             {
                 throw exception_t("Value '" + property.value() +
-                              "' for " + property.name() + " must be greater than " + std::to_string(lower_bound));
+                              "' for " + property.name() + " must be greater or equal to " +
+                              std::to_string(lower_bound));
             }
 
-            if (check_upper_bound && converted_value >= upper_bound)
+            if (check_upper_bound && converted_value > upper_bound)
             {
                 throw exception_t("Value '" + property.value() +
-                              "' for " + property.name() + " must be lower than " + std::to_string(upper_bound));
+                              "' for " + property.name() + " must be lower or equal to " +
+                              std::to_string(upper_bound));
             }
 
             return converted_value;
