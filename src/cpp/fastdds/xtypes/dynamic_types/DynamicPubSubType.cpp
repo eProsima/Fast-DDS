@@ -30,6 +30,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+//{{{ Public functions
+
 DynamicPubSubType::DynamicPubSubType(
         traits<DynamicType>::ref_type type)
     : dynamic_type_(type)
@@ -39,46 +41,10 @@ DynamicPubSubType::DynamicPubSubType(
 
 DynamicPubSubType::~DynamicPubSubType()
 {
-    if (m_keyBuffer != nullptr)
+    if (key_buffer_ != nullptr)
     {
-        free(m_keyBuffer);
+        free(key_buffer_);
     }
-}
-
-traits<DynamicType>::ref_type DynamicPubSubType::GetDynamicType() const
-{
-    return dynamic_type_;
-}
-
-ReturnCode_t DynamicPubSubType::SetDynamicType(
-        traits<DynamicData>::ref_type data)
-{
-    if (!dynamic_type_)
-    {
-        return SetDynamicType(data->type());
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicPubSubType::SetDynamicType(
-        traits<DynamicType>::ref_type type)
-{
-    if (!dynamic_type_)
-    {
-        dynamic_type_ = type;
-        UpdateDynamicTypeInfo();
-        return RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-    }
-
-    return RETCODE_BAD_PARAMETER;
 }
 
 void* DynamicPubSubType::createData()
@@ -129,6 +95,11 @@ bool DynamicPubSubType::deserialize(
     return true;
 }
 
+traits<DynamicType>::ref_type DynamicPubSubType::get_dynamic_type() const noexcept
+{
+    return dynamic_type_;
+}
+
 bool DynamicPubSubType::getKey(
         void* data,
         eprosima::fastrtps::rtps::InstanceHandle_t* handle,
@@ -144,31 +115,31 @@ bool DynamicPubSubType::getKey(
     size_t keyBufferSize =
             static_cast<uint32_t>((*data_ptr)->calculate_key_serialized_size(calculator, current_alignment));
 
-    if (nullptr == m_keyBuffer)
+    if (nullptr == key_buffer_)
     {
-        m_keyBuffer = (unsigned char*)malloc(keyBufferSize > 16 ? keyBufferSize : 16);
-        memset(m_keyBuffer, 0, keyBufferSize > 16 ? keyBufferSize : 16);
+        key_buffer_ = (unsigned char*)malloc(keyBufferSize > 16 ? keyBufferSize : 16);
+        memset(key_buffer_, 0, keyBufferSize > 16 ? keyBufferSize : 16);
     }
 
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
+    eprosima::fastcdr::FastBuffer fastbuffer((char*)key_buffer_, keyBufferSize);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
             eprosima::fastcdr::CdrVersion::XCDRv2);  // Object that serializes the data.
     (*data_ptr)->serialize_key(ser);
     if (force_md5 || keyBufferSize > 16)
     {
-        m_md5.init();
-        m_md5.update(m_keyBuffer, (unsigned int)ser.get_serialized_data_length());
-        m_md5.finalize();
+        md5_.init();
+        md5_.update(key_buffer_, (unsigned int)ser.get_serialized_data_length());
+        md5_.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = m_md5.digest[i];
+            handle->value[i] = md5_.digest[i];
         }
     }
     else
     {
         for (uint8_t i = 0; i < 16; ++i)
         {
-            handle->value[i] = m_keyBuffer[i];
+            handle->value[i] = key_buffer_[i];
         }
     }
     return true;
@@ -262,6 +233,25 @@ bool DynamicPubSubType::serialize(
     payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
+
+ReturnCode_t DynamicPubSubType::set_dynamic_type(
+        traits<DynamicType>::ref_type type)
+{
+    if (!dynamic_type_)
+    {
+        dynamic_type_ = type;
+        UpdateDynamicTypeInfo();
+        return RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
+    }
+
+    return RETCODE_BAD_PARAMETER;
+}
+
+//}}}
 
 void DynamicPubSubType::UpdateDynamicTypeInfo()
 {

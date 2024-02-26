@@ -29,17 +29,15 @@ class DynamicData;
 
 class DynamicPubSubType : public virtual eprosima::fastdds::dds::TopicDataType
 {
-protected:
-
-    void UpdateDynamicTypeInfo();
-
     traits<DynamicType>::ref_type dynamic_type_;
 
-    MD5 m_md5;
+    unsigned char* key_buffer_ {nullptr};
 
-    unsigned char* m_keyBuffer = nullptr;
+    MD5 md5_;
 
 public:
+
+    //{{{ Public functions
 
     FASTDDS_EXPORTED_API DynamicPubSubType() = default;
 
@@ -78,6 +76,13 @@ public:
     FASTDDS_EXPORTED_API bool deserialize (
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
+
+    /*
+     * Returns a copy of the internal  @ref DynamicType object
+     * @return pointer to the new object
+     * @remark Ownership is transferred. This object must be removed using @ref deleteData
+     */
+    FASTDDS_EXPORTED_API traits<DynamicType>::ref_type get_dynamic_type() const noexcept;
 
     /*
      * Calculate the key associated to a given object
@@ -128,29 +133,19 @@ public:
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
     /*
-     * Returns a copy of the internal  @ref DynamicType object
-     * @return pointer to the new object
-     * @remark Ownership is transferred. This object must be removed using @ref deleteData
-     */
-    FASTDDS_EXPORTED_API traits<DynamicType>::ref_type GetDynamicType() const;
-
-    /*
-     * Sets up the internal @ref DynamicType object
-     * @param @ref DynamicData object whose type to copy
-     * @return @ref ReturnCode_t with operation status
-     * @remark Ownership is not transferred.
-     */
-    FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
-            traits<DynamicData>::ref_type data);
-
-    /*
      * Sets up the internal @ref DynamicType object
      * @param @ref DynamicType to copy
      * @return @ref ReturnCode_t with operation status
      * @remark Ownership is not transferred.
      */
-    FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
+    FASTDDS_EXPORTED_API ReturnCode_t set_dynamic_type(
             traits<DynamicType>::ref_type type);
+
+    //}}}
+
+private:
+
+    void UpdateDynamicTypeInfo();
 };
 
 } // namespace dds
