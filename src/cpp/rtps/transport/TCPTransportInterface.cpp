@@ -757,8 +757,8 @@ bool TCPTransportInterface::OpenOutputChannel(
             }
             else
             {
-                std::lock_guard<std::mutex> socketsLock(pending_channel_logical_ports_mutex_);
-                pending_channel_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].push_back(logical_port);
+                std::lock_guard<std::mutex> socketsLock(channel_pending_logical_ports_mutex_);
+                channel_pending_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].insert(logical_port);
             }
 
             statistics_info_.add_entry(locator);
@@ -863,8 +863,8 @@ bool TCPTransportInterface::OpenOutputChannel(
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
-            std::lock_guard<std::mutex> socketsLock(pending_channel_logical_ports_mutex_);
-            pending_channel_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].push_back(logical_port);
+            std::lock_guard<std::mutex> socketsLock(channel_pending_logical_ports_mutex_);
+            channel_pending_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].insert(logical_port);
         }
     }
 
@@ -1932,6 +1932,22 @@ void TCPTransportInterface::CloseOutputChannel(
             }
             ++it;
         }
+    }
+}
+
+void TCPTransportInterface::send_channel_pending_logical_ports(
+        const uint16_t& physical_port,
+        std::shared_ptr<TCPChannelResource>& channel)
+{
+    std::lock_guard<std::mutex> socketsLock(channel_pending_logical_ports_mutex_);
+    auto logical_ports = channel_pending_logical_ports_.find(physical_port);
+    if (logical_ports != channel_pending_logical_ports_.end())
+    {
+        for (auto logical_port : logical_ports->second)
+        {
+            channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+        }
+        channel_pending_logical_ports_.erase(physical_port);
     }
 }
 

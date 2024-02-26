@@ -2175,8 +2175,8 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
         auto channel = clientTransportUnderTest->get_channel_resources().begin()->second;
         ASSERT_TRUE(channel->is_logical_port_added(7410));
         ASSERT_TRUE(channel->is_logical_port_added(7411));
-        auto pending_channel_logical_ports = clientTransportUnderTest->get_pending_channel_logical_ports();
-        ASSERT_TRUE(pending_channel_logical_ports.empty());
+        auto channel_pending_logical_ports = clientTransportUnderTest->get_channel_pending_logical_ports();
+        ASSERT_TRUE(channel_pending_logical_ports.empty());
 
         client_resource_list.clear();
     }
@@ -2194,7 +2194,8 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
 
         // Add participant discovered (from UDP discovery for example)
         Locator_t discoveredParticipantLocator;
-        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", participantPhysicalLocator, discoveredParticipantLocator);
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", participantPhysicalLocator,
+                discoveredParticipantLocator);
         IPLocator::setLogicalPort(discoveredParticipantLocator, 7410);
 
         // OpenOutputChannel
@@ -2204,9 +2205,10 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
         ASSERT_TRUE(serverTransportUnderTest->OpenOutputChannel(server_resource_list, discoveredParticipantLocator));
         ASSERT_FALSE(server_resource_list.empty());
         ASSERT_TRUE(serverTransportUnderTest->get_channel_resources().empty());
-        auto pending_channel_logical_ports = serverTransportUnderTest->get_pending_channel_logical_ports();
-        ASSERT_EQ(pending_channel_logical_ports[participantPhysicalLocator][0], 7410);
-        ASSERT_EQ(pending_channel_logical_ports[participantPhysicalLocator][1], 7411);
+        auto channel_pending_logical_ports = serverTransportUnderTest->get_channel_pending_logical_ports();
+        ASSERT_TRUE(channel_pending_logical_ports.find(7410) != channel_pending_logical_ports.end());
+        ASSERT_TRUE(channel_pending_logical_ports.find(7411) != channel_pending_logical_ports.end());
+        ASSERT_EQ(channel_pending_logical_ports.size(), 2);
 
         server_resource_list.clear();
     }
@@ -2224,7 +2226,8 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
 
         // Add participant discovered (from UDP discovery for example)
         Locator_t discoveredParticipantLocator;
-        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", participantPhysicalLocator, discoveredParticipantLocator);
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", participantPhysicalLocator,
+                discoveredParticipantLocator);
         IPLocator::setLogicalPort(discoveredParticipantLocator, 7410);
 
         // OpenOutputChannel
@@ -2236,8 +2239,8 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
         auto channel = clientTransportUnderTest->get_channel_resources().begin()->second;
         ASSERT_TRUE(channel->is_logical_port_added(7410));
         ASSERT_TRUE(channel->is_logical_port_added(7411));
-        auto pending_channel_logical_ports = clientTransportUnderTest->get_pending_channel_logical_ports();
-        ASSERT_TRUE(pending_channel_logical_ports.empty());
+        auto channel_pending_logical_ports = clientTransportUnderTest->get_channel_pending_logical_ports();
+        ASSERT_TRUE(channel_pending_logical_ports.empty());
 
         client_resource_list.clear();
     }

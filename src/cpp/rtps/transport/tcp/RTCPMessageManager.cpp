@@ -474,16 +474,8 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
 
     // Add pending logical ports to the channel
     uint16_t physical_port = IPLocator::getPhysicalPort(channel->locator());
-    std::lock_guard<std::mutex> socketsLock(mTransport->pending_channel_logical_ports_mutex_);
-    auto logical_ports = mTransport->pending_channel_logical_ports_.find(physical_port);
-    if (logical_ports != mTransport->pending_channel_logical_ports_.end())
-    {
-        for (auto logical_port : logical_ports->second)
-        {
-            channel->add_logical_port(logical_port, this);
-        }
-        mTransport->pending_channel_logical_ports_.erase(physical_port);
-    }
+    mTransport->send_channel_pending_logical_ports(physical_port, channel);
+
 
     return RETCODE_OK;
 }

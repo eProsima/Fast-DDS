@@ -109,10 +109,10 @@ protected:
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
     // Map containging the logical ports that must be added to a channel that has not been created yet. This could happen
-    // with acceptor channels that are created after their output channel has been opened (LARGE_DATA case). 
+    // with acceptor channels that are created after their output channel has been opened (LARGE_DATA case).
     // The key is physical port associated to the send resource, and later to the channel.
-    std::map<uint16_t, std::vector<uint16_t>> pending_channel_logical_ports_;
-    std::mutex pending_channel_logical_ports_mutex_;
+    std::map<uint16_t, std::set<uint16_t>> channel_pending_logical_ports_;
+    std::mutex channel_pending_logical_ports_mutex_;
 
     TCPTransportInterface(
             int32_t transport_kind);
@@ -484,6 +484,16 @@ public:
             SendResourceList& send_resource_list,
             const LocatorList& remote_participant_locators,
             const LocatorList& participant_initial_peers) const;
+
+    /**
+     * Method to add the logical ports associated to a physical port but
+     * not to a channel when obtained.
+     * @param physical_port Physical port associated to logical port.
+     * @param channel Channel that should add the logical ports associated to the physical port if available.
+     */
+    void send_channel_pending_logical_ports(
+            const uint16_t& physical_port,
+            std::shared_ptr<TCPChannelResource>& channel);
 };
 
 } // namespace rtps
