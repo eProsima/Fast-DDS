@@ -757,7 +757,7 @@ bool TCPTransportInterface::OpenOutputChannel(
             }
             else
             {
-                std::lock_guard<std::mutex> socketsLock(channel_pending_logical_ports_mutex_);
+                std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
                 channel_pending_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].insert(logical_port);
             }
 
@@ -863,7 +863,7 @@ bool TCPTransportInterface::OpenOutputChannel(
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
-            std::lock_guard<std::mutex> socketsLock(channel_pending_logical_ports_mutex_);
+            std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
             channel_pending_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].insert(logical_port);
         }
     }
@@ -1363,7 +1363,7 @@ bool TCPTransportInterface::send(
 
     bool success = false;
 
-    std::lock_guard<std::mutex> scoped_lock(sockets_map_mutex_);
+    std::unique_lock<std::mutex> scoped_lock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(locator);
     if (channel_resource == channel_resources_.end())
     {
@@ -1391,31 +1391,46 @@ bool TCPTransportInterface::send(
 
         if (channel->is_logical_port_added(logical_port))
         {
-            if (channel->is_logical_port_opened(logical_port))
+            if (!channel->is_logical_port_opened(logical_port))
             {
-                TCPHeader tcp_header;
-                statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
-                fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
-
+                // Logical port might be under negotiation. Wait a little and check again. This prevents from
+                // losing first messages. If not under negotiation, knowing that it previously was in pending list,
+                // it had to be moved to confirmed output list.
+                if (channel->is_logical_port_under_negotiation(logical_port))
                 {
-                    asio::error_code ec;
-                    size_t sent = channel->send(
-                        (octet*)&tcp_header,
-                        static_cast<uint32_t>(TCPHeader::size()),
-                        send_buffer,
-                        send_buffer_size,
-                        ec);
+                    scoped_lock.unlock();
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                    scoped_lock.lock();
+                }
+                // Now the channel should be in the output list. If not, it means that negotiation hasn't finished yet
+                // or that it wasn't under negotiation (remote participant has been removed and its correspondent
+                // logical port was moved to pending). In such cases send is skipped.
+                if (!channel->is_logical_port_opened(logical_port))
+                {
+                    return success;
+                }
+            }
+            TCPHeader tcp_header;
+            statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
+            fill_rtcp_header(tcp_header, send_buffer, send_buffer_size, logical_port);
+            {
+                asio::error_code ec;
+                size_t sent = channel->send(
+                    (octet*)&tcp_header,
+                    static_cast<uint32_t>(TCPHeader::size()),
+                    send_buffer,
+                    send_buffer_size,
+                    ec);
 
-                    if (sent != static_cast<uint32_t>(TCPHeader::size() + send_buffer_size) || ec)
-                    {
-                        EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
-                                TCPHeader::size() + send_buffer_size << " b): " << ec.message());
-                        success = false;
-                    }
-                    else
-                    {
-                        success = true;
-                    }
+                if (sent != static_cast<uint32_t>(TCPHeader::size() + send_buffer_size) || ec)
+                {
+                    EPROSIMA_LOG_WARNING(DEBUG, "Failed to send RTCP message (" << sent << " of " <<
+                            TCPHeader::size() + send_buffer_size << " b): " << ec.message());
+                    success = false;
+                }
+                else
+                {
+                    success = true;
                 }
             }
         }
@@ -1939,7 +1954,7 @@ void TCPTransportInterface::send_channel_pending_logical_ports(
         const uint16_t& physical_port,
         std::shared_ptr<TCPChannelResource>& channel)
 {
-    std::lock_guard<std::mutex> socketsLock(channel_pending_logical_ports_mutex_);
+    std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
     auto logical_ports = channel_pending_logical_ports_.find(physical_port);
     if (logical_ports != channel_pending_logical_ports_.end())
     {

@@ -2153,10 +2153,10 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
 TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
-    uint16_t port = g_default_port;
 
     // TCP Client
     {
+        uint16_t port = 12345;
         TCPv4TransportDescriptor clientDescriptor;
         std::unique_ptr<MockTCPv4Transport> clientTransportUnderTest(new MockTCPv4Transport(clientDescriptor));
         clientTransportUnderTest->init();
@@ -2206,9 +2206,12 @@ TEST_F(TCPv4Tests, add_logical_port_on_send_resource_creation)
         ASSERT_FALSE(server_resource_list.empty());
         ASSERT_TRUE(serverTransportUnderTest->get_channel_resources().empty());
         auto channel_pending_logical_ports = serverTransportUnderTest->get_channel_pending_logical_ports();
-        ASSERT_TRUE(channel_pending_logical_ports.find(7410) != channel_pending_logical_ports.end());
-        ASSERT_TRUE(channel_pending_logical_ports.find(7411) != channel_pending_logical_ports.end());
-        ASSERT_EQ(channel_pending_logical_ports.size(), 2);
+        ASSERT_EQ(channel_pending_logical_ports.size(), 1);
+        ASSERT_EQ(channel_pending_logical_ports.begin()->second.size(), 2);
+        ASSERT_TRUE(channel_pending_logical_ports.begin()->second.find(
+                    7410) != channel_pending_logical_ports.begin()->second.end());
+        ASSERT_TRUE(channel_pending_logical_ports.begin()->second.find(
+                    7411) != channel_pending_logical_ports.begin()->second.end());
 
         server_resource_list.clear();
     }

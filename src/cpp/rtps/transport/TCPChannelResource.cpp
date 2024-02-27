@@ -120,6 +120,25 @@ bool TCPChannelResource::is_logical_port_added(
            != pending_logical_output_ports_.end();
 }
 
+bool TCPChannelResource::is_logical_port_under_negotiation(
+        uint16_t port)
+{
+    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    bool found = false;
+
+    for (const auto& negotiating_logical_port : negotiating_logical_ports_)
+    {
+        if (negotiating_logical_port.second == port)
+        {
+            found = true;
+            break;
+        }
+    }
+
+    return found && std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
+           != pending_logical_output_ports_.end();
+}
+
 void TCPChannelResource::add_logical_port(
         uint16_t port,
         RTCPMessageManager* rtcp_manager)
