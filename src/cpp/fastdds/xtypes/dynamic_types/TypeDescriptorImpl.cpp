@@ -236,6 +236,8 @@ bool TypeDescriptorImpl::is_consistent() noexcept
                 case TK_UINT16:
                 case TK_INT32:
                 case TK_UINT32:
+                case TK_INT64:
+                case TK_UINT64:
                 case TK_ENUM:
                     break;
                 default:
