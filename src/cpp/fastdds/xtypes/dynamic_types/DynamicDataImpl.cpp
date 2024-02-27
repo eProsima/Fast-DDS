@@ -396,24 +396,15 @@ bool DynamicDataImpl::equals(
                 key_to_id_.begin(),
                 key_to_id_.end(),
                 other_data->key_to_id_.begin(),
-                [](const decltype(key_to_id_)::value_type& l, const decltype(key_to_id_)::value_type& r)
+                [&](const decltype(key_to_id_)::value_type& l, const decltype(key_to_id_)::value_type& r)
                 {
-                    return 0 == l.first.compare(r.first) && l.second == r.second;
-                }) &&
-                   value_.size() == other_data->value_.size() &&
-                   std::equal(
-                value_.begin(),
-                value_.end(),
-                other_data->value_.begin(),
-                [&, element_kind](const decltype(value_)::value_type& l, const decltype(value_)::value_type& r)
-                {
-                    if (is_complex_kind(element_kind))
-                    {
-                        return std::static_pointer_cast<DynamicDataImpl>(l.second)->equals(
-                            std::static_pointer_cast<DynamicDataImpl>(r.second));
-                    }
-
-                    return compare_values(element_kind, l.second, r.second);
+                    return 0 == l.first.compare(r.first) &&
+                    1 == value_.count(l.second) &&
+                    1 == other_data->value_.count(r.second) &&
+                    (is_complex_kind(element_kind) ?
+                    std::static_pointer_cast<DynamicDataImpl>(value_.at(l.second))->equals(
+                        std::static_pointer_cast<DynamicDataImpl>(other_data->value_.at(r.second))) :
+                    compare_values(element_kind, value_.at(l.second), other_data->value_.at(r.second)));
                 });
         }
         else if (TK_BITMASK == type_kind)
@@ -5206,9 +5197,17 @@ bool DynamicDataImpl::deserialize(
                                     dcdr >> member_data;
 
                                     // Select member pointed by discriminator.
-                                    int32_t discriminator {0};
+                                    int64_t discriminator {0};
+                                    uint64_t udiscriminator {0};
                                     selected_union_member_ = MEMBER_ID_INVALID;
-                                    if (RETCODE_OK == get_int32_value(discriminator, 0))
+                                    ReturnCode_t ret_value = get_int64_value(discriminator, 0);
+                                    if (RETCODE_OK != ret_value)
+                                    {
+                                        ret_value = get_uint64_value(udiscriminator, 0);
+                                        discriminator = static_cast<int64_t>(udiscriminator);
+                                    }
+
+                                    if (RETCODE_OK == ret_value)
                                     {
                                         for (auto member : type->get_all_members_by_index())
                                         {
@@ -5217,7 +5216,7 @@ bool DynamicDataImpl::deserialize(
 
                                             for (auto label : m_impl->get_descriptor().label())
                                             {
-                                                if (discriminator == label)
+                                                if (static_cast<int32_t>(discriminator) == label)
                                                 {
                                                     selected_union_member_ = m_impl->get_id();
                                                     break;
@@ -5230,17 +5229,29 @@ bool DynamicDataImpl::deserialize(
                                             selected_union_member_ = type->default_union_member();
                                         }
                                     }
+                                    else
+                                    {
+                                        throw fastcdr::exception::BadParamException("Wrong discriminator");
+                                    }
                                 }
                                 break;
                             default:
                                 {
-                                    // Check MemberId in mutable case.
-                                    auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
-                                                          selected_union_member_))};
-                                    dcdr >> member_data;
-                                    if (ExtensibilityKind::MUTABLE != type->get_descriptor().extensibility_kind())
+                                    if (1 == value_.count(selected_union_member_))
                                     {
-                                        ret_value = false;
+                                        // Check MemberId in mutable case.
+                                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
+                                                              selected_union_member_))};
+                                        dcdr >> member_data;
+                                        if (ExtensibilityKind::MUTABLE != type->get_descriptor().extensibility_kind())
+                                        {
+                                            ret_value = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw fastcdr::exception::BadParamException(
+                                            "Cannot deserialize union member due to wrong discriminator value");
                                     }
                                 }
                                 break;
