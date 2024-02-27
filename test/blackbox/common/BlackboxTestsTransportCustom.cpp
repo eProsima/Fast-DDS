@@ -68,7 +68,8 @@ public:
     }
 
     bool init(
-            const eprosima::fastrtps::rtps::PropertyPolicy* properties = nullptr) override
+            const eprosima::fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const uint32_t& max_msg_size_no_frag = 0) override
     {
         const std::string* value =
                 eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(*properties, test_property_name);
@@ -76,7 +77,7 @@ public:
         {
             descriptor_.init_function_called();
         }
-        return low_level_transport_->init(properties);
+        return low_level_transport_->init(properties, max_msg_size_no_frag);
     }
 
     bool send(

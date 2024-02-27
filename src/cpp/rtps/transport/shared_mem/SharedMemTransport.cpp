@@ -245,8 +245,10 @@ bool SharedMemTransport::DoInputLocatorsMatch(
 }
 
 bool SharedMemTransport::init(
-        const fastrtps::rtps::PropertyPolicy*)
+        const fastrtps::rtps::PropertyPolicy*,
+        const uint32_t& max_msg_size_no_frag)
 {
+    (void) max_msg_size_no_frag;
     // TODO(Adolfo): Calculate this value from UDP sockets buffers size.
     static constexpr uint32_t shm_default_segment_size = 512 * 1024;
 

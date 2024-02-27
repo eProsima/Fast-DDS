@@ -86,10 +86,12 @@ public:
     /**
      * Initialize this transport. This method will prepare all the internals of the transport.
      * @param properties Optional policy to specify additional parameters of the created transport.
+     * @param max_msg_size_no_frag Optional maximum message size to avoid 65500 KB fragmentation limit.
      * @return True when the transport was correctly initialized.
      */
     virtual bool init(
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr) = 0;
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const uint32_t& max_msg_size_no_frag = 0) = 0;
 
     /**
      * Must report whether the input channel associated to this locator is open. Channels must either be

@@ -73,9 +73,10 @@ public:
      * @return True when the transport was correctly initialized.
      */
     RTPS_DllAPI bool init(
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const uint32_t& max_msg_size_no_frag = 0) override
     {
-        return low_level_transport_->init(properties);
+        return low_level_transport_->init(properties, max_msg_size_no_frag);
     }
 
     /*!

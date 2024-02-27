@@ -49,8 +49,8 @@ MockTransport::~MockTransport()
 }
 
 bool MockTransport::init(
-        const PropertyPolicy* /*properties*/)
-
+        const PropertyPolicy* /*properties*/,
+        const uint32_t& /*max_msg_size_no_frag*/)
 {
     return true;
 }
