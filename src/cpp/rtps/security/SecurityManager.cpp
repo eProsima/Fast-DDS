@@ -4292,7 +4292,7 @@ void SecurityManager::AuthenticationHandshakeProperties::parse_from_property_pol
 
     if (max_handshake_requests != nullptr)
     {
-        max_handshake_requests_ = PropertyParser::as_int(
+        max_handshake_requests_ = (int32_t)PropertyParser::as_int(
             *max_handshake_requests,
             false, 0,
             true, 1,
@@ -4304,7 +4304,7 @@ void SecurityManager::AuthenticationHandshakeProperties::parse_from_property_pol
 
     if (initial_handshake_resend_period != nullptr)
     {
-        initial_handshake_resend_period_ms_ = PropertyParser::as_int(
+        initial_handshake_resend_period_ms_ = (int32_t)PropertyParser::as_int(
             *initial_handshake_resend_period,
             false, 0,
             true, 1,
