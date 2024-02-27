@@ -297,7 +297,7 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
     type_identifier_consistency(*element_identifier);
     collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
-    plain_collection_type_identifier_header_consistency(header, *element_identifier);
+    plain_map_type_identifier_header_consistency(header, *element_identifier, *key_identifier);
     map_key_type_identifier_consistency(*key_identifier);
     PlainMapSTypeDefn plain_map_s_type_defn;
     plain_map_s_type_defn.header(header);
@@ -321,7 +321,7 @@ const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
     collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
     l_bound_consistency(bound);
-    plain_collection_type_identifier_header_consistency(header, *element_identifier);
+    plain_map_type_identifier_header_consistency(header, *element_identifier, *key_identifier);
     map_key_type_identifier_consistency(*key_identifier);
     PlainMapLTypeDefn plain_map_l_type_defn;
     plain_map_l_type_defn.header(header);
@@ -2050,6 +2050,51 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
     }
 }
 
+void TypeObjectUtils::plain_map_type_identifier_header_consistency(
+        const PlainCollectionHeader& header,
+        const TypeIdentifier& element_identifier,
+        const TypeIdentifier& key_identifier)
+{
+    switch (header.equiv_kind()){
+        case EK_BOTH:
+            if (!is_fully_descriptive_type_identifier(key_identifier))
+            {
+                throw InvalidArgumentError(
+                          "The given header equiv_kind is EK_BOTH, but the key_identifier is not fully descriptive.");
+            }
+            if (!is_fully_descriptive_type_identifier(element_identifier))
+            {
+                throw InvalidArgumentError(
+                          "The given header equiv_kind is EK_BOTH, but the element_identifier is not fully descriptive.");
+            }
+            break;
+        case EK_MINIMAL:
+            if (!(is_fully_descriptive_type_identifier(key_identifier) || key_identifier._d() == EK_MINIMAL))
+            {
+                throw InvalidArgumentError(
+                          "The given header equiv_kind is EK_MINIMAL, but the key_identifier is neither fully descriptive nor EK_MINIMAL.");
+            }
+            if (!(is_fully_descriptive_type_identifier(element_identifier) || element_identifier._d() == EK_MINIMAL))
+            {
+                throw InvalidArgumentError(
+                          "The given header equiv_kind is EK_MINIMAL, but the element_identifier is neither fully descriptive nor EK_MINIMAL.");
+            }
+            break;
+        case EK_COMPLETE:
+            if (!(is_fully_descriptive_type_identifier(key_identifier) || key_identifier._d() == EK_COMPLETE))
+            {
+                throw InvalidArgumentError(
+                          "The given header equiv_kind is EK_COMPLETE, but the key_identifier is neither fully descriptive nor EK_COMPLETE.");
+            }
+            if (!(is_fully_descriptive_type_identifier(element_identifier) || element_identifier._d() == EK_COMPLETE))
+            {
+                throw InvalidArgumentError(
+                          "The given header equiv_kind is EK_COMPLETE, but the element_identifier is neither fully descriptive nor EK_COMPLETE.");
+            }
+            break;
+    }
+}
+
 void TypeObjectUtils::map_key_type_identifier_consistency(
         const TypeIdentifier& key_identifier)
 {
@@ -2142,7 +2187,8 @@ void TypeObjectUtils::map_sdefn_consistency(
     plain_collection_header_consistency(plain_map.header());
     type_identifier_consistency(*plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
+    plain_map_type_identifier_header_consistency(plain_map.header(),
+            *plain_map.element_identifier(), *plain_map.key_identifier());
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
@@ -2153,7 +2199,8 @@ void TypeObjectUtils::map_ldefn_consistency(
     l_bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
+    plain_map_type_identifier_header_consistency(plain_map.header(),
+            *plain_map.element_identifier(), *plain_map.key_identifier());
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 

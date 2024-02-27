@@ -2122,6 +2122,22 @@ protected:
             const TypeIdentifier& element_identifier);
 
     /**
+     * @brief Check consistency between a given PlainCollectionHeader of a map and the related TypeIdentifier:
+     *        1. TypeIdentifier initialized
+     *        2. Consistency of EquivalenceKinds
+     *
+     * @param[in] header PlainCollectionHeader of the map to be checked.
+     * @param[in] element_identifier TypeIdentifier of the map elements to be checked.
+     * @param[in] key_identifier TypeIdentifier of the map keys to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
+     *            consistent.
+     */
+    static void plain_map_type_identifier_header_consistency(
+            const PlainCollectionHeader& header,
+            const TypeIdentifier& element_identifier,
+            const TypeIdentifier& key_identifier);
+
+    /**
      * @brief Check map key_identifier consistency.
      *        XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements of signed
      *        and unsigned integer types and of narrow and wide string types.
