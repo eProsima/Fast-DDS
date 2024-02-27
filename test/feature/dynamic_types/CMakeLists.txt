@@ -24,6 +24,7 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     dds_types_tests/DynamicTypesAliasesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesPrimitivesDDSTypesTests.cpp
+    dds_types_tests/DynamicTypesStringsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesStructuresDDSTypesTests.cpp
     dds_types_tests/DynamicTypesUnionsDDSTypesTests.cpp
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesPubSubTypes.cxx
@@ -38,6 +39,8 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/structuresTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendablePubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendableTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysPubSubTypes.cxx
@@ -68,8 +71,6 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/relative_path_includeTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesTypeObjectSupport.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsPubSubTypes.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/stringsTypeObjectSupport.cxx
     )
 
 add_executable(DynamicTypesTests DynamicTypesTests.cpp)
