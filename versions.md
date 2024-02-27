@@ -4,6 +4,8 @@ Forthcoming
 * Rename project to `fastdds`.
 * Rename environment variable to `FASTDDS_DEFAULT_PROFILES_FILE` and rename default XML profiles file to `FASTDDS_DEFAULT_PROFILES`.
 * Remove API marked as deprecated.
+* Removed deprecated FastRTPS API tests.
+* Removed no longer supported `FASTRTPS_API_TESTS` CMake options.
 
 Version 2.14.0
 --------------
