@@ -56,6 +56,7 @@ struct StatisticsAncillary
 {
     std::set<std::shared_ptr<IListener>> listeners;
     std::atomic<uint32_t> enabled_writers_mask{0};
+    virtual ~StatisticsAncillary() = default;
 };
 
 struct StatisticsWriterAncillary
