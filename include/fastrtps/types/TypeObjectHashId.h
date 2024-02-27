@@ -46,7 +46,7 @@ typedef octet EquivalenceHash[14];
 
 /*!
  * @brief This class represents the union TypeObjectHashId defined by the user in the IDL file.
- * @ingroup TYPEOBJECTHASHID
+ * @ingroup TYPES_MODULE
  */
 class TypeObjectHashId
 {

@@ -80,6 +80,16 @@
  * This module contains all classes and methods associated with RTPSReader and its specifications, as well as other necessary classes.
  */
 
+/** @defgroup TYPES_MODULE Contains the builtin generated types
+ * @namespace eprosima::fastrtps::types
+ * @ingroup FASTRTPS_MODULE
+ */
+
+/** @defgroup XMLPARSER_MODULE Contains all the modules related with the XMLParser
+ * @namespace eprosima::fastrtps::xmlparser
+ * @ingroup FASTRTPS_MODULE
+ */
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 /** @defgroup PARAMETER_MODULE Qos Module
