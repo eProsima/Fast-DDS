@@ -3772,6 +3772,12 @@ void DynamicDataImpl::set_discriminator_value(
         case TK_UINT16:
             data->set_uint16_value(MEMBER_ID_INVALID, static_cast<uint16_t>(new_discriminator_value));
             break;
+        case TK_INT64:
+            data->set_int64_value(MEMBER_ID_INVALID, static_cast<int64_t>(new_discriminator_value));
+            break;
+        case TK_UINT64:
+            data->set_uint64_value(MEMBER_ID_INVALID, static_cast<uint64_t>(new_discriminator_value));
+            break;
         case TK_CHAR8:
             data->set_char8_value(MEMBER_ID_INVALID, static_cast<char>(new_discriminator_value));
             break;
@@ -3782,6 +3788,8 @@ void DynamicDataImpl::set_discriminator_value(
             data->set_boolean_value(MEMBER_ID_INVALID, 0 == new_discriminator_value ? false : true);
             break;
         case TK_BYTE:
+            data->set_byte_value(MEMBER_ID_INVALID, static_cast<uint8_t>(new_discriminator_value));
+            break;
         case TK_UINT8:
             data->set_uint8_value(MEMBER_ID_INVALID, static_cast<uint8_t>(new_discriminator_value));
             break;
