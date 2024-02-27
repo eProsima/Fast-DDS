@@ -1394,18 +1394,12 @@ bool TCPTransportInterface::send(
             if (!channel->is_logical_port_opened(logical_port))
             {
                 // Logical port might be under negotiation. Wait a little and check again. This prevents from
-                // losing first messages. If not under negotiation, knowing that it previously was in pending list,
-                // it had to be moved to confirmed output list.
-                if (channel->is_logical_port_under_negotiation(logical_port))
-                {
-                    scoped_lock.unlock();
-                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                    scoped_lock.lock();
-                }
-                // Now the channel should be in the output list. If not, it means that negotiation hasn't finished yet
-                // or that it wasn't under negotiation (remote participant has been removed and its correspondent
-                // logical port was moved to pending). In such cases send is skipped.
-                if (!channel->is_logical_port_opened(logical_port))
+                // losing first messages.
+                scoped_lock.unlock();
+                bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port, std::chrono::milliseconds(
+                                    50));
+                scoped_lock.lock();
+                if (!logical_port_opened)
                 {
                     return success;
                 }

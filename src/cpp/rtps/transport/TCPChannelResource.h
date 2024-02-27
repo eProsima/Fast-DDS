@@ -70,6 +70,7 @@ protected:
     std::map<TCPTransactionId, uint16_t> last_checked_logical_port_;
     std::vector<uint16_t> pending_logical_output_ports_; // Must be accessed after lock pending_logical_mutex_
     std::vector<uint16_t> logical_output_ports_;
+    std::condition_variable_any logical_output_ports_updated_cv;
     std::mutex read_mutex_;
     std::recursive_mutex pending_logical_mutex_;
     std::atomic<eConnectionStatus> connection_status_;
@@ -94,8 +95,11 @@ public:
     bool is_logical_port_added(
             uint16_t port);
 
-    bool is_logical_port_under_negotiation(
-            uint16_t port);
+    // This method checks if a logical port is under negotiation. If it is, it waits for the negotiation to finish up to a timeout.
+    // Independently if being under negotiation or not, it returns true if the port is opened, false otherwise.
+    bool wait_logical_port_under_negotiation(
+            uint16_t port,
+            const std::chrono::milliseconds& timeout);
 
     bool connection_established()
     {
