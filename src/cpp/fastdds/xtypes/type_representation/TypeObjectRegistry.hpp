@@ -188,7 +188,7 @@ public:
      * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
-     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
+     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
      */
     ReturnCode_t get_type_dependencies(
             const TypeIdentifierSeq& type_identifiers,
@@ -235,9 +235,6 @@ public:
      * @param[in] type_object Related TypeObject being registered.
      * @return ReturnCode_t RETCODE_OK if correctly registered.
      *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
-     *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
-     *                      TypeObject.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeObject is not consistent.
      */
     ReturnCode_t register_type_object(
             const TypeIdentifier& type_identifier,
@@ -472,6 +469,10 @@ protected:
                 add_dependency(type_id, type_dependencies);
                 type_ids.push_back(type_id);
             }
+            else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+            {
+                type_ids.push_back(type_id);
+            }
         }
         if (!type_ids.empty())
         {
@@ -507,6 +508,10 @@ protected:
             if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
             {
                 add_dependency(type_id, type_dependencies);
+                type_ids.push_back(type_id);
+            }
+            else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+            {
                 type_ids.push_back(type_id);
             }
         }
@@ -563,10 +568,18 @@ protected:
             add_dependency(key_type_id, type_dependencies);
             type_ids.push_back(key_type_id);
         }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(key_type_id))
+        {
+            type_ids.push_back(key_type_id);
+        }
         TypeIdentifier element_type_id = map_type.element().common().type();
         if (TypeObjectUtils::is_direct_hash_type_identifier(element_type_id))
         {
             add_dependency(element_type_id, type_dependencies);
+            type_ids.push_back(element_type_id);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(element_type_id))
+        {
             type_ids.push_back(element_type_id);
         }
         if (!type_ids.empty())
