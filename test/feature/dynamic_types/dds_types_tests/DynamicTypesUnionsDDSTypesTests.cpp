@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "../DynamicTypesDDSTypesTest.hpp"
+#include <string>
 
 #include <gtest/gtest.h>
 
+#include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
 #include "../../../dds-types-test/unionsPubSubTypes.h"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
