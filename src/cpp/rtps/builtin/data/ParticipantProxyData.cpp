@@ -463,6 +463,17 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
+                        // This is a custom PID defined by eProsima, so if the DATA(p)'s
+                        // vendor ID is not ours we need just ignore it.
+                        // TODO(eduponz): This is a workaround for the moment, as it is implicitly assuming
+                        // that the vendor ID parameter came before this one. In the future, we should propagate
+                        // the vendor ID from the RTPS message header using the CacheChange and check it here.
+                        FASTDDS_TODO_BEFORE(2, 14, "Add vendor ID to CacheChange");
+                        if (c_VendorId_eProsima != m_VendorId)
+                        {
+                            return true;
+                        }
+
                         ParameterNetworkConfigSet_t p(pid, plength);
                         if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::read_from_cdr_message(p,
                                 msg, plength))
