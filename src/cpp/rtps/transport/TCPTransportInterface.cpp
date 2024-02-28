@@ -698,10 +698,31 @@ bool TCPTransportInterface::OpenOutputChannel(
             listening_port = config->listening_ports.front();
         }
 
+        bool local_lower_interface = false;
+        if (IPLocator::getPhysicalPort(physical_locator) == listening_port)
+        {
+            std::vector<Locator> list;
+            std::vector<fastrtps::rtps::IPFinder::info_IP> local_interfaces;
+            get_ips(local_interfaces);
+            for (const auto& interface_it : local_interfaces)
+            {
+                Locator interface_loc(interface_it.locator);
+                interface_loc.port = physical_locator.port;
+                if (is_interface_allowed(interface_loc))
+                {
+                    list.push_back(interface_loc);
+                }
+            }
+            if (!list.empty() && (list.front() < physical_locator))
+            {
+                local_lower_interface = true;
+            }
+        }
+
         // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
         // and the locator added to the send_resource_list.
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
-        if (IPLocator::getPhysicalPort(physical_locator) > listening_port)
+        if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
             logInfo(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
