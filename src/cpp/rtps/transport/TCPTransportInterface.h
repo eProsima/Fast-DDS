@@ -110,7 +110,7 @@ protected:
 
     // Map containging the logical ports that must be added to a channel that has not been created yet. This could happen
     // with acceptor channels that are created after their output channel has been opened (LARGE_DATA case).
-    // The key is physical port associated to the send resource, and later to the channel.
+    // The key is the physical locator associated with the sender resource, and later to the channel.
     std::map<Locator, std::set<uint16_t>> channel_pending_logical_ports_;
     std::mutex channel_pending_logical_ports_mutex_;
 
@@ -486,13 +486,11 @@ public:
             const LocatorList& participant_initial_peers) const;
 
     /**
-     * Method to add the logical ports associated to a physical locator but
-     * not to a channel when obtained.
-     * @param physical_locator Physical locator associated to logical port.
-     * @param channel Channel that should add the logical ports associated to the physical locator if available.
+     * Method to add the logical ports associated to a channel that was not available
+     * when the logical ports were obtained.
+     * @param channel Channel that might add the logical ports if available.
      */
     void send_channel_pending_logical_ports(
-            const Locator& physical_locator,
             std::shared_ptr<TCPChannelResource>& channel);
 };
 

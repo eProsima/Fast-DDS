@@ -1949,18 +1949,17 @@ void TCPTransportInterface::CloseOutputChannel(
 }
 
 void TCPTransportInterface::send_channel_pending_logical_ports(
-        const Locator& physical_locator,
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
-    auto logical_ports = channel_pending_logical_ports_.find(physical_locator);
+    auto logical_ports = channel_pending_logical_ports_.find(channel->locator());
     if (logical_ports != channel_pending_logical_ports_.end())
     {
         for (auto logical_port : logical_ports->second)
         {
             channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         }
-        channel_pending_logical_ports_.erase(physical_locator);
+        channel_pending_logical_ports_.erase(channel->locator());
     }
 }
 

@@ -95,8 +95,6 @@ public:
     bool is_logical_port_added(
             uint16_t port);
 
-    // This method checks if a logical port is under negotiation. If it is, it waits for the negotiation to finish up to a timeout.
-    // Independently if being under negotiation or not, it returns true if the port is opened, false otherwise.
     /**
      * This method checks if a logical port is under negotiation. If it is, it waits for the negotiation to finish up to a timeout.
      * Independently if being under negotiation or not, it returns true if the port is opened, false otherwise.
