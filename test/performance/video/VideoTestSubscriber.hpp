@@ -115,8 +115,6 @@ class VideoTestSubscriber
                 VideoTestSubscriber* mp_up;
         } m_commandsublistener;
 
-        //VideoDataType video_t;
-        //TestCommandDataType command_t;
         std::string m_sXMLConfigFile;
         bool m_bRunning;
 

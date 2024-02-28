@@ -101,7 +101,7 @@ VideoTestPublisher::~VideoTestPublisher()
             {
                 mp_commandsub->delete_datareader(mp_dr);
             }
-            mp_participant->delete_subscriber(mp_commandsub);
+            mp_participant->delete_subscriber(mp_commandsub); 
         }
         if (mp_datapub)
         {
@@ -172,19 +172,9 @@ void VideoTestPublisher::init(
     // Create Participant
     std::string participant_profile_name = "pub_participant_profile";
     DomainParticipantQos participant_qos;
-    int domainId;
-    if (m_forcedDomain >= 0)
-    {
-        domainId = m_forcedDomain;
-    }
-    else
-    {
-        domainId = pid % 230;
-    }
-    //PParam.rtps.properties = part_property_policy;
+
     participant_qos.properties(part_property_policy);
 
-    //PParam.rtps.setName("video_test_publisher");
     participant_qos.name("video_test_publisher");
 
     if (m_sXMLConfigFile.length() > 0)
@@ -193,24 +183,24 @@ void VideoTestPublisher::init(
         {
             mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(m_forcedDomain,
                 participant_profile_name);
-        //ParticipantAttributes participant_att;
-        //if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK == eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name, participant_att))
-        //{
-        //participant_att.domainId = m_forcedDomain;
-        //mp_participant = Domain::createParticipant(participant_att);
-        //}
         }
         else
         {
-        // mp_participant = Domain::createParticipant(participant_profile_name);
             mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(participant_profile_name);
         }
     }
     else
     {
-        // mp_participant = Domain::createParticipant(PParam);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(
-            domainId, participant_qos);
+        if (m_forcedDomain >= 0)
+        {
+            mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+                m_forcedDomain, participant_qos);
+        }
+        else
+        {
+            mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+                pid % 230, participant_qos);
+        }
     }
 
     ASSERT_NE(mp_participant, nullptr);
@@ -222,24 +212,9 @@ void VideoTestPublisher::init(
     type_command.reset(new TestCommandDataType());
     ASSERT_EQ(mp_participant->register_type(type_video), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(mp_participant->register_type(type_command), ReturnCode_t::RETCODE_OK);
-    //Domain::registerType(mp_participant, (TopicDataType*)&video_t);
-    //Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
     // Create Data Publisher
     std::string profile_name = "publisher_profile";
-
-    PublisherAttributes PubDataparam;
-
-    if (!reliable)
-    {
-        PubDataparam.qos.m_reliability.kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
-    }
-    PubDataparam.properties = property_policy;
-    if (large_data)
-    {
-        PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind = eprosima::fastrtps::ASYNCHRONOUS_PUBLISH_MODE;
-    }
 
     if (m_sXMLConfigFile.length() > 0)
     {
@@ -252,14 +227,7 @@ void VideoTestPublisher::init(
     ASSERT_NE(mp_datapub, nullptr);
     ASSERT_TRUE(mp_datapub->is_enabled());
 
-    //if (m_sXMLConfigFile.length() > 0)
-    //{
-    //    eprosima::fastrtps::xmlparser::XMLProfileManager::fillPublisherAttributes(profile_name, PubDataparam);
-    //}
-
     // Create topic
-    //PubDataparam.topic.topicDataType = "VideoType";
-    //PubDataparam.topic.topicKind = NO_KEY;
     std::ostringstream video_topic_name;
     video_topic_name << "VideoTest_";
     if (hostname)
@@ -267,7 +235,6 @@ void VideoTestPublisher::init(
         video_topic_name << asio::ip::host_name() << "_";
     }
     video_topic_name << pid << "_PUB2SUB";
-    //PubDataparam.topic.topicName = pt.str();
     mp_video_topic = mp_participant->create_topic(video_topic_name.str(),
                     "VideoType", TOPIC_QOS_DEFAULT);
     ASSERT_NE(mp_video_topic, nullptr);
@@ -277,7 +244,6 @@ void VideoTestPublisher::init(
     if (reliable_)
     {
         datawriter_qos_data.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-        // PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
     }
     else
     {
@@ -285,44 +251,24 @@ void VideoTestPublisher::init(
     }
 
     datawriter_qos_data.properties(property_policy);
-    //PubDataparam.properties = property_policy;
 
     if (large_data)
     {
         datawriter_qos_data.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        //PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         datawriter_qos_data.publish_mode().kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
-        // PubDataparam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
     }
-    // PubDataparam.times.heartbeatPeriod.seconds = 0;
-    // PubDataparam.times.heartbeatPeriod.nanosec = 100000000;
     datawriter_qos_data.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
     datawriter_qos_data.reliable_writer_qos().times.heartbeatPeriod.nanosec = 100000000;
 
-    //mp_datapub = Domain::createPublisher(mp_participant, PubDataparam, (PublisherListener*)&this->m_datapublistener);
-    //if (mp_datapub == nullptr)
-    // {
-    //     return false;
-    // }
     mp_data_dw = mp_datapub->create_datawriter(mp_video_topic, datawriter_qos_data, &this->m_datapublistener);
     ASSERT_NE(mp_data_dw, nullptr);
     ASSERT_TRUE(mp_data_dw->is_enabled());
 
 
     // Create Command Publisher
-    //PubCommandParam.topic.topicName = pct.str();
-    //PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
     mp_commandpub = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT);
-    //mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-    //if (mp_commandpub == nullptr)
-    //{
-    //    return false;
-    //}
 
     // Create topic
-    //PublisherAttributes PubCommandParam;
-    //PubCommandParam.topic.topicDataType = "TestCommandType";
-    //PubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream command_topic_name;
     command_topic_name << "VideoTest_Command_";
     if (hostname)
@@ -338,9 +284,6 @@ void VideoTestPublisher::init(
 
     //Create Command DataWriter
     datawriter_qos_cmd.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
-    //PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    //PubCommandParam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
     datawriter_qos_cmd.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     datawriter_qos_cmd.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     datawriter_qos_cmd.publish_mode().kind = PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
@@ -352,14 +295,11 @@ void VideoTestPublisher::init(
 
 
     // Create subscriber
-    mp_commandsub = mp_participant->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);
+    mp_commandsub = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(mp_commandsub, nullptr);
     ASSERT_TRUE(mp_commandsub->is_enabled());
 
     // Create topic
-    //SubscriberAttributes SubCommandParam;
-    //SubCommandParam.topic.topicDataType = "TestCommandType";
-    //SubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream sub_topic_name;
     sub_topic_name << "VideoTest_Command_";
     if (hostname)
@@ -368,7 +308,6 @@ void VideoTestPublisher::init(
     }
     sub_topic_name << pid << "_SUB2PUB";
 
-    //SubCommandParam.topic.topicName = sct.str();
     mp_command_sub_topic = mp_participant->create_topic(sub_topic_name.str(),
                     "TestCommandType", eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(mp_command_sub_topic, nullptr);
@@ -378,18 +317,10 @@ void VideoTestPublisher::init(
     datareader_qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
     datareader_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     datareader_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    //SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    //SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     mp_dr = mp_commandsub->create_datareader(mp_command_sub_topic, datareader_qos, &this->m_commandsublistener);
     ASSERT_NE(mp_dr, nullptr);
     ASSERT_TRUE(mp_dr->is_enabled());
 
-    //mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-    //if (mp_commandsub == nullptr)
-    //{
-    //    return false;
-    //}
 }
 
 void VideoTestPublisher::DataPubListener::on_publication_matched(
@@ -515,33 +446,6 @@ void VideoTestPublisher::run()
     cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
 
     this->test(0);
-
-    cout << "REMOVING PUBLISHER" << endl;
-    //Domain::removePublisher(this->mp_commandpub);
-    if (mp_commandpub)
-    {
-        if (mp_command_dw)
-        {
-            mp_commandpub->delete_datawriter(mp_command_dw);
-        }
-        mp_participant->delete_publisher(mp_commandpub);
-    }
-    cout << "REMOVING SUBSCRIBER" << endl;
-    //Domain::removeSubscriber(mp_commandsub);
-    if (mp_commandsub)
-    {
-        if (mp_dr)
-        {
-            mp_commandsub->delete_datareader(mp_dr);
-        }
-        mp_participant->delete_subscriber(mp_commandsub);
-    }
-
-    std::string str_reliable = "besteffort";
-    if (reliable_)
-    {
-        str_reliable = "reliable";
-    }
 }
 
 bool VideoTestPublisher::test(
@@ -603,7 +507,6 @@ bool VideoTestPublisher::test(
 
     // Clean up
     size_t removed = 0;
-    //mp_data_dw->removeAllChange(&removed);
     mp_data_dw->clear_history(&removed);
     delete(mp_video_out);
 
@@ -644,7 +547,6 @@ void VideoTestPublisher::InitGStreamer()
 
                     // Link the camera source and colorspace filter using capabilities specified
                     gst_bin_add_many(GST_BIN(pipeline), filesrc, videorate, sink, NULL);
-                    //ok = gst_element_link_filtered(filesrc, sink, caps) == TRUE;
                     ok = gst_element_link_filtered(filesrc, videorate, caps) == TRUE;
                     ok = gst_element_link_filtered(videorate, sink, caps) == TRUE;
                     gst_caps_unref(caps);

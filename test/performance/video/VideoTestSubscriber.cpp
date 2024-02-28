@@ -71,7 +71,6 @@ VideoTestSubscriber::~VideoTestSubscriber()
 {
     stop();
 
-    //Domain::removeParticipant(mp_participant);
     if (mp_participant != nullptr)
     {
         if (mp_commandsub)
@@ -104,6 +103,7 @@ VideoTestSubscriber::~VideoTestSubscriber()
         }
         DomainParticipantFactory::get_instance()->delete_participant(mp_participant);
     }
+
     if (gmain_loop_ != nullptr)
     {
         std::unique_lock<std::mutex> lock(gst_mutex_);
@@ -112,10 +112,7 @@ VideoTestSubscriber::~VideoTestSubscriber()
     }
 
     gst_bin_remove_many(GST_BIN(pipeline), appsrc, videoconvert, sink, NULL);
-    //if (pipeline)   gst_object_unref(GST_OBJECT(pipeline)), pipeline = nullptr;
-    //if (sink)   gst_object_unref(GST_OBJECT(sink)), sink = nullptr;
-    //if (videoconvert)   gst_object_unref(GST_OBJECT(videoconvert)), videoconvert = nullptr;
-    //if (appsrc)   gst_object_unref(GST_OBJECT(appsrc)), appsrc = nullptr;
+
     thread_.join();
 }
 
@@ -148,23 +145,12 @@ void VideoTestSubscriber::init(
 
     InitGStreamer();
 
-    // Create RTPSParticipant
+    // Create Participant
     std::string participant_profile_name = "sub_participant_profile";
-    //ParticipantAttributes PParam;
     DomainParticipantQos participant_qos;
-    int domainId;
-    if (m_forcedDomain >= 0)
-    {
-        domainId = m_forcedDomain;
-    }
-    else
-    {
-        domainId = pid % 230;
-    }
-    //PParam.rtps.setName("video_test_subscriber");
+
     participant_qos.name("video_test_subscriber");
 
-    //PParam.rtps.properties = part_property_policy;
     participant_qos.properties(part_property_policy);
 
     if (m_sXMLConfigFile.length() > 0)
@@ -173,34 +159,28 @@ void VideoTestSubscriber::init(
         {
             mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(m_forcedDomain,
                 participant_profile_name);
-            //ParticipantAttributes participant_att;
-            //if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-            //        eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile_name,
-            //        participant_att))
-            //{
-            //    participant_att.domainId = m_forcedDomain;
-            //    mp_participant = Domain::createParticipant(participant_att);
-            //}
         }
         else
         {
-            //mp_participant = Domain::createParticipant(participant_profile_name);
             mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(participant_profile_name);
         }
     }
     else
     {
-        //mp_participant = Domain::createParticipant(PParam);
-        mp_participant = DomainParticipantFactory::get_instance()->create_participant(
-            domainId, participant_qos);
+        if (m_forcedDomain >= 0)
+        {
+            mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+                m_forcedDomain, participant_qos);
+        }
+        else
+        {
+            mp_participant = DomainParticipantFactory::get_instance()->create_participant(
+                pid % 230, participant_qos);
+        }
     }
 
     ASSERT_NE(mp_participant, nullptr);
 
-    // if (mp_participant == nullptr)
-    // {
-    //     return false;
-    // }
     // Register the type
     TypeSupport video_type;
     TypeSupport command_type;
@@ -208,17 +188,12 @@ void VideoTestSubscriber::init(
     command_type.reset(new TestCommandDataType());
     ASSERT_EQ(mp_participant->register_type(video_type), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(mp_participant->register_type(command_type), ReturnCode_t::RETCODE_OK);
-    //Domain::registerType(mp_participant, (TopicDataType*)&video_t);
-    //Domain::registerType(mp_participant, (TopicDataType*)&command_t);
 
-
-    // Create Data subscriber
+    // Create Data Subscriber
     std::string profile_name = "subscriber_profile";
-    //SubscriberAttributes SubDataparam;
 
     if (m_sXMLConfigFile.length() > 0)
     {
-        //eprosima::fastrtps::xmlparser::XMLProfileManager::fillSubscriberAttributes(profile_name, SubDataparam);
         mp_datasub = mp_participant->create_subscriber_with_profile(profile_name);
     }
     else
@@ -229,8 +204,6 @@ void VideoTestSubscriber::init(
     ASSERT_TRUE(mp_datasub->is_enabled());
 
     // Create topic
-    //SubDataparam.topic.topicDataType = "VideoType";
-    //SubDataparam.topic.topicKind = NO_KEY;
     std::ostringstream video_topic_name;
     video_topic_name << "VideoTest_";
     if (hostname)
@@ -238,47 +211,36 @@ void VideoTestSubscriber::init(
         video_topic_name << asio::ip::host_name() << "_";
     }
     video_topic_name << pid << "_PUB2SUB";
-    //SubDataparam.topic.topicName = st.str();
     mp_video_topic = mp_participant->create_topic(video_topic_name.str(),
                     "VideoType", TOPIC_QOS_DEFAULT);
     ASSERT_NE(mp_video_topic, nullptr);
     ASSERT_TRUE(mp_video_topic->is_enabled());
 
     // Create data DataReader
-    if (reliable)
+    if (m_bReliable)
     {
         datareader_qos_data.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
-        // SubDataparam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
     }
     else
     {
         datareader_qos_data.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
     }
     datareader_qos_data.properties(property_policy);
-    //SubDataparam.properties = property_policy;
+
     if (large_data)
     {
         datareader_qos_data.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        //SubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
-    // mp_datasub = Domain::createSubscriber(mp_participant, SubDataparam, &this->m_datasublistener);
-    // if (mp_datasub == nullptr)
-    // {
-    //     std::cout << "Cannot create data subscriber" << std::endl;
-    //     return false;
-    // }
+
     mp_data_dr = mp_datasub->create_datareader(mp_video_topic, datareader_qos_data, &this->m_datasublistener);
     ASSERT_NE(mp_data_dr, nullptr);
     ASSERT_TRUE(mp_data_dr->is_enabled());
 
 
     // Create Command Publisher
-    //PublisherAttributes PubCommandParam;
     mp_commandpub = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT);
 
     // Create topic
-    //PubCommandParam.topic.topicDataType = "TestCommandType";
-    //PubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream pub_cmd_topic_name;
     pub_cmd_topic_name << "VideoTest_Command_";
     if (hostname)
@@ -286,7 +248,6 @@ void VideoTestSubscriber::init(
         pub_cmd_topic_name << asio::ip::host_name() << "_";
     }
     pub_cmd_topic_name << pid << "_SUB2PUB";
-    //PubCommandParam.topic.topicName = pct.str();
 
     mp_command_pub_topic = mp_participant->create_topic(pub_cmd_topic_name.str(),
                     "TestCommandType", TOPIC_QOS_DEFAULT);
@@ -297,19 +258,10 @@ void VideoTestSubscriber::init(
     datawriter_qos.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
     datawriter_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     datawriter_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    //PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    //PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
     mp_dw = mp_commandpub->create_datawriter(mp_command_pub_topic, datawriter_qos,
                 &this->m_commandpublistener);
     ASSERT_NE(mp_dw, nullptr);
     ASSERT_TRUE(mp_dw->is_enabled());
-    //mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
-    // if (mp_commandpub == nullptr)
-    // {
-    //     return false;
-    // }
-
 
 
     // Create Command Subscriber
@@ -318,9 +270,6 @@ void VideoTestSubscriber::init(
     ASSERT_TRUE(mp_commandsub->is_enabled());
 
     // Create topic
-    //SubscriberAttributes SubCommandParam;
-    //SubCommandParam.topic.topicDataType = "TestCommandType";
-    //SubCommandParam.topic.topicKind = NO_KEY;
     std::ostringstream sub_cmd_topic_name;
     sub_cmd_topic_name << "VideoTest_Command_";
     if (hostname)
@@ -333,23 +282,13 @@ void VideoTestSubscriber::init(
     ASSERT_NE(mp_command_sub_topic, nullptr);
     ASSERT_TRUE(mp_command_sub_topic->is_enabled());
 
-    //SubCommandParam.topic.topicName = sct.str();
     datareader_qos_cmd.history().kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
     datareader_qos_cmd.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     datareader_qos_cmd.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
-    //SubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    //SubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    //SubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
 
     mp_commanhd_dr = mp_commandsub->create_datareader(mp_command_sub_topic, datareader_qos_cmd, &this->m_commandsublistener);
     ASSERT_NE(mp_commanhd_dr, nullptr);
     ASSERT_TRUE(mp_commanhd_dr->is_enabled());
-    //mp_commandsub = Domain::createSubscriber(mp_participant, SubCommandParam, &this->m_commandsublistener);
-    // if (mp_commandsub == nullptr)
-    // {
-        // return false;
-    // }
-    // return true;
 }
 
 void VideoTestSubscriber::DataSubListener::on_subscription_matched(
@@ -663,9 +602,7 @@ gboolean VideoTestSubscriber::push_data_cb(
         GstBuffer* buffer;
         GstFlowReturn ret;
         GstMapInfo map;
-        //gint16 *raw;
         gint num_samples = 0;
-        //gint size = 0;
 
         const VideoType& vpacket = sub->pop_video_packet();
 
