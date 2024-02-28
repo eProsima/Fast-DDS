@@ -491,7 +491,7 @@ void EDPStatic::assignRemoteEndpoints(
 
 bool EDPStatic::newRemoteReader(
         const GUID_t& participant_guid,
-        const string_255& participant_name,
+        const fastcdr::string_255& participant_name,
         uint16_t user_id,
         EntityId_t ent_id)
 {
@@ -542,7 +542,7 @@ bool EDPStatic::newRemoteReader(
 
 bool EDPStatic::newRemoteWriter(
         const GUID_t& participant_guid,
-        const string_255& participant_name,
+        const fastcdr::string_255& participant_name,
         uint16_t user_id,
         EntityId_t ent_id,
         const GUID_t& persistence_guid)

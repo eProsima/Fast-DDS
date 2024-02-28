@@ -173,7 +173,7 @@ public:
     virtual void on_type_discovery(
             RTPSParticipant* participant,
             const SampleIdentity& request_sample_id,
-            const string_255& topic,
+            const fastcdr::string_255& topic,
             const types::TypeIdentifier* identifier,
             const types::TypeObject* object,
             types::DynamicType_ptr dyn_type)
@@ -206,8 +206,8 @@ public:
      */
     virtual void on_type_information_received(
             RTPSParticipant* participant,
-            const string_255& topic_name,
-            const string_255& type_name,
+            const fastcdr::string_255& topic_name,
+            const fastcdr::string_255& type_name,
             const types::TypeInformation& type_information)
     {
         static_cast<void>(participant);
