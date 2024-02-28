@@ -21,6 +21,7 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
+#include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
@@ -135,17 +136,30 @@ public:
             SendResourceList& sender_resource_list,
             const Locator&) = 0;
 
-    //! Must open the channel that maps to/from the given locator selector entry. This method must allocate,
-    //! reserve and mark any resources that are needed for said channel.
+    /**
+     * Must open the channel that maps to/from the given locator selector entry. This method must allocate,
+     * reserve and mark any resources that are needed for said channel.
+     *
+     * @param sender_resource_list Participant's send resource list.
+     * @param locator_selector_entry Locator selector entry with the remote participant's locators.
+     *
+     * @return true if the channel was correctly opened or if finding an already opened one.
+     */
     virtual bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
-            const fastrtps::rtps::LocatorSelectorEntry&);
+            const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry);
 
-
-    //! Close the channel that maps to/from the given locator selector entry.
+    /**
+     * Close the channel that maps to/from the given locator selector entry.
+     *
+     * @param sender_resource_list Participant's send resource list.
+     * @param locator_selector_entry Locator selector entry with the remote participant's locators.
+     *
+     * @return true if the channel was correctly closed or if it was already closed.
+     */
     virtual void CloseOutputChannel(
             SendResourceList& sender_resource_list,
-            const fastrtps::rtps::LocatorSelectorEntry&);
+            const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry);
 
     /** Opens an input channel to receive incoming connections.
      *   If there is an existing channel it registers the receiver interface.
