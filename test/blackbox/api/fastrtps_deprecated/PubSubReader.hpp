@@ -153,7 +153,6 @@ private:
         void onNewDataMessage(
                 eprosima::fastrtps::Subscriber* sub) override
         {
-            std::cout << "Data received." << std::endl;
             ASSERT_NE(sub, nullptr);
             reader_.message_receive_count_.fetch_add(1);
             reader_.message_receive_cv_.notify_one();

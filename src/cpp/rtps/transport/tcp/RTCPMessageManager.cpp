@@ -473,8 +473,7 @@ ResponseCode RTCPMessageManager::processBindConnectionRequest(
     sendData(channel, BIND_CONNECTION_RESPONSE, transaction_id, &payload, code);
 
     // Add pending logical ports to the channel
-    uint16_t physical_port = IPLocator::getPhysicalPort(channel->locator());
-    mTransport->send_channel_pending_logical_ports(physical_port, channel);
+    mTransport->send_channel_pending_logical_ports(channel->locator(), channel);
 
 
     return RETCODE_OK;

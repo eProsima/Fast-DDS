@@ -758,7 +758,7 @@ bool TCPTransportInterface::OpenOutputChannel(
             else
             {
                 std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
-                channel_pending_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].insert(logical_port);
+                channel_pending_logical_ports_[physical_locator].insert(logical_port);
             }
 
             statistics_info_.add_entry(locator);
@@ -864,7 +864,7 @@ bool TCPTransportInterface::OpenOutputChannel(
                     << IPLocator::getPhysicalPort(locator) << "; logical: "
                     << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
             std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
-            channel_pending_logical_ports_[IPLocator::getPhysicalPort(physical_locator)].insert(logical_port);
+            channel_pending_logical_ports_[physical_locator].insert(logical_port);
         }
     }
 
@@ -1403,6 +1403,7 @@ bool TCPTransportInterface::send(
                 {
                     return success;
                 }
+                scoped_lock.lock();
             }
             TCPHeader tcp_header;
             statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
@@ -1945,18 +1946,18 @@ void TCPTransportInterface::CloseOutputChannel(
 }
 
 void TCPTransportInterface::send_channel_pending_logical_ports(
-        const uint16_t& physical_port,
+        const Locator& physical_locator,
         std::shared_ptr<TCPChannelResource>& channel)
 {
     std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
-    auto logical_ports = channel_pending_logical_ports_.find(physical_port);
+    auto logical_ports = channel_pending_logical_ports_.find(physical_locator);
     if (logical_ports != channel_pending_logical_ports_.end())
     {
         for (auto logical_port : logical_ports->second)
         {
             channel->add_logical_port(logical_port, rtcp_message_manager_.get());
         }
-        channel_pending_logical_ports_.erase(physical_port);
+        channel_pending_logical_ports_.erase(physical_locator);
     }
 }
 

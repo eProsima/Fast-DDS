@@ -167,8 +167,6 @@ protected:
         void on_data_available(
                 eprosima::fastdds::dds::DataReader* datareader) override
         {
-            std::cout << "Data received." << std::endl;
-
             ASSERT_NE(datareader, nullptr);
             {
                 std::lock_guard<std::mutex> guard(reader_.message_receive_mutex_);
