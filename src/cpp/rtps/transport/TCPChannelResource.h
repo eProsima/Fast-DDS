@@ -234,6 +234,9 @@ protected:
 
 private:
 
+    bool is_logical_port_opened_nts(
+            uint16_t port);
+
     void prepare_send_check_logical_ports_req(
             uint16_t closedPort,
             RTCPMessageManager* rtcp_manager);

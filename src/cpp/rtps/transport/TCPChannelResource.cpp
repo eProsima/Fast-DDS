@@ -108,6 +108,12 @@ bool TCPChannelResource::is_logical_port_opened(
         uint16_t port)
 {
     std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    return is_logical_port_opened_nts(port);
+}
+
+bool TCPChannelResource::is_logical_port_opened_nts(
+        uint16_t port)
+{
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end();
 }
 
