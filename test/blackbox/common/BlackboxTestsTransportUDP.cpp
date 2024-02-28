@@ -524,7 +524,7 @@ void deliver_datagram_from_file(
     std::basic_ifstream<char> file(filename, std::ios::binary | std::ios::in);
 
     file.seekg(0, file.end);
-    size_t file_size = file.tellg();
+    size_t file_size = static_cast<size_t>(file.tellg());
     file.seekg(0, file.beg);
 
     std::vector<uint8_t> buf(file_size);

@@ -835,12 +835,8 @@ struct ConnectionListSampleValidator : public SampleValidator
 
                                     return expected_locators_found;
                                 }
-                                else
-                                {
-                                    return false;
-                                }
 
-                                return true;
+                                return false;
                             });
 
             ASSERT_NE(it, total_msgs.end());

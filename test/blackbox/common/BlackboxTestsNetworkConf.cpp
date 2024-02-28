@@ -429,7 +429,7 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
 {
 #ifdef _WIN32
     GTEST_SKIP() << "This test is skipped on Windows";
-#endif // _WIN32
+#else
     std::vector<IPFinder::info_IP> no_interfaces;
 
     std::vector<IPFinder::info_IP> locahost_interface_only;
@@ -481,6 +481,7 @@ TEST_P(NetworkConfig, PubSubAsymmetricInterfaceWhitelistLocalhostOnly)
             interface_whitelist_test(no_interfaces, locahost_interface_only, true);
         }
     }
+#endif // _WIN32
 }
 
 // Regression test for redmine issue #18854 to check in UDP that setting the interface whitelist in one

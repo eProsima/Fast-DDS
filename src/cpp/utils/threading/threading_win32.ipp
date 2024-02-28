@@ -21,12 +21,13 @@
 
 namespace eprosima {
 
-template<typename... Args>
+template<typename ... Args>
 static void set_name_to_current_thread_impl(
-    const char* fmt, Args... args)
+        const char* fmt,
+        Args... args)
 {
     char thread_name[16]{};
-    snprintf(thread_name, 16, fmt, args...);
+    snprintf(thread_name, 16, fmt, args ...);
 
     std::wstringstream stream;
     stream << thread_name;
@@ -63,7 +64,8 @@ static void configure_current_thread_priority(
     {
         if (0 == SetThreadPriority(GetCurrentThread(), priority))
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << GetLastError() << "' configuring priority for thread " << GetCurrentThread());
+            EPROSIMA_LOG_ERROR(SYSTEM,
+                    "Error '" << GetLastError() << "' configuring priority for thread " << GetCurrentThread());
         }
     }
 }
@@ -73,9 +75,10 @@ static void configure_current_thread_affinity(
 {
     if (affinity_mask != 0)
     {
-        if (0 == SetThreadAffinityMask(GetCurrentThread(), affinity_mask))
+        if (0 == SetThreadAffinityMask(GetCurrentThread(), static_cast<DWORD_PTR>(affinity_mask)))
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << GetLastError() << "' configuring affinity for thread " << GetCurrentThread());
+            EPROSIMA_LOG_ERROR(SYSTEM,
+                    "Error '" << GetLastError() << "' configuring affinity for thread " << GetCurrentThread());
         }
     }
 }
