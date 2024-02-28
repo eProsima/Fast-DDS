@@ -100,23 +100,6 @@ public:
      *
      * @param[out] participant Pointer to the Participant which discovered the remote DataReader.
      * @param[out] info Remote DataReader information. User can take ownership of the object.
-     */
-    virtual void on_data_reader_discovery(
-            DomainParticipant* participant,
-            fastrtps::rtps::ReaderDiscoveryInfo&& info)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(info);
-    }
-
-    /*!
-     * This method is called when a new DataReader is discovered, or a previously discovered DataReader changes
-     * its QOS or is removed.
-     *
-     * @warning Not Supported. This callback will never be called in the current version.
-     *
-     * @param[out] participant Pointer to the Participant which discovered the remote DataReader.
-     * @param[out] info Remote DataReader information. User can take ownership of the object.
      * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataReader.
      */
     virtual void on_data_reader_discovery(
@@ -132,23 +115,6 @@ public:
     /*!
      * This method is called when a new DataWriter is discovered, or a previously discovered DataWriter changes
      * its QOS or is removed.
-     *
-     * @param[out] participant Pointer to the Participant which discovered the remote DataWriter.
-     * @param[out] info Remote DataWriter information. User can take ownership of the object.
-     */
-    virtual void on_data_writer_discovery(
-            DomainParticipant* participant,
-            fastrtps::rtps::WriterDiscoveryInfo&& info)
-    {
-        static_cast<void>(participant);
-        static_cast<void>(info);
-    }
-
-    /*!
-     * This method is called when a new DataWriter is discovered, or a previously discovered DataWriter changes
-     * its QOS or is removed.
-     *
-     * @warning Not Supported. This callback will never be called in the current version.
      *
      * @param[out] participant Pointer to the Participant which discovered the remote DataWriter.
      * @param[out] info Remote DataWriter information. User can take ownership of the object.

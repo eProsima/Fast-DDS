@@ -1532,7 +1532,9 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_data_reader_discovery(participant_->participant_, std::move(info));
+        bool should_be_ignored = false;
+        participant_->listener_->on_data_reader_discovery(participant_->participant_, std::move(info),
+                should_be_ignored);
     }
 }
 
@@ -1543,7 +1545,9 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_data_writer_discovery(participant_->participant_, std::move(info));
+        bool should_be_ignored = false;
+        participant_->listener_->on_data_writer_discovery(participant_->participant_, std::move(info),
+                should_be_ignored);
     }
 }
 

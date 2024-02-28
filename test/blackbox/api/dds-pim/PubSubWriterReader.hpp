@@ -110,7 +110,8 @@ class PubSubWriterReader
 
         void on_data_reader_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             (void)participant;
 
@@ -131,7 +132,8 @@ class PubSubWriterReader
 
         void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             (void)participant;
 

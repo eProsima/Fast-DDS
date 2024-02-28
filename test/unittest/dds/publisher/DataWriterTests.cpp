@@ -374,7 +374,8 @@ TEST(DataWriterTests, get_guid)
 
         void on_data_writer_discovery(
                 DomainParticipant*,
-                fastrtps::rtps::WriterDiscoveryInfo&& info) override
+                fastrtps::rtps::WriterDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER == info.status)

@@ -436,12 +436,6 @@ protected:
 
     //! Collection of all SampleIdentity and the TypeIdentfierWithSize it originated from, hashed by its SampleIdentity.
     std::unordered_map<SampleIdentity, xtypes::TypeIdentfierWithSize> async_get_type_requests_;
-
-    void request_cache_change_acked(
-            fastrtps::rtps::CacheChange_t* change);
-
-    void reply_cache_change_acked(
-            fastrtps::rtps::CacheChange_t* change);
 };
 
 } /* namespace builtin */
