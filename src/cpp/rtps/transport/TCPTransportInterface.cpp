@@ -490,7 +490,8 @@ bool TCPTransportInterface::init(
 
     if (configuration()->maxMessageSize > maximumMessageSize)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
+        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT,
+                "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
         return false;
     }
 

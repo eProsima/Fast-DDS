@@ -157,7 +157,8 @@ bool UDPTransportInterface::init(
 
     if (configuration()->maxMessageSize > maximumMessageSize)
     {
-        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
+        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT,
+                "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
         return false;
     }
 

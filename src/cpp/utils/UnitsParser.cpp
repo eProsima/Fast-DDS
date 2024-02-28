@@ -28,10 +28,15 @@ void to_uppercase(
         std::string& st) noexcept
 {
     std::transform(st.begin(), st.end(), st.begin(),
-            ::toupper);
+            [](unsigned char c)
+            {
+                return static_cast<char>(std::toupper(c));
+            });
 }
 
-uint32_t parse_value_and_units(std::string& value, std::string units)
+uint32_t parse_value_and_units(
+        std::string& value,
+        std::string units)
 {
     static const std::map<std::string, std::uint32_t> magnitudes = {
         {"B", 1},

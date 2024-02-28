@@ -301,8 +301,8 @@ void RTPSParticipantAttributes::setup_transports(
             transports != fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-            "Max message size of UDP cannot be greater than 65500. Will use DEFAULT transports.");
-            return;
+                "Max message size of UDP cannot be greater than 65500. Will use DEFAULT transports.");
+        return;
     }
     bool intraprocess_only = is_intraprocess_only(*this);
 
