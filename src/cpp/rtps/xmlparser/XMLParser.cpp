@@ -773,7 +773,7 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
             }
             else if (strcmp(name, WAIT_FOR_LOGICAL_PORT_NEGOTIATION) == 0)
             {
-                // wait_for_logical_port_negotiation_ms - uint64Type
+                // wait_for_logical_port_negotiation_ms - uint32Type
                 int iTimeout(0);
                 if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
                 {
