@@ -191,45 +191,45 @@ public:
     }
 
     RTPS_DllAPI void typeName(
-            const string_255& typeName)
+            const fastcdr::string_255& typeName)
     {
         m_typeName = typeName;
     }
 
     RTPS_DllAPI void typeName(
-            string_255&& typeName)
+            fastcdr::string_255&& typeName)
     {
         m_typeName = std::move(typeName);
     }
 
-    RTPS_DllAPI const string_255& typeName() const
+    RTPS_DllAPI const fastcdr::string_255& typeName() const
     {
         return m_typeName;
     }
 
-    RTPS_DllAPI string_255& typeName()
+    RTPS_DllAPI fastcdr::string_255& typeName()
     {
         return m_typeName;
     }
 
     RTPS_DllAPI void topicName(
-            const string_255& topicName)
+            const fastcdr::string_255& topicName)
     {
         m_topicName = topicName;
     }
 
     RTPS_DllAPI void topicName(
-            string_255&& topicName)
+            fastcdr::string_255&& topicName)
     {
         m_topicName = std::move(topicName);
     }
 
-    RTPS_DllAPI const string_255& topicName() const
+    RTPS_DllAPI const fastcdr::string_255& topicName() const
     {
         return m_topicName;
     }
 
-    RTPS_DllAPI string_255& topicName()
+    RTPS_DllAPI fastcdr::string_255& topicName()
     {
         return m_topicName;
     }
@@ -492,9 +492,9 @@ private:
     //!GUID_t of the participant converted to InstanceHandle
     InstanceHandle_t m_RTPSParticipantKey;
     //!Type name
-    string_255 m_typeName;
+    fastcdr::string_255 m_typeName;
     //!Topic name
-    string_255 m_topicName;
+    fastcdr::string_255 m_topicName;
     //!User defined ID
     uint16_t m_userDefinedId;
     //!Field to indicate if the Reader is Alive.

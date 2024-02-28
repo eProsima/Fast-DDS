@@ -34,7 +34,6 @@
 #include <string>
 #include <vector>
 
-#include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastcdr/xcdr/external.hpp>
 #include <fastcdr/xcdr/optional.hpp>
 

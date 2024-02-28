@@ -230,7 +230,7 @@ public:
      */
     bool lookup_participant_name(
             const GUID_t& guid,
-            string_255& name);
+            fastcdr::string_255& name);
 
     /**
      * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
@@ -611,8 +611,8 @@ private:
 
     void check_and_notify_type_discovery(
             RTPSParticipantListener* listener,
-            const string_255& topic_name,
-            const string_255& type_name,
+            const fastcdr::string_255& topic_name,
+            const fastcdr::string_255& type_name,
             const types::TypeIdentifier* type_id,
             const types::TypeObject* type_obj,
             const xtypes::TypeInformation* type_info) const;
