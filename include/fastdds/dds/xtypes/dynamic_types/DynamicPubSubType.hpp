@@ -145,7 +145,7 @@ public:
 
 private:
 
-    void UpdateDynamicTypeInfo();
+    void update_dynamic_type();
 };
 
 } // namespace dds

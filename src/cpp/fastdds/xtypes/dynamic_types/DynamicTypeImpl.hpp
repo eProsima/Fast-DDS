@@ -112,6 +112,10 @@ private:
 
     std::vector<AnnotationDescriptorImpl> annotation_;
 
+    int32_t default_discriminator_value_ {0};
+
+    MemberId default_union_member_ {MEMBER_ID_INVALID};
+
     DynamicTypeMembersById member_;
 
     DynamicTypeMembersByName member_by_name_;
@@ -121,10 +125,6 @@ private:
     TypeDescriptorImpl type_descriptor_;
 
     std::vector<VerbatimTextDescriptorImpl> verbatim_;
-
-    int32_t default_discriminator_value_ {0};
-
-    MemberId default_union_member_ {MEMBER_ID_INVALID};
 };
 
 } // namespace dds

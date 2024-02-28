@@ -23,44 +23,44 @@ namespace dds {
 
 class MemberDescriptorImpl : public virtual MemberDescriptor
 {
-    //! Name of the member
-    ObjectName name_;
+    //! Default value of the member in string.
+    std::string default_value_;
 
     //! MemberId, it should be filled automatically when the member is added.
     MemberId id_ {MEMBER_ID_INVALID};
 
-    //! Member's type
-    traits<DynamicType>::ref_type type_;
-
-    //! Default value of the member in string.
-    std::string default_value_;
-
     //! Definition order of the member inside its parent.
     uint32_t index_ {0xFFFFFFFF};
-
-    //! Case Labels for unions.
-    UnionCaseLabelSeq label_;
-
-    //! @ref TryConstructKind
-    TryConstructKind try_construct_kind_ {TryConstructKind::DISCARD};
-
-    //! If the member is key.
-    bool is_key_ {false};
-
-    //! If the member is optional.
-    bool is_optional_ {false};
-
-    //! If the member is must_understand.
-    bool is_must_understand_ {false};
-
-    //! If the member is shared (external).
-    bool is_shared_ {false};
 
     //! If the union member is default.
     bool is_default_label_ {false};
 
+    //! If the member is key.
+    bool is_key_ {false};
+
+    //! If the member is must_understand.
+    bool is_must_understand_ {false};
+
+    //! If the member is optional.
+    bool is_optional_ {false};
+
+    //! If the member is shared (external).
+    bool is_shared_ {false};
+
+    //! Case Labels for unions.
+    UnionCaseLabelSeq label_;
+
+    //! Name of the member
+    ObjectName name_;
+
     //! Kind of the DynamicType which will contains this member.
     TypeKind parent_kind_ {TK_NONE};
+
+    //! @ref TryConstructKind
+    TryConstructKind try_construct_kind_ {TryConstructKind::DISCARD};
+
+    //! Member's type
+    traits<DynamicType>::ref_type type_;
 
 public:
 

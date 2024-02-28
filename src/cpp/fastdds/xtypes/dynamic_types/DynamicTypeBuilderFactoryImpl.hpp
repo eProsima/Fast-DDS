@@ -33,12 +33,7 @@ class DynamicTypeBuilderFactoryImpl : public traits<DynamicTypeBuilderFactory>::
 {
 public:
 
-    static traits<DynamicTypeBuilderFactory>::ref_type get_instance() noexcept;
-
-    static ReturnCode_t delete_instance() noexcept;
-
-    traits<DynamicType>::ref_type get_primitive_type(
-            TypeKind kind) noexcept override;
+    //{{{ Functions to create types
 
     traits<DynamicTypeBuilder>::ref_type create_type(
             traits<TypeDescriptor>::ref_type descriptor) noexcept override;
@@ -46,8 +41,38 @@ public:
     traits<DynamicTypeBuilder>::ref_type create_type_copy(
             traits<DynamicType>::ref_type type) noexcept override;
 
+    traits<DynamicTypeBuilder>::ref_type create_type_w_document(
+            const std::string& document,
+            const std::string& type_name,
+            const IncludePathSeq& include_paths) noexcept override;
+
     traits<DynamicTypeBuilder>::ref_type create_type_w_type_object(
             const xtypes::TypeObject& type_object) noexcept override;
+
+    traits<DynamicTypeBuilder>::ref_type create_type_w_uri(
+            const std::string& document_url,
+            const std::string& type_name,
+            const IncludePathSeq& include_paths) noexcept override;
+
+    //}}}
+
+    //{{{ Functions to create specific types
+
+    traits<DynamicTypeBuilder>::ref_type create_array_type(
+            traits<DynamicType>::ref_type element_type,
+            const BoundSeq& bound) noexcept override;
+
+    traits<DynamicTypeBuilder>::ref_type create_bitmask_type(
+            uint32_t bound) noexcept override;
+
+    traits<DynamicTypeBuilder>::ref_type create_map_type(
+            traits<DynamicType>::ref_type key_element_type,
+            traits<DynamicType>::ref_type element_type,
+            uint32_t bound) noexcept override;
+
+    traits<DynamicTypeBuilder>::ref_type create_sequence_type(
+            traits<DynamicType>::ref_type element_type,
+            uint32_t bound) noexcept override;
 
     traits<DynamicTypeBuilder>::ref_type create_string_type(
             uint32_t bound) noexcept override;
@@ -55,40 +80,24 @@ public:
     traits<DynamicTypeBuilder>::ref_type create_wstring_type(
             uint32_t bound) noexcept override;
 
-    traits<DynamicTypeBuilder>::ref_type create_sequence_type(
-            traits<DynamicType>::ref_type element_type,
-            uint32_t bound) noexcept override;
+    //}}}
 
-    traits<DynamicTypeBuilder>::ref_type create_array_type(
-            traits<DynamicType>::ref_type element_type,
-            const BoundSeq& bound) noexcept override;
-
-    traits<DynamicTypeBuilder>::ref_type create_map_type(
-            traits<DynamicType>::ref_type key_element_type,
-            traits<DynamicType>::ref_type element_type,
-            uint32_t bound) noexcept override;
-
-    traits<DynamicTypeBuilder>::ref_type create_bitmask_type(
-            uint32_t bound) noexcept override;
-
-    traits<DynamicTypeBuilder>::ref_type create_type_w_uri(
-            const std::string& document_url,
-            const std::string& type_name,
-            const IncludePathSeq& include_paths) noexcept override;
-
-    traits<DynamicTypeBuilder>::ref_type create_type_w_document(
-            const std::string& document,
-            const std::string& type_name,
-            const IncludePathSeq& include_paths) noexcept override;
+    static ReturnCode_t delete_instance() noexcept;
 
     ReturnCode_t delete_type(
             traits<DynamicType>::ref_type type) noexcept override;
+
+    static traits<DynamicTypeBuilderFactory>::ref_type get_instance() noexcept;
+
+    traits<DynamicType>::ref_type get_primitive_type(
+            TypeKind kind) noexcept override;
 
 private:
 
     static traits<DynamicTypeBuilderFactoryImpl>::ref_type instance_;
 
-    // Cached primitive types.
+    //{{{ Cached primitive types.
+
     traits<DynamicTypeImpl>::ref_type bool_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_BOOLEAN,
                                                                                                        ""})};
     traits<DynamicTypeImpl>::ref_type byte_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_BYTE, ""})};
@@ -112,7 +121,7 @@ private:
     traits<DynamicTypeImpl>::ref_type char8_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_CHAR8, ""})};
     traits<DynamicTypeImpl>::ref_type char16_type_ {std::make_shared<DynamicTypeImpl>(TypeDescriptorImpl{TK_CHAR16,
                                                                                                          ""})};
-
+    //}}}
 };
 
 } // namespace dds

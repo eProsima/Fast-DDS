@@ -36,7 +36,7 @@ DynamicPubSubType::DynamicPubSubType(
         traits<DynamicType>::ref_type type)
     : dynamic_type_(type)
 {
-    UpdateDynamicTypeInfo();
+    update_dynamic_type();
 }
 
 DynamicPubSubType::~DynamicPubSubType()
@@ -240,7 +240,7 @@ ReturnCode_t DynamicPubSubType::set_dynamic_type(
     if (!dynamic_type_)
     {
         dynamic_type_ = type;
-        UpdateDynamicTypeInfo();
+        update_dynamic_type();
         return RETCODE_OK;
     }
     else
@@ -253,7 +253,7 @@ ReturnCode_t DynamicPubSubType::set_dynamic_type(
 
 //}}}
 
-void DynamicPubSubType::UpdateDynamicTypeInfo()
+void DynamicPubSubType::update_dynamic_type()
 {
     m_isGetKeyDefined = false;
 
