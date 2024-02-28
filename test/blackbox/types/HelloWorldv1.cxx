@@ -255,7 +255,7 @@ uint16_t& HelloWorld::index()
  * @param _message New value to be copied in member message
  */
 void HelloWorld::message(
-        const eprosima::fastrtps::fixed_string<128>& _message)
+        const eprosima::fastcdr::fixed_string<128>& _message)
 {
     m_message = _message;
 }
@@ -265,7 +265,7 @@ void HelloWorld::message(
  * @param _message New value to be moved in member message
  */
 void HelloWorld::message(
-        eprosima::fastrtps::fixed_string<128>&& _message)
+        eprosima::fastcdr::fixed_string<128>&& _message)
 {
     m_message = std::move(_message);
 }
@@ -274,7 +274,7 @@ void HelloWorld::message(
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const eprosima::fastrtps::fixed_string<128>& HelloWorld::message() const
+const eprosima::fastcdr::fixed_string<128>& HelloWorld::message() const
 {
     return m_message;
 }
@@ -283,7 +283,7 @@ const eprosima::fastrtps::fixed_string<128>& HelloWorld::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-eprosima::fastrtps::fixed_string<128>& HelloWorld::message()
+eprosima::fastcdr::fixed_string<128>& HelloWorld::message()
 {
     return m_message;
 }

@@ -229,7 +229,7 @@ void AccessControlTest::check_remote_datareader(
     SecurityException exception;
 
     ReaderProxyData reader_proxy_data(1, 1);
-    reader_proxy_data.topicName(eprosima::fastrtps::string_255(topic_name));
+    reader_proxy_data.topicName(eprosima::fastcdr::string_255(topic_name));
     reader_proxy_data.m_qos.m_partition.setNames(partitions);
     bool relay_only;
     bool result = access_plugin.check_remote_datareader(
@@ -287,7 +287,7 @@ void AccessControlTest::check_remote_datawriter(
     SecurityException exception;
 
     WriterProxyData writer_proxy_data(1, 1);
-    writer_proxy_data.topicName(eprosima::fastrtps::string_255(topic_name));
+    writer_proxy_data.topicName(eprosima::fastcdr::string_255(topic_name));
     writer_proxy_data.m_qos.m_partition.setNames(partitions);
     bool result = access_plugin.check_remote_datawriter(
         *access_handle,
