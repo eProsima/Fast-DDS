@@ -158,11 +158,12 @@ void VideoTestSubscriber::init(
         if (m_forcedDomain >= 0)
         {
             mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(m_forcedDomain,
-                participant_profile_name);
+                            participant_profile_name);
         }
         else
         {
-            mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(participant_profile_name);
+            mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                participant_profile_name);
         }
     }
     else
@@ -229,7 +230,8 @@ void VideoTestSubscriber::init(
 
     if (large_data)
     {
-        datareader_qos_data.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        datareader_qos_data.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
     }
 
     mp_data_dr = mp_datasub->create_datareader(mp_video_topic, datareader_qos_data, &this->m_datasublistener);
@@ -259,7 +261,7 @@ void VideoTestSubscriber::init(
     datawriter_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     datawriter_qos.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
     mp_dw = mp_commandpub->create_datawriter(mp_command_pub_topic, datawriter_qos,
-                &this->m_commandpublistener);
+                    &this->m_commandpublistener);
     ASSERT_NE(mp_dw, nullptr);
     ASSERT_TRUE(mp_dw->is_enabled());
 
@@ -278,7 +280,7 @@ void VideoTestSubscriber::init(
     }
     sub_cmd_topic_name << pid << "_PUB2SUB";
     mp_command_sub_topic = mp_participant->create_topic(sub_cmd_topic_name.str(),
-                "TestCommandType", TOPIC_QOS_DEFAULT);
+                    "TestCommandType", TOPIC_QOS_DEFAULT);
     ASSERT_NE(mp_command_sub_topic, nullptr);
     ASSERT_TRUE(mp_command_sub_topic->is_enabled());
 
@@ -286,7 +288,8 @@ void VideoTestSubscriber::init(
     datareader_qos_cmd.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     datareader_qos_cmd.durability().kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
 
-    mp_commanhd_dr = mp_commandsub->create_datareader(mp_command_sub_topic, datareader_qos_cmd, &this->m_commandsublistener);
+    mp_commanhd_dr = mp_commandsub->create_datareader(mp_command_sub_topic, datareader_qos_cmd,
+                    &this->m_commandsublistener);
     ASSERT_NE(mp_commanhd_dr, nullptr);
     ASSERT_TRUE(mp_commanhd_dr->is_enabled());
 }
@@ -363,7 +366,7 @@ void VideoTestSubscriber::CommandSubListener::on_data_available(
 {
     SampleInfo info;
     TestCommandType command;
-    if(ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&command, &info))
+    if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&command, &info))
     {
         if (info.valid_data)
         {

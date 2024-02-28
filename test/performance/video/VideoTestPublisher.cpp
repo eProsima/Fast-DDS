@@ -101,7 +101,7 @@ VideoTestPublisher::~VideoTestPublisher()
             {
                 mp_commandsub->delete_datareader(mp_dr);
             }
-            mp_participant->delete_subscriber(mp_commandsub); 
+            mp_participant->delete_subscriber(mp_commandsub);
         }
         if (mp_datapub)
         {
@@ -182,11 +182,12 @@ void VideoTestPublisher::init(
         if (m_forcedDomain >= 0)
         {
             mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(m_forcedDomain,
-                participant_profile_name);
+                            participant_profile_name);
         }
         else
         {
-            mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(participant_profile_name);
+            mp_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+                participant_profile_name);
         }
     }
     else
@@ -254,7 +255,8 @@ void VideoTestPublisher::init(
 
     if (large_data)
     {
-        datawriter_qos_data.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        datawriter_qos_data.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
         datawriter_qos_data.publish_mode().kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
     }
     datawriter_qos_data.reliable_writer_qos().times.heartbeatPeriod.seconds = 0;
