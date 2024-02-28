@@ -154,8 +154,6 @@ public:
      *
      * @param sender_resource_list Participant's send resource list.
      * @param locator_selector_entry Locator selector entry with the remote participant's locators.
-     *
-     * @return true if the channel was correctly closed or if it was already closed.
      */
     virtual void CloseOutputChannel(
             SendResourceList& sender_resource_list,
