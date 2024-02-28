@@ -326,11 +326,10 @@ TEST_F(TCPv6Tests, non_blocking_send)
     // Create a TCP Server transport
     TCPv6TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
+    senderDescriptor.non_blocking_send = true;
     senderDescriptor.sendBufferSize = msg_size;
     MockTCPv6Transport senderTransportUnderTest(senderDescriptor);
-    eprosima::fastrtps::rtps::RTPSParticipantAttributes att;
-    att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
-    senderTransportUnderTest.init(&att.properties);
+    senderTransportUnderTest.init();
 
     // Create a TCP Client socket.
     // The creation of a reception transport for testing this functionality is not
