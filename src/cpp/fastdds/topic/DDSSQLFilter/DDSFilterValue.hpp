@@ -19,10 +19,10 @@
 #ifndef _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 #define _FASTDDS_TOPIC_DDSSQLFILTER_DDSFILTERVALUE_HPP_
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <memory>
 #include <regex>
-
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -70,7 +70,7 @@ public:
         int64_t signed_integer_value;                  ///< Value when kind == SIGNED_INTEGER / ENUM
         uint64_t unsigned_integer_value;               ///< Value when kind == UNSIGNED_INTEGER
         long double float_value;                       ///< Value when kind == FLOAT
-        eprosima::fastrtps::string_255 string_value;   ///< Value when kind == STRING
+        eprosima::fastcdr::string_255 string_value;   ///< Value when kind == STRING
     };
 
     /**

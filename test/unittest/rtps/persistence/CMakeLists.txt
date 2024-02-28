@@ -53,6 +53,7 @@ if(SQLITE3_SUPPORT)
         ${PROJECT_SOURCE_DIR}/src/cpp
         )
     target_link_libraries(PersistenceTests
+        fastcdr
         foonathan_memory
             GTest::gmock
         ${CMAKE_DL_LIBS}

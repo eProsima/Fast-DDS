@@ -21,23 +21,15 @@
 #define TYPES_HPP
 
 #include <fastcdr/config.h>
-#if FASTCDR_VERSION_MAJOR == 1
-#include <fastrtps/utils/fixed_size_string.hpp>
-#else
 #include <fastcdr/cdr/fixed_size_string.hpp>
-#endif // FASTCDR_VERSION_MAJOR == 1
+
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace rpc {
 
-using InstanceName =
-#if FASTCDR_VERSION_MAJOR == 1
-        fastrtps::string_255;
-#else
-        fastcdr::string_255;
-#endif // FASTCDR_VERSION_MAJOR == 1
+using InstanceName = fastcdr::string_255;
 
 enum RemoteExceptionCode_t
 {

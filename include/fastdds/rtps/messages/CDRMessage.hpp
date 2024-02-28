@@ -449,7 +449,7 @@ inline bool CDRMessage::readString(
 
 inline bool CDRMessage::readString(
         CDRMessage_t* msg,
-        string_255* stri)
+        fastcdr::string_255* stri)
 {
     uint32_t str_size = 1;
     bool valid = true;
@@ -738,7 +738,7 @@ inline bool CDRMessage::add_string(
 
 inline bool CDRMessage::add_string(
         CDRMessage_t* msg,
-        const string_255& in_str)
+        const fastcdr::string_255& in_str)
 {
     return add_string(msg, in_str.c_str());
 }

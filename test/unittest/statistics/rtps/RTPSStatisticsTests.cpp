@@ -352,8 +352,8 @@ public:
 
     void match_endpoints(
             bool key,
-            fastrtps::string_255 data_type,
-            fastrtps::string_255 topic_name)
+            fastcdr::string_255 data_type,
+            fastcdr::string_255 topic_name)
     {
         using namespace fastrtps;
         using namespace fastrtps::rtps;
