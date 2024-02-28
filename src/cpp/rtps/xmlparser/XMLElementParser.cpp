@@ -4737,9 +4737,9 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                     </xs:simpleType>
                 </xs:element>
             </xs:all>
-            <xs:attribute name="max_msg_size" type="uint32" use="optional"/>
-            <xs:attribute name="sockets_size" type="uint32" use="optional"/>
-            <xs:attribute name="non_blocking" type="boolean" use="optional"/>
+            <xs:attribute name="max_msg_size" type="string" use="optional"/>
+            <xs:attribute name="sockets_size" type="string" use="optional"/>
+            <xs:attribute name="non_blocking" type="string" use="optional"/>
         </xs:complexType>
      */
 
@@ -4748,6 +4748,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
     {
         if (strcmp(attrib->Name(), MAX_MSG_SIZE_LARGE_DATA) == 0)
         {
+            // max_msg_size - stringType
             try
             {
                 std::string temp = attrib->Value();
@@ -4773,12 +4774,13 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 EPROSIMA_LOG_ERROR(XMLPARSER,
                         "Found wrong value " << attrib->Value() << " for max_msg_size attribute. " <<
                         except.what());
-                ret = XMLP_ret::XML_NOK;
+                ret = XMLP_ret::XML_ERROR;
                 break;
             }
         }
         else if (strcmp(attrib->Name(), SOCKETS_SIZE_LARGE_DATA) == 0)
         {
+            // sockets_size - stringType
             try
             {
                 std::string temp = attrib->Value();
@@ -4804,12 +4806,13 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 EPROSIMA_LOG_ERROR(XMLPARSER,
                         "Found wrong value " << attrib->Value() << " for sockets_size attribute. " <<
                         except.what());
-                ret = XMLP_ret::XML_NOK;
+                ret = XMLP_ret::XML_ERROR;
                 break;
             }
         }
         else if (strcmp(attrib->Name(), NON_BLOCKING_LARGE_DATA) == 0)
         {
+            // non_blocking - stringType
             try
             {
                 std::string temp = attrib->Value();
@@ -4828,7 +4831,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 EPROSIMA_LOG_ERROR(XMLPARSER,
                         "Found wrong value " << attrib->Value() << " for non_blocking attribute. " <<
                         except.what());
-                ret = XMLP_ret::XML_NOK;
+                ret = XMLP_ret::XML_ERROR;
                 break;
             }
         }
@@ -4849,7 +4852,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
         const char* name = current_elem->Name();
         if (tags_present.count(name) != 0)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'thread_settings'. Tag: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'builtinTransports'. Tag: " << name);
             ret = XMLP_ret::XML_ERROR;
             break;
         }

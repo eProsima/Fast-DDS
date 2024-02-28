@@ -728,7 +728,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     snprintf(xml, xml_len, xml_arguments, arguments.c_str());
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    ASSERT_EQ(XMLP_ret::XML_NOK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
     ASSERT_EQ(bt_opts, bt_opts_check);
 
     // 4.f. Wrong value for argument defaults in LARGE_DATA with default config options
@@ -738,7 +738,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     snprintf(xml, xml_len, xml_arguments, arguments.c_str());
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    ASSERT_EQ(XMLP_ret::XML_NOK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
     ASSERT_EQ(bt_opts, bt_opts_check);
 
     // 4.g. Wrong value for argument defaults in LARGE_DATA with default config options
@@ -748,7 +748,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     snprintf(xml, xml_len, xml_arguments, arguments.c_str());
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
-    ASSERT_EQ(XMLP_ret::XML_NOK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
     ASSERT_EQ(bt_opts, bt_opts_check);
 
     // Clean up

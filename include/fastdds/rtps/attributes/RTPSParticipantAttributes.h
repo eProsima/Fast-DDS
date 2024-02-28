@@ -603,7 +603,7 @@ public:
     fastdds::rtps::ThreadSettings security_log_thread;
 #endif // if HAVE_SECURITY
 
-    /*! Maximum message size used to avoid fragmentation, setted ONLY in LARGE_DATA. If this value is
+    /*! Maximum message size used to avoid fragmentation, set ONLY in LARGE_DATA. If this value is
      * not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
      * higher than 65500K.
      */

@@ -129,7 +129,7 @@
             ├ userTransports                       [0~1],
             |   └ transport_id                     [1~*] [string],
             ├ useBuiltinTransports                 [bool],
-            ├ builtinTransports                    [0~1][string]
+            ├ builtinTransports                    [0~1][builtinTransportsType]
             ├ propertiesPolicy                     [0~1],
             ├ allocation                           [0~1],
             ├ userData                             [0~1],
@@ -164,7 +164,7 @@
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="builtinTransports" type="builtinTransportsEnumType" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="builtinTransports" type="builtinTransportsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -183,13 +183,13 @@
     </xs:complexType>
 
     <!--Builtin Transports Enum Type:
-        | ╠ att. max_msg_size  [uint32],
-        | ╠ att. sockets_size  [uint32],
+        | ╠ att. max_msg_size  [string],
+        | ╠ att. sockets_size  [string],
         | ╚ att. non_blocking  [bool]
         |
-        └ mode         [int32]-->
+        └ mode         [string]-->
 
-    <xs:complexType name="builtinTransportsEnumType">
+    <xs:complexType name="builtinTransportsType">
         <xs:all>
             <xs:element name="mode" minOccurs="1" maxOccurs="1">
                 <xs:simpleType>
@@ -206,9 +206,9 @@
                 </xs:simpleType>
             </xs:element>
         </xs:all>
-        <xs:attribute name="max_msg_size" type="uint32" use="optional"/>
-        <xs:attribute name="sockets_size" type="uint32" use="optional"/>
-        <xs:attribute name="non_blocking" type="boolean" use="optional"/>
+        <xs:attribute name="max_msg_size" type="string" use="optional"/>
+        <xs:attribute name="sockets_size" type="string" use="optional"/>
+        <xs:attribute name="non_blocking" type="string" use="optional"/>
     </xs:complexType>
 
     <!--Data writer / publisher:
