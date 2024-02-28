@@ -138,8 +138,8 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     utils/print_functions.cpp
 
     common/DatagramInjectionTransport.cpp
-    common/TCPReqRepHelloWorldRequester.cpp
-    common/TCPReqRepHelloWorldReplier.cpp
+    api/dds-pim/TCPReqRepHelloWorldRequester.cpp
+    api/dds-pim/TCPReqRepHelloWorldReplier.cpp
     )
 
 file(GLOB DDS_BLACKBOXTESTS_TEST_SOURCE "common/DDSBlackboxTests*.cpp")
