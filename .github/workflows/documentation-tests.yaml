@@ -59,6 +59,12 @@ jobs:
           update: false
           upgrade: false
 
+      - name: Install GTest
+        uses: eProsima/eProsima-CI/multiplatform/install_gtest@v0
+        with:
+          cmake_build_type: Release
+          version: release-1.11.0
+
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
         with:
@@ -142,18 +148,28 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
+          colcon_meta_file: './src/fastrtps/.github/workflows/config/documentation.meta'
+          colcon_build_args: ''
+          colcon_build_args_default: ''
+          cmake_args: ''
+          cmake_args_default: ''
+          cmake_build_type: Release
           workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
 
       - name: Colcon test
         id: test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
         with:
-          # Override the default timeout argument
+          colcon_test_args: ''
+          colcon_test_args_default: --event-handlers=console_direct+
+          ctest_args: ''
           ctest_args_default: ''
           packages_names: fastdds-docs
-          test_report_artifact: ${{ format('test_report_{0}', github.job, join(matrix.*, '_')) }}
           workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}', github.job, join(matrix.*, '_')) }}
 
       - name: Test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
