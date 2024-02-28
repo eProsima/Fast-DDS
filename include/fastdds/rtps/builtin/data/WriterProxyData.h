@@ -21,6 +21,8 @@
 #define _FASTDDS_RTPS_BUILTIN_DATA_WRITERPROXYDATA_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
@@ -30,7 +32,7 @@
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -216,45 +218,45 @@ public:
     }
 
     RTPS_DllAPI void typeName(
-            const string_255& typeName)
+            const fastcdr::string_255& typeName)
     {
         m_typeName = typeName;
     }
 
     RTPS_DllAPI void typeName(
-            string_255&& typeName)
+            fastcdr::string_255&& typeName)
     {
         m_typeName = std::move(typeName);
     }
 
-    RTPS_DllAPI const string_255& typeName() const
+    RTPS_DllAPI const fastcdr::string_255& typeName() const
     {
         return m_typeName;
     }
 
-    RTPS_DllAPI string_255& typeName()
+    RTPS_DllAPI fastcdr::string_255& typeName()
     {
         return m_typeName;
     }
 
     RTPS_DllAPI void topicName(
-            const string_255& topicName)
+            const fastcdr::string_255& topicName)
     {
         m_topicName = topicName;
     }
 
     RTPS_DllAPI void topicName(
-            string_255&& topicName)
+            fastcdr::string_255&& topicName)
     {
         m_topicName = std::move(topicName);
     }
 
-    RTPS_DllAPI const string_255& topicName() const
+    RTPS_DllAPI const fastcdr::string_255& topicName() const
     {
         return m_topicName;
     }
 
-    RTPS_DllAPI string_255& topicName()
+    RTPS_DllAPI fastcdr::string_255& topicName()
     {
         return m_topicName;
     }
@@ -476,10 +478,10 @@ private:
     InstanceHandle_t m_RTPSParticipantKey;
 
     //!Type name
-    string_255 m_typeName;
+    fastcdr::string_255 m_typeName;
 
     //!Topic name
-    string_255 m_topicName;
+    fastcdr::string_255 m_topicName;
 
     //!User defined ID
     uint16_t m_userDefinedId;

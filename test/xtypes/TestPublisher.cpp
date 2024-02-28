@@ -250,7 +250,7 @@ void TestPublisher::PubListener::on_publication_matched(
 void TestPublisher::PartListener::on_type_discovery(
         eprosima::fastdds::dds::DomainParticipant*,
         const rtps::SampleIdentity&,
-        const eprosima::fastrtps::string_255& topic,
+        const eprosima::fastcdr::string_255& topic,
         const eprosima::fastrtps::types::TypeIdentifier*,
         const eprosima::fastrtps::types::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
@@ -267,8 +267,8 @@ void TestPublisher::PartListener::on_type_discovery(
 
 void TestPublisher::PartListener::on_type_information_received(
         eprosima::fastdds::dds::DomainParticipant*,
-        const eprosima::fastrtps::string_255 topic_name,
-        const eprosima::fastrtps::string_255 type_name,
+        const eprosima::fastcdr::string_255 topic_name,
+        const eprosima::fastcdr::string_255 type_name,
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
     std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
