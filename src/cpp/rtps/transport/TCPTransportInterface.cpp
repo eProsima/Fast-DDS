@@ -303,10 +303,6 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
                 {
                     IPLocator::setIPv4(loc, sInterface);
                 }
-                else if (loc.kind == LOCATOR_KIND_TCPv6)
-                {
-                    IPLocator::setIPv6(loc, sInterface);
-                }
 #if TLS_FOUND
                 if (configuration()->apply_security)
                 {
