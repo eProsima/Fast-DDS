@@ -132,50 +132,44 @@ bool TCPChannelResource::wait_logical_port_under_negotiation(
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
 
-    // The port is under negotiation if it's in the pending list and in the negotiation list.
-    bool found_in_negotiating_list = false;
-    for (const auto& negotiating_logical_port : negotiating_logical_ports_)
+    // Early return if the port is already opened.
+    if (is_logical_port_opened_nts(port))
     {
-        if (negotiating_logical_port.second == port)
-        {
-            found_in_negotiating_list = true;
-            break;
-        }
+        return true;
     }
 
-    if (found_in_negotiating_list
-            && std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(),
-            port) != pending_logical_output_ports_.end())
+    // The port is under negotiation if it's in the pending list and in the negotiation list.
+    bool found_in_negotiating_list = negotiating_logical_ports_.end() != std::find_if(
+        negotiating_logical_ports_.begin(),
+        negotiating_logical_ports_.end(),
+        [port](const decltype(negotiating_logical_ports_)::value_type& item)
+        {
+            return item.second == port;
+        });
+
+    if (found_in_negotiating_list &&
+            pending_logical_output_ports_.end() != std::find(
+                pending_logical_output_ports_.begin(),
+                pending_logical_output_ports_.end(),
+                port))
     {
         // Wait for the negotiation to finish. The condition variable might get notified if other logical port is opened. In such case,
         // it should wait again with the respective remaining time. If the timeout is 0, it will wait indefinitely.
-        bool negotiating = true;
-        auto end_time = std::chrono::steady_clock::now() + timeout;
-        while (negotiating)
+        auto wait_predicate = [this, port]() -> bool
+                {
+                    return is_logical_port_opened_nts(port);
+                };
+        if (timeout == std::chrono::milliseconds(0))
         {
-            auto now = std::chrono::steady_clock::now();
-            if (timeout != std::chrono::milliseconds(0) && now >= end_time)
-            {
-                break;
-            }
-            auto time_left = timeout == std::chrono::milliseconds(0) ? timeout :  end_time - now;
-
-            // Checks that the update comes from the desired port. If not, negotiating is still true.
-            negotiating = logical_output_ports_updated_cv.wait_for(scopedLock, time_left, [this, port]() -> bool
-                            {
-                                return std::find(logical_output_ports_.begin(),
-                                logical_output_ports_.end(), port) == logical_output_ports_.end();
-                            });
+            logical_output_ports_updated_cv.wait(scopedLock, wait_predicate);
         }
-        return std::find(logical_output_ports_.begin(), logical_output_ports_.end(),
-                       port) == logical_output_ports_.end();
+        else
+        {
+            logical_output_ports_updated_cv.wait_for(scopedLock, timeout, wait_predicate);
+        }
     }
-    // Maybe it was already opened
-    else
-    {
-        return std::find(logical_output_ports_.begin(), logical_output_ports_.end(),
-                       port) != logical_output_ports_.end();
-    }
+
+    return is_logical_port_opened_nts(port);
 }
 
 void TCPChannelResource::add_logical_port(
