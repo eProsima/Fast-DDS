@@ -7458,204 +7458,76 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     XMLProfileManager::DeleteInstance();
 }
 
-/*
-   TEST_F(DynamicTypesTests, DynamicType_bounded_string)
-   {
-   using namespace xmlparser;
+TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
+{
+    using namespace xmlparser;
 
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
+    ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), RETCODE_OK);
-   std::unique_ptr<DynamicData> data {DynamicDataFactory::get_instance().create_data(*type)};
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
 
-   // SERIALIZATION TEST
-   StringStruct refData;
-   StringStructPubSubType refDatapb;
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
-   uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data.get())());
-   SerializedPayload_t payload(payloadSize);
-   SerializedPayload_t dynamic_payload(payloadSize);
-   EXPECT_TRUE(pbType->serialize(data, &dynamic_payload));
-   EXPECT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+    /*
+       XML:
+       <bitset name="MyBitSet">
+            <bitfield name="a" bit_bound = "3"/ >
+            <bitfield name="b" bit_bound="1"/ >
+            <bitfield bit_bound="4"/>
+            <bitfield name="c" bit_bound="10"/>
+            <bitfield name="d" bit_bound="12" type="int16"/>
+        </bitset>
 
-   uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
-   SerializedPayload_t static_payload(static_payloadSize);
-   EXPECT_TRUE(refDatapb.serialize(&refData, &static_payload));
-   EXPECT_EQ(static_payload.length, static_payloadSize);
-   EXPECT_NE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID), RETCODE_OK);
+       IDL:
+       bitset MyBitset
+       {
+           bitfield<3> a; // @bit_bound=3 @position=0
+           bitfield<1> b; // @bit_bound=1 @position=3
+           bitfield<4>;
+           bitfield<10> c; // @bit_bound=10 @position=8
+           bitfield<12, short> d; // @bit_bound=12 @position=18
+       };
+     */
 
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
+    // Bitset
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_BITSET);
+    type_descriptor->name("MyBitSet");
+    type_descriptor->bound({3, 1, 10, 12});
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    ASSERT_TRUE(builder);
 
-   TEST_F(DynamicTypesTests, DynamicType_bounded_wstring)
-   {
-   using namespace xmlparser;
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->id(0);
+    member_descriptor->name("a");
+    member_descriptor->type(factory->get_primitive_type(TK_UINT8));
+    ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->id(3);
+    member_descriptor->name("b");
+    member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
+    ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), RETCODE_OK);
-   std::unique_ptr<DynamicData> data {DynamicDataFactory::get_instance().create_data(*type)};
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->id(8);
+    member_descriptor->name("c");
+    member_descriptor->type(factory->get_primitive_type(TK_UINT16));
+    ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-   // SERIALIZATION TEST
-   StringStruct refData;
-   StringStructPubSubType refDatapb;
+    member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->id(18);
+    member_descriptor->name("d");
+    member_descriptor->type(factory->get_primitive_type(TK_INT16));
+    ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-   uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data.get())());
-   SerializedPayload_t payload(payloadSize);
-   SerializedPayload_t dynamic_payload(payloadSize);
-   EXPECT_TRUE(pbType->serialize(data, &dynamic_payload));
-   EXPECT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+    DynamicType::_ref_type type {pbType->get_dynamic_type()};
+    ASSERT_TRUE(type->equals(builder->build()));
 
-   uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
-   SerializedPayload_t static_payload(static_payloadSize);
-   EXPECT_TRUE(refDatapb.serialize(&refData, &static_payload));
-   EXPECT_EQ(static_payload.length, static_payloadSize);
-   EXPECT_NE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID), RETCODE_OK);
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
-   {
-   using namespace xmlparser;
-
-   XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
-   ASSERT_EQ(ret, XMLP_ret::XML_OK);
-   auto pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   auto a_type = factory.get_char8_type();
-   auto b_type = factory.get_bool_type();
-   auto c_type = factory.get_uint16_type();
-   auto d_type = factory.get_int16_type();
-
-   //
-   XML:
-   < bitset name = "MyBitSet" >
-   < bitfield name = "a" bit_bound = "3" / >
-   < bitfield name = "b" bit_bound = "1" / >
-   < bitfield bit_bound = "4" / >
-   < bitfield name = "c" bit_bound = "10" / >
-   < bitfield name = "d" bit_bound = "12" type = "int16" / >
-   < / bitset >
-
-   IDL:
-   bitset MyBitset
-   {
-   bitfield<3> a; // @bit_bound=3 @position=0
-   bitfield<1> b; // @bit_bound=1 @position=3
-   bitfield<4>;
-   bitfield<10> c; // @bit_bound=10 @position=8
-   bitfield<12, short> d; // @bit_bound=12 @position=18
-   };
-   //
-
-   // Bitset
-   std::unique_ptr<DynamicTypeBuilder> bitset_builder { factory.create_bitset_type()};
-
-   bitset_builder.add_member(0, "a", a_type);
-   bitset_builder.apply_annotation_to_member(0, ANNOTATION_BIT_BOUND, "value", "3");
-   bitset_builder.apply_annotation_to_member(0, ANNOTATION_POSITION, "value", "0");
-
-   bitset_builder.add_member(1, "b", b_type);
-   bitset_builder.apply_annotation_to_member(1, ANNOTATION_BIT_BOUND, "value", "1");
-   bitset_builder.apply_annotation_to_member(1, ANNOTATION_POSITION, "value", "3");
-
-   bitset_builder.add_member(2, "", a_type);
-   // The member doesn't exist so the annotation application will fail, and isn't needed.
-   //bitset_builder.apply_annotation_to_member(2, ANNOTATION_BIT_BOUND, "value", "4");
-   //bitset_builder.apply_annotation_to_member(2, ANNOTATION_POSITION, "value", "4");
-
-   bitset_builder.add_member(3, "c", c_type);
-   bitset_builder.apply_annotation_to_member(3, ANNOTATION_BIT_BOUND, "value", "10");
-   bitset_builder.apply_annotation_to_member(3, ANNOTATION_POSITION, "value", "8"); // 4 empty
-
-   bitset_builder.add_member(4, "d", d_type);
-   bitset_builder.apply_annotation_to_member(4, ANNOTATION_BIT_BOUND, "value", "12");
-   bitset_builder.apply_annotation_to_member(4, ANNOTATION_POSITION, "value", "18");
-
-   bitset_builder->set_name("MyBitSet");
-   std::unique_ptr<const DynamicType> bitset_type = bitset_builder.build();
-   ASSERT_TRUE(bitset_type);
-
-   std::unique_ptr<const DynamicType> type;
-   ASSERT_EQ(pbType->GetDynamicType(type), RETCODE_OK);
-   EXPECT_EQ(*type, *bitset_type);
-   EXPECT_TRUE(type->equals(*bitset_type));
-
-   delete(pbType);
-   XMLProfileManager::DeleteInstance();
-   }
-
-   TEST_F(DynamicTypesTests, DynamicType_ostream_test)
-   {
-   using namespace xmlparser;
-
-   DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-
-   auto a_type = factory.get_char8_type();
-   auto b_type = factory.get_bool_type();
-   auto c_type = factory.get_uint16_type();
-   auto d_type = factory.get_int16_type();
-
-   // Bitset
-   std::unique_ptr<DynamicTypeBuilder> bitset_builder { factory.create_bitset_type()};
-
-   bitset_builder.add_member(0, "a", a_type);
-   bitset_builder.apply_annotation_to_member(0, ANNOTATION_BIT_BOUND, "value", "3");
-   bitset_builder.apply_annotation_to_member(0, ANNOTATION_POSITION, "value", "0");
-
-   bitset_builder.add_member(1, "b", b_type);
-   bitset_builder.apply_annotation_to_member(1, ANNOTATION_BIT_BOUND, "value", "1");
-   bitset_builder.apply_annotation_to_member(1, ANNOTATION_POSITION, "value", "3");
-
-   bitset_builder.add_member(2, "", a_type);
-
-   bitset_builder.add_member(3, "c", c_type);
-   bitset_builder.apply_annotation_to_member(3, ANNOTATION_BIT_BOUND, "value", "10");
-   bitset_builder.apply_annotation_to_member(3, ANNOTATION_POSITION, "value", "8"); // 4 empty
-
-   bitset_builder.add_member(4, "d", d_type);
-   bitset_builder.apply_annotation_to_member(4, ANNOTATION_BIT_BOUND, "value", "12");
-   bitset_builder.apply_annotation_to_member(4, ANNOTATION_POSITION, "value", "18");
-
-   bitset_builder->set_name("MyBitSet");
-   bitset_builder->annotation_set_final();
-   std::unique_ptr<const DynamicType> bitset_type = bitset_builder.build();
-   ASSERT_TRUE(bitset_type);
-
-   std::ostringstream os;
-   os << *bitset_type;
-
-   const std::string reference =
-   "\n\tname:     MyBitSet\n\tkind:     TK_BITSET\n\tbounds:   1\n\tmembers:\
-   \n\t\tindex:    0\n\t\tname:     a\n\t\tid:       0\n\t\ttype:     \n\t\t\tname:     char\n\t\t\tkind:\
-   TK_CHAR8\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:bit_bound\n\t\t\t\tkey:\
-   'value'\n\t\t\t\tvalue:   3\n\t\t\tannotation:position\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:\
-   0\n\n\t\tindex:    1\n\t\tname:     b\n\t\tid:       1\n\t\ttype:     \n\t\t\tname:     bool\n\t\t\tkind:\
-   TK_BOOLEAN\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:bit_bound\n\t\t\t\tkey:\
-   'value'\n\t\t\t\tvalue:   1\n\t\t\tannotation:position\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:\
-   3\n\n\t\tindex:    2\n\t\tname:     \n\t\tid:       2\n\t\ttype:     \n\t\t\tname:     char\n\t\t\tkind:\
-   TK_CHAR8\n\t\t\tbounds:   0\n\n\t\tindex:    3\n\t\tname:     c\n\t\tid:       3\n\t\ttype:     \n\t\t\tname:\
-   uint16_t\n\t\t\tkind:     TK_UINT16\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:\
-   bit_bound\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:   10\n\t\t\tannotation:position\n\t\t\t\tkey:\
-   'value'\n\t\t\t\tvalue:   8\n\n\t\tindex:    4\n\t\tname:     d\n\t\tid:       4\n\t\ttype:\
-   \n\t\t\tname:     int16_t\n\t\t\tkind:     TK_INT16\n\t\t\tbounds:   0\n\t\tmember annotations:\
-   \n\t\t\tannotation:bit_bound\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:   12\n\t\t\tannotation:position\n\t\t\t\tkey:\
-   'value'\n\t\t\t\tvalue:   18\n";
-
-   ASSERT_EQ(reference, os.str());
-   }
- */
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
+}
 
 TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
 {

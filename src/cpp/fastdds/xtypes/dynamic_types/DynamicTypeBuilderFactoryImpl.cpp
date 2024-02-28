@@ -22,15 +22,171 @@ namespace dds {
 
 traits<DynamicTypeBuilderFactoryImpl>::ref_type DynamicTypeBuilderFactoryImpl::instance_;
 
-traits<DynamicTypeBuilderFactory>::ref_type DynamicTypeBuilderFactoryImpl::get_instance() noexcept
+//{{{ Functions to create types
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type(
+        traits<TypeDescriptor>::ref_type descriptor) noexcept
 {
-    if (!instance_)
+    auto descriptor_impl = traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(descriptor);
+
+    if (descriptor_impl->is_consistent())
     {
-        instance_ = std::make_shared<DynamicTypeBuilderFactoryImpl>();
+        return std::make_shared<DynamicTypeBuilderImpl>(*descriptor_impl);
     }
 
-    return instance_;
+    return {};
 }
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_copy(
+        traits<DynamicType>::ref_type type) noexcept
+{
+    auto ret_val = std::make_shared<DynamicTypeBuilderImpl>(TypeDescriptorImpl{TK_NONE, ""});
+    ret_val->copy_from(traits<DynamicType>::narrow<DynamicTypeImpl>(type));
+    return ret_val;
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_document(
+        const std::string& document,
+        const std::string& type_name,
+        const IncludePathSeq& include_paths) noexcept
+{
+    traits<DynamicTypeBuilder>::ref_type nil;
+    static_cast<void>(document);
+    static_cast<void>(type_name);
+    static_cast<void>(include_paths);
+    return nil;
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_type_object(
+        const xtypes::TypeObject& type_object) noexcept
+{
+    traits<DynamicTypeBuilder>::ref_type nil;
+    static_cast<void>(type_object);
+    return nil;
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_uri(
+        const std::string& document_url,
+        const std::string& type_name,
+        const IncludePathSeq& include_paths) noexcept
+{
+    traits<DynamicTypeBuilder>::ref_type nil;
+    static_cast<void>(document_url);
+    static_cast<void>(type_name);
+    static_cast<void>(include_paths);
+    return nil;
+}
+
+//}}}
+
+//{{{ Functions to create specific types
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_array_type(
+        traits<DynamicType>::ref_type element_type,
+        const BoundSeq& bound) noexcept
+{
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
+
+    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_ARRAY, ""});
+    ret_val->type_descriptor_.element_type(element_type);
+    ret_val->type_descriptor_.bound() = bound;
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+    return {};
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitmask_type(
+        uint32_t bound) noexcept
+{
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_BITMASK, ""});
+    ret_val->type_descriptor_.element_type(bool_type_);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_map_type(
+        traits<DynamicType>::ref_type key_element_type,
+        traits<DynamicType>::ref_type element_type,
+        uint32_t bound) noexcept
+{
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
+
+    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_MAP, ""});
+    ret_val->type_descriptor_.key_element_type(key_element_type);
+    ret_val->type_descriptor_.element_type(element_type);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_sequence_type(
+        traits<DynamicType>::ref_type element_type,
+        uint32_t bound) noexcept
+{
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
+
+    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_SEQUENCE, ""});
+    ret_val->type_descriptor_.element_type(element_type);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+    return {};
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_string_type(
+        uint32_t bound) noexcept
+{
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_STRING8, ""});
+    ret_val->type_descriptor_.element_type(char8_type_);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
+}
+
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstring_type(
+        uint32_t bound) noexcept
+{
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
+        TypeDescriptorImpl{TK_STRING16, ""});
+    ret_val->type_descriptor_.element_type(char16_type_);
+    ret_val->type_descriptor_.bound().push_back(bound);
+
+    if (ret_val->type_descriptor_.is_consistent())
+    {
+        return ret_val;
+    }
+
+    return {};
+}
+
+//}}}
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_instance() noexcept
 {
@@ -40,6 +196,23 @@ ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_instance() noexcept
     }
     instance_.reset();
     return RETCODE_OK;
+}
+
+ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_type(
+        traits<DynamicType>::ref_type type) noexcept
+{
+    type.reset();
+    return RETCODE_OK;
+}
+
+traits<DynamicTypeBuilderFactory>::ref_type DynamicTypeBuilderFactoryImpl::get_instance() noexcept
+{
+    if (!instance_)
+    {
+        instance_ = std::make_shared<DynamicTypeBuilderFactoryImpl>();
+    }
+
+    return instance_;
 }
 
 traits<DynamicType>::ref_type DynamicTypeBuilderFactoryImpl::get_primitive_type(
@@ -99,171 +272,6 @@ traits<DynamicType>::ref_type DynamicTypeBuilderFactoryImpl::get_primitive_type(
     }
 
     return ret_val;
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type(
-        traits<TypeDescriptor>::ref_type descriptor) noexcept
-{
-    auto descriptor_impl = traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(descriptor);
-
-    if (descriptor_impl->is_consistent())
-    {
-        return std::make_shared<DynamicTypeBuilderImpl>(*descriptor_impl);
-    }
-
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_copy(
-        traits<DynamicType>::ref_type type) noexcept
-{
-    auto ret_val = std::make_shared<DynamicTypeBuilderImpl>(TypeDescriptorImpl{TK_NONE, ""});
-    ret_val->copy_from(traits<DynamicType>::narrow<DynamicTypeImpl>(type));
-    return ret_val;
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_type_object(
-        const xtypes::TypeObject& type_object) noexcept
-{
-    traits<DynamicTypeBuilder>::ref_type nil;
-    static_cast<void>(type_object);
-    return nil;
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_string_type(
-        uint32_t bound) noexcept
-{
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_STRING8, ""});
-    ret_val->type_descriptor_.element_type(char8_type_);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
-    {
-        return ret_val;
-    }
-
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstring_type(
-        uint32_t bound) noexcept
-{
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_STRING16, ""});
-    ret_val->type_descriptor_.element_type(char16_type_);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
-    {
-        return ret_val;
-    }
-
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_sequence_type(
-        traits<DynamicType>::ref_type element_type,
-        uint32_t bound) noexcept
-{
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
-
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_SEQUENCE, ""});
-    ret_val->type_descriptor_.element_type(element_type);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
-    {
-        return ret_val;
-    }
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_array_type(
-        traits<DynamicType>::ref_type element_type,
-        const BoundSeq& bound) noexcept
-{
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
-
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_ARRAY, ""});
-    ret_val->type_descriptor_.element_type(element_type);
-    ret_val->type_descriptor_.bound() = bound;
-
-    if (ret_val->type_descriptor_.is_consistent())
-    {
-        return ret_val;
-    }
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_map_type(
-        traits<DynamicType>::ref_type key_element_type,
-        traits<DynamicType>::ref_type element_type,
-        uint32_t bound) noexcept
-{
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
-
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_MAP, ""});
-    ret_val->type_descriptor_.key_element_type(key_element_type);
-    ret_val->type_descriptor_.element_type(element_type);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
-    {
-        return ret_val;
-    }
-
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitmask_type(
-        uint32_t bound) noexcept
-{
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_BITMASK, ""});
-    ret_val->type_descriptor_.element_type(bool_type_);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
-    {
-        return ret_val;
-    }
-
-    return {};
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_uri(
-        const std::string& document_url,
-        const std::string& type_name,
-        const IncludePathSeq& include_paths) noexcept
-{
-    traits<DynamicTypeBuilder>::ref_type nil;
-    static_cast<void>(document_url);
-    static_cast<void>(type_name);
-    static_cast<void>(include_paths);
-    return nil;
-}
-
-traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_type_w_document(
-        const std::string& document,
-        const std::string& type_name,
-        const IncludePathSeq& include_paths) noexcept
-{
-    traits<DynamicTypeBuilder>::ref_type nil;
-    static_cast<void>(document);
-    static_cast<void>(type_name);
-    static_cast<void>(include_paths);
-    return nil;
-}
-
-ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_type(
-        traits<DynamicType>::ref_type type) noexcept
-{
-    type.reset();
-    return RETCODE_OK;
 }
 
 } // namespace dds

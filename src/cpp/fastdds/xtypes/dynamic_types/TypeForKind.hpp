@@ -21,6 +21,8 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
+//{{{ Type traits
+
 template <TypeKind TK>
 struct TypeForKind_;
 
@@ -149,6 +151,10 @@ using TypeForKind = typename TypeForKind_<TK>::type;
 
 template <TypeKind TK>
 using SequenceTypeForKind = typename TypeForKind_<TK>::sequence_type;
+
+//}}}
+
+//{{{ Promotion traits
 
 template <TypeKind TK, TypeKind PromotedTK>
 struct TypePromotion : std::false_type {};
@@ -381,6 +387,7 @@ struct TypePromotion<TK_BOOLEAN, TK_FLOAT64> : std::true_type {};
 template <>
 struct TypePromotion<TK_BOOLEAN, TK_FLOAT128> : std::true_type {};
 
+//}}}
 
 } // namespace dds
 } // namespace fastdds

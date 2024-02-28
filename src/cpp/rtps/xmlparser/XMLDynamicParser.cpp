@@ -160,7 +160,7 @@ XMLP_ret XMLParser::parseXMLTypes(
 
 XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         tinyxml2::XMLElement* p_root,
-        fastdds::dds::traits<fastdds::dds::DynamicTypeBuilder>::ref_type builder,
+        DynamicTypeBuilder::_ref_type builder,
         uint16_t& field_position)
 {
     /*
@@ -202,15 +202,12 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
     md->name(memberName);
     md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     builder->add_member(md);
-    //TODO(richiware) get_builtin_annotation
-    //builder.apply_annotation_to_member(
-    //    builder.get_member_id_by_name(memberName), ANNOTATION_POSITION_ID, "value", position);
     ++field_position;
 
     return XMLP_ret::XML_OK;
 }
 
-static traits<DynamicType>::ref_type getDiscriminatorTypeBuilder(
+static DynamicType::_ref_type getDiscriminatorTypeBuilder(
         const std::string& disc,
         uint32_t bound = 0)
 {
@@ -284,14 +281,14 @@ static traits<DynamicType>::ref_type getDiscriminatorTypeBuilder(
     }
     else if (0 == disc.compare(STRING))
     {
-        return factory->create_string_type(0 == bound ? LENGTH_UNLIMITED : bound)->build();
+        return factory->create_string_type(0 == bound ? static_cast<uint32_t>(LENGTH_UNLIMITED) : bound)->build();
     }
     else if (0 == disc.compare(WSTRING))
     {
-        return factory->create_wstring_type(0 == bound ? LENGTH_UNLIMITED : bound)->build();
+        return factory->create_wstring_type(0 == bound ? static_cast<uint32_t>(LENGTH_UNLIMITED) : bound)->build();
     }
 
-    eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type ret;
+    DynamicType::_ref_type ret;
     XMLProfileManager::getDynamicTypeByName(ret, disc);
     return ret;
 }
@@ -333,7 +330,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             }
         }
 
-        traits<DynamicType>::ref_type value_type;
+        DynamicType::_ref_type value_type;
         if ((p_root->Attribute(ARRAY_DIMENSIONS) != nullptr) ||
                 (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) ||
                 (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
@@ -361,8 +358,8 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                 alias_descriptor->kind(TK_ALIAS);
                 alias_descriptor->name(name);
                 alias_descriptor->base_type(value_type);
-                traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
-                                                                  alias_descriptor)};
+                DynamicTypeBuilder::_ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                           alias_descriptor)};
                 XMLProfileManager::insertDynamicTypeByName(name, builder->build());
             }
             else
@@ -408,7 +405,6 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         </xs:complexType>
      */
     XMLP_ret ret = XMLP_ret::XML_OK;
-    MemberId mId{0};
 
     const char* name = p_root->Attribute(NAME);
     if (nullptr == name)
@@ -420,6 +416,26 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     TypeDescriptor::_ref_type bitset_descriptor {traits<TypeDescriptor>::make_shared()};
     bitset_descriptor->kind(TK_BITSET);
     bitset_descriptor->name(name);
+
+    //{{{ Retrieve bounds
+    for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
+            p_element != nullptr; p_element = p_element->NextSiblingElement())
+    {
+        const char* member_name = p_element->Attribute(NAME);
+        const char* bit_bound = p_element->Attribute(BIT_BOUND);
+
+        if (bit_bound == nullptr)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing bitfield bit_bound: Not found.");
+            return {};
+        }
+
+        if (nullptr != member_name)
+        {
+            bitset_descriptor->bound().push_back(std::stoul(bit_bound));
+        }
+    }
+    //}}}
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
@@ -437,21 +453,18 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         }
     }
 
-    traits<DynamicTypeBuilder>::ref_type type_builder =
+    DynamicTypeBuilder::_ref_type type_builder =
             DynamicTypeBuilderFactory::get_instance()->create_type(bitset_descriptor);
 
-    const char* element_name = nullptr;
-    uint16_t position = 0;
+    const char* element_name {nullptr};
+    MemberId position {0};
     for (tinyxml2::XMLElement* p_element = p_root->FirstChildElement();
             p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
         element_name = p_element->Name();
         if (strcmp(element_name, BITFIELD) == 0)
         {
-            if (!parseXMLBitfieldDynamicType(p_element, type_builder, mId++, position))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
+            parseXMLBitfieldDynamicType(p_element, type_builder, position);
         }
         else
         {
@@ -464,11 +477,10 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     return ret;
 }
 
-traits<eprosima::fastdds::dds::DynamicType>::ref_type XMLParser::parseXMLBitfieldDynamicType(
+DynamicType::_ref_type XMLParser::parseXMLBitfieldDynamicType(
         tinyxml2::XMLElement* p_root,
-        traits<fastdds::dds::DynamicTypeBuilder>::ref_type builder,
-        MemberId mId,
-        uint16_t& position)
+        DynamicTypeBuilder::_ref_type builder,
+        MemberId& position)
 {
     /*
         <xs:complexType name="bitfieldDcl">
@@ -493,36 +505,32 @@ traits<eprosima::fastdds::dds::DynamicType>::ref_type XMLParser::parseXMLBitfiel
         return {};
     }
 
-    if (memberName == nullptr)
-    {
-        memberName = "";
-    }
+    DynamicType::_ref_type member_type;
+    DynamicTypeBuilderFactory::_ref_type factory = DynamicTypeBuilderFactory::get_instance();
 
-    traits<eprosima::fastdds::dds::DynamicType>::ref_type member_type;
-    traits<DynamicTypeBuilderFactory>::ref_type factory = DynamicTypeBuilderFactory::get_instance();
+    auto size = std::stoul(bit_bound);
 
     if (memberType == nullptr)
     {
         try
         {
-            uint16_t size = static_cast<uint16_t>(std::stoul(bit_bound));
-            if (size == 1)
+            if (1 == size)
             {
                 memberType = BOOLEAN;
             }
-            else if (size <= 8)
+            else if (9 > size)
             {
-                memberType = CHAR;
+                memberType = UINT8;
             }
-            else if (size <= 16)
+            else if (17 > size)
             {
                 memberType = USHORT;
             }
-            else if (size <= 32)
+            else if (33 > size)
             {
                 memberType = ULONG;
             }
-            else if (size <= 64)
+            else if (65 > size)
             {
                 memberType = ULONGLONG;
             }
@@ -540,86 +548,69 @@ traits<eprosima::fastdds::dds::DynamicType>::ref_type XMLParser::parseXMLBitfiel
         }
     }
 
-    if (0 == strncmp(memberType, BOOLEAN, 8))
+    if (nullptr != memberName)
     {
-        member_type = factory->get_primitive_type(TK_BOOLEAN);
-    }
-    else if (0 == strncmp(memberType, CHAR, 5))
-    {
-        member_type = factory->get_primitive_type(TK_CHAR8);
-    }
-    else if (0 == strncmp(memberType, WCHAR, 6))
-    {
-        member_type = factory->get_primitive_type(TK_CHAR16);
-    }
-    else if (0 == strncmp(memberType, TBYTE, 6)
-            || 0 == strncmp(memberType, OCTET, 6))
-    {
-        member_type = factory->get_primitive_type(TK_BYTE);
-    }
-    else if (0 == strncmp(memberType, UINT8, 6))
-    {
-        member_type = factory->get_primitive_type(TK_INT8);
-    }
-    else if (0 == strncmp(memberType, INT8, 5))
-    {
-        member_type = factory->get_primitive_type(TK_UINT8);
-    }
-    else if (0 == strncmp(memberType, SHORT, 6))
-    {
-        member_type = factory->get_primitive_type(TK_INT16);
-    }
-    else if (0 == strncmp(memberType, LONG, 5))
-    {
-        member_type = factory->get_primitive_type(TK_INT32);
-    }
-    else if (0 == strncmp(memberType, ULONG, 13))
-    {
-        member_type = factory->get_primitive_type(TK_UINT32);
-    }
-    else if (0 == strncmp(memberType, USHORT, 14))
-    {
-        member_type = factory->get_primitive_type(TK_UINT16);
-    }
-    else if (0 == strncmp(memberType, LONGLONG, 9))
-    {
-        member_type = factory->get_primitive_type(TK_INT64);
-    }
-    else if (0 == strncmp(memberType, ULONGLONG, 17))
-    {
-        member_type = factory->get_primitive_type(TK_UINT64);
-    }
-    else // Unsupported type?
-    {
-        EPROSIMA_LOG_ERROR(XMLPARSER,
-                "Failed creating bitfield " << memberName << ": Type " << memberType << " unsupported.");
+
+        if (0 == strncmp(memberType, BOOLEAN, 8))
+        {
+            member_type = factory->get_primitive_type(TK_BOOLEAN);
+        }
+        else if (0 == strncmp(memberType, TBYTE, 6)
+                || 0 == strncmp(memberType, OCTET, 6))
+        {
+            member_type = factory->get_primitive_type(TK_BYTE);
+        }
+        else if (0 == strncmp(memberType, INT8, 6))
+        {
+            member_type = factory->get_primitive_type(TK_INT8);
+        }
+        else if (0 == strncmp(memberType, UINT8, 5))
+        {
+            member_type = factory->get_primitive_type(TK_UINT8);
+        }
+        else if (0 == strncmp(memberType, SHORT, 6))
+        {
+            member_type = factory->get_primitive_type(TK_INT16);
+        }
+        else if (0 == strncmp(memberType, LONG, 5))
+        {
+            member_type = factory->get_primitive_type(TK_INT32);
+        }
+        else if (0 == strncmp(memberType, ULONG, 13))
+        {
+            member_type = factory->get_primitive_type(TK_UINT32);
+        }
+        else if (0 == strncmp(memberType, USHORT, 14))
+        {
+            member_type = factory->get_primitive_type(TK_UINT16);
+        }
+        else if (0 == strncmp(memberType, LONGLONG, 9))
+        {
+            member_type = factory->get_primitive_type(TK_INT64);
+        }
+        else if (0 == strncmp(memberType, ULONGLONG, 17))
+        {
+            member_type = factory->get_primitive_type(TK_UINT64);
+        }
+        else // Unsupported type?
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Failed creating bitfield " << memberName << ": Type " << memberType << " unsupported.");
+        }
+
+        if (!member_type)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
+        }
+
+        MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
+        md->id(position);
+        md->name(memberName);
+        md->type(member_type);
+        builder->add_member(md);
     }
 
-    if (!member_type)
-    {
-        EPROSIMA_LOG_ERROR(XMLPARSER, "Failed creating " << memberType << ": " << memberName);
-    }
-
-    MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
-    md->id(mId);
-    md->name(memberName);
-    md->type(member_type);
-    builder->add_member(md);
-
-    if (!std::string(memberName).empty())
-    {
-        /*!TODO(richiware) get_builtin_annotation.
-           traits<AnnotationDescriptorImpl>::ref_type ad = std::make_shared<AnnotationDescriptorImpl>();
-           ad.set_type(fact.create_annotation_primitive(ANNOTATION_BIT_BOUND_ID));
-           ad.set_value("value", bit_bound);
-           builder.apply_annotation_to_member(mId, ad);
-
-           ad.set_type(fact.create_annotation_primitive(ANNOTATION_POSITION_ID));
-           ad.set_value("value", std::to_string(position).c_str());
-           builder.apply_annotation_to_member(mId, ad);
-         */
-    }
-    position += static_cast<uint16_t>(atoi(bit_bound));
+    position += size;
 
     return member_type;
 }
@@ -666,7 +657,7 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     bitmask_descriptor->name(name);
     bitmask_descriptor->element_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     bitmask_descriptor->bound().push_back(bit_bound);
-    traits<DynamicTypeBuilder>::ref_type type_builder {
+    DynamicTypeBuilder::_ref_type type_builder {
         DynamicTypeBuilderFactory::get_instance()->create_type(bitmask_descriptor)};
     uint16_t position = 0;
 
@@ -709,7 +700,6 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
             </xs:sequence>
         </xs:complexType>
 
-        //TODO: Enum bitbound to set the internal field
      */
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* enumName = p_root->Attribute(NAME);
@@ -737,17 +727,16 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
             return XMLP_ret::XML_ERROR;
         }
 
-        /* TODO(richiware) Change to set annotation @value
-           const char* value = literal->Attribute(VALUE);
-           if (value != nullptr)
-           {
-            currValue = static_cast<uint32_t>(std::atoi(value));
-           }
-         */
-
         MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
         md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
         md->name(name);
+
+        const char* value = literal->Attribute(VALUE);
+        if (value != nullptr)
+        {
+            md->default_value(value);
+        }
+
         type_builder->add_member(md);
     }
 
@@ -793,7 +782,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
         }
     }
 
-    traits<DynamicTypeBuilder>::ref_type type_builder = DynamicTypeBuilderFactory::get_instance()->create_type(
+    DynamicTypeBuilder::_ref_type type_builder = DynamicTypeBuilderFactory::get_instance()->create_type(
         structure_descriptor);
 
     const char* element_name = nullptr;
@@ -850,7 +839,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
     if (p_element != nullptr)
     {
         const char* disc = p_element->Attribute(TYPE);
-        traits<DynamicType>::ref_type disc_type = getDiscriminatorTypeBuilder(disc);
+        DynamicType::_ref_type disc_type = getDiscriminatorTypeBuilder(disc);
         if (!disc_type)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER,
@@ -863,8 +852,8 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
             union_descriptor->kind(TK_UNION);
             union_descriptor->name(name);
             union_descriptor->discriminator_type(disc_type);
-            traits<DynamicTypeBuilder>::ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->
-                                                                       create_type(union_descriptor)};
+            DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->
+                                                                create_type(union_descriptor)};
 
             MemberId mId{1};
             for (p_element = p_root->FirstChildElement(CASE);
@@ -961,7 +950,7 @@ static bool dimensionsToLabels(
     return def;
 }
 
-traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
+DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root)
 {
     /*
@@ -1019,8 +1008,8 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         }
     }
 
-    traits<DynamicType>::ref_type member;
-    traits<DynamicTypeBuilderFactory>::ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+    DynamicType::_ref_type member;
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
     const char* memberSequence = p_root->Attribute(SEQ_MAXLENGTH);
     if (memberSequence != nullptr)
@@ -1033,7 +1022,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
             </sequence>
             In this example, inner sequence's name is ignored and can be omited.
          */
-        traits<DynamicType>::ref_type content_type {getDiscriminatorTypeBuilder(memberType)};
+        DynamicType::_ref_type content_type {getDiscriminatorTypeBuilder(memberType)};
         if (!content_type)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing sequence element type: Cannot be recognized: " << memberType);
@@ -1061,7 +1050,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         }
         else
         {
-            traits<DynamicTypeBuilder>::ref_type inner_builder {factory->create_sequence_type(content_type, length)};
+            DynamicTypeBuilder::_ref_type inner_builder {factory->create_sequence_type(content_type, length)};
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
             member = factory->create_array_type(inner_builder->build(), bounds)->build();
@@ -1089,7 +1078,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         // Parse key
 
         //const char* keyType = p_root->Attribute(KEY);
-        traits<DynamicType>::ref_type key_type;
+        DynamicType::_ref_type key_type;
         const char* memberMapKeyType = p_root->Attribute(MAP_KEY_TYPE);
         if (memberMapKeyType != nullptr)
         {
@@ -1107,7 +1096,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         }
 
         // Parse value
-        traits<DynamicType>::ref_type value_type;
+        DynamicType::_ref_type value_type;
         if (memberType != nullptr)
         {
             value_type = getDiscriminatorTypeBuilder(memberType);
@@ -1145,8 +1134,8 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         }
         else
         {
-            traits<DynamicTypeBuilder>::ref_type inner_builder {factory->create_map_type(key_type, value_type,
-                                                                        length)};
+            DynamicTypeBuilder::_ref_type inner_builder {factory->create_map_type(key_type, value_type,
+                                                                 length)};
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
             member = factory->create_array_type(
@@ -1390,7 +1379,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
             bound = static_cast<uint32_t>(std::atoi(boundStr));
         }
 
-        traits<DynamicTypeBuilder>::ref_type string_builder = factory->create_string_type(bound);
+        DynamicTypeBuilder::_ref_type string_builder = factory->create_string_type(bound);
 
         if (!isArray)
         {
@@ -1415,7 +1404,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
             bound = static_cast<uint32_t>(std::atoi(boundStr));
         }
 
-        traits<DynamicTypeBuilder>::ref_type wstring_builder = factory->create_wstring_type(bound);
+        DynamicTypeBuilder::_ref_type wstring_builder = factory->create_wstring_type(bound);
 
         if (!isArray)
         {
@@ -1432,7 +1421,7 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
     }
     else // Complex type?
     {
-        traits<DynamicType>::ref_type type;
+        DynamicType::_ref_type type;
         XMLProfileManager::getDynamicTypeByName(type, memberType);
         if (!isArray)
         {
@@ -1462,69 +1451,29 @@ traits<DynamicType>::ref_type XMLParser:: parseXMLMemberDynamicType(
         return {};
     }
 
-    /*TODO(richiware)
-       const char* memberTopicKey = p_root->Attribute(KEY);
-
-       if (memberTopicKey != nullptr)
-       {
-        if (strncmp(memberTopicKey, "true", 5) == 0)
-        {
-            // check if its primitive
-            if (memberBuilder->is_primitive())
-            {
-                auto& fact = DynamicTypeBuilderFactory::get_instance();
-
-                // copy if modification is required
-                DynamicTypeBuilder* mutable_builder {factory.create_type_copy(*memberBuilder)};
-
-                   AnnotationDescriptor ad;
-                   ad.set_type(fact.create_annotation_primitive(ANNOTATION_KEY_ID));
-                   ad.set_value("value", CONST_TRUE);
-                   mutable_builder->apply_annotation(ad);
-
-                return mutable_builder;
-            }
-        }
-       }
-     */
-
     return member;
 }
 
-traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
+DynamicType::_ref_type XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
-        traits<fastdds::dds::DynamicTypeBuilder>::ref_type& builder,
+        fastdds::dds::DynamicTypeBuilder::_ref_type& builder,
         MemberId mId)
 {
     return parseXMLMemberDynamicType(p_root, builder, mId, "");
 }
 
-traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
+DynamicType::_ref_type XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
-        traits<fastdds::dds::DynamicTypeBuilder>::ref_type& builder,
+        DynamicTypeBuilder::_ref_type& builder,
         MemberId mId,
         const std::string& values)
 {
-    traits<DynamicType>::ref_type member {parseXMLMemberDynamicType(p_root)};
+    DynamicType::_ref_type member {parseXMLMemberDynamicType(p_root)};
 
     if (!member)
     {
         return {};
     }
-
-    /*TODO(richiware)
-       const char* memberTopicKey = p_root->Attribute(KEY);
-
-       if (memberTopicKey != nullptr && strncmp(memberTopicKey, "true", 5) == 0)
-       {
-       auto& fact = DynamicTypeBuilderFactory::get_instance();
-
-       AnnotationDescriptor ad;
-       ad.set_type(fact.create_annotation_primitive(ANNOTATION_KEY_ID));
-       ad.set_value("value", CONST_TRUE);
-       builder.apply_annotation(ad);
-       }
-     */
 
     const char* memberName = p_root->Attribute(NAME);
 
@@ -1541,6 +1490,16 @@ traits<DynamicType>::ref_type XMLParser::parseXMLMemberDynamicType(
         md->label(labels);
         md->is_default_label(defaultLabel);
     }
+
+    //{{{ Check @key annotation
+    const char* memberTopicKey = p_root->Attribute(KEY);
+
+    if (memberTopicKey != nullptr && strncmp(memberTopicKey, "true", 5) == 0)
+    {
+        md->is_key(true);
+    }
+    //}}}
+
 
     builder->add_member(md);
 

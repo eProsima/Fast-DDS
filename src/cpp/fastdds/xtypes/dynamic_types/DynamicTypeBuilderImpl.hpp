@@ -96,21 +96,21 @@ private:
 
     std::vector<AnnotationDescriptorImpl> annotation_;
 
+    int32_t default_discriminator_value_ {0};
+
+    MemberId default_union_member_ {MEMBER_ID_INVALID};
+
     DynamicTypeMembersById member_;
 
     DynamicTypeMembersByName member_by_name_;
 
     std::vector<traits<DynamicTypeMemberImpl>::ref_type> members_;
 
-    TypeDescriptorImpl type_descriptor_;
+    MemberId next_id_ {0};
 
     uint32_t next_index_ {0};
 
-    MemberId next_id_ {0};
-
-    int32_t default_discriminator_value_ {0};
-
-    MemberId default_union_member_ {MEMBER_ID_INVALID};
+    TypeDescriptorImpl type_descriptor_;
 };
 
 } // namespace dds
