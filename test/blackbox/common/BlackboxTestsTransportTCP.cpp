@@ -908,9 +908,9 @@ TEST_P(TransportTCP, multiple_listening_ports)
     server->wait_discovery();
     client_1->wait_discovery();
     client_2->wait_discovery(std::chrono::seconds(1));
-    EXPECT_EQ(server->get_matched(), 1);
-    EXPECT_EQ(client_1->get_matched(), 1);
-    EXPECT_EQ(client_2->get_matched(), 0);
+    EXPECT_EQ(server->get_matched(), 1U);
+    EXPECT_EQ(client_1->get_matched(), 1U);
+    EXPECT_EQ(client_2->get_matched(), 0U);
 
     // Send data
     auto data = default_helloworld_data_generator();
