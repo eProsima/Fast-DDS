@@ -215,10 +215,10 @@ void HelloMsg::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
     scdr << m_deadlinekey;
-       
-      
+
+
 }
 
 /*!
@@ -255,7 +255,7 @@ uint16_t& HelloMsg::deadlinekey()
  * @param _payload New value to be copied in member payload
  */
 void HelloMsg::payload(
-        const eprosima::fastrtps::fixed_string<256>& _payload)
+        const eprosima::fastcdr::fixed_string<256>& _payload)
 {
     m_payload = _payload;
 }
@@ -265,7 +265,7 @@ void HelloMsg::payload(
  * @param _payload New value to be moved in member payload
  */
 void HelloMsg::payload(
-        eprosima::fastrtps::fixed_string<256>&& _payload)
+        eprosima::fastcdr::fixed_string<256>&& _payload)
 {
     m_payload = std::move(_payload);
 }
@@ -274,7 +274,7 @@ void HelloMsg::payload(
  * @brief This function returns a constant reference to member payload
  * @return Constant reference to member payload
  */
-const eprosima::fastrtps::fixed_string<256>& HelloMsg::payload() const
+const eprosima::fastcdr::fixed_string<256>& HelloMsg::payload() const
 {
     return m_payload;
 }
@@ -283,7 +283,7 @@ const eprosima::fastrtps::fixed_string<256>& HelloMsg::payload() const
  * @brief This function returns a reference to member payload
  * @return Reference to member payload
  */
-eprosima::fastrtps::fixed_string<256>& HelloMsg::payload()
+eprosima::fastcdr::fixed_string<256>& HelloMsg::payload()
 {
     return m_payload;
 }
