@@ -22,10 +22,10 @@
 #include <array>
 #include <cstdint>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
-
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -33,7 +33,7 @@ namespace dds {
 
 struct ReaderFilterInformation
 {
-    fastrtps::string_255 filter_class_name;
+    fastcdr::string_255 filter_class_name;
     IContentFilterFactory* filter_factory = nullptr;
     IContentFilter* filter = nullptr;
     std::array<uint8_t, 16> filter_signature{ { 0 } };

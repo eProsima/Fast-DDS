@@ -2703,7 +2703,7 @@ void LargeStringStruct::serializeKey(
  * @param _my_large_string New value to be copied in member my_large_string
  */
 void LargeStringStruct::my_large_string(
-        const eprosima::fastrtps::fixed_string<41925>& _my_large_string)
+        const eprosima::fastcdr::fixed_string<41925>& _my_large_string)
 {
     m_my_large_string = _my_large_string;
 }
@@ -2713,7 +2713,7 @@ void LargeStringStruct::my_large_string(
  * @param _my_large_string New value to be moved in member my_large_string
  */
 void LargeStringStruct::my_large_string(
-        eprosima::fastrtps::fixed_string<41925>&& _my_large_string)
+        eprosima::fastcdr::fixed_string<41925>&& _my_large_string)
 {
     m_my_large_string = std::move(_my_large_string);
 }
@@ -2722,7 +2722,7 @@ void LargeStringStruct::my_large_string(
  * @brief This function returns a constant reference to member my_large_string
  * @return Constant reference to member my_large_string
  */
-const eprosima::fastrtps::fixed_string<41925>& LargeStringStruct::my_large_string() const
+const eprosima::fastcdr::fixed_string<41925>& LargeStringStruct::my_large_string() const
 {
     return m_my_large_string;
 }
@@ -2731,7 +2731,7 @@ const eprosima::fastrtps::fixed_string<41925>& LargeStringStruct::my_large_strin
  * @brief This function returns a reference to member my_large_string
  * @return Reference to member my_large_string
  */
-eprosima::fastrtps::fixed_string<41925>& LargeStringStruct::my_large_string()
+eprosima::fastcdr::fixed_string<41925>& LargeStringStruct::my_large_string()
 {
     return m_my_large_string;
 }

@@ -22,6 +22,8 @@
 #include <memory>
 #include <sstream>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
@@ -37,7 +39,6 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/fastrtps_dll.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -581,7 +582,7 @@ public:
 private:
 
     //! Name of the participant.
-    string_255 name{"RTPSParticipant"};
+    fastcdr::string_255 name{"RTPSParticipant"};
 };
 
 }  // namespace rtps

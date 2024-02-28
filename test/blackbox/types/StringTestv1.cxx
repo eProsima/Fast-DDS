@@ -198,7 +198,7 @@ void StringTest::serializeKey(
  * @param _message New value to be copied in member message
  */
 void StringTest::message(
-        const eprosima::fastrtps::fixed_string<10000>& _message)
+        const eprosima::fastcdr::fixed_string<10000>& _message)
 {
     m_message = _message;
 }
@@ -208,7 +208,7 @@ void StringTest::message(
  * @param _message New value to be moved in member message
  */
 void StringTest::message(
-        eprosima::fastrtps::fixed_string<10000>&& _message)
+        eprosima::fastcdr::fixed_string<10000>&& _message)
 {
     m_message = std::move(_message);
 }
@@ -217,7 +217,7 @@ void StringTest::message(
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const eprosima::fastrtps::fixed_string<10000>& StringTest::message() const
+const eprosima::fastcdr::fixed_string<10000>& StringTest::message() const
 {
     return m_message;
 }
@@ -226,7 +226,7 @@ const eprosima::fastrtps::fixed_string<10000>& StringTest::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-eprosima::fastrtps::fixed_string<10000>& StringTest::message()
+eprosima::fastcdr::fixed_string<10000>& StringTest::message()
 {
     return m_message;
 }

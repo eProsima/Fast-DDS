@@ -283,7 +283,7 @@ public:
      *
      * @return name
      */
-    const fastrtps::string_255& name() const
+    const fastcdr::string_255& name() const
     {
         return name_;
     }
@@ -293,7 +293,7 @@ public:
      *
      * @return name
      */
-    fastrtps::string_255& name()
+    fastcdr::string_255& name()
     {
         return name_;
     }
@@ -304,7 +304,7 @@ public:
      * @param value New name to be set
      */
     void name(
-            const fastrtps::string_255& value)
+            const fastcdr::string_255& value)
     {
         name_ = value;
     }
@@ -485,7 +485,7 @@ private:
     TransportConfigQos transport_;
 
     //!Name of the participant.
-    fastrtps::string_255 name_ = "RTPSParticipant";
+    fastcdr::string_255 name_ = "RTPSParticipant";
 
     /*! User defined flow controller to use alongside.
      *

@@ -21,7 +21,7 @@
 
 #include <string>
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 
@@ -62,17 +62,17 @@ public:
     }
 
     /// Name of the content filtered topic on which the reader was created
-    fastrtps::string_255 content_filtered_topic_name;
+    fastcdr::string_255 content_filtered_topic_name;
     /// Name of the related topic being filtered
-    fastrtps::string_255 related_topic_name;
+    fastcdr::string_255 related_topic_name;
     /// Class name of the filter being used.
     /// May be empty to indicate the ContentFilterProperty is not present.
-    fastrtps::string_255 filter_class_name;
+    fastcdr::string_255 filter_class_name;
     /// Filter expression indicating which content the reader wants to receive.
     /// May be empty to indicate the ContentFilterProperty is not present.
     std::string filter_expression;
     /// List of values for the parameters present on the filter expression
-    fastrtps::ResourceLimitedVector<fastrtps::string_255, std::true_type> expression_parameters;
+    fastrtps::ResourceLimitedVector<fastcdr::string_255, std::true_type> expression_parameters;
 };
 
 }  // namespace rtps
