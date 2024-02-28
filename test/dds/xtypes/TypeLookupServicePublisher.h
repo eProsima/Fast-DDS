@@ -109,7 +109,6 @@ private:
     bool create_known_type_impl(
             const std::string& type);
 
-
     bool create_discovered_type(
             const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& info);
 

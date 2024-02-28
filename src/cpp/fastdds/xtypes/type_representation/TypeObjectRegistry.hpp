@@ -41,93 +41,16 @@
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
 namespace std {
-
 template<>
 struct hash<eprosima::fastdds::dds::xtypes::TypeIdentifier>
 {
     std::size_t operator ()(
-            const eprosima::fastdds::dds::xtypes::TypeIdentifier& type_identifier) const
+            const eprosima::fastdds::dds::xtypes::TypeIdentifier& k) const
     {
-        std::size_t hash_value = 0;
-
-        // Incorporate the discriminator into the hash value
-        hash_value += static_cast<std::size_t>(type_identifier._d());
-
-        if (type_identifier._d() == eprosima::fastdds::dds::xtypes::TI_PLAIN_SEQUENCE_SMALL &&
-                type_identifier.seq_sdefn().header().equiv_kind() != eprosima::fastdds::dds::xtypes::EK_BOTH)
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.seq_sdefn().element_identifier().get()->
-                            equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.seq_sdefn().element_identifier().get()->
-                            equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.seq_sdefn().element_identifier().get()->
-                            equivalence_hash()[2]));
-        }
-        else if (type_identifier._d() == eprosima::fastdds::dds::xtypes::TI_PLAIN_SEQUENCE_LARGE &&
-                type_identifier.seq_ldefn().header().equiv_kind() != eprosima::fastdds::dds::xtypes::EK_BOTH)
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.seq_ldefn().element_identifier().get()->
-                            equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.seq_ldefn().element_identifier().get()->
-                            equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.seq_ldefn().element_identifier().get()->
-                            equivalence_hash()[2]));
-        }
-        else if (type_identifier._d() == eprosima::fastdds::dds::xtypes::TI_PLAIN_ARRAY_SMALL &&
-                type_identifier.array_sdefn().header().equiv_kind() != eprosima::fastdds::dds::xtypes::EK_BOTH)
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.array_sdefn().element_identifier().get()->
-                            equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.array_sdefn().element_identifier().get()->
-                            equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.array_sdefn().element_identifier().get()->
-                            equivalence_hash()[2]));
-        }
-        else if (type_identifier._d() == eprosima::fastdds::dds::xtypes::TI_PLAIN_ARRAY_LARGE &&
-                type_identifier.array_ldefn().header().equiv_kind() != eprosima::fastdds::dds::xtypes::EK_BOTH)
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.array_ldefn().element_identifier().get()->
-                            equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.array_ldefn().element_identifier().get()->
-                            equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.array_ldefn().element_identifier().get()->
-                            equivalence_hash()[2]));
-        }
-        else if (type_identifier._d() == eprosima::fastdds::dds::xtypes::TI_PLAIN_MAP_SMALL &&
-                type_identifier.map_sdefn().header().equiv_kind() != eprosima::fastdds::dds::xtypes::EK_BOTH)
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.map_sdefn().element_identifier().get()->
-                            equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.map_sdefn().element_identifier().get()->
-                            equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.map_sdefn().element_identifier().get()->
-                            equivalence_hash()[2]));
-        }
-        else if (type_identifier._d() == eprosima::fastdds::dds::xtypes::TI_PLAIN_MAP_LARGE &&
-                type_identifier.map_ldefn().header().equiv_kind() != eprosima::fastdds::dds::xtypes::EK_BOTH)
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.map_ldefn().element_identifier().get()->
-                            equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.map_ldefn().element_identifier().get()->
-                            equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.map_ldefn().element_identifier().get()->
-                            equivalence_hash()[2]));
-        }
-        else
-        {
-            hash_value = (hash_value << 24) |
-                    (static_cast<size_t>(type_identifier.equivalence_hash()[0]) << 16) |
-                    (static_cast<size_t>(type_identifier.equivalence_hash()[1]) << 8) |
-                    (static_cast<size_t>(type_identifier.equivalence_hash()[2]));
-        }
-
-        return hash_value;
+        // The collection only has direct hash TypeIdentifiers so the EquivalenceHash can be used.
+        return (static_cast<size_t>(k.equivalence_hash()[0]) << 16) |
+               (static_cast<size_t>(k.equivalence_hash()[1]) << 8) |
+               (static_cast<size_t>(k.equivalence_hash()[2]));
     }
 
 };
