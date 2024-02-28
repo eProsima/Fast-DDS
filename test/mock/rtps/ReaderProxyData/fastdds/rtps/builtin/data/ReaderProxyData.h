@@ -159,33 +159,33 @@ public:
     }
 
     void typeName(
-            const string_255& typeName)
+            const fastcdr::string_255& typeName)
     {
         type_name_ = typeName;
     }
 
-    const string_255& typeName() const
+    const fastcdr::string_255& typeName() const
     {
         return type_name_;
     }
 
-    string_255& typeName()
+    fastcdr::string_255& typeName()
     {
         return type_name_;
     }
 
     void topicName(
-            const string_255& topicName)
+            const fastcdr::string_255& topicName)
     {
         topic_name_ = topicName;
     }
 
-    const string_255& topicName() const
+    const fastcdr::string_255& topicName() const
     {
         return topic_name_;
     }
 
-    string_255& topicName()
+    fastcdr::string_255& topicName()
     {
         return topic_name_;
     }
@@ -386,8 +386,8 @@ public:
 private:
 
     GUID_t m_guid;
-    string_255 topic_name_;
-    string_255 type_name_;
+    fastcdr::string_255 topic_name_;
+    fastcdr::string_255 type_name_;
     TopicKind_t topic_kind_;
     bool is_alive_;
     fastdds::dds::TypeIdV1 type_id_;

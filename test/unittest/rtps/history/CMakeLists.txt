@@ -77,6 +77,7 @@ target_include_directories(ReaderHistoryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(ReaderHistoryTests
+    fastcdr
     GTest::gmock
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(ReaderHistoryTests)

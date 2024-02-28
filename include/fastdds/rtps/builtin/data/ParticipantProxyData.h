@@ -90,7 +90,7 @@ public:
     //!Manual liveliness count
     Count_t m_manualLivelinessCount;
     //!Participant name
-    string_255 m_participantName;
+    fastcdr::string_255 m_participantName;
     //!
     InstanceHandle_t m_key;
     //!

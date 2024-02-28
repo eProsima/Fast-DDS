@@ -27,7 +27,7 @@
 #define _FAST_DDS_GENERATED_DEADLINEPAYLOAD_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #include <array>
 #include <bitset>
@@ -156,34 +156,34 @@ public:
      * @param _payload New value to be copied in member payload
      */
     eProsima_user_DllExport void payload(
-            const eprosima::fastrtps::fixed_string<256>& _payload);
+            const eprosima::fastcdr::fixed_string<256>& _payload);
 
     /*!
      * @brief This function moves the value in member payload
      * @param _payload New value to be moved in member payload
      */
     eProsima_user_DllExport void payload(
-            eprosima::fastrtps::fixed_string<256>&& _payload);
+            eprosima::fastcdr::fixed_string<256>&& _payload);
 
     /*!
      * @brief This function returns a constant reference to member payload
      * @return Constant reference to member payload
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<256>& payload() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<256>& payload() const;
 
     /*!
      * @brief This function returns a reference to member payload
      * @return Reference to member payload
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<256>& payload();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<256>& payload();
 
 
     /*!
-    * @brief This function returns the maximum serialized size of an object
-    * depending on the buffer alignment.
-    * @param current_alignment Buffer alignment.
-    * @return Maximum serialized size.
-    */
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -217,22 +217,21 @@ public:
 
 
     /*!
-    * @brief This function tells you if the Key has been defined for this type
-    */
+     * @brief This function tells you if the Key has been defined for this type
+     */
     eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
-    * @brief This function serializes the key members of an object using CDR serialization.
-    * @param cdr CDR serialization object.
-    */
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
     eProsima_user_DllExport void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
-
 
 private:
 
     uint16_t m_deadlinekey;
-    eprosima::fastrtps::fixed_string<256> m_payload;
+    eprosima::fastcdr::fixed_string<256> m_payload;
 
 };
 

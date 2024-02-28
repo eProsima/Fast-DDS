@@ -82,8 +82,8 @@ public:
 
     void on_type_information_received(
             eprosima::fastdds::dds::DomainParticipant* participant,
-            const eprosima::fastrtps::string_255 topic_name,
-            const eprosima::fastrtps::string_255 type_name,
+            const eprosima::fastcdr::string_255 topic_name,
+            const eprosima::fastcdr::string_255 type_name,
             const eprosima::fastrtps::types::TypeInformation& type_information) override
     {
         using callback_type = std::function<void (const std::string& name,
