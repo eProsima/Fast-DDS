@@ -769,7 +769,7 @@ bool PDPSimple::newRemoteEndpointStaticallyDiscovered(
         int16_t userDefinedId,
         EndpointKind_t kind)
 {
-    string_255 pname;
+    fastcdr::string_255 pname;
     if (lookup_participant_name(pguid, pname))
     {
         if (kind == WRITER)

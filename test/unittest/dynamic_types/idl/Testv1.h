@@ -26,9 +26,6 @@
 #ifndef _FAST_DDS_GENERATED_TEST_H_
 #define _FAST_DDS_GENERATED_TEST_H_
 
-
-#include <fastrtps/utils/fixed_size_string.hpp>
-
 #include <array>
 #include <bitset>
 #include <cstdint>
@@ -36,6 +33,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -415,11 +414,11 @@ public:
 
 
     /*!
-    * @brief This function returns the maximum serialized size of an object
-    * depending on the buffer alignment.
-    * @param current_alignment Buffer alignment.
-    * @return Maximum serialized size.
-    */
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -453,17 +452,16 @@ public:
 
 
     /*!
-    * @brief This function tells you if the Key has been defined for this type
-    */
+     * @brief This function tells you if the Key has been defined for this type
+     */
     eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
-    * @brief This function serializes the key members of an object using CDR serialization.
-    * @param cdr CDR serialization object.
-    */
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
     eProsima_user_DllExport void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
-
 
 private:
 
@@ -919,26 +917,26 @@ public:
      * @param _my_small_string_8 New value to be copied in member my_small_string_8
      */
     eProsima_user_DllExport void my_small_string_8(
-            const eprosima::fastrtps::fixed_string<128>& _my_small_string_8);
+            const eprosima::fastcdr::fixed_string<128>& _my_small_string_8);
 
     /*!
      * @brief This function moves the value in member my_small_string_8
      * @param _my_small_string_8 New value to be moved in member my_small_string_8
      */
     eProsima_user_DllExport void my_small_string_8(
-            eprosima::fastrtps::fixed_string<128>&& _my_small_string_8);
+            eprosima::fastcdr::fixed_string<128>&& _my_small_string_8);
 
     /*!
      * @brief This function returns a constant reference to member my_small_string_8
      * @return Constant reference to member my_small_string_8
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<128>& my_small_string_8() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<128>& my_small_string_8() const;
 
     /*!
      * @brief This function returns a reference to member my_small_string_8
      * @return Reference to member my_small_string_8
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<128>& my_small_string_8();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<128>& my_small_string_8();
 
 
     /*!
@@ -946,26 +944,26 @@ public:
      * @param _my_large_string_8 New value to be copied in member my_large_string_8
      */
     eProsima_user_DllExport void my_large_string_8(
-            const eprosima::fastrtps::fixed_string<500>& _my_large_string_8);
+            const eprosima::fastcdr::fixed_string<500>& _my_large_string_8);
 
     /*!
      * @brief This function moves the value in member my_large_string_8
      * @param _my_large_string_8 New value to be moved in member my_large_string_8
      */
     eProsima_user_DllExport void my_large_string_8(
-            eprosima::fastrtps::fixed_string<500>&& _my_large_string_8);
+            eprosima::fastcdr::fixed_string<500>&& _my_large_string_8);
 
     /*!
      * @brief This function returns a constant reference to member my_large_string_8
      * @return Constant reference to member my_large_string_8
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<500>& my_large_string_8() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<500>& my_large_string_8() const;
 
     /*!
      * @brief This function returns a reference to member my_large_string_8
      * @return Reference to member my_large_string_8
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<500>& my_large_string_8();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<500>& my_large_string_8();
 
 
     /*!
@@ -973,26 +971,27 @@ public:
      * @param _my_array_string New value to be copied in member my_array_string
      */
     eProsima_user_DllExport void my_array_string(
-            const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& _my_array_string);
+            const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& _my_array_string);
 
     /*!
      * @brief This function moves the value in member my_array_string
      * @param _my_array_string New value to be moved in member my_array_string
      */
     eProsima_user_DllExport void my_array_string(
-            std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>&& _my_array_string);
+            std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>&& _my_array_string);
 
     /*!
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string() const;
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>,
+            5>& my_array_string() const;
 
     /*!
      * @brief This function returns a reference to member my_array_string
      * @return Reference to member my_array_string
      */
-    eProsima_user_DllExport std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string();
+    eProsima_user_DllExport std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string();
 
 
     /*!
@@ -1077,11 +1076,11 @@ public:
 
 
     /*!
-    * @brief This function returns the maximum serialized size of an object
-    * depending on the buffer alignment.
-    * @param current_alignment Buffer alignment.
-    * @return Maximum serialized size.
-    */
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1115,17 +1114,16 @@ public:
 
 
     /*!
-    * @brief This function tells you if the Key has been defined for this type
-    */
+     * @brief This function tells you if the Key has been defined for this type
+     */
     eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
-    * @brief This function serializes the key members of an object using CDR serialization.
-    * @param cdr CDR serialization object.
-    */
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
     eProsima_user_DllExport void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
-
 
 private:
 
@@ -1143,9 +1141,9 @@ private:
     std::map<int32_t, std::vector<std::vector<uint8_t>>> m_my_map_long_seq_octet;
     std::map<int32_t, MyOctetArray500> m_my_map_long_octet_array_500;
     std::map<int32_t, std::map<uint8_t, BSAlias5>> m_my_map_long_lol_type;
-    eprosima::fastrtps::fixed_string<128> m_my_small_string_8;
-    eprosima::fastrtps::fixed_string<500> m_my_large_string_8;
-    std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5> m_my_array_string;
+    eprosima::fastcdr::fixed_string<128> m_my_small_string_8;
+    eprosima::fastcdr::fixed_string<500> m_my_large_string_8;
+    std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5> m_my_array_string;
     MA3 m_multi_alias_array_42;
     std::array<MyMiniArray, 5> m_my_array_arrays;
     std::array<MySequenceLong, 23> m_my_sequences_array;
@@ -1317,10 +1315,6 @@ public:
      */
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
-
-
-
-
 
 private:
 
@@ -1511,10 +1505,6 @@ public:
     eProsima_user_DllExport void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-
-
-
-
 private:
 
     uint8_t m__d;
@@ -1641,11 +1631,11 @@ public:
 
 
     /*!
-    * @brief This function returns the maximum serialized size of an object
-    * depending on the buffer alignment.
-    * @param current_alignment Buffer alignment.
-    * @return Maximum serialized size.
-    */
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1679,17 +1669,16 @@ public:
 
 
     /*!
-    * @brief This function tells you if the Key has been defined for this type
-    */
+     * @brief This function tells you if the Key has been defined for this type
+     */
     eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
-    * @brief This function serializes the key members of an object using CDR serialization.
-    * @param cdr CDR serialization object.
-    */
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
     eProsima_user_DllExport void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
-
 
 private:
 
@@ -1808,11 +1797,11 @@ public:
 
 
     /*!
-    * @brief This function returns the maximum serialized size of an object
-    * depending on the buffer alignment.
-    * @param current_alignment Buffer alignment.
-    * @return Maximum serialized size.
-    */
+     * @brief This function returns the maximum serialized size of an object
+     * depending on the buffer alignment.
+     * @param current_alignment Buffer alignment.
+     * @return Maximum serialized size.
+     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -1846,17 +1835,16 @@ public:
 
 
     /*!
-    * @brief This function tells you if the Key has been defined for this type
-    */
+     * @brief This function tells you if the Key has been defined for this type
+     */
     eProsima_user_DllExport static bool isKeyDefined();
 
     /*!
-    * @brief This function serializes the key members of an object using CDR serialization.
-    * @param cdr CDR serialization object.
-    */
+     * @brief This function serializes the key members of an object using CDR serialization.
+     * @param cdr CDR serialization object.
+     */
     eProsima_user_DllExport void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
-
 
 private:
 

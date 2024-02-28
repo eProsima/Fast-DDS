@@ -34,7 +34,7 @@ int compare_values(
         T rvalue)
 {
     return lvalue < rvalue ? -1 :
-                   lvalue > rvalue ? 1 : 0;
+           lvalue > rvalue ? 1 : 0;
 }
 
 /**
@@ -140,7 +140,7 @@ static long double to_float(
  */
 static void to_string_value(
         const DDSFilterValue& in,
-        eprosima::fastrtps::string_255& out)
+        eprosima::fastcdr::string_255& out)
 {
     assert(DDSFilterValue::ValueKind::CHAR == in.kind);
     out.assign(&in.char_value, 1);
@@ -268,7 +268,7 @@ int DDSFilterValue::compare(
 
             case ValueKind::STRING:
             {
-                eprosima::fastrtps::string_255 rvalue;
+                eprosima::fastcdr::string_255 rvalue;
                 to_string_value(rhs, rvalue);
                 return std::strcmp(lhs.string_value.c_str(), rvalue.c_str());
             }
@@ -332,7 +332,7 @@ bool DDSFilterValue::is_like(
 {
     assert(other.regular_expr_);
 
-    eprosima::fastrtps::string_255 char_string_value;
+    eprosima::fastcdr::string_255 char_string_value;
 
     switch (kind)
     {

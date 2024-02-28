@@ -239,11 +239,11 @@ void KeyedHelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
     scdr << m_key;
-       
-     
-      
+
+
+
 }
 
 /*!
@@ -309,7 +309,7 @@ uint16_t& KeyedHelloWorld::index()
  * @param _message New value to be copied in member message
  */
 void KeyedHelloWorld::message(
-        const eprosima::fastrtps::fixed_string<128>& _message)
+        const eprosima::fastcdr::fixed_string<128>& _message)
 {
     m_message = _message;
 }
@@ -319,7 +319,7 @@ void KeyedHelloWorld::message(
  * @param _message New value to be moved in member message
  */
 void KeyedHelloWorld::message(
-        eprosima::fastrtps::fixed_string<128>&& _message)
+        eprosima::fastcdr::fixed_string<128>&& _message)
 {
     m_message = std::move(_message);
 }
@@ -328,7 +328,7 @@ void KeyedHelloWorld::message(
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const eprosima::fastrtps::fixed_string<128>& KeyedHelloWorld::message() const
+const eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message() const
 {
     return m_message;
 }
@@ -337,7 +337,7 @@ const eprosima::fastrtps::fixed_string<128>& KeyedHelloWorld::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-eprosima::fastrtps::fixed_string<128>& KeyedHelloWorld::message()
+eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message()
 {
     return m_message;
 }

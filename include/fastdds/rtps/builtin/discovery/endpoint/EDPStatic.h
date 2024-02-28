@@ -116,7 +116,7 @@ public:
      */
     bool newRemoteWriter(
             const GUID_t& participant_guid,
-            const string_255& participant_name,
+            const fastcdr::string_255& participant_name,
             uint16_t user_id,
             EntityId_t ent_id = c_EntityId_Unknown,
             const GUID_t& persistence_guid = GUID_t::unknown());
@@ -130,7 +130,7 @@ public:
      */
     bool newRemoteReader(
             const GUID_t& participant_guid,
-            const string_255& participant_name,
+            const fastcdr::string_255& participant_name,
             uint16_t user_id,
             EntityId_t ent_id = c_EntityId_Unknown);
 
