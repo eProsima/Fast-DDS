@@ -97,7 +97,7 @@ ResponseCode TCPChannelResource::process_bind_request(
 
 void TCPChannelResource::set_all_ports_pending()
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     pending_logical_output_ports_.insert(pending_logical_output_ports_.end(),
             logical_output_ports_.begin(),
             logical_output_ports_.end());
@@ -107,14 +107,14 @@ void TCPChannelResource::set_all_ports_pending()
 bool TCPChannelResource::is_logical_port_opened(
         uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end();
 }
 
 bool TCPChannelResource::is_logical_port_added(
         uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     return std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) != logical_output_ports_.end()
            || std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), port)
            != pending_logical_output_ports_.end();
@@ -176,7 +176,7 @@ void TCPChannelResource::add_logical_port(
         uint16_t port,
         RTCPMessageManager* rtcp_manager)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     // Already opened?
     if (std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port) == logical_output_ports_.end())
     {
@@ -202,7 +202,7 @@ void TCPChannelResource::add_logical_port(
 void TCPChannelResource::send_pending_open_logical_ports(
         RTCPMessageManager* rtcp_manager)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     if (!pending_logical_output_ports_.empty())
     {
         for (uint16_t port : pending_logical_output_ports_)
@@ -270,7 +270,7 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(
         // Don't add ports just tested and already pendings
         if (p <= max_port && p != closedPort)
         {
-            std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+            std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
             auto pendingIt = std::find(pending_logical_output_ports_.begin(), pending_logical_output_ports_.end(), p);
             if (pendingIt == pending_logical_output_ports_.end())
             {
@@ -286,7 +286,7 @@ void TCPChannelResource::prepare_send_check_logical_ports_req(
     else
     {
         TCPTransactionId id = rtcp_manager->sendCheckLogicalPortsRequest(this, candidatePorts);
-        std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+        std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
         last_checked_logical_port_[id] = candidatePorts.back();
     }
 }
@@ -321,7 +321,7 @@ void TCPChannelResource::process_check_logical_ports_response(
 void TCPChannelResource::set_logical_port_pending(
         uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     auto it = std::find(logical_output_ports_.begin(), logical_output_ports_.end(), port);
     if (it != logical_output_ports_.end())
     {
@@ -333,7 +333,7 @@ void TCPChannelResource::set_logical_port_pending(
 bool TCPChannelResource::remove_logical_port(
         uint16_t port)
 {
-    std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
+    std::lock_guard<std::recursive_mutex> scopedLock(pending_logical_mutex_);
     if (!is_logical_port_added(port))
     {
         return false;
