@@ -52,7 +52,7 @@ namespace DDSSQLFilter {
 static IContentFilterFactory::ReturnCode_t transform_enum(
         std::shared_ptr<DDSFilterValue>& value,
         const eprosima::fastrtps::types::TypeIdentifier* type,
-        const eprosima::fastrtps::string_255& string_value)
+        const eprosima::fastcdr::string_255& string_value)
 {
     const char* str_value = string_value.c_str();
     auto type_obj = eprosima::fastrtps::types::TypeObjectFactory::get_instance()->get_type_object(type);

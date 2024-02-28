@@ -25,6 +25,8 @@
 #include <memory>
 #include <utility>
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
@@ -42,7 +44,6 @@
 
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
-#include <fastrtps/utils/fixed_size_string.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include "DataReaderHistoryCounters.hpp"
@@ -381,9 +382,9 @@ private:
     //!ResourceLimitsQosPolicy values.
     ResourceLimitsQosPolicy resource_limited_qos_;
     //!Topic name
-    fastrtps::string_255 topic_name_;
+    fastcdr::string_255 topic_name_;
     //!Type name
-    fastrtps::string_255 type_name_;
+    fastcdr::string_255 type_name_;
     //!Whether the type has keys
     bool has_keys_;
     //!TopicDataType
