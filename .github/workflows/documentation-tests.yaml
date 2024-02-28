@@ -69,7 +69,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
       - name: Download Fast DDS .repos
-        uses: eProsima/eProsima-CI/ubuntu/vcs_import@main
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ./src/fastrtps/fastrtps.repos
           destination_workspace: src
