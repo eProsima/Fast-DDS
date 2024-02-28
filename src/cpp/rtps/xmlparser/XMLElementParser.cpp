@@ -4579,7 +4579,8 @@ XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
                 ret = XMLP_ret::XML_ERROR;
                 break;
             }
-            catch (const std::out_of_range& except) {
+            catch (const std::out_of_range& except)
+            {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
                         "Value of the port attribute " << attrib->Value() << " out of range. " <<
                         except.what());
