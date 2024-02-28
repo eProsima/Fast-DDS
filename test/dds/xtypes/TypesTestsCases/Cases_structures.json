@@ -618,7 +618,7 @@
                     "timeout": "2",
                     "expected_matches": "1",
                     "known_types": [
-                        "testing_2::foo"
+                        "testing_1::foo"
                     ]
                 },
                 {
@@ -639,7 +639,7 @@
                     "timeout": "2",
                     "expected_matches": "1",
                     "known_types": [
-                        "testing_1::foo"
+                        "testing_2::foo"
                     ]
                 },
                 {

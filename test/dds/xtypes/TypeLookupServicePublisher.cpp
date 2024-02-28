@@ -305,7 +305,8 @@ void TypeLookupServicePublisher::on_publication_matched(
 
 void TypeLookupServicePublisher::on_data_reader_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info)
+        eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info,
+        bool& /*should_be_ignored*/)
 {
     std::string discovered_reader_type_name = info.info.typeName().to_string();
 

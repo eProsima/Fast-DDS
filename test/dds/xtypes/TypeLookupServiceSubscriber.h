@@ -97,7 +97,8 @@ public:
 
     void on_data_writer_discovery(
             DomainParticipant* /*participant*/,
-            fastrtps::rtps::WriterDiscoveryInfo&& info) override;
+            fastrtps::rtps::WriterDiscoveryInfo&& info,
+            bool& /*should_be_ignored*/) override;
 
 private:
 

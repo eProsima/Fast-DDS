@@ -3373,7 +3373,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_entity_proxy;
             TypeObjectUtils::add_union_case_label(label_seq_entity_proxy, static_cast<int32_t>(StatusKind::PROXY));
             CommonUnionMember common_entity_proxy;
-            MemberId member_id_entity_proxy = 0x00000000;
+            MemberId member_id_entity_proxy = 0x00000001;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5199,7 +5199,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_connection_list;
             TypeObjectUtils::add_union_case_label(label_seq_connection_list, static_cast<int32_t>(StatusKind::CONNECTION_LIST));
             CommonUnionMember common_connection_list;
-            MemberId member_id_connection_list = 0x00000001;
+            MemberId member_id_connection_list = 0x00000002;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5806,7 +5806,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_incompatible_qos_status;
             TypeObjectUtils::add_union_case_label(label_seq_incompatible_qos_status, static_cast<int32_t>(StatusKind::INCOMPATIBLE_QOS));
             CommonUnionMember common_incompatible_qos_status;
-            MemberId member_id_incompatible_qos_status = 0x00000002;
+            MemberId member_id_incompatible_qos_status = 0x00000003;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6040,7 +6040,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_inconsistent_topic_status;
             TypeObjectUtils::add_union_case_label(label_seq_inconsistent_topic_status, static_cast<int32_t>(StatusKind::INCONSISTENT_TOPIC));
             CommonUnionMember common_inconsistent_topic_status;
-            MemberId member_id_inconsistent_topic_status = 0x00000003;
+            MemberId member_id_inconsistent_topic_status = 0x00000004;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6274,7 +6274,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_liveliness_lost_status;
             TypeObjectUtils::add_union_case_label(label_seq_liveliness_lost_status, static_cast<int32_t>(StatusKind::LIVELINESS_LOST));
             CommonUnionMember common_liveliness_lost_status;
-            MemberId member_id_liveliness_lost_status = 0x00000004;
+            MemberId member_id_liveliness_lost_status = 0x00000005;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6655,7 +6655,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_liveliness_changed_status;
             TypeObjectUtils::add_union_case_label(label_seq_liveliness_changed_status, static_cast<int32_t>(StatusKind::LIVELINESS_CHANGED));
             CommonUnionMember common_liveliness_changed_status;
-            MemberId member_id_liveliness_changed_status = 0x00000005;
+            MemberId member_id_liveliness_changed_status = 0x00000006;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -6972,7 +6972,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_deadline_missed_status;
             TypeObjectUtils::add_union_case_label(label_seq_deadline_missed_status, static_cast<int32_t>(StatusKind::DEADLINE_MISSED));
             CommonUnionMember common_deadline_missed_status;
-            MemberId member_id_deadline_missed_status = 0x00000006;
+            MemberId member_id_deadline_missed_status = 0x00000007;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7206,7 +7206,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_sample_lost_status;
             TypeObjectUtils::add_union_case_label(label_seq_sample_lost_status, static_cast<int32_t>(StatusKind::SAMPLE_LOST));
             CommonUnionMember common_sample_lost_status;
-            MemberId member_id_sample_lost_status = 0x00000007;
+            MemberId member_id_sample_lost_status = 0x00000008;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7274,7 +7274,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier()
             UnionCaseLabelSeq label_seq_statuses_size;
             TypeObjectUtils::add_union_case_label(label_seq_statuses_size, static_cast<int32_t>(StatusKind::STATUSES_SIZE));
             CommonUnionMember common_statuses_size;
-            MemberId member_id_statuses_size = 0x00000008;
+            MemberId member_id_statuses_size = 0x00000009;
             if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8345,7 +8345,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_entity_proxy;
                         TypeObjectUtils::add_union_case_label(label_seq_entity_proxy, static_cast<int32_t>(StatusKind::PROXY));
                         CommonUnionMember common_entity_proxy;
-                        MemberId member_id_entity_proxy = 0x00000000;
+                        MemberId member_id_entity_proxy = 0x00000001;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -10171,7 +10171,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_connection_list;
                         TypeObjectUtils::add_union_case_label(label_seq_connection_list, static_cast<int32_t>(StatusKind::CONNECTION_LIST));
                         CommonUnionMember common_connection_list;
-                        MemberId member_id_connection_list = 0x00000001;
+                        MemberId member_id_connection_list = 0x00000002;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -10778,7 +10778,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_incompatible_qos_status;
                         TypeObjectUtils::add_union_case_label(label_seq_incompatible_qos_status, static_cast<int32_t>(StatusKind::INCOMPATIBLE_QOS));
                         CommonUnionMember common_incompatible_qos_status;
-                        MemberId member_id_incompatible_qos_status = 0x00000002;
+                        MemberId member_id_incompatible_qos_status = 0x00000003;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -11012,7 +11012,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_inconsistent_topic_status;
                         TypeObjectUtils::add_union_case_label(label_seq_inconsistent_topic_status, static_cast<int32_t>(StatusKind::INCONSISTENT_TOPIC));
                         CommonUnionMember common_inconsistent_topic_status;
-                        MemberId member_id_inconsistent_topic_status = 0x00000003;
+                        MemberId member_id_inconsistent_topic_status = 0x00000004;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -11246,7 +11246,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_liveliness_lost_status;
                         TypeObjectUtils::add_union_case_label(label_seq_liveliness_lost_status, static_cast<int32_t>(StatusKind::LIVELINESS_LOST));
                         CommonUnionMember common_liveliness_lost_status;
-                        MemberId member_id_liveliness_lost_status = 0x00000004;
+                        MemberId member_id_liveliness_lost_status = 0x00000005;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -11627,7 +11627,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_liveliness_changed_status;
                         TypeObjectUtils::add_union_case_label(label_seq_liveliness_changed_status, static_cast<int32_t>(StatusKind::LIVELINESS_CHANGED));
                         CommonUnionMember common_liveliness_changed_status;
-                        MemberId member_id_liveliness_changed_status = 0x00000005;
+                        MemberId member_id_liveliness_changed_status = 0x00000006;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -11944,7 +11944,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_deadline_missed_status;
                         TypeObjectUtils::add_union_case_label(label_seq_deadline_missed_status, static_cast<int32_t>(StatusKind::DEADLINE_MISSED));
                         CommonUnionMember common_deadline_missed_status;
-                        MemberId member_id_deadline_missed_status = 0x00000006;
+                        MemberId member_id_deadline_missed_status = 0x00000007;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -12178,7 +12178,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_sample_lost_status;
                         TypeObjectUtils::add_union_case_label(label_seq_sample_lost_status, static_cast<int32_t>(StatusKind::SAMPLE_LOST));
                         CommonUnionMember common_sample_lost_status;
-                        MemberId member_id_sample_lost_status = 0x00000007;
+                        MemberId member_id_sample_lost_status = 0x00000008;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -12246,7 +12246,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifi
                         UnionCaseLabelSeq label_seq_statuses_size;
                         TypeObjectUtils::add_union_case_label(label_seq_statuses_size, static_cast<int32_t>(StatusKind::STATUSES_SIZE));
                         CommonUnionMember common_statuses_size;
-                        MemberId member_id_statuses_size = 0x00000008;
+                        MemberId member_id_statuses_size = 0x00000009;
                         if (EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1()._d() || TK_NONE == type_ids_MonitorServiceData.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_MonitorServiceData.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_MonitorServiceData.type_identifier1().seq_sdefn().header().equiv_kind()) ||

@@ -93,7 +93,8 @@ public:
 
     void on_data_reader_discovery(
             DomainParticipant* /*participant*/,
-            fastrtps::rtps::ReaderDiscoveryInfo&& info) override;
+            fastrtps::rtps::ReaderDiscoveryInfo&& info,
+            bool& /*should_be_ignored*/) override;
 
 private:
 
@@ -106,7 +107,6 @@ private:
     template <typename Type, typename TypePubSubType>
     bool create_known_type_impl(
             const std::string& type);
-
 
     bool create_discovered_type(
             eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info);

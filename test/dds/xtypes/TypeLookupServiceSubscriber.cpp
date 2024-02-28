@@ -407,7 +407,8 @@ void TypeLookupServiceSubscriber::on_data_available(
 
 void TypeLookupServiceSubscriber::on_data_writer_discovery(
         eprosima::fastdds::dds::DomainParticipant* /*participant*/,
-        eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info)
+        eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+        bool& /*should_be_ignored*/)
 {
     std::string discovered_writer_type_name = info.info.typeName().to_string();
 
