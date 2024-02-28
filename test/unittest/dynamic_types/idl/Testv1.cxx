@@ -2205,7 +2205,7 @@ std::map<int32_t, std::map<uint8_t, BSAlias5>>& ComplexStruct::my_map_long_lol_t
  * @param _my_small_string_8 New value to be copied in member my_small_string_8
  */
 void ComplexStruct::my_small_string_8(
-        const eprosima::fastrtps::fixed_string<128>& _my_small_string_8)
+        const eprosima::fastcdr::fixed_string<128>& _my_small_string_8)
 {
     m_my_small_string_8 = _my_small_string_8;
 }
@@ -2215,7 +2215,7 @@ void ComplexStruct::my_small_string_8(
  * @param _my_small_string_8 New value to be moved in member my_small_string_8
  */
 void ComplexStruct::my_small_string_8(
-        eprosima::fastrtps::fixed_string<128>&& _my_small_string_8)
+        eprosima::fastcdr::fixed_string<128>&& _my_small_string_8)
 {
     m_my_small_string_8 = std::move(_my_small_string_8);
 }
@@ -2224,7 +2224,7 @@ void ComplexStruct::my_small_string_8(
  * @brief This function returns a constant reference to member my_small_string_8
  * @return Constant reference to member my_small_string_8
  */
-const eprosima::fastrtps::fixed_string<128>& ComplexStruct::my_small_string_8() const
+const eprosima::fastcdr::fixed_string<128>& ComplexStruct::my_small_string_8() const
 {
     return m_my_small_string_8;
 }
@@ -2233,7 +2233,7 @@ const eprosima::fastrtps::fixed_string<128>& ComplexStruct::my_small_string_8() 
  * @brief This function returns a reference to member my_small_string_8
  * @return Reference to member my_small_string_8
  */
-eprosima::fastrtps::fixed_string<128>& ComplexStruct::my_small_string_8()
+eprosima::fastcdr::fixed_string<128>& ComplexStruct::my_small_string_8()
 {
     return m_my_small_string_8;
 }
@@ -2244,7 +2244,7 @@ eprosima::fastrtps::fixed_string<128>& ComplexStruct::my_small_string_8()
  * @param _my_large_string_8 New value to be copied in member my_large_string_8
  */
 void ComplexStruct::my_large_string_8(
-        const eprosima::fastrtps::fixed_string<500>& _my_large_string_8)
+        const eprosima::fastcdr::fixed_string<500>& _my_large_string_8)
 {
     m_my_large_string_8 = _my_large_string_8;
 }
@@ -2254,7 +2254,7 @@ void ComplexStruct::my_large_string_8(
  * @param _my_large_string_8 New value to be moved in member my_large_string_8
  */
 void ComplexStruct::my_large_string_8(
-        eprosima::fastrtps::fixed_string<500>&& _my_large_string_8)
+        eprosima::fastcdr::fixed_string<500>&& _my_large_string_8)
 {
     m_my_large_string_8 = std::move(_my_large_string_8);
 }
@@ -2263,7 +2263,7 @@ void ComplexStruct::my_large_string_8(
  * @brief This function returns a constant reference to member my_large_string_8
  * @return Constant reference to member my_large_string_8
  */
-const eprosima::fastrtps::fixed_string<500>& ComplexStruct::my_large_string_8() const
+const eprosima::fastcdr::fixed_string<500>& ComplexStruct::my_large_string_8() const
 {
     return m_my_large_string_8;
 }
@@ -2272,7 +2272,7 @@ const eprosima::fastrtps::fixed_string<500>& ComplexStruct::my_large_string_8() 
  * @brief This function returns a reference to member my_large_string_8
  * @return Reference to member my_large_string_8
  */
-eprosima::fastrtps::fixed_string<500>& ComplexStruct::my_large_string_8()
+eprosima::fastcdr::fixed_string<500>& ComplexStruct::my_large_string_8()
 {
     return m_my_large_string_8;
 }
@@ -2283,7 +2283,7 @@ eprosima::fastrtps::fixed_string<500>& ComplexStruct::my_large_string_8()
  * @param _my_array_string New value to be copied in member my_array_string
  */
 void ComplexStruct::my_array_string(
-        const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& _my_array_string)
+        const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& _my_array_string)
 {
     m_my_array_string = _my_array_string;
 }
@@ -2293,7 +2293,7 @@ void ComplexStruct::my_array_string(
  * @param _my_array_string New value to be moved in member my_array_string
  */
 void ComplexStruct::my_array_string(
-        std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>&& _my_array_string)
+        std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>&& _my_array_string)
 {
     m_my_array_string = std::move(_my_array_string);
 }
@@ -2302,7 +2302,7 @@ void ComplexStruct::my_array_string(
  * @brief This function returns a constant reference to member my_array_string
  * @return Constant reference to member my_array_string
  */
-const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& ComplexStruct::my_array_string() const
+const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& ComplexStruct::my_array_string() const
 {
     return m_my_array_string;
 }
@@ -2311,7 +2311,7 @@ const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& Comple
  * @brief This function returns a reference to member my_array_string
  * @return Reference to member my_array_string
  */
-std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& ComplexStruct::my_array_string()
+std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& ComplexStruct::my_array_string()
 {
     return m_my_array_string;
 }
@@ -3665,10 +3665,10 @@ void KeyedStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-       
+
     scdr << m_key;
-       
-      
+
+
 }
 
 /*!

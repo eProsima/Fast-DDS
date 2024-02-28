@@ -90,6 +90,7 @@ target_include_directories(LivelinessManagerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(LivelinessManagerTests PRIVATE
+    fastcdr
     GTest::gmock)
 gtest_discover_tests(LivelinessManagerTests)
 
