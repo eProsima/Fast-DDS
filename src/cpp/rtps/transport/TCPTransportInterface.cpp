@@ -1398,7 +1398,6 @@ bool TCPTransportInterface::send(
                 scoped_lock.unlock();
                 bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port, std::chrono::milliseconds(
                                     50));
-                scoped_lock.lock();
                 if (!logical_port_opened)
                 {
                     return success;
