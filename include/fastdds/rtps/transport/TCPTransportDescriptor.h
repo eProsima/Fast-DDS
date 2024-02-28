@@ -56,6 +56,8 @@ namespace rtps {
  * - \c non_blocking_send: do not block on send operations. When it is set to true, send operations will return
  *      immediately if the buffer might get full, but no error will be returned to the upper layer. This means
  *      that the application will behave as if the datagram is sent and lost.
+ * 
+ * - \c wait_for_logical_port_negotiation_ms: time to wait for logical port negotiation (in ms).
  *
  * @ingroup TRANSPORT_MODULE
  */
@@ -293,6 +295,14 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
      * datagram. This may cause application lock.
      */
     bool non_blocking_send;
+
+    /**
+     * Time to wait for logical port negotiation (ms). If a logical port is under negotiation, it waits for the
+     * negotiation to finish up to this timeout before trying to send a message to that port.
+     * Default value: 50 ms.
+     * Zero value means waiting indefinitely.
+     */
+    uint32_t wait_for_logical_port_negotiation_ms;
 
     //! Add listener port to the listening_ports list
     void add_listener_port(

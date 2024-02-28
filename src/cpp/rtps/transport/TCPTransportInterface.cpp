@@ -106,6 +106,7 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , check_crc(true)
     , apply_security(false)
     , non_blocking_send(false)
+    , wait_for_logical_port_negotiation_ms(50)
 {
 }
 
@@ -128,6 +129,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , keep_alive_thread(t.keep_alive_thread)
     , accept_thread(t.accept_thread)
     , non_blocking_send(t.non_blocking_send)
+    , wait_for_logical_port_negotiation_ms(t.wait_for_logical_port_negotiation_ms)
 {
 }
 
@@ -156,6 +158,7 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     keep_alive_thread = t.keep_alive_thread;
     accept_thread = t.accept_thread;
     non_blocking_send = t.non_blocking_send;
+    wait_for_logical_port_negotiation_ms = t.wait_for_logical_port_negotiation_ms;
     return *this;
 }
 
@@ -178,6 +181,7 @@ bool TCPTransportDescriptor::operator ==(
            this->keep_alive_thread == t.keep_alive_thread &&
            this->accept_thread == t.accept_thread &&
            this->non_blocking_send == t.non_blocking_send &&
+           this->wait_for_logical_port_negotiation_ms == t.wait_for_logical_port_negotiation_ms &&
            SocketTransportDescriptor::operator ==(t));
 }
 
@@ -1397,7 +1401,7 @@ bool TCPTransportInterface::send(
                 // losing first messages.
                 scoped_lock.unlock();
                 bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port, std::chrono::milliseconds(
-                                    50));
+                                    configuration()->wait_for_logical_port_negotiation_ms));
                 if (!logical_port_opened)
                 {
                     return success;

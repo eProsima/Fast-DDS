@@ -771,6 +771,16 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                     return XMLP_ret::XML_ERROR;
                 }
             }
+            else if (strcmp(name, WAIT_FOR_LOGICAL_PORT_NEGOTIATION) == 0)
+            {
+                // wait_for_logical_port_negotiation_ms - uint64Type
+                int iTimeout(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+                pTCPDesc->wait_for_logical_port_negotiation_ms = static_cast<uint32_t>(iTimeout);
+            }
         }
     }
     else

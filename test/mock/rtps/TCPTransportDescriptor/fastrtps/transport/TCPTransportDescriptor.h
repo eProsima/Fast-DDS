@@ -179,6 +179,8 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
     fastdds::rtps::ThreadSettings keep_alive_thread;
     fastdds::rtps::ThreadSettings accept_thread;
 
+    uint32_t wait_for_logical_port_negotiation_ms;
+
     void add_listener_port(
             uint16_t port)
     {

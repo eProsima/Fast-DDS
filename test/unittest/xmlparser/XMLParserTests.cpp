@@ -909,6 +909,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <calculate_crc>false</calculate_crc>\
                     <check_crc>false</check_crc>\
                     <enable_tcp_nodelay>false</enable_tcp_nodelay>\
+                    <wait_for_logical_port_negotiation_ms>100</wait_for_logical_port_negotiation_ms>\
                     <tls><!-- TLS Section --></tls>\
                     <segment_size>262144</segment_size>\
                     <port_queue_capacity>512</port_queue_capacity>\
@@ -1022,6 +1023,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <check_crc>false</check_crc>\
                     <enable_tcp_nodelay>false</enable_tcp_nodelay>\
                     <non_blocking_send>true</non_blocking_send>\
+                    <wait_for_logical_port_negotiation_ms>100</wait_for_logical_port_negotiation_ms>\
                     <tls><!-- TLS Section --></tls>\
                     <keep_alive_thread>\
                         <scheduling_policy>12</scheduling_policy>\
@@ -1090,6 +1092,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv4Desc->keep_alive_thread, modified_thread_settings);
         EXPECT_EQ(pTCPv4Desc->non_blocking_send, true);
         EXPECT_EQ(pTCPv4Desc->accept_thread, modified_thread_settings);
+        EXPECT_EQ(pTCPv4Desc->wait_for_logical_port_negotiation_ms, 100u);
         EXPECT_EQ(pTCPv4Desc->default_reception_threads(), modified_thread_settings);
         EXPECT_EQ(pTCPv4Desc->get_thread_config_for_port(12345), modified_thread_settings);
         EXPECT_EQ(pTCPv4Desc->get_thread_config_for_port(12346), modified_thread_settings);
@@ -1244,6 +1247,7 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "tls",
         "keep_alive_thread",
         "accept_thread",
+        "wait_for_logical_port_negotiation_ms",
         "default_reception_threads",
         "reception_threads",
         "bad_element"

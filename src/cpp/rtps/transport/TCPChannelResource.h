@@ -100,12 +100,12 @@ public:
     /**
      * This method checks if a logical port is under negotiation. If it is, it waits for the negotiation to finish up to a timeout.
      * Independently if being under negotiation or not, it returns true if the port is opened, false otherwise.
-     * 
+     *
      * @param port The logical port to check.
      * @param timeout The maximum time to wait for the negotiation to finish (optional).
-     * 
+     *
      * @return true if the port is opened, false otherwise.
-    */
+     */
     bool wait_logical_port_under_negotiation(
             uint16_t port,
             const std::chrono::milliseconds& timeout);
