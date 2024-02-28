@@ -69,7 +69,7 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
 
       - name: Download Fast DDS .repos
-        uses: eProsima/eProsima-CI/ubuntu/vcs_import@feature/vcs_import/skip_existing
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@main
         with:
           vcs_repos_file: ./src/fastrtps/fastrtps.repos
           destination_workspace: src
@@ -141,6 +141,8 @@ jobs:
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          workspace: ${{ github.workspace }}
 
       - name: Colcon test
         id: test
@@ -151,6 +153,7 @@ jobs:
           ctest_args_default: ''
           packages_names: fastdds-docs
           test_report_artifact: ${{ format('test_report_{0}', github.job, join(matrix.*, '_')) }}
+          workspace: ${{ github.workspace }}
 
       - name: Test summary
         uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
