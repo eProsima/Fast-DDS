@@ -289,7 +289,7 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
      * as if the datagram is sent but lost (i.e. throughput may be reduced). This value is
      * specially useful on high-frequency writers.
      *
-     * When set to false, calls to send() will block until the send buffer has space for the
+     * When set to false, which is the default, calls to send() will block until the send buffer has space for the
      * datagram. This may cause application lock.
      */
     bool non_blocking_send;
