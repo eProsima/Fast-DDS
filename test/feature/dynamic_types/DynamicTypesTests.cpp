@@ -37,8 +37,6 @@
 
 #include <xmlparser/XMLProfileManager.h>
 
-#include "idl/BasicPubSubTypes.h"
-
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
@@ -7571,6 +7569,51 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, TypeDescriptorFullyQualifiedName)
+{
+    TypeDescriptor::_ref_type descriptor {traits<TypeDescriptor>::make_shared()};
+
+    descriptor->name("Position");
+    ASSERT_TRUE(descriptor->is_consistent());
+    descriptor->name("Position_");
+    ASSERT_TRUE(descriptor->is_consistent());
+    descriptor->name("Position123");
+    ASSERT_TRUE(descriptor->is_consistent());
+    descriptor->name("position_123");
+    ASSERT_TRUE(descriptor->is_consistent());
+    descriptor->name("_Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("123Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("Position&");
+    ASSERT_FALSE(descriptor->is_consistent());
+
+    descriptor->name("my_interface::action::dds_::Position");
+    ASSERT_TRUE(descriptor->is_consistent());
+    descriptor->name("my_interface:action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("my_interface:::action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("_my_interface::action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("1my_interface::action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name(":my_interface::action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("::my_interface::action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("$my_interface::action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("my_interface::2action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("my_interface::_action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("my_interface::*action::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
+    descriptor->name("my_interface::action*::dds_::Position");
+    ASSERT_FALSE(descriptor->is_consistent());
 }
 
 int main(

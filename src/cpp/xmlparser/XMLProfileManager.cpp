@@ -48,7 +48,6 @@ sp_transport_map_t XMLProfileManager::transport_profiles_;
 p_dynamictype_map_t XMLProfileManager::dynamic_types_;
 BaseNode* XMLProfileManager::root = nullptr;
 
-
 XMLP_ret XMLProfileManager::fillParticipantAttributes(
         const std::string& profile_name,
         ParticipantAttributes& atts,
@@ -661,7 +660,7 @@ sp_transport_t XMLProfileManager::getTransportById(
 
 bool XMLProfileManager::insertDynamicTypeByName(
         const std::string& type_name,
-        const eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type& type)
+        const eprosima::fastdds::dds::DynamicType::_ref_type& type)
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {
@@ -673,7 +672,7 @@ bool XMLProfileManager::insertDynamicTypeByName(
 }
 
 XMLP_ret XMLProfileManager::getDynamicTypeByName(
-        eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type& dynamic_type,
+        eprosima::fastdds::dds::DynamicType::_ref_type& dynamic_type,
         const std::string& type_name)
 {
     if (dynamic_types_.find(type_name) != dynamic_types_.end())
