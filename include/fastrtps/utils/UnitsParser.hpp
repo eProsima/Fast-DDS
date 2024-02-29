@@ -47,7 +47,7 @@ inline void to_uppercase(
  * Converts a numeric value with units to bytes.
  *
  * @param[in] value Numeric value to convert
- * @param[in] st Units to use for the conversion
+ * @param[in] units Units to use for the conversion
  * @return The value in bytes
  */
 uint32_t parse_value_and_units(
