@@ -56,7 +56,7 @@ namespace rtps {
  * - \c non_blocking_send: do not block on send operations. When it is set to true, send operations will return
  *      immediately if the buffer might get full, but no error will be returned to the upper layer. This means
  *      that the application will behave as if the datagram is sent and lost.
- * 
+ *
  * - \c tcp_negotiation_timeout: time to wait for logical port negotiation (in ms).
  *
  * @ingroup TRANSPORT_MODULE
