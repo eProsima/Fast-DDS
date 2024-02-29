@@ -41,7 +41,6 @@ add_subdirectory(transport)
 add_subdirectory(logging)
 add_subdirectory(utils)
 add_subdirectory(xmlparser)
-add_subdirectory(xtypes)
 add_subdirectory(statistics/dds)
 add_subdirectory(cmake)
 

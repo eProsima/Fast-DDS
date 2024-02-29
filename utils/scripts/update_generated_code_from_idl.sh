@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 files_to_exclude=(
-    './include/fastrtps/types/*'
     )
 
 files_not_needing_typeobject=(
@@ -11,7 +10,6 @@ files_not_needing_typeobject=(
     )
 
 files_needing_case_sensitive=(
-    './test/feature/dynamic_types/idl/new_features_4_2.idl'
     )
 
 files_needing_output_dir=(
