@@ -469,14 +469,6 @@ bool TCPTransportInterface::init(
     ip::tcp::endpoint local_endpoint = initial_peer_local_locator_socket_->local_endpoint();
     initial_peer_local_locator_port_ = local_endpoint.port();
 
-    // Get non_blocking_send property
-    if (properties)
-    {
-        auto s_non_blocking_send = eprosima::fastrtps::rtps::PropertyPolicyHelper::find_property(*properties,
-                        "fastdds.tcp_transport.non_blocking_send");
-        non_blocking_send_ = s_non_blocking_send && *s_non_blocking_send == "true" ? true : false;
-    }
-
     // Check system buffer sizes.
     if (configuration()->sendBufferSize == 0)
     {
