@@ -3514,23 +3514,31 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
         TypeKind element_kind =
                 get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                             enclosing_type_->get_descriptor().element_type()));
-        if (MEMBER_ID_INVALID != id)
-        {
-            auto it = value_.cbegin();
-            assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+        auto it = value_.cbegin();
+        assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
 
-            if (TK_BITMASK == element_kind)
+        if (TK_ARRAY == element_kind ||
+                TK_SEQUENCE == element_kind)
+        {
+            if (MEMBER_ID_INVALID != id)
             {
-                ret_value = get_sequence_values_bitmask<TK>(id, it, value, 0);
+                auto sequence =
+                        std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
+                assert(sequence);
+
+                if (sequence->size() > id)
+                {
+                    ret_value = sequence->at(id)->get_sequence_values<TK>(value, MEMBER_ID_INVALID);
+                }
             }
-            else
-            {
-                ret_value = get_sequence_values_primitive<TK>(id, element_kind, it, value, 0);
-            }
+        }
+        else if (TK_BITMASK == element_kind)
+        {
+            ret_value = get_sequence_values_bitmask<TK>(MEMBER_ID_INVALID == id ? 0 : id, it, value, 0);
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Element kind is not which expected");
+            ret_value = get_sequence_values_primitive<TK>(MEMBER_ID_INVALID == id ? 0 : id, element_kind, it, value, 0);
         }
     }
     else
@@ -4301,25 +4309,49 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
     else if (TK_ARRAY == type_kind ||
             TK_SEQUENCE == type_kind)
     {
-        TypeKind element_kind =
-                get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+        auto element_type =
+                get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
                             enclosing_type_->get_descriptor().element_type()));
-        if (MEMBER_ID_INVALID != id)
+        TypeKind element_kind = element_type->get_kind();
+        auto it = value_.cbegin();
+        assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+        if (TK_ARRAY == element_kind ||
+                TK_SEQUENCE == element_kind)
         {
-            auto it = value_.cbegin();
-            assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
-            if (TK_BITMASK == element_kind)
+            if (MEMBER_ID_INVALID != id)
             {
-                ret_value = set_sequence_values_bitmask<TK>(id, it, value);
-            }
-            else
-            {
-                ret_value = set_sequence_values_primitive<TK>(id, element_kind, it, value);
+                auto sequence =
+                        std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
+                assert(sequence);
+                if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                        (TK_SEQUENCE == type_kind &&
+                        (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
+                        enclosing_type_->get_descriptor().bound().at(0) ||
+                        enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
+                {
+                    if (sequence->size() < id + 1)
+                    {
+                        auto last_pos = sequence->size();
+                        sequence->resize(id + 1);
+
+                        for (auto pos = last_pos; pos < sequence->size(); ++pos)
+                        {
+                            sequence->at(pos) = traits<DynamicData>::narrow<DynamicDataImpl>(
+                                DynamicDataFactory::get_instance()->create_data(element_type));
+                        }
+                    }
+
+                    ret_value = sequence->at(id)->set_sequence_values<TK>(MEMBER_ID_INVALID, value);
+                }
             }
         }
-        else
+        else if (TK_BITMASK == element_kind)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Element kind is not which expected");
+            ret_value = set_sequence_values_bitmask<TK>(MEMBER_ID_INVALID == id ? 0 : id, it, value);
+        }
+        else      // Try primitives
+        {
+            ret_value = set_sequence_values_primitive<TK>(MEMBER_ID_INVALID == id ? 0 : id, element_kind, it, value);
         }
     }
     else
@@ -5011,6 +5043,15 @@ size_t DynamicDataImpl::calculate_serialized_size(
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(
                                         value_.begin()->second), current_alignment);
                     break;
+                case TK_BITMASK:
+                {
+                    auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
+                                       value_.begin()->second)};
+                    calculated_size +=
+                            calculator.calculate_array_serialized_size(vector_t->data(),
+                                    vector_t->size(), current_alignment);
+                }
+                break;
                 default:
                     calculated_size =
                             calculator.calculate_array_serialized_size(
@@ -5411,14 +5452,13 @@ size_t DynamicDataImpl::calculate_serialized_size(
                                         value_.begin()->second), current_alignment);
                     break;
                 case TK_BITMASK:
-                case TK_BITSET:
                 {
                     uint32_t seq_length {0};
                     auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
                                        value_.begin()->second)};
                     calculated_size = calculator.calculate_serialized_size(seq_length, current_alignment);
                     calculated_size +=
-                            calculator.calculate_array_serialized_size( vector_t->data(),
+                            calculator.calculate_array_serialized_size(vector_t->data(),
                                     vector_t->size(), current_alignment);
                 }
                 break;
@@ -5715,6 +5755,13 @@ bool DynamicDataImpl::deserialize(
                                     ->
                                     second));
                     break;
+                case TK_BITMASK:
+                {
+                    auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
+                                       value_.begin()->second)};
+                    cdr.deserialize_array(vector_t->data(), vector_t->size());
+                    break;
+                }
                 default:
                     cdr.deserialize_array(*std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
                                 value_.begin()->second));
@@ -6177,7 +6224,7 @@ bool DynamicDataImpl::deserialize(
                     uint32_t sequence_length {0};
 
                     if (TK_BITMASK != element_kind &&
-                            TK_BITSET != element_kind && fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+                            fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
                     {
                         uint32_t dheader {0};
                         cdr.deserialize(dheader);
@@ -6621,6 +6668,13 @@ void DynamicDataImpl::serialize(
                     cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->
                                     second));
                     break;
+                case TK_BITMASK:
+                {
+                    auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
+                                       value_.begin()->second)};
+                    cdr.serialize_array(vector_t->data(), vector_t->size());
+                    break;
+                }
                 default:
                     cdr.serialize_array(*std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
                                 value_.begin()->second));
@@ -6970,7 +7024,7 @@ void DynamicDataImpl::serialize(
                         value_.begin()->second);
 
                     if (TK_BITMASK != element_kind &&
-                            TK_BITSET != element_kind && fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
+                            fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
                     {
                         fastcdr::Cdr::state dheader_state {cdr.allocate_xcdrv2_dheader()};
 

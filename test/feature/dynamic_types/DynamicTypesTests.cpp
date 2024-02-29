@@ -3816,7 +3816,10 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
 
     ASSERT_NE(data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_NE(data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    ASSERT_EQ(data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    Int32Seq good_seq;
+    ASSERT_EQ(data->get_int32_values(good_seq, 0), RETCODE_OK);
+    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
 
     auto seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
@@ -3841,7 +3844,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_TRUE(seq_data);
     UInt32Seq wrong_seq;
     ASSERT_NE(seq_data->get_uint32_values(wrong_seq, 0), RETCODE_OK);
-    Int32Seq good_seq;
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
     ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
@@ -4162,7 +4164,10 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
 
     ASSERT_NE(data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_NE(data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    ASSERT_EQ(data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    Int32Seq good_seq;
+    ASSERT_EQ(data->get_int32_values(good_seq, 0), RETCODE_OK);
+    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
 
     auto seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
@@ -4199,7 +4204,6 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_TRUE(seq_data);
     UInt32Seq wrong_seq;
     ASSERT_NE(seq_data->get_uint32_values(wrong_seq, 0), RETCODE_OK);
-    Int32Seq good_seq;
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
     ASSERT_EQ(good_seq, Int32Seq({1, 2}));
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
