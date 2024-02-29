@@ -27,8 +27,6 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -124,10 +122,6 @@ void RTPSDomainImpl::stopAll()
         lock.lock();
     }
 
-    // TODO(richiware) Why this layer contains calls to dynamictypes
-    // Deletes DynamicTypes and TypeObject factories
-    fastdds::dds::DynamicDataFactory::delete_instance();
-    fastdds::dds::DynamicTypeBuilderFactory::delete_instance();
     xmlparser::XMLProfileManager::DeleteInstance();
 
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");

@@ -259,7 +259,6 @@ public:
         dynamic_types_.clear();
     }
 
-    // TODO(richiware) Version for v1.3
     /**
      * Retrieves a DynamicPubSubType for the given dynamic type name.
      * Any instance retrieve by calling this method must be deleted calling the

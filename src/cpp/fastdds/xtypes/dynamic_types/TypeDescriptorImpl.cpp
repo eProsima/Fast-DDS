@@ -156,7 +156,6 @@ bool TypeDescriptorImpl::equals(
 
 bool TypeDescriptorImpl::is_consistent() noexcept
 {
-    //TODO(richiware) when dynamic_type has is_consisten.
     // Alias Types need the base type to indicate what type has been aliased.
     if (TK_ALIAS == kind_ && !base_type_)
     {
