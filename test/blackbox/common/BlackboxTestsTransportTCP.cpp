@@ -1294,7 +1294,11 @@ TEST_P(TransportTCP, large_message_large_data_send_receive)
     // Prepare data to be sent. before participants discovery so it is ready to be sent as soon as possible.
     // The writer might try to send the data before the reader has negotiated the connection.
     // If the negotiation timeout is too short, the writer will fail to send the data and the reader will not receive it.
+<<<<<<< HEAD
     // LARGE_DATA participant discovery is tipically faster than tcp negotiation.
+=======
+    // LARGE_DATA has a default 100ms timeout since its discovery is tipically faster than tcp negotiation.
+>>>>>>> bca988e8f (Refs #20508: Reuse unused transport descriptor tcp_negotiation_timeout)
     std::list<Data1mb> data;
     data = default_data300kb_data_generator(1);
 

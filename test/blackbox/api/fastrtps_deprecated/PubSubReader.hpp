@@ -760,6 +760,11 @@ public:
 
             auto data_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
             data_transport->add_listener_port(tcp_listening_port);
+            data_transport->calculate_crc = false;
+            data_transport->check_crc = false;
+            data_transport->apply_security = false;
+            data_transport->enable_tcp_nodelay = true;
+            data_transport->tcp_negotiation_timeout = 100;
             participant_attr_.rtps.userTransports.push_back(data_transport);
         }
         else
@@ -769,6 +774,11 @@ public:
 
             auto data_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
             data_transport->add_listener_port(tcp_listening_port);
+            data_transport->calculate_crc = false;
+            data_transport->check_crc = false;
+            data_transport->apply_security = false;
+            data_transport->enable_tcp_nodelay = true;
+            data_transport->tcp_negotiation_timeout = 100;
             participant_attr_.rtps.userTransports.push_back(data_transport);
         }
 

@@ -128,7 +128,7 @@ bool TCPChannelResource::is_logical_port_added(
 
 bool TCPChannelResource::wait_logical_port_under_negotiation(
         uint16_t port,
-        const std::chrono::milliseconds& timeout = std::chrono::milliseconds(0))
+        const std::chrono::milliseconds& timeout)
 {
     std::unique_lock<std::recursive_mutex> scopedLock(pending_logical_mutex_);
 

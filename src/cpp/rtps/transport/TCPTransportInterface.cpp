@@ -88,10 +88,6 @@ static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 
-FASTDDS_TODO_BEFORE(3, 0,
-        "Eliminate s_default_tcp_negotitation_timeout, variable used to initialize deprecate attribute.");
-static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
-
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , keep_alive_frequency_ms(s_default_keep_alive_frequency)
@@ -99,14 +95,13 @@ TCPTransportDescriptor::TCPTransportDescriptor()
     , max_logical_port(100)
     , logical_port_range(20)
     , logical_port_increment(2)
-    , tcp_negotiation_timeout(s_default_tcp_negotitation_timeout)
+    , tcp_negotiation_timeout(0)
     , enable_tcp_nodelay(false)
     , wait_for_tcp_negotiation(false)
     , calculate_crc(true)
     , check_crc(true)
     , apply_security(false)
     , non_blocking_send(false)
-    , wait_for_logical_port_negotiation_ms(50)
 {
 }
 
@@ -129,7 +124,6 @@ TCPTransportDescriptor::TCPTransportDescriptor(
     , keep_alive_thread(t.keep_alive_thread)
     , accept_thread(t.accept_thread)
     , non_blocking_send(t.non_blocking_send)
-    , wait_for_logical_port_negotiation_ms(t.wait_for_logical_port_negotiation_ms)
 {
 }
 
@@ -158,7 +152,6 @@ TCPTransportDescriptor& TCPTransportDescriptor::operator =(
     keep_alive_thread = t.keep_alive_thread;
     accept_thread = t.accept_thread;
     non_blocking_send = t.non_blocking_send;
-    wait_for_logical_port_negotiation_ms = t.wait_for_logical_port_negotiation_ms;
     return *this;
 }
 
@@ -181,7 +174,6 @@ bool TCPTransportDescriptor::operator ==(
            this->keep_alive_thread == t.keep_alive_thread &&
            this->accept_thread == t.accept_thread &&
            this->non_blocking_send == t.non_blocking_send &&
-           this->wait_for_logical_port_negotiation_ms == t.wait_for_logical_port_negotiation_ms &&
            SocketTransportDescriptor::operator ==(t));
 }
 
@@ -1395,13 +1387,15 @@ bool TCPTransportInterface::send(
 
         if (channel->is_logical_port_added(logical_port))
         {
-            if (!channel->is_logical_port_opened(logical_port))
+            // If tcp_negotiation_timeout is setted, wait until logical port is opened or timeout. Negative timeout means
+            // waiting indefinitely.
+            if (!channel->is_logical_port_opened(logical_port) && !configuration()->tcp_negotiation_timeout)
             {
                 // Logical port might be under negotiation. Wait a little and check again. This prevents from
                 // losing first messages.
                 scoped_lock.unlock();
                 bool logical_port_opened = channel->wait_logical_port_under_negotiation(logical_port, std::chrono::milliseconds(
-                                    configuration()->wait_for_logical_port_negotiation_ms));
+                                    configuration()->tcp_negotiation_timeout));
                 if (!logical_port_opened)
                 {
                     return success;

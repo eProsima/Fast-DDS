@@ -100,7 +100,7 @@ public:
      * Independently if being under negotiation or not, it returns true if the port is opened, false otherwise.
      *
      * @param port The logical port to check.
-     * @param timeout The maximum time to wait for the negotiation to finish (optional).
+     * @param timeout The maximum time to wait for the negotiation to finish. Zero value means no wait
      *
      * @return true if the port is opened, false otherwise.
      */
