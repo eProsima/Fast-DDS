@@ -11,6 +11,10 @@ on:
   push:
     branches:
       - 'master'
+      - '2.13.x'
+      - '2.12.x'
+      - '2.10.x'
+      - '2.6.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -19,6 +23,10 @@ on:
   pull_request:
     branches:
       - 'master'
+      - '2.13.x'
+      - '2.12.x'
+      - '2.10.x'
+      - '2.6.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
