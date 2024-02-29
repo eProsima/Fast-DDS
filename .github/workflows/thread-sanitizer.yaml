@@ -24,8 +24,6 @@ on:
       - '!**/CMakeLists.txt'
 
   pull_request:
-    branches:
-      - '2.6.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
