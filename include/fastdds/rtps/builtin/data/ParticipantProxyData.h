@@ -63,13 +63,13 @@ class ParticipantProxyData
 {
 public:
 
-    ParticipantProxyData(
+    RTPS_DllAPI ParticipantProxyData(
             const RTPSParticipantAllocationAttributes& allocation);
 
-    ParticipantProxyData(
+    RTPS_DllAPI ParticipantProxyData(
             const ParticipantProxyData& pdata);
 
-    virtual ~ParticipantProxyData();
+    RTPS_DllAPI virtual ~ParticipantProxyData();
 
     //!Protocol version
     ProtocolVersion_t m_protocolVersion;
