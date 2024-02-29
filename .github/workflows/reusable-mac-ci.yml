@@ -91,7 +91,7 @@ jobs:
             DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
             if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_2.13.x.repos"
             fi
             META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
 
@@ -100,7 +100,7 @@ jobs:
             DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
             if [ ! -f ${DEPENDS_REPOS_PATH} ]
             then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
+              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_2.13.x.repos"
             fi
             META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
           fi
