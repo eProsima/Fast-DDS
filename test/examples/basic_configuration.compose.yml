@@ -1,0 +1,25 @@
+# FASTDDS_TODO_BEFORE(3, 0, "This compose file should be used for the future configuration example");
+version: "3"
+
+services:
+  publisher:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/dds/BasicConfigurationExample
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/BasicConfigurationExample@FILE_EXTENSION@ publisher --wait 2 --samples 10 --interval 10 --reliable --transient & $${EXAMPLE_DIR}/BasicConfigurationExample@FILE_EXTENSION@ subscriber --samples 10 --reliable --transient"
+
+  subscriber:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/dds/BasicConfigurationExample@FILE_EXTENSION@
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/BasicConfigurationExample@FILE_EXTENSION@ subscriber --samples 10 --reliable --transient"

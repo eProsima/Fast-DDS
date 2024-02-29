@@ -20,6 +20,7 @@ option(PERFORMANCE_TESTS "Activate the building and execution of performance tes
 option(SYSTEM_TESTS "Activate the building and execution of system tests" OFF)
 option(PROFILING_TESTS "Activate the building and execution of profiling tests" OFF)
 option(EPROSIMA_BUILD_TESTS "Activate the building and execution unit tests and integral tests" OFF)
+option(FASTDDS_EXAMPLE_TESTS "Activate the building and execution of Fast DDS examples tests" OFF)
 
 if(EPROSIMA_BUILD)
     set(EPROSIMA_BUILD_TESTS ON)
@@ -57,6 +58,13 @@ if(EPROSIMA_BUILD_TESTS)
     if(UNIX AND NOT APPLE AND STRICT_REALTIME)
         add_subdirectory(realtime)
     endif()
+endif()
+
+###############################################################################
+# Example tests
+###############################################################################
+if (COMPILE_EXAMPLES AND FASTDDS_EXAMPLE_TESTS)
+    add_subdirectory(examples)
 endif()
 
 ###############################################################################
