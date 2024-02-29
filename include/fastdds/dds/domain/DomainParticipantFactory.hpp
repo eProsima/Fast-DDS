@@ -285,7 +285,7 @@ public:
      * Otherwise, failure of the setting operation is expected.
      *
      * @param library_settings LibrarySettings to be set.
-     * @return RETCODE_PRECONDITION_NOT_MET if any DomainParticipant is enabled.
+     * @return RETCODE_PRECONDITION_NOT_MET if any DomainParticipant is already enabled.
      *         RETCODE_OK otherwise.
      */
     RTPS_DllAPI ReturnCode_t set_library_settings(
