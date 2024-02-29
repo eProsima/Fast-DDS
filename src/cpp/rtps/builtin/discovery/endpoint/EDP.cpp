@@ -1380,7 +1380,6 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
                 {
                     found = true;
 
-                    // TODO(richiware) Implement and use move with attributes
                     if (r.matched_writer_add(remote_writer_data))
                     {
                         EPROSIMA_LOG_INFO(RTPS_EDP, "Valid Matching to local reader: " << readerGUID.entityId);
