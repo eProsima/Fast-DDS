@@ -957,7 +957,8 @@ public:
 
     PubSubWriter& setup_large_data_tcp(
             bool v6 = false,
-            const uint16_t& port = 0)
+            const uint16_t& port = 0,
+            const uint32_t& tcp_negotiation_timeout = 0)
     {
         participant_qos_.transport().use_builtin_transports = false;
 
@@ -977,7 +978,7 @@ public:
             data_transport->check_crc = false;
             data_transport->apply_security = false;
             data_transport->enable_tcp_nodelay = true;
-            data_transport->tcp_negotiation_timeout = 100;
+            data_transport->tcp_negotiation_timeout = tcp_negotiation_timeout;
             participant_qos_.transport().user_transports.push_back(data_transport);
         }
         else
@@ -991,7 +992,7 @@ public:
             data_transport->check_crc = false;
             data_transport->apply_security = false;
             data_transport->enable_tcp_nodelay = true;
-            data_transport->tcp_negotiation_timeout = 100;
+            data_transport->tcp_negotiation_timeout = tcp_negotiation_timeout;
             participant_qos_.transport().user_transports.push_back(data_transport);
         }
 

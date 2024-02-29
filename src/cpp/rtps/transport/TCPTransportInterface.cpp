@@ -1389,7 +1389,7 @@ bool TCPTransportInterface::send(
         {
             // If tcp_negotiation_timeout is setted, wait until logical port is opened or timeout. Negative timeout means
             // waiting indefinitely.
-            if (!channel->is_logical_port_opened(logical_port) && !configuration()->tcp_negotiation_timeout)
+            if (!channel->is_logical_port_opened(logical_port))
             {
                 // Logical port might be under negotiation. Wait a little and check again. This prevents from
                 // losing first messages.
