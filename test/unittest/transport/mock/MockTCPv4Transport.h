@@ -56,12 +56,15 @@ public:
     }
 
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
+            const octet* send_buffer,
             uint32_t send_buffer_size,
-            const fastrtps::rtps::Locator_t& send_resource_locator,
+            const Locator_t& send_resource_locator,
             const Locator_t& remote_locator)
     {
-        return TCPv4Transport::send(send_buffer, send_buffer_size, send_resource_locator, remote_locator);
+        eprosima::fastdds::rtps::NetworkBuffer buffers(send_buffer, send_buffer_size);
+        std::list<eprosima::fastdds::rtps::NetworkBuffer> buffer_list;
+        buffer_list.push_back(buffers);
+        return TCPv4Transport::send(buffer_list, send_buffer_size, send_resource_locator, remote_locator);
     }
 
     const std::map<Locator_t, std::set<uint16_t>>& get_channel_pending_logical_ports() const
