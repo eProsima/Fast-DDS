@@ -768,7 +768,8 @@ void sample_lost_test_dr_init(
     // We want to ensure that samples are only lost due to the custom filter we have set in sample_lost_test_dw_init.
     // Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
     // other possible loss.
-    reader.socket_buffer_size(20 * 1024 * 1024);
+    constexpr uint32_t BUFFER_SIZE = 20ul * 1024ul * 1024ul;
+    reader.socket_buffer_size(BUFFER_SIZE);
     reader.sample_lost_status_functor(functor)
             .init();
 
