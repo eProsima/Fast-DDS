@@ -29,7 +29,7 @@ TEST(RTPSDomainTests, library_settings_test)
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
 #else
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_FULL, library_settings.intraprocess_delivery);
-#endif
+#endif // if HAVE_STRICT_REALTIME
     library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY;
     // Setting the library settings within an empty RTPSDomain shall return true
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));

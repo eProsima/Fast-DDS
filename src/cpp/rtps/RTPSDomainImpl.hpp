@@ -216,16 +216,16 @@ public:
 
     /**
      * @brief Get the library settings.
-     * 
+     *
      * @param library_settings LibrarySettings reference where the settings are returned.
-     * @return True. 
+     * @return True.
      */
     static bool get_library_settings(
             fastdds::LibrarySettings& library_settings);
 
     /**
      * @brief Set the library settings-
-     * 
+     *
      * @param library_settings LibrarySettings to be set.
      * @return False if there is any RTPSParticipant already created.
      *         True if correctly set.
