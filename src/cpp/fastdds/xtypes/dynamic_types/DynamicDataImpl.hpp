@@ -593,6 +593,38 @@ private:
             SequenceTypeForKind<TK>& value,
             MemberId id) noexcept;
 
+    /*!
+     * Auxiliary template with the common code for getting the values of a bitmask sequence from a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<TypeKind TK>
+    ReturnCode_t get_sequence_values_bitmask(
+            MemberId id,
+            std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
+            SequenceTypeForKind<TK>& value,
+            size_t number_of_elements) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for getting the values of a primitive sequence from a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<TypeKind TK>
+    ReturnCode_t get_sequence_values_primitive(
+            MemberId id,
+            TypeKind element_kind,
+            std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
+            SequenceTypeForKind<TK>& value,
+            size_t number_of_elements) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for getting the values of a primitive sequence supporting promotion
+     * from a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<TypeKind TK, TypeKind ToTK>
+    ReturnCode_t get_sequence_values_promoting(
+            MemberId id,
+            std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
+            SequenceTypeForKind<TK>& value,
+            size_t number_of_elements) noexcept;
+
     template<TypeKind TK >
     ReturnCode_t get_value(
             TypeForKind<TK>& value,
@@ -639,6 +671,35 @@ private:
     template<TypeKind TK>
     ReturnCode_t set_sequence_values(
             MemberId id,
+            const SequenceTypeForKind<TK>& value) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for setting the values of a bitmask sequence into a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<TypeKind TK>
+    ReturnCode_t set_sequence_values_bitmask(
+            MemberId id,
+            std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
+            const SequenceTypeForKind<TK>& value) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for setting the values of a primitive sequence into a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<TypeKind TK>
+    ReturnCode_t set_sequence_values_primitive(
+            MemberId id,
+            TypeKind element_kind,
+            std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
+            const SequenceTypeForKind<TK>& value) noexcept;
+
+    /*!
+     * Auxiliary template with the common code for setting the values of a primitive sequence supporting promotion
+     * into a TK_ARRAY or TK_SEQUENCE.
+     */
+    template<TypeKind TK, TypeKind ToTK>
+    ReturnCode_t set_sequence_values_promoting(
+            MemberId id,
+            std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
             const SequenceTypeForKind<TK>& value) noexcept;
 
 
