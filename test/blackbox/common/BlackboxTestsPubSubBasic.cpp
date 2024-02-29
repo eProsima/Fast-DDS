@@ -544,6 +544,15 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
 
     Locator_t LocatorBuffer;
 
+    // Set statistics properties manually to ensure a fixed size of participant properties
+    PropertyPolicy property_policy;
+    property_policy.properties().emplace_back(
+        eprosima::fastdds::dds::parameter_policy_physical_data_host, "test_host");
+    property_policy.properties().emplace_back(
+        eprosima::fastdds::dds::parameter_policy_physical_data_user, "test_user");
+    property_policy.properties().emplace_back(
+        eprosima::fastdds::dds::parameter_policy_physical_data_process, "test_process");
+
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     LocatorList_t WriterUnicastLocators;
@@ -559,7 +568,8 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     writer.static_discovery("file://PubSubWriter.xml").
             unicastLocatorList(WriterUnicastLocators).multicastLocatorList(WriterMulticastLocators).
             setPublisherIDs(1,
-            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            2).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
+            .property_policy(property_policy).init();
 
     ASSERT_TRUE(writer.isInitialized());
 
@@ -573,12 +583,29 @@ TEST_P(PubSubBasic, ReceivedPropertiesDataWithinSizeLimit)
     LocatorBuffer.port = static_cast<uint16_t>(MULTICAST_PORT_RANDOM_NUMBER);
     ReaderMulticastLocators.push_back(LocatorBuffer);
 
-    //Expected properties have exactly size 92
-    reader.properties_max_size(92).
+    // The calculation of the exact maximum properties size has been done according to the following table
+    //
+    // | Type  | Value                               | Size | Alignment | Extra | Total |
+    // |-------|-------------------------------------|------|-----------|-------|-------|
+    // | key   | PARTICIPANT_TYPE                    |   17 |         3 |     4 |    24 |
+    // | value | SIMPLE                              |    7 |         1 |     4 |    12 |
+    // | key   | fastdds.physical_data.host          |   27 |         1 |     4 |    32 |
+    // | value | test_host                           |   10 |         2 |     4 |    16 |
+    // | key   | fastdds.physical_data.user          |   27 |         1 |     4 |    32 |
+    // | value | test_user                           |   10 |         2 |     4 |    16 |
+    // | key   | fastdds.physical_data.process       |   30 |         2 |     4 |    36 |
+    // | value | test_process                        |   13 |         3 |     4 |    20 |
+    // | key   | eProsimaEDPStatic_Writer_ALIVE_ID_1 |   36 |         0 |     4 |    40 |
+    // | value | 0.0.2.3                             |    8 |         0 |     4 |    12 |
+    //
+    // Total: 240 Bytes
+
+    reader.properties_max_size(240).
             static_discovery("file://PubSubReader.xml").
             unicastLocatorList(ReaderUnicastLocators).multicastLocatorList(ReaderMulticastLocators).
             setSubscriberIDs(3,
-            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER).init();
+            4).setManualTopicName(std::string("BlackBox_StaticDiscovery_") + TOPIC_RANDOM_NUMBER)
+            .property_policy(property_policy).init();
 
     ASSERT_TRUE(reader.isInitialized());
 
