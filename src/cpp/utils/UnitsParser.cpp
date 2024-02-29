@@ -17,6 +17,14 @@
  *
  */
 
+#include <algorithm>
+#include <cstdint>
+#include <limits>
+#include <map>
+#include <set>
+#include <regex>
+#include <stdexcept>
+
 #include <fastrtps/utils/UnitsParser.hpp>
 
 namespace eprosima {
@@ -28,7 +36,7 @@ void to_uppercase(
         std::string& st) noexcept
 {
     std::transform(st.begin(), st.end(), st.begin(),
-            [](unsigned char c)
+            [](int c)
             {
                 return static_cast<char>(std::toupper(c));
             });

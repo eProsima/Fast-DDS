@@ -20,15 +20,7 @@
 #define _FASTDDS_UTILS_UNITS_PARSER_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <algorithm>
-#include <cstdint>
-#include <limits>
-#include <map>
-#include <set>
-#include <regex>
-#include <stdexcept>
 #include <string>
-#include <ctype.h>
 
 namespace eprosima {
 namespace fastdds {
