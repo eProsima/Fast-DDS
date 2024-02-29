@@ -58,7 +58,7 @@ namespace types {
 
 /*!
  * @brief This class represents the structure ExtendedAnnotationParameterValue defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class ExtendedAnnotationParameterValue
 {
@@ -160,7 +160,7 @@ private:
 };
 /*!
  * @brief This class represents the union AnnotationParameterValue defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class AnnotationParameterValue
 {
@@ -813,7 +813,7 @@ private:
 
 /*!
  * @brief This class represents the structure AppliedAnnotationParameter defined by the user in the IDL file.
- * @ingroup ANNOTATIONPARAMETERVALUE
+ * @ingroup TYPES_MODULE
  */
 class AppliedAnnotationParameter
 {

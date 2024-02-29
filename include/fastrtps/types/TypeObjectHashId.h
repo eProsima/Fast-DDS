@@ -28,13 +28,11 @@
 #include <string>
 #include <vector>
 
-namespace eprosima
-{
-    namespace fastcdr
-    {
-        class Cdr;
-    }
-}
+namespace eprosima {
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
+} // namespace eprosima
 
 // The types in this file shall be serialized with XCDR encoding version 2
 namespace eprosima {
@@ -48,7 +46,7 @@ typedef octet EquivalenceHash[14];
 
 /*!
  * @brief This class represents the union TypeObjectHashId defined by the user in the IDL file.
- * @ingroup TYPEOBJECTHASHID
+ * @ingroup TYPES_MODULE
  */
 class TypeObjectHashId
 {
@@ -68,32 +66,37 @@ public:
      * @brief Copy constructor.
      * @param x Reference to the object TypeObjectHashId that will be copied.
      */
-    TypeObjectHashId(const TypeObjectHashId &x);
+    TypeObjectHashId(
+            const TypeObjectHashId& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object TypeObjectHashId that will be copied.
      */
-    TypeObjectHashId(TypeObjectHashId &&x);
+    TypeObjectHashId(
+            TypeObjectHashId&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object TypeObjectHashId that will be copied.
      */
-    TypeObjectHashId& operator=(const TypeObjectHashId &x);
+    TypeObjectHashId& operator =(
+            const TypeObjectHashId& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeObjectHashId that will be copied.
      */
-    TypeObjectHashId& operator=(TypeObjectHashId &&x);
+    TypeObjectHashId& operator =(
+            TypeObjectHashId&& x);
 
     /*!
      * @brief This function sets the discriminator value.
      * @param __d New value for the discriminator.
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
-    void _d(uint8_t __d);
+    void _d(
+            uint8_t __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
@@ -111,13 +114,15 @@ public:
      * @brief This function copies the value in member hash
      * @param _hash New value to be copied in member hash
      */
-    void hash(const EquivalenceHash &_hash);
+    void hash(
+            const EquivalenceHash& _hash);
 
     /*!
      * @brief This function moves the value in member hash
      * @param _hash New value to be moved in member hash
      */
-    void hash(EquivalenceHash &&_hash);
+    void hash(
+            EquivalenceHash&& _hash);
 
     /*!
      * @brief This function returns a constant reference to member hash
@@ -139,20 +144,24 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    static size_t getCdrSerializedSize(const TypeObjectHashId& data, size_t current_alignment = 0);
+    static size_t getCdrSerializedSize(
+            const TypeObjectHashId& data,
+            size_t current_alignment = 0);
 
 
     /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serialize(eprosima::fastcdr::Cdr &cdr) const;
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
 
     /*!
      * @brief This function deserializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void deserialize(eprosima::fastcdr::Cdr &cdr);
+    void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
 
 
 
@@ -162,7 +171,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Maximum serialized size.
      */
-    static size_t getKeyMaxCdrSerializedSize(size_t current_alignment = 0);
+    static size_t getKeyMaxCdrSerializedSize(
+            size_t current_alignment = 0);
 
     /*!
      * @brief This function tells you if the Key has been defined for this type
@@ -173,9 +183,11 @@ public:
      * @brief This function serializes the key members of an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
-    void serializeKey(eprosima::fastcdr::Cdr &cdr) const;
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
 
 private:
+
     uint8_t m__d;
 
     EquivalenceHash m_hash;
