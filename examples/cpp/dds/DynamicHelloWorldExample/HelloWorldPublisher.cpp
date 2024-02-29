@@ -190,20 +190,23 @@ void HelloWorldPublisher::runThread(
             else
             {
                 std::string message;
-                m_Hello->get_string_value(message, 0);
+                m_Hello->get_string_value(message, m_Hello->get_member_id_by_name("message"));
                 uint32_t index {0};
-                m_Hello->get_uint32_value(index, 1);
+                m_Hello->get_uint32_value(index, m_Hello->get_member_id_by_name("index"));
+                UInt32Seq array;
+                m_Hello->get_uint32_values(array, m_Hello->get_member_id_by_name("array"));
                 std::string aux_array = "[";
-                DynamicData::_ref_type array {m_Hello->loan_value(2)};
+
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
                     for (uint32_t j = 0; j < 2; ++j)
                     {
-                        aux_array += std::to_string((i * 5) + j) + (j == 1 ? "]" : ", ");
+                        aux_array += std::to_string(array.at((i * 5) + j)) + (j == 1 ? "]" : ", ");
                     }
                     aux_array += (i == 4 ? "]" : "], ");
                 }
+
                 std::cout << "Message: " << message << " with index: " << index
                           << " array: " << aux_array << " SENT" << std::endl;
             }
