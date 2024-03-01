@@ -2146,58 +2146,94 @@ TEST_F(TCPv4Tests, opening_output_channel_with_same_locator_as_local_listening_p
     ASSERT_EQ(send_resource_list.size(), 2u);
 }
 
-// This test verifies that the send resource list is correctly cleaned and the channel resource is removed
-// from the channel_resources_map.
+// This test verifies that the send resource list is correctly cleaned both in LAN and WAN cases.
 TEST_F(TCPv4Tests, remove_from_send_resource_list)
 {
-    TCPv4TransportDescriptor send_descriptor;
-    MockTCPv4Transport send_transport_under_test(send_descriptor);
-    send_transport_under_test.init();
+    // Three scenarios are considered: LAN, WAN1 and WAN2
+    // LAN: The remote locator is in the same LAN as the local locator
+    // WAN1: The remote locator is in a different LAN than the local locator, and initial peers have LAN and WAN remote addresses.
+    // WAN2: The remote locator is in a different LAN than the local locator, and initial peers have WANtoLANLocator ([0][WAN] address).
+    std::vector<std::string> test_cases = {
+        "LAN",
+        "WAN1",
+        "WAN2"
+    };
 
-    Locator_t output_locator_1;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port, output_locator_1);
-    IPLocator::setLogicalPort(output_locator_1, 7410);
+    for (const std::string& test_case : test_cases)
+    {
+        TCPv4TransportDescriptor send_descriptor;
 
-    Locator_t output_locator_2;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port + 1, output_locator_2);
-    IPLocator::setLogicalPort(output_locator_2, 7410);
+        MockTCPv4Transport send_transport_under_test(send_descriptor);
+        send_transport_under_test.init();
 
-    LocatorList_t initial_peer_list;
-    initial_peer_list.push_back(output_locator_2);
+        Locator_t discovery_locator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port, discovery_locator);
+        IPLocator::setLogicalPort(discovery_locator, 7410);
 
-    SendResourceList send_resource_list;
-    ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_1));
-    ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_2));
-    ASSERT_EQ(send_resource_list.size(), 2u);
+        Locator_t initial_peer_locator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port + 1, initial_peer_locator);
+        IPLocator::setLogicalPort(initial_peer_locator, 7410);
+        LocatorList_t initial_peer_list;
 
-    // Using a wrong locator should not remove the channel resource
-    LocatorList_t wrong_remote_participant_physical_locators;
-    Locator_t wrong_output_locator;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port + 2, wrong_output_locator);
-    IPLocator::setLogicalPort(wrong_output_locator, 7410);
-    wrong_remote_participant_physical_locators.push_back(wrong_output_locator);
-    send_transport_under_test.CloseOutputChannel(
-        send_resource_list,
-        wrong_remote_participant_physical_locators,
-        initial_peer_list);
-    ASSERT_EQ(send_resource_list.size(), 2u);
+        if (test_case == "WAN1" || test_case == "WAN2")
+        {
+            IPLocator::setWan(discovery_locator, g_test_wan_address);
+            IPLocator::setWan(initial_peer_locator, g_test_wan_address);
 
-    // Using the correct locator should remove the channel resource
-    LocatorList_t remote_participant_physical_locators;
-    remote_participant_physical_locators.push_back(output_locator_1);
-    send_transport_under_test.CloseOutputChannel(
-        send_resource_list,
-        remote_participant_physical_locators,
-        initial_peer_list);
-    ASSERT_EQ(send_resource_list.size(), 1u);
+            if (test_case == "WAN2")
+            {
+                initial_peer_locator = IPLocator::WanToLanLocator(initial_peer_locator);
+            }
+        }
 
-    // Using the initial peer locator should not remove the channel resource
-    remote_participant_physical_locators.clear();
-    send_transport_under_test.CloseOutputChannel(
-        send_resource_list,
-        remote_participant_physical_locators,
-        initial_peer_list);
-    ASSERT_EQ(send_resource_list.size(), 1u);
+        initial_peer_list.push_back(initial_peer_locator);
+
+        SendResourceList send_resource_list;
+        ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, discovery_locator));
+        ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, initial_peer_locator));
+        ASSERT_EQ(send_resource_list.size(), 2u);
+
+        // Using a wrong locator should not remove the channel resource
+        LocatorList_t wrong_remote_participant_physical_locators;
+        Locator_t wrong_output_locator;
+        IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port + 2, wrong_output_locator);
+        IPLocator::setLogicalPort(wrong_output_locator, 7410);
+
+        if (test_case == "WAN1" || test_case == "WAN2")
+        {
+            IPLocator::setWan(wrong_output_locator, g_test_wan_address);
+        }
+        wrong_remote_participant_physical_locators.push_back(wrong_output_locator);
+        send_transport_under_test.CloseOutputChannel(
+            send_resource_list,
+            wrong_remote_participant_physical_locators,
+            initial_peer_list);
+        ASSERT_EQ(send_resource_list.size(), 2);
+
+        // Using the correct locator should remove the channel resource
+        LocatorList_t remote_participant_physical_locators;
+        remote_participant_physical_locators.push_back(discovery_locator);
+        send_transport_under_test.CloseOutputChannel(
+            send_resource_list,
+            remote_participant_physical_locators,
+            initial_peer_list);
+        ASSERT_EQ(send_resource_list.size(), 1);
+
+        // Using the initial peer locator should not remove the channel resource
+        remote_participant_physical_locators.clear();
+        if (test_case == "WAN2")
+        {
+            // In WAN2, the remote_participant_physical_locators are the real Locators, not the WANtoLANLocators.
+            IPLocator::setIPv4(initial_peer_locator, "127.0.0.1");
+            IPLocator::setWan(initial_peer_locator, g_test_wan_address);
+        }
+        remote_participant_physical_locators.push_back(initial_peer_locator);
+        send_transport_under_test.CloseOutputChannel(
+            send_resource_list,
+            remote_participant_physical_locators,
+            initial_peer_list);
+        ASSERT_EQ(send_resource_list.size(), 1);
+    }
 }
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()

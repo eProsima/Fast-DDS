@@ -1871,6 +1871,14 @@ void TCPTransportInterface::CloseOutputChannel(
     for (const Locator& remote_participant_locator : remote_participant_locators)
     {
         remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
+
+        // Also add the WANtoLANLocator ([0][WAN] address) if the remote locator is a WAN locator. In WAN scenario,
+        //initial peer can also work with the WANtoLANLocator of the remote participant.
+        if (IPLocator::hasWan(remote_participant_locator))
+        {
+            remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(IPLocator::WanToLanLocator(
+                        remote_participant_locator)));
+        }
     }
 
     // Exlude initial peers.
