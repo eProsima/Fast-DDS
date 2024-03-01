@@ -627,7 +627,8 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data_with_tcp_negotiat
 
 TEST(ChainingTransportTests, builtin_transports_env_large_data_with_all_options)
 {
-    BuiltinTransportsTest::test_env("LARGE_DATA?max_msg_size=70KB&sockets_size=70KB&non_blocking=true&tcp_negotiation_timeout=50");
+    BuiltinTransportsTest::test_env(
+        "LARGE_DATA?max_msg_size=70KB&sockets_size=70KB&non_blocking=true&tcp_negotiation_timeout=50");
 }
 
 #ifndef __APPLE__

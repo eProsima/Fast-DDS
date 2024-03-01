@@ -100,7 +100,8 @@ static void set_builtin_transports_from_env_var(
     if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
     {
         std::regex COMMON_REGEX(R"((\w+))");
-        std::regex OPTIONS_REGEX(R"((\w+)\?(((max_msg_size|sockets_size)=(\d+)(\w*)&?)|(non_blocking=(\w+)&?)|(tcp_negotiation_timeout=(\d+)&?)){0,4})");
+        std::regex OPTIONS_REGEX(
+            R"((\w+)\?(((max_msg_size|sockets_size)=(\d+)(\w*)&?)|(non_blocking=(\w+)&?)|(tcp_negotiation_timeout=(\d+)&?)){0,4})");
         std::smatch mr;
 
         if (std::regex_match(env_value, COMMON_REGEX, std::regex_constants::match_not_null))
