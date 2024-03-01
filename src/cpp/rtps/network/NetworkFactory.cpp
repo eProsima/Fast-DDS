@@ -18,6 +18,7 @@
 #include <utility>
 
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -471,20 +472,20 @@ void NetworkFactory::update_network_interfaces()
     }
 }
 
-void NetworkFactory::remove_from_send_resource_list(
+void NetworkFactory::remove_participant_associated_send_resources(
         SendResourceList& send_resource_list,
-        std::set<Locator_t>& remote_participant_physical_locators) const
+        const LocatorList_t& remote_participant_locators,
+        const LocatorList_t& participant_initial_peers) const
 {
     for (auto& transport : mRegisteredTransports)
     {
-        if (transport->kind() == LOCATOR_KIND_TCPv4 ||
-                transport->kind() == LOCATOR_KIND_TCPv6)
+        TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
+        if (tcp_transport)
         {
-            TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
-            if (tcp_transport)
-            {
-                tcp_transport->remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
-            }
+            tcp_transport->CloseOutputChannel(
+                send_resource_list,
+                remote_participant_locators,
+                participant_initial_peers);
         }
     }
 }

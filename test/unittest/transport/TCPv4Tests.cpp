@@ -21,6 +21,7 @@
 #include "mock/MockTCPChannelResource.h"
 #include "mock/MockTCPv4Transport.h"
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -1200,7 +1201,7 @@ TEST_F(TCPv4Tests, send_and_receive_between_secure_clients_1)
         senderThread->join();
         sem.wait();
     }
-    ASSERT_TRUE(sendTransportUnderTest2.CloseOutputChannel(outputLocator));
+    ASSERT_TRUE(sendTransportUnderTest2.SenderResourceHasBeenClosed(outputLocator));
    }
  */
 
@@ -2149,35 +2150,54 @@ TEST_F(TCPv4Tests, opening_output_channel_with_same_locator_as_local_listening_p
 // from the channel_resources_map.
 TEST_F(TCPv4Tests, remove_from_send_resource_list)
 {
-    TCPv4TransportDescriptor recvDescriptor;
-    recvDescriptor.add_listener_port(g_default_port);
-    MockTCPv4Transport receiveTransportUnderTest(recvDescriptor);
-    receiveTransportUnderTest.init();
+    TCPv4TransportDescriptor send_descriptor;
+    MockTCPv4Transport send_transport_under_test(send_descriptor);
+    send_transport_under_test.init();
 
-    TCPv4TransportDescriptor sendDescriptor;
-    MockTCPv4Transport sendTransportUnderTest(sendDescriptor);
-    sendTransportUnderTest.init();
+    Locator_t output_locator_1;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port, output_locator_1);
+    IPLocator::setLogicalPort(output_locator_1, 7410);
 
-    Locator_t outputLocator;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port, outputLocator);
-    IPLocator::setLogicalPort(outputLocator, 7410);
+    Locator_t output_locator_2;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port + 1, output_locator_2);
+    IPLocator::setLogicalPort(output_locator_2, 7410);
+
+    LocatorList_t initial_peer_list;
+    initial_peer_list.push_back(output_locator_2);
 
     SendResourceList send_resource_list;
-    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+    ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_1));
+    ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_2));
+    ASSERT_EQ(send_resource_list.size(), 2u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // Using a wrong locator should not remove the channel resource
+    LocatorList_t wrong_remote_participant_physical_locators;
+    Locator_t wrong_output_locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv4, "127.0.0.1", g_default_port + 2, wrong_output_locator);
+    IPLocator::setLogicalPort(wrong_output_locator, 7410);
+    wrong_remote_participant_physical_locators.push_back(wrong_output_locator);
+    send_transport_under_test.CloseOutputChannel(
+        send_resource_list,
+        wrong_remote_participant_physical_locators,
+        initial_peer_list);
+    ASSERT_EQ(send_resource_list.size(), 2u);
 
-    ASSERT_FALSE(send_resource_list.empty());
-
-    // Using a wrong locator (for example the non-physical locator) should not remove the channel resource
-    std::set<Locator_t> remote_participant_physical_locators;
-    remote_participant_physical_locators.insert(outputLocator);
-    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
-    ASSERT_FALSE(send_resource_list.empty());
     // Using the correct locator should remove the channel resource
-    remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(outputLocator));
-    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
-    ASSERT_TRUE(send_resource_list.empty());
+    LocatorList_t remote_participant_physical_locators;
+    remote_participant_physical_locators.push_back(output_locator_1);
+    send_transport_under_test.CloseOutputChannel(
+        send_resource_list,
+        remote_participant_physical_locators,
+        initial_peer_list);
+    ASSERT_EQ(send_resource_list.size(), 1u);
+
+    // Using the initial peer locator should not remove the channel resource
+    remote_participant_physical_locators.clear();
+    send_transport_under_test.CloseOutputChannel(
+        send_resource_list,
+        remote_participant_physical_locators,
+        initial_peer_list);
+    ASSERT_EQ(send_resource_list.size(), 1u);
 }
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()

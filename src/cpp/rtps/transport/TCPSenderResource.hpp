@@ -39,7 +39,7 @@ public:
         // Implementation functions are bound to the right transport parameters
         clean_up = [this, &transport]()
                 {
-                    transport.CloseOutputChannel(locator_);
+                    transport.SenderResourceHasBeenClosed(locator_);
                 };
 
         send_lambda_ = [this, &transport](

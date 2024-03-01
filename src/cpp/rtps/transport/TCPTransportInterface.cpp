@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstring>
 #include <map>
+#include <set>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -647,7 +648,7 @@ bool TCPTransportInterface::transform_remote_locator(
     return false;
 }
 
-void TCPTransportInterface::CloseOutputChannel(
+void TCPTransportInterface::SenderResourceHasBeenClosed(
         fastrtps::rtps::Locator_t& locator)
 {
     // The TCPSendResource associated channel cannot be removed from the channel_resources_ map. On transport's destruction
@@ -655,15 +656,17 @@ void TCPTransportInterface::CloseOutputChannel(
     // socket and keep a connection status of eEstablished. This would prevent new connect calls since it thinks it's already
     // connected.
     // If moving this unbind send with the respective channel disconnection to this point, the following problem arises:
-    // If receiving a CloseOutputChannel call after receiving an unbinding message from a remote participant (our participant
+    // If receiving a SenderResourceHasBeenClosed call after receiving an unbinding message from a remote participant (our participant
     // isn't disconnecting but we want to erase this send resource), the channel cannot be disconnected here since the listening thread is
     // taken the read mutex (permanently waiting at read asio layer). This mutex is also needed to disconnect the socket (deadlock).
     // Socket disconnection should always be done in the listening thread (or in the transport cleanup, when receiver resources have
     // already been destroyed and the listening thread had consequently finished).
+    // Therefore, to guarantee expected behavior, at this point the channel resource associated to the send resource has to be found.
+    // Additionally, the send resource locator is invalidated to prevent further use of associated channel.
     std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
     auto channel_resource = channel_resources_.find(locator);
     assert(channel_resource != channel_resources_.end());
-    (void)channel_resource;
+    static_cast<void>(channel_resource);
     LOCATOR_INVALID(locator);
 }
 
@@ -1858,12 +1861,34 @@ void TCPTransportInterface::fill_local_physical_port(
     }
 }
 
-void TCPTransportInterface::remove_from_send_resource_list(
+void TCPTransportInterface::CloseOutputChannel(
         SendResourceList& send_resource_list,
-        std::set<Locator>& remote_participant_physical_locators) const
+        const LocatorList& remote_participant_locators,
+        const LocatorList& participant_initial_peers) const
 {
-    for (auto& remote_participant_physical_locator : remote_participant_physical_locators)
+    // Since send resources handle physical locators, we need to convert the remote participant locators to physical
+    std::set<Locator> remote_participant_physical_locators;
+    for (const Locator& remote_participant_locator : remote_participant_locators)
     {
+        remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
+    }
+
+    // Exlude initial peers.
+    for (const auto& initial_peer : participant_initial_peers)
+    {
+        if (std::find(remote_participant_physical_locators.begin(), remote_participant_physical_locators.end(),
+                IPLocator::toPhysicalLocator(initial_peer)) != remote_participant_physical_locators.end())
+        {
+            remote_participant_physical_locators.erase(IPLocator::toPhysicalLocator(initial_peer));
+        }
+    }
+
+    for (const auto& remote_participant_physical_locator : remote_participant_physical_locators)
+    {
+        if (!IsLocatorSupported(remote_participant_physical_locator))
+        {
+            continue;
+        }
         // Remove send resources for the associated remote participant locator
         for (auto it = send_resource_list.begin(); it != send_resource_list.end();)
         {
@@ -1874,7 +1899,6 @@ void TCPTransportInterface::remove_from_send_resource_list(
                 if (tcp_sender_resource->locator() == remote_participant_physical_locator)
                 {
                     it = send_resource_list.erase(it);
-                    std::cout << "size of send_resource_list: " << send_resource_list.size() << std::endl;
                     continue;
                 }
             }

@@ -44,6 +44,8 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 
+#include <fastdds/rtps/common/LocatorList.hpp>
+
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 #include "fastrtps/utils/shared_mutex.hpp"
@@ -1240,18 +1242,18 @@ bool PDP::remove_remote_participant(
         this->mp_mutex->lock();
 
         // Delete from sender resource list (TCP only)
-        std::set<Locator_t> remote_participant_physical_locators;
-        for (auto& remote_participant_locator : pdata->default_locators.unicast)
+        LocatorList_t remote_participant_locators;
+        for (auto& remote_participant_default_locator : pdata->default_locators.unicast)
         {
-            if (remote_participant_locator.kind == LOCATOR_KIND_TCPv4 ||
-                    remote_participant_locator.kind == LOCATOR_KIND_TCPv6)
-            {
-                remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
-            }
+            remote_participant_locators.push_back(remote_participant_default_locator);
         }
-        if (!remote_participant_physical_locators.empty())
+        for (auto& remote_participant_metatraffic_locator : pdata->metatraffic_locators.unicast)
         {
-            mp_RTPSParticipant->remove_from_send_resource_list(remote_participant_physical_locators);
+            remote_participant_locators.push_back(remote_participant_metatraffic_locator);
+        }
+        if (!remote_participant_locators.empty())
+        {
+            mp_RTPSParticipant->update_removed_participant(remote_participant_locators);
         }
 
         // Return reader proxy objects to pool

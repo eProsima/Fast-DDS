@@ -51,6 +51,8 @@
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulPersistentWriter.h>
 
+#include <fastdds/rtps/common/LocatorList.hpp>
+
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -2982,23 +2984,16 @@ bool RTPSParticipantImpl::should_match_local_endpoints(
     return should_match_local_endpoints;
 }
 
-void RTPSParticipantImpl::remove_from_send_resource_list(
-        std::set<Locator_t>& remote_participant_physical_locators)
+void RTPSParticipantImpl::update_removed_participant(
+        LocatorList_t& remote_participant_locators)
 {
-    // Exlude initial peer locators from remote_participant_physical_locators
-    for (auto& initial_peer : m_att.builtin.initialPeersList)
-    {
-        Locator_t initial_peer_physical_locator = IPLocator::toPhysicalLocator(initial_peer);
-        if (std::find(remote_participant_physical_locators.begin(), remote_participant_physical_locators.end(),
-                initial_peer_physical_locator) != remote_participant_physical_locators.end())
-        {
-            remote_participant_physical_locators.erase(initial_peer_physical_locator);
-        }
-    }
-    if (!remote_participant_physical_locators.empty())
+    if (!remote_participant_locators.empty())
     {
         std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
-        m_network_Factory.remove_from_send_resource_list(send_resource_list_, remote_participant_physical_locators);
+        m_network_Factory.remove_participant_associated_send_resources(
+            send_resource_list_,
+            remote_participant_locators,
+            m_att.builtin.initialPeersList);
     }
 }
 

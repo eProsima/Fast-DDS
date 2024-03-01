@@ -945,8 +945,38 @@ TEST_P(TransportTCP, send_resource_cleanup)
 
     // Server
     // Create a server with two transports, one of which uses a DatagramInjectionTransportDescriptor
-    // which heritates from ChainingTransportDescriptor. This will allow us to get send_resource_list_
-    // from the server participant when its transport gets its OpenOutputChannel() method called.
+    // which heritates from ChainingTransportDescriptor. The low level transport of this chaining transport will be UDP.
+    // This will allow us to get send_resource_list_ from the server participant when UDP transport gets its OpenOutputChannel()
+    // method called. This should happen after TCP transports connection is established. We can then see how many TCP send
+    // resources exist.
+    // For the cleanup test we follow that same procedure. Firstly we destroy both participants and then instantiate a new
+    // UDP participant. The send resource list will get updated with no TCP send resource.
+    //  __________________________________________________________              _____________________
+    // |                   Server                                 |            |       Client        |
+    // |                                                          |            |                     |
+    // |    SendResourceList                                      |            |                     |
+    // |          |                                               |            |                     |
+    // |        Empty                                             |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - TCPv4 init()                     |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - ChainingTransport(UDP) init()    |            |                     |
+    // |          |                                               |            |                     |
+    // |        1 TCP            <------------------------------------------------- TCPv4 init()     |
+    // |          |                                               |            |                     |
+    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     | 
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
+    // |          |                                               |            |                     |
+    // |        Empty           <-------------------------------------------------- clean transports |
+    // |          |                                               |            |                     |
+    // |        1 UDP           - ChainingTransport(UDP)  <------------------------ UDPv4 init()     | 
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 0        get_send_resource_list()   |            |                     |
+    // |__________________________________________________________|            |_____________________|  
+    //
     uint16_t server_port = 10000;
     test_transport_->add_listener_port(server_port);
     auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
@@ -1055,6 +1085,35 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
     // Create a client with two transports, one of which uses a DatagramInjectionTransportDescriptor
     // which heritates from ChainingTransportDescriptor. This will allow us to get send_resource_list_
     // from the client participant when its transport gets its OpenOutputChannel() method called.
+
+    //  __________________________________________________________              _____________________
+    // |                   Server                                 |            |       Client        |
+    // |                                                          |            |                     |
+    // |    SendResourceList                                      |            |                     |
+    // |          |                                               |            |                     |
+    // |        Empty                                             |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - TCPv4 init()                     |            |                     |
+    // |          |                                               |            |                     |
+    // |          |            - ChainingTransport(UDP) init()    |            |                     |
+    // |          |                                               |            |                     |
+    // |        1 TCP            <------------------------------------------------- TCPv4 init()     |
+    // |          |                                               |            |                     |
+    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     | 
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
+    // |          |                                               |            |                     |
+    // |  1 TCP (initial peer)  <-------------------------------------------------- clean transports |
+    // |          |                                               |            |                     |
+    // |    1 TCP + 1 UDP       - ChainingTransport(UDP)  <------------------------ UDPv4 init()     | 
+    // |          |                                               |            |                     |
+    // |          |             - ChainingTransport->             |            |                     |
+    // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
+    // |     (initial peer)                                       |            |                     |
+    // |__________________________________________________________|            |_____________________| 
+    //
+
     uint16_t server_port = 10000;
     LocatorList_t initial_peer_list;
     Locator_t initialPeerLocator;

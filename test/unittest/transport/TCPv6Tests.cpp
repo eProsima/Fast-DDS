@@ -20,6 +20,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
@@ -143,9 +144,9 @@ TEST_F(TCPv6Tests, opening_and_closing_output_channel)
        ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
        ASSERT_TRUE  (transportUnderTest.OpenOutputChannel(genericOutputChannelLocator));
        ASSERT_TRUE  (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_TRUE  (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+       ASSERT_TRUE  (transportUnderTest.SenderResourceHasBeenClosed(genericOutputChannelLocator));
        ASSERT_FALSE (transportUnderTest.IsOutputChannelOpen(genericOutputChannelLocator));
-       ASSERT_FALSE (transportUnderTest.CloseOutputChannel(genericOutputChannelLocator));
+       ASSERT_FALSE (transportUnderTest.SenderResourceHasBeenClosed(genericOutputChannelLocator));
      */
 }
 
@@ -500,217 +501,60 @@ TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_p
 // from the channel_resources_map.
 TEST_F(TCPv6Tests, remove_from_send_resource_list)
 {
-    TCPv6TransportDescriptor recvDescriptor;
-    recvDescriptor.add_listener_port(g_default_port);
-    MockTCPv6Transport receiveTransportUnderTest(recvDescriptor);
-    receiveTransportUnderTest.init();
+    TCPv6TransportDescriptor send_descriptor;
+    MockTCPv6Transport send_transport_under_test(send_descriptor);
+    send_transport_under_test.init();
 
-    TCPv6TransportDescriptor sendDescriptor;
-    MockTCPv6Transport sendTransportUnderTest(sendDescriptor);
-    sendTransportUnderTest.init();
+    Locator_t output_locator_1;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", g_default_port, output_locator_1);
+    IPLocator::setLogicalPort(output_locator_1, 7410);
 
-    Locator_t outputLocator;
-    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", g_default_port, outputLocator);
-    IPLocator::setLogicalPort(outputLocator, 7410);
+    Locator_t output_locator_2;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", g_default_port + 1, output_locator_2);
+    IPLocator::setLogicalPort(output_locator_2, 7410);
+
+    LocatorList_t initial_peer_list;
+    initial_peer_list.push_back(output_locator_2);
 
     SendResourceList send_resource_list;
-    ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(send_resource_list, outputLocator));
+    ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_1));
+    ASSERT_TRUE(send_transport_under_test.OpenOutputChannel(send_resource_list, output_locator_2));
+    ASSERT_EQ(send_resource_list.size(), 2u);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // Using a wrong locator should not remove the channel resource
+    LocatorList_t wrong_remote_participant_physical_locators;
+    Locator_t wrong_output_locator;
+    IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", g_default_port + 2, wrong_output_locator);
+    IPLocator::setLogicalPort(wrong_output_locator, 7410);
+    wrong_remote_participant_physical_locators.push_back(wrong_output_locator);
+    send_transport_under_test.CloseOutputChannel(
+        send_resource_list,
+        wrong_remote_participant_physical_locators,
+        initial_peer_list);
+    ASSERT_EQ(send_resource_list.size(), 2u);
 
-    ASSERT_FALSE(send_resource_list.empty());
-
-    // Using a wrong locator (for example the non-physical locator) should not remove the channel resource
-    std::set<Locator_t> remote_participant_physical_locators;
-    remote_participant_physical_locators.insert(outputLocator);
-    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
-    ASSERT_FALSE(send_resource_list.empty());
     // Using the correct locator should remove the channel resource
-    remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(outputLocator));
-    sendTransportUnderTest.remove_from_send_resource_list(send_resource_list, remote_participant_physical_locators);
-    ASSERT_TRUE(send_resource_list.empty());
+    LocatorList_t remote_participant_physical_locators;
+    remote_participant_physical_locators.push_back(output_locator_1);
+    send_transport_under_test.CloseOutputChannel(
+        send_resource_list,
+        remote_participant_physical_locators,
+        initial_peer_list);
+    ASSERT_EQ(send_resource_list.size(), 1u);
+
+    // Using the initial peer locator should not remove the channel resource
+    remote_participant_physical_locators.clear();
+    remote_participant_physical_locators.push_back(output_locator_2);
+    send_transport_under_test.CloseOutputChannel(
+        send_resource_list,
+        remote_participant_physical_locators,
+        initial_peer_list);
+    ASSERT_EQ(send_resource_list.size(), 1u);
 }
 
-/*
-    TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
-    {
-    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+// TODO: TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports) 
+// TODO: TEST_F(TCPv6Tests, send_and_receive_between_ports)
 
-    using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
-    using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
-
-    TCPv6TransportDescriptor recvDescriptor;
-    recvDescriptor.add_listener_port(g_default_port);
-    recvDescriptor.apply_security = true;
-    recvDescriptor.tls_config.password = "testkey";
-    recvDescriptor.tls_config.cert_chain_file = "mainpubcert.pem";
-    recvDescriptor.tls_config.private_key_file = "mainpubkey.pem";
-    recvDescriptor.tls_config.verify_file = "maincacert.pem";
-        // Server doesn't accept clients without certs
-    recvDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER | TLSVerifyMode::VERIFY_FAIL_IF_NO_PEER_CERT;
-    recvDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
-    recvDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
-    recvDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
-    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
-    recvDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
-    TCPv6Transport receiveTransportUnderTest(recvDescriptor);
-    receiveTransportUnderTest.init();
-
-    TCPv6TransportDescriptor sendDescriptor;
-    sendDescriptor.apply_security = true;
-    sendDescriptor.tls_config.password = "testkey";
-    sendDescriptor.tls_config.cert_chain_file = "mainsubcert.pem";
-    sendDescriptor.tls_config.private_key_file = "mainsubkey.pem";
-    sendDescriptor.tls_config.verify_file = "maincacert.pem";
-    sendDescriptor.tls_config.verify_mode = TLSVerifyMode::VERIFY_PEER;
-    sendDescriptor.tls_config.add_option(TLSOptions::DEFAULT_WORKAROUNDS);
-    sendDescriptor.tls_config.add_option(TLSOptions::SINGLE_DH_USE);
-    sendDescriptor.tls_config.add_option(TLSOptions::NO_COMPRESSION);
-    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV2);
-    sendDescriptor.tls_config.add_option(TLSOptions::NO_SSLV3);
-    TCPv6Transport sendTransportUnderTest(sendDescriptor);
-    sendTransportUnderTest.init();
-
-    Locator_t inputLocator;
-    inputLocator.kind = LOCATOR_KIND_TCPv6;
-    inputLocator.port = g_default_port;
-    IPLocator::setIPv4(inputLocator, "::1");
-    IPLocator::setLogicalPort(inputLocator, 7410);
-
-    Locator_t outputLocator;
-    outputLocator.kind = LOCATOR_KIND_TCPv6;
-    IPLocator::setIPv4(outputLocator, "::1");
-    outputLocator.port = g_default_port;
-    IPLocator::setLogicalPort(outputLocator, 7410);
-
-    {
-        MockReceiverResource receiver(receiveTransportUnderTest, inputLocator);
-        MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
-        ASSERT_TRUE(receiveTransportUnderTest.IsInputChannelOpen(inputLocator));
-
-        ASSERT_TRUE(sendTransportUnderTest.OpenOutputChannel(outputLocator));
-        octet message[5] = { 'H','e','l','l','o' };
-
-        Semaphore sem;
-        std::function<void()> recCallback = [&]()
-        {
-            EXPECT_EQ(memcmp(message, msg_recv->data, 5), 0);
-            sem.post();
-        };
-
-        msg_recv->setCallback(recCallback);
-
-        auto sendThreadFunction = [&]()
-        {
-            bool sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
-            while (!sent)
-            {
-                sent = sendTransportUnderTest.send(message, 5, outputLocator, inputLocator);
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            EXPECT_TRUE(sent);
-            //EXPECT_TRUE(transportUnderTest.send(message, 5, outputLocator, inputLocator));
-        };
-
-        senderThread.reset(new std::thread(sendThreadFunction));
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        senderThread->join();
-        sem.wait();
-    }
-    ASSERT_TRUE(sendTransportUnderTest.CloseOutputChannel(outputLocator));
-    }
- */
-// TODO SKIP AT THIS MOMENT
-/*
-    TEST_F(TCPv6Tests, send_and_receive_between_ports)
-    {
-    descriptor.listening_ports.push_back(g_default_port);
-    TCPv6Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    Locator_t localLocator;
-    localLocator.port = g_default_port;
-    localLocator.kind = LOCATOR_KIND_TCPv6;
-    IPLocator::setIPv6(localLocator, "::1");
-
-    Locator_t outputChannelLocator;
-    outputChannelLocator = g_default_port;
-    outputChannelLocator.kind = LOCATOR_KIND_TCPv6;
-    IPLocator::setIPv6(outputChannelLocator, "::1");
-
-    MockReceiverResource receiver(transportUnderTest, localLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
-
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator)); // Includes loopback
-    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(localLocator));
-    octet message[5] = { 'H','e','l','l','o' };
-
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    Semaphore sem;
-    std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
-        sem.post();
-    };
-
-    msg_recv->setCallback(recCallback);
-
-    auto sendThreadFunction = [&]()
-    {
-        EXPECT_TRUE(transportUnderTest.send(message, 5, outputChannelLocator, localLocator));
-    };
-
-    senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    senderThread->join();
-    sem.wait();
-    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-    }
-
-    TEST_F(TCPv6Tests, send_to_loopback)
-    {
-    TCPv6Transport transportUnderTest(descriptor);
-    transportUnderTest.init();
-
-    Locator_t multicastLocator;
-    multicastLocator.set_port(g_default_port);
-    multicastLocator.kind = LOCATOR_KIND_TCPv6;
-    IPLocator::setIPv6(multicastLocator, 0xff31, 0, 0, 0, 0, 0, 0, 0);
-
-    Locator_t outputChannelLocator;
-    outputChannelLocator.set_port(g_default_port + 1);
-    outputChannelLocator.kind = LOCATOR_KIND_TCPv6;
-    IPLocator::setIPv6(outputChannelLocator, 0,0,0,0,0,0,0,1); // Loopback
-
-    MockReceiverResource receiver(transportUnderTest, multicastLocator);
-    MockMessageReceiver *msg_recv = dynamic_cast<MockMessageReceiver*>(receiver.CreateMessageReceiver());
-
-    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(outputChannelLocator));
-    ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
-    octet message[5] = { 'H','e','l','l','o' };
-
-    Semaphore sem;
-    std::function<void()> recCallback = [&]()
-    {
-        EXPECT_EQ(memcmp(message,msg_recv->data,5), 0);
-        sem.post();
-    };
-
-    msg_recv->setCallback(recCallback);
-
-    auto sendThreadFunction = [&]()
-    {
-        EXPECT_TRUE(transportUnderTest.send(message, 5, outputChannelLocator, multicastLocator));
-    };
-
-    senderThread.reset(new std::thread(sendThreadFunction));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    senderThread->join();
-    sem.wait();
-    ASSERT_TRUE(transportUnderTest.CloseOutputChannel(outputChannelLocator));
-    }
- */
 #endif // ifndef __APPLE__
 
 void TCPv6Tests::HELPER_SetDescriptorDefaults()

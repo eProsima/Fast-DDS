@@ -26,6 +26,7 @@
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>
 #include <fastrtps/rtps/writer/RTPSWriter.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 
 #if HAVE_SECURITY
 #include <rtps/security/SecurityManager.h>
@@ -331,7 +332,7 @@ public:
 
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
 
-    MOCK_METHOD(bool, remove_from_send_resource_list, (std::set<Locator_t>&));
+    MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
 
 private:
 

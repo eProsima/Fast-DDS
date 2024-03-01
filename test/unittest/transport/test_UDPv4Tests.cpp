@@ -99,7 +99,7 @@ public:
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
 
-   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
+   ASSERT_TRUE(transportUnderTest.SenderResourceHasBeenClosed(locator));
    }
 
    TEST_F(test_UDPv4Tests, ACKNACK_messages_dropped)
@@ -118,7 +118,7 @@ public:
    // Then
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
-   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
+   ASSERT_TRUE(transportUnderTest.SenderResourceHasBeenClosed(locator));
    }
 
    TEST_F(test_UDPv4Tests, HEARTBEAT_messages_dropped)
@@ -137,7 +137,7 @@ public:
    // Then
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
-   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
+   ASSERT_TRUE(transportUnderTest.SenderResourceHasBeenClosed(locator));
    }
 
    TEST_F(test_UDPv4Tests, Dropping_by_random_chance)
@@ -158,7 +158,7 @@ public:
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(3u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
-   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
+   ASSERT_TRUE(transportUnderTest.SenderResourceHasBeenClosed(locator));
    }
 
    TEST_F(test_UDPv4Tests, dropping_by_sequence_number)
@@ -180,7 +180,7 @@ public:
    // Then
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(1u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
-   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
+   ASSERT_TRUE(transportUnderTest.SenderResourceHasBeenClosed(locator));
    }
 
    TEST_F(test_UDPv4Tests, No_drops_when_unrequested)
@@ -203,7 +203,7 @@ public:
    // Then
    ASSERT_TRUE(transportUnderTest.send(testDataMessage.buffer, testDataMessage.length, locator, locator));
    ASSERT_EQ(0u, test_UDPv4Transport::test_UDPv4Transport_DropLog.size());
-   ASSERT_TRUE(transportUnderTest.CloseOutputChannel(locator));
+   ASSERT_TRUE(transportUnderTest.SenderResourceHasBeenClosed(locator));
    }
 
    void test_UDPv4Tests::HELPER_SetDescriptorDefaults()
