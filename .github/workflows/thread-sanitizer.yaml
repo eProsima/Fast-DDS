@@ -41,7 +41,8 @@ jobs:
     name: Sanitizer Evaluation
 
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
-              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+              contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
+              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
 
     runs-on: ubuntu-22.04
 
