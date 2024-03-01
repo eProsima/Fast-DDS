@@ -842,6 +842,93 @@ TEST_P(TransportTCP, large_data_topology)
     writers.clear();
 }
 
+// This test verifies that if having a server with several listening ports, only the first one is used.
+TEST_P(TransportTCP, multiple_listening_ports)
+{
+    // Create a server with several listening ports
+    PubSubReader<HelloWorldPubSubType>* server = new PubSubReader<HelloWorldPubSubType>(TEST_TOPIC_NAME);
+    uint16_t server_port_1 = 10000;
+    uint16_t server_port_2 = 10001;
+
+    std::shared_ptr<TCPTransportDescriptor> server_transport;
+    if (use_ipv6)
+    {
+        server_transport = std::make_shared<TCPv6TransportDescriptor>();
+    }
+    else
+    {
+        server_transport = std::make_shared<TCPv4TransportDescriptor>();
+    }
+    server_transport->add_listener_port(server_port_1);
+    server_transport->add_listener_port(server_port_2);
+    server->disable_builtin_transport().add_user_transport_to_pparams(server_transport).init();
+    ASSERT_TRUE(server->isInitialized());
+
+    // Create two clients each one connecting to a different port
+    PubSubWriter<HelloWorldPubSubType>* client_1 = new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType>* client_2 = new PubSubWriter<HelloWorldPubSubType>(TEST_TOPIC_NAME);
+    std::shared_ptr<TCPTransportDescriptor> client_transport_1;
+    std::shared_ptr<TCPTransportDescriptor> client_transport_2;
+    Locator_t initialPeerLocator_1;
+    Locator_t initialPeerLocator_2;
+    if (use_ipv6)
+    {
+        client_transport_1 = std::make_shared<TCPv6TransportDescriptor>();
+        client_transport_2 = std::make_shared<TCPv6TransportDescriptor>();
+        initialPeerLocator_1.kind = LOCATOR_KIND_TCPv6;
+        initialPeerLocator_2.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(initialPeerLocator_1, "::1");
+        IPLocator::setIPv6(initialPeerLocator_2, "::1");
+    }
+    else
+    {
+        client_transport_1 = std::make_shared<TCPv4TransportDescriptor>();
+        client_transport_2 = std::make_shared<TCPv4TransportDescriptor>();
+        initialPeerLocator_1.kind = LOCATOR_KIND_TCPv4;
+        initialPeerLocator_2.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(initialPeerLocator_1, 127, 0, 0, 1);
+        IPLocator::setIPv4(initialPeerLocator_2, 127, 0, 0, 1);
+    }
+    client_1->disable_builtin_transport().add_user_transport_to_pparams(client_transport_1);
+    client_2->disable_builtin_transport().add_user_transport_to_pparams(client_transport_2);
+    initialPeerLocator_1.port = server_port_1;
+    initialPeerLocator_2.port = server_port_2;
+    LocatorList_t initial_peer_list_1;
+    LocatorList_t initial_peer_list_2;
+    initial_peer_list_1.push_back(initialPeerLocator_1);
+    initial_peer_list_2.push_back(initialPeerLocator_2);
+    client_1->initial_peers(initial_peer_list_1);
+    client_2->initial_peers(initial_peer_list_2);
+    client_1->init();
+    client_2->init();
+    ASSERT_TRUE(client_1->isInitialized());
+    ASSERT_TRUE(client_2->isInitialized());
+
+    // Wait for discovery.
+    server->wait_discovery();
+    client_1->wait_discovery();
+    client_2->wait_discovery(std::chrono::seconds(1));
+    EXPECT_EQ(server->get_matched(), 1U);
+    EXPECT_EQ(client_1->get_matched(), 1U);
+    EXPECT_EQ(client_2->get_matched(), 0U);
+
+    // Send data
+    auto data = default_helloworld_data_generator();
+    server->startReception(data);
+    client_1->send(data);
+    // In this test all data should be sent.
+    ASSERT_TRUE(data.empty());
+    // Block server until reception finished.
+    server->block_for_all();
+    // Wait for all data to be acked.
+    EXPECT_TRUE(client_1->waitForAllAcked(std::chrono::milliseconds(100)));
+
+    // Release TCP client and server resources.
+    delete client_1;
+    delete client_2;
+    delete server;
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else

@@ -1909,22 +1909,6 @@ TEST_F(TCPv4Tests, autofill_port)
 
     EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports[0] != 0);
     EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports.size() == 1);
-
-    uint16_t port = 12345;
-    TCPv4TransportDescriptor test_descriptor_multiple_autofill;
-    test_descriptor_multiple_autofill.add_listener_port(0);
-    test_descriptor_multiple_autofill.add_listener_port(port);
-    test_descriptor_multiple_autofill.add_listener_port(0);
-    TCPv4Transport transportUnderTest_multiple_autofill(test_descriptor_multiple_autofill);
-    transportUnderTest_multiple_autofill.init();
-
-    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[0] != 0);
-    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[1] == port);
-    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports[2] != 0);
-    EXPECT_TRUE(
-        transportUnderTest_multiple_autofill.configuration()->listening_ports[0] !=
-        transportUnderTest_multiple_autofill.configuration()->listening_ports[2]);
-    EXPECT_TRUE(transportUnderTest_multiple_autofill.configuration()->listening_ports.size() == 3);
 }
 
 // This test verifies server's channel resources mapping keys uniqueness, where keys are clients locators.
