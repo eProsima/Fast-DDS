@@ -498,7 +498,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -654,7 +654,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -812,7 +812,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -968,7 +968,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -1127,7 +1127,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -1282,7 +1282,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -1444,7 +1444,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -1611,7 +1611,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -1783,7 +1783,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -1935,7 +1935,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -2086,7 +2086,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -2242,7 +2242,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -2397,7 +2397,7 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
@@ -2591,7 +2591,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -3081,7 +3081,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -3367,7 +3367,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     ASSERT_FALSE(data->loan_value(0));
 
     // Testing get_item_count.
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
 
     // XCDRv1
     {
@@ -3880,7 +3880,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
     // Test get_item_count().
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -3943,7 +3943,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(0, data->get_item_count());
+    ASSERT_EQ(0u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
@@ -3953,7 +3953,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(0, data->get_item_count());
+    ASSERT_EQ(0u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
@@ -3964,7 +3964,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     ASSERT_EQ(RETCODE_OK, data->clear_value(0));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4066,7 +4066,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(8, data->get_item_count());
+    ASSERT_EQ(8u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -4109,18 +4109,18 @@ TEST_F(DynamicTypesTests, DynamicType_array)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(8, data->get_item_count());
+    ASSERT_EQ(8u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
     ASSERT_EQ(test2, Int32Seq({0, 0, 0, 0, 0, 0, 0, 0}));
     ASSERT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8}));
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(8, data->get_item_count());
+    ASSERT_EQ(8u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
     ASSERT_EQ(test2, Int32Seq({0, 0, 0, 0, 0, 0, 0, 0}));
     ASSERT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8}));
     ASSERT_EQ(RETCODE_OK, data->clear_value(1));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(8, data->get_item_count());
+    ASSERT_EQ(8u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
     ASSERT_EQ(test2, Int32Seq({1, 0, 3, 4, 5, 6, 7, 8}));
 
@@ -4246,7 +4246,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
     // Test get_item_count().
-    ASSERT_EQ(4, data->get_item_count());
+    ASSERT_EQ(4u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -4329,7 +4329,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(4, data->get_item_count());
+    ASSERT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4373,7 +4373,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(4, data->get_item_count());
+    ASSERT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4418,7 +4418,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 
     ASSERT_EQ(RETCODE_OK, data->clear_value(2));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(4, data->get_item_count());
+    ASSERT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4463,7 +4463,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 
     ASSERT_EQ(RETCODE_OK, data->clear_value(3));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(4, data->get_item_count());
+    ASSERT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4557,7 +4557,7 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count().
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -4606,24 +4606,24 @@ TEST_F(DynamicTypesTests, DynamicType_map)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(0, data->get_item_count());
+    ASSERT_EQ(0u, data->get_item_count());
     ASSERT_NE(RETCODE_OK, data->get_int32_value(test2, 0));
     ASSERT_NE(RETCODE_OK, data->get_int32_value(test4, 1));
 
     ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("10"), test1));
     ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("20"), test3));
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(0, data->get_item_count());
+    ASSERT_EQ(0u, data->get_item_count());
     ASSERT_NE(RETCODE_OK, data->get_int32_value(test2, 0));
     ASSERT_NE(RETCODE_OK, data->get_int32_value(test4, 1));
 
     ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("10"), test1));
     ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("20"), test3));
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->clear_value(0));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
     ASSERT_NE(RETCODE_OK, data->get_int32_value(test2, 0));
     ASSERT_EQ(RETCODE_OK, data->get_int32_value(test4, 1));
     ASSERT_EQ(test3, test4);
@@ -4675,29 +4675,29 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     // Testing getters, setters, loan_value.
     DynamicData::_ref_type loan_data {data->loan_value(0)};
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0, loan_data->get_item_count());
+    ASSERT_EQ(0u, loan_data->get_item_count());
     int32_t test1 {234};
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("3"), test1));
     int32_t test2 {123};
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("4"), test2));
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
     loan_data = data->loan_value(1);
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0, loan_data->get_item_count());
+    ASSERT_EQ(0u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("1"), test2));
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("2"), test1));
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
 
     int32_t test_get {0};
     loan_data = data->loan_value(0);
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
     ASSERT_EQ(test1, test_get);
@@ -4707,7 +4707,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
     loan_data = data->loan_value(1);
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
     ASSERT_EQ(test2, test_get);
@@ -4726,7 +4726,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(2, complex_data->get_item_count());
+    ASSERT_EQ(2u, complex_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             complex_data->get_int32_value(test_get, complex_data->get_member_id_by_name("3")));
     ASSERT_EQ(test1, test_get);
@@ -4746,7 +4746,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
     // Test get_item_count().
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -4762,10 +4762,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(2, data2->get_item_count());
+        ASSERT_EQ(2u, data2->get_item_count());
         loan_data = data2->loan_value(0);
         ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2, loan_data->get_item_count());
+        ASSERT_EQ(2u, loan_data->get_item_count());
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
         ASSERT_EQ(test3, test_get);
@@ -4775,7 +4775,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
         loan_data = data2->loan_value(1);
         ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2, loan_data->get_item_count());
+        ASSERT_EQ(2u, loan_data->get_item_count());
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
         ASSERT_EQ(test2, test_get);
@@ -4799,10 +4799,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
         ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(2, data2->get_item_count());
+        ASSERT_EQ(2u, data2->get_item_count());
         loan_data = data2->loan_value(0);
         ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2, loan_data->get_item_count());
+        ASSERT_EQ(2u, loan_data->get_item_count());
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
         ASSERT_EQ(test3, test_get);
@@ -4812,7 +4812,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
         loan_data = data2->loan_value(1);
         ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2, loan_data->get_item_count());
+        ASSERT_EQ(2u, loan_data->get_item_count());
         ASSERT_EQ(RETCODE_OK,
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
         ASSERT_EQ(test2, test_get);
@@ -4825,60 +4825,60 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(0, data->get_item_count());
+    ASSERT_EQ(0u, data->get_item_count());
     ASSERT_FALSE(data->loan_value(0));
     ASSERT_FALSE(data->loan_value(1));
 
     loan_data = data->loan_value(data->get_member_id_by_name("10"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0, loan_data->get_item_count());
+    ASSERT_EQ(0u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("3"), test1));
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("4"), test2));
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
     loan_data = data->loan_value(data->get_member_id_by_name("20"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0, loan_data->get_item_count());
+    ASSERT_EQ(0u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("1"), test2));
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("2"), test1));
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(0, data->get_item_count());
+    ASSERT_EQ(0u, data->get_item_count());
     ASSERT_FALSE(data->loan_value(0));
     ASSERT_FALSE(data->loan_value(1));
 
     loan_data = data->loan_value(data->get_member_id_by_name("10"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0, loan_data->get_item_count());
+    ASSERT_EQ(0u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("3"), test1));
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("4"), test2));
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
     loan_data = data->loan_value(data->get_member_id_by_name("20"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0, loan_data->get_item_count());
+    ASSERT_EQ(0u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("1"), test2));
     ASSERT_EQ(RETCODE_OK,
             loan_data->set_int32_value(loan_data->get_member_id_by_name("2"), test1));
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    ASSERT_EQ(2, data->get_item_count());
+    ASSERT_EQ(2u, data->get_item_count());
     ASSERT_EQ(RETCODE_OK, data->clear_value(0));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(1, data->get_item_count());
+    ASSERT_EQ(1u, data->get_item_count());
     ASSERT_FALSE(data->loan_value(0));
     loan_data = data->loan_value(1);
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(2, loan_data->get_item_count());
+    ASSERT_EQ(2u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
             loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
     ASSERT_EQ(test2, test_get);
@@ -4976,7 +4976,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     ASSERT_FALSE(struct_data->loan_value(MEMBER_ID_INVALID));
 
     // Test get_item_count.
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -5023,7 +5023,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, struct_data->clear_all_values());
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
     ASSERT_EQ(0, test2);
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
@@ -5032,7 +5032,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
     ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
     ASSERT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
     ASSERT_EQ(0, test2);
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
@@ -5042,7 +5042,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
     ASSERT_EQ(RETCODE_OK, struct_data->clear_value(1));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
     ASSERT_EQ(test1, test2);
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
@@ -5255,7 +5255,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_FALSE(struct_data->loan_value(MEMBER_ID_INVALID));
 
     // Testing get_item_count
-    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(4u, struct_data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -5310,7 +5310,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, struct_data->clear_all_values());
-    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(4u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
     ASSERT_EQ(0, test2);
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
@@ -5325,7 +5325,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(2, test1));
     ASSERT_EQ(RETCODE_OK, struct_data->set_string_value(4, test5));
     ASSERT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
-    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(4u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
     ASSERT_EQ(0, test2);
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
@@ -5343,7 +5343,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_NE(RETCODE_OK, struct_data->clear_value(3));
     ASSERT_EQ(RETCODE_OK, struct_data->clear_value(4));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
-    ASSERT_EQ(4, struct_data->get_item_count());
+    ASSERT_EQ(4u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
     ASSERT_EQ(test1, test2);
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
@@ -5468,7 +5468,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
 
     // Testing get_item_count.
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -5527,7 +5527,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, struct_data->clear_all_values());
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
     ASSERT_EQ(0, test2);
     inner_struct_data = struct_data->loan_value(0);
@@ -5545,7 +5545,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
     ASSERT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
     ASSERT_EQ(0, test2);
     inner_struct_data = struct_data->loan_value(0);
@@ -5564,7 +5564,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
     ASSERT_EQ(RETCODE_OK, struct_data->clear_value(0));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
-    ASSERT_EQ(2, struct_data->get_item_count());
+    ASSERT_EQ(2u, struct_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
     ASSERT_EQ(test1, test2);
     inner_struct_data = struct_data->loan_value(0);
@@ -5729,7 +5729,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     // Testing loan_value.
 
     // Testing get_item_count.
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
 
     // Encoding/decoding
     ASSERT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
@@ -5780,7 +5780,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, union_data->clear_all_values());
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
@@ -5789,7 +5789,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
 
     ASSERT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, union_data->clear_nonkey_values());
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
@@ -5800,7 +5800,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_NE(RETCODE_OK, union_data->clear_value(3));
     ASSERT_EQ(RETCODE_OK, union_data->clear_value(1));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(100));
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
     ASSERT_EQ(0, int64_get);
     ASSERT_EQ(RETCODE_OK, union_data->clear_value(0));
@@ -5931,7 +5931,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(RETCODE_OK, union_data->set_complex_value(2, complex_data));
 
     // Testing get_item_count.
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
 
     // Encoding/decoding
     // XCDRv1
@@ -5984,29 +5984,29 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
 
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, union_data->clear_all_values());
-    ASSERT_EQ(1, union_data->get_item_count());
+    ASSERT_EQ(1u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
 
     ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
     ASSERT_EQ(RETCODE_OK, union_data->clear_nonkey_values());
-    ASSERT_EQ(1, union_data->get_item_count());
+    ASSERT_EQ(1u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
 
     ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
     ASSERT_NE(RETCODE_OK, union_data->clear_value(2));
     ASSERT_EQ(RETCODE_OK, union_data->clear_value(1));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(100));
-    ASSERT_EQ(2, union_data->get_item_count());
+    ASSERT_EQ(2u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int64_value(test2, 1), RETCODE_OK);
     ASSERT_EQ(0, test2);
     ASSERT_EQ(RETCODE_OK, union_data->clear_value(0));
-    ASSERT_EQ(1, union_data->get_item_count());
+    ASSERT_EQ(1u, union_data->get_item_count());
     ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
