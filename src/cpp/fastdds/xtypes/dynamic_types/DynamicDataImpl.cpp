@@ -3799,36 +3799,36 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_promoting(
         SequenceTypeForKind<TK>& value,
         size_t number_of_elements) noexcept
 {
-    if (TK == ToTK || TypePromotion<ToTK, TK>::value)
+    auto sequence = std::static_pointer_cast<SequenceTypeForKind<ToTK>>(value_iterator->second);
+    assert(sequence);
+
+    if (MEMBER_ID_INVALID == id)
     {
-        auto sequence = std::static_pointer_cast<SequenceTypeForKind<ToTK>>(value_iterator->second);
-        assert(sequence);
-
-        if (MEMBER_ID_INVALID == id)
+        if (0 == sequence->size())
         {
-            if (0 == sequence->size())
-            {
-                value.clear();
-                return RETCODE_OK;
-            }
-
-            id = 0;
-        }
-
-        if (sequence->size() > id)
-        {
-            auto initial_pos = sequence->begin() + id;
-            auto final_pos = sequence->end();
-            if (0 != number_of_elements &&
-                    static_cast<typename SequenceTypeForKind<ToTK>::difference_type>(number_of_elements) <
-                    std::distance(initial_pos, final_pos))
-            {
-                final_pos = std::next(initial_pos, number_of_elements);
-            }
             value.clear();
-            value.insert(value.begin(), initial_pos, final_pos);
             return RETCODE_OK;
         }
+
+        id = 0;
+    }
+
+    if (sequence->size() > id && (TK == ToTK || TypePromotion<ToTK, TK>::value))
+    {
+        auto initial_pos = sequence->begin() + id;
+        auto final_pos = sequence->end();
+        if (0 != number_of_elements &&
+                static_cast<typename SequenceTypeForKind<ToTK>::difference_type>(number_of_elements) <
+                std::distance(initial_pos, final_pos))
+        {
+            final_pos = std::next(initial_pos, number_of_elements);
+        }
+        value.clear();
+        for (auto it = initial_pos; it != final_pos; ++it)
+        {
+            value.push_back(static_cast<TypeForKind<TK>>(*it));
+        }
+        return RETCODE_OK;
     }
 
     return RETCODE_BAD_PARAMETER;
@@ -4586,28 +4586,27 @@ ReturnCode_t DynamicDataImpl::set_sequence_values_promoting(
         std::map<MemberId, std::shared_ptr<void>>::const_iterator value_iterator,
         const SequenceTypeForKind<TK>& value) noexcept
 {
-    if (TK == ToTK || TypePromotion<TK, ToTK>::value)
+    TypeKind type_kind = enclosing_type_->get_kind();
+    auto sequence = std::static_pointer_cast<SequenceTypeForKind<ToTK>>(value_iterator->second);
+    assert(sequence);
+
+    if (((TK_ARRAY == type_kind && sequence->size() >= id + value.size()) ||
+            (TK_SEQUENCE == type_kind &&
+            (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
+            enclosing_type_->get_descriptor().bound().at(0) >= id + value.size()))) &&
+            (TK == ToTK || TypePromotion<TK, ToTK>::value))
     {
-        TypeKind type_kind = enclosing_type_->get_kind();
-        auto sequence = std::static_pointer_cast<SequenceTypeForKind<ToTK>>(value_iterator->second);
-        assert(sequence);
-        if ((TK_ARRAY == type_kind && sequence->size() >= id + value.size()) ||
-                (TK_SEQUENCE == type_kind &&
-                (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
-                enclosing_type_->get_descriptor().bound().at(0) >= id + value.size())))
+        if (sequence->size() < id + value.size())
         {
-            if (sequence->size() < id + value.size())
-            {
-                sequence->resize(id + value.size());
-            }
-            auto pos = sequence->begin() + id;
-            for (size_t count {0}; count < value.size(); ++count)
-            {
-                *pos = static_cast<TypeForKind<ToTK>>(value.at(count));
-                ++pos;
-            }
-            return RETCODE_OK;
+            sequence->resize(id + value.size());
         }
+        auto pos = sequence->begin() + id;
+        for (size_t count {0}; count < value.size(); ++count)
+        {
+            *pos = static_cast<TypeForKind<ToTK>>(value.at(count));
+            ++pos;
+        }
+        return RETCODE_OK;
     }
 
     return RETCODE_BAD_PARAMETER;
@@ -6469,14 +6468,14 @@ bool DynamicDataImpl::deserialize(
                                     int64_t discriminator {0};
                                     uint64_t udiscriminator {0};
                                     selected_union_member_ = MEMBER_ID_INVALID;
-                                    ReturnCode_t ret_value = get_int64_value(discriminator, 0);
-                                    if (RETCODE_OK != ret_value)
+                                    ReturnCode_t dyn_ret_value = get_int64_value(discriminator, 0);
+                                    if (RETCODE_OK != dyn_ret_value)
                                     {
-                                        ret_value = get_uint64_value(udiscriminator, 0);
+                                        dyn_ret_value = get_uint64_value(udiscriminator, 0);
                                         discriminator = static_cast<int64_t>(udiscriminator);
                                     }
 
-                                    if (RETCODE_OK == ret_value)
+                                    if (RETCODE_OK == dyn_ret_value)
                                     {
                                         for (auto member : type->get_all_members_by_index())
                                         {
