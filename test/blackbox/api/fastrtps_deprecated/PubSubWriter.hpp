@@ -381,6 +381,8 @@ public:
             eprosima::fastrtps::Domain::removeParticipant(participant_);
             participant_ = nullptr;
         }
+
+        initialized_ = false;
     }
 
     void send(

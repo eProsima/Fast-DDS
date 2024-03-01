@@ -198,6 +198,17 @@ bool SecurityManager::init(
 
         if (authentication_plugin_ != nullptr)
         {
+            // retrieve authentication properties, if any
+            const PropertyPolicy auth_handshake_properties = PropertyPolicyHelper::get_properties_with_prefix(
+                participant_->getRTPSParticipantAttributes().properties,
+                "dds.sec.auth.builtin.PKI-DH.");
+
+            // if auth_handshake_properties is empty, the default values are used
+            if (PropertyPolicyHelper::length(auth_handshake_properties) > 0)
+            {
+                auth_handshake_props_.parse_from_property_policy(auth_handshake_properties);
+            }
+
             authentication_plugin_->set_logger(logging_plugin_, exception);
 
             // Validate local participant
@@ -618,7 +629,7 @@ bool SecurityManager::discovered_participant(
                     resend_handshake_message_token(guid);
                     return true;
                 },
-                DiscoveredParticipantInfo::INITIAL_RESEND_HANDSHAKE_MILLISECS)); // TODO (Ricardo) Configurable
+                static_cast<double>(auth_handshake_props_.initial_handshake_resend_period_ms_)));
 
         IdentityHandle* remote_identity_handle = nullptr;
 
@@ -920,6 +931,7 @@ bool SecurityManager::on_process_handshake(
                     handshake_message_send = true;
                     expected_sequence_number = message.message_identity().sequence_number();
                     remote_participant_info->change_sequence_number_ = change->sequenceNumber;
+                    remote_participant_info->handshake_requests_sent_++;
                 }
                 else
                 {
@@ -984,7 +996,8 @@ bool SecurityManager::on_process_handshake(
                     remote_participant_info->expected_sequence_number_ = expected_sequence_number;
                     // Avoid DoS attack by exponentially increasing event interval
                     auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
-                    remote_participant_info->event_->update_interval_millisec(time_ms * 2);
+                    remote_participant_info->event_->update_interval_millisec(
+                        time_ms * auth_handshake_props_.handshake_resend_period_gain_);
                     remote_participant_info->event_->restart_timer();
                 }
 
@@ -1526,6 +1539,7 @@ void SecurityManager::process_participant_stateless_message(
                             if (participant_stateless_message_writer_history_->add_change(p_change))
                             {
                                 remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                                remote_participant_info->handshake_requests_sent_++;
                             }
                             //TODO (Ricardo) What to do if not added?
                         }
@@ -1598,6 +1612,7 @@ void SecurityManager::process_participant_stateless_message(
                         if (participant_stateless_message_writer_history_->add_change(p_change))
                         {
                             remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                            remote_participant_info->handshake_requests_sent_++;
                         }
                         //TODO (Ricardo) What to do if not added?
                     }
@@ -4187,7 +4202,7 @@ void SecurityManager::resend_handshake_message_token(
 
         if (remote_participant_info)
         {
-            if (remote_participant_info->handshake_requests_sent_ >= DiscoveredParticipantInfo::MAX_HANDSHAKE_REQUESTS)
+            if (remote_participant_info->handshake_requests_sent_ >= auth_handshake_props_.max_handshake_requests_)
             {
                 if (remote_participant_info->auth_status_ != AUTHENTICATION_FAILED)
                 {
@@ -4222,7 +4237,8 @@ void SecurityManager::resend_handshake_message_token(
                 {
                     // Avoid DoS attack by exponentially increasing event interval
                     auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
-                    remote_participant_info->event_->update_interval_millisec(time_ms * 2);
+                    remote_participant_info->event_->update_interval_millisec(
+                        time_ms * auth_handshake_props_.handshake_resend_period_gain_);
                     remote_participant_info->event_->restart_timer();
                 }
             }
@@ -4257,6 +4273,54 @@ void SecurityManager::on_validation_failed(
         info.guid = participant_data.m_guid;
         participant_->getListener()->onParticipantAuthentication(
             participant_->getUserRTPSParticipant(), std::move(info));
+    }
+}
+
+SecurityManager::AuthenticationHandshakeProperties::AuthenticationHandshakeProperties()
+    : max_handshake_requests_(10)
+    , initial_handshake_resend_period_ms_(125)
+    , handshake_resend_period_gain_(1.5)
+{
+
+}
+
+void SecurityManager::AuthenticationHandshakeProperties::parse_from_property_policy(
+        const PropertyPolicy& auth_handshake_properties)
+{
+    const Property* const max_handshake_requests =
+            PropertyPolicyHelper::get_property(auth_handshake_properties, "max_handshake_requests");
+
+    if (max_handshake_requests != nullptr)
+    {
+        max_handshake_requests_ = (int32_t)PropertyParser::as_int(
+            *max_handshake_requests,
+            false, 0,
+            true, 1,
+            SecurityException("Error parsing max_handshake_requests property value."));
+    }
+
+    const Property* const initial_handshake_resend_period =
+            PropertyPolicyHelper::get_property(auth_handshake_properties, "initial_handshake_resend_period");
+
+    if (initial_handshake_resend_period != nullptr)
+    {
+        initial_handshake_resend_period_ms_ = (int32_t)PropertyParser::as_int(
+            *initial_handshake_resend_period,
+            false, 0,
+            true, 1,
+            SecurityException("Error parsing initial_handshake_resend_period property value."));
+    }
+
+    const Property* const handshake_resend_period_gain =
+            PropertyPolicyHelper::get_property(auth_handshake_properties, "handshake_resend_period_gain");
+
+    if (handshake_resend_period_gain != nullptr)
+    {
+        handshake_resend_period_gain_ = PropertyParser::as_double(
+            *handshake_resend_period_gain,
+            false, 0.0,
+            true, 1.0,
+            SecurityException("Error parsing handshake_resend_period_gain property value."));
     }
 }
 
