@@ -100,7 +100,7 @@ static void set_builtin_transports_from_env_var(
     if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
     {
         std::regex COMMON_REGEX(R"((\w+))");
-        std::regex OPTIONS_REGEX(R"((\w+)\?((max_msg_size|non_blocking|sockets_size)=(\d+)?(\w+)&?){0,3})");
+        std::regex OPTIONS_REGEX(R"((\w+)\?(((max_msg_size|sockets_size)=(\d+)(\w*)&?)|(non_blocking=(\w+)&?)|(tcp_negotiation_timeout=(\d+)&?)){0,4})");
         std::smatch mr;
 
         if (std::regex_match(env_value, COMMON_REGEX, std::regex_constants::match_not_null))
@@ -122,9 +122,11 @@ static void set_builtin_transports_from_env_var(
         }
         else if (std::regex_match(env_value, mr, OPTIONS_REGEX, std::regex_constants::match_not_null))
         {
+            // Transport mode AND options are specified
             std::regex msg_size_regex(R"((max_msg_size)=(\d+)(\w*))");
             std::regex sockets_size_regex(R"((sockets_size)=(\d+)(\w*))");
             std::regex non_blocking_regex(R"((non_blocking)=(true|false))");
+            std::regex tcp_timeout_regex(R"((tcp_negotiation_timeout)=(\d+))");
 
             fastdds::rtps::BuiltinTransportsOptions options;
 
@@ -150,15 +152,22 @@ static void set_builtin_transports_from_env_var(
                     std::string unit = (mr[3] == "") ? "B" : mr[3].str();
                     options.maxMessageSize = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
                 }
+                // Sockets_size parser
                 if (std::regex_search(env_value, mr, sockets_size_regex, std::regex_constants::match_not_null))
                 {
                     std::string value = mr[2];
                     std::string unit = (mr[3] == "") ? "B" : mr[3].str();
                     options.sockets_buffer_size = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
                 }
+                // Non-blocking-send parser
                 if (std::regex_search(env_value, mr, non_blocking_regex, std::regex_constants::match_not_null))
                 {
                     options.non_blocking_send = mr[2] == "true";
+                }
+                // TCP_negotiation_timeout parser
+                if (std::regex_search(env_value, mr, tcp_timeout_regex, std::regex_constants::match_not_null))
+                {
+                    options.tcp_negotiation_timeout = static_cast<uint32_t>(std::stoul(mr[2]));
                 }
                 attr.setup_transports(ret_val, options);
                 return;
