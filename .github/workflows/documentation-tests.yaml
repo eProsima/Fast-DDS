@@ -34,9 +34,8 @@ env:
 jobs:
   ubuntu-build-and-test-documentation:
     name: Documentation build and test
-
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
-              contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
+    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
+              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
 
     runs-on: ubuntu-22.04
     steps:
