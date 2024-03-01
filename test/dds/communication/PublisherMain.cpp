@@ -31,6 +31,7 @@ using namespace eprosima::fastdds::dds;
  * --samples <int>
  * --magic <str>
  * --xmlfile <path>
+ * --interval <int>
  */
 
 int main(
@@ -45,6 +46,7 @@ int main(
     uint32_t wait = 0;
     char* xml_file = nullptr;
     uint32_t samples = 4;
+    uint32_t interval = 250;
     std::string magic;
 
     while (arg_count < argc)
@@ -91,6 +93,16 @@ int main(
 
             samples = strtol(argv[arg_count], nullptr, 10);
         }
+        else if (strcmp(argv[arg_count], "--interval") == 0)
+        {
+            if (++arg_count >= argc)
+            {
+                std::cout << "--interval expects a parameter" << std::endl;
+                return -1;
+            }
+
+            interval = strtol(argv[arg_count], nullptr, 10);
+        }
         else if (strcmp(argv[arg_count], "--magic") == 0)
         {
             if (++arg_count >= argc)
@@ -134,7 +146,7 @@ int main(
             publisher.wait_discovery(wait);
         }
 
-        publisher.run(samples);
+        publisher.run(samples, 0, interval);
         return 0;
     }
 
