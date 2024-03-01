@@ -18,8 +18,12 @@
 #ifndef _FASTDDS_RTPS_COMMON_PROPERTYQOS_H_
 #define _FASTDDS_RTPS_COMMON_PROPERTYQOS_H_
 
+#include <functional>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+#include <fastdds/rtps/exceptions/Exception.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -210,6 +214,128 @@ private:
             size_t dataSize)
     {
         return (dataSize - (current_alignment % dataSize)) & (dataSize - 1);
+    }
+
+};
+
+struct PropertyParser
+{
+
+    /**
+     * @brief Parse a property value as an integer
+     * @param property Property to parse
+     * @param check_upper_bound If true, check that the value is lower than upper_bound
+     * @param upper_bound Upper bound to check
+     * @param check_lower_bound If true, check that the value is greater than lower_bound
+     * @param lower_bound Lower bound to check
+     * @param exception Exception to throw if the value is not a valid integer or if it is out of bounds
+     * @return The parsed integer value
+     *
+     * @warning May throw an exception_t if the value is not a valid integer
+     *  or if it is out of bounds.
+     */
+    template<typename exception_t>
+    inline static int as_int(
+            const Property& property,
+            const bool& check_upper_bound,
+            const int& upper_bound,
+            const bool& check_lower_bound,
+            const int& lower_bound,
+            const exception_t& exception)
+    {
+        return parse_value(
+            std::function<int(const Property& property)>(
+                [](const Property& property)
+                {
+                    return std::stoi(property.value());
+                }
+                ),
+            property,
+            check_upper_bound,
+            upper_bound,
+            check_lower_bound,
+            lower_bound,
+            exception);
+    }
+
+    /**
+     * @brief Parse a property value as a double
+     * @param property Property to parse
+     * @param check_upper_bound If true, check that the value is lower than upper_bound
+     * @param upper_bound Upper bound to check
+     * @param check_lower_bound If true, check that the value is greater than lower_bound
+     * @param lower_bound Lower bound to check
+     * @param exception Exception to throw if the value is not a valid double or if it is out of bounds
+     * @return The parsed double value
+     *
+     * @warning May throw an exception_t if the value is not a valid double
+     *  or if it is out of bounds.
+     */
+    template<typename exception_t>
+    inline static double as_double(
+            const Property& property,
+            const bool& check_upper_bound,
+            const double& upper_bound,
+            const bool& check_lower_bound,
+            const double& lower_bound,
+            const exception_t& exception)
+    {
+        return parse_value(
+            std::function<double(const Property& property)>(
+                [](const Property& property)
+                {
+                    return std::stod(property.value());
+                }
+                ),
+            property,
+            check_upper_bound,
+            upper_bound,
+            check_lower_bound,
+            lower_bound,
+            exception);
+    }
+
+private:
+
+    template <typename value_t,
+            typename exception_t>
+    inline static value_t parse_value(
+            const std::function<value_t(const Property&)>& conversor,
+            const Property& property,
+            const bool& check_upper_bound,
+            const value_t& upper_bound,
+            const bool& check_lower_bound,
+            const value_t& lower_bound,
+            const exception_t& exception)
+    {
+        try
+        {
+            value_t converted_value = conversor(property);
+
+            if (check_lower_bound && converted_value < lower_bound)
+            {
+                throw exception_t("Value '" + property.value() +
+                              "' for " + property.name() + " must be greater or equal to " +
+                              std::to_string(lower_bound));
+            }
+
+            if (check_upper_bound && converted_value > upper_bound)
+            {
+                throw exception_t("Value '" + property.value() +
+                              "' for " + property.name() + " must be lower or equal to " +
+                              std::to_string(upper_bound));
+            }
+
+            return converted_value;
+        }
+        catch (const std::invalid_argument&)
+        {
+            throw exception;
+        }
+        catch (const std::out_of_range&)
+        {
+            throw exception;
+        }
     }
 
 };
