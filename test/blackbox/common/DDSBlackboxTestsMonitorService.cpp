@@ -1253,7 +1253,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
     writer_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
     StatisticsGUIDList guids = MSP.get_writer_guids();
 
-    ASSERT_EQ(guids.size(), 1);
+    ASSERT_EQ(guids.size(), 1u);
     writer_proxy_msg.local_entity(guids.back());
 
     expected_msgs.push_back(writer_proxy_msg);

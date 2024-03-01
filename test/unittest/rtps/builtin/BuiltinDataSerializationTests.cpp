@@ -97,7 +97,7 @@ void assert_is_empty_content_filter(
     ASSERT_EQ("", filter_property.related_topic_name.to_string());
     ASSERT_EQ("", filter_property.filter_class_name.to_string());
     ASSERT_EQ("", filter_property.filter_expression);
-    ASSERT_EQ(0, filter_property.expression_parameters.size());
+    ASSERT_EQ(0u, filter_property.expression_parameters.size());
 }
 
 TEST(BuiltinDataSerializationTests, ok_with_defaults)

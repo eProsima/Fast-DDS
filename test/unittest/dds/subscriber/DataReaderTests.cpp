@@ -2136,7 +2136,7 @@ TEST_F(DataReaderTests, check_read_take_iteration)
         EXPECT_EQ(data_reader_->take_instance(data, infos, 1, handles[i]),
                 ReturnCode_t::RETCODE_OK);
 
-        EXPECT_EQ(i, std::atoi(data[0].message().data()));
+        EXPECT_EQ(static_cast<int>(i), std::atoi(data[0].message().data()));
 
         EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data, infos));
     }

@@ -694,7 +694,7 @@ TEST(DDSBasic, participant_ignore_local_endpoints_two_participants)
     EXPECT_TRUE(samples.empty());
 
     // Wait for reception
-    EXPECT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5);
+    EXPECT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5u);
 }
 
 /**

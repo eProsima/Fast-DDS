@@ -809,11 +809,11 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
                     return Iterations::DISCOVERED_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::DISCOVERED_READER, iteration);
-        ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
-        ASSERT_EQ(0, content_filter_property.related_topic_name.size());
-        ASSERT_EQ(0, content_filter_property.filter_class_name.size());
-        ASSERT_EQ(0, content_filter_property.filter_expression.size());
-        ASSERT_EQ(0, content_filter_property.expression_parameters.size());
+        ASSERT_EQ(0u, content_filter_property.content_filtered_topic_name.size());
+        ASSERT_EQ(0u, content_filter_property.related_topic_name.size());
+        ASSERT_EQ(0u, content_filter_property.filter_class_name.size());
+        ASSERT_EQ(0u, content_filter_property.filter_expression.size());
+        ASSERT_EQ(0u, content_filter_property.expression_parameters.size());
     }
 
     // Test second iteration: expect ReaderDiscoveryInfo::CHANGED_QOS_READER.
@@ -825,11 +825,11 @@ TEST_P(RTPSDiscovery, ContentFilterRegistrationWithoutCFP)
                     return Iterations::CHANGED_QOS_READER == iteration || Iterations::WITH_ERROR == iteration;
                 });
         ASSERT_EQ(Iterations::CHANGED_QOS_READER, iteration);
-        ASSERT_EQ(0, content_filter_property.content_filtered_topic_name.size());
-        ASSERT_EQ(0, content_filter_property.related_topic_name.size());
-        ASSERT_EQ(0, content_filter_property.filter_class_name.size());
-        ASSERT_EQ(0, content_filter_property.filter_expression.size());
-        ASSERT_EQ(0, content_filter_property.expression_parameters.size());
+        ASSERT_EQ(0u, content_filter_property.content_filtered_topic_name.size());
+        ASSERT_EQ(0u, content_filter_property.related_topic_name.size());
+        ASSERT_EQ(0u, content_filter_property.filter_class_name.size());
+        ASSERT_EQ(0u, content_filter_property.filter_expression.size());
+        ASSERT_EQ(0u, content_filter_property.expression_parameters.size());
     }
 }
 

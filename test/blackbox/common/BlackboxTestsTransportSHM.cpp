@@ -155,7 +155,7 @@ TEST(SHM, IgnoreNonExistentSegment)
     }
     // Check logs
     Log::Flush();
-    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 0);
+    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 0u);
 
     // Clean-up
     Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
