@@ -183,9 +183,10 @@
     </xs:complexType>
 
     <!--Builtin Transports Enum Type:
-        | ╠ att. max_msg_size  [string],
-        | ╠ att. sockets_size  [string],
-        | ╚ att. non_blocking  [bool]
+        | ╠ att. max_msg_size             [string],
+        | ╠ att. sockets_size             [string],
+        | ╠ att. non_blocking             [string],
+        | ╚ att. tcp_negotiation_timeout  [string]
         |
         └ mode         [string]-->
 
@@ -209,6 +210,7 @@
         <xs:attribute name="max_msg_size" type="string" use="optional"/>
         <xs:attribute name="sockets_size" type="string" use="optional"/>
         <xs:attribute name="non_blocking" type="string" use="optional"/>
+        <xs:attribute name="tcp_negotiation_timeout" type="string" use="optional"/>
     </xs:complexType>
 
     <!--Data writer / publisher:

@@ -4758,7 +4758,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                         }), temp.end());
                 if (attrib->Value()[0] == '-')
                 {
-                    throw std::invalid_argument("Negative value detected");
+                    throw std::invalid_argument("Negative value detected.");
                 }
                 std::regex msg_size_regex(R"((\d+)(\w*))");
                 std::smatch mr;
@@ -4790,7 +4790,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                         }), temp.end());
                 if (attrib->Value()[0] == '-')
                 {
-                    throw std::invalid_argument("Negative value detected");
+                    throw std::invalid_argument("Negative value detected.");
                 }
                 std::regex sockets_size_regex(R"((\d+)(\w*))");
                 std::smatch mr;
@@ -4822,7 +4822,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                         }), temp.end());
                 if (temp != "true" && temp != "false")
                 {
-                    throw std::invalid_argument("Not valid value detected");
+                    throw std::invalid_argument("Only \"true\" or \"false\" values allowed.");
                 }
                 bt_opts->non_blocking_send = temp == "true" ? true : false;
             }
@@ -4830,6 +4830,36 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER,
                         "Found wrong value " << attrib->Value() << " for non_blocking attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(attrib->Name(), TCP_NEGOTIATION_TIMEOUT) == 0)
+        {
+            // tcp_negotiation_timeout - stringType
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (attrib->Value()[0] == '-')
+                {
+                    throw std::invalid_argument("Negative value detected.");
+                }
+                uint64_t value = std::stoull(temp);
+                if (value > std::numeric_limits<std::uint32_t>::max())
+                {
+                    throw std::out_of_range("Value for timeout out of range. Max uint32_t.");
+                }
+                bt_opts->tcp_negotiation_timeout = static_cast<uint32_t>(std::stoul(temp));
+            }
+            catch (std::exception& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for tcp_negotiation_timeout attribute. " <<
                         except.what());
                 ret = XMLP_ret::XML_ERROR;
                 break;
