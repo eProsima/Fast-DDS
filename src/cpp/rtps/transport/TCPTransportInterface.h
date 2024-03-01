@@ -289,7 +289,7 @@ public:
             const Locator& loc) const = 0;
 
     virtual bool is_interface_allowed(
-            const std::string& interface) const = 0;
+            const std::string& network_interface) const = 0;
 
     //! Checks for TCP kinds.
     bool IsLocatorSupported(

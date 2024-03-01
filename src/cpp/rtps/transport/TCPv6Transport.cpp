@@ -233,9 +233,9 @@ bool TCPv6Transport::is_interface_whitelist_empty() const
 }
 
 bool TCPv6Transport::is_interface_allowed(
-        const std::string& interface) const
+        const std::string& tcp_interface) const
 {
-    return is_interface_allowed(asio::ip::address_v6::from_string(interface));
+    return is_interface_allowed(asio::ip::address_v6::from_string(tcp_interface));
 }
 
 bool TCPv6Transport::is_interface_allowed(

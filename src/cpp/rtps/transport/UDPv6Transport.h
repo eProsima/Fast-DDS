@@ -141,7 +141,7 @@ protected:
 
     //! Checks if the given interface is allowed by the white list.
     bool is_interface_allowed(
-            const std::string& interface) const override;
+            const std::string& udp_interface) const override;
 
     //! Checks if the interfaces white list is empty.
     bool is_interface_whitelist_empty() const override;

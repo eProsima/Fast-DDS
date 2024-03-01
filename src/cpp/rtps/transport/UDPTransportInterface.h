@@ -231,7 +231,7 @@ protected:
 
     //! Checks if the given interface is allowed by the white list.
     virtual bool is_interface_allowed(
-            const std::string& interface) const = 0;
+            const std::string& udp_interface) const = 0;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
