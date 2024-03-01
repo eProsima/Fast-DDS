@@ -356,6 +356,30 @@ private:
         AUTHENTICATION_NOT_AVAILABLE
     };
 
+    struct AuthenticationHandshakeProperties
+    {
+        AuthenticationHandshakeProperties();
+        ~AuthenticationHandshakeProperties() = default;
+
+        /**
+         * @brief Parses the properties from a propertypolicy rule
+         * @param properties PropertyPolicy reference to the properties to parse
+         */
+        void parse_from_property_policy(
+                const PropertyPolicy& properties);
+
+        // Maximum number of handshake requests to be sent
+        // Must be greater than 0
+        int32_t max_handshake_requests_;
+        // Initial wait time (in milliseconds) for the first handshake request resend
+        // Must be greater than 0
+        int32_t initial_handshake_resend_period_ms_;
+        // Gain for the period between handshake request resends
+        // The initial period is multiplied by this value each time a resend is performed
+        // Must be greater than 1
+        double handshake_resend_period_gain_;
+    };
+
     class DiscoveredParticipantInfo
     {
         struct AuthenticationInfo
@@ -366,12 +390,13 @@ private:
 
             AuthenticationInfo(
                     AuthenticationStatus auth_status)
-                : identity_handle_(nullptr)
+                : handshake_requests_sent_(0)
+                , identity_handle_(nullptr)
                 , handshake_handle_(nullptr)
                 , auth_status_(auth_status)
                 , expected_sequence_number_(0)
                 , change_sequence_number_(SequenceNumber_t::unknown())
-                , handshake_requests_sent_(0)
+
             {
             }
 
@@ -386,6 +411,8 @@ private:
             {
             }
 
+            int32_t handshake_requests_sent_;
+
             IdentityHandle* identity_handle_;
 
             HandshakeHandle* handshake_handle_;
@@ -398,8 +425,6 @@ private:
 
             EventUniquePtr event_;
 
-            uint32_t handshake_requests_sent_;
-
         private:
 
             AuthenticationInfo(
@@ -409,9 +434,6 @@ private:
     public:
 
         typedef std::unique_ptr<AuthenticationInfo> AuthUniquePtr;
-
-        static constexpr uint32_t INITIAL_RESEND_HANDSHAKE_MILLISECS = 125;
-        static constexpr uint32_t MAX_HANDSHAKE_REQUESTS = 5;
 
         DiscoveredParticipantInfo(
                 AuthenticationStatus auth_status,
@@ -788,6 +810,8 @@ private:
     Cryptography* crypto_plugin_ = nullptr;
 
     uint32_t domain_id_ = 0;
+
+    AuthenticationHandshakeProperties auth_handshake_props_;
 
     IdentityHandle* local_identity_handle_ = nullptr;
 
