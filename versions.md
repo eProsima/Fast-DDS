@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Added `non_blocking_send` to TCP Transport.
+* Added authentication handshake properties.
 
 Version 2.10.3
 --------------
