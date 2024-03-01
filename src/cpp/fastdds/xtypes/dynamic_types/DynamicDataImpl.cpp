@@ -3534,11 +3534,11 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
         }
         else if (TK_BITMASK == element_kind)
         {
-            ret_value = get_sequence_values_bitmask<TK>(MEMBER_ID_INVALID == id ? 0 : id, it, value, 0);
+            ret_value = get_sequence_values_bitmask<TK>(id, it, value, 0);
         }
         else
         {
-            ret_value = get_sequence_values_primitive<TK>(MEMBER_ID_INVALID == id ? 0 : id, element_kind, it, value, 0);
+            ret_value = get_sequence_values_primitive<TK>(id, element_kind, it, value, 0);
         }
     }
     else
@@ -3559,6 +3559,18 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_bitmask(
     auto sequence =
             std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(value_iterator->second);
     assert(sequence);
+
+    if (MEMBER_ID_INVALID == id)
+    {
+        if (0 == sequence->size())
+        {
+            value.clear();
+            return RETCODE_OK;
+        }
+
+        id = 0;
+    }
+
     if (sequence->size() > id)
     {
         auto initial_pos = sequence->begin() + id;
@@ -3706,6 +3718,18 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_primitive<TK_STRING8>(
     {
         auto sequence = std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_iterator->second);
         assert(sequence);
+
+        if (MEMBER_ID_INVALID == id)
+        {
+            if (0 == sequence->size())
+            {
+                value.clear();
+                return RETCODE_OK;
+            }
+
+            id = 0;
+        }
+
         if (sequence->size() > id)
         {
             auto initial_pos = sequence->begin() + id;
@@ -3737,6 +3761,18 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_primitive<TK_STRING16>(
     {
         auto sequence = std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_iterator->second);
         assert(sequence);
+
+        if (MEMBER_ID_INVALID == id)
+        {
+            if (0 == sequence->size())
+            {
+                value.clear();
+                return RETCODE_OK;
+            }
+
+            id = 0;
+        }
+
         if (sequence->size() > id)
         {
             auto initial_pos = sequence->begin() + id;
@@ -3767,6 +3803,18 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_promoting(
     {
         auto sequence = std::static_pointer_cast<SequenceTypeForKind<ToTK>>(value_iterator->second);
         assert(sequence);
+
+        if (MEMBER_ID_INVALID == id)
+        {
+            if (0 == sequence->size())
+            {
+                value.clear();
+                return RETCODE_OK;
+            }
+
+            id = 0;
+        }
+
         if (sequence->size() > id)
         {
             auto initial_pos = sequence->begin() + id;
