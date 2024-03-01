@@ -105,11 +105,21 @@
             </rtps>
         </participant>
 
+        <participant profile_name="participant_largedata_tcp_negotiation_timeout">
+            <domainId>0</domainId>
+            <rtps>
+                <name>Participant.builtin_transports_largedata_tcp_negotiation_timeout</name>
+                <builtinTransports tcp_negotiation_timeout="50">
+                    <mode>LARGE_DATA</mode>
+                </builtinTransports>
+            </rtps>
+        </participant>
+
         <participant profile_name="participant_largedata_all_options">
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata_all_options</name>
-                <builtinTransports max_msg_size="70000" sockets_size="70000" non_blocking="true">
+                <builtinTransports max_msg_size="70000" sockets_size="70000" non_blocking="true" tcp_negotiation_timeout="50">
                     <mode>LARGE_DATA</mode>
                 </builtinTransports>
             </rtps>

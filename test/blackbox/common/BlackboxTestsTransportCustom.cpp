@@ -551,12 +551,20 @@ TEST(ChainingTransportTests, builtin_transports_api_large_data_with_non_blocking
     BuiltinTransportsTest::test_api(BuiltinTransports::LARGE_DATA, &options);
 }
 
+TEST(ChainingTransportTests, builtin_transports_api_large_data_with_tcp_negotiation_timeout)
+{
+    BuiltinTransportsOptions options;
+    options.tcp_negotiation_timeout = 50;
+    BuiltinTransportsTest::test_api(BuiltinTransports::LARGE_DATA, &options);
+}
+
 TEST(ChainingTransportTests, builtin_transports_api_large_data_with_all_options)
 {
     BuiltinTransportsOptions options;
     options.maxMessageSize = 70000;
     options.sockets_buffer_size = 70000;
     options.non_blocking_send = true;
+    options.tcp_negotiation_timeout = 50;
     BuiltinTransportsTest::test_api(BuiltinTransports::LARGE_DATA, &options);
 }
 
@@ -612,9 +620,14 @@ TEST(ChainingTransportTests, builtin_transports_env_large_data_with_non_blocking
     BuiltinTransportsTest::test_env("LARGE_DATA?non_blocking=true");
 }
 
+TEST(ChainingTransportTests, builtin_transports_env_large_data_with_tcp_negotiation_timeout)
+{
+    BuiltinTransportsTest::test_env("LARGE_DATA?tcp_negotiation_timeout=50");
+}
+
 TEST(ChainingTransportTests, builtin_transports_env_large_data_with_all_options)
 {
-    BuiltinTransportsTest::test_env("LARGE_DATA?max_msg_size=70KB&sockets_size=70KB&non_blocking=true");
+    BuiltinTransportsTest::test_env("LARGE_DATA?max_msg_size=70KB&sockets_size=70KB&non_blocking=true&tcp_negotiation_timeout=50");
 }
 
 #ifndef __APPLE__
@@ -667,6 +680,11 @@ TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_max_msg_size
 TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_non_blocking_send)
 {
     BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata_non_blocking_send");
+}
+
+TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_tcp_negotiation_timeout)
+{
+    BuiltinTransportsTest::test_xml("builtin_transports_profile.xml", "participant_largedata_tcp_negotiation_timeout");
 }
 
 TEST(ChainingTransportTests, builtin_transports_xml_large_data_with_all_options)

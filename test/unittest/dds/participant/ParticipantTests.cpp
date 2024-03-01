@@ -4407,7 +4407,8 @@ public:
                         tcp_ptr->maxMessageSize == options.maxMessageSize &&
                         tcp_ptr->sendBufferSize == options.sockets_buffer_size &&
                         tcp_ptr->receiveBufferSize == options.sockets_buffer_size &&
-                        tcp_ptr->non_blocking_send == options.non_blocking_send)
+                        tcp_ptr->non_blocking_send == options.non_blocking_send &&
+                        tcp_ptr->tcp_negotiation_timeout == options.tcp_negotiation_timeout)
                 {
                     tcp_ok = true;
                 }
@@ -4507,6 +4508,7 @@ TEST(ParticipantTests, ParticipantCreationWithLargeDataOptionsThroughAPI)
     options.maxMessageSize = 40000;
     options.sockets_buffer_size = 60000;
     options.non_blocking_send = true;
+    options.tcp_negotiation_timeout = 50;
     qos = DomainParticipantQos();
     qos.setup_transports(rtps::BuiltinTransports::LARGE_DATA, options);
     EXPECT_TRUE(BuiltinTransportsOptionsTest::check_options_qos(qos, options));
@@ -4551,25 +4553,37 @@ TEST(ParticipantTests, ParticipantCreationWithLargeDataOptionsThroughEnvVar)
     options.non_blocking_send = true;
     BuiltinTransportsOptionsTest::test_large_data_correct_participant_with_env(mode, config_options, options);
 
-    // 4. All options
-    config_options = "?max_msg_size=70KB&non_blocking=true&sockets_size=70KB";
+    // 4. Only non_blocking_send
+    config_options = "?tcp_negotiation_timeout=50";
+    options = rtps::BuiltinTransportsOptions();
+    options.tcp_negotiation_timeout = 50;
+    BuiltinTransportsOptionsTest::test_large_data_correct_participant_with_env(mode, config_options, options);
+
+    // 5. All options
+    config_options = "?max_msg_size=70KB&non_blocking=true&sockets_size=70KB&tcp_negotiation_timeout=50";
     options = rtps::BuiltinTransportsOptions();
     options.maxMessageSize = 70000;
     options.sockets_buffer_size = 70000;
     options.non_blocking_send = true;
+    options.tcp_negotiation_timeout = 50;
     BuiltinTransportsOptionsTest::test_large_data_correct_participant_with_env(mode, config_options, options);
 
-    // 5. Wrong units defaults to LARGE_DATA with default config options
+    // 6. Incorrect units defaults to LARGE_DATA with default config options
     config_options = "?max_msg_size=70TB&non_blocking=true&sockets_size=70Byte";
     options = rtps::BuiltinTransportsOptions();
     BuiltinTransportsOptionsTest::test_large_data_correct_participant_with_env(mode, config_options, options);
 
-    // 6. Exceed maximum defaults to LARGE_DATA with default config options
+    // 7. Exceed maximum defaults to LARGE_DATA with default config options
     config_options = "?max_msg_size=5000000000&non_blocking=false&sockets_size=5000000000";
     options = rtps::BuiltinTransportsOptions();
     BuiltinTransportsOptionsTest::test_large_data_correct_participant_with_env(mode, config_options, options);
 
-    // 7. Wrong spelling defaults to DEFAULT builtin transports
+    // 8. Wrong type defaults to DEFAULT builtin transports with no options
+    config_options = "?max_msg_size=70KB&non_blocking=true&sockets_size=70KB&tcp_negotiation_timeout=ten";
+    options = rtps::BuiltinTransportsOptions();
+    BuiltinTransportsOptionsTest::test_wrong_participant_with_env(mode, config_options);
+
+    // 9. Wrong spelling defaults to DEFAULT builtin transports with no options
     config_options = "?max_message_size=70B&no_blokcing=true&sokcets_saze=70Byte";
     BuiltinTransportsOptionsTest::test_wrong_participant_with_env(mode, config_options);
 }
