@@ -932,7 +932,7 @@
             <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="keep_alive_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="accept_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="tcp_negotiation_timeout" type="int32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tcp_negotiation_timeout" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="segment_size" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="port_queue_capacity" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="healthy_check_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>

@@ -249,6 +249,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
                 <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="tcp_negotiation_timeout" type="uint32_t" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
@@ -430,6 +431,7 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, KEEP_ALIVE_THREAD) == 0 ||
                 strcmp(name, ACCEPT_THREAD) == 0 ||
                 strcmp(name, ENABLE_TCP_NODELAY) == 0 ||
+                strcmp(name, TCP_NEGOTIATION_TIMEOUT) == 0 ||
                 strcmp(name, TLS) == 0 ||
                 strcmp(name, SEGMENT_SIZE) == 0 ||
                 strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
