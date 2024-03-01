@@ -964,18 +964,18 @@ TEST_P(TransportTCP, send_resource_cleanup)
     // |          |                                               |            |                     |
     // |        1 TCP            <------------------------------------------------- TCPv4 init()     |
     // |          |                                               |            |                     |
-    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     | 
+    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     |
     // |          |                                               |            |                     |
     // |          |             - ChainingTransport->             |            |                     |
     // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
     // |          |                                               |            |                     |
     // |        Empty           <-------------------------------------------------- clean transports |
     // |          |                                               |            |                     |
-    // |        1 UDP           - ChainingTransport(UDP)  <------------------------ UDPv4 init()     | 
+    // |        1 UDP           - ChainingTransport(UDP)  <------------------------ UDPv4 init()     |
     // |          |                                               |            |                     |
     // |          |             - ChainingTransport->             |            |                     |
     // | TCP SendResources == 0        get_send_resource_list()   |            |                     |
-    // |__________________________________________________________|            |_____________________|  
+    // |__________________________________________________________|            |_____________________|
     //
     uint16_t server_port = 10000;
     test_transport_->add_listener_port(server_port);
@@ -1099,19 +1099,19 @@ TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
     // |          |                                               |            |                     |
     // |        1 TCP            <------------------------------------------------- TCPv4 init()     |
     // |          |                                               |            |                     |
-    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     | 
+    // |    1 TCP + 1 UDP        <------------------------------------------------- UDPv4 init()     |
     // |          |                                               |            |                     |
     // |          |             - ChainingTransport->             |            |                     |
     // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
     // |          |                                               |            |                     |
     // |  1 TCP (initial peer)  <-------------------------------------------------- clean transports |
     // |          |                                               |            |                     |
-    // |    1 TCP + 1 UDP       - ChainingTransport(UDP)  <------------------------ UDPv4 init()     | 
+    // |    1 TCP + 1 UDP       - ChainingTransport(UDP)  <------------------------ UDPv4 init()     |
     // |          |                                               |            |                     |
     // |          |             - ChainingTransport->             |            |                     |
     // | TCP SendResources == 1        get_send_resource_list()   |            |                     |
     // |     (initial peer)                                       |            |                     |
-    // |__________________________________________________________|            |_____________________| 
+    // |__________________________________________________________|            |_____________________|
     //
 
     uint16_t server_port = 10000;

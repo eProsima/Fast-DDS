@@ -249,7 +249,7 @@ public:
 
     /**
      * Remove the given participants from the send resource list
-     * 
+     *
      * @param send_resource_list List of send resources associated to the local participant.
      * @param remote_participant_locators List of locators associated to the remote participant.
      * @param participant_initial_peers List of locators of the initial peers of the local participant.

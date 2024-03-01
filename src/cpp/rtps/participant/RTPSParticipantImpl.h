@@ -1269,9 +1269,9 @@ public:
 
     /**
      * Method called on participant removal with the set of locators associated to the participant.
-     * 
+     *
      * @param remote_participant_locators Set of locators associated to the participant removed.
-    */
+     */
     void update_removed_participant(
             LocatorList_t& remote_participant_locators);
 

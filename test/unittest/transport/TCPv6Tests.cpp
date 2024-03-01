@@ -552,7 +552,7 @@ TEST_F(TCPv6Tests, remove_from_send_resource_list)
     ASSERT_EQ(send_resource_list.size(), 1u);
 }
 
-// TODO: TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports) 
+// TODO: TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
 // TODO: TEST_F(TCPv6Tests, send_and_receive_between_ports)
 
 #endif // ifndef __APPLE__

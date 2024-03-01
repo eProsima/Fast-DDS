@@ -469,7 +469,7 @@ public:
     /**
      * Close the output channel associated to the given remote participant but if its locators belong to the
      * given list of initial peers.
-     * 
+     *
      * @param send_resource_list List of send resources associated to the local participant.
      * @param remote_participant_locators Set of locators associated to the remote participant.
      * @param participant_initial_peers List of locators associated to the initial peers of the local participant.
