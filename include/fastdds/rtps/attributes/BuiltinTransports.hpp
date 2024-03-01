@@ -54,6 +54,16 @@ struct RTPS_DllAPI BuiltinTransportsOptions
      *
      */
     uint32_t sockets_buffer_size = 0;
+
+    /**
+     * @brief Time to wait for logical port negotiation (ms).
+     *
+     * It specifies the value that will be used to configure the honomym attribute of the TCPTransportDescriptor used.
+     * It only takes effect if the LARGE_DATA mode is used.
+     * Zero value means no waiting (default).
+     *
+     */
+    uint32_t tcp_negotiation_timeout = 0;
 };
 
 /**
@@ -77,6 +87,10 @@ inline bool operator ==(
         return false;
     }
     if (bto1.sockets_buffer_size != bto2.sockets_buffer_size)
+    {
+        return false;
+    }
+    if (bto1.tcp_negotiation_timeout != bto2.tcp_negotiation_timeout)
     {
         return false;
     }

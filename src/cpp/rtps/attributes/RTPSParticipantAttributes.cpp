@@ -113,7 +113,7 @@ static std::shared_ptr<fastdds::rtps::TCPv4TransportDescriptor> create_tcpv4_tra
     descriptor->check_crc = false;
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
-    descriptor->tcp_negotiation_timeout = 0;
+    descriptor->tcp_negotiation_timeout = options.tcp_negotiation_timeout;
 
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     descriptor->accept_thread = att.builtin_transports_reception_threads;
@@ -136,7 +136,7 @@ static std::shared_ptr<fastdds::rtps::TCPv6TransportDescriptor> create_tcpv6_tra
     descriptor->check_crc = false;
     descriptor->apply_security = false;
     descriptor->enable_tcp_nodelay = true;
-    descriptor->tcp_negotiation_timeout = 0;
+    descriptor->tcp_negotiation_timeout = options.tcp_negotiation_timeout;
 
     descriptor->default_reception_threads(att.builtin_transports_reception_threads);
     descriptor->accept_thread = att.builtin_transports_reception_threads;
