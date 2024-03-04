@@ -63,7 +63,7 @@
 #define EPROSIMA_DYN_LINK
 #endif // if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 
-#include <fastrtps/eProsima_auto_link.h>
+#include <fastdds/fastdds_auto_link.hpp>
 #endif // auto-linking disabled
 
 #endif // _FASTDDS_FASTDDS_DLL_H_
