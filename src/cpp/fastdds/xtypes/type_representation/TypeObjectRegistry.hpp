@@ -299,6 +299,18 @@ protected:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
     /**
+     * @brief Get the type dependencies of custom annotations.
+     *
+     * @param[in] custom_annotation_seq Sequence of custom annotations.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    ReturnCode_t get_custom_annotations_dependencies(
+            const AppliedAnnotationSeq& custom_annotation_seq,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
      * @brief Get the type dependencies of plain sequences or arrays.
      *
      * @tparam T Either PlainSequenceSElemDefn, PlainSequenceLElemDefn, PlainArraySElemDefn or PlainArrayLElemDefn.
