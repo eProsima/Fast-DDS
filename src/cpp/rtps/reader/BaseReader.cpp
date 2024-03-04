@@ -498,6 +498,11 @@ void BaseReader::init(
         const std::shared_ptr<IPayloadPool>& payload_pool,
         const std::shared_ptr<IChangePool>& change_pool)
 {
+    if (!(liveliness_lease_duration_ < fastdds::dds::c_TimeInfinite))
+    {
+        liveliness_lease_duration_ = fastdds::dds::Duration_t(24 * 60 * 60, 0);
+    }
+
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
     fixed_payload_size_ = 0;
