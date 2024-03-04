@@ -373,7 +373,7 @@ protected:
             }
             else
             {
-                EXPECT_EQ(filter_counter.content_filter_info_count, 0);
+                EXPECT_EQ(filter_counter.content_filter_info_count, 0u);
                 EXPECT_EQ(filter_counter.max_filter_signature_number, 0u);
             }
         }

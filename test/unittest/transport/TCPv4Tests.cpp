@@ -1511,7 +1511,7 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
        as communication lacks most of the discovery messages using a raw socket as participant.
      */
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
-    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
+    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1u);
     auto sender_channel_resource =
             std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
 
@@ -1945,7 +1945,7 @@ TEST_F(TCPv4Tests, client_announced_local_port_uniqueness)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
+    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2u);
 }
 
 #ifndef _WIN32
@@ -2009,7 +2009,7 @@ TEST_F(TCPv4Tests, non_blocking_send)
        as communication lacks most of the discovery messages using a raw socket as participant.
      */
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
-    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
+    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1u);
     auto sender_channel_resource =
             std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
 
@@ -2138,11 +2138,11 @@ TEST_F(TCPv4Tests, opening_output_channel_with_same_locator_as_local_listening_p
     // If the remote address is lower than the local one, no channel must be created but it must be added to the send_resource_list
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, lowerOutputChannelLocator));
     ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(lowerOutputChannelLocator));
-    ASSERT_EQ(send_resource_list.size(), 1);
+    ASSERT_EQ(send_resource_list.size(), 1u);
     // If the remote address is higher than the local one, a CONNECT channel must be created and added to the send_resource_list
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, higherOutputChannelLocator));
     ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(higherOutputChannelLocator));
-    ASSERT_EQ(send_resource_list.size(), 2);
+    ASSERT_EQ(send_resource_list.size(), 2u);
 }
 
 void TCPv4Tests::HELPER_SetDescriptorDefaults()

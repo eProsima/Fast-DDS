@@ -496,15 +496,15 @@ TEST(SubscriberTests, ChangeDefaultDataReaderQos)
     EXPECT_EQ(2, wqos.endpoint().entity_id);
     EXPECT_EQ(eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE, wqos.endpoint().history_memory_policy);
     // .reader_resource_limits
-    EXPECT_EQ(30, wqos.reader_resource_limits().matched_publisher_allocation.initial);
-    EXPECT_EQ(300, wqos.reader_resource_limits().matched_publisher_allocation.maximum);
-    EXPECT_EQ(4, wqos.reader_resource_limits().matched_publisher_allocation.increment);
-    EXPECT_EQ(40, wqos.reader_resource_limits().sample_infos_allocation.initial);
-    EXPECT_EQ(400, wqos.reader_resource_limits().sample_infos_allocation.maximum);
-    EXPECT_EQ(5, wqos.reader_resource_limits().sample_infos_allocation.increment);
-    EXPECT_EQ(50, wqos.reader_resource_limits().outstanding_reads_allocation.initial);
-    EXPECT_EQ(500, wqos.reader_resource_limits().outstanding_reads_allocation.maximum);
-    EXPECT_EQ(6, wqos.reader_resource_limits().outstanding_reads_allocation.increment);
+    EXPECT_EQ(30u, wqos.reader_resource_limits().matched_publisher_allocation.initial);
+    EXPECT_EQ(300u, wqos.reader_resource_limits().matched_publisher_allocation.maximum);
+    EXPECT_EQ(4u, wqos.reader_resource_limits().matched_publisher_allocation.increment);
+    EXPECT_EQ(40u, wqos.reader_resource_limits().sample_infos_allocation.initial);
+    EXPECT_EQ(400u, wqos.reader_resource_limits().sample_infos_allocation.maximum);
+    EXPECT_EQ(5u, wqos.reader_resource_limits().sample_infos_allocation.increment);
+    EXPECT_EQ(50u, wqos.reader_resource_limits().outstanding_reads_allocation.initial);
+    EXPECT_EQ(500u, wqos.reader_resource_limits().outstanding_reads_allocation.maximum);
+    EXPECT_EQ(6u, wqos.reader_resource_limits().outstanding_reads_allocation.increment);
     EXPECT_EQ(33, wqos.reader_resource_limits().max_samples_per_read);
     // .data_sharing
     EXPECT_EQ(eprosima::fastdds::dds::ON, wqos.data_sharing().kind());

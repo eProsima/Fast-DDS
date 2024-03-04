@@ -70,7 +70,7 @@ TEST(DataReaderInstance, writer_update_its_ownership_strength)
     // Anything changes because it is not an "alive" writer of the instance.
     ASSERT_EQ(dw3_guid, instance.current_owner.first);
     ASSERT_EQ(14u, instance.current_owner.second);
-    ASSERT_EQ(3, instance.alive_writers.size());
+    ASSERT_EQ(3u, instance.alive_writers.size());
 }
 
 /*!

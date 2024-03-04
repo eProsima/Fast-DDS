@@ -196,7 +196,7 @@ TEST_F(TCPv6Tests, autofill_port)
     transportUnderTest_autofill.init();
 
     EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports[0] != 0);
-    EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports.size() == 1);
+    EXPECT_TRUE(transportUnderTest_autofill.configuration()->listening_ports.size() == 1u);
 }
 
 static void GetIP6s(
@@ -297,7 +297,7 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2);
+    ASSERT_EQ(receiveTransportUnderTest.get_channel_resources().size(), 2u);
 }
 
 #ifndef _WIN32
@@ -361,7 +361,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
        as communication lacks most of the discovery messages using a raw socket as participant.
      */
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
-    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
+    ASSERT_TRUE(sender_unbound_channel_resources.size() == 1u);
     auto sender_channel_resource =
             std::static_pointer_cast<TCPChannelResourceBasic>(sender_unbound_channel_resources[0]);
 
@@ -493,7 +493,7 @@ TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_p
     // If the remote address is higher than the local one, a CONNECT channel must be created and added to the send_resource_list
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, higherOutputChannelLocator));
     ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(higherOutputChannelLocator));
-    ASSERT_EQ(send_resource_list.size(), 2);
+    ASSERT_EQ(send_resource_list.size(), 2u);
 }
 
 /*
