@@ -582,11 +582,11 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
     ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
+    ASSERT_EQ(232u, test2);
     ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 303), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(303, test2);
+    ASSERT_EQ(303u, test2);
     ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
@@ -596,10 +596,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
+    ASSERT_EQ(1u, test2);
     ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
     ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
 
@@ -700,15 +700,15 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     // Test clear functions.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
 
     DynamicDataFactory::get_instance()->delete_data(data);
 }
@@ -896,7 +896,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     ASSERT_NE(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
     ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
+    ASSERT_EQ(232u, test2);
     ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
@@ -907,10 +907,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
     ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
     ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
+    ASSERT_EQ(1u, test2);
     ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
     ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
 
@@ -1014,16 +1014,16 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     // Test clear functions.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
     ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
     ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
 
     DynamicDataFactory::get_instance()->delete_data(data);
 }
@@ -1210,15 +1210,15 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 3004), RETCODE_OK);
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(3004, test2);
+    ASSERT_EQ(3004u, test2);
     ASSERT_NE(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
+    ASSERT_EQ(232u, test2);
     ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100, test2);
+    ASSERT_EQ(100u, test2);
     ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
@@ -1227,10 +1227,10 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
+    ASSERT_EQ(1u, test2);
     ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
     ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
 
@@ -1328,16 +1328,16 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     // Test clear functions.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
     ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
 
     DynamicDataFactory::get_instance()->delete_data(data);
 }
@@ -2288,16 +2288,16 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     // Test clear functions.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
     ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
     ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
 
     DynamicDataFactory::get_instance()->delete_data(data);
 }
@@ -2514,13 +2514,13 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     uint32_t test2 {0};
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2, test2);
+    ASSERT_EQ(2u, test2);
 
     ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
+    ASSERT_EQ(1u, test2);
     ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
     ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
@@ -2530,10 +2530,10 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
     ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 2), RETCODE_OK);
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2, test2);
+    ASSERT_EQ(2u, test2);
     ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
     ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
 
@@ -2636,16 +2636,16 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     // Test clear functions.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
     ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    ASSERT_EQ(0u, test2);
 
     DynamicDataFactory::get_instance()->delete_data(data);
 }
@@ -3413,7 +3413,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     // Remove the elements.
     ASSERT_EQ(RETCODE_OK, data->clear_all_values());
     ASSERT_EQ(data->get_uint8_value(get_test_field_1, 0), RETCODE_OK);
-    ASSERT_EQ(0, get_test_field_1);
+    ASSERT_EQ(0u, get_test_field_1);
     ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), RETCODE_OK);
     ASSERT_EQ(0, get_test_field_2);
 
@@ -3421,7 +3421,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     ASSERT_EQ(data->set_int32_value(3, set_test_field_2), RETCODE_OK);
     ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
     ASSERT_EQ(data->get_uint8_value(get_test_field_1, 0), RETCODE_OK);
-    ASSERT_EQ(0, get_test_field_1);
+    ASSERT_EQ(0u, get_test_field_1);
     ASSERT_EQ(data->get_int32_value(get_test_field_2, 3), RETCODE_OK);
     ASSERT_EQ(0, get_test_field_2);
 
