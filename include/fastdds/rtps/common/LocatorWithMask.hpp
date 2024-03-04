@@ -30,7 +30,7 @@ namespace rtps {
 /**
  * A Locator with a mask that defines the number of significant bits of its address.
  */
-class RTPS_DllAPI LocatorWithMask : public Locator
+class FASTDDS_EXPORTED_API LocatorWithMask : public Locator
 {
 public:
 

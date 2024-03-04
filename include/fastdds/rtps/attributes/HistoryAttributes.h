@@ -35,7 +35,7 @@ namespace rtps {
  * The Publisher-Subscriber API has other fields to define this values (HistoryQosPolicy and ResourceLimitsQosPolicy).
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-class RTPS_DllAPI HistoryAttributes
+class FASTDDS_EXPORTED_API HistoryAttributes
 {
 public:
 

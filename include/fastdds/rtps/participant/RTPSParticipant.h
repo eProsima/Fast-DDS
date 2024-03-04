@@ -81,7 +81,7 @@ class WLP;
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
  * @ingroup RTPS_MODULE
  */
-class RTPS_DllAPI RTPSParticipant
+class FASTDDS_EXPORTED_API RTPSParticipant
 {
     friend class RTPSParticipantImpl;
     friend class RTPSDomain;

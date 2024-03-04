@@ -44,14 +44,14 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI SubscriberListener()
+    FASTDDS_EXPORTED_API SubscriberListener()
     {
     }
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~SubscriberListener()
+    FASTDDS_EXPORTED_API virtual ~SubscriberListener()
     {
     }
 
@@ -61,7 +61,7 @@ public:
      *
      * @param sub Subscriber
      */
-    RTPS_DllAPI virtual void on_data_on_readers(
+    FASTDDS_EXPORTED_API virtual void on_data_on_readers(
             Subscriber* sub)
     {
         (void)sub;

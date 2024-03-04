@@ -33,7 +33,7 @@ namespace rtps {
  * This class is used to define attributes across a wide set of Qos and APIs.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-struct RTPS_DllAPI ThreadSettings
+struct FASTDDS_EXPORTED_API ThreadSettings
 {
     /**
      * @brief The scheduling policy used for this thread.

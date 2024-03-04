@@ -39,7 +39,7 @@ protected:
     DynamicType_ptr key_element_type_;      // Key Type for maps.
     std::vector<AnnotationDescriptor*> annotation_; // Annotations to apply
 
-    RTPS_DllAPI void clean();
+    FASTDDS_EXPORTED_API void clean();
 
     static bool is_type_name_consistent(
             const std::string& sName);
@@ -52,107 +52,107 @@ protected:
 
 public:
 
-    RTPS_DllAPI TypeDescriptor();
+    FASTDDS_EXPORTED_API TypeDescriptor();
 
-    RTPS_DllAPI TypeDescriptor(
+    FASTDDS_EXPORTED_API TypeDescriptor(
             const TypeDescriptor* other);
 
-    RTPS_DllAPI TypeDescriptor(
+    FASTDDS_EXPORTED_API TypeDescriptor(
             const std::string& name,
             TypeKind kind);
 
-    RTPS_DllAPI ~TypeDescriptor();
+    FASTDDS_EXPORTED_API ~TypeDescriptor();
 
-    RTPS_DllAPI ReturnCode_t copy_from(
+    FASTDDS_EXPORTED_API ReturnCode_t copy_from(
             const TypeDescriptor* descriptor);
 
-    RTPS_DllAPI bool equals(
+    FASTDDS_EXPORTED_API bool equals(
             const TypeDescriptor* descriptor) const;
 
-    RTPS_DllAPI bool is_consistent() const;
+    FASTDDS_EXPORTED_API bool is_consistent() const;
 
-    RTPS_DllAPI DynamicType_ptr get_base_type() const;
+    FASTDDS_EXPORTED_API DynamicType_ptr get_base_type() const;
 
-    RTPS_DllAPI uint32_t get_bounds(
+    FASTDDS_EXPORTED_API uint32_t get_bounds(
             uint32_t index = 0) const;
 
-    RTPS_DllAPI uint32_t get_bounds_size() const;
+    FASTDDS_EXPORTED_API uint32_t get_bounds_size() const;
 
-    RTPS_DllAPI DynamicType_ptr get_discriminator_type() const;
+    FASTDDS_EXPORTED_API DynamicType_ptr get_discriminator_type() const;
 
-    RTPS_DllAPI DynamicType_ptr get_element_type() const;
+    FASTDDS_EXPORTED_API DynamicType_ptr get_element_type() const;
 
-    RTPS_DllAPI DynamicType_ptr get_key_element_type() const;
+    FASTDDS_EXPORTED_API DynamicType_ptr get_key_element_type() const;
 
-    RTPS_DllAPI TypeKind get_kind() const;
+    FASTDDS_EXPORTED_API TypeKind get_kind() const;
 
-    RTPS_DllAPI std::string get_name() const;
+    FASTDDS_EXPORTED_API std::string get_name() const;
 
-    RTPS_DllAPI uint32_t get_total_bounds() const;
+    FASTDDS_EXPORTED_API uint32_t get_total_bounds() const;
 
-    RTPS_DllAPI void set_kind(
+    FASTDDS_EXPORTED_API void set_kind(
             TypeKind kind);
 
-    RTPS_DllAPI void set_name(
+    FASTDDS_EXPORTED_API void set_name(
             std::string name);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
             AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI AnnotationDescriptor* get_annotation(
+    FASTDDS_EXPORTED_API AnnotationDescriptor* get_annotation(
             const std::string& name) const;
 
     // Annotations application
-    RTPS_DllAPI bool annotation_is_extensibility() const;
+    FASTDDS_EXPORTED_API bool annotation_is_extensibility() const;
 
-    RTPS_DllAPI bool annotation_is_mutable() const;
+    FASTDDS_EXPORTED_API bool annotation_is_mutable() const;
 
-    RTPS_DllAPI bool annotation_is_final() const;
+    FASTDDS_EXPORTED_API bool annotation_is_final() const;
 
-    RTPS_DllAPI bool annotation_is_appendable() const;
+    FASTDDS_EXPORTED_API bool annotation_is_appendable() const;
 
-    RTPS_DllAPI bool annotation_is_nested() const;
+    FASTDDS_EXPORTED_API bool annotation_is_nested() const;
 
-    RTPS_DllAPI bool annotation_is_bit_bound() const;
+    FASTDDS_EXPORTED_API bool annotation_is_bit_bound() const;
 
-    RTPS_DllAPI bool annotation_is_key() const;
+    FASTDDS_EXPORTED_API bool annotation_is_key() const;
 
-    RTPS_DllAPI bool annotation_is_non_serialized() const;
+    FASTDDS_EXPORTED_API bool annotation_is_non_serialized() const;
 
     // Annotation getters
-    RTPS_DllAPI std::string annotation_get_extensibility() const;
+    FASTDDS_EXPORTED_API std::string annotation_get_extensibility() const;
 
-    RTPS_DllAPI bool annotation_get_nested() const;
+    FASTDDS_EXPORTED_API bool annotation_get_nested() const;
 
-    RTPS_DllAPI uint16_t annotation_get_bit_bound() const;
+    FASTDDS_EXPORTED_API uint16_t annotation_get_bit_bound() const;
 
-    RTPS_DllAPI bool annotation_get_key() const;
+    FASTDDS_EXPORTED_API bool annotation_get_key() const;
 
     // Annotation setters
-    RTPS_DllAPI void annotation_set_extensibility(
+    FASTDDS_EXPORTED_API void annotation_set_extensibility(
             const std::string& extensibility);
 
-    RTPS_DllAPI void annotation_set_mutable();
+    FASTDDS_EXPORTED_API void annotation_set_mutable();
 
-    RTPS_DllAPI void annotation_set_final();
+    FASTDDS_EXPORTED_API void annotation_set_final();
 
-    RTPS_DllAPI void annotation_set_appendable();
+    FASTDDS_EXPORTED_API void annotation_set_appendable();
 
-    RTPS_DllAPI void annotation_set_nested(
+    FASTDDS_EXPORTED_API void annotation_set_nested(
             bool nested);
 
-    RTPS_DllAPI void annotation_set_bit_bound(
+    FASTDDS_EXPORTED_API void annotation_set_bit_bound(
             uint16_t bit_bound);
 
-    RTPS_DllAPI void annotation_set_key(
+    FASTDDS_EXPORTED_API void annotation_set_key(
             bool key);
 
-    RTPS_DllAPI void annotation_set_non_serialized(
+    FASTDDS_EXPORTED_API void annotation_set_non_serialized(
             bool non_serialized);
 };
 

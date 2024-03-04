@@ -68,7 +68,7 @@ namespace rtps {
  * For example, an address + port combination in the case of UDP.
  * @ingroup COMMON_MODULE
  */
-class RTPS_DllAPI Locator_t
+class FASTDDS_EXPORTED_API Locator_t
 {
 public:
 

@@ -73,7 +73,7 @@ namespace rtps {
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI EntityId_t
+struct FASTDDS_EXPORTED_API EntityId_t
 {
     static constexpr unsigned int size = 4;
     octet value[size];

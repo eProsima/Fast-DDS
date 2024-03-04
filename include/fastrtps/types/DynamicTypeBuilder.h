@@ -72,24 +72,24 @@ protected:
     ReturnCode_t copy_from_builder(const DynamicTypeBuilder* other);
 
 public:
-    RTPS_DllAPI ReturnCode_t add_empty_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_empty_member(
             uint32_t index,
             const std::string& name);
 
-    RTPS_DllAPI ReturnCode_t add_member(const MemberDescriptor* descriptor);
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(const MemberDescriptor* descriptor);
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicTypeBuilder* type_ = nullptr);
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicTypeBuilder* type_,
             const std::string& defaultValue);
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicTypeBuilder* type_,
@@ -97,18 +97,18 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
         DynamicType_ptr type_ = DynamicType_ptr(nullptr));
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicType_ptr type_,
             const std::string& defaultValue);
 
-    RTPS_DllAPI ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
             DynamicType_ptr type_,
@@ -116,37 +116,37 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation_to_member(
             MemberId id,
             AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation_to_member(
             MemberId id,
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI DynamicType_ptr build();
+    FASTDDS_EXPORTED_API DynamicType_ptr build();
 
-    RTPS_DllAPI ReturnCode_t copy_from(const DynamicTypeBuilder* other);
+    FASTDDS_EXPORTED_API ReturnCode_t copy_from(const DynamicTypeBuilder* other);
 
     ReturnCode_t get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
 
-    RTPS_DllAPI inline TypeKind get_kind() const
+    FASTDDS_EXPORTED_API inline TypeKind get_kind() const
     {
         return kind_;
     }
 
-    RTPS_DllAPI std::string get_name() const;
+    FASTDDS_EXPORTED_API std::string get_name() const;
 
-    RTPS_DllAPI MemberId get_member_id_by_name(const std::string& name) const;
+    FASTDDS_EXPORTED_API MemberId get_member_id_by_name(const std::string& name) const;
 
     const TypeDescriptor* get_type_descriptor() const
     {
@@ -157,7 +157,7 @@ public:
 
     bool is_discriminator_type() const;
 
-    RTPS_DllAPI ReturnCode_t set_name(const std::string& name);
+    FASTDDS_EXPORTED_API ReturnCode_t set_name(const std::string& name);
 };
 
 } // namespace types

@@ -23,8 +23,6 @@
 #include <cstdint>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
-#include <fastrtps/fastrtps_dll.h>
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -33,7 +31,7 @@ namespace rtps {
 /**
  * @brief Options for configuring the built-in transports when using LARGE_DATA mode.
  */
-struct RTPS_DllAPI BuiltinTransportsOptions
+struct FASTDDS_EXPORTED_API BuiltinTransportsOptions
 {
     //! Whether to use non-blocking send operation.
     bool non_blocking_send = false;

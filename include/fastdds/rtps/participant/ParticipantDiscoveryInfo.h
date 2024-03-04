@@ -36,7 +36,7 @@ struct ParticipantDiscoveryInfo
     //!Enum DISCOVERY_STATUS, four different status for discovered participants.
     //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
-    enum RTPS_DllAPI DISCOVERY_STATUS
+    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
 #else
     enum DISCOVERY_STATUS
 #endif // if defined(_WIN32)
@@ -74,7 +74,7 @@ struct ParticipantDiscoveryInfo
 #if HAVE_SECURITY
 struct ParticipantAuthenticationInfo
 {
-    enum RTPS_DllAPI AUTHENTICATION_STATUS
+    enum FASTDDS_EXPORTED_API AUTHENTICATION_STATUS
     {
         AUTHORIZED_PARTICIPANT,
         UNAUTHORIZED_PARTICIPANT

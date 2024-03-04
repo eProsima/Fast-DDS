@@ -32,7 +32,7 @@ namespace rtps{
  * @ingroup COMMON_MODULE
  */
 #if defined(_WIN32)
-    enum RTPS_DllAPI MatchingStatus{
+    enum FASTDDS_EXPORTED_API MatchingStatus{
 #else
         enum MatchingStatus{
 #endif
@@ -45,7 +45,7 @@ namespace rtps{
  * Class MatchingInfo contains information about the matching between two endpoints.
  * @ingroup COMMON_MODULE
  */
-class RTPS_DllAPI MatchingInfo
+class FASTDDS_EXPORTED_API MatchingInfo
 {
 public:
     //!Default constructor

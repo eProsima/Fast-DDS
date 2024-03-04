@@ -44,7 +44,7 @@ namespace dds {
  * - indicate status changes when calling dds::core::Entity::status_changes
  */
 
-class RTPS_DllAPI StatusMask : public std::bitset<FASTDDS_STATUS_COUNT>
+class FASTDDS_EXPORTED_API StatusMask : public std::bitset<FASTDDS_STATUS_COUNT>
 {
 public:
 

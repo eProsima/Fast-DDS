@@ -36,7 +36,7 @@ public:
     //!Enum DISCOVERY_STATUS, four different status for discovered writers.
     //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
-    enum RTPS_DllAPI DISCOVERY_STATUS
+    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
 #else
     enum  DISCOVERY_STATUS
 #endif // if defined(_WIN32)

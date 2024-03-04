@@ -43,7 +43,7 @@ class PublisherImpl;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Publisher
+class FASTDDS_EXPORTED_API Publisher
 {
     friend class PublisherImpl;
     virtual ~Publisher();

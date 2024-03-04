@@ -33,7 +33,7 @@ namespace rtps {
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI GuidPrefix_t
+struct FASTDDS_EXPORTED_API GuidPrefix_t
 {
     static constexpr unsigned int size = 12;
     octet value[size];

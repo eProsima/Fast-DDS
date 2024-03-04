@@ -29,7 +29,7 @@ namespace rtps {
  * @enum ChangeKind_t, different types of CacheChange_t.
  * @ingroup COMMON_MODULE
  */
-enum RTPS_DllAPI ChangeKind_t
+enum FASTDDS_EXPORTED_API ChangeKind_t
 {
     ALIVE,                            //!< ALIVE
     NOT_ALIVE_DISPOSED,               //!< NOT_ALIVE_DISPOSED

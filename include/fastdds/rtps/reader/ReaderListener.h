@@ -40,7 +40,7 @@ struct CacheChange_t;
  * certain events.
  * @ingroup READER_MODULE
  */
-class RTPS_DllAPI ReaderListener
+class FASTDDS_EXPORTED_API ReaderListener
 {
 public:
 

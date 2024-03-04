@@ -550,7 +550,7 @@ public:
     //! Optionally allows user to define the GuidPrefix_t
     GuidPrefix_t prefix;
 
-    RTPS_DllAPI inline bool ReadguidPrefix(
+    FASTDDS_EXPORTED_API inline bool ReadguidPrefix(
             const char* pfx)
     {
         return bool(std::istringstream(pfx) >> prefix);

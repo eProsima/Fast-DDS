@@ -35,7 +35,7 @@ namespace fastrtps {
  * Class SampleInfo_t with information that is provided along a sample when reading data from a Subscriber.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI SampleInfo_t
+class FASTDDS_EXPORTED_API SampleInfo_t
 {
 public:
 

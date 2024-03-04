@@ -51,7 +51,7 @@ documentation and/or software.
 * assumes that char is 8 bit and int is 32 bit
  *  @ingroup UTILITIES_MODULE
 */
-class RTPS_DllAPI MD5
+class FASTDDS_EXPORTED_API MD5
 {
 public:
     typedef unsigned char uint1; //  8bit
@@ -68,7 +68,7 @@ public:
 
 	void init();
 private:
-  
+
 
   typedef unsigned int uint4;  // 32bit
   enum {blocksize = 64}; // VC6 won't eat a const static int here

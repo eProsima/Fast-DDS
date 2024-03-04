@@ -39,18 +39,18 @@ struct UDPTransportDescriptor : public SocketTransportDescriptor
     virtual ~UDPTransportDescriptor() = default;
 
     //! Constructor
-    RTPS_DllAPI UDPTransportDescriptor();
+    FASTDDS_EXPORTED_API UDPTransportDescriptor();
 
     //! Copy constructor
-    RTPS_DllAPI UDPTransportDescriptor(
+    FASTDDS_EXPORTED_API UDPTransportDescriptor(
             const UDPTransportDescriptor& t) = default;
 
     //! Copy assignment
-    RTPS_DllAPI UDPTransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API UDPTransportDescriptor& operator =(
             const UDPTransportDescriptor& t) = default;
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const UDPTransportDescriptor& t) const;
 
     //! Source port to use for outgoing datagrams

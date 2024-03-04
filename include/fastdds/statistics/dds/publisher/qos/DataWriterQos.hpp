@@ -39,7 +39,7 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI DataWriterQos();
+    FASTDDS_EXPORTED_API DataWriterQos();
 };
 
 //! Constant to access default Statistics DataWriter Qos

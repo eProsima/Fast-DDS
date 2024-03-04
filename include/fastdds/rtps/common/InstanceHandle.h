@@ -31,7 +31,7 @@ namespace rtps {
 
 using KeyHash_t = std::array<octet, 16>;
 
-struct RTPS_DllAPI InstanceHandleValue_t
+struct FASTDDS_EXPORTED_API InstanceHandleValue_t
 {
     /**
      * Write access indexing operator.
@@ -148,7 +148,7 @@ private:
  * Struct InstanceHandle_t, used to contain the key for WITH_KEY topics.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI InstanceHandle_t
+struct FASTDDS_EXPORTED_API InstanceHandle_t
 {
     //!Value
     InstanceHandleValue_t value;

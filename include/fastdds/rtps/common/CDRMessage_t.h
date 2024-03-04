@@ -47,7 +47,7 @@ namespace rtps {
  * @brief Structure CDRMessage_t, contains a serialized message.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI CDRMessage_t final
+struct FASTDDS_EXPORTED_API CDRMessage_t final
 {
     // TODO(Miguel C): Deprecate when not used in mocks
     CDRMessage_t()

@@ -33,7 +33,7 @@ class Topic;
  *
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI TopicListener
+class FASTDDS_EXPORTED_API TopicListener
 {
 public:
 

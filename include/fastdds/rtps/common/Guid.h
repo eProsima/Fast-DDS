@@ -36,7 +36,7 @@ struct InstanceHandle_t;
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI GUID_t
+struct FASTDDS_EXPORTED_API GUID_t
 {
     //!Guid prefix
     GuidPrefix_t guidPrefix;

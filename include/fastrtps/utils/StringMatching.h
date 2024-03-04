@@ -35,7 +35,7 @@ namespace rtps {
    section B.6).
    @ingroup UTILITIES_MODULE
  */
-class RTPS_DllAPI StringMatching
+class FASTDDS_EXPORTED_API StringMatching
 {
 public:
 

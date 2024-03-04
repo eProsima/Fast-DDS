@@ -18,7 +18,7 @@
 namespace eprosima {
 namespace fastcdr {
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonStructMember& data,
         size_t& current_alignment)
@@ -54,7 +54,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonStructMember& data)
 {
@@ -69,7 +69,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonStructMember& data)
 {
@@ -85,7 +85,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteMemberDetail& data,
         size_t& current_alignment)
@@ -126,7 +126,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteMemberDetail& data)
 {
@@ -136,7 +136,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteMemberDetail& data)
 {
@@ -146,7 +146,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalMemberDetail& data,
         size_t& current_alignment)
@@ -178,7 +178,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalMemberDetail& data)
 {
@@ -186,7 +186,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalMemberDetail& data)
 {
@@ -194,7 +194,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructMember& data,
         size_t& current_alignment)
@@ -227,7 +227,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteStructMember& data)
 {
@@ -236,7 +236,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteStructMember& data)
 {
@@ -245,7 +245,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructMember& data,
         size_t& current_alignment)
@@ -278,7 +278,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalStructMember& data)
 {
@@ -287,7 +287,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalStructMember& data)
 {
@@ -296,7 +296,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data,
         size_t& current_alignment)
@@ -326,7 +326,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data)
 {
@@ -334,7 +334,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data)
 {
@@ -342,7 +342,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalTypeDetail&,
         size_t&)
@@ -351,21 +351,21 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::MinimalTypeDetail&)
 {
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::MinimalTypeDetail&)
 {
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteTypeDetail& data,
         size_t& current_alignment)
@@ -405,7 +405,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteTypeDetail& data)
 {
@@ -415,7 +415,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteTypeDetail& data)
 {
@@ -425,7 +425,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructHeader& data,
         size_t& current_alignment)
@@ -458,7 +458,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteStructHeader& data)
 {
@@ -467,7 +467,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteStructHeader& data)
 {
@@ -476,7 +476,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructHeader& data,
         size_t& current_alignment)
@@ -509,7 +509,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalStructHeader& data)
 {
@@ -518,7 +518,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalStructHeader& data)
 {
@@ -527,7 +527,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructType& data,
         size_t& current_alignment)
@@ -567,7 +567,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteStructType& data)
 {
@@ -582,7 +582,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteStructType& data)
 {
@@ -598,7 +598,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructType& data,
         size_t& current_alignment)
@@ -638,7 +638,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalStructType& data)
 {
@@ -653,7 +653,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalStructType& data)
 {
@@ -669,7 +669,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonUnionMember& data,
         size_t& current_alignment)
@@ -713,7 +713,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonUnionMember& data)
 {
@@ -729,7 +729,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonUnionMember& data)
 {
@@ -746,7 +746,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionMember& data,
         size_t& current_alignment)
@@ -779,7 +779,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteUnionMember& data)
 {
@@ -788,7 +788,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteUnionMember& data)
 {
@@ -797,7 +797,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionMember& data,
         size_t& current_alignment)
@@ -830,7 +830,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalUnionMember& data)
 {
@@ -839,7 +839,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalUnionMember& data)
 {
@@ -848,7 +848,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonDiscriminatorMember& data,
         size_t& current_alignment)
@@ -881,7 +881,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonDiscriminatorMember& data)
 {
@@ -895,7 +895,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonDiscriminatorMember& data)
 {
@@ -910,7 +910,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteDiscriminatorMember& data,
         size_t& current_alignment)
@@ -951,7 +951,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteDiscriminatorMember& data)
 {
@@ -961,7 +961,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteDiscriminatorMember& data)
 {
@@ -971,7 +971,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalDiscriminatorMember& data,
         size_t& current_alignment)
@@ -1001,7 +1001,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalDiscriminatorMember& data)
 {
@@ -1009,7 +1009,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalDiscriminatorMember& data)
 {
@@ -1017,7 +1017,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionHeader& data,
         size_t& current_alignment)
@@ -1047,7 +1047,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteUnionHeader& data)
 {
@@ -1055,7 +1055,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteUnionHeader& data)
 {
@@ -1063,7 +1063,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionHeader& data,
         size_t& current_alignment)
@@ -1093,7 +1093,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalUnionHeader& data)
 {
@@ -1101,7 +1101,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalUnionHeader& data)
 {
@@ -1109,7 +1109,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionType& data,
         size_t& current_alignment)
@@ -1153,7 +1153,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteUnionType& data)
 {
@@ -1169,7 +1169,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteUnionType& data)
 {
@@ -1186,7 +1186,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionType& data,
         size_t& current_alignment)
@@ -1230,7 +1230,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalUnionType& data)
 {
@@ -1246,7 +1246,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalUnionType& data)
 {
@@ -1263,7 +1263,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonAnnotationParameter& data,
         size_t& current_alignment)
@@ -1296,7 +1296,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonAnnotationParameter& data)
 {
@@ -1310,7 +1310,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonAnnotationParameter& data)
 {
@@ -1325,7 +1325,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationParameter& data,
         size_t& current_alignment)
@@ -1361,7 +1361,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteAnnotationParameter& data)
 {
@@ -1371,7 +1371,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteAnnotationParameter& data)
 {
@@ -1381,7 +1381,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAnnotationParameter& data,
         size_t& current_alignment)
@@ -1417,7 +1417,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalAnnotationParameter& data)
 {
@@ -1427,7 +1427,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalAnnotationParameter& data)
 {
@@ -1437,7 +1437,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationHeader& data,
         size_t& current_alignment)
@@ -1469,7 +1469,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteAnnotationHeader& data)
 {
@@ -1477,7 +1477,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteAnnotationHeader& data)
 {
@@ -1485,7 +1485,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalAnnotationHeader&,
         size_t&)
@@ -1494,21 +1494,21 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::MinimalAnnotationHeader&)
 {
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::MinimalAnnotationHeader&)
 {
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationType& data,
         size_t& current_alignment)
@@ -1550,7 +1550,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteAnnotationType& data)
 {
@@ -1565,7 +1565,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteAnnotationType& data)
 {
@@ -1581,7 +1581,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAnnotationType& data,
         size_t& current_alignment)
@@ -1623,7 +1623,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalAnnotationType& data)
 {
@@ -1638,7 +1638,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalAnnotationType& data)
 {
@@ -1654,7 +1654,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonAliasBody& data,
         size_t& current_alignment)
@@ -1687,7 +1687,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonAliasBody& data)
 {
@@ -1701,7 +1701,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonAliasBody& data)
 {
@@ -1716,7 +1716,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAliasBody& data,
         size_t& current_alignment)
@@ -1757,7 +1757,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteAliasBody& data)
 {
@@ -1767,7 +1767,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteAliasBody& data)
 {
@@ -1777,7 +1777,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAliasBody& data,
         size_t& current_alignment)
@@ -1807,7 +1807,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalAliasBody& data)
 {
@@ -1815,7 +1815,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalAliasBody& data)
 {
@@ -1823,7 +1823,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAliasHeader& data,
         size_t& current_alignment)
@@ -1853,7 +1853,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteAliasHeader& data)
 {
@@ -1861,7 +1861,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteAliasHeader& data)
 {
@@ -1869,7 +1869,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalAliasHeader&,
         size_t&)
@@ -1878,21 +1878,21 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::MinimalAliasHeader&)
 {
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::MinimalAliasHeader&)
 {
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAliasType& data,
         size_t& current_alignment)
@@ -1928,7 +1928,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteAliasType& data)
 {
@@ -1943,7 +1943,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteAliasType& data)
 {
@@ -1959,7 +1959,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAliasType& data,
         size_t& current_alignment)
@@ -1995,7 +1995,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalAliasType& data)
 {
@@ -2010,7 +2010,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalAliasType& data)
 {
@@ -2026,7 +2026,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteElementDetail& data,
         size_t& current_alignment)
@@ -2064,7 +2064,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteElementDetail& data)
 {
@@ -2073,7 +2073,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteElementDetail& data)
 {
@@ -2082,7 +2082,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonCollectionElement& data,
         size_t& current_alignment)
@@ -2115,7 +2115,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonCollectionElement& data)
 {
@@ -2129,7 +2129,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonCollectionElement& data)
 {
@@ -2144,7 +2144,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteCollectionElement& data,
         size_t& current_alignment)
@@ -2177,7 +2177,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteCollectionElement& data)
 {
@@ -2186,7 +2186,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteCollectionElement& data)
 {
@@ -2195,7 +2195,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalCollectionElement& data,
         size_t& current_alignment)
@@ -2225,7 +2225,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalCollectionElement& data)
 {
@@ -2233,7 +2233,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalCollectionElement& data)
 {
@@ -2241,7 +2241,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonCollectionHeader& data,
         size_t& current_alignment)
@@ -2271,7 +2271,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonCollectionHeader& data)
 {
@@ -2279,7 +2279,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonCollectionHeader& data)
 {
@@ -2287,7 +2287,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteCollectionHeader& data,
         size_t& current_alignment)
@@ -2320,7 +2320,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteCollectionHeader& data)
 {
@@ -2329,7 +2329,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteCollectionHeader& data)
 {
@@ -2338,7 +2338,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalCollectionHeader& data,
         size_t& current_alignment)
@@ -2368,7 +2368,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalCollectionHeader& data)
 {
@@ -2376,7 +2376,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalCollectionHeader& data)
 {
@@ -2384,7 +2384,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalSequenceType& data,
         size_t& current_alignment)
@@ -2431,7 +2431,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteSequenceType& data)
 {
@@ -2446,7 +2446,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteSequenceType& data)
 {
@@ -2462,7 +2462,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteSequenceType& data,
         size_t& current_alignment)
@@ -2509,7 +2509,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalSequenceType& data)
 {
@@ -2524,7 +2524,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalSequenceType& data)
 {
@@ -2540,7 +2540,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonArrayHeader& data,
         size_t& current_alignment)
@@ -2575,7 +2575,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonArrayHeader& data)
 {
@@ -2583,7 +2583,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonArrayHeader& data)
 {
@@ -2591,7 +2591,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteArrayHeader& data,
         size_t& current_alignment)
@@ -2624,7 +2624,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteArrayHeader& data)
 {
@@ -2633,7 +2633,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteArrayHeader& data)
 {
@@ -2642,7 +2642,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalArrayHeader& data,
         size_t& current_alignment)
@@ -2672,7 +2672,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalArrayHeader& data)
 {
@@ -2680,7 +2680,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalArrayHeader& data)
 {
@@ -2688,7 +2688,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteArrayType& data,
         size_t& current_alignment)
@@ -2724,7 +2724,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteArrayType& data)
 {
@@ -2739,7 +2739,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteArrayType& data)
 {
@@ -2755,7 +2755,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalArrayType& data,
         size_t& current_alignment)
@@ -2791,7 +2791,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalArrayType& data)
 {
@@ -2806,7 +2806,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalArrayType& data)
 {
@@ -2822,7 +2822,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteMapType& data,
         size_t& current_alignment)
@@ -2861,7 +2861,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteMapType& data)
 {
@@ -2877,7 +2877,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteMapType& data)
 {
@@ -2894,7 +2894,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalMapType& data,
         size_t& current_alignment)
@@ -2933,7 +2933,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalMapType& data)
 {
@@ -2949,7 +2949,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalMapType& data)
 {
@@ -2966,7 +2966,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonEnumeratedLiteral& data,
         size_t& current_alignment)
@@ -2999,7 +2999,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonEnumeratedLiteral& data)
 {
@@ -3013,7 +3013,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonEnumeratedLiteral& data)
 {
@@ -3028,7 +3028,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteEnumeratedLiteral& data,
         size_t& current_alignment)
@@ -3061,7 +3061,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteEnumeratedLiteral& data)
 {
@@ -3070,7 +3070,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteEnumeratedLiteral& data)
 {
@@ -3079,7 +3079,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data,
         size_t& current_alignment)
@@ -3112,7 +3112,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data)
 {
@@ -3121,7 +3121,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalEnumeratedLiteral& data)
 {
@@ -3130,7 +3130,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonEnumeratedHeader& data,
         size_t& current_alignment)
@@ -3162,7 +3162,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonEnumeratedHeader& data)
 {
@@ -3170,7 +3170,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonEnumeratedHeader& data)
 {
@@ -3178,7 +3178,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteEnumeratedHeader& data,
         size_t& current_alignment)
@@ -3211,7 +3211,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteEnumeratedHeader& data)
 {
@@ -3220,7 +3220,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteEnumeratedHeader& data)
 {
@@ -3229,7 +3229,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedHeader& data,
         size_t& current_alignment)
@@ -3259,7 +3259,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalEnumeratedHeader& data)
 {
@@ -3267,7 +3267,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalEnumeratedHeader& data)
 {
@@ -3275,7 +3275,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteEnumeratedType& data,
         size_t& current_alignment)
@@ -3317,7 +3317,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteEnumeratedType& data)
 {
@@ -3332,7 +3332,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteEnumeratedType& data)
 {
@@ -3348,7 +3348,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedType& data,
         size_t& current_alignment)
@@ -3389,7 +3389,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalEnumeratedType& data)
 {
@@ -3404,7 +3404,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalEnumeratedType& data)
 {
@@ -3420,7 +3420,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitflag& data,
         size_t& current_alignment)
@@ -3453,7 +3453,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonBitflag& data)
 {
@@ -3467,7 +3467,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonBitflag& data)
 {
@@ -3482,7 +3482,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitflag& data,
         size_t& current_alignment)
@@ -3515,7 +3515,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteBitflag& data)
 {
@@ -3524,7 +3524,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteBitflag& data)
 {
@@ -3533,7 +3533,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitflag& data,
         size_t& current_alignment)
@@ -3566,7 +3566,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalBitflag& data)
 {
@@ -3575,7 +3575,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalBitflag& data)
 {
@@ -3584,7 +3584,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitmaskHeader& data,
         size_t& current_alignment)
@@ -3616,7 +3616,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonBitmaskHeader& data)
 {
@@ -3624,7 +3624,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonBitmaskHeader& data)
 {
@@ -3632,7 +3632,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitmaskType& data,
         size_t& current_alignment)
@@ -3673,7 +3673,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteBitmaskType& data)
 {
@@ -3688,7 +3688,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteBitmaskType& data)
 {
@@ -3704,7 +3704,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitmaskType& data,
         size_t& current_alignment)
@@ -3745,7 +3745,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalBitmaskType& data)
 {
@@ -3760,7 +3760,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalBitmaskType& data)
 {
@@ -3776,7 +3776,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitfield& data,
         size_t& current_alignment)
@@ -3815,7 +3815,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CommonBitfield& data)
 {
@@ -3831,7 +3831,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CommonBitfield& data)
 {
@@ -3848,7 +3848,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitfield& data,
         size_t& current_alignment)
@@ -3881,7 +3881,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteBitfield& data)
 {
@@ -3890,7 +3890,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteBitfield& data)
 {
@@ -3899,7 +3899,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitfield& data,
         size_t& current_alignment)
@@ -3932,7 +3932,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalBitfield& data)
 {
@@ -3941,7 +3941,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalBitfield& data)
 {
@@ -3950,7 +3950,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitsetHeader& data,
         size_t& current_alignment)
@@ -3983,7 +3983,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteBitsetHeader& data)
 {
@@ -3992,7 +3992,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteBitsetHeader& data)
 {
@@ -4001,7 +4001,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitsetHeader& data,
         size_t& current_alignment)
@@ -4031,7 +4031,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalBitsetHeader& data)
 {
@@ -4039,7 +4039,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalBitsetHeader& data)
 {
@@ -4047,7 +4047,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitsetType& data,
         size_t& current_alignment)
@@ -4088,7 +4088,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteBitsetType& data)
 {
@@ -4103,7 +4103,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteBitsetType& data)
 {
@@ -4119,7 +4119,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitsetType& data,
         size_t& current_alignment)
@@ -4160,7 +4160,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalBitsetType& data)
 {
@@ -4175,7 +4175,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalBitsetType& data)
 {
@@ -4191,7 +4191,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::CompleteExtendedType&,
         size_t&)
@@ -4200,21 +4200,21 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::CompleteExtendedType&)
 {
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::CompleteExtendedType&)
 {
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalExtendedType&,
         size_t&)
@@ -4223,21 +4223,21 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::MinimalExtendedType&)
 {
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::MinimalExtendedType&)
 {
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteTypeObject& data,
         size_t& current_alignment)
@@ -4351,7 +4351,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::CompleteTypeObject& data)
 {
@@ -4396,7 +4396,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::CompleteTypeObject& data)
 {
@@ -4441,7 +4441,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalTypeObject& data,
         size_t& current_alignment)
@@ -4555,7 +4555,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::MinimalTypeObject& data)
 {
@@ -4600,7 +4600,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::MinimalTypeObject& data)
 {
@@ -4645,7 +4645,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeObject& data,
         size_t& current_alignment)
@@ -4701,7 +4701,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeObject& data)
 {
@@ -4721,7 +4721,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeObject& data)
 {
@@ -4741,7 +4741,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data,
         size_t& current_alignment)
@@ -4774,7 +4774,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data)
 {
@@ -4783,7 +4783,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data)
 {
@@ -4792,7 +4792,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierPair& data,
         size_t& current_alignment)
@@ -4825,7 +4825,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeIdentifierPair& data)
 {
@@ -4834,7 +4834,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeIdentifierPair& data)
 {
@@ -4843,7 +4843,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierWithSize& data,
         size_t& current_alignment)
@@ -4876,7 +4876,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeIdentifierWithSize& data)
 {
@@ -4885,7 +4885,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeIdentifierWithSize& data)
 {
@@ -4894,7 +4894,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data,
         size_t& current_alignment)
@@ -4936,7 +4936,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data)
 {
@@ -4946,7 +4946,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeIdentifierWithDependencies& data)
 {
@@ -4956,7 +4956,7 @@ RTPS_DllAPI void deserialize(
 }
 
 template<>
-RTPS_DllAPI size_t calculate_serialized_size(
+FASTDDS_EXPORTED_API size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeInformation& data,
         size_t& current_alignment)
@@ -4989,7 +4989,7 @@ RTPS_DllAPI size_t calculate_serialized_size(
 }
 
 template<>
-RTPS_DllAPI void serialize(
+FASTDDS_EXPORTED_API void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeInformation& data)
 {
@@ -4998,7 +4998,7 @@ RTPS_DllAPI void serialize(
 }
 
 template<>
-RTPS_DllAPI void deserialize(
+FASTDDS_EXPORTED_API void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeInformation& data)
 {

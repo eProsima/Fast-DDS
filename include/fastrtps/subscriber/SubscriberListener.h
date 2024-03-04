@@ -35,7 +35,7 @@ class Subscriber;
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  */
-class RTPS_DllAPI SubscriberListener
+class FASTDDS_EXPORTED_API SubscriberListener
 {
 public:
 

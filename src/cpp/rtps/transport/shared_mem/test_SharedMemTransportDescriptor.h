@@ -30,8 +30,8 @@ typedef struct test_SharedMemTransportDescriptor : public SharedMemTransportDesc
 {
     virtual ~test_SharedMemTransportDescriptor() {}
 
-    RTPS_DllAPI test_SharedMemTransportDescriptor();
-    RTPS_DllAPI test_SharedMemTransportDescriptor(
+    FASTDDS_EXPORTED_API test_SharedMemTransportDescriptor();
+    FASTDDS_EXPORTED_API test_SharedMemTransportDescriptor(
             const test_SharedMemTransportDescriptor& t);
 
     virtual TransportInterface* create_transport() const override;

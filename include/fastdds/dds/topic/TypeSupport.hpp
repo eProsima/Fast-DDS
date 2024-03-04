@@ -53,14 +53,14 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI TypeSupport() noexcept = default;
+    FASTDDS_EXPORTED_API TypeSupport() noexcept = default;
 
     /**
      * @brief Copy Constructor
      *
      * @param type Another instance of TypeSupport
      */
-    RTPS_DllAPI TypeSupport(
+    FASTDDS_EXPORTED_API TypeSupport(
             const TypeSupport& type) noexcept = default;
 
     /**
@@ -68,7 +68,7 @@ public:
      *
      * @param type Another instance of TypeSupport
      */
-    RTPS_DllAPI TypeSupport(
+    FASTDDS_EXPORTED_API TypeSupport(
             TypeSupport&& type) noexcept = default;
 
     /**
@@ -76,7 +76,7 @@ public:
      *
      * @param type Another instance of TypeSupport
      */
-    RTPS_DllAPI TypeSupport& operator = (
+    FASTDDS_EXPORTED_API TypeSupport& operator = (
             const TypeSupport& type) noexcept = default;
 
     /**
@@ -84,7 +84,7 @@ public:
      *
      * @param type Another instance of TypeSupport
      */
-    RTPS_DllAPI TypeSupport& operator = (
+    FASTDDS_EXPORTED_API TypeSupport& operator = (
             TypeSupport&& type) noexcept = default;
 
     /*!
@@ -94,7 +94,7 @@ public:
      *
      * @param ptr
      */
-    RTPS_DllAPI explicit TypeSupport(
+    FASTDDS_EXPORTED_API explicit TypeSupport(
             fastdds::dds::TopicDataType* ptr)
         : std::shared_ptr<fastdds::dds::TopicDataType>(ptr)
     {
@@ -106,7 +106,7 @@ public:
      *
      * @param ptr
      */
-    RTPS_DllAPI TypeSupport(
+    FASTDDS_EXPORTED_API TypeSupport(
             fastrtps::types::DynamicPubSubType ptr)
         : std::shared_ptr<fastdds::dds::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(
                     ptr)))
@@ -120,7 +120,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
      * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
      */
-    RTPS_DllAPI virtual ReturnCode_t register_type(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t register_type(
             DomainParticipant* participant) const;
 
     /**
@@ -131,7 +131,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the type name is empty, RETCODE_PRECONDITION_NOT_MET if there is another type with
      * the same name registered on the DomainParticipant and RETCODE_OK if it is registered correctly
      */
-    RTPS_DllAPI virtual ReturnCode_t register_type(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t register_type(
             DomainParticipant* participant,
             std::string type_name) const;
 
@@ -140,7 +140,7 @@ public:
      *
      * @return name of the data type
      */
-    RTPS_DllAPI virtual const std::string& get_type_name() const
+    FASTDDS_EXPORTED_API virtual const std::string& get_type_name() const
     {
         return get()->m_topicDataTypeName;
     }
@@ -153,7 +153,7 @@ public:
      * @return true if it is serialized correctly, false if not
      */
 
-    RTPS_DllAPI virtual bool serialize(
+    FASTDDS_EXPORTED_API virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload)
     {
@@ -168,7 +168,7 @@ public:
      * @param[in] data_representation Representation that should be used to encode the data into the payload.
      * @return true if it is serialized correctly, false if not
      */
-    RTPS_DllAPI virtual bool serialize(
+    FASTDDS_EXPORTED_API virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation);
@@ -180,7 +180,7 @@ public:
      * @param data Pointer to data
      * @return true if it is deserialized correctly, false if not
      */
-    RTPS_DllAPI virtual bool deserialize(
+    FASTDDS_EXPORTED_API virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data);
 
@@ -190,7 +190,7 @@ public:
      * @param[in] data Pointer to data.
      * @return Functor which calculates the serialized size of the data.
      */
-    RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
+    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data)
     {
         return get_serialized_size_provider(data, DEFAULT_DATA_REPRESENTATION);
@@ -203,7 +203,7 @@ public:
      * @param[in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
-    RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
+    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data,
             DataRepresentationId_t data_representation)
     {
@@ -215,7 +215,7 @@ public:
      *
      * @return Pointer to the data
      */
-    RTPS_DllAPI virtual void* create_data()
+    FASTDDS_EXPORTED_API virtual void* create_data()
     {
         return get()->createData();
     }
@@ -225,7 +225,7 @@ public:
      *
      * @param data Pointer to the data to delete
      */
-    RTPS_DllAPI virtual void delete_data(
+    FASTDDS_EXPORTED_API virtual void delete_data(
             void* data)
     {
         return get()->deleteData(data);
@@ -239,7 +239,7 @@ public:
      * @param force_md5 boolean to force md5 (default: false)
      * @return true if the key is returned, false if not
      */
-    RTPS_DllAPI virtual bool get_key(
+    FASTDDS_EXPORTED_API virtual bool get_key(
             void* data,
             InstanceHandle_t* i_handle,
             bool force_md5 = false)
@@ -247,7 +247,7 @@ public:
         return get()->getKey(data, i_handle, force_md5);
     }
 
-    RTPS_DllAPI virtual bool operator ==(
+    FASTDDS_EXPORTED_API virtual bool operator ==(
             const TypeSupport& type_support)
     {
         return get()->m_typeSize == type_support->m_typeSize
@@ -263,7 +263,7 @@ public:
      *
      * @return true if empty, false if not
      */
-    RTPS_DllAPI bool empty() const
+    FASTDDS_EXPORTED_API bool empty() const
     {
         return get() == nullptr;
     }
@@ -271,7 +271,7 @@ public:
     /**
      * Checks if the type is bounded.
      */
-    RTPS_DllAPI virtual inline bool is_bounded() const
+    FASTDDS_EXPORTED_API virtual inline bool is_bounded() const
     {
         return get()->is_bounded();
     }
@@ -279,7 +279,7 @@ public:
     /**
      * Checks if the type is plain when using default encoding.
      */
-    RTPS_DllAPI virtual inline bool is_plain() const
+    FASTDDS_EXPORTED_API virtual inline bool is_plain() const
     {
         return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     }
@@ -287,19 +287,19 @@ public:
     /**
      * Checks if the type is plain when using a specific encoding.
      */
-    RTPS_DllAPI virtual inline bool is_plain(
+    FASTDDS_EXPORTED_API virtual inline bool is_plain(
             DataRepresentationId_t data_representation) const
     {
         return get()->is_plain(data_representation);
     }
 
-    RTPS_DllAPI bool operator !=(
+    FASTDDS_EXPORTED_API bool operator !=(
             std::nullptr_t) const
     {
         return bool(*this);
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             std::nullptr_t) const
     {
         return !*this;

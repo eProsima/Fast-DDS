@@ -40,15 +40,15 @@
 #if defined(_WIN32)
 #if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 #if defined(fastdds_EXPORTS)
-#define RTPS_DllAPI __declspec( dllexport )
+#define FASTDDS_EXPORTED_API __declspec( dllexport )
 #else
-#define RTPS_DllAPI __declspec( dllimport )
+#define FASTDDS_EXPORTED_API __declspec( dllimport )
 #endif // FASTDDS_SOURCE
 #else
-#define RTPS_DllAPI
+#define FASTDDS_EXPORTED_API
 #endif // if defined(EPROSIMA_ALL_DYN_LINK) || defined(FASTDDS_DYN_LINK)
 #else
-#define RTPS_DllAPI
+#define FASTDDS_EXPORTED_API
 #endif // _WIN32
 
 // Auto linking.

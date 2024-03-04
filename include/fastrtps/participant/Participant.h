@@ -43,7 +43,7 @@ namespace rtps
  * Class Participant used to group Publishers and Subscribers into a single working unit.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Participant
+class FASTDDS_EXPORTED_API Participant
 {
     public:
         /**
