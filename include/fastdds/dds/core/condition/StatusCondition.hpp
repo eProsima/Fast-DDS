@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;

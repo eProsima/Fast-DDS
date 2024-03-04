@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

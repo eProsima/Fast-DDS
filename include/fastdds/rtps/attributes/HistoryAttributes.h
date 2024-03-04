@@ -21,7 +21,7 @@
 #define _FASTDDS_HISTORYATTRIBUTES_H_
 
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <cstdint>
 

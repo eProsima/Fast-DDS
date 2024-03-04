@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_CHANGEKINDT_HPP_
 #define _FASTDDS_RTPS_COMMON_CHANGEKINDT_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastrtps {

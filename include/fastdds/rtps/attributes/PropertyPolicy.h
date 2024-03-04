@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/common/BinaryProperty.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastrtps {

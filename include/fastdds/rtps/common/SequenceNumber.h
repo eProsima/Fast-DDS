@@ -24,7 +24,7 @@
 #include <limits>
 #include <vector>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/utils/fixed_size_bitmap.hpp>
 #include <fastdds/rtps/common/Types.h>
 

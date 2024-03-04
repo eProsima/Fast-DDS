@@ -19,7 +19,7 @@
 #ifndef SUBLISTENER_H_
 #define SUBLISTENER_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 

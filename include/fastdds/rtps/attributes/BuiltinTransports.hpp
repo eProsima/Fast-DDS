@@ -21,6 +21,8 @@
 
 #include <ostream>
 #include <cstdint>
+
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {

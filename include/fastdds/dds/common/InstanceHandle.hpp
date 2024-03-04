@@ -21,7 +21,7 @@
 #define _FASTDDS_DDS_COMMON_INSTANCEHANDLE_HPP_
 
 #include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 
 namespace eprosima {

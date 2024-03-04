@@ -42,7 +42,7 @@
 #include <stdint.h>
 #include <vector>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/string_convert.hpp>

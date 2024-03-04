@@ -15,7 +15,7 @@
 #ifndef FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERCONSTS_HPP
 #define FASTDDS_RTPS_FLOWCONTROL_FLOWCONTROLLERCONSTS_HPP
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -18,7 +18,7 @@
 #ifndef _RTPS_WRITER_WRITERDISCOVERYINFO_H_
 #define _RTPS_WRITER_WRITERDISCOVERYINFO_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 namespace eprosima {

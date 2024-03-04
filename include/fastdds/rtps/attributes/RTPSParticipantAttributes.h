@@ -38,7 +38,7 @@
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

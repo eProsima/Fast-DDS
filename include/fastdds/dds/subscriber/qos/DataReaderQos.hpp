@@ -26,7 +26,7 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

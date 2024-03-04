@@ -37,7 +37,7 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>

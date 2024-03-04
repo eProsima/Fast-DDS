@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_TOPIC_HPP_
 #define _FASTDDS_TOPIC_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>

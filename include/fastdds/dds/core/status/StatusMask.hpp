@@ -21,7 +21,7 @@
 #ifndef _FASTDDS_STATUSMASK_HPP_
 #define _FASTDDS_STATUSMASK_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <bitset>
 #include <cstdint>

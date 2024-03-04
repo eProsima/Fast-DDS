@@ -23,7 +23,7 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

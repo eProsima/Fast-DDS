@@ -20,7 +20,7 @@
 #ifndef STRINGMATCHING_H_
 #define STRINGMATCHING_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <string>
 #include <vector>

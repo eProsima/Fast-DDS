@@ -20,7 +20,7 @@
 #define _FASTDDS_STATISTICS_DDS_PUBLISHER_QOS_DATAWRITERQOS_HPP_
 
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

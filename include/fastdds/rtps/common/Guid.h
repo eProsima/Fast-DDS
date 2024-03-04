@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_RTPS_GUID_H_
 #define _FASTDDS_RTPS_RTPS_GUID_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>

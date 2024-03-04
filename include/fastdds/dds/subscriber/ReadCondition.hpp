@@ -25,7 +25,7 @@
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -22,7 +22,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

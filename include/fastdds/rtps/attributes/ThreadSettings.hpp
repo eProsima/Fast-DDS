@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <limits>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #ifndef _FASTDDS_THREADSETTINGS_HPP_
 #define _FASTDDS_THREADSETTINGS_HPP_

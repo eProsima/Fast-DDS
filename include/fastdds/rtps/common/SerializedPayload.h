@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 /*!

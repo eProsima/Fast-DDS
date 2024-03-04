@@ -29,7 +29,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 

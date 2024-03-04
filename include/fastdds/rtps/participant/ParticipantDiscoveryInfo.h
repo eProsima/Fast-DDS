@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__
 #define _FASTDDS_RTPS_PARTICIPANT_PARTICIPANTDISCOVERYINFO_H__
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
 namespace eprosima {

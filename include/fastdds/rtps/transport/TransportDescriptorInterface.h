@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <vector>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

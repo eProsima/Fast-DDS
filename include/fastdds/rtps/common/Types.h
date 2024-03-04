@@ -24,7 +24,7 @@
 #include <cstdint>
 #include <stdint.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/VendorId_t.hpp>
 

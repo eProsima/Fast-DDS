@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastrtps {

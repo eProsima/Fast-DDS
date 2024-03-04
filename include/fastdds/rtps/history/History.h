@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_HISTORY_H_
 #define _FASTDDS_RTPS_HISTORY_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>

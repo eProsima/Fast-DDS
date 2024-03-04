@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_RTPS_EXCEPTIONS_EXCEPTION_H_
 #define _FASTDDS_RTPS_EXCEPTIONS_EXCEPTION_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <exception>
 #include <string>
 #include <cstdint>

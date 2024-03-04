@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_RTPS_THROUGHPUT_CONTROLLER_DESCRIPTOR_H
 #define _FASTDDS_RTPS_THROUGHPUT_CONTROLLER_DESCRIPTOR_H
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <cstdint>
 
 namespace eprosima {

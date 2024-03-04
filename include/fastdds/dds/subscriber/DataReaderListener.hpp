@@ -25,7 +25,7 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/utils/md5.h>
 
 // This version of TypeSupport has `is_bounded()`

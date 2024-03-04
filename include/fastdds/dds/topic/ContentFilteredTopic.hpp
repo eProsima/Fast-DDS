@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
 #define _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 

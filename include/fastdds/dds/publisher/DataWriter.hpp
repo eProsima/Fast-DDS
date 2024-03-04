@@ -29,7 +29,7 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;

@@ -1,7 +1,7 @@
 #ifndef _TYPE_NAMES_GENERATOR_
 #define _TYPE_NAMES_GENERATOR_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <cstdint>
 #include <string>

@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

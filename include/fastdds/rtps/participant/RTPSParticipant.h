@@ -29,7 +29,7 @@
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/statistics/IListeners.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 

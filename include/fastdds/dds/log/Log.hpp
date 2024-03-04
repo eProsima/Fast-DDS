@@ -19,7 +19,7 @@
 #include <sstream>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 /**
  * eProsima log layer. Logging categories and verbosity can be specified dynamically at runtime.

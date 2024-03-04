@@ -26,7 +26,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;

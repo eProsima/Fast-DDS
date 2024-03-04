@@ -39,7 +39,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {

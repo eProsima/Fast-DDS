@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_
 #define _FASTDDS_RTPS_COMMON_LOCATORLIST_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
