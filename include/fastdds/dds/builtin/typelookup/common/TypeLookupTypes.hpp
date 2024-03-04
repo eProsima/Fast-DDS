@@ -138,7 +138,8 @@ public:
     FASTDDS_EXPORTED_API TypeLookup_getTypes_Out& result();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_Result& data,
@@ -187,7 +188,8 @@ public:
     FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -221,7 +223,8 @@ public:
     FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
@@ -279,12 +282,14 @@ public:
             const TypeLookup_getTypeDependencies_Result& data,
             size_t current_alignment = 0);
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
     FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
     FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);

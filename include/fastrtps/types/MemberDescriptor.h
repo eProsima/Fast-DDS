@@ -18,9 +18,9 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class DynamicType;
 class AnnotationDescriptor;
@@ -28,6 +28,7 @@ class AnnotationDescriptor;
 class MemberDescriptor
 {
 protected:
+
     std::string name_;                  // Name of the member
     MemberId id_;                       // MemberId, it should be filled automatically when the member is added.
     DynamicType_ptr type_;              // Member's Type.
@@ -43,11 +44,14 @@ protected:
     friend class DynamicTypeMember;
     friend class TypeObjectFactory;
 
-    bool is_default_value_consistent(const std::string& sDefaultValue) const;
+    bool is_default_value_consistent(
+            const std::string& sDefaultValue) const;
 
-    bool is_type_name_consistent(const std::string& sName) const;
+    bool is_type_name_consistent(
+            const std::string& sName) const;
 
 public:
+
     FASTDDS_EXPORTED_API MemberDescriptor();
 
     FASTDDS_EXPORTED_API MemberDescriptor(
@@ -73,21 +77,25 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    FASTDDS_EXPORTED_API MemberDescriptor(const MemberDescriptor* descriptor);
+    FASTDDS_EXPORTED_API MemberDescriptor(
+            const MemberDescriptor* descriptor);
 
     FASTDDS_EXPORTED_API ~MemberDescriptor();
 
-    bool check_union_labels(const std::vector<uint64_t>& labels) const;
+    bool check_union_labels(
+            const std::vector<uint64_t>& labels) const;
 
-    FASTDDS_EXPORTED_API ReturnCode_t copy_from(const MemberDescriptor* other);
+    FASTDDS_EXPORTED_API ReturnCode_t copy_from(
+            const MemberDescriptor* other);
 
-    FASTDDS_EXPORTED_API bool equals(const MemberDescriptor* other) const;
+    FASTDDS_EXPORTED_API bool equals(
+            const MemberDescriptor* other) const;
 
     FASTDDS_EXPORTED_API TypeKind get_kind() const;
 
     FASTDDS_EXPORTED_API MemberId get_id() const;
 
-    FASTDDS_EXPORTED_API  uint32_t get_index() const;
+    FASTDDS_EXPORTED_API uint32_t get_index() const;
 
     FASTDDS_EXPORTED_API std::string get_name() const;
 
@@ -105,39 +113,49 @@ public:
 
     FASTDDS_EXPORTED_API bool is_default_union_value() const;
 
-    FASTDDS_EXPORTED_API bool is_consistent(TypeKind parentKind) const;
+    FASTDDS_EXPORTED_API bool is_consistent(
+            TypeKind parentKind) const;
 
-    FASTDDS_EXPORTED_API void add_union_case_index(uint64_t value);
+    FASTDDS_EXPORTED_API void add_union_case_index(
+            uint64_t value);
 
-    FASTDDS_EXPORTED_API void set_id(MemberId id);
+    FASTDDS_EXPORTED_API void set_id(
+            MemberId id);
 
-    FASTDDS_EXPORTED_API void set_index(uint32_t index);
+    FASTDDS_EXPORTED_API void set_index(
+            uint32_t index);
 
-    FASTDDS_EXPORTED_API void set_name(const std::string& name);
+    FASTDDS_EXPORTED_API void set_name(
+            const std::string& name);
 
-    FASTDDS_EXPORTED_API void set_type(DynamicType_ptr type);
+    FASTDDS_EXPORTED_API void set_type(
+            DynamicType_ptr type);
 
     FASTDDS_EXPORTED_API DynamicType_ptr get_type() const
     {
         return type_;
     }
 
-    FASTDDS_EXPORTED_API void set_default_union_value(bool bDefault);
+    FASTDDS_EXPORTED_API void set_default_union_value(
+            bool bDefault);
 
-    FASTDDS_EXPORTED_API void set_default_value(const std::string& value)
+    FASTDDS_EXPORTED_API void set_default_value(
+            const std::string& value)
     {
         default_value_ = value;
     }
 
     // Annotations
-    ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(
+            AnnotationDescriptor& descriptor);
 
     ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    AnnotationDescriptor* get_annotation(const std::string& name) const;
+    AnnotationDescriptor* get_annotation(
+            const std::string& name) const;
 
     // Annotations application
     FASTDDS_EXPORTED_API bool annotation_is_optional() const;
@@ -168,23 +186,31 @@ public:
     FASTDDS_EXPORTED_API uint16_t annotation_get_bit_bound() const;
 
     // Annotations setters
-    FASTDDS_EXPORTED_API void annotation_set_optional(bool optional);
+    FASTDDS_EXPORTED_API void annotation_set_optional(
+            bool optional);
 
-    FASTDDS_EXPORTED_API void annotation_set_key(bool key);
+    FASTDDS_EXPORTED_API void annotation_set_key(
+            bool key);
 
-    FASTDDS_EXPORTED_API void annotation_set_must_understand(bool must_understand);
+    FASTDDS_EXPORTED_API void annotation_set_must_understand(
+            bool must_understand);
 
-    FASTDDS_EXPORTED_API void annotation_set_non_serialized(bool non_serialized);
+    FASTDDS_EXPORTED_API void annotation_set_non_serialized(
+            bool non_serialized);
 
-    FASTDDS_EXPORTED_API void annotation_set_value(const std::string& value);
+    FASTDDS_EXPORTED_API void annotation_set_value(
+            const std::string& value);
 
-    FASTDDS_EXPORTED_API void annotation_set_default(const std::string& default_value);
+    FASTDDS_EXPORTED_API void annotation_set_default(
+            const std::string& default_value);
 
     FASTDDS_EXPORTED_API void annotation_set_default_literal();
 
-    FASTDDS_EXPORTED_API void annotation_set_position(uint16_t position);
+    FASTDDS_EXPORTED_API void annotation_set_position(
+            uint16_t position);
 
-    FASTDDS_EXPORTED_API void annotation_set_bit_bound(uint16_t bit_bound);
+    FASTDDS_EXPORTED_API void annotation_set_bit_bound(
+            uint16_t bit_bound);
 };
 
 } // namespace types

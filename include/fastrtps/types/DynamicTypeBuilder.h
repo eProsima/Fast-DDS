@@ -31,11 +31,14 @@ class DynamicTypeMember;
 class DynamicTypeBuilder
 {
 protected:
+
     DynamicTypeBuilder();
 
-    DynamicTypeBuilder(const DynamicTypeBuilder* builder);
+    DynamicTypeBuilder(
+            const DynamicTypeBuilder* builder);
 
-    DynamicTypeBuilder(const TypeDescriptor* descriptor);
+    DynamicTypeBuilder(
+            const TypeDescriptor* descriptor);
 
     virtual ~DynamicTypeBuilder();
 
@@ -60,23 +63,28 @@ protected:
             const std::string& key,
             const std::string& value);
 
-    bool check_union_configuration(const MemberDescriptor* descriptor);
+    bool check_union_configuration(
+            const MemberDescriptor* descriptor);
 
     // Checks if there is a member with the given name.
-    bool exists_member_by_name(const std::string& name) const;
+    bool exists_member_by_name(
+            const std::string& name) const;
 
     void refresh_member_ids();
 
     void clear();
 
-    ReturnCode_t copy_from_builder(const DynamicTypeBuilder* other);
+    ReturnCode_t copy_from_builder(
+            const DynamicTypeBuilder* other);
 
 public:
+
     FASTDDS_EXPORTED_API ReturnCode_t add_empty_member(
             uint32_t index,
             const std::string& name);
 
-    FASTDDS_EXPORTED_API ReturnCode_t add_member(const MemberDescriptor* descriptor);
+    FASTDDS_EXPORTED_API ReturnCode_t add_member(
+            const MemberDescriptor* descriptor);
 
     FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
@@ -100,7 +108,7 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
             const std::string& name,
-        DynamicType_ptr type_ = DynamicType_ptr(nullptr));
+            DynamicType_ptr type_ = DynamicType_ptr(nullptr));
 
     FASTDDS_EXPORTED_API ReturnCode_t add_member(
             MemberId id,
@@ -116,7 +124,8 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(AnnotationDescriptor& descriptor);
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
+            AnnotationDescriptor& descriptor);
 
     FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
             const std::string& annotation_name,
@@ -135,9 +144,11 @@ public:
 
     FASTDDS_EXPORTED_API DynamicType_ptr build();
 
-    FASTDDS_EXPORTED_API ReturnCode_t copy_from(const DynamicTypeBuilder* other);
+    FASTDDS_EXPORTED_API ReturnCode_t copy_from(
+            const DynamicTypeBuilder* other);
 
-    ReturnCode_t get_all_members(std::map<MemberId, DynamicTypeMember*>& members);
+    ReturnCode_t get_all_members(
+            std::map<MemberId, DynamicTypeMember*>& members);
 
     FASTDDS_EXPORTED_API inline TypeKind get_kind() const
     {
@@ -146,7 +157,8 @@ public:
 
     FASTDDS_EXPORTED_API std::string get_name() const;
 
-    FASTDDS_EXPORTED_API MemberId get_member_id_by_name(const std::string& name) const;
+    FASTDDS_EXPORTED_API MemberId get_member_id_by_name(
+            const std::string& name) const;
 
     const TypeDescriptor* get_type_descriptor() const
     {
@@ -157,7 +169,8 @@ public:
 
     bool is_discriminator_type() const;
 
-    FASTDDS_EXPORTED_API ReturnCode_t set_name(const std::string& name);
+    FASTDDS_EXPORTED_API ReturnCode_t set_name(
+            const std::string& name);
 };
 
 } // namespace types

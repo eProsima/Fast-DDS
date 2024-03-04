@@ -31,6 +31,7 @@ namespace types {
 class DynamicDataFactory
 {
 protected:
+
     DynamicDataFactory();
 
     ReturnCode_t create_members(
@@ -40,22 +41,27 @@ protected:
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicData*> dynamic_datas_;
     mutable std::recursive_mutex mutex_;
-#endif
+#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
 public:
+
     ~DynamicDataFactory();
 
     FASTDDS_EXPORTED_API static DynamicDataFactory* get_instance();
 
     FASTDDS_EXPORTED_API static ReturnCode_t delete_instance();
 
-    FASTDDS_EXPORTED_API DynamicData* create_data(DynamicTypeBuilder* pBuilder);
+    FASTDDS_EXPORTED_API DynamicData* create_data(
+            DynamicTypeBuilder* pBuilder);
 
-    FASTDDS_EXPORTED_API DynamicData* create_data(DynamicType_ptr pType);
+    FASTDDS_EXPORTED_API DynamicData* create_data(
+            DynamicType_ptr pType);
 
-    FASTDDS_EXPORTED_API DynamicData* create_copy(const DynamicData* pData);
+    FASTDDS_EXPORTED_API DynamicData* create_copy(
+            const DynamicData* pData);
 
-    FASTDDS_EXPORTED_API ReturnCode_t delete_data(DynamicData* pData);
+    FASTDDS_EXPORTED_API ReturnCode_t delete_data(
+            DynamicData* pData);
 
     FASTDDS_EXPORTED_API bool is_empty() const;
 };

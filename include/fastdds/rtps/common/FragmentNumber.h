@@ -27,9 +27,9 @@
 #include <cmath>
 #include <algorithm>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 using FragmentNumber_t = uint32_t;
 
@@ -37,19 +37,21 @@ using FragmentNumber_t = uint32_t;
 //!@ingroup COMMON_MODULE
 using FragmentNumberSet_t = BitmapRange<FragmentNumber_t>;
 
-inline std::ostream& operator<<(std::ostream& output, const FragmentNumberSet_t& fns)
+inline std::ostream& operator <<(
+        std::ostream& output,
+        const FragmentNumberSet_t& fns)
 {
     output << fns.base() << ":";
     fns.for_each([&](FragmentNumber_t it)
-    {
-        output << it << "-";
-    });
+            {
+                output << it << "-";
+            });
 
     return output;
 }
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif /* _FASTDDS_RTPS_RPTS_ELEM_FRAGNUM_H_ */

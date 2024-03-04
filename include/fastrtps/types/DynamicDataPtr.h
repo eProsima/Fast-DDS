@@ -29,8 +29,8 @@ public:
 
     typedef std::shared_ptr<DynamicData> Base;
 
-    using Base::operator->;
-    using Base::operator*;
+    using Base::operator ->;
+    using Base::operator *;
     using Base::operator bool;
 
     FASTDDS_EXPORTED_API DynamicData_ptr()
