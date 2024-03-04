@@ -6,12 +6,14 @@ import fnmatch
 
 class IDLProcessor:
     def __init__(self):
+        self.structs_info = set()
+
         # List of files to ignore
         self.files_to_ignore = {"relative_path_include.idl"} 
+        # List of struct names to ignore
+        self.struct_names_to_ignore = ["MapWString*", "MapInnerAliasBoundedWStringHelper*", "AnnotatedStruct"]
         # List of IDL files that don't have a TypeObject
         self.idl_without_typeobjects = {"XtypesTestsTypeNoTypeObject", "declarations", "external"}
-        self.struct_info = set()
-
 
     def extract_structures(self, idl_text):
         # Regular expressions for module and struct extraction
@@ -55,14 +57,14 @@ class IDLProcessor:
                         # Store struct information along with the IDL file name and module name
                         for module_name, structures in module_structures.items():
                             for structure in structures:
-                                self.struct_info.add((structure[0], idl_file_name, module_name, idls_path))
+                                self.structs_info.add((structure[0], idl_file_name, module_name, idls_path))
                         
                         # Store struct information for structures outside modules
                         for structure in outside_structures:
-                            self.struct_info.add((structure[0], idl_file_name, "", idls_path))
+                            self.structs_info.add((structure[0], idl_file_name, "", idls_path))
 
 
-def create_case_files(struct_info):
+def create_case_files(structs_info, struct_names_to_ignore):
     # Create 'Cases' folder if it doesn't exist
     cases_folder = os.path.join(os.path.dirname(__file__), 'TypesTestsCases')
     if not os.path.exists(cases_folder):
@@ -71,15 +73,12 @@ def create_case_files(struct_info):
 
     # Aggregate test cases for each IDL file
     idl_test_cases = {}
-    for struct_name, idl_file_name, module_name, idls_path in struct_info:
+    for struct_name, idl_file_name, module_name, idls_path in structs_info:
         if idls_path != "BaseCasesIDLs/":
             if idl_file_name not in idl_test_cases:
                 idl_test_cases[idl_file_name] = []
 
-            # Ignore cases for maps that use WString as keys
-            if (not fnmatch.fnmatch(struct_name, "MapWString*") and not 
-                fnmatch.fnmatch(struct_name, "MapInnerAliasBoundedWStringHelper*")):
-
+            if not any(fnmatch.fnmatch(struct_name, pattern) for pattern in struct_names_to_ignore):
                 known_types = [struct_name]
                 if module_name:
                     known_types = [f"{module_name}::{struct_name}"]
@@ -117,7 +116,7 @@ def create_case_files(struct_info):
         print(f"Created case file: {file_path}")
 
         
-def update_types_header_file(struct_info, typecode_path):
+def update_types_header_file(structs_info, typecode_path):
     # Update types header file with necessary includes
     header_file_path = os.path.join(os.path.dirname(__file__), 'TypeLookupServiceTestsTypes.h')
 
@@ -131,7 +130,7 @@ def update_types_header_file(struct_info, typecode_path):
 
     # Add new include lines before the #endif directive
     new_include_lines = set()
-    for _, idl_file_name, _, idls_path in struct_info:
+    for _, idl_file_name, _, idls_path in structs_info:
         if idls_path != "BaseCasesIDLs/":
             include_line = f'#include "{typecode_path}{idl_file_name}PubSubTypes.h"\n'
             new_include_lines.add(include_line)
@@ -147,7 +146,7 @@ def update_types_header_file(struct_info, typecode_path):
     print(f"Header file '{header_file_path}' updated successfully.")
 
 
-def update_participant_headers_file(file_name, macro_name, struct_info, idl_without_typeobjects):
+def update_participant_headers_file(file_name, macro_name, structs_info, struct_names_to_ignore, idl_without_typeobjects):
     # Update participant header file with necessary macros and type information
     script_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(script_dir, file_name)
@@ -162,7 +161,7 @@ def update_participant_headers_file(file_name, macro_name, struct_info, idl_with
     # Find the function declaration where macros need to be inserted
     func_declaration = re.search(r'(void\s+create_type_creator_functions\(\)\s*{[\s\S]*?})', content)
     if func_declaration:
-        updated_func = insert_macros(func_declaration.group(1), macro_name, struct_info, idl_without_typeobjects)
+        updated_func = insert_macros(func_declaration.group(1), macro_name, structs_info, struct_names_to_ignore, idl_without_typeobjects)
         content = content.replace(func_declaration.group(1), updated_func)
 
     with open(temp_file_path, 'w') as file:
@@ -173,7 +172,7 @@ def update_participant_headers_file(file_name, macro_name, struct_info, idl_with
     print(f"Type lookup file '{file_name}' updated successfully.")
 
 
-def insert_macros(func_declaration, macro_name, struct_info, idl_without_typeobjects):
+def insert_macros(func_declaration, macro_name, structs_info, struct_names_to_ignore, idl_without_typeobjects):
     # Insert macros into the function declaration
     lines = func_declaration.split('\n')
     lines = [line for line in lines if not re.match(rf'\s*{macro_name}\((\w+|\w+::\w+)\);', line)]  # Remove existing macro lines
@@ -181,28 +180,29 @@ def insert_macros(func_declaration, macro_name, struct_info, idl_without_typeobj
     
     idx = updated_func.rfind('    }')
     if idx != -1:
-        struct_info = sorted(list(struct_info), key=lambda x: (x[1], x[2], x[0]))  # Sort struct_info alphabetically
-        for struct_name, idl_file_name, module_name, _ in struct_info:
-            if idl_file_name in idl_without_typeobjects:
-                if module_name:
-                    updated_func = (updated_func[:idx] +
-                                    f"        {macro_name}({module_name}::{struct_name});\n"
-                                    f"        types_without_typeobject_.insert(\"{module_name}__{struct_name}\");\n" +
-                                    updated_func[idx:])
+        structs_info = sorted(list(structs_info), key=lambda x: (x[1], x[2], x[0]), reverse=True)  # Sort structs_info alphabetically
+        for struct_name, idl_file_name, module_name, _ in structs_info:
+            if not any(fnmatch.fnmatch(struct_name, pattern) for pattern in struct_names_to_ignore):
+                if idl_file_name in idl_without_typeobjects:
+                    if module_name:
+                        updated_func = (updated_func[:idx] +
+                                        f"        {macro_name}({module_name}::{struct_name});\n"
+                                        f"        types_without_typeobject_.insert(\"{module_name}__{struct_name}\");\n" +
+                                        updated_func[idx:])
+                    else:
+                        updated_func = (updated_func[:idx] +
+                                        f"        {macro_name}({struct_name});\n"
+                                        f"        types_without_typeobject_.insert(\"{struct_name}\");\n" +
+                                        updated_func[idx:])
                 else:
-                    updated_func = (updated_func[:idx] +
-                                    f"        {macro_name}({struct_name});\n"
-                                    f"        types_without_typeobject_.insert(\"{struct_name}\");\n" +
-                                    updated_func[idx:])
-            else:
-                if module_name:
-                    updated_func = (updated_func[:idx] +
-                                    f"        {macro_name}({module_name}::{struct_name});\n" +
-                                    updated_func[idx:])
-                else:
-                    updated_func = (updated_func[:idx] +
-                                    f"        {macro_name}({struct_name});\n" +
-                                    updated_func[idx:])
+                    if module_name:
+                        updated_func = (updated_func[:idx] +
+                                        f"        {macro_name}({module_name}::{struct_name});\n" +
+                                        updated_func[idx:])
+                    else:
+                        updated_func = (updated_func[:idx] +
+                                        f"        {macro_name}({struct_name});\n" +
+                                        updated_func[idx:])
 
     return updated_func
 
@@ -222,6 +222,7 @@ def delete_files_in_cases_folder():
 
 def main():
     if len(sys.argv) != 3:
+        print("This script updates the header files and creates cases files to test the BasesCasesIDL and all the structures found in the IDL files in a given path.")
         print("Usage: update_header_and_create_cases.py <path to IDL files> <path to PubSubTypes files>")
         print("Example: python3 update_header_and_create_cases.py ../../../thirdparty/dds-types-test/IDL/ ../../dds-types-test/")
         return
@@ -239,18 +240,18 @@ def main():
     processor.process_idl_files("BaseCasesIDLs/")
     processor.process_idl_files(idls_path)
 
-    if not processor.struct_info:
+    if not processor.structs_info:
         print("No structures found in the IDL files.")
         return
 
     delete_files_in_cases_folder()
 
-    create_case_files(processor.struct_info)
-    update_types_header_file(processor.struct_info, typecode_path)
+    create_case_files(processor.structs_info, processor.struct_names_to_ignore)
+    update_types_header_file(processor.structs_info, typecode_path)
     update_participant_headers_file("TypeLookupServicePublisher.h", "PUBLISHER_TYPE_CREATOR_FUNCTION",
-                                     processor.struct_info, processor.idl_without_typeobjects)
+                                     processor.structs_info, processor.struct_names_to_ignore, processor.idl_without_typeobjects)
     update_participant_headers_file("TypeLookupServiceSubscriber.h", "SUBSCRIBER_TYPE_CREATOR_FUNCTION",
-                                     processor.struct_info, processor.idl_without_typeobjects)
+                                     processor.structs_info, processor.struct_names_to_ignore, processor.idl_without_typeobjects)
     
 
 if __name__ == "__main__":

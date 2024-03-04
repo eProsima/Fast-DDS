@@ -180,7 +180,7 @@ bool TypeLookupServiceSubscriber::process_type_impl(
         if (info.valid_data && reader->is_sample_valid(&data, &info))
         {
             std::lock_guard<std::mutex> guard(known_types_mutex_);
-            std::cout << "Subscriber type_" << reader->type().get_type_name() << ": " << std::endl;
+            // std::cout << "Subscriber type_" << reader->type().get_type_name() << ": " << std::endl;
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
@@ -217,7 +217,7 @@ bool TypeLookupServiceSubscriber::process_dyn_type_impl(
         if (info.valid_data && reader->is_sample_valid(&data, &info))
         {
             std::lock_guard<std::mutex> guard(known_types_mutex_);
-            std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": " << std::endl;
+            // std::cout << "Subscriber dyn_type_" << reader->type().get_type_name() << ": " << std::endl;
             received_samples_[info.sample_identity.writer_guid()]++;
             cv_.notify_all();
         }
