@@ -129,7 +129,7 @@
             ├ userTransports                       [0~1],
             |   └ transport_id                     [1~*] [string],
             ├ useBuiltinTransports                 [bool],
-            ├ builtinTransports                    [0~1][builtinTransportsType]
+            ├ builtinTransports                    [0~1],
             ├ propertiesPolicy                     [0~1],
             ├ allocation                           [0~1],
             ├ userData                             [0~1],
@@ -190,13 +190,13 @@
         |
         └ (raw_data)                      [string]-->
 
-    <xs:complexType name="builtinTransportsType" >
+    <xs:complexType name="builtinTransportsType">
         <xs:simpleContent>
             <xs:extension base="builtinTransportKind">
                 <xs:attribute name="max_msg_size" type="string" use="optional"/>
                 <xs:attribute name="sockets_size" type="string" use="optional"/>
-                <xs:attribute name="non_blocking" type="string" use="optional"/>
-                <xs:attribute name="tcp_negotiation_timeout" type="string" use="optional"/>
+                <xs:attribute name="non_blocking" type="boolean" use="optional"/>
+                <xs:attribute name="tcp_negotiation_timeout" type="uint32" use="optional"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>

@@ -4717,29 +4717,31 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
         tinyxml2::XMLElement* elem,
         eprosima::fastdds::rtps::BuiltinTransports* bt,
         eprosima::fastdds::rtps::BuiltinTransportsOptions* bt_opts,
-        uint8_t ident)
+        uint8_t /*ident*/)
 {
     /*
-        <xs:complexType name="builtinTransportsEnumType">
-            <xs:all>
-                <xs:element name="mode" minOccurs="1" maxOccurs="1">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="NONE" />
-                            <xs:enumeration value="DEFAULT" />
-                            <xs:enumeration value="DEFAULTv6" />
-                            <xs:enumeration value="SHM" />
-                            <xs:enumeration value="UDPv4" />
-                            <xs:enumeration value="UDPv6" />
-                            <xs:enumeration value="LARGE_DATA" />
-                            <xs:enumeration value="LARGE_DATAv6" />
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:element>
-            </xs:all>
-            <xs:attribute name="max_msg_size" type="string" use="optional"/>
-            <xs:attribute name="sockets_size" type="string" use="optional"/>
-            <xs:attribute name="non_blocking" type="string" use="optional"/>
+        <xs:simpleType name="builtinTransportKind">
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="NONE" />
+                <xs:enumeration value="DEFAULT" />
+                <xs:enumeration value="DEFAULTv6" />
+                <xs:enumeration value="SHM" />
+                <xs:enumeration value="UDPv4" />
+                <xs:enumeration value="UDPv6" />
+                <xs:enumeration value="LARGE_DATA" />
+                <xs:enumeration value="LARGE_DATAv6" />
+            </xs:restriction>
+        </xs:simpleType>
+
+        <xs:complexType name="builtinTransportsType">
+            <xs:simpleContent>
+                <xs:extension base="builtinTransportKind">
+                    <xs:attribute name="max_msg_size" type="string" use="optional"/>
+                    <xs:attribute name="sockets_size" type="string" use="optional"/>
+                    <xs:attribute name="non_blocking" type="bool" use="optional"/>
+                    <xs:attribute name="tcp_negotiation_timeout" type="uint32" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
         </xs:complexType>
      */
 
@@ -4873,50 +4875,28 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
         }
     }
 
-    std::set<std::string> tags_present;
+    std::string mode = get_element_text(elem);
 
-    for (tinyxml2::XMLElement* current_elem = elem->FirstChildElement();
-            current_elem != nullptr && ret != XMLP_ret::XML_ERROR;
-            current_elem = current_elem->NextSiblingElement())
+    if (mode.empty())
     {
-        const char* name = current_elem->Name();
-        if (tags_present.count(name) != 0)
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'builtinTransports'. Tag: " << name);
-            ret = XMLP_ret::XML_ERROR;
-            break;
-        }
-        tags_present.emplace(name);
-
-        if (strcmp(current_elem->Name(), BT_MODE) == 0)
-        {
-            // Builtin transports selected - stringType
-            std::string s = "";
-            if (XMLP_ret::XML_OK != getXMLString(current_elem, &s, ident))
-            {
-                return XMLP_ret::XML_ERROR;
-            }
-            if (!get_element_enum_value(s.c_str(), *bt,
-                    NONE, eprosima::fastdds::rtps::BuiltinTransports::NONE,
-                    DEFAULT_C, eprosima::fastdds::rtps::BuiltinTransports::DEFAULT,
-                    DEFAULTv6, eprosima::fastdds::rtps::BuiltinTransports::DEFAULTv6,
-                    SHM, eprosima::fastdds::rtps::BuiltinTransports::SHM,
-                    UDPv4, eprosima::fastdds::rtps::BuiltinTransports::UDPv4,
-                    UDPv6, eprosima::fastdds::rtps::BuiltinTransports::UDPv6,
-                    LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
-                    LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
-                ret = XMLP_ret::XML_ERROR;
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Found incorrect tag '" << current_elem->Name() << "'");
-            ret = XMLP_ret::XML_ERROR;
-            break;
-        }
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
+        return XMLP_ret::XML_ERROR;
     }
+
+    if (!get_element_enum_value(mode.c_str(), *bt,
+            NONE, eprosima::fastdds::rtps::BuiltinTransports::NONE,
+            DEFAULT_C, eprosima::fastdds::rtps::BuiltinTransports::DEFAULT,
+            DEFAULTv6, eprosima::fastdds::rtps::BuiltinTransports::DEFAULTv6,
+            SHM, eprosima::fastdds::rtps::BuiltinTransports::SHM,
+            UDPv4, eprosima::fastdds::rtps::BuiltinTransports::UDPv4,
+            UDPv6, eprosima::fastdds::rtps::BuiltinTransports::UDPv6,
+            LARGE_DATA, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA,
+            LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
+        ret = XMLP_ret::XML_ERROR;
+    }
+
     return ret;
 }
 

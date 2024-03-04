@@ -139,7 +139,6 @@ extern const char* THROUGHPUT_CONT;
 extern const char* USER_TRANS;
 extern const char* USE_BUILTIN_TRANS;
 extern const char* BUILTIN_TRANS;
-extern const char* BT_MODE;
 extern const char* MAX_MSG_SIZE_LARGE_DATA;
 extern const char* SOCKETS_SIZE_LARGE_DATA;
 extern const char* NON_BLOCKING_LARGE_DATA;

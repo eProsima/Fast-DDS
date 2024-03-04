@@ -123,7 +123,6 @@ const char* THROUGHPUT_CONT = "throughputController";
 const char* USER_TRANS = "userTransports";
 const char* USE_BUILTIN_TRANS = "useBuiltinTransports";
 const char* BUILTIN_TRANS = "builtinTransports";
-const char* BT_MODE = "mode";
 const char* MAX_MSG_SIZE_LARGE_DATA = "max_msg_size";
 const char* SOCKETS_SIZE_LARGE_DATA = "sockets_size";
 const char* NON_BLOCKING_LARGE_DATA = "non_blocking";
