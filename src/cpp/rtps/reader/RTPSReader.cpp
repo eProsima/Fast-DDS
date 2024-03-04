@@ -110,6 +110,11 @@ void RTPSReader::init(
         const std::shared_ptr<IChangePool>& change_pool,
         const ReaderAttributes& att)
 {
+    if ( !(liveliness_lease_duration_ < c_TimeInfinite))
+    {
+        liveliness_lease_duration_ = Duration_t(24 * 60 * 60, 0);
+    }
+
     payload_pool_ = payload_pool;
     change_pool_ = change_pool;
     fixed_payload_size_ = 0;
