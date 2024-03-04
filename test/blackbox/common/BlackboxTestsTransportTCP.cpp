@@ -927,6 +927,7 @@ TEST_P(TransportTCP, multiple_listening_ports)
     // Release TCP client and server resources.
     delete client_1;
     delete client_2;
+    delete server;
 }
 
 // Test TCP send resource cleaning. This test matches a server with a client and then releases the
