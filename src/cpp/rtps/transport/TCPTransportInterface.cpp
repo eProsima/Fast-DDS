@@ -657,16 +657,14 @@ void TCPTransportInterface::SenderResourceHasBeenClosed(
     // connected.
     // If moving this unbind send with the respective channel disconnection to this point, the following problem arises:
     // If receiving a SenderResourceHasBeenClosed call after receiving an unbinding message from a remote participant (our participant
-    // isn't disconnecting but we want to erase this send resource), the channel cannot be disconnected here since the listening thread is
+    // isn't disconnecting but we want to erase this send resource), the channel cannot be disconnected here since the listening thread has
     // taken the read mutex (permanently waiting at read asio layer). This mutex is also needed to disconnect the socket (deadlock).
     // Socket disconnection should always be done in the listening thread (or in the transport cleanup, when receiver resources have
     // already been destroyed and the listening thread had consequently finished).
-    // Therefore, to guarantee expected behavior, at this point the channel resource associated to the send resource has to be found.
-    // Additionally, the send resource locator is invalidated to prevent further use of associated channel.
-    std::unique_lock<std::mutex> scopedLock(sockets_map_mutex_);
-    auto channel_resource = channel_resources_.find(locator);
-    assert(channel_resource != channel_resources_.end());
-    static_cast<void>(channel_resource);
+    // An assert() clause finding the respective channel resource cannot be made since in LARGE DATA scenario, where the PDP discovery is done
+    // via UDP, a server's send resource can be created with without any associated channel resource until receiving a connection request from
+    // the client.
+    // The send resource locator is invalidated to prevent further use of associated channel.
     LOCATOR_INVALID(locator);
 }
 
