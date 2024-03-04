@@ -629,9 +629,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     // Parametrized XML
     const char* xml_p =
             "\
-            <builtinTransports>\
-                <mode>%s</mode>\
-            </builtinTransports>\
+            <builtinTransports>%s</builtinTransports>\
             ";
     constexpr size_t xml_len {500};
     char xml[xml_len];
@@ -670,9 +668,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     // 4. LARGE_DATA with arguments
     const char* xml_arguments =
             "\
-            <builtinTransports%s>\
-                <mode>LARGE_DATA</mode>\
-            </builtinTransports>\
+            <builtinTransports%s>LARGE_DATA</builtinTransports>\
             ";
     eprosima::fastdds::rtps::BuiltinTransportsOptions bt_opts;
     eprosima::fastdds::rtps::BuiltinTransportsOptions bt_opts_check;
