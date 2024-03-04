@@ -188,29 +188,17 @@
         | ╠ att. non_blocking             [string],
         | ╚ att. tcp_negotiation_timeout  [string]
         |
-        └ mode         [string]-->
+        └ (raw_data)                      [string]-->
 
-    <xs:complexType name="builtinTransportsType">
-        <xs:all>
-            <xs:element name="mode" minOccurs="1" maxOccurs="1">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="NONE" />
-                        <xs:enumeration value="DEFAULT" />
-                        <xs:enumeration value="DEFAULTv6" />
-                        <xs:enumeration value="SHM" />
-                        <xs:enumeration value="UDPv4" />
-                        <xs:enumeration value="UDPv6" />
-                        <xs:enumeration value="LARGE_DATA" />
-                        <xs:enumeration value="LARGE_DATAv6" />
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-        </xs:all>
-        <xs:attribute name="max_msg_size" type="string" use="optional"/>
-        <xs:attribute name="sockets_size" type="string" use="optional"/>
-        <xs:attribute name="non_blocking" type="string" use="optional"/>
-        <xs:attribute name="tcp_negotiation_timeout" type="string" use="optional"/>
+    <xs:complexType name="builtinTransportsType" >
+        <xs:simpleContent>
+            <xs:extension base="builtinTransportKind">
+                <xs:attribute name="max_msg_size" type="string" use="optional"/>
+                <xs:attribute name="sockets_size" type="string" use="optional"/>
+                <xs:attribute name="non_blocking" type="string" use="optional"/>
+                <xs:attribute name="tcp_negotiation_timeout" type="string" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
     <!--Data writer / publisher:
@@ -1813,6 +1801,22 @@
             <xs:element name="reception_thread" type="threadSettingsWithPortType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
+
+
+    <!--Builtin Transport Kind list Type:
+        └ builtinTransport  [1]-->
+    <xs:simpleType name="builtinTransportKind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE" />
+            <xs:enumeration value="DEFAULT" />
+            <xs:enumeration value="DEFAULTv6" />
+            <xs:enumeration value="SHM" />
+            <xs:enumeration value="UDPv4" />
+            <xs:enumeration value="UDPv6" />
+            <xs:enumeration value="LARGE_DATA" />
+            <xs:enumeration value="LARGE_DATAv6" />
+        </xs:restriction>
+    </xs:simpleType>
 
 
     <!--| PRIMITIVE TYPES DEFINITION |-->
