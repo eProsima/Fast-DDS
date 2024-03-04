@@ -6001,7 +6001,7 @@ bool DynamicDataImpl::deserialize(
 
             for (uint32_t count {0};
                     (is_primitive || eprosima::fastcdr::CdrVersion::XCDRv2 != cdr.get_cdr_version() ||
-                    cdr.get_current_position() - offset < dheader) && count < length; ++count)
+                    static_cast<uint32_t>(cdr.get_current_position() - offset) < dheader) && count < length; ++count)
             {
                 if (static_cast<uint32_t>(LENGTH_UNLIMITED) == type->get_descriptor().bound().at(0) ||
                         type->get_descriptor().bound().at(0) > key_to_id_.size())
@@ -6200,7 +6200,7 @@ bool DynamicDataImpl::deserialize(
             }
 
             if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() &&
-                    cdr.get_current_position() - offset != dheader)
+                    static_cast<uint32_t>(cdr.get_current_position() - offset) != dheader)
             {
                 throw fastcdr::exception::BadParamException(
                           "Member size differs from the size specified by DHEADER");
@@ -6302,13 +6302,14 @@ bool DynamicDataImpl::deserialize(
                             }
 
                             uint32_t count {0};
-                            while (cdr.get_current_position() - offset < dheader && count < sequence_length)
+                            while (static_cast<uint32_t>(cdr.get_current_position() - offset) < dheader &&
+                                    count < sequence_length)
                             {
                                 cdr.deserialize(vector_t->data()[count]);
                                 ++count;
                             }
 
-                            if (cdr.get_current_position() - offset != dheader)
+                            if (static_cast<uint32_t>(cdr.get_current_position() - offset) != dheader)
                             {
                                 throw fastcdr::exception::BadParamException(
                                           "Member size differs from the size specified by DHEADER");
