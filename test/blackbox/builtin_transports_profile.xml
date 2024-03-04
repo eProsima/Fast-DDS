@@ -12,9 +12,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_none</name>
-                <builtinTransports>
-                    <mode>NONE</mode>
-                </builtinTransports>
+                <builtinTransports>NONE</builtinTransports>
                 <!--
                     Need to add at least one transport in
                     order to be able to create the participant
@@ -29,9 +27,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_default</name>
-                <builtinTransports>
-                    <mode>DEFAULT</mode>
-                </builtinTransports>
+                <builtinTransports>DEFAULT</builtinTransports>
             </rtps>
         </participant>
 
@@ -39,9 +35,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_defaultv6</name>
-                <builtinTransports>
-                    <mode>DEFAULTv6</mode>
-                </builtinTransports>
+                <builtinTransports>DEFAULTv6</builtinTransports>
             </rtps>
         </participant>
 
@@ -49,9 +43,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_shm</name>
-                <builtinTransports>
-                    <mode>SHM</mode>
-                </builtinTransports>
+                <builtinTransports>SHM</builtinTransports>
             </rtps>
         </participant>
 
@@ -59,9 +51,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_udp</name>
-                <builtinTransports>
-                    <mode>UDPv4</mode>
-                </builtinTransports>
+                <builtinTransports>UDPv4</builtinTransports>
             </rtps>
         </participant>
 
@@ -69,9 +59,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_udpv6</name>
-                <builtinTransports>
-                    <mode>UDPv6</mode>
-                </builtinTransports>
+                <builtinTransports>UDPv6</builtinTransports>
             </rtps>
         </participant>
 
@@ -79,9 +67,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata</name>
-                <builtinTransports>
-                    <mode>LARGE_DATA</mode>
-                </builtinTransports>
+                <builtinTransports>LARGE_DATA</builtinTransports>
             </rtps>
         </participant>
 
@@ -89,9 +75,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata_max_msg_size</name>
-                <builtinTransports max_msg_size="70000" sockets_size="70000">
-                    <mode>LARGE_DATA</mode>
-                </builtinTransports>
+                <builtinTransports max_msg_size="70000" sockets_size="70000">LARGE_DATA</builtinTransports>
             </rtps>
         </participant>
 
@@ -99,9 +83,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata_non_blocking_send</name>
-                <builtinTransports non_blocking="true">
-                    <mode>LARGE_DATA</mode>
-                </builtinTransports>
+                <builtinTransports non_blocking="true">LARGE_DATA</builtinTransports>
             </rtps>
         </participant>
 
@@ -109,9 +91,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata_tcp_negotiation_timeout</name>
-                <builtinTransports tcp_negotiation_timeout="50">
-                    <mode>LARGE_DATA</mode>
-                </builtinTransports>
+                <builtinTransports tcp_negotiation_timeout="50">LARGE_DATA</builtinTransports>
             </rtps>
         </participant>
 
@@ -119,9 +99,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedata_all_options</name>
-                <builtinTransports max_msg_size="70000" sockets_size="70000" non_blocking="true" tcp_negotiation_timeout="50">
-                    <mode>LARGE_DATA</mode>
-                </builtinTransports>
+                <builtinTransports max_msg_size="70000" sockets_size="70000" non_blocking="true" tcp_negotiation_timeout="50">LARGE_DATA</builtinTransports>
             </rtps>
         </participant>
 
@@ -129,9 +107,7 @@
             <domainId>0</domainId>
             <rtps>
                 <name>Participant.builtin_transports_largedatav6</name>
-                <builtinTransports>
-                    <mode>LARGE_DATAv6</mode>
-                </builtinTransports>
+                <builtinTransports>LARGE_DATAv6</builtinTransports>
             </rtps>
         </participant>
 
