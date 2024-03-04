@@ -11,10 +11,12 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         default: '2.10.x'
-  pull_request:
   push:
     branches:
       - 2.10.x
+  pull_request:
+    branches:
+      - '2.10.x'
   schedule:
     - cron: '0 1 * * *'
 
