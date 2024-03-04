@@ -21,6 +21,7 @@
 
 #include <ostream>
 #include <cstdint>
+#include <fastdds/rtps/transport/TransportInterface.h>
 
 #include <fastrtps/fastrtps_dll.h>
 
@@ -44,13 +45,14 @@ struct RTPS_DllAPI BuiltinTransportsOptions
      * to register every transport.
      *
      */
-    uint32_t maxMessageSize = 65500;
+    uint32_t maxMessageSize = fastdds::rtps::s_maximumMessageSize;
 
     /**
      * @brief The value used to configure the send and receive fuffer sizes of the sockets.
      *
      * It specifies the value that will be used to configure the send and receive buffer sizes of the sockets
      * used by the transports created with the builtin transports.
+     * Zero value indicates to use default system buffer size.
      *
      */
     uint32_t sockets_buffer_size = 0;

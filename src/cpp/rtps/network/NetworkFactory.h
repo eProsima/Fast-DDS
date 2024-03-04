@@ -67,7 +67,7 @@ public:
      *
      * @param descriptor Structure that defines all initial configuration for a given transport.
      * @param properties Optional policy to specify additional parameters for the created transport.
-     * @param max_msg_size_no_frag Optional parameter that will allow to skip 65500 KB maxMessageSize limit.
+     * @param max_msg_size_no_frag Optional parameter that will allow to skip 65500 KB (s_maximumMessageSize) maxMessageSize limit.
      * during the transport initialization.
      */
     bool RegisterTransport(

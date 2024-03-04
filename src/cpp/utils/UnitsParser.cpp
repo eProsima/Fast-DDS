@@ -63,14 +63,14 @@ uint32_t parse_value_and_units(
     if (!std::regex_match(units, pattern))
     {
         throw std::invalid_argument(
-                  "The units are not in the expected format. Use: {B, KB, MG, GB, KIB, MIB, GIB}).");
+                  "The units are not in the expected format. Use: {B, KB, MG, GB, KIB, MIB, GIB}.");
     }
     const auto magnitude = magnitudes.at(units);
 
     // Check whether the product of number * magnitude overflows
     if (num > std::numeric_limits<std::uint32_t>::max() / magnitude)
     {
-        throw std::invalid_argument("The number is too large to be converted to bytes (Max: 2^32-1 Bytes).");
+        throw std::invalid_argument("The number is too large to be converted to bytes (Max: (2^32)-1 Bytes).");
     }
 
     // The explicit cast to uint32_t is safe since the number has already been checked to fit.

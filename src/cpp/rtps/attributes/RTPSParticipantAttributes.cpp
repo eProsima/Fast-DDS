@@ -294,14 +294,15 @@ void RTPSParticipantAttributes::setup_transports(
         fastdds::rtps::BuiltinTransports transports,
         const fastdds::rtps::BuiltinTransportsOptions& options)
 {
-    if (options.maxMessageSize > 65500 &&
+    if (options.maxMessageSize > fastdds::rtps::s_maximumMessageSize &&
             (transports != fastdds::rtps::BuiltinTransports::NONE &&
             transports != fastdds::rtps::BuiltinTransports::SHM &&
             transports != fastdds::rtps::BuiltinTransports::LARGE_DATA &&
             transports != fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
-                "Max message size of UDP cannot be greater than 65500. Will use DEFAULT transports.");
+                "Max message size of UDP cannot be greater than " << std::to_string(
+                    fastdds::rtps::s_maximumMessageSize) << ".");
         return;
     }
     bool intraprocess_only = is_intraprocess_only(*this);
@@ -335,13 +336,13 @@ void RTPSParticipantAttributes::setup_transports(
             break;
 
         case fastdds::rtps::BuiltinTransports::LARGE_DATA:
-            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB
+            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
             setup_transports_large_data(*this, intraprocess_only, options);
             break;
 
         case fastdds::rtps::BuiltinTransports::LARGE_DATAv6:
-            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB
+            // This parameter will allow allow the initialization of UDP transports with maxMessageSize > 65500 KB (s_maximumMessageSize)
             max_msg_size_no_frag = options.maxMessageSize;
             setup_transports_large_datav6(*this, intraprocess_only, options);
             break;

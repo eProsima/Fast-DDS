@@ -18,7 +18,6 @@
 
 #ifndef _FASTDDS_UTILS_UNITS_PARSER_HPP_
 #define _FASTDDS_UTILS_UNITS_PARSER_HPP_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <string>
 
@@ -50,5 +49,4 @@ uint32_t parse_value_and_units(
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* _FASTDDS_UTILS_UNITS_PARSER_HPP_ */

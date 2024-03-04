@@ -643,7 +643,7 @@ public:
 
     /*! Maximum message size used to avoid fragmentation, setted ONLY in LARGE_DATA. If this value is
      * not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
-     * higher than 65500K.
+     * higher than 65500 KB (s_maximumMessageSize).
      */
     uint32_t max_msg_size_no_frag = 0;
 
