@@ -299,6 +299,95 @@ protected:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
     /**
+     * @brief Get the type dependencies of custom annotations.
+     *
+     * @param[in] custom_annotation_seq Sequence of custom annotations.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    ReturnCode_t get_custom_annotations_dependencies(
+            const AppliedAnnotationSeq& custom_annotation_seq,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
+     * @brief Get the type dependencies of plain sequences or arrays.
+     *
+     * @tparam T Either PlainSequenceSElemDefn, PlainSequenceLElemDefn, PlainArraySElemDefn or PlainArrayLElemDefn.
+     * @param[in] collection_type Plain collection Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_indirect_hash_collection_dependencies(
+            const T& collection_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+
+        TypeIdentifier type_id = *collection_type.element_identifier().get();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            add_dependency(type_id, type_dependencies);
+            type_ids.push_back(type_id);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+        {
+            type_ids.push_back(type_id);
+        }
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
+     * @brief Get the type dependencies of plain maps.
+     *
+     * @tparam T Either PlainMapSTypeDefn or PlainMapLTypeDefn.
+     * @param[in] map_type Plain map Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     */
+    template<typename T>
+    ReturnCode_t get_indirect_hash_map_dependencies(
+            const T& map_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+
+        TypeIdentifier key_id = *map_type.key_identifier().get();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(key_id))
+        {
+            add_dependency(key_id, type_dependencies);
+            type_ids.push_back(key_id);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(key_id))
+        {
+            type_ids.push_back(key_id);
+        }
+        TypeIdentifier element_id = *map_type.element_identifier().get();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(element_id))
+        {
+            add_dependency(element_id, type_dependencies);
+            type_ids.push_back(element_id);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(element_id))
+        {
+            type_ids.push_back(element_id);
+        }
+
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_OK;
+    }
+
+    /**
      * @brief Get the alias type dependencies.
      *
      * @tparam T Either a CompleteAliasType or MinimalAliasType.
