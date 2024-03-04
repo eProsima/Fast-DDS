@@ -2551,7 +2551,9 @@ bool RTPSParticipantImpl::get_persistence_service(
         if (param.persistence_guid == c_Guid_Unknown)
         {
             EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Cannot create persistence service. Persistence GUID not specified");
-            return false;
+            auto trick = const_cast<EndpointAttributes&>(param);
+            trick.durabilityKind = TRANSIENT_LOCAL;
+            return true;
         }
         service = get_persistence_service(param);
         if (service == nullptr)
