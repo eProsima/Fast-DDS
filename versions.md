@@ -3,6 +3,7 @@ Forthcoming
 Migrate communication tests in `dds/communication` folder
 
 * Added authentication handshake properties.
+* Added methods OpenOutputChannel and CloseOutputChannel to TransportInterface with LocatorSelectorEntry argument.
 
 Version 2.13.0
 --------------
