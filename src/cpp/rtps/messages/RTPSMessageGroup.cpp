@@ -257,7 +257,7 @@ RTPSMessageGroup::RTPSMessageGroup(
                     ));
     }
 
-    full_msg_ = &(send_buffer_->rtpsmsg_fullmsg_);
+    header_msg_ = &(send_buffer_->rtpsmsg_fullmsg_);
     submessage_msg_ = &(send_buffer_->rtpsmsg_submessage_);
 
     // Init RTPS message.
@@ -310,9 +310,13 @@ RTPSMessageGroup::~RTPSMessageGroup() noexcept(false)
 
 void RTPSMessageGroup::reset_to_header()
 {
-    CDRMessage::initCDRMsg(full_msg_);
-    full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
-    full_msg_->length = RTPSMESSAGE_HEADER_SIZE;
+    CDRMessage::initCDRMsg(header_msg_);
+    header_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+    header_msg_->length = RTPSMESSAGE_HEADER_SIZE;
+
+    buffers_to_send_.clear();
+    copied_messages_.clear();
+    buffers_bytes_ = 0;
 }
 
 void RTPSMessageGroup::flush()
@@ -445,13 +449,32 @@ bool RTPSMessageGroup::insert_submessage(
     return true;
 }
 
+bool RTPSMessageGroup::check_space(
+        CDRMessage_t* msg,
+        const uint32_t length)
+{
+    uint32_t extra_size = 0;
+
+#if HAVE_SECURITY
+    // Avoid full message growing over estimated extra size for RTPS encryption
+    extra_size += participant_->calculate_extra_size_for_rtps_message();
+#endif  // HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+    // Keep room for the statistics submessage by reducing max_size while appending submessage
+    extra_size += eprosima::fastdds::statistics::rtps::statistics_submessage_length;
+#endif  // FASTDDS_STATISTICS
+
+    return msg && ((msg->pos + length) <= (msg->max_size - extra_size));
+}
+
 bool RTPSMessageGroup::add_info_dst_in_buffer(
         CDRMessage_t* buffer,
         const GuidPrefix_t& destination_guid_prefix)
 {
 #if HAVE_SECURITY
     // Add INFO_SRC when we are at the beginning of the message and RTPS protection is enabled
-    if ((full_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
+    if ((header_msg_->length == RTPSMESSAGE_HEADER_SIZE) &&
             participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
     {
         RTPSMessageCreator::addSubmessageInfoSRC(buffer, c_ProtocolVersion, c_VendorId_eProsima,
