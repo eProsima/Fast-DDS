@@ -17,6 +17,9 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
 
+#include <xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLProfileManager.h>
+
 /**
  * This test checks the getter and setter for the library settings in the RTPS layer.
  */
@@ -52,6 +55,48 @@ TEST(RTPSDomainTests, library_settings_test)
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
+}
+
+/**
+ * This test checks get_topic_attributes_from_profile API.
+ */
+TEST(RTPSDomainTests, get_topic_attributes_from_profile_test)
+{
+    std::string profile_name = "test_profile_name";
+    eprosima::fastrtps::TopicAttributes topic_att;
+    EXPECT_FALSE(eprosima::fastrtps::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
+
+    const std::string xml =
+            R"(<profiles>
+    <topic profile_name="test_profile_name">
+        <name>Test</name>
+        <dataType>DataTest</dataType>
+        <historyQos>
+            <kind>KEEP_LAST</kind>
+            <depth>20</depth>
+        </historyQos>
+        <resourceLimitsQos>
+            <max_samples>5</max_samples>
+            <max_instances>2</max_instances>
+            <max_samples_per_instance>1</max_samples_per_instance>
+            <allocated_samples>20</allocated_samples>
+            <extra_samples>10</extra_samples>
+        </resourceLimitsQos>
+    </topic>
+</profiles>)";
+
+    EXPECT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK,
+            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLString(xml.c_str(), xml.length()));
+    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
+    EXPECT_EQ(topic_att.topicName, "Test");
+    EXPECT_EQ(topic_att.topicDataType, "DataTest");
+    EXPECT_EQ(topic_att.historyQos.kind, eprosima::fastdds::dds::HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS);
+    EXPECT_EQ(topic_att.historyQos.depth, 20);
+    EXPECT_EQ(topic_att.resourceLimitsQos.max_samples, 5);
+    EXPECT_EQ(topic_att.resourceLimitsQos.max_instances, 2);
+    EXPECT_EQ(topic_att.resourceLimitsQos.max_samples_per_instance, 1);
+    EXPECT_EQ(topic_att.resourceLimitsQos.allocated_samples, 20);
+    EXPECT_EQ(topic_att.resourceLimitsQos.extra_samples, 10);
 }
 
 int main(
