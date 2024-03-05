@@ -1,4 +1,4 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2021 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,22 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys, os, subprocess, glob
+import sys, os, subprocess, glob, time
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
-publisher_command = os.environ.get("SIMPLE_COMMUNICATION_PUBLISHER_BIN")
+publisher_command = os.environ.get("DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN")
 if not publisher_command:
-    publisher_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationPublisher*"), recursive=True)
+    publisher_files = glob.glob(os.path.join(script_dir, "**/DDSCommunicationPublisher*"), recursive=True)
     pf = iter(publisher_files)
     publisher_command = next(pf, None)
     while publisher_command and (not os.path.isfile(publisher_command) or not os.access(publisher_command,
         os.X_OK)):
         publisher_command = next(pf, None)
 assert publisher_command
-subscriber_command = os.environ.get("SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
+subscriber_command = os.environ.get("DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN")
 if not subscriber_command:
-    subscriber_files = glob.glob(os.path.join(script_dir, "**/SimpleCommunicationSubscriber*"), recursive=True)
+    subscriber_files = glob.glob(os.path.join(script_dir, "**/DDSCommunicationSubscriber*"), recursive=True)
     pf = iter(subscriber_files)
     subscriber_command = next(pf, None)
     while subscriber_command and (not os.path.isfile(subscriber_command) or not os.access(subscriber_command,
@@ -63,22 +63,21 @@ else:
     if xml_file_sub:
         real_xml_file_sub = os.path.join(script_dir, xml_file_sub)
 
-
-subscriber1_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
+subscriber1_proc = subprocess.Popen([subscriber_command, "--samples", "20", "--seed", str(os.getpid())]
         + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
         + extra_sub_args)
 publisher_proc = subprocess.Popen([publisher_command, "--seed", str(os.getpid())]
         + (["--xmlfile", real_xml_file_pub] if real_xml_file_pub else [])
         + extra_pub_args)
-subscriber2_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid())]
-        + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
-        + extra_sub_args)
+for i in range(2):
+    subscriber2_proc = subprocess.Popen([subscriber_command, "--die_on_data_received", "--seed", str(os.getpid())]
+            + (["--xmlfile", real_xml_file_sub] if real_xml_file_sub else [])
+            + extra_sub_args)
+    time.sleep(2)
+    subscriber2_proc.kill()
 
 subscriber1_proc.communicate()
 retvalue = subscriber1_proc.returncode
-subscriber2_proc.communicate()
-if retvalue == 0:
-    retvalue = subscriber2_proc.returncode
 
 publisher_proc.kill()
 

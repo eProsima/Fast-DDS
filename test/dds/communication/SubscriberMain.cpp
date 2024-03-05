@@ -43,6 +43,7 @@ int main(
     bool notexit = false;
     bool fixed_type = false;
     bool zero_copy = false;
+    bool die_on_data_received = false;
     bool succeed_on_timeout = false;
     uint32_t seed = 7800;
     uint32_t samples = 4;
@@ -129,6 +130,10 @@ int main(
 
             publishers = strtol(argv[arg_count], nullptr, 10);
         }
+        else if (strcmp(argv[arg_count], "--die_on_data_received") == 0)
+        {
+            die_on_data_received = true;
+        }
         else
         {
             std::cout << "Wrong argument " << argv[arg_count] << std::endl;
@@ -143,7 +148,7 @@ int main(
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
     }
 
-    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy, succeed_on_timeout);
+    SubscriberModule subscriber(publishers, samples, fixed_type, zero_copy, succeed_on_timeout, die_on_data_received);
 
     if (subscriber.init(seed, magic))
     {

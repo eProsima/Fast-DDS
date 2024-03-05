@@ -1,5 +1,6 @@
 Forthcoming
 -----------
+Migrate communication tests in `dds/communication` folder
 
 * Added authentication handshake properties.
 

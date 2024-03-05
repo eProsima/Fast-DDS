@@ -13,15 +13,15 @@
 // limitations under the License.
 
 /**
- * @file SubscriberModule.hpp
- *
+ * @file Publisher.hpp
  */
-#ifndef TEST_COMMUNICATION_SUBSCRIBER_HPP
-#define TEST_COMMUNICATION_SUBSCRIBER_HPP
+
+#ifndef TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
+#define TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
 #include "types/FixedSizedPubSubTypes.h"
@@ -29,90 +29,78 @@
 
 #include <mutex>
 #include <condition_variable>
-#include <map>
-#include <chrono>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class SubscriberModule
+class PublisherModule
     : public DomainParticipantListener
 {
 public:
 
-    SubscriberModule(
-            const uint32_t publishers,
-            const uint32_t max_number_samples,
+    PublisherModule(
+            bool exit_on_lost_liveliness,
             bool fixed_type = false,
-            bool zero_copy = false,
-            bool succeed_on_timeout = false,
-            bool die_on_data_received = false)
-        : publishers_(publishers)
-        , max_number_samples_(max_number_samples)
+            bool zero_copy = false)
+        : exit_on_lost_liveliness_(exit_on_lost_liveliness)
         , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
-        , succeed_on_timeout_(succeed_on_timeout)
-        , die_on_data_received_(die_on_data_received)
     {
     }
 
-    ~SubscriberModule();
+    ~PublisherModule();
 
+    void on_publication_matched(
+            DataWriter* /*publisher*/,
+            const PublicationMatchedStatus& info) override;
+
+    /**
+     * This method is called when a new Participant is discovered, or a previously discovered participant
+     * changes its QOS or is removed.
+     * @param p Pointer to the Participant
+     * @param info DiscoveryInfo.
+     */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
             fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(
-            DomainParticipant* /*participant*/,
+            DomainParticipant* participant,
             fastrtps::rtps::ParticipantAuthenticationInfo&& info) override;
 #endif // if HAVE_SECURITY
-
-    void on_subscription_matched(
-            DataReader* /*reader*/,
-            const SubscriptionMatchedStatus& info) override;
-
-    void on_data_available(
-            DataReader* reader) override;
-
-    void on_liveliness_changed(
-            DataReader* /*reader*/,
-            const eprosima::fastdds::dds::LivelinessChangedStatus& status) override;
 
     bool init(
             uint32_t seed,
             const std::string& magic);
 
-    bool run(
-            bool notexit,
-            uint32_t timeout = 86400000);
+    void wait_discovery(
+            uint32_t how_many);
 
-    bool run_for(
-            bool notexit,
-            const std::chrono::milliseconds& timeout);
+    void run(
+            uint32_t samples,
+            uint32_t loops = 0,
+            uint32_t interval = 250);
 
 private:
 
     std::mutex mutex_;
     std::condition_variable cv_;
-    const uint32_t publishers_ = 0;
-    const uint32_t max_number_samples_ = 0;
-    std::map<eprosima::fastrtps::rtps::GUID_t, uint32_t> number_samples_;
+    unsigned int matched_ = 0;
+    bool exit_on_lost_liveliness_ = false;
     bool fixed_type_ = false;
     bool zero_copy_ = false;
     bool run_ = true;
-    bool succeed_on_timeout_ = false;
     DomainParticipant* participant_ = nullptr;
     TypeSupport type_;
-    Subscriber* subscriber_ = nullptr;
-    DataReader* reader_ = nullptr;
+    Publisher* publisher_ = nullptr;
+    DataWriter* writer_ = nullptr;
     Topic* topic_ = nullptr;
-    bool die_on_data_received_ = false;
 };
 
 } // dds
 } // fastdds
 } // eprosima
 
-#endif // TEST_COMMUNICATION_SUBSCRIBER_HPP
+#endif // TEST_DDS_COMMUNICATION_PUBLISHERMODULE_HPP

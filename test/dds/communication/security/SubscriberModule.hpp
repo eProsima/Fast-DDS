@@ -46,13 +46,11 @@ public:
             const uint32_t max_number_samples,
             bool fixed_type = false,
             bool zero_copy = false,
-            bool succeed_on_timeout = false,
             bool die_on_data_received = false)
         : publishers_(publishers)
         , max_number_samples_(max_number_samples)
         , fixed_type_(zero_copy || fixed_type) // If zero copy active, fixed type is required
         , zero_copy_(zero_copy)
-        , succeed_on_timeout_(succeed_on_timeout)
         , die_on_data_received_(die_on_data_received)
     {
     }
@@ -85,8 +83,7 @@ public:
             const std::string& magic);
 
     bool run(
-            bool notexit,
-            uint32_t timeout = 86400000);
+            bool notexit);
 
     bool run_for(
             bool notexit,
@@ -102,7 +99,6 @@ private:
     bool fixed_type_ = false;
     bool zero_copy_ = false;
     bool run_ = true;
-    bool succeed_on_timeout_ = false;
     DomainParticipant* participant_ = nullptr;
     TypeSupport type_;
     Subscriber* subscriber_ = nullptr;
