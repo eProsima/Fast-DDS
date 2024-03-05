@@ -20,4 +20,4 @@ jobs:
       label: '${{ matrix.os-image }}-nightly-sec-ubuntu-ci'
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
-      fastdds-branch: 'master'
+      fastdds-branch: '2.12.x'
