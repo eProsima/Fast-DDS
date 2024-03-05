@@ -24,6 +24,9 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
+
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
 #include <rtps/messages/CDRMessage.hpp>
 
@@ -127,7 +130,6 @@ public:
             const EntityId_t& readerId,
             bool expectsInlineQos,
             InlineQosWriter* inlineQos);
-
     static bool addSubmessageData(
             CDRMessage_t* msg,
             const CacheChange_t* change,
@@ -135,7 +137,10 @@ public:
             const EntityId_t& readerId,
             bool expectsInlineQos,
             InlineQosWriter* inlineQos,
-            bool* is_big_submessage);
+            bool& is_big_submessage,
+            bool copy_data,
+            NetworkBuffer& pending_buffer,
+            uint8_t& pending_padding);
 
     static bool addMessageDataFrag(
             CDRMessage_t* msg,
@@ -154,7 +159,10 @@ public:
             TopicKind_t topicKind,
             const EntityId_t& readerId,
             bool expectsInlineQos,
-            InlineQosWriter* inlineQos);
+            InlineQosWriter* inlineQos,
+            bool copy_data,
+            NetworkBuffer& pending_buffer,
+            uint8_t& pending_padding);
 
     static bool addMessageGap(
             CDRMessage_t* msg,
