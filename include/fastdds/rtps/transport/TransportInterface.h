@@ -141,7 +141,7 @@ public:
      * reserve and mark any resources that are needed for said channel.
      *
      * @param sender_resource_list Participant's send resource list.
-     * @param locator_selector_entry Locator selector entry with the remote participant's locators.
+     * @param locator_selector_entry Locator selector entry with the remote entity locators.
      *
      * @return true if the channel was correctly opened or if finding an already opened one.
      */
@@ -153,7 +153,7 @@ public:
      * Close the channel that maps to/from the given locator selector entry.
      *
      * @param sender_resource_list Participant's send resource list.
-     * @param locator_selector_entry Locator selector entry with the remote participant's locators.
+     * @param locator_selector_entry Locator selector entry with the remote entity locators.
      */
     virtual void CloseOutputChannel(
             SendResourceList& sender_resource_list,

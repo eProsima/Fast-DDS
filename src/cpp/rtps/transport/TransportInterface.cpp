@@ -16,7 +16,6 @@
 
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 
-
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
