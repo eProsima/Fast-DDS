@@ -1434,7 +1434,8 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     const octet* data = message.data();
     size_t size = message.size();
 
-    // Send the message with no header
+    // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
+    // and we want to guarantee that the buffer might be full, we send the message more than twice.
     for (int i = 0; i < 5; i++)
     {
         sender_channel_resource->send(nullptr, 0, data, size, ec);
@@ -1932,7 +1933,8 @@ TEST_F(TCPv4Tests, non_blocking_send)
     const octet* data = message.data();
     size_t size = message.size();
 
-    // Send the message with no header
+    // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
+    // and we want to guarantee that the buffer might be full, we send the message more than twice.
     for (int i = 0; i < 5; i++)
     {
         sender_channel_resource->send(nullptr, 0, data, size, ec);
