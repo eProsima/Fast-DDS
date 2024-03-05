@@ -101,6 +101,27 @@ endif()
 gtest_discover_tests(EdpTests)
 
 #PDP TESTS
+
+set(TCPTransportInterface_SOURCE
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/RTCPMessageManager.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/tcp/TCPControlMessage.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorBasic.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResource.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceBasic.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPTransportInterface.cpp
+    )
+if(TLS_FOUND)
+    set(TCPTransportInterface_SOURCE
+        ${TCPTransportInterface_SOURCE}
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPAcceptorSecure.cpp
+        ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/TCPChannelResourceSecure.cpp
+        )
+endif()
+
 set(PDPTESTS_SOURCE PDPTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/participant/PDP.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
@@ -148,6 +169,7 @@ set(PDPTESTS_SOURCE PDPTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    ${TCPTransportInterface_SOURCE}
     )
 
 add_executable(PDPTests ${PDPTESTS_SOURCE})
@@ -185,7 +207,8 @@ target_include_directories(PDPTests PRIVATE
 
 target_link_libraries(PDPTests foonathan_memory
     GTest::gmock
-    ${CMAKE_DL_LIBS})
+    ${CMAKE_DL_LIBS}
+    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
 if(QNX)
     target_link_libraries(PDPTests socket)
 endif()
@@ -196,4 +219,3 @@ else()
 endif()
 
 gtest_discover_tests(PDPTests)
-

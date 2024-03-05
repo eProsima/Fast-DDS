@@ -19,6 +19,7 @@
 #include <chrono>
 #include <cstring>
 #include <map>
+#include <set>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -269,6 +270,19 @@ Locator TCPTransportInterface::remote_endpoint_to_locator(
     Locator locator;
     asio::error_code ec;
     endpoint_to_locator(channel->remote_endpoint(ec), locator);
+    if (ec)
+    {
+        LOCATOR_INVALID(locator);
+    }
+    return locator;
+}
+
+Locator TCPTransportInterface::local_endpoint_to_locator(
+        const std::shared_ptr<TCPChannelResource>& channel) const
+{
+    Locator locator;
+    asio::error_code ec;
+    endpoint_to_locator(channel->local_endpoint(ec), locator);
     if (ec)
     {
         LOCATOR_INVALID(locator);
@@ -634,11 +648,24 @@ bool TCPTransportInterface::transform_remote_locator(
     return false;
 }
 
-void TCPTransportInterface::CloseOutputChannel(
+void TCPTransportInterface::SenderResourceHasBeenClosed(
         fastrtps::rtps::Locator_t& locator)
 {
-    locator.set_Invalid_Address();
-    locator.port = 0;
+    // The TCPSendResource associated channel cannot be removed from the channel_resources_ map. On transport's destruction
+    // this map is consulted to send the unbind requests. If not sending it, the other participant wouldn't disconnect the
+    // socket and keep a connection status of eEstablished. This would prevent new connect calls since it thinks it's already
+    // connected.
+    // If moving this unbind send with the respective channel disconnection to this point, the following problem arises:
+    // If receiving a SenderResourceHasBeenClosed call after receiving an unbinding message from a remote participant (our participant
+    // isn't disconnecting but we want to erase this send resource), the channel cannot be disconnected here since the listening thread has
+    // taken the read mutex (permanently waiting at read asio layer). This mutex is also needed to disconnect the socket (deadlock).
+    // Socket disconnection should always be done in the listening thread (or in the transport cleanup, when receiver resources have
+    // already been destroyed and the listening thread had consequently finished).
+    // An assert() clause finding the respective channel resource cannot be made since in LARGE DATA scenario, where the PDP discovery is done
+    // via UDP, a server's send resource can be created with without any associated channel resource until receiving a connection request from
+    // the client.
+    // The send resource locator is invalidated to prevent further use of associated channel.
+    LOCATOR_INVALID(locator);
 }
 
 bool TCPTransportInterface::CloseInputChannel(
@@ -1187,7 +1214,6 @@ bool TCPTransportInterface::Receive(
                     {
                         std::shared_ptr<RTCPMessageManager> rtcp_message_manager;
                         if (TCPChannelResource::eConnectionStatus::eDisconnected != channel->connection_status())
-
                         {
                             std::unique_lock<std::mutex> lock(rtcp_message_manager_mutex_);
                             rtcp_message_manager = rtcp_manager.lock();
@@ -1436,10 +1462,8 @@ void TCPTransportInterface::SocketAccepted(
             create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << channel->local_endpoint().address() << ":"
-                    << channel->local_endpoint().port() << "), remote: "
-                    << channel->remote_endpoint().address() << ":"
-                    << channel->remote_endpoint().port() << ")");
+                    << local_endpoint_to_locator(channel) << ", remote: "
+                    << remote_endpoint_to_locator(channel) << ")");
         }
         else
         {
@@ -1481,10 +1505,8 @@ void TCPTransportInterface::SecureSocketAccepted(
             create_listening_thread(secure_channel);
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
-                    << socket->lowest_layer().local_endpoint().address() << ":"
-                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
-                    << socket->lowest_layer().remote_endpoint().address() << ":"
-                    << socket->lowest_layer().remote_endpoint().port() << ")");
+                    << local_endpoint_to_locator(secure_channel) << ", remote: "
+                    << remote_endpoint_to_locator(secure_channel) << ")");
         }
         else
         {
@@ -1834,6 +1856,60 @@ void TCPTransportInterface::fill_local_physical_port(
     else
     {
         IPLocator::setPhysicalPort(locator, initial_peer_local_locator_port_);
+    }
+}
+
+void TCPTransportInterface::CloseOutputChannel(
+        SendResourceList& send_resource_list,
+        const LocatorList& remote_participant_locators,
+        const LocatorList& participant_initial_peers) const
+{
+    // Since send resources handle physical locators, we need to convert the remote participant locators to physical
+    std::set<Locator> remote_participant_physical_locators;
+    for (const Locator& remote_participant_locator : remote_participant_locators)
+    {
+        remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
+
+        // Also add the WANtoLANLocator ([0][WAN] address) if the remote locator is a WAN locator. In WAN scenario,
+        //initial peer can also work with the WANtoLANLocator of the remote participant.
+        if (IPLocator::hasWan(remote_participant_locator))
+        {
+            remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(IPLocator::WanToLanLocator(
+                        remote_participant_locator)));
+        }
+    }
+
+    // Exlude initial peers.
+    for (const auto& initial_peer : participant_initial_peers)
+    {
+        if (std::find(remote_participant_physical_locators.begin(), remote_participant_physical_locators.end(),
+                IPLocator::toPhysicalLocator(initial_peer)) != remote_participant_physical_locators.end())
+        {
+            remote_participant_physical_locators.erase(IPLocator::toPhysicalLocator(initial_peer));
+        }
+    }
+
+    for (const auto& remote_participant_physical_locator : remote_participant_physical_locators)
+    {
+        if (!IsLocatorSupported(remote_participant_physical_locator))
+        {
+            continue;
+        }
+        // Remove send resources for the associated remote participant locator
+        for (auto it = send_resource_list.begin(); it != send_resource_list.end();)
+        {
+            TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
+
+            if (tcp_sender_resource)
+            {
+                if (tcp_sender_resource->locator() == remote_participant_physical_locator)
+                {
+                    it = send_resource_list.erase(it);
+                    continue;
+                }
+            }
+            ++it;
+        }
     }
 }
 

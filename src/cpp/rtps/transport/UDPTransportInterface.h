@@ -48,7 +48,7 @@ public:
             const Locator&) override;
 
     //! Removes all outbound sockets on the given port.
-    void CloseOutputChannel(
+    void SenderResourceHasBeenClosed(
             eProsimaUDPSocket& socket);
 
     //! Reports whether Locators correspond to the same port.
