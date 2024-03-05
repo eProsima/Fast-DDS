@@ -374,10 +374,13 @@ TEST_F(TCPv6Tests, non_blocking_send)
 
     // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
     // and we want to guarantee that the buffer might be full, we send the message more than twice.
+    size_t bytes_sent = 0;
     for (int i = 0; i < 5; i++)
     {
-        sender_channel_resource->send(nullptr, 0, data, size, ec);
+        bytes_sent += sender_channel_resource->send(nullptr, 0, data, size, ec);
     }
+
+    ASSERT_EQ(bytes_sent, size * 2);
 
     socket.shutdown(asio::ip::tcp::socket::shutdown_both);
     socket.cancel();
