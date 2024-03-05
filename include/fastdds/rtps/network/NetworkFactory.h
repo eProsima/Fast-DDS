@@ -19,6 +19,7 @@
 #include <memory>
 
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/network/ReceiverResource.h>
@@ -215,6 +216,18 @@ public:
      * Re-scan network interfaces
      */
     void update_network_interfaces();
+
+    /**
+     * Remove the given participants from the send resource list
+     *
+     * @param send_resource_list List of send resources associated to the local participant.
+     * @param remote_participant_locators List of locators associated to the remote participant.
+     * @param participant_initial_peers List of locators of the initial peers of the local participant.
+     */
+    void remove_participant_associated_send_resources(
+            fastdds::rtps::SendResourceList& send_resource_list,
+            const LocatorList_t& remote_participant_locators,
+            const LocatorList_t& participant_initial_peers) const;
 
 private:
 
