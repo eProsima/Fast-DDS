@@ -30,7 +30,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;

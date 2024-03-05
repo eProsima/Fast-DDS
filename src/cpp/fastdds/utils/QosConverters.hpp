@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastdds {

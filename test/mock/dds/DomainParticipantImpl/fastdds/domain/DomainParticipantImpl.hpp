@@ -38,7 +38,7 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 #include <gmock/gmock.h>
 

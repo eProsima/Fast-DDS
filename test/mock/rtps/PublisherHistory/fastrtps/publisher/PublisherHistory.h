@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastrtps/common/KeyedChanges.h>
 #include <fastrtps/utils/TimedMutex.hpp>
 

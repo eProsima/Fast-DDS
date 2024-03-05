@@ -31,7 +31,7 @@
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
 namespace eprosima {

@@ -39,7 +39,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/core/condition/StatusConditionImpl.hpp>

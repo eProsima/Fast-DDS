@@ -25,7 +25,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/ReaderQos.h>
 
 namespace eprosima {
