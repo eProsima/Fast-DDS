@@ -103,6 +103,48 @@ static bool append_message(
     return ret_val;
 }
 
+bool RTPSMessageGroup::append_submessage()
+{
+    // If header_msg_ is reseted, append submessage_msg_ to header_msg_
+    // If not, put submessage_msg_ into a new buffer and add it to buffers_to_send_
+    // Final msg Struct: | header_msg_ + submessage_msg_ | payload | padding | submessage_msg_ | payload | padding | ...
+
+    if (header_msg_->pos == RTPSMESSAGE_HEADER_SIZE && header_msg_->length == RTPSMESSAGE_HEADER_SIZE)
+    {
+        // header_msg_ is reseted. This is the first submessage
+        if (!append_message(participant_, header_msg_, submessage_msg_))
+        {
+            return false;
+        }
+    }
+    else
+    {
+        // header_msg_ is not reseted. This is not the first submessage
+        // Create new copy of submessage_header and add it to buffers_to_send_
+        // submessage_msg_ only contains the header with gather-send or the whole message if copy_data is enabled
+        CDRMessage_t new_sub_msg = *submessage_msg_;
+        copied_messages_.push_back(new_sub_msg);
+
+        buffers_to_send_.push_back(NetworkBuffer(copied_messages_.back().buffer, copied_messages_.back().length));
+        buffers_bytes_ += copied_messages_.back().length;
+    }
+
+    if (nullptr != pending_buffer_.buffer)
+    {
+        // Add pending buffer & padding to buffers_to_send_
+        buffers_to_send_.push_back(NetworkBuffer(pending_buffer_.buffer, pending_buffer_.size));
+        buffers_bytes_ += pending_buffer_.size;
+        pending_buffer_ = NetworkBuffer();
+        if (pending_padding_ > 0)
+        {
+            buffers_to_send_.push_back(NetworkBuffer(padding_, pending_padding_));
+            buffers_bytes_ += pending_padding_;
+            pending_padding_ = 0;
+        }
+    }
+    return true;
+}
+
 bool sort_changes_group (
         CacheChange_t* c1,
         CacheChange_t* c2)
@@ -365,17 +407,22 @@ bool RTPSMessageGroup::insert_submessage(
         const GuidPrefix_t& destination_guid_prefix,
         bool is_big_submessage)
 {
-    if (!append_message(participant_, full_msg_, submessage_msg_))
+    uint32_t total_size = submessage_msg_->length + pending_buffer_.size + buffers_bytes_ + pending_padding_;
+    if (!check_space(header_msg_, total_size))
     {
-        // Retry
-        flush_and_reset();
-        add_info_dst_in_buffer(full_msg_, destination_guid_prefix);
+        NetworkBuffer backup = pending_buffer_;
+        pending_buffer_ = NetworkBuffer();
 
-        if (!append_message(participant_, full_msg_, submessage_msg_))
-        {
-            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
-            return false;
-        }
+        flush();
+        add_info_dst_in_buffer(header_msg_, destination_guid_prefix);
+
+        pending_buffer_ = backup;
+    }
+
+    if (!append_submessage())
+    {
+        EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
+        return false;
     }
 
     // Messages with a submessage bigger than 64KB cannot have more submessages and should be flushed
