@@ -127,7 +127,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.10.x' }}
       DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'v1.2.1' }}
 
     steps:
