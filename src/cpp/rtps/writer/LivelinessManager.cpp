@@ -188,7 +188,7 @@ bool LivelinessManager::assert_liveliness(
                     for (LivelinessData& w: writers_)
                     {
                         if (w.kind == writer.kind &&
-                            w.guid.guidPrefix == guid.guidPrefix)
+                                w.guid.guidPrefix == guid.guidPrefix)
                         {
                             assert_writer_liveliness(w);
                         }
@@ -256,7 +256,7 @@ bool LivelinessManager::assert_liveliness(
         for (LivelinessData& writer: writers_)
         {
             if (writer.kind == kind &&
-                guid_prefix == writer.guid.guidPrefix)
+                    guid_prefix == writer.guid.guidPrefix)
             {
                 assert_writer_liveliness(writer);
             }
