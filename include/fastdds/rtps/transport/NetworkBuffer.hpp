@@ -29,7 +29,7 @@ namespace rtps {
 
 /**
  * A slice of data to be sent to one or more transports.
- * An RTPS datagram is made up of one or more NetworkBuffer instances.
+ * An RTPS datagram is made up of headers and one or more NetworkBuffer instances.
  */
 struct NetworkBuffer final
 {
@@ -39,6 +39,20 @@ struct NetworkBuffer final
     size_t size;
 
     NetworkBuffer(const void* ptr, size_t s) : buffer(ptr), size(s) {}
+
+    NetworkBuffer() : buffer(nullptr), size(0) {}
+
+    NetworkBuffer(const fastrtps::rtps::octet* ptr, size_t s) : buffer(ptr), size(s) {}
+
+    NetworkBuffer(const NetworkBuffer& copy) : buffer(copy.buffer), size(copy.size) {}
+
+    NetworkBuffer& operator=(const NetworkBuffer& copy) {
+        if (this != &copy) {
+            buffer = copy.buffer;
+            size = copy.size;
+        }
+        return *this;
+    }
 
     //! Conversion operator to asio::const_buffer.
     operator asio::const_buffer() const {
