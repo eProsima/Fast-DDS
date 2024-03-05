@@ -215,17 +215,19 @@ protected:
      *                     The return value to expect from `return_loan` will be calculated from this one as follows:
      *                     - NOT_ENABLED => NOT_ENABLED (calling `return_loan` on a not enabled reader).
      *                     - OK => OK (successfully returning a loan).
-     *                     - Any other => RETCODE_PRECONDITION_NOT_MET (trying to return collections which the reader
-     *                       did not loan).
+     *                     - Any other => RETCODE_PRECONDITION_NOT_MET (trying to return non-empty collections which
+     *                       the reader did not loan).
      * @param data_reader  The reader on which to return the loan.
      * @param data_values  The data collection to return.
      * @param infos        The SampleInfo collection to return.
+     * @param seq_max      The value to expect as `maximum` on the collections after return_loan returns OK.
      */
     void check_return_loan(
             const ReturnCode_t& code,
             DataReader* data_reader,
             LoanableCollection& data_values,
-            SampleInfoSeq& infos)
+            SampleInfoSeq& infos,
+            int32_t seq_max)
     {
         ReturnCode_t expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
         if (ReturnCode_t::RETCODE_OK == code || ReturnCode_t::RETCODE_NOT_ENABLED == code)
@@ -237,9 +239,9 @@ protected:
         if (ReturnCode_t::RETCODE_OK == expected_return_loan_ret)
         {
             EXPECT_TRUE(data_values.has_ownership());
-            EXPECT_EQ(0, data_values.maximum());
+            EXPECT_EQ(seq_max, data_values.maximum());
             EXPECT_TRUE(infos.has_ownership());
-            EXPECT_EQ(0, infos.maximum());
+            EXPECT_EQ(seq_max, infos.maximum());
         }
     }
 
@@ -261,10 +263,11 @@ protected:
             DataReader* data_reader,
             LoanableCollection& data_values,
             SampleInfoSeq& infos,
-            int32_t max_samples = LENGTH_UNLIMITED)
+            int32_t max_samples = LENGTH_UNLIMITED,
+            int32_t seq_max = 0)
     {
         EXPECT_EQ(instance_ok_code, data_reader->read_instance(data_values, infos, max_samples, handle));
-        check_return_loan(loan_return_code, data_reader, data_values, infos);
+        check_return_loan(loan_return_code, data_reader, data_values, infos, seq_max);
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
 
         EXPECT_EQ(instance_ok_code, data_reader->take_instance(data_values, infos, max_samples, handle));
@@ -273,7 +276,7 @@ protected:
             // Write received data so it can be taken again
             send_data(data_values, infos);
         }
-        check_return_loan(loan_return_code, data_reader, data_values, infos);
+        check_return_loan(loan_return_code, data_reader, data_values, infos, seq_max);
         reset_lengths_if_ok(instance_ok_code, data_values, infos);
     }
 
@@ -295,12 +298,13 @@ protected:
             DataReader* data_reader,
             LoanableCollection& data_values,
             SampleInfoSeq& infos,
-            int32_t max_samples = LENGTH_UNLIMITED)
+            int32_t max_samples = LENGTH_UNLIMITED,
+            int32_t seq_max = 0)
     {
         EXPECT_EQ(instance_bad_code, data_reader->read_instance(data_values, infos, max_samples, handle));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos, seq_max);
         EXPECT_EQ(instance_bad_code, data_reader->take_instance(data_values, infos, max_samples, handle));
-        check_return_loan(wrong_loan_code, data_reader, data_values, infos);
+        check_return_loan(wrong_loan_code, data_reader, data_values, infos, seq_max);
     }
 
     /**
@@ -314,6 +318,7 @@ protected:
      * @param infos               The sample_info collection to use
      * @param max_samples         The value to pass as `max_samples` on calls to `read/take_instance`
      * @param two_valid_instances Whether `handle_wrong_` is considered a valid instance
+     * @param seq_max             The value to expect as `maximum` on the collections after return_loan returns OK.
      */
     void check_instance_methods(
             const ReturnCode_t& instance_ok_code,
@@ -323,7 +328,8 @@ protected:
             LoanableCollection& data_values,
             SampleInfoSeq& infos,
             int32_t max_samples = LENGTH_UNLIMITED,
-            bool two_valid_instances = false)
+            bool two_valid_instances = false,
+            int32_t seq_max = 0)
     {
         // Calc expected result of `return_loan` for calls with a wrong instance handle.
         ReturnCode_t wrong_loan_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
@@ -331,26 +337,30 @@ protected:
         {
             wrong_loan_code = instance_bad_code;
         }
+        else if (ReturnCode_t::RETCODE_OK == loan_return_code)
+        {
+            wrong_loan_code = ReturnCode_t::RETCODE_OK;
+        }
 
         // Trying to get data for HANDLE_NIL should always use instance_bad_code.
         check_wrong_instance_methods(HANDLE_NIL, instance_bad_code, wrong_loan_code,
-                data_reader, data_values, infos, max_samples);
+                data_reader, data_values, infos, max_samples, seq_max);
 
         // Trying to get data for handle_wrong_ depends on `two_instances`
         if (two_valid_instances)
         {
             check_correct_instance_methods(handle_wrong_, instance_ok_code, loan_return_code,
-                    data_reader, data_values, infos, max_samples);
+                    data_reader, data_values, infos, max_samples, seq_max);
         }
         else
         {
             check_wrong_instance_methods(handle_wrong_, instance_bad_code, wrong_loan_code,
-                    data_reader, data_values, infos, max_samples);
+                    data_reader, data_values, infos, max_samples, seq_max);
         }
 
         // Trying to get data for handle_ok_ should always use instance_ok_code
         check_correct_instance_methods(handle_ok_, instance_ok_code, loan_return_code,
-                data_reader, data_values, infos, max_samples);
+                data_reader, data_values, infos, max_samples, seq_max);
     }
 
     /**
@@ -413,11 +423,18 @@ protected:
             DataSeq data_values;
             SampleInfoSeq infos;
 
+            ReturnCode_t expected_return_loan_ret = code;
+            if (ReturnCode_t::RETCODE_NO_DATA == code)
+            {
+                // Even when read returns data, no loan will be performed
+                expected_return_loan_ret = ReturnCode_t::RETCODE_OK;
+            }
+
             EXPECT_EQ(code, data_reader->read(data_values, infos));
-            check_return_loan(code, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, 0);
             reset_lengths_if_ok(code, data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
-            check_return_loan(code, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, 0);
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
@@ -426,7 +443,7 @@ protected:
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
             }
-            check_return_loan(code, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, 0);
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
@@ -435,11 +452,11 @@ protected:
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
             }
-            check_return_loan(code, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, 0);
             reset_lengths_if_ok(code, data_values, infos);
 
-            check_instance_methods(instance_ok_code, instance_bad_code, instance_ok_code,
-                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances);
+            check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances, 0);
         }
 
         // Check read/take and variants without loan
@@ -448,17 +465,16 @@ protected:
             SampleInfoSeq infos(1);
 
             ReturnCode_t expected_return_loan_ret = code;
-            if (ReturnCode_t::RETCODE_OK == code)
+            if (ReturnCode_t::RETCODE_NO_DATA == code)
             {
-                // Even when read returns data, no loan will be performed
-                expected_return_loan_ret = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                expected_return_loan_ret = ReturnCode_t::RETCODE_OK;
             }
 
             EXPECT_EQ(code, data_reader->read(data_values, infos));
-            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, data_values.maximum());
             reset_lengths_if_ok(code, data_values, infos);
             EXPECT_EQ(code, data_reader->read_next_instance(data_values, infos));
-            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, data_values.maximum());
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take(data_values, infos));
@@ -467,7 +483,7 @@ protected:
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
             }
-            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, data_values.maximum());
             reset_lengths_if_ok(code, data_values, infos);
 
             EXPECT_EQ(code, data_reader->take_next_instance(data_values, infos));
@@ -476,11 +492,11 @@ protected:
                 send_data(data_values, infos);
                 data_reader->wait_for_unread_message(time_to_wait);
             }
-            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos);
+            check_return_loan(expected_return_loan_ret, data_reader, data_values, infos, data_values.maximum());
             reset_lengths_if_ok(code, data_values, infos);
 
             check_instance_methods(instance_ok_code, instance_bad_code, expected_return_loan_ret,
-                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances);
+                    data_reader, data_values, infos, LENGTH_UNLIMITED, two_valid_instances, data_values.maximum());
         }
     }
 
@@ -812,15 +828,16 @@ void check_collection(
  * take_instance, where no instance would exist and the return will be BAD_PARAMETER. Otherwise, PRECONDITION_NOT_MET
  * should be returned.
  *
- * As no data will ever be returned, return_loan will always return PRECONDITION_NOT_MET.
+ * As no data will ever be returned, return_loan will always return OK.
  */
 TEST_F(DataReaderTests, collection_preconditions)
 {
     create_entities();
     create_instance_handles();
 
-    const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_NO_DATA;
+    const ReturnCode_t& no_data_code = ReturnCode_t::RETCODE_NO_DATA;
     const ReturnCode_t& wrong_code = ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    const ReturnCode_t& return_loan_code = ReturnCode_t::RETCODE_OK;
 
     // Helper buffers to create loaned sequences
     FooArray arr;
@@ -901,35 +918,35 @@ TEST_F(DataReaderTests, collection_preconditions)
     }
 
     // Check compatible combinations
-    using ok_test_case_t = std::pair<test_case_t, const ReturnCode_t&>;
+    using ok_test_case_t = std::pair<test_case_t, std::pair<const ReturnCode_t&, const ReturnCode_t&>>;
     std::vector<ok_test_case_t> ok_cases
     {
         // max == 0. Loaned data will be returned.
-        { {true_0_0, info_true_0_0}, ok_code},
+        { {true_0_0, info_true_0_0}, {no_data_code, return_loan_code}},
         // max > 0 && owns == true. Data will be copied.
-        { {true_10_0, info_true_10_0}, ok_code},
-        { {true_10_1, info_true_10_1}, ok_code},
+        { {true_10_0, info_true_10_0}, {no_data_code, return_loan_code}},
+        { {true_10_1, info_true_10_1}, {no_data_code, return_loan_code}},
         // max > 0 && owns == false. Precondition not met.
-        { {false_10_0, info_false_10_0}, wrong_code},
-        { {false_10_1, info_false_10_1}, wrong_code}
+        { {false_10_0, info_false_10_0}, {wrong_code, wrong_code}},
+        { {false_10_1, info_false_10_1}, {wrong_code, wrong_code}}
     };
 
     const ReturnCode_t& instance_bad_code = ReturnCode_t::RETCODE_BAD_PARAMETER;
     for (const ok_test_case_t& test : ok_cases)
     {
-        EXPECT_EQ(test.second, data_reader_->read(test.first.first, test.first.second));
-        EXPECT_EQ(wrong_code, data_reader_->return_loan(test.first.first, test.first.second));
-        EXPECT_EQ(test.second, data_reader_->read_next_instance(test.first.first, test.first.second));
-        EXPECT_EQ(wrong_code, data_reader_->return_loan(test.first.first, test.first.second));
-        EXPECT_EQ(test.second, data_reader_->take(test.first.first, test.first.second));
-        EXPECT_EQ(wrong_code, data_reader_->return_loan(test.first.first, test.first.second));
-        EXPECT_EQ(test.second, data_reader_->take_next_instance(test.first.first, test.first.second));
-        EXPECT_EQ(wrong_code, data_reader_->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.first, data_reader_->read(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.second, data_reader_->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.first, data_reader_->read_next_instance(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.second, data_reader_->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.first, data_reader_->take(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.second, data_reader_->return_loan(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.first, data_reader_->take_next_instance(test.first.first, test.first.second));
+        EXPECT_EQ(test.second.second, data_reader_->return_loan(test.first.first, test.first.second));
 
         // When collection preconditions are ok, as the reader has no data, BAD_PARAMETER will be returned
-        const ReturnCode_t& instance_code = (test.second == ok_code) ? instance_bad_code : test.second;
-        check_instance_methods(instance_code, instance_code, wrong_code,
-                data_reader_, test.first.first, test.first.second);
+        const ReturnCode_t& instance_code = (test.second.first == no_data_code) ? instance_bad_code : test.second.first;
+        check_instance_methods(instance_code, instance_code, test.second.second,
+                data_reader_, test.first.first, test.first.second, LENGTH_UNLIMITED, false, test.first.first.maximum());
     }
 
     // Check for  max_samples > max_len
@@ -939,8 +956,8 @@ TEST_F(DataReaderTests, collection_preconditions)
         EXPECT_EQ(wrong_code, data_reader_->take(true_10_0, info_true_10_0, 20));
         EXPECT_EQ(wrong_code, data_reader_->take_next_instance(true_10_0, info_true_10_0, 20));
 
-        check_instance_methods(wrong_code, wrong_code, wrong_code,
-                data_reader_, true_10_0, info_true_10_0, 20);
+        check_instance_methods(wrong_code, wrong_code, return_loan_code,
+                data_reader_, true_10_0, info_true_10_0, 20, false, true_10_0.maximum());
 
     }
 
