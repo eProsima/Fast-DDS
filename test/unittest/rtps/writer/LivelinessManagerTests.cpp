@@ -173,7 +173,7 @@ TEST_F(LivelinessManagerTests, AssertLivelinessByKind)
     liveliness_manager.add_writer(GUID_t(guidP, 6), MANUAL_BY_TOPIC_LIVELINESS_QOS, Duration_t(10));
 
     // Assert liveliness of automatic writers (the rest should be unchanged)
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(AUTOMATIC_LIVELINESS_QOS));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(AUTOMATIC_LIVELINESS_QOS, guidP));
     auto liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].status, LivelinessData::WriterStatus::ALIVE);
     EXPECT_EQ(liveliness_data[1].status, LivelinessData::WriterStatus::ALIVE);
@@ -183,7 +183,7 @@ TEST_F(LivelinessManagerTests, AssertLivelinessByKind)
     EXPECT_EQ(liveliness_data[5].status, LivelinessData::WriterStatus::NOT_ASSERTED);
 
     // Assert liveliness of manual by participant writers
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS, guidP));
     liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].status, LivelinessData::WriterStatus::ALIVE);
     EXPECT_EQ(liveliness_data[1].status, LivelinessData::WriterStatus::ALIVE);
@@ -193,7 +193,7 @@ TEST_F(LivelinessManagerTests, AssertLivelinessByKind)
     EXPECT_EQ(liveliness_data[5].status, LivelinessData::WriterStatus::NOT_ASSERTED);
 
     // Assert liveliness of manual by topic writers
-    EXPECT_TRUE(liveliness_manager.assert_liveliness(MANUAL_BY_TOPIC_LIVELINESS_QOS));
+    EXPECT_TRUE(liveliness_manager.assert_liveliness(MANUAL_BY_TOPIC_LIVELINESS_QOS, guidP));
     liveliness_data = liveliness_manager.get_liveliness_data();
     EXPECT_EQ(liveliness_data[0].status, LivelinessData::WriterStatus::ALIVE);
     EXPECT_EQ(liveliness_data[1].status, LivelinessData::WriterStatus::ALIVE);
@@ -434,7 +434,7 @@ TEST_F(LivelinessManagerTests, TimerOwnerCalculation)
     liveliness_manager.add_writer(GUID_t(guidP, 2), AUTOMATIC_LIVELINESS_QOS, Duration_t(1000 * 1e-3));
     liveliness_manager.add_writer(GUID_t(guidP, 3), AUTOMATIC_LIVELINESS_QOS, Duration_t(500 * 1e-3));
 
-    liveliness_manager.assert_liveliness(AUTOMATIC_LIVELINESS_QOS);
+    liveliness_manager.assert_liveliness(AUTOMATIC_LIVELINESS_QOS, guidP);
 
     wait_liveliness_lost(1u);
     EXPECT_EQ(writer_losing_liveliness, GUID_t(guidP, 1));
