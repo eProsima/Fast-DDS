@@ -477,6 +477,8 @@ void NetworkFactory::remove_participant_associated_send_resources(
         const LocatorList_t& remote_participant_locators,
         const LocatorList_t& participant_initial_peers) const
 {
+    // TODO(eduponz): Call the overload of CloseOutputChannel that takes a LocatorSelectorEntry for
+    // all transports and let them decide what to do.
     for (auto& transport : mRegisteredTransports)
     {
         TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
