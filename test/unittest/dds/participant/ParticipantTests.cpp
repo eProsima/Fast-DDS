@@ -52,6 +52,7 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
@@ -60,7 +61,6 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
-#include <xmlparser/XMLProfileManager.h>
 
 #include "../../logging/mock/MockConsumer.h"
 
@@ -87,8 +87,6 @@ using fastrtps::types::DynamicType_ptr;
 using fastrtps::types::DynamicTypeBuilder_ptr;
 using fastrtps::types::DynamicTypeBuilderFactory;
 using fastrtps::types::TypeDescriptor;
-using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::xmlparser::XMLProfileManager;
 
 // Mocked TopicDataType for Topic creation tests
 class TopicDataTypeMock : public TopicDataType
@@ -501,35 +499,10 @@ void check_participant_with_profile (
     DomainParticipantQos qos;
     participant->get_qos(qos);
 
-    ParticipantAttributes participant_atts;
-    XMLProfileManager::fillParticipantAttributes(profile_name, participant_atts);
-
-    /* Values taken from profile */
-    ASSERT_TRUE(qos.allocation() == participant_atts.rtps.allocation);
-    // Check that all the non-binary properties in participant_atts are present (by name) in qos
-    for (auto property : participant_atts.rtps.properties.properties())
-    {
-        ASSERT_NE(nullptr, fastrtps::rtps::PropertyPolicyHelper::find_property(qos.properties(), property.name()));
-    }
-    ASSERT_TRUE(qos.properties().binary_properties() == participant_atts.rtps.properties.binary_properties());
-    ASSERT_TRUE(qos.name().to_string() == participant_atts.rtps.getName());
-    ASSERT_TRUE(qos.wire_protocol().prefix == participant_atts.rtps.prefix);
-    ASSERT_TRUE(qos.wire_protocol().participant_id == participant_atts.rtps.participantID);
-    ASSERT_TRUE(qos.wire_protocol().builtin == participant_atts.rtps.builtin);
-    ASSERT_TRUE(qos.wire_protocol().port == participant_atts.rtps.port);
-    ASSERT_TRUE(qos.wire_protocol().throughput_controller == participant_atts.rtps.throughputController);
-    ASSERT_TRUE(qos.wire_protocol().default_unicast_locator_list ==
-            participant_atts.rtps.defaultUnicastLocatorList);
-    ASSERT_TRUE(qos.wire_protocol().default_multicast_locator_list ==
-            participant_atts.rtps.defaultMulticastLocatorList);
-    ASSERT_TRUE(qos.transport().user_transports == participant_atts.rtps.userTransports);
-    ASSERT_TRUE(qos.transport().use_builtin_transports == participant_atts.rtps.useBuiltinTransports);
-    ASSERT_TRUE(qos.transport().send_socket_buffer_size == participant_atts.rtps.sendSocketBufferSize);
-    ASSERT_TRUE(qos.transport().listen_socket_buffer_size == participant_atts.rtps.listenSocketBufferSize);
-    ASSERT_TRUE(qos.user_data().data_vec() == participant_atts.rtps.userData);
-
-    //Values not implemented on attributes (taken from default QoS)
-    ASSERT_TRUE(qos.entity_factory() == PARTICIPANT_QOS_DEFAULT.entity_factory());
+    DomainParticipantQos profile_qos;
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->get_participant_qos_from_profile(profile_name, profile_qos),
+            ReturnCode_t::RETCODE_OK);
+    check_equivalent_qos(qos, profile_qos);
 }
 
 /**
@@ -1814,16 +1787,10 @@ void check_publisher_with_profile (
     PublisherQos qos;
     publisher->get_qos(qos);
 
-    PublisherAttributes publisher_atts;
-    XMLProfileManager::fillPublisherAttributes(profile_name, publisher_atts);
-
-    //Values taken from profile
-    ASSERT_TRUE(qos.group_data().dataVec() == publisher_atts.qos.m_groupData.dataVec());
-    ASSERT_TRUE(qos.partition() == publisher_atts.qos.m_partition);
-    ASSERT_TRUE(qos.presentation() == publisher_atts.qos.m_presentation);
-
-    //Values not implemented on attributes (taken from default QoS)
-    ASSERT_TRUE(qos.entity_factory() == PUBLISHER_QOS_DEFAULT.entity_factory());
+    PublisherQos profile_qos;
+    EXPECT_EQ(publisher->get_participant()->get_publisher_qos_from_profile(profile_name, profile_qos),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(qos, profile_qos);
 }
 
 TEST(ParticipantTests, CreatePublisherWithProfile)
@@ -1894,16 +1861,10 @@ void check_subscriber_with_profile (
     SubscriberQos qos;
     subscriber->get_qos(qos);
 
-    SubscriberAttributes subscriber_atts;
-    XMLProfileManager::fillSubscriberAttributes(profile_name, subscriber_atts);
-
-    //Values taken from profile
-    ASSERT_TRUE(qos.group_data().dataVec() == subscriber_atts.qos.m_groupData.dataVec());
-    ASSERT_TRUE(qos.partition() == subscriber_atts.qos.m_partition);
-    ASSERT_TRUE(qos.presentation() == subscriber_atts.qos.m_presentation);
-
-    //Values not implemented on attributes (taken from default QoS)
-    ASSERT_TRUE(qos.entity_factory() == SUBSCRIBER_QOS_DEFAULT.entity_factory());
+    SubscriberQos profile_qos;
+    EXPECT_EQ(subscriber->get_participant()->get_subscriber_qos_from_profile(profile_name, profile_qos),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(qos, profile_qos);
 }
 
 TEST(ParticipantTests, GetSubscriberProfileQos)
@@ -2075,12 +2036,10 @@ void check_topic_with_profile (
     TopicQos qos;
     topic->get_qos(qos);
 
-    TopicAttributesQos topic_atts;
-    XMLProfileManager::fillTopicAttributes(profile_name, topic_atts);
-
-    //Values taken from profile
-    ASSERT_TRUE(qos.history() == topic_atts.historyQos);
-    ASSERT_TRUE(qos.resource_limits() == topic_atts.resourceLimitsQos);
+    TopicQos profile_qos;
+    EXPECT_EQ(topic->get_participant()->get_topic_qos_from_profile(profile_name, profile_qos),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(qos, profile_qos);
 }
 
 TEST(ParticipantTests, GetTopicProfileQos)
