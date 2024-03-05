@@ -326,10 +326,9 @@ void RTPSMessageGroup::send()
 {
     if (endpoint_ && sender_)
     {
+        CDRMessage_t* msgToSend = header_msg_;
 
-        CDRMessage_t* msgToSend = full_msg_;
-
-        if (full_msg_->length > RTPSMESSAGE_HEADER_SIZE)
+        if (header_msg_->length > RTPSMESSAGE_HEADER_SIZE)
         {
             std::lock_guard<RTPSMessageSenderInterface> lock(*sender_);
 
@@ -338,12 +337,12 @@ void RTPSMessageGroup::send()
             if (participant_->security_attributes().is_rtps_protected && endpoint_->supports_rtps_protection())
             {
                 CDRMessage::initCDRMsg(encrypt_msg_);
-                full_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
+                header_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
                 encrypt_msg_->pos = RTPSMESSAGE_HEADER_SIZE;
                 encrypt_msg_->length = RTPSMESSAGE_HEADER_SIZE;
-                memcpy(encrypt_msg_->buffer, full_msg_->buffer, RTPSMESSAGE_HEADER_SIZE);
+                memcpy(encrypt_msg_->buffer, header_msg_->buffer, RTPSMESSAGE_HEADER_SIZE);
 
-                if (!participant_->security_manager().encode_rtps_message(*full_msg_, *encrypt_msg_,
+                if (!participant_->security_manager().encode_rtps_message(*header_msg_, *encrypt_msg_,
                         sender_->remote_participants()))
                 {
                     EPROSIMA_LOG_ERROR(RTPS_WRITER, "Error encoding rtps message.");
@@ -354,14 +353,26 @@ void RTPSMessageGroup::send()
             }
 #endif // if HAVE_SECURITY
 
-            eprosima::fastdds::statistics::rtps::add_statistics_submessage(msgToSend);
+            // TODO Carlos: Does mixing secure and non-secure messages work right now? All messages will be encrypted...
+            // We need to call encode_rtps_message() for every buffer in buffers_to_send_
 
-            if (!sender_->send(msgToSend,
+            buffers_to_send_.push_front(NetworkBuffer(msgToSend->buffer, msgToSend->length));
+            buffers_bytes_ += msgToSend->length;
+
+#ifdef FASTDDS_STATISTICS
+            CDRMessage_t stats_msg;
+            eprosima::fastdds::statistics::rtps::add_statistics_submessage(&stats_msg);
+            buffers_to_send_.push_back(NetworkBuffer(stats_msg.buffer, stats_msg.length));
+            buffers_bytes_ += stats_msg.length;
+#endif // FASTDDS_STATISTICS
+
+            if (!sender_->send(buffers_to_send_,
+                    buffers_bytes_,
                     max_blocking_time_point_))
             {
                 throw timeout();
             }
-            current_sent_bytes_ += msgToSend->length;
+            current_sent_bytes_ += buffers_bytes_;
         }
     }
 }
