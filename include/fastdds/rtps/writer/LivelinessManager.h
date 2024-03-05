@@ -110,7 +110,8 @@ public:
      * @return True if liveliness was successfully asserted
      */
     bool assert_liveliness(
-            LivelinessQosPolicyKind kind);
+            LivelinessQosPolicyKind kind,
+            GuidPrefix_t guid_prefix);
 
     /**
      * @brief A method to check any writer of the given kind is alive
