@@ -565,7 +565,7 @@ bool RTPSMessageGroup::add_data_frag(
 {
     assert(nullptr != sender_);
 
-    EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA/DATA_FRAG messages");
+    EPROSIMA_LOG_INFO(RTPS_WRITER, "Sending relevant changes as DATA_FRAG messages");
 
     // Calculate fragment start
     uint32_t fragment_start = change.getFragmentSize() * (fragment_number - 1);
@@ -573,7 +573,7 @@ bool RTPSMessageGroup::add_data_frag(
     uint32_t fragment_size = fragment_number < change.getFragmentCount() ? change.getFragmentSize() :
             change.serializedPayload.length - fragment_start;
     // Check limitation
-    if (data_exceeds_limitation(fragment_size, sent_bytes_limitation_, current_sent_bytes_, full_msg_->length))
+    if (data_exceeds_limitation(fragment_size, sent_bytes_limitation_, current_sent_bytes_, header_msg_->length + buffers_bytes_))
     {
         flush_and_reset();
         throw limit_exceeded();
@@ -587,8 +587,12 @@ bool RTPSMessageGroup::add_data_frag(
     InlineQosWriter* inline_qos;
     inline_qos = (change.inline_qos.length > 0 && nullptr != change.inline_qos.data) ? &qos_writer : nullptr;
 
+    bool copy_data = false;
 #if HAVE_SECURITY
     uint32_t from_buffer_position = submessage_msg_->pos;
+    bool protect_payload = endpoint_->getAttributes().security_attributes().is_payload_protected;
+    bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
+    copy_data = protect_payload || protect_submessage;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
@@ -600,7 +604,7 @@ bool RTPSMessageGroup::add_data_frag(
     change_to_add.writerGUID = endpoint_->getGuid();
 
 #if HAVE_SECURITY
-    if (endpoint_->getAttributes().security_attributes().is_payload_protected)
+    if (protect_payload)
     {
         SerializedPayload_t encrypt_payload;
         encrypt_payload.data = encrypt_msg_->buffer;
@@ -624,7 +628,7 @@ bool RTPSMessageGroup::add_data_frag(
 
     if (!RTPSMessageCreator::addSubmessageDataFrag(submessage_msg_, &change, fragment_number,
             change_to_add.serializedPayload, endpoint_->getAttributes().topicKind, readerId,
-            expectsInlineQos, inline_qos))
+            expectsInlineQos, inline_qos, copy_data, pending_buffer_, pending_padding_))
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add DATA_FRAG submsg to the CDRMessage. Buffer too small");
         change_to_add.serializedPayload.data = nullptr;
