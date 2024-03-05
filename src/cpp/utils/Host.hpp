@@ -17,7 +17,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {

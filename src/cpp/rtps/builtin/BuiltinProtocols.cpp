@@ -36,7 +36,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 
 #include <algorithm>
 

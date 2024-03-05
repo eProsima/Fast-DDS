@@ -43,7 +43,7 @@
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/TopicDataType.h>
 
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastrtps/qos/QosPolicies.h>

@@ -22,7 +22,7 @@
 #include <asio.hpp>
 
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
 

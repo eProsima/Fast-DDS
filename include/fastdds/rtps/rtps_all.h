@@ -37,7 +37,7 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastrtps/qos/QosPolicies.h>
