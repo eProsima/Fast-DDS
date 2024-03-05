@@ -198,32 +198,6 @@ if(TLS_FOUND)
         )
 endif()
 
-set(TEST_UDPV4TESTS_SOURCE
-    test_UDPv4Tests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/messages/RTPSMessageCreator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/NetworkFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/ChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/test_UDPv4Transport.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPChannelResource.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPTransportInterface.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/UDPv4Transport.cpp
-    ${TCPTransportInterface_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
-    )
-
 set(SHAREDMEMTESTS_SOURCE
     SharedMemTests.cpp
     mock/MockReceiverResource.cpp
@@ -299,38 +273,6 @@ if(MSVC OR MSVC_IDE)
     target_link_libraries(UDPv4Tests ${PRIVACY} iphlpapi Shlwapi )
 endif()
 gtest_discover_tests(UDPv4Tests)
-
-add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
-target_compile_definitions(test_UDPv4Tests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_include_directories(test_UDPv4Tests PRIVATE
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-    )
-target_link_libraries(test_UDPv4Tests
-    fastcdr
-    GTest::gtest
-    ${MOCKS}
-    $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-if(QNX)
-    target_link_libraries(test_UDPv4Tests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
-else()
-    target_link_libraries(test_UDPv4Tests ${PRIVACY})
-endif()
-gtest_discover_tests(test_UDPv4Tests)
 
 ##########################
 # IPv6 tests

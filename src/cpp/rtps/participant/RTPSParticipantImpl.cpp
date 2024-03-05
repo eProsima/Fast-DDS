@@ -2985,7 +2985,7 @@ bool RTPSParticipantImpl::should_match_local_endpoints(
 }
 
 void RTPSParticipantImpl::update_removed_participant(
-        LocatorList_t& remote_participant_locators)
+        const LocatorList_t& remote_participant_locators)
 {
     if (!remote_participant_locators.empty())
     {

@@ -1273,7 +1273,7 @@ public:
      * @param remote_participant_locators Set of locators associated to the participant removed.
      */
     void update_removed_participant(
-            LocatorList_t& remote_participant_locators);
+            const LocatorList_t& remote_participant_locators);
 
 };
 } // namespace rtps
