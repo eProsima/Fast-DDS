@@ -620,7 +620,8 @@ void WriterProxy::update_heartbeat_response_interval(
 }
 
 bool WriterProxy::send(
-        CDRMessage_t* message,
+        const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
         std::chrono::steady_clock::time_point max_blocking_time_point) const
 {
     if (is_on_same_process_)
@@ -630,7 +631,8 @@ bool WriterProxy::send(
 
     const ResourceLimitedVector<Locator_t>& remote_locators = remote_locators_shrinked();
 
-    return reader_->send_sync_nts(message,
+    return reader_->send_sync_nts(buffers,
+                   total_bytes,
                    Locators(remote_locators.begin()),
                    Locators(remote_locators.end()),
                    max_blocking_time_point);

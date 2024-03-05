@@ -93,14 +93,16 @@ const std::vector<GUID_t>& DirectMessageSender::remote_guids() const
 /**
  * Send a message through this interface.
  *
- * @param message Pointer to the buffer with the message already serialized.
+ * @param buffers List of NetworkBuffers to send.
+ * @param total_bytes Total number of bytes to send. Should be equal to the sum of the @c size field of all buffers.
  * @param max_blocking_time_point Future timepoint where blocking send should end.
  */
 bool DirectMessageSender::send(
-        CDRMessage_t* message,
+        const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+        const uint32_t& total_bytes,
         std::chrono::steady_clock::time_point max_blocking_time_point) const
 {
-    return participant_->sendSync(message, participant_->getGuid(),
+    return participant_->sendSync(buffers, total_bytes, participant_->getGuid(),
                    Locators(locators_->begin()), Locators(locators_->end()), max_blocking_time_point);
 }
 

@@ -104,7 +104,8 @@ public:
     MOCK_METHOD0(getEventResource, ResourceEvent & ());
 
     bool send_sync_nts(
-            CDRMessage_t* /*message*/,
+            const std::list<eprosima::fastdds::rtps::NetworkBuffer>& /*buffers*/,
+            const uint32_t& /*total_bytes*/,
             const LocatorsIterator& /*destination_locators_begin*/,
             const LocatorsIterator& /*destination_locators_end*/,
             std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)

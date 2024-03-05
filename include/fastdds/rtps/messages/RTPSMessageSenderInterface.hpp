@@ -24,8 +24,10 @@
 
 #include <chrono>
 #include <vector>
+#include <list>
 
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -75,11 +77,13 @@ public:
     /**
      * Send a message through this interface.
      *
-     * @param message Pointer to the buffer with the message already serialized.
+     * @param buffers List of NetworkBuffers to send with data already serialized.
+     * @param total_bytes Total number of bytes to send. Should be equal to the sum of the @c size field of all buffers.
      * @param max_blocking_time_point Future timepoint where blocking send should end.
      */
     virtual bool send(
-            CDRMessage_t* message,
+            const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
             std::chrono::steady_clock::time_point max_blocking_time_point) const = 0;
 
     /*!
