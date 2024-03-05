@@ -1001,6 +1001,9 @@ TEST_F(DataReaderTests, return_loan)
     EXPECT_EQ(ok_code, data_reader_->enable());
     EXPECT_EQ(ok_code, reader2->enable());
 
+    // Calling return loan with empty sequences on an enabled reader should return OK
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, data_reader_->return_loan(data_values, infos));
+
     FooType data;
     data.index(0);
 
@@ -1009,9 +1012,6 @@ TEST_F(DataReaderTests, return_loan)
     {
         EXPECT_EQ(ok_code, data_writer_->write(&data, handle_ok_));
     }
-
-    // Returning a loan without having called read or take should return PRECONDITION_NOT_MET
-    EXPECT_EQ(precondition_code, data_reader_->return_loan(data_values, infos));
 
     // Read with loan from both readers
     EXPECT_EQ(ok_code, data_reader_->read(data_values, infos));
