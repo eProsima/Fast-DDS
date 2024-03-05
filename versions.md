@@ -7,6 +7,7 @@ Forthcoming
 * Removed deprecated FastRTPS API tests.
 * Removed no longer supported `FASTRTPS_API_TESTS` CMake options.
 * XML Parser API no longer public.
+* Calling `DataReader::return_loan` returns `ReturnCode_t::RETCODE_OK` both for empty sequences and for sequences that were not loaned.
 
 Version 2.14.0
 --------------
