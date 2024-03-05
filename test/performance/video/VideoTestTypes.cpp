@@ -22,7 +22,9 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
-bool VideoDataType::serialize(void*data, SerializedPayload_t* payload)
+bool VideoDataType::serialize(
+        void* data,
+        eprosima::fastrtps::rtps::SerializedPayload_t* payload)
 {
     VideoType* lt = (VideoType*)data;
 
@@ -37,7 +39,9 @@ bool VideoDataType::serialize(void*data, SerializedPayload_t* payload)
     return true;
 }
 
-bool VideoDataType::deserialize(SerializedPayload_t* payload,void * data)
+bool VideoDataType::deserialize(
+        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        void* data)
 {
     VideoType* lt = (VideoType*)data;
     lt->seqnum = *(uint32_t*)payload->data;
@@ -45,21 +49,24 @@ bool VideoDataType::deserialize(SerializedPayload_t* payload,void * data)
     lt->duration = *(uint64_t*)(payload->data + 12);
     uint32_t siz = *(uint32_t*)(payload->data + 20);
     lt->data.resize(siz + 1);
-    std::copy(payload->data+24,payload->data+24+siz,lt->data.begin());
+    std::copy(payload->data + 24, payload->data + 24 + siz, lt->data.begin());
     return true;
 }
 
-std::function<uint32_t()> VideoDataType::getSerializedSizeProvider(void* data)
+std::function<uint32_t()> VideoDataType::getSerializedSizeProvider(
+        void* data)
 {
     return [data]() -> uint32_t
-    {
-        VideoType *tdata = static_cast<VideoType*>(data);
-        uint32_t size = 0;
+           {
+               VideoType* tdata = static_cast<VideoType*>(data);
+               uint32_t size = 0;
 
-        size = (uint32_t)(sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint32_t) + tdata->data.size());
+               size =
+                       (uint32_t)(sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint32_t) +
+                       tdata->data.size());
 
-        return size;
-    };
+               return size;
+           };
 }
 
 void* VideoDataType::createData()
@@ -67,21 +74,27 @@ void* VideoDataType::createData()
 
     return (void*)new VideoType();
 }
-void VideoDataType::deleteData(void* data)
+
+void VideoDataType::deleteData(
+        void* data)
 {
 
     delete((VideoType*)data);
 }
 
-
-bool TestCommandDataType::serialize(void*data,SerializedPayload_t* payload)
+bool TestCommandDataType::serialize(
+        void* data,
+        SerializedPayload_t* payload)
 {
     TestCommandType* t = (TestCommandType*)data;
     *(TESTCOMMAND*)payload->data = t->m_command;
     payload->length = 4;
     return true;
 }
-bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
+
+bool TestCommandDataType::deserialize(
+        SerializedPayload_t* payload,
+        void* data)
 {
     TestCommandType* t = (TestCommandType*)data;
     //	cout << "PAYLOAD LENGTH: "<<payload->length << endl;
@@ -91,23 +104,26 @@ bool TestCommandDataType::deserialize(SerializedPayload_t* payload,void * data)
     return true;
 }
 
-std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(void*)
+std::function<uint32_t()> TestCommandDataType::getSerializedSizeProvider(
+        void*)
 {
     return []() -> uint32_t
-    {
-        uint32_t size = 0;
+           {
+               uint32_t size = 0;
 
-        size = (uint32_t)sizeof(uint32_t);
+               size = (uint32_t)sizeof(uint32_t);
 
-        return size;
-    };
+               return size;
+           };
 }
 
 void* TestCommandDataType::createData()
 {
     return (void*)new TestCommandType();
 }
-void TestCommandDataType::deleteData(void* data)
+
+void TestCommandDataType::deleteData(
+        void* data)
 {
     delete((TestCommandType*)data);
 }

@@ -21,102 +21,162 @@
 #define VIDEOPUBLISHER_H_
 
 #include <asio.hpp>
+#include <condition_variable>
+#include <chrono>
 
 #include "VideoTestTypes.hpp"
 #include <gstreamer-1.0/gst/app/gstappsrc.h>
 #include <gstreamer-1.0/gst/app/gstappsink.h>
 #include <gstreamer-1.0/gst/gst.h>
 
-#include <condition_variable>
-#include <chrono>
 
 class VideoTestPublisher
 {
+public:
+
+    VideoTestPublisher();
+    virtual ~VideoTestPublisher();
+
+    eprosima::fastdds::dds::DomainParticipant* mp_participant;
+    eprosima::fastdds::dds::Publisher* mp_datapub;
+    eprosima::fastdds::dds::Publisher* mp_commandpub;
+    eprosima::fastdds::dds::Subscriber* mp_commandsub;
+    eprosima::fastdds::dds::Topic* mp_video_topic;
+    eprosima::fastdds::dds::Topic* mp_command_pub_topic;
+    eprosima::fastdds::dds::Topic* mp_command_sub_topic;
+    VideoType* mp_video_out;
+    std::chrono::steady_clock::time_point t_start_;
+    int n_subscribers;
+    unsigned int n_samples;
+    std::mutex mutex_;
+    int disc_count_;
+    std::condition_variable disc_cond_;
+    int comm_count_;
+    std::condition_variable comm_cond_;
+    bool timer_on_;
+    std::chrono::steady_clock::time_point send_start_;
+    std::condition_variable timer_cond_;
+    int m_status;
+    unsigned int n_received;
+    void init(
+            int n_sub,
+            int n_sam,
+            bool reliable,
+            uint32_t pid,
+            bool hostname,
+            const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
+            const eprosima::fastrtps::rtps::PropertyPolicy& property_policy,
+            bool large_data,
+            const std::string& sXMLConfigFile,
+            int test_time,
+            int drop_rate,
+            int max_sleep_time,
+            int forced_domain,
+            int video_width,
+            int video_height,
+            int frame_rate);
+    void run();
+    bool test(
+            uint32_t datasize);
+
+    class DataPubListener : public eprosima::fastdds::dds::DataWriterListener
+    {
     public:
-        VideoTestPublisher();
-        virtual ~VideoTestPublisher();
 
-        eprosima::fastrtps::Participant* mp_participant;
-        eprosima::fastrtps::Publisher* mp_datapub;
-        eprosima::fastrtps::Publisher* mp_commandpub;
-        eprosima::fastrtps::Subscriber* mp_commandsub;
-        VideoType* mp_video_out;
-        std::chrono::steady_clock::time_point t_start_;
-        int n_subscribers;
-        unsigned int n_samples;
-        eprosima::fastrtps::SampleInfo_t m_sampleinfo;
-        std::mutex mutex_;
-        int disc_count_;
-        std::condition_variable disc_cond_;
-        int comm_count_;
-        std::condition_variable comm_cond_;
-        bool timer_on_;
-        std::chrono::steady_clock::time_point send_start_;
-        std::condition_variable timer_cond_;
-        int m_status;
-        unsigned int n_received;
-        bool init(int n_sub, int n_sam, bool reliable, uint32_t pid, bool hostname,
-                const eprosima::fastrtps::rtps::PropertyPolicy& part_property_policy,
-                const eprosima::fastrtps::rtps::PropertyPolicy& property_policy, bool large_data,
-                const std::string& sXMLConfigFile, int test_time, int drop_rate, int max_sleep_time,
-                int forced_domain, int video_width, int video_height, int frame_rate);
-        void run();
-        bool test(uint32_t datasize);
-
-        class DataPubListener : public eprosima::fastrtps::PublisherListener
+        DataPubListener(
+                VideoTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
         {
-            public:
-                DataPubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
-                ~DataPubListener(){}
-                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
-                VideoTestPublisher* mp_up;
-                int n_matched;
-        } m_datapublistener;
+        }
 
-        class CommandPubListener : public eprosima::fastrtps::PublisherListener
+        ~DataPubListener()
         {
-            public:
-                CommandPubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
-                ~CommandPubListener(){}
-                void onPublicationMatched(eprosima::fastrtps::Publisher* pub,
-                        eprosima::fastrtps::rtps::MatchingInfo& info);
-                VideoTestPublisher* mp_up;
-                int n_matched;
-        } m_commandpublistener;
+        }
 
-        class CommandSubListener : public eprosima::fastrtps::SubscriberListener
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* /*datawriter*/,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+        VideoTestPublisher* mp_up;
+        int n_matched;
+    }
+    m_datapublistener;
+
+    class CommandPubListener : public eprosima::fastdds::dds::DataWriterListener
+    {
+    public:
+
+        CommandPubListener(
+                VideoTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
         {
-            public:
-                CommandSubListener(VideoTestPublisher* up):mp_up(up),n_matched(0){}
-                ~CommandSubListener(){}
-                void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub,
-                        eprosima::fastrtps::rtps::MatchingInfo& into);
-                void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
-                VideoTestPublisher* mp_up;
-                int n_matched;
-        } m_commandsublistener;
+        }
 
-        VideoDataType video_t;
-        TestCommandDataType command_t;
-        std::string m_sXMLConfigFile;
-        bool reliable_;
+        ~CommandPubListener()
+        {
+        }
 
-        GstElement* pipeline;
-        GstElement* filesrc;
-        GstElement* videorate;
-        GstElement* sink;
-        int m_testTime;
-        int m_dropRate;
-        int m_sendSleepTime;
-        int m_forcedDomain;
-        int m_videoWidth;
-        int m_videoHeight;
-        int m_videoFrameRate;
+        void on_publication_matched(
+                eprosima::fastdds::dds::DataWriter* /*datawriter*/,
+                const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+        VideoTestPublisher* mp_up;
+        int n_matched;
+    }
+    m_commandpublistener;
+
+    class CommandSubListener : public eprosima::fastdds::dds::DataReaderListener
+    {
+    public:
+
+        CommandSubListener(
+                VideoTestPublisher* up)
+            : mp_up(up)
+            , n_matched(0)
+        {
+        }
+
+        ~CommandSubListener()
+        {
+        }
+
+        void on_subscription_matched(
+                eprosima::fastdds::dds::DataReader* /*datareader*/,
+                const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* datareader) override;
+        VideoTestPublisher* mp_up;
+        int n_matched;
+    }
+    m_commandsublistener;
+
+    std::string m_sXMLConfigFile;
+    bool reliable_;
+
+    GstElement* pipeline;
+    GstElement* filesrc;
+    GstElement* videorate;
+    GstElement* sink;
+    int m_testTime;
+    int m_dropRate;
+    int m_sendSleepTime;
+    int m_forcedDomain;
+    int m_videoWidth;
+    int m_videoHeight;
+    int m_videoFrameRate;
+
 protected:
 
-        void InitGStreamer();
-        static GstFlowReturn new_sample(GstElement *sink, VideoTestPublisher *sub);
+    void InitGStreamer();
+    static GstFlowReturn new_sample(
+            GstElement* sink,
+            VideoTestPublisher* sub);
+    eprosima::fastdds::dds::DataReaderQos datareader_qos;
+    eprosima::fastdds::dds::DataWriterQos datawriter_qos_cmd;
+    eprosima::fastdds::dds::DataWriterQos datawriter_qos_data;
+    eprosima::fastdds::dds::DataWriter* mp_data_dw;
+    eprosima::fastdds::dds::DataReader* mp_dr;
+    eprosima::fastdds::dds::DataWriter* mp_command_dw;
 
 };
 
