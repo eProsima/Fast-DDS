@@ -224,7 +224,7 @@ public:
             fastdds::LibrarySettings& library_settings);
 
     /**
-     * @brief Set the library settings-
+     * @brief Set the library settings.
      *
      * @param library_settings LibrarySettings to be set.
      * @return False if there is any RTPSParticipant already created.
@@ -232,6 +232,18 @@ public:
      */
     static bool set_library_settings(
             const fastdds::LibrarySettings& library_settings);
+
+    /**
+     * @brief Get the TopicAttributes from XML profile.
+     *
+     * @param profile_name Topic profile name.
+     * @param topic_att TopicAttributes object where the attributes are returned.
+     * @return bool true if the profile exists.
+     *              false otherwise.
+     */
+    static bool get_topic_attributes_from_profile(
+            const std::string& profile_name,
+            TopicAttributes& topic_attributes);
 
 private:
 

@@ -905,6 +905,24 @@ bool RTPSDomainImpl::set_library_settings(
     return true;
 }
 
+bool RTPSDomain::get_topic_attributes_from_profile(
+        const std::string& profile_name,
+        TopicAttributes& topic_attributes)
+{
+    return RTPSDomainImpl::get_topic_attributes_from_profile(profile_name, topic_attributes);
+}
+
+bool RTPSDomainImpl::get_topic_attributes_from_profile(
+        const std::string& profile_name,
+        TopicAttributes& topic_attributes)
+{
+    if (xmlparser::XMLP_ret::XML_OK == xmlparser::XMLProfileManager::fillTopicAttributes(profile_name, topic_attributes))
+    {
+        return true;
+    }
+    return false;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

@@ -29,6 +29,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/IChangePool.h>
+#include <fastrtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -310,6 +311,18 @@ public:
      */
     RTPS_DllAPI static bool set_library_settings(
             const fastdds::LibrarySettings& library_settings);
+
+    /**
+     * @brief Get the TopicAttributes from XML profile.
+     *
+     * @param profile_name Topic profile name.
+     * @param topic_att TopicAttributes object where the attributes are returned.
+     * @return bool true if the profile exists.
+     *              false otherwise.
+     */
+    RTPS_DllAPI static bool get_topic_attributes_from_profile(
+            const std::string& profile_name,
+            TopicAttributes& topic_att);
 
 private:
 
