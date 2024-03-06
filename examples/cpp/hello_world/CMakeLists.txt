@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(DDSHelloWorldExample VERSION 1 LANGUAGES CXX)
+project(hello_world VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -34,15 +34,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif()
 endif()
 
-message(STATUS "Configuring HelloWorld example...")
-file(GLOB DDS_HELLOWORLD_EXAMPLE_SOURCES_CXX "*.cxx")
-file(GLOB DDS_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
+message(STATUS "Configuring hello world example...")
+file(GLOB HELLO_WORLD_SOURCES_CXX "*.cxx")
+file(GLOB HELLO_WORLD_SOURCES_CPP "*.cpp")
 
-add_executable(DDSHelloWorldExample ${DDS_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_HELLOWORLD_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(DDSHelloWorldExample PRIVATE
+add_executable(hello_world ${HELLO_WORLD_SOURCES_CXX} ${HELLO_WORLD_SOURCES_CPP})
+target_compile_definitions(hello_world PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSHelloWorldExample fastdds fastcdr fastdds::optionparser)
-install(TARGETS DDSHelloWorldExample
-    RUNTIME DESTINATION examples/cpp/dds/HelloWorldExample/${BIN_INSTALL_DIR})
+target_link_libraries(hello_world fastdds fastcdr)
+install(TARGETS hello_world
+    RUNTIME DESTINATION examples/cpp/hello_world/${BIN_INSTALL_DIR})
