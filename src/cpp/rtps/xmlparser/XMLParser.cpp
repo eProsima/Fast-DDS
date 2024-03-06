@@ -244,6 +244,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
                 <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="tcp_negotiation_timeout" type="uint32_t" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
@@ -374,6 +375,59 @@ XMLP_ret XMLParser::parseXMLTransportData(
     return ret;
 }
 
+<<<<<<< HEAD
+=======
+XMLP_ret XMLParser::validateXMLTransportElements(
+        tinyxml2::XMLElement& p_root)
+{
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    for (tinyxml2::XMLElement* p_aux0 = p_root.FirstChildElement(); p_aux0 != nullptr;
+            p_aux0 = p_aux0->NextSiblingElement())
+    {
+        const char* name = p_aux0->Name();
+        if (!(strcmp(name, TRANSPORT_ID) == 0 ||
+                strcmp(name, TYPE) == 0 ||
+                strcmp(name, SEND_BUFFER_SIZE) == 0 ||
+                strcmp(name, RECEIVE_BUFFER_SIZE) == 0 ||
+                strcmp(name, MAX_MESSAGE_SIZE) == 0 ||
+                strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
+                strcmp(name, WHITE_LIST) == 0 ||
+                strcmp(name, TTL) == 0 ||
+                strcmp(name, NON_BLOCKING_SEND) == 0 ||
+                strcmp(name, UDP_OUTPUT_PORT) == 0 ||
+                strcmp(name, TCP_WAN_ADDR) == 0 ||
+                strcmp(name, KEEP_ALIVE_FREQUENCY) == 0 ||
+                strcmp(name, KEEP_ALIVE_TIMEOUT) == 0 ||
+                strcmp(name, MAX_LOGICAL_PORT) == 0 ||
+                strcmp(name, LOGICAL_PORT_RANGE) == 0 ||
+                strcmp(name, LOGICAL_PORT_INCREMENT) == 0 ||
+                strcmp(name, LISTENING_PORTS) == 0 ||
+                strcmp(name, CALCULATE_CRC) == 0 ||
+                strcmp(name, CHECK_CRC) == 0 ||
+                strcmp(name, KEEP_ALIVE_THREAD) == 0 ||
+                strcmp(name, ACCEPT_THREAD) == 0 ||
+                strcmp(name, ENABLE_TCP_NODELAY) == 0 ||
+                strcmp(name, TCP_NEGOTIATION_TIMEOUT) == 0 ||
+                strcmp(name, TLS) == 0 ||
+                strcmp(name, SEGMENT_SIZE) == 0 ||
+                strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
+                strcmp(name, HEALTHY_CHECK_TIMEOUT_MS) == 0 ||
+                strcmp(name, RTPS_DUMP_FILE) == 0 ||
+                strcmp(name, DEFAULT_RECEPTION_THREADS) == 0 ||
+                strcmp(name, RECEPTION_THREADS) == 0 ||
+                strcmp(name, DUMP_THREAD) == 0 ||
+                strcmp(name, PORT_OVERFLOW_POLICY) == 0 ||
+                strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0))
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'transportDescriptorType'. Name: " << name);
+            ret = XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return ret;
+}
+
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
 XMLP_ret XMLParser::parseXMLCommonTransportData(
         tinyxml2::XMLElement* p_root,
         sp_transport_t p_transport)
@@ -650,6 +704,16 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                 EPROSIMA_LOG_ERROR(XMLPARSER,
                         "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
                 return XMLP_ret::XML_ERROR;
+            }
+            else if (strcmp(name, TCP_NEGOTIATION_TIMEOUT) == 0)
+            {
+                // tcp_negotiation_timeout - uint32Type
+                int iTimeout(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+                pTCPDesc->tcp_negotiation_timeout = static_cast<uint32_t>(iTimeout);
             }
         }
     }

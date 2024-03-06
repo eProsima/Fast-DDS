@@ -72,6 +72,12 @@ extern const char* METADATA_LOGICAL_PORT;
 extern const char* LISTENING_PORTS;
 extern const char* CALCULATE_CRC;
 extern const char* CHECK_CRC;
+<<<<<<< HEAD
+=======
+extern const char* KEEP_ALIVE_THREAD;
+extern const char* ACCEPT_THREAD;
+extern const char* TCP_NEGOTIATION_TIMEOUT;
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
 extern const char* SEGMENT_SIZE;
 extern const char* PORT_QUEUE_CAPACITY;
 extern const char* PORT_OVERFLOW_POLICY;

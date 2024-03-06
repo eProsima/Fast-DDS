@@ -51,6 +51,11 @@
                 <calculate_crc>false</calculate_crc>
                 <check_crc>false</check_crc>
                 <enable_tcp_nodelay>false</enable_tcp_nodelay>
+<<<<<<< HEAD
+=======
+                <non_blocking_send>false</non_blocking_send>
+                <tcp_negotiation_timeout>100</tcp_negotiation_timeout>
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
             </transport_descriptor>
             <!-- UDP sample transport descriptor. Several options are common with TCP -->
             <transport_descriptor>

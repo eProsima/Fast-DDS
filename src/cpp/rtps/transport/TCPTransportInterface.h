@@ -118,6 +118,12 @@ protected:
 
     eprosima::fastdds::statistics::rtps::OutputTrafficManager statistics_info_;
 
+    // Map containging the logical ports that must be added to a channel that has not been created yet. This could happen
+    // with acceptor channels that are created after their output channel has been opened (LARGE_DATA case).
+    // The key is the physical locator associated with the sender resource, and later to the channel.
+    std::map<Locator, std::set<uint16_t>> channel_pending_logical_ports_;
+    std::mutex channel_pending_logical_ports_mutex_;
+
     TCPTransportInterface(
             int32_t transport_kind);
 
@@ -461,11 +467,34 @@ public:
     void fill_local_physical_port(
             Locator& locator) const;
 
+<<<<<<< HEAD
     bool get_non_blocking_send() const
     {
         return non_blocking_send_;
     }
 
+=======
+    /**
+     * Close the output channel associated to the given remote participant but if its locators belong to the
+     * given list of initial peers.
+     *
+     * @param send_resource_list List of send resources associated to the local participant.
+     * @param remote_participant_locators Set of locators associated to the remote participant.
+     * @param participant_initial_peers List of locators associated to the initial peers of the local participant.
+     */
+    void CloseOutputChannel(
+            SendResourceList& send_resource_list,
+            const LocatorList& remote_participant_locators,
+            const LocatorList& participant_initial_peers) const;
+
+    /**
+     * Method to add the logical ports associated to a channel that was not available
+     * when the logical ports were obtained.
+     * @param channel Channel that might add the logical ports if available.
+     */
+    void send_channel_pending_logical_ports(
+            std::shared_ptr<TCPChannelResource>& channel);
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
 };
 
 } // namespace rtps
