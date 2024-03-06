@@ -24,6 +24,10 @@ on:
         type: string
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   ubuntu-ci:
 
