@@ -527,7 +527,7 @@ TEST_F(TCPv6Tests, remove_from_send_resource_list)
     IPLocator::createLocator(LOCATOR_KIND_TCPv6, "::1", g_default_port + 2, wrong_output_locator);
     IPLocator::setLogicalPort(wrong_output_locator, 7410);
     wrong_remote_participant_physical_locators.push_back(wrong_output_locator);
-    send_transport_under_test.CloseOutputChannel(
+    send_transport_under_test.cleanup_sender_resources(
         send_resource_list,
         wrong_remote_participant_physical_locators,
         initial_peer_list);
@@ -536,7 +536,7 @@ TEST_F(TCPv6Tests, remove_from_send_resource_list)
     // Using the correct locator should remove the channel resource
     LocatorList_t remote_participant_physical_locators;
     remote_participant_physical_locators.push_back(output_locator_1);
-    send_transport_under_test.CloseOutputChannel(
+    send_transport_under_test.cleanup_sender_resources(
         send_resource_list,
         remote_participant_physical_locators,
         initial_peer_list);
@@ -545,7 +545,7 @@ TEST_F(TCPv6Tests, remove_from_send_resource_list)
     // Using the initial peer locator should not remove the channel resource
     remote_participant_physical_locators.clear();
     remote_participant_physical_locators.push_back(output_locator_2);
-    send_transport_under_test.CloseOutputChannel(
+    send_transport_under_test.cleanup_sender_resources(
         send_resource_list,
         remote_participant_physical_locators,
         initial_peer_list);

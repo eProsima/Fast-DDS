@@ -124,6 +124,7 @@ set(${PROJECT_NAME}_source_files
     fastdds/builtin/typelookup/TypeLookupManager.cpp
     fastdds/builtin/typelookup/TypeLookupRequestListener.cpp
     fastdds/builtin/typelookup/TypeLookupReplyListener.cpp
+    rtps/transport/TransportInterface.cpp
     rtps/transport/ChainingTransport.cpp
     rtps/transport/ChannelResource.cpp
     rtps/transport/PortBasedTransportDescriptor.cpp

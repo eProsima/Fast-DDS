@@ -1888,7 +1888,7 @@ void TCPTransportInterface::fill_local_physical_port(
     }
 }
 
-void TCPTransportInterface::CloseOutputChannel(
+void TCPTransportInterface::cleanup_sender_resources(
         SendResourceList& send_resource_list,
         const LocatorList& remote_participant_locators,
         const LocatorList& participant_initial_peers) const
