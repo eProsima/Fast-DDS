@@ -591,7 +591,7 @@ TEST_P(NetworkConfig, PubGetSendingLocatorsWhitelist)
     for (const auto& network_interface : interfaces)
     {
         std::cout << "Adding interface '" << network_interface.name << "' (" << network_interface.name.size() << ")" <<
-                std::endl;
+            std::endl;
         descriptor_->interfaceWhiteList.push_back(network_interface.name);
     }
 

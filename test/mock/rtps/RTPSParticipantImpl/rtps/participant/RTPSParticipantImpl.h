@@ -356,7 +356,7 @@ public:
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
 
     MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
-    
+
     uint32_t getRTPSParticipantID() const
     {
         return 0;
