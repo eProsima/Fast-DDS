@@ -11,7 +11,7 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 #include <fastrtps/utils/TimedMutex.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>

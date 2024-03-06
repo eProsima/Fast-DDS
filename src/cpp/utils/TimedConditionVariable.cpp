@@ -16,7 +16,7 @@
  * @file TimedConditionVariable.cpp
  */
 
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 #if defined(_WIN32)
 #include <windows.h>
