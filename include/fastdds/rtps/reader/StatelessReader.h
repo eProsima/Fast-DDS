@@ -27,7 +27,7 @@
 
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {
