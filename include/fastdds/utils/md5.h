@@ -76,10 +76,6 @@ public:
     void init();
 
 private:
-<<<<<<< HEAD:include/fastrtps/utils/md5.h
-=======
-
->>>>>>> b4d1e6d55 (Refs #20566: Migrate fastrtps/utils/md5.h to fastdds/utils):include/fastdds/utils/md5.h
 
     typedef unsigned int uint4; // 32bit
     enum
@@ -102,7 +98,6 @@ private:
     uint1 buffer[blocksize]; // bytes that didn't fit in last 64 byte chunk
     uint4 count[2]; // 64bit counter for number of bits (lo, hi)
     uint4 state[4]; // digest so far
-
 
     // low level logic operations
     static inline uint4 F(
