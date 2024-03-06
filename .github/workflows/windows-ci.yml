@@ -24,13 +24,6 @@ on:
         type: string
         required: true
 
-  push:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
   pull_request:
     branches:
       - 'master'
