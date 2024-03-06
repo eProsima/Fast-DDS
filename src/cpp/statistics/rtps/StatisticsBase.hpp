@@ -53,6 +53,7 @@ namespace statistics {
 struct StatisticsAncillary
 {
     std::set<std::shared_ptr<IListener>> listeners;
+    virtual ~StatisticsAncillary() = default;
 };
 
 struct StatisticsWriterAncillary
