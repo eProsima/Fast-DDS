@@ -22,7 +22,7 @@
 
 #include <list>
 
-#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 
 namespace eprosima {
 namespace fastdds {

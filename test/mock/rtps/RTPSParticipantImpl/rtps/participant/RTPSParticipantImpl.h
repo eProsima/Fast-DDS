@@ -27,11 +27,8 @@
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-<<<<<<< HEAD
 #include <fastdds/rtps/common/LocatorList.hpp>
-=======
 #include <fastdds/rtps/history/IChangePool.h>
->>>>>>> c0a6f5177 (Refs #20301: add library settings DDS & RTPS API. RTPSDomainTests testing the new API)
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
