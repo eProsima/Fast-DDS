@@ -91,6 +91,8 @@ public:
 
 private:
 
+    using DomainParticipantListener::on_participant_discovery;
+
     std::mutex mutex_;
     std::condition_variable cv_;
     const uint32_t publishers_ = 0;
