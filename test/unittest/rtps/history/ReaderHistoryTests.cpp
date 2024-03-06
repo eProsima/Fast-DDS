@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/common/ChangeComparison.hpp>
 

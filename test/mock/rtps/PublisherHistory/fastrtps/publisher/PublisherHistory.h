@@ -31,7 +31,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastrtps/common/KeyedChanges.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

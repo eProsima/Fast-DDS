@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <cassert>
 #include <functional>

@@ -28,7 +28,7 @@
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

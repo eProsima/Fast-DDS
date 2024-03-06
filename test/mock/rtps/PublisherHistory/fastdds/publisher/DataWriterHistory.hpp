@@ -30,7 +30,7 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
 

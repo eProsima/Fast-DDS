@@ -22,7 +22,7 @@
 #include <mutex>
 #include <set>
 
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>

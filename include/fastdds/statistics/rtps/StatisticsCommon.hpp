@@ -26,7 +26,7 @@
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/statistics/IListeners.hpp>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 
 namespace eprosima {

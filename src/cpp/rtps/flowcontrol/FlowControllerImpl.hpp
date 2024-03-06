@@ -12,7 +12,7 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/TimedConditionVariable.hpp>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/thread.hpp>
