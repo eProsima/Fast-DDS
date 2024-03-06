@@ -22,7 +22,7 @@ namespace rtps {
 
 using LocatorSelectorEntry = fastrtps::rtps::LocatorSelectorEntry;
 
-bool TransportInterface::OpenOutputChannel(
+bool TransportInterface::OpenOutputChannels(
         SendResourceList& send_resource_list,
         const LocatorSelectorEntry& locator_selector_entry)
 {
@@ -40,7 +40,7 @@ bool TransportInterface::OpenOutputChannel(
     return success;
 }
 
-void TransportInterface::CloseOutputChannel(
+void TransportInterface::CloseOutputChannels(
         SendResourceList& sender_resource_list,
         const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry)
 {

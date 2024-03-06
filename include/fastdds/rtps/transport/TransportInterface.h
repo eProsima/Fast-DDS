@@ -145,7 +145,7 @@ public:
      *
      * @return true if the channel was correctly opened or if finding an already opened one.
      */
-    virtual bool OpenOutputChannel(
+    virtual bool OpenOutputChannels(
             SendResourceList& sender_resource_list,
             const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry);
 
@@ -155,7 +155,7 @@ public:
      * @param sender_resource_list Participant's send resource list.
      * @param locator_selector_entry Locator selector entry with the remote entity locators.
      */
-    virtual void CloseOutputChannel(
+    virtual void CloseOutputChannels(
             SendResourceList& sender_resource_list,
             const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry);
 
