@@ -67,6 +67,14 @@ static inline bool ros_super_client_env()
     return false;
 }
 
+template<class charT>
+std::basic_ostream<charT>& operator <<(
+        std::basic_ostream<charT>& output,
+        const RemoteServerList_t& /*list*/)
+{
+    return output;
+}
+
 } // namespace rtps
 } // namespace fastdds
 
