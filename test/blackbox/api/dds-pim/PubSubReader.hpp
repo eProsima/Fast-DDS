@@ -1093,6 +1093,13 @@ public:
         return *this;
     }
 
+    PubSubReader& expect_inline_qos(
+            bool expect)
+    {
+        datareader_qos_.expects_inline_qos(expect);
+        return *this;
+    }
+
     PubSubReader& heartbeatResponseDelay(
             const int32_t secs,
             const int32_t frac)
