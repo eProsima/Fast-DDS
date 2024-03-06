@@ -22,7 +22,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <MockTransport.h>
 #include <rtps/network/NetworkFactory.h>

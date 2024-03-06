@@ -22,7 +22,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <rtps/transport/TCPTransportInterface.h>
 

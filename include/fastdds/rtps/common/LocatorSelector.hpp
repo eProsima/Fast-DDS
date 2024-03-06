@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <algorithm>
 

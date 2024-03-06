@@ -18,7 +18,7 @@
  */
 
 #include <fastdds/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <fastdds/dds/log/Log.hpp>
 

@@ -37,7 +37,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/rtps/rtps_fwd.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
 

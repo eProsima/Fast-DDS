@@ -47,7 +47,7 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 #include "fastrtps/utils/shared_mutex.hpp"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>

@@ -27,7 +27,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <xmlparser/XMLParserUtils.hpp>
