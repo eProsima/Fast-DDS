@@ -36,9 +36,17 @@ void to_uppercase(
         std::string& st) noexcept
 {
     std::transform(st.begin(), st.end(), st.begin(),
-            [](int c)
+            [](char c)
             {
-                return static_cast<char>(std::toupper(c));
+                //TODO Carlos: use std::toupper after update VS2019
+                if (c >= 'a' && c <= 'z')
+                {
+                    return static_cast<char>(c - 'a' + 'A');
+                }
+                else
+                {
+                    return static_cast<char>(c);
+                }
             });
 }
 
