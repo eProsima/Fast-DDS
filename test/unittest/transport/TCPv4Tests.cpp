@@ -2116,7 +2116,7 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
             IPLocator::setWan(wrong_output_locator, g_test_wan_address);
         }
         wrong_remote_participant_physical_locators.push_back(wrong_output_locator);
-        send_transport_under_test.CloseOutputChannel(
+        send_transport_under_test.cleanup_sender_resources(
             send_resource_list,
             wrong_remote_participant_physical_locators,
             initial_peer_list);
@@ -2125,7 +2125,7 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
         // Using the correct locator should remove the channel resource
         LocatorList_t remote_participant_physical_locators;
         remote_participant_physical_locators.push_back(discovery_locator);
-        send_transport_under_test.CloseOutputChannel(
+        send_transport_under_test.cleanup_sender_resources(
             send_resource_list,
             remote_participant_physical_locators,
             initial_peer_list);
@@ -2140,7 +2140,7 @@ TEST_F(TCPv4Tests, remove_from_send_resource_list)
             IPLocator::setWan(initial_peer_locator, g_test_wan_address);
         }
         remote_participant_physical_locators.push_back(initial_peer_locator);
-        send_transport_under_test.CloseOutputChannel(
+        send_transport_under_test.cleanup_sender_resources(
             send_resource_list,
             remote_participant_physical_locators,
             initial_peer_list);

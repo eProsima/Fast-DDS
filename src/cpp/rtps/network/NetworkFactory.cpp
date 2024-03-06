@@ -484,7 +484,7 @@ void NetworkFactory::remove_participant_associated_send_resources(
         TCPTransportInterface* tcp_transport = dynamic_cast<TCPTransportInterface*>(transport.get());
         if (tcp_transport)
         {
-            tcp_transport->CloseOutputChannel(
+            tcp_transport->cleanup_sender_resources(
                 send_resource_list,
                 remote_participant_locators,
                 participant_initial_peers);

@@ -480,7 +480,7 @@ public:
      * @param remote_participant_locators Set of locators associated to the remote participant.
      * @param participant_initial_peers List of locators associated to the initial peers of the local participant.
      */
-    void CloseOutputChannel(
+    void cleanup_sender_resources(
             SendResourceList& send_resource_list,
             const LocatorList& remote_participant_locators,
             const LocatorList& participant_initial_peers) const;
