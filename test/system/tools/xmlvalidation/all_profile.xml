@@ -894,6 +894,7 @@
                 <check_crc>false</check_crc>
                 <enable_tcp_nodelay>false</enable_tcp_nodelay>
                 <non_blocking_send>false</non_blocking_send>
+                <tcp_negotiation_timeout>100</tcp_negotiation_timeout>
             </transport_descriptor>
 
             <transport_descriptor>
@@ -944,6 +945,7 @@
                 <calculate_crc>false</calculate_crc>
                 <check_crc>false</check_crc>
                 <enable_tcp_nodelay>false</enable_tcp_nodelay>
+                <tcp_negotiation_timeout>100</tcp_negotiation_timeout>
             </transport_descriptor>
 
             <transport_descriptor>

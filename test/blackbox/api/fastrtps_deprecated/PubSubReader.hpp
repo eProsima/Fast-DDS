@@ -744,7 +744,8 @@ public:
 
     PubSubReader& setup_large_data_tcp(
             bool v6 = false,
-            const uint16_t& port = 0)
+            const uint16_t& port = 0,
+            const uint32_t& tcp_negotiation_timeout = 0)
     {
         participant_attr_.rtps.useBuiltinTransports = false;
 
@@ -760,6 +761,11 @@ public:
 
             auto data_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
             data_transport->add_listener_port(tcp_listening_port);
+            data_transport->calculate_crc = false;
+            data_transport->check_crc = false;
+            data_transport->apply_security = false;
+            data_transport->enable_tcp_nodelay = true;
+            data_transport->tcp_negotiation_timeout = tcp_negotiation_timeout;
             participant_attr_.rtps.userTransports.push_back(data_transport);
         }
         else
@@ -769,6 +775,11 @@ public:
 
             auto data_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
             data_transport->add_listener_port(tcp_listening_port);
+            data_transport->calculate_crc = false;
+            data_transport->check_crc = false;
+            data_transport->apply_security = false;
+            data_transport->enable_tcp_nodelay = true;
+            data_transport->tcp_negotiation_timeout = tcp_negotiation_timeout;
             participant_attr_.rtps.userTransports.push_back(data_transport);
         }
 

@@ -65,6 +65,11 @@ public:
         return TCPv4Transport::send(send_buffer, send_buffer_size, send_resource_locator, remote_locator);
     }
 
+    const std::map<Locator_t, std::set<uint16_t>>& get_channel_pending_logical_ports() const
+    {
+        return channel_pending_logical_ports_;
+    }
+
 };
 
 } // namespace rtps
