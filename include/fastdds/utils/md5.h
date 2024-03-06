@@ -37,7 +37,6 @@
 #include <iostream>
 
 #include <fastdds/fastdds_dll.hpp>
-
 /**
  * Class MD5, for calculating MD5 hashes of strings or byte arrays
  * it is not meant to be fast or secure
@@ -77,6 +76,10 @@ public:
     void init();
 
 private:
+<<<<<<< HEAD:include/fastrtps/utils/md5.h
+=======
+
+>>>>>>> b4d1e6d55 (Refs #20566: Migrate fastrtps/utils/md5.h to fastdds/utils):include/fastdds/utils/md5.h
 
     typedef unsigned int uint4; // 32bit
     enum

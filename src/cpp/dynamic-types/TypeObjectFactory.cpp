@@ -27,7 +27,7 @@
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {

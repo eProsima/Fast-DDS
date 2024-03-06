@@ -25,7 +25,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 namespace eprosima {
 namespace fastdds {

@@ -30,7 +30,7 @@
 #include <fastdds/topic/TopicProxy.hpp>
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 namespace eprosima {
 namespace fastdds {

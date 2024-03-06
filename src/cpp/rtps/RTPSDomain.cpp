@@ -34,7 +34,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/utils/external_locators.hpp>
