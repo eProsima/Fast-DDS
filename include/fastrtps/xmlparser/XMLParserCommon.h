@@ -72,6 +72,7 @@ extern const char* METADATA_LOGICAL_PORT;
 extern const char* LISTENING_PORTS;
 extern const char* CALCULATE_CRC;
 extern const char* CHECK_CRC;
+extern const char* TCP_NEGOTIATION_TIMEOUT;
 extern const char* SEGMENT_SIZE;
 extern const char* PORT_QUEUE_CAPACITY;
 extern const char* PORT_OVERFLOW_POLICY;

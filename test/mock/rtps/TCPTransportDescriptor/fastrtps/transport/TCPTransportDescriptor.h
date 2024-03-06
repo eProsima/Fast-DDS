@@ -175,6 +175,8 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     TLSConfig tls_config;
 
+    uint32_t tcp_negotiation_timeout;
+
     void add_listener_port(
             uint16_t port)
     {

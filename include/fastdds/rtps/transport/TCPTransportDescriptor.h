@@ -48,6 +48,8 @@ namespace rtps {
  *
  * - \c tls_config: Configuration for TLS.
  *
+ * - \c tcp_negotiation_timeout: time to wait for logical port negotiation (in ms).
+ *
  * @ingroup TRANSPORT_MODULE
  */
 struct TCPTransportDescriptor : public SocketTransportDescriptor
@@ -246,7 +248,11 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
     //! Increment between logical ports to try during RTCP negotiation
     uint16_t logical_port_increment;
 
-    FASTDDS_TODO_BEFORE(3, 0, "Eliminate tcp_negotiation_timeout, variable not in use.")
+    /**
+     * Time to wait for logical port negotiation (ms). If a logical port is under negotiation, it waits for the
+     * negotiation to finish up to this timeout before trying to send a message to that port.
+     * Zero value means no waiting (default).
+     */
     uint32_t tcp_negotiation_timeout;
 
     //! Enables the TCP_NODELAY socket option
