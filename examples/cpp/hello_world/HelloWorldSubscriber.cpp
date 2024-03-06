@@ -19,12 +19,14 @@
 
 #include "HelloWorldSubscriber.h"
 
-#include <chrono>
+#include <stdexcept>
 #include <thread>
 
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
@@ -37,81 +39,44 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
-}
-
-bool HelloWorldSubscriber::init(
-        bool use_env)
-{
-    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-    pqos.name("Participant_sub");
+    // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
-
-    if (use_env)
-    {
-        factory->load_profiles();
-        factory->get_default_participant_qos(pqos);
-    }
-
-    participant_ = factory->create_participant(0, pqos);
-
+    participant_ = factory->create_participant_with_default_profile();
     if (participant_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Participant initialization failed");
     }
 
-    //REGISTER THE TYPE
+    // Register the type
     type_.register_type(participant_);
 
-    //CREATE THE SUBSCRIBER
-    SubscriberQos sqos = SUBSCRIBER_QOS_DEFAULT;
-
-    if (use_env)
-    {
-        participant_->get_default_subscriber_qos(sqos);
-    }
-
-    subscriber_ = participant_->create_subscriber(sqos, nullptr);
-
+    // Create the subscriber
+    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+    participant_->get_default_subscriber_qos(sub_qos);
+    subscriber_ = participant_->create_subscriber(sub_qos, nullptr);
     if (subscriber_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Subscriber initialization failed");
     }
 
-    //CREATE THE TOPIC
-    TopicQos tqos = TOPIC_QOS_DEFAULT;
-
-    if (use_env)
-    {
-        participant_->get_default_topic_qos(tqos);
-    }
-
-    topic_ = participant_->create_topic(
-        "HelloWorldTopic",
-        "HelloWorld",
-        tqos);
-
+    // Create the topic
+    TopicQos topic_qos = TOPIC_QOS_DEFAULT;
+    participant_->get_default_topic_qos(topic_qos);
+    topic_ = participant_->create_topic("Hello_world_topic", "HelloWorld", topic_qos);
     if (topic_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("Topic initialization failed");
     }
 
-    // CREATE THE READER
-    DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
-    rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-
-    if (use_env)
-    {
-        subscriber_->get_default_datareader_qos(rqos);
-    }
-
-    reader_ = subscriber_->create_datareader(topic_, rqos, &listener_);
-
+    // Create the reader
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+    subscriber_->get_default_datareader_qos(reader_qos);
+    reader_ = subscriber_->create_datareader(topic_, reader_qos, this);
     if (reader_ == nullptr)
     {
-        return false;
+        throw std::runtime_error("DataReader initialization failed");
     }
-
-    return true;
 }
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
@@ -131,18 +96,16 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
-void HelloWorldSubscriber::SubListener::on_subscription_matched(
+void HelloWorldSubscriber::on_subscription_matched(
         DataReader*,
         const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -152,7 +115,7 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
     }
 }
 
-void HelloWorldSubscriber::SubListener::on_data_available(
+void HelloWorldSubscriber::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
@@ -160,25 +123,15 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
-            samples_++;
-            // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            // Print Hello world message data
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' RECEIVED" << std::endl;
         }
     }
 }
 
 void HelloWorldSubscriber::run()
 {
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
+    std::cout << "Subscriber running. Please press enter to stop the Subscriber at any time." << std::endl;
     std::cin.ignore();
-}
-
-void HelloWorldSubscriber::run(
-        uint32_t number)
-{
-    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number > listener_.samples_)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
 }
