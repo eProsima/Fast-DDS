@@ -2122,6 +2122,21 @@ protected:
             const TypeIdentifier& element_identifier);
 
     /**
+     * @brief Retrieves the equivalence kind of a component within a map.
+     * Takes into account the consistency of the type of the compoment.
+     *
+     * @param[in] identifier TypeIdentifier of the component to be checked.
+     * @param[in] is_key Indicates whether the component being evaluated is the key (true) or the element (false).
+     * @return EK_COMPLETE if the component equivalence kind is EK_COMPLETE.
+     * @return EK_MINIMAL if the component equivalence kind is EK_MINIMAL.
+     * @return EK_BOTH if the component equivalence kind is EK_BOTH.
+     * @return TK_NONE if the component type is invalid.
+     */
+    static EquivalenceKind get_map_component_equiv_kind_for_consistency(
+            const TypeIdentifier& identifier,
+            bool is_key);
+
+    /**
      * @brief Check consistency between a given PlainCollectionHeader of a map and the related TypeIdentifier:
      *        1. TypeIdentifier initialized
      *        2. Consistency of EquivalenceKinds
