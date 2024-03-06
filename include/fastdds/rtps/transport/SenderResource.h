@@ -65,29 +65,59 @@ public:
     {
         bool returned_value = false;
 
+        if (send_lambda_ && !send_buffers_lambda_)
+        {
+            EPROSIMA_LOG_WARNING(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
+                    << std::endl << "Please implement send_buffers_lambda_ instead.");
+            return send_lambda_(data, dataLength,
+                            destination_locators_begin, destination_locators_end, max_blocking_time_point);
+        }
+
         // Use a list of NetworkBuffer to send the message
         std::list<NetworkBuffer> buffers;
         buffers.push_back(NetworkBuffer(data, dataLength));
         uint32_t total_bytes = dataLength;
+
+        returned_value = send(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                        max_blocking_time_point);
+
+        return returned_value;
+    }
+
+    /**
+     * Sends to a destination locator, through the channel managed by this resource.
+     * @param buffers List of buffers to send.
+     * @param total_bytes Length of all buffers to be sent. Will be used as a boundary for
+     * the previous parameter.
+     * @param destination_locators_begin destination endpoint Locators iterator begin.
+     * @param destination_locators_end destination endpoint Locators iterator end.
+     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
+     * @return Success of the send operation.
+     */
+    bool send(
+            const std::list<NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
+            LocatorsIterator* destination_locators_begin,
+            LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point)
+    {
+        bool returned_value = false;
 
         if (send_buffers_lambda_)
         {
             returned_value = send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
                             max_blocking_time_point);
         }
-        else if (send_lambda_)
+
+        if (send_lambda_)
         {
-            EPROSIMA_LOG_WARNING(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
+            EPROSIMA_LOG_ERROR(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
                     << std::endl << "Please implement send_buffers_lambda_ instead.");
-            returned_value = send_lambda_(data, dataLength, destination_locators_begin, destination_locators_end,
-                            max_blocking_time_point);
+            send_lambda_ = nullptr;
         }
 
         return returned_value;
     }
-
-    // TODO: Create a new send function that receives a list of NetworkBuffers. The one that received octet* will be deprecated.
-    // TODO: The deprecated send function will warn ONCE about its deprecation and call the new one.
 
     /**
      * Resources can only be transfered through move semantics. Copy, assignment, and

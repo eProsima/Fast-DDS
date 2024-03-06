@@ -82,6 +82,17 @@ public:
                        destination_locators_end, timeout);
     }
 
+    bool send(
+            eprosima::fastrtps::rtps::SenderResource* /*low_sender_resource*/,
+            const std::list<NetworkBuffer>& /*buffers*/,
+            uint32_t /*total_bytes*/,
+            eprosima::fastrtps::rtps::LocatorsIterator* /*destination_locators_begin*/,
+            eprosima::fastrtps::rtps::LocatorsIterator* /*destination_locators_end*/,
+            const std::chrono::steady_clock::time_point& /*timeout*/) override
+    {
+        return true;
+    }
+
     void receive(
             TransportReceiverInterface* next_receiver,
             const eprosima::fastrtps::rtps::octet* receive_buffer,

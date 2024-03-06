@@ -54,6 +54,22 @@ public:
 
                     return false;
                 };
+
+        send_buffers_lambda_ = [this, &transport](
+            const std::list<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
+            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& timeout) -> bool
+                {
+                    if (low_sender_resource_)
+                    {
+                        return transport.send(low_sender_resource_.get(), buffers, total_bytes,
+                                       destination_locators_begin, destination_locators_end, timeout);
+                    }
+
+                    return false;
+                };
     }
 
     fastrtps::rtps::SenderResource* lower_sender_cast()

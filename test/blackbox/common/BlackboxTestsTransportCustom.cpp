@@ -22,12 +22,14 @@
 #include <fastdds/rtps/transport/ChainingTransport.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
 using BuiltinTransports = eprosima::fastdds::rtps::BuiltinTransports;
 using BuiltinTransportsOptions = eprosima::fastdds::rtps::BuiltinTransportsOptions;
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
 class TestChainingTransportDescriptor : public eprosima::fastdds::rtps::ChainingTransportDescriptor
 {
@@ -92,6 +94,21 @@ public:
 
         // Call low level transport
         return low_sender_resource->send(send_buffer, send_buffer_size, destination_locators_begin,
+                       destination_locators_end, timeout);
+    }
+
+    bool send(
+            eprosima::fastrtps::rtps::SenderResource* low_sender_resource,
+            const std::list<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
+            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_begin,
+            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_end,
+            const std::chrono::steady_clock::time_point& timeout) override
+    {
+        descriptor_.send_function_called();
+
+        // Call low level transport
+        return low_sender_resource->send(buffers, total_bytes, destination_locators_begin,
                        destination_locators_end, timeout);
     }
 
