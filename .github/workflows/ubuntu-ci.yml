@@ -1,4 +1,4 @@
-name: Fast-DDS MacOS CI
+name: Fast-DDS Ubuntu CI
 
 on:
   workflow_dispatch:
@@ -24,26 +24,24 @@ on:
         type: string
         required: true
 
-  pull_request:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
-
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}
   cancel-in-progress: true
 
 jobs:
-  mac-ci:
-    uses: ./.github/workflows/reusable-mac-ci.yml
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
+  ubuntu-ci:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-22.04'
+
+    uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
-      label: ${{ inputs.label || 'mac-ci' }}
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
-      cmake-args: ${{ inputs.cmake-args }}
-      ctest-args: ${{ inputs.ctest-args }}
+      cmake-args: ${{ inputs.cmake-args || "-DSECURITY=ON" }}
+      ctest-args: ${{ inputs.ctest-args || "-LE xfail" }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}

@@ -7,20 +7,36 @@ on:
 
 jobs:
   nightly-sec-windows-ci:
+    strategy:
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
-      label: 'nightly-sec-windows-ci'
+      label: 'nightly-sec-windows-ci-${{ matrix.fastdds-branch }}'
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
-      fastdds_branch: 'master'
+      fastdds_branch: '${{ matrix.fastdds-branch }}'
 
   nightly-nosec-windows-ci:
+    strategy:
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
-      label: 'nightly-nosec-windows-ci'
+      label: 'nightly-nosec-windows-ci-${{ matrix.fastdds-branch }}'
       cmake-args: "-DSECURITY=OFF"
       ctest-args: "-LE xfail"
-      fastdds_branch: 'master'
+      fastdds_branch: '${{ matrix.fastdds-branch }}'
 
   nightly-3_0_x-windows-ci:
     uses: ./.github/workflows/reusable-windows-ci.yml

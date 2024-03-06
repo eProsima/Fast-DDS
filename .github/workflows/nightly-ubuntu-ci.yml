@@ -13,11 +13,17 @@ jobs:
       matrix:
         os-image:
           - 'ubuntu-22.04'
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
 
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
       os-image: ${{ matrix.os-image }}
-      label: '${{ matrix.os-image }}-nightly-sec-ubuntu-ci'
+      label: '${{ matrix.os-image }}-nightly-sec-ubuntu-ci-${{ matrix.fastdds-branch }}'
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
-      fastdds-branch: 'master'
+      fastdds-branch: '${{ matrix.fastdds-branch }}'

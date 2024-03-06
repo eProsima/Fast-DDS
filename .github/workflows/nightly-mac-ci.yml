@@ -7,17 +7,33 @@ on:
 
 jobs:
   nightly-sec-mac-ci:
+    strategy:
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
     uses: ./.github/workflows/reusable-mac-ci.yml
     with:
-      label: 'nightly-sec-mac-ci'
+      label: 'nightly-sec-mac-ci-${{ matrix.fastdds-branch }}'
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
-      fastdds-branch: 'master'
+      fastdds-branch: '${{ matrix.fastdds-branch }}'
 
   nightly-nosec-mac-ci:
+    strategy:
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
     uses: ./.github/workflows/reusable-mac-ci.yml
     with:
-      label: 'nightly-nosec-mac-ci'
+      label: 'nightly-nosec-mac-ci-${{ matrix.fastdds-branch }}'
       cmake-args: "-DSECURITY=OFF"
       ctest-args: "-LE xfail"
-      fastdds-branch: 'master'
+      fastdds-branch: '${{ matrix.fastdds-branch }}'

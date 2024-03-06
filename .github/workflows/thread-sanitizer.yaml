@@ -15,14 +15,6 @@ on:
         required: false
         type: string
 
-  push:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
-
   pull_request:
     branches:
       - 'master'
@@ -31,6 +23,9 @@ on:
       - '**.txt'
       - '!**/CMakeLists.txt'
 
+  schedule:
+    - cron: '0 1 * * *'
+    
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true

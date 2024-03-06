@@ -1,4 +1,4 @@
-name: Sanitizer analysis
+name: Address Sanitizer analysis
 
 on:
   workflow_dispatch:
@@ -11,10 +11,15 @@ on:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
         default: 'master'
+
   pull_request:
-  push:
     branches:
-      - master
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+      
   schedule:
     - cron: '0 1 * * *'
 
