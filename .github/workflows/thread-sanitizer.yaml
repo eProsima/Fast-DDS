@@ -15,13 +15,6 @@ on:
         required: false
         type: string
 
-  push:
-    branches:
-      - '2.10.x'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
   pull_request:
     branches:
       - '2.10.x'
