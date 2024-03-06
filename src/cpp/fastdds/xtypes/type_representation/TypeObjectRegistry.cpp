@@ -338,6 +338,20 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     return ret_code;
 }
 
+ReturnCode_t TypeObjectRegistry::get_direct_hash_type_dependencies(
+        const TypeIdentifierSeq& type_identifiers,
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+{
+    for (const TypeIdentifier& type_id : type_identifiers)
+    {
+        if (!TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+        }
+    }
+    return get_type_dependencies(type_identifiers, type_dependencies);
+}
+
 ReturnCode_t TypeObjectRegistry::get_type_dependencies(
         const TypeIdentifierSeq& type_identifiers,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
@@ -383,9 +397,6 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies(
                     break;
                 case TI_PLAIN_MAP_LARGE:
                     get_indirect_hash_map_dependencies(type_id.map_ldefn(), type_dependencies);
-                    break;
-                default:
-                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
                     break;
             }
         }

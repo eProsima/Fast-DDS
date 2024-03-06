@@ -76,6 +76,40 @@ void register_empty_structure_type_object()
     TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name);
 }
 
+void register_plain_seq_type_object(
+        eprosima::fastcdr::external<TypeIdentifier> complete_typeid)
+{
+    std::string plain_seq_name = "plain_sequence";
+    CollectionElementFlag flags = TypeObjectUtils::build_collection_element_flag(
+        eprosima::fastdds::dds::xtypes::TryConstructKind::USE_DEFAULT, false);
+    PlainCollectionHeader header = TypeObjectUtils::build_plain_collection_header(EK_COMPLETE, flags);
+
+
+    eprosima::fastcdr::external<TypeIdentifier> primitive_identifier{new TypeIdentifier()};
+    primitive_identifier->_d(TK_INT32);
+
+
+    PlainSequenceSElemDefn plain_seq = TypeObjectUtils::build_plain_sequence_s_elem_defn(
+        header, 255, complete_typeid);
+    TypeObjectUtils::build_and_register_s_sequence_type_identifier(plain_seq, plain_seq_name);
+}
+
+void register_alias_type_object()
+{
+    TypeIdentifier primitive_type_id;
+    primitive_type_id._d(TK_INT16);
+    CommonAliasBody int16_common_body = TypeObjectUtils::build_common_alias_body(0, primitive_type_id);
+    CompleteAliasBody int16_body = TypeObjectUtils::build_complete_alias_body(int16_common_body,
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+    CompleteTypeDetail empty_type_detail = TypeObjectUtils::build_complete_type_detail(
+        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
+        eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "type_name");
+    CompleteAliasHeader alias_header = TypeObjectUtils::build_complete_alias_header(empty_type_detail);
+    CompleteAliasType alias_type = TypeObjectUtils::build_complete_alias_type(0, alias_header, int16_body);
+    TypeObjectUtils::build_and_register_alias_type_object(alias_type, "int16_alias");
+}
+
 // Build PlainSequenceSElemDefn with inconsistent parameters.
 TEST(TypeObjectUtilsTests, build_plain_sequence_s_elem_defn_inconsistencies)
 {
@@ -461,93 +495,398 @@ TEST(TypeObjectUtilsTests, build_plain_map_s_type_defn_inconsistencies)
 #if !defined(NDEBUG)
     PlainCollectionHeader wrong_header;
     // Inconsistent header CollectionElementFlags
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 wrong_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     wrong_header.element_flags(flags);
     // Inconsistent header EquivalenceKind
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 wrong_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     // Non-initialized TypeIdentifier
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
     // Check SBound consistency
     SBound wrong_bound = 0;
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, wrong_bound, test_identifier, flags, key_identifier), InvalidArgumentError);
 
     // Primitive TypeIdentifier
     EXPECT_NO_THROW(test_identifier->_d(TK_BOOLEAN));
     // TypeIdentifier inconsistent with complete header
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     PlainCollectionHeader minimal_header = TypeObjectUtils::build_plain_collection_header(
         EK_MINIMAL, flags);
     // TypeIdentifier inconsistent with minimal header
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 minimal_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     PlainCollectionHeader fully_descriptive_header = TypeObjectUtils::build_plain_collection_header(
         EK_BOTH, flags);
     // Wrong key_flags
     CollectionElementFlag wrong_flags = 0;
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, wrong_flags, key_identifier), InvalidArgumentError);
 #if !defined(NDEBUG)
     // Uninitialized key_identifier
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
 #endif // !defined(NDEBUG)
     // Non-integer key identifier
     EXPECT_NO_THROW(key_identifier->_d(TK_FLOAT32));
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
     // TypeIdentifier consistent with fully-descriptive header and integer key identifier
     EXPECT_NO_THROW(key_identifier->_d(TK_INT64));
-    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier));
     StringSTypeDefn string_type_def = TypeObjectUtils::build_string_s_type_defn(50);
     EXPECT_NO_THROW(key_identifier->string_sdefn(string_type_def));
-    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 fully_descriptive_header, 10, test_identifier, flags, key_identifier));
-    // Change discriminator to EK_COMPLETE
+
+    // Get EK_COMPLETE and EK_MINIMAL TypeIdentifiers
     register_empty_structure_type_object();
     TypeIdentifierPair type_ids;
+    eprosima::fastcdr::external<TypeIdentifier> complete_typeid;
+    eprosima::fastcdr::external<TypeIdentifier> minimal_typeid;
     DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("empty_structure", type_ids);
     if (EK_COMPLETE == type_ids.type_identifier1()._d())
     {
-        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+        complete_typeid = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+        minimal_typeid = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
     }
     else
     {
-        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+        complete_typeid = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+        minimal_typeid = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
     }
-    // TypeIdentifier consistent with complete header
-    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-                complete_header, 10, test_identifier, flags, key_identifier));
-    // TypeIdentifier inconsistent with minimal header
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-                minimal_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
-    // TypeIdentifier inconsistent with fully-descriptive header
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-                fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
-    // Change discriminator to EK_MINIMAL
-    if (EK_COMPLETE == type_ids.type_identifier1()._d())
+
+    register_plain_seq_type_object(complete_typeid);
+    TypeIdentifierPair indirect_type_ids;
+    eprosima::fastcdr::external<TypeIdentifier> complete_indirect_id;
+    eprosima::fastcdr::external<TypeIdentifier> minimal_indirect_id;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("plain_sequence",
+            indirect_type_ids);
+    if (EK_COMPLETE == indirect_type_ids.type_identifier1()._d())
     {
-        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier2()));
+        complete_indirect_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(indirect_type_ids.type_identifier1()));
+        minimal_indirect_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(indirect_type_ids.type_identifier2()));
     }
     else
     {
-        test_identifier = eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(type_ids.type_identifier1()));
+        complete_indirect_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(indirect_type_ids.type_identifier2()));
+        minimal_indirect_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(indirect_type_ids.type_identifier1()));
     }
-    // TypeIdentifier inconsistent with complete header
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
+
+    register_alias_type_object();
+    TypeIdentifierPair alias_type_ids;
+    eprosima::fastcdr::external<TypeIdentifier> complete_alias_id;
+    eprosima::fastcdr::external<TypeIdentifier> minimal_alias_id;
+    DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("int16_alias",
+            alias_type_ids);
+    if (EK_COMPLETE == alias_type_ids.type_identifier1()._d())
+    {
+        complete_alias_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(alias_type_ids.type_identifier1()));
+        minimal_alias_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(alias_type_ids.type_identifier2()));
+    }
+    else
+    {
+        complete_alias_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(alias_type_ids.type_identifier2()));
+        minimal_alias_id =
+                eprosima::fastcdr::external<TypeIdentifier>(new TypeIdentifier(alias_type_ids.type_identifier1()));
+    }
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, key_identifier));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, complete_alias_id));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, test_identifier, flags, minimal_alias_id));
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_typeid, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_indirect_id, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, key_identifier));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, complete_alias_id));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, complete_alias_id, flags, minimal_alias_id));
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_typeid, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_indirect_id, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, key_identifier));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, complete_alias_id));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                fully_descriptive_header, 10, minimal_alias_id, flags, minimal_alias_id));
+
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
                 complete_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
-    // TypeIdentifier consistent with minimal header
-    EXPECT_NO_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-                minimal_header, 10, test_identifier, flags, key_identifier));
-    // TypeIdentifier inconsistent with fully-descriptive header
-    EXPECT_THROW(PlainMapSTypeDefn plain_seq = TypeObjectUtils::build_plain_map_s_type_defn(
-                fully_descriptive_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, test_identifier, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, test_identifier, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, test_identifier, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, test_identifier, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, test_identifier, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, test_identifier, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_typeid, flags, key_identifier));
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_typeid, flags, complete_alias_id));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_typeid, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_typeid, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_typeid, flags, minimal_alias_id));
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_indirect_id, flags, key_identifier));
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_indirect_id, flags, complete_alias_id));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_indirect_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_indirect_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_indirect_id, flags, minimal_alias_id));
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_alias_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_alias_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_alias_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_alias_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, complete_alias_id, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_typeid, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_indirect_id, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_alias_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_alias_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_alias_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_alias_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                complete_header, 10, minimal_alias_id, flags, minimal_alias_id), InvalidArgumentError);
+
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, test_identifier, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, test_identifier, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, test_identifier, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, test_identifier, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, test_identifier, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_typeid, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_indirect_id, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, minimal_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, minimal_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, complete_alias_id, flags, minimal_alias_id), InvalidArgumentError);
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_typeid, flags, key_identifier));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_typeid, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_typeid, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_typeid, flags, complete_alias_id));
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_typeid, flags, minimal_alias_id));
+
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_indirect_id, flags, key_identifier));
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_indirect_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_indirect_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_indirect_id, flags, complete_alias_id));
+    EXPECT_NO_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_indirect_id, flags, minimal_alias_id));
+
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_alias_id, flags, key_identifier), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_alias_id, flags, complete_typeid), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_alias_id, flags, complete_indirect_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_alias_id, flags, complete_alias_id), InvalidArgumentError);
+    EXPECT_THROW(PlainMapSTypeDefn plain_map = TypeObjectUtils::build_plain_map_s_type_defn(
+                minimal_header, 10, minimal_alias_id, flags, minimal_alias_id), InvalidArgumentError);
 }
 
 // Build PlainMapLTypeDefn with inconsistent parameters.
