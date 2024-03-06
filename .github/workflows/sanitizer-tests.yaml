@@ -35,10 +35,10 @@ jobs:
         FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
 
     steps:
-      - name: Install wget
+      - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: wget
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
@@ -69,9 +69,6 @@ jobs:
         run: |
           cd ./src/fastrtps
           git checkout ${{ env.FASTDDS_BRANCH }}
-
-      - name: Install apt packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages
 
       - name: Install GTest
         uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
@@ -124,10 +121,10 @@ jobs:
       DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'v1.2.1' }}
 
     steps:
-      - name: Install wget
+      - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          packages: wget
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
@@ -162,9 +159,6 @@ jobs:
           path: src/discovery_server
           repository: eProsima/Discovery-Server
           ref: ${{ env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
-
-      - name: Install apt packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages
 
       - name: Install GTest
         uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
