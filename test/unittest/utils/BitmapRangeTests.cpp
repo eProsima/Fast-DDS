@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <cstdint>
-#include <fastrtps/utils/fixed_size_bitmap.hpp>
+#include <fastdds/utils/fixed_size_bitmap.hpp>
 #include <gtest/gtest.h>
 
 #include <algorithm>

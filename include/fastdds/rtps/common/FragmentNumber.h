@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_RPTS_ELEM_FRAGNUM_H_
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/utils/fixed_size_bitmap.hpp>
+#include <fastdds/utils/fixed_size_bitmap.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 #include <set>
