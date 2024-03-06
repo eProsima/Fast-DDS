@@ -1457,6 +1457,21 @@ ReturnCode_t DataReaderImpl::check_qos(
         EPROSIMA_LOG_ERROR(DDS_QOS_CHECK, "unique_network_request cannot be set along specific locators");
         return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
     }
+    if (qos.history().kind == KEEP_LAST_HISTORY_QOS && qos.history().depth <= 0)
+    {
+        EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK, "HISTORY DEPTH must be higher than 0 if HISTORY KIND is KEEP_LAST.");
+        return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    }
+    if (qos.history().kind == KEEP_LAST_HISTORY_QOS && qos.history().depth > 0 &&
+            qos.resource_limits().max_samples_per_instance > 0 &&
+            qos.history().depth > qos.resource_limits().max_samples_per_instance)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "HISTORY DEPTH '" << qos.history().depth <<
+                "' is inconsistent with max_samples_per_instance: '" << qos.resource_limits().max_samples_per_instance <<
+                "'. Consistency rule: depth <= max_samples_per_instance." <<
+                " Effectively using max_samples_per_instance as depth.");
+    }
     return ReturnCode_t::RETCODE_OK;
 }
 

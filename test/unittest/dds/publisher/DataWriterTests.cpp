@@ -12,7 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
 #include <condition_variable>
+#include <cstdint>
+#include <memory>
 #include <mutex>
 #include <thread>
 
@@ -28,6 +31,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -40,9 +44,8 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include "../../logging/mock/MockConsumer.h"
-
 #include "../../common/CustomPayloadPool.hpp"
+#include "../../logging/mock/MockConsumer.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -669,6 +672,17 @@ TEST(DataWriterTests, InvalidQos)
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
 
     qos.endpoint().history_memory_policy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
+
+    qos = DATAWRITER_QOS_DEFAULT;
+    qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    qos.history().depth = 0;
+    EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos)); // KEEP LAST 0 is inconsistent
+    qos.history().depth = 2;
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos)); // KEEP LAST 2 is OK
+    // KEEP LAST 2000 but max_samples_per_instance default (400) is inconsistent but right now it only shows a warning
+    // This test will fail whenever we enforce the consistency between depth and max_samples_per_instance.
+    qos.history().depth = 2000;
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == ReturnCode_t::RETCODE_OK);
@@ -1989,6 +2003,75 @@ TEST(DataWriterTests, CustomPoolCreation)
     participant->delete_contained_entities();
 
     DomainParticipantFactory::get_instance()->delete_participant(participant);
+}
+
+TEST(DataWriterTests, history_depth_max_samples_per_instance_warning)
+{
+
+    /* Setup log so it may catch the expected warning */
+    Log::ClearConsumers();
+    MockConsumer* mockConsumer = new MockConsumer("RTPS_QOS_CHECK");
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+    Log::SetVerbosity(Log::Warning);
+
+    /* Create a participant, topic, and a publisher */
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    /* Create a datawriter with the QoS that should generate a warning */
+    DataWriterQos qos;
+    qos.history().depth = 10;
+    qos.resource_limits().max_samples_per_instance = 5;
+    DataWriter* datawriter_1 = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(datawriter_1, nullptr);
+
+    /* Check that the config generated a warning */
+    auto wait_for_log_entries =
+            [&mockConsumer](const uint32_t amount, const uint32_t retries, const uint32_t wait_ms) -> size_t
+            {
+                size_t entries = 0;
+                for (uint32_t i = 0; i < retries; i++)
+                {
+                    entries = mockConsumer->ConsumedEntries().size();
+                    if (entries >= amount)
+                    {
+                        break;
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+                }
+                return entries;
+            };
+
+    const size_t expected_entries = 1;
+    const uint32_t retries = 4;
+    const uint32_t wait_ms = 25;
+    ASSERT_EQ(wait_for_log_entries(expected_entries, retries, wait_ms), expected_entries);
+
+    /* Check that the datawriter can send data */
+    FooType data;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter_1->write(&data, HANDLE_NIL));
+
+    /* Check that a correctly initialized writer does not produce any warning */
+    qos.history().depth = 10;
+    qos.resource_limits().max_samples_per_instance = 10;
+    DataWriter* datawriter_2 = publisher->create_datawriter(topic, qos);
+    ASSERT_NE(datawriter_2, nullptr);
+    ASSERT_EQ(wait_for_log_entries(expected_entries, retries, wait_ms), expected_entries);
+
+    /* Tear down */
+    participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
+    Log::KillThread();
 }
 
 } // namespace dds

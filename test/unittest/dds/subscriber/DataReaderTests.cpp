@@ -15,6 +15,7 @@
 #include <array>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <forward_list>
 #include <iostream>
 #include <memory>
@@ -22,58 +23,50 @@
 #include <thread>
 #include <type_traits>
 
+#include <asio.hpp>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <fastcdr/Cdr.h>
 
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
-
+#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/LoanableArray.hpp>
 #include <fastdds/dds/core/LoanableCollection.hpp>
 #include <fastdds/dds/core/LoanableSequence.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
-#include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastrtps/utils/IPLocator.h>
-
-#include "FooBoundedType.hpp"
-#include "FooBoundedTypeSupport.hpp"
-
-#include "FooType.hpp"
-#include "FooTypeSupport.hpp"
-
-#include "../../logging/mock/MockConsumer.h"
-
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../../common/CustomPayloadPool.hpp"
+#include "../../logging/mock/MockConsumer.h"
 #include "fastdds/dds/common/InstanceHandle.hpp"
 #include "fastdds/dds/core/policy/QosPolicies.hpp"
-
-#include <asio.hpp>
+#include "FooBoundedType.hpp"
+#include "FooBoundedTypeSupport.hpp"
+#include "FooType.hpp"
+#include "FooTypeSupport.hpp"
 
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
@@ -706,6 +699,18 @@ TEST_F(DataReaderTests, InvalidQos)
     qos.endpoint().remote_locator_list.push_back(locator);
     qos.properties().properties().emplace_back("fastdds.unique_network_flows", "");
     EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos));
+
+    qos = DATAREADER_QOS_DEFAULT;
+    qos.history().kind = KEEP_LAST_HISTORY_QOS;
+    qos.history().depth = 0;
+    EXPECT_EQ(inconsistent_code, data_reader_->set_qos(qos)); // KEEP LAST 0 is inconsistent
+    // KEEP LAST 2000 but max_samples_per_instance default (400) is inconsistent but right now it only shows a warning
+    // In the reader, this returns RETCODE_INMUTABLE_POLICY, because the depth cannot be changed on run time.
+    // Because of the implementation, we know de consistency is checked before the inmutability, so by checking the
+    // return against RETCODE_INMUTABLE_POLICY we are testing that the setting are not considered inconsistent yet.
+    // This test will fail whenever we enforce the consistency between depth and max_samples_per_instance.
+    qos.history().depth = 2000;
+    EXPECT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader_->set_qos(qos));
 
     /* Inmutable QoS */
     const ReturnCode_t inmutable_code = ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
@@ -3543,6 +3548,71 @@ TEST_F(DataReaderTests, CustomPoolCreation)
     participant->delete_contained_entities();
 
     DomainParticipantFactory::get_instance()->delete_participant(participant);
+}
+
+TEST_F(DataReaderTests, history_depth_max_samples_per_instance_warning)
+{
+
+    /* Setup log so it may catch the expected warning */
+    Log::ClearConsumers();
+    MockConsumer* mockConsumer = new MockConsumer("RTPS_QOS_CHECK");
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
+    Log::SetVerbosity(Log::Warning);
+
+    /* Create a participant, topic, and a subscriber */
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    /* Create a datareader with the QoS that should generate a warning */
+    DataReaderQos qos;
+    qos.history().depth = 10;
+    qos.resource_limits().max_samples_per_instance = 5;
+    DataReader* datareader_1 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(datareader_1, nullptr);
+
+    /* Check that the config generated a warning */
+    auto wait_for_log_entries =
+            [&mockConsumer](const uint32_t amount, const uint32_t retries, const uint32_t wait_ms) -> size_t
+            {
+                size_t entries = 0;
+                for (uint32_t i = 0; i < retries; i++)
+                {
+                    entries = mockConsumer->ConsumedEntries().size();
+                    if (entries >= amount)
+                    {
+                        break;
+                    }
+                    std::this_thread::sleep_for(std::chrono::milliseconds(wait_ms));
+                }
+                return entries;
+            };
+
+    const size_t expected_entries = 1;
+    const uint32_t retries = 4;
+    const uint32_t wait_ms = 25;
+    ASSERT_EQ(wait_for_log_entries(expected_entries, retries, wait_ms), expected_entries);
+
+    /* Check that a correctly initialized datareader does not produce any warning */
+    qos.history().depth = 10;
+    qos.resource_limits().max_samples_per_instance = 10;
+    DataReader* datareader_2 = subscriber->create_datareader(topic, qos);
+    ASSERT_NE(datareader_2, nullptr);
+    ASSERT_EQ(wait_for_log_entries(expected_entries, retries, wait_ms), expected_entries);
+
+    /* Tear down */
+    participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
+    Log::KillThread();
 }
 
 int main(

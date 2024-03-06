@@ -380,6 +380,7 @@ TEST(DDSDataWriter, OfferedDeadlineMissedListener)
  *   - Only affects TRANSPORT case (UDP or SHM communication, data_sharing and intraprocess disabled)
  *   - Destruction order matters: writer must be destroyed before reader (otherwise heartbeats would no be sent while
  *     destroying the writer)
+ * Edit: this test has been updated to ensure that HistoryQoS and ResourceLimitQoS constraints are met (#20401).
  */
 TEST(DDSDataWriter, HeartbeatWhileDestruction)
 {
@@ -392,13 +393,21 @@ TEST(DDSDataWriter, HeartbeatWhileDestruction)
         // A high number of samples increases the probability of the data race to occur
         size_t n_samples = 1000;
 
-        reader.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).init();
+        reader.reliability(RELIABLE_RELIABILITY_QOS)
+                .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+                .init();
         ASSERT_TRUE(reader.isInitialized());
 
-        writer.reliability(RELIABLE_RELIABILITY_QOS).durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS).history_kind(
-            KEEP_LAST_HISTORY_QOS).history_depth(static_cast<int32_t>(n_samples)).heartbeat_period_seconds(0).
-                heartbeat_period_nanosec(
-            20 * 1000).init();
+        writer.reliability(RELIABLE_RELIABILITY_QOS)
+                .durability_kind(TRANSIENT_LOCAL_DURABILITY_QOS)
+                .history_kind(KEEP_LAST_HISTORY_QOS)
+                .history_depth(static_cast<int32_t>(n_samples))
+                .resource_limits_max_samples(static_cast<int32_t>(n_samples))
+                .resource_limits_max_instances(static_cast<int32_t>(1))
+                .resource_limits_max_samples_per_instance(static_cast<int32_t>(n_samples))
+                .heartbeat_period_seconds(0)
+                .heartbeat_period_nanosec(20 * 1000)
+                .init();
         ASSERT_TRUE(writer.isInitialized());
 
         reader.wait_discovery();
@@ -410,6 +419,17 @@ TEST(DDSDataWriter, HeartbeatWhileDestruction)
 
         EXPECT_TRUE(data.empty());
     }
+}
+
+/**
+ * This is a regression test for issue https://eprosima.easyredmine.com/issues/20504.
+ * It checks that a DataWriter be created with default Qos and a large history depth.
+ */
+TEST(DDSDataWriter, default_qos_large_history_depth)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.history_depth(1000).init();
+    ASSERT_TRUE(writer.isInitialized());
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
