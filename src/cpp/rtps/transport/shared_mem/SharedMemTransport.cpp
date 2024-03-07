@@ -430,9 +430,12 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
             shared_mem_segment_->alloc_buffer(total_bytes, max_blocking_time_point);
     void* pos = shared_buffer->data();
 
-    // TODO Carlos: handle statistics
+    // Statistics submessage is always the last buffer to be added
+    // If statistics message is present, skip last buffer
+    auto it_end = remove_statistics_buffer(buffers.back(), total_bytes) ? std::prev(buffers.end()) : buffers.end();
 
-    for (auto it = buffers.begin(); it != buffers.end(); ++it)
+
+    for (auto it = buffers.begin(); it != it_end; ++it)
     {
         // Direct copy from the const_buffer to the mutable shared_buffer
         memcpy(pos, ((*it).buffer), (*it).size);

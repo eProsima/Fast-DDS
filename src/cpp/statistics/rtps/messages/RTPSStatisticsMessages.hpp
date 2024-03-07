@@ -168,34 +168,41 @@ inline uint32_t get_statistics_message_pos(
     return statistics_pos;
 }
 
+inline bool is_statistics_buffer(
+        const NetworkBuffer& stat_buffer)
+{
+    return statistics_submessage_length == stat_buffer.size &&
+           FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == static_cast<const eprosima::fastrtps::rtps::octet*>(stat_buffer.buffer)[0];
+}
+
 #endif // FASTDDS_STATISTICS
 
 inline void set_statistics_submessage_from_transport(
         const eprosima::fastrtps::rtps::Locator_t& destination,
-        const eprosima::fastrtps::rtps::octet* send_buffer,
-        uint32_t send_buffer_size,
+        const eprosima::fastdds::rtps::NetworkBuffer& send_buffer,
+        const uint32_t& total_bytes,
         StatisticsSubmessageData::Sequence& sequence)
 {
     static_cast<void>(destination);
     static_cast<void>(send_buffer);
-    static_cast<void>(send_buffer_size);
+    static_cast<void>(total_bytes);
     static_cast<void>(sequence);
 
 #ifdef FASTDDS_STATISTICS
     using namespace eprosima::fastrtps::rtps;
 
-    uint32_t statistics_pos = get_statistics_message_pos(send_buffer, send_buffer_size);
-
-    if ( 0 != statistics_pos )
+    if (is_statistics_buffer(send_buffer))
     {
+        uint32_t statistics_pos = 0;
+
         // Accumulate bytes on sequence
-        sequence.add_message(send_buffer_size);
+        sequence.add_message(total_bytes);
 
         // Skip the submessage header
         statistics_pos += RTPSMESSAGE_SUBMESSAGEHEADER_SIZE;
 
         // Set current timestamp and sequence
-        auto current_pos = &send_buffer[statistics_pos];
+        auto current_pos = &static_cast<const octet*>(send_buffer.buffer)[statistics_pos];
         Time_t ts;
         Time_t::now(ts);
 
@@ -219,20 +226,21 @@ inline void set_statistics_submessage_from_transport(
 #endif // FASTDDS_STATISTICS
 }
 
-inline void remove_statistics_submessage(
-        const eprosima::fastrtps::rtps::octet* send_buffer,
-        uint32_t& send_buffer_size)
+inline bool remove_statistics_buffer(
+        const NetworkBuffer& stat_buffer,
+        uint32_t& total_bytes)
 {
-    static_cast<void>(send_buffer);
-    static_cast<void>(send_buffer_size);
+    static_cast<void>(stat_buffer);
+    static_cast<void>(total_bytes);
 
 #ifdef FASTDDS_STATISTICS
-    uint32_t statistics_pos = get_statistics_message_pos(send_buffer, send_buffer_size);
-    if ( 0 != statistics_pos )
+    if (is_statistics_buffer(stat_buffer))
     {
-        send_buffer_size = statistics_pos;
+        total_bytes -= statistics_submessage_length;
+        return true;
     }
 #endif // FASTDDS_STATISTICS
+    return false;
 }
 
 } // namespace rtps

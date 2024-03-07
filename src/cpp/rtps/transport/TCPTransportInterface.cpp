@@ -1526,8 +1526,8 @@ bool TCPTransportInterface::send(
                 scoped_lock.lock();
             }
             TCPHeader tcp_header;
-            // TODO Carlos: Handle statistics buffer message
-            // statistics_info_.set_statistics_message_data(remote_locator, send_buffer, send_buffer_size);
+            // Statistics submessage is always the last buffer to be added
+            statistics_info_.set_statistics_message_data(remote_locator, buffers.back(), total_bytes);
             fill_rtcp_header(tcp_header, buffers, total_bytes, logical_port);
             {
                 asio::error_code ec;
