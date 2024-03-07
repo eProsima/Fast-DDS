@@ -142,6 +142,10 @@ std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
         size_t max = 0,
         bool unique_key = false);
 
+std::list<KeyedHelloWorld> default_keyedhelloworld_per_participant_data_generator(
+        size_t participants,
+        size_t max = 0);
+
 std::list<StringTest> default_large_string_data_generator(
         size_t max = 0);
 
