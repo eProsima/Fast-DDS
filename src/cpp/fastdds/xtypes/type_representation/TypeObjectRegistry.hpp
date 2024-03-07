@@ -189,7 +189,6 @@ public:
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
-     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
      */
     ReturnCode_t get_type_dependencies(
             const TypeIdentifierSeq& type_identifiers,
@@ -329,7 +328,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
@@ -370,7 +369,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
     }
@@ -404,7 +403,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -437,7 +436,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -478,7 +477,7 @@ protected:
         }
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -521,7 +520,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -555,7 +554,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -595,7 +594,7 @@ protected:
 
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }

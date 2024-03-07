@@ -596,7 +596,7 @@ ReturnCode_t TypeObjectRegistry::get_type_dependencies_impl(
                     get_indirect_hash_map_dependencies(type_id.map_ldefn(), type_dependencies);
                     break;
                 default:
-                    break;
+                    return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
             }
         }
     }

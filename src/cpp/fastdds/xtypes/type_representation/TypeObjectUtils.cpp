@@ -2051,10 +2051,13 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
 }
 
 EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
-        const TypeIdentifier& identifier,
-        bool is_key)
+        const TypeIdentifier& identifier)
 {
-    if (is_direct_hash_type_identifier(identifier))
+    if (identifier._d() == TK_NONE)
+    {
+        return TK_NONE;
+    }
+    else if (is_direct_hash_type_identifier(identifier))
     {
         TypeObject type_object;
         if (eprosima::fastdds::dds::RETCODE_OK ==
@@ -2069,89 +2072,120 @@ EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
     }
     else if (is_indirect_hash_type_identifier(identifier))
     {
-        if (is_key)
-        {
-            // indirecr hash for key is not allowed
-            return TK_NONE;
-        }
         EquivalenceKind element_equiv_kind;
         EquivalenceKind key_equiv_kind;
 
         switch (identifier._d())
         {
             case TI_PLAIN_SEQUENCE_SMALL:
-                return get_map_component_equiv_kind_for_consistency(*identifier.seq_sdefn().element_identifier(),
-                               false);
+                if ((*identifier.seq_sdefn().element_identifier())._d() == TK_NONE)
+                {
+                    return TK_NONE;
+                }
+                else
+                {
+                    return get_map_component_equiv_kind_for_consistency(*identifier.seq_sdefn().element_identifier());
+                }
             case TI_PLAIN_SEQUENCE_LARGE:
-                return get_map_component_equiv_kind_for_consistency(*identifier.seq_ldefn().element_identifier(),
-                               false);
+                if ((*identifier.seq_ldefn().element_identifier())._d() == TK_NONE)
+                {
+                    return TK_NONE;
+                }
+                else
+                {
+                    return get_map_component_equiv_kind_for_consistency(*identifier.seq_ldefn().element_identifier());
+                }
             case TI_PLAIN_ARRAY_SMALL:
-                return get_map_component_equiv_kind_for_consistency(
-                    *identifier.array_sdefn().element_identifier(), false);
+                if ((*identifier.array_sdefn().element_identifier())._d() == TK_NONE)
+                {
+                    return TK_NONE;
+                }
+                else
+                {
+                    return get_map_component_equiv_kind_for_consistency(*identifier.array_sdefn().element_identifier());
+                }
+
             case TI_PLAIN_ARRAY_LARGE:
-                return get_map_component_equiv_kind_for_consistency(
-                    *identifier.array_ldefn().element_identifier(), false);
+                if ((*identifier.array_ldefn().element_identifier())._d() == TK_NONE)
+                {
+                    return TK_NONE;
+                }
+                else
+                {
+                    return get_map_component_equiv_kind_for_consistency(*identifier.array_ldefn().element_identifier());
+                }
             case TI_PLAIN_MAP_SMALL:
-                if (is_fully_descriptive_type_identifier(*identifier.map_sdefn().element_identifier()) &&
-                        is_fully_descriptive_type_identifier(*identifier.map_sdefn().key_identifier()))
+                if ((*identifier.map_sdefn().element_identifier())._d() == TK_NONE ||
+                        (*identifier.map_sdefn().key_identifier())._d() == TK_NONE)
                 {
-                    return EK_BOTH;
+                    return TK_NONE;
                 }
+                else
+                {
+                    element_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                        *identifier.map_sdefn().element_identifier());
+                    key_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                        *identifier.map_sdefn().key_identifier());
 
-                element_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                    *identifier.map_sdefn().element_identifier(), false);
-                key_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                    *identifier.map_sdefn().key_identifier(), false);
-
-                if ((EK_COMPLETE == element_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_sdefn().element_identifier())) &&
-                        (EK_COMPLETE == key_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_sdefn().key_identifier())))
-                {
-                    return EK_COMPLETE;
+                    if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
+                    {
+                        return EK_BOTH;
+                    }
+                    else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                            (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                    {
+                        return EK_COMPLETE;
+                    }
+                    else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                            (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                    {
+                        return EK_MINIMAL;
+                    }
+                    else
+                    {
+                        return TK_NONE;
+                    }
                 }
-                else if ((EK_MINIMAL == element_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_sdefn().element_identifier())) &&
-                        (EK_MINIMAL == key_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_sdefn().key_identifier())))
-                {
-                    return EK_MINIMAL;
-                }
-                break;
             case TI_PLAIN_MAP_LARGE:
-                if (is_fully_descriptive_type_identifier(*identifier.map_ldefn().element_identifier()) &&
-                        is_fully_descriptive_type_identifier(*identifier.map_ldefn().key_identifier()))
+                if ((*identifier.map_ldefn().element_identifier())._d() == TK_NONE ||
+                        (*identifier.map_ldefn().key_identifier())._d() == TK_NONE)
                 {
-                    return EK_BOTH;
+                    return TK_NONE;
                 }
+                else
+                {
+                    element_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                        *identifier.map_ldefn().element_identifier());
+                    key_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                        *identifier.map_ldefn().key_identifier());
 
-                element_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                    *identifier.map_sdefn().element_identifier(), false);
-                key_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                    *identifier.map_sdefn().key_identifier(), false);
-
-                if ((EK_COMPLETE == element_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_ldefn().element_identifier())) &&
-                        (EK_COMPLETE == key_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_ldefn().key_identifier())))
-                {
-                    return EK_COMPLETE;
+                    if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
+                    {
+                        return EK_BOTH;
+                    }
+                    else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                            (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                    {
+                        return EK_COMPLETE;
+                    }
+                    else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                            (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                    {
+                        return EK_MINIMAL;
+                    }
+                    else
+                    {
+                        return TK_NONE;
+                    }
                 }
-                else if ((EK_MINIMAL == element_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_ldefn().element_identifier())) &&
-                        (EK_MINIMAL == key_equiv_kind ||
-                        is_fully_descriptive_type_identifier(*identifier.map_ldefn().key_identifier())))
-                {
-                    return EK_MINIMAL;
-                }
-                break;
+            default:
+                return TK_NONE;
         }
     }
     else
     {
         return EK_BOTH;
     }
-    return TK_NONE;
 }
 
 void TypeObjectUtils::plain_map_type_identifier_header_consistency(
@@ -2159,8 +2193,8 @@ void TypeObjectUtils::plain_map_type_identifier_header_consistency(
         const TypeIdentifier& element_identifier,
         const TypeIdentifier& key_identifier)
 {
-    EquivalenceKind key_equiv_kind = get_map_component_equiv_kind_for_consistency(key_identifier, true);
-    EquivalenceKind element_equiv_kind = get_map_component_equiv_kind_for_consistency(element_identifier, false);
+    EquivalenceKind key_equiv_kind = get_map_component_equiv_kind_for_consistency(key_identifier);
+    EquivalenceKind element_equiv_kind = get_map_component_equiv_kind_for_consistency(element_identifier);
 
     switch (header.equiv_kind())
     {
@@ -2177,8 +2211,7 @@ void TypeObjectUtils::plain_map_type_identifier_header_consistency(
             }
             break;
         case EK_MINIMAL:
-            if (key_equiv_kind == EK_BOTH &&
-                    element_equiv_kind == EK_BOTH)
+            if (key_equiv_kind == EK_BOTH && element_equiv_kind == EK_BOTH)
             {
                 throw InvalidArgumentError(
                           "The given header equiv_kind is EK_MINIMAL, but both identifiers are fully descriptive.");
@@ -2197,8 +2230,7 @@ void TypeObjectUtils::plain_map_type_identifier_header_consistency(
             }
             break;
         case EK_COMPLETE:
-            if (key_equiv_kind == EK_BOTH &&
-                    element_equiv_kind == EK_BOTH)
+            if (key_equiv_kind == EK_BOTH && element_equiv_kind == EK_BOTH)
             {
                 throw InvalidArgumentError(
                           "The given header equiv_kind is EK_COMPLETE, but both identifiers are fully descriptive.");
