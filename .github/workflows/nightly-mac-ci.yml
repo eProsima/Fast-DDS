@@ -8,6 +8,7 @@ on:
 jobs:
   nightly-sec-mac-ci:
     strategy:
+      fail-fast: false
       matrix:
         fastdds-branch:
           - 'master'
@@ -24,6 +25,7 @@ jobs:
 
   nightly-nosec-mac-ci:
     strategy:
+      fail-fast: false
       matrix:
         fastdds-branch:
           - 'master'
