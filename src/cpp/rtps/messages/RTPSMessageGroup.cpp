@@ -150,7 +150,7 @@ bool RTPSMessageGroup::append_submessage()
     if (nullptr != pending_buffer_.buffer)
     {
         // Add pending buffer & padding to buffers_to_send_
-        buffers_to_send_.push_back(NetworkBuffer(pending_buffer_.buffer, pending_buffer_.size));
+        buffers_to_send_.push_back(NetworkBuffer(pending_buffer_));
         buffers_bytes_ += pending_buffer_.size;
         pending_buffer_ = NetworkBuffer();
         if (pending_padding_ > 0)
@@ -440,13 +440,8 @@ bool RTPSMessageGroup::insert_submessage(
     uint32_t total_size = submessage_msg_->length + pending_buffer_.size + buffers_bytes_ + pending_padding_;
     if (!check_space(header_msg_, total_size))
     {
-        NetworkBuffer backup = pending_buffer_;
-        pending_buffer_ = NetworkBuffer();
-
         flush();
         add_info_dst_in_buffer(header_msg_, destination_guid_prefix);
-
-        pending_buffer_ = backup;
     }
 
     if (!append_submessage())
