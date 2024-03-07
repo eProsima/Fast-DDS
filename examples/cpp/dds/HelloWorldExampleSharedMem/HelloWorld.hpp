@@ -81,11 +81,11 @@ public:
     eProsima_user_DllExport HelloWorld(
             const HelloWorld& x)
     {
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
-        m_data = x.m_data;
+                    m_data = x.m_data;
 
     }
 
@@ -109,11 +109,11 @@ public:
             const HelloWorld& x)
     {
 
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
-        m_data = x.m_data;
+                    m_data = x.m_data;
 
         return *this;
     }
@@ -140,8 +140,8 @@ public:
             const HelloWorld& x) const
     {
         return (m_index == x.m_index &&
-               m_message == x.m_message &&
-               m_data == x.m_data);
+           m_message == x.m_message &&
+           m_data == x.m_data);
     }
 
     /*!
@@ -182,6 +182,7 @@ public:
         return m_index;
     }
 
+
     /*!
      * @brief This function copies the value in member message
      * @param _message New value to be copied in member message
@@ -220,12 +221,13 @@ public:
         return m_message;
     }
 
+
     /*!
      * @brief This function copies the value in member data
      * @param _data New value to be copied in member data
      */
     eProsima_user_DllExport void data(
-            const std::array<char, 1024 * 1024>& _data)
+            const std::array<char, 1024*1024>& _data)
     {
         m_data = _data;
     }
@@ -235,7 +237,7 @@ public:
      * @param _data New value to be moved in member data
      */
     eProsima_user_DllExport void data(
-            std::array<char, 1024 * 1024>&& _data)
+            std::array<char, 1024*1024>&& _data)
     {
         m_data = std::move(_data);
     }
@@ -244,7 +246,7 @@ public:
      * @brief This function returns a constant reference to member data
      * @return Constant reference to member data
      */
-    eProsima_user_DllExport const std::array<char, 1024 * 1024>& data() const
+    eProsima_user_DllExport const std::array<char, 1024*1024>& data() const
     {
         return m_data;
     }
@@ -253,16 +255,18 @@ public:
      * @brief This function returns a reference to member data
      * @return Reference to member data
      */
-    eProsima_user_DllExport std::array<char, 1024 * 1024>& data()
+    eProsima_user_DllExport std::array<char, 1024*1024>& data()
     {
         return m_data;
     }
+
+
 
 private:
 
     uint32_t m_index{0};
     std::string m_message;
-    std::array<char, 1024 * 1024> m_data;
+    std::array<char, 1024*1024> m_data{0};
 
 };
 

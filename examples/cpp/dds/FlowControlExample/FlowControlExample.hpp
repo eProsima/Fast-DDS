@@ -79,9 +79,9 @@ public:
     eProsima_user_DllExport FlowControlExample(
             const FlowControlExample& x)
     {
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
-        m_wasFast = x.m_wasFast;
+                    m_wasFast = x.m_wasFast;
 
     }
 
@@ -104,9 +104,9 @@ public:
             const FlowControlExample& x)
     {
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
-        m_wasFast = x.m_wasFast;
+                    m_wasFast = x.m_wasFast;
 
         return *this;
     }
@@ -132,7 +132,7 @@ public:
             const FlowControlExample& x) const
     {
         return (m_message == x.m_message &&
-               m_wasFast == x.m_wasFast);
+           m_wasFast == x.m_wasFast);
     }
 
     /*!
@@ -183,6 +183,7 @@ public:
         return m_message;
     }
 
+
     /*!
      * @brief This function sets a value in member wasFast
      * @param _wasFast New value for member wasFast
@@ -210,6 +211,8 @@ public:
     {
         return m_wasFast;
     }
+
+
 
 private:
 

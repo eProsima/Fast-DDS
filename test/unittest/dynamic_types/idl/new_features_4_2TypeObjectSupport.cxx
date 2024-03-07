@@ -791,7 +791,7 @@ void register_WCharUnion_type_identifier()
             UnionCaseLabelSeq label_seq_case_zero;
             TypeObjectUtils::add_union_case_label(label_seq_case_zero, static_cast<int32_t>('a'));
             CommonUnionMember common_case_zero;
-            MemberId member_id_case_zero = 0x00000000;
+            MemberId member_id_case_zero = 0x00000001;
             if (EK_COMPLETE == type_ids_WCharUnion.type_identifier1()._d() || TK_NONE == type_ids_WCharUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_WCharUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_WCharUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -859,7 +859,7 @@ void register_WCharUnion_type_identifier()
             UnionCaseLabelSeq label_seq_case_one;
             TypeObjectUtils::add_union_case_label(label_seq_case_one, static_cast<int32_t>('b'));
             CommonUnionMember common_case_one;
-            MemberId member_id_case_one = 0x00000001;
+            MemberId member_id_case_one = 0x00000002;
             if (EK_COMPLETE == type_ids_WCharUnion.type_identifier1()._d() || TK_NONE == type_ids_WCharUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_WCharUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_WCharUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -990,7 +990,7 @@ void register_OctetUnion_type_identifier()
             UnionCaseLabelSeq label_seq_case_five;
             TypeObjectUtils::add_union_case_label(label_seq_case_five, static_cast<int32_t>(5));
             CommonUnionMember common_case_five;
-            MemberId member_id_case_five = 0x00000000;
+            MemberId member_id_case_five = 0x00000001;
             if (EK_COMPLETE == type_ids_OctetUnion.type_identifier1()._d() || TK_NONE == type_ids_OctetUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_OctetUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_OctetUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1058,7 +1058,7 @@ void register_OctetUnion_type_identifier()
             UnionCaseLabelSeq label_seq_case_seven;
             TypeObjectUtils::add_union_case_label(label_seq_case_seven, static_cast<int32_t>(7));
             CommonUnionMember common_case_seven;
-            MemberId member_id_case_seven = 0x00000001;
+            MemberId member_id_case_seven = 0x00000002;
             if (EK_COMPLETE == type_ids_OctetUnion.type_identifier1()._d() || TK_NONE == type_ids_OctetUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_OctetUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_OctetUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1189,7 +1189,7 @@ void register_Int8Union_type_identifier()
             UnionCaseLabelSeq label_seq_case_three;
             TypeObjectUtils::add_union_case_label(label_seq_case_three, static_cast<int32_t>(3));
             CommonUnionMember common_case_three;
-            MemberId member_id_case_three = 0x00000000;
+            MemberId member_id_case_three = 0x00000001;
             if (EK_COMPLETE == type_ids_Int8Union.type_identifier1()._d() || TK_NONE == type_ids_Int8Union.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Int8Union.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Int8Union.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1257,7 +1257,7 @@ void register_Int8Union_type_identifier()
             UnionCaseLabelSeq label_seq_case_six;
             TypeObjectUtils::add_union_case_label(label_seq_case_six, static_cast<int32_t>(6));
             CommonUnionMember common_case_six;
-            MemberId member_id_case_six = 0x00000001;
+            MemberId member_id_case_six = 0x00000002;
             if (EK_COMPLETE == type_ids_Int8Union.type_identifier1()._d() || TK_NONE == type_ids_Int8Union.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Int8Union.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Int8Union.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3103,7 +3103,7 @@ void register_StructTest_type_identifier()
                         UnionCaseLabelSeq label_seq_case_five;
                         TypeObjectUtils::add_union_case_label(label_seq_case_five, static_cast<int32_t>(5));
                         CommonUnionMember common_case_five;
-                        MemberId member_id_case_five = 0x00000000;
+                        MemberId member_id_case_five = 0x00000001;
                         if (EK_COMPLETE == type_ids_OctetUnion.type_identifier1()._d() || TK_NONE == type_ids_OctetUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_OctetUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_OctetUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3171,7 +3171,7 @@ void register_StructTest_type_identifier()
                         UnionCaseLabelSeq label_seq_case_seven;
                         TypeObjectUtils::add_union_case_label(label_seq_case_seven, static_cast<int32_t>(7));
                         CommonUnionMember common_case_seven;
-                        MemberId member_id_case_seven = 0x00000001;
+                        MemberId member_id_case_seven = 0x00000002;
                         if (EK_COMPLETE == type_ids_OctetUnion.type_identifier1()._d() || TK_NONE == type_ids_OctetUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_OctetUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_OctetUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3360,7 +3360,7 @@ void register_StructTest_type_identifier()
                         UnionCaseLabelSeq label_seq_case_three;
                         TypeObjectUtils::add_union_case_label(label_seq_case_three, static_cast<int32_t>(3));
                         CommonUnionMember common_case_three;
-                        MemberId member_id_case_three = 0x00000000;
+                        MemberId member_id_case_three = 0x00000001;
                         if (EK_COMPLETE == type_ids_Int8Union.type_identifier1()._d() || TK_NONE == type_ids_Int8Union.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_Int8Union.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_Int8Union.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -3428,7 +3428,7 @@ void register_StructTest_type_identifier()
                         UnionCaseLabelSeq label_seq_case_six;
                         TypeObjectUtils::add_union_case_label(label_seq_case_six, static_cast<int32_t>(6));
                         CommonUnionMember common_case_six;
-                        MemberId member_id_case_six = 0x00000001;
+                        MemberId member_id_case_six = 0x00000002;
                         if (EK_COMPLETE == type_ids_Int8Union.type_identifier1()._d() || TK_NONE == type_ids_Int8Union.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_Int8Union.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_Int8Union.type_identifier1().seq_sdefn().header().equiv_kind()) ||

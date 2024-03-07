@@ -11988,7 +11988,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             UnionCaseLabelSeq label_seq_writer_reader_data;
             TypeObjectUtils::add_union_case_label(label_seq_writer_reader_data, static_cast<int32_t>(HISTORY2HISTORY_LATENCY));
             CommonUnionMember common_writer_reader_data;
-            MemberId member_id_writer_reader_data = 0x00000000;
+            MemberId member_id_writer_reader_data = 0x00000001;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -12926,7 +12926,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             UnionCaseLabelSeq label_seq_locator2locator_data;
             TypeObjectUtils::add_union_case_label(label_seq_locator2locator_data, static_cast<int32_t>(NETWORK_LATENCY));
             CommonUnionMember common_locator2locator_data;
-            MemberId member_id_locator2locator_data = 0x00000001;
+            MemberId member_id_locator2locator_data = 0x00000002;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -13686,7 +13686,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             TypeObjectUtils::add_union_case_label(label_seq_entity_data, static_cast<int32_t>(PUBLICATION_THROUGHPUT));
             TypeObjectUtils::add_union_case_label(label_seq_entity_data, static_cast<int32_t>(SUBSCRIPTION_THROUGHPUT));
             CommonUnionMember common_entity_data;
-            MemberId member_id_entity_data = 0x00000002;
+            MemberId member_id_entity_data = 0x00000003;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -14964,7 +14964,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             TypeObjectUtils::add_union_case_label(label_seq_entity2locator_traffic, static_cast<int32_t>(RTPS_SENT));
             TypeObjectUtils::add_union_case_label(label_seq_entity2locator_traffic, static_cast<int32_t>(RTPS_LOST));
             CommonUnionMember common_entity2locator_traffic;
-            MemberId member_id_entity2locator_traffic = 0x00000003;
+            MemberId member_id_entity2locator_traffic = 0x00000004;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -15730,7 +15730,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             TypeObjectUtils::add_union_case_label(label_seq_entity_count, static_cast<int32_t>(PDP_PACKETS));
             TypeObjectUtils::add_union_case_label(label_seq_entity_count, static_cast<int32_t>(EDP_PACKETS));
             CommonUnionMember common_entity_count;
-            MemberId member_id_entity_count = 0x00000004;
+            MemberId member_id_entity_count = 0x00000005;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -17393,7 +17393,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             UnionCaseLabelSeq label_seq_discovery_time;
             TypeObjectUtils::add_union_case_label(label_seq_discovery_time, static_cast<int32_t>(DISCOVERED_ENTITY));
             CommonUnionMember common_discovery_time;
-            MemberId member_id_discovery_time = 0x00000005;
+            MemberId member_id_discovery_time = 0x00000006;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -18460,7 +18460,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             UnionCaseLabelSeq label_seq_sample_identity_count;
             TypeObjectUtils::add_union_case_label(label_seq_sample_identity_count, static_cast<int32_t>(SAMPLE_DATAS));
             CommonUnionMember common_sample_identity_count;
-            MemberId member_id_sample_identity_count = 0x00000006;
+            MemberId member_id_sample_identity_count = 0x00000007;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -19458,7 +19458,7 @@ void register_eprosima_fastdds_statistics_Data_type_identifier()
             UnionCaseLabelSeq label_seq_physical_data;
             TypeObjectUtils::add_union_case_label(label_seq_physical_data, static_cast<int32_t>(PHYSICAL_DATA));
             CommonUnionMember common_physical_data;
-            MemberId member_id_physical_data = 0x00000007;
+            MemberId member_id_physical_data = 0x00000008;
             if (EK_COMPLETE == type_ids_Data.type_identifier1()._d() || TK_NONE == type_ids_Data.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_Data.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_Data.type_identifier1().seq_sdefn().header().equiv_kind()) ||
