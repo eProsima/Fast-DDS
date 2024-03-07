@@ -31,6 +31,7 @@ file(GLOB RTPS_DOMAIN_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/*.cpp
     )
 
@@ -52,6 +53,13 @@ endif()
 add_executable(
     ${RTPS_DOMAIN_TESTS_EXEC}
     ${RTPS_DOMAIN_TESTS_SOURCE}
+    )
+
+target_compile_definitions(${RTPS_DOMAIN_TESTS_EXEC} PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 
 target_include_directories(
