@@ -164,7 +164,7 @@ public:
 
 private:
 
-    using eprosima::fastrtps::TopicDataType::is_plain;
+    using eprosima::fastdds::dds::TopicDataType::is_plain;
 };
 
 enum TESTCOMMAND : uint32_t
