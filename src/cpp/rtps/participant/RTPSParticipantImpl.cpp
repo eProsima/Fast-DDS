@@ -50,6 +50,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulPersistentWriter.h>
+#include <fastrtps/utils/UnitsParser.hpp>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 
@@ -86,9 +87,11 @@ using SharedMemTransportDescriptor = fastdds::rtps::SharedMemTransportDescriptor
 using BuiltinTransports = fastdds::rtps::BuiltinTransports;
 
 /**
- * Parse the environment variable specifying the transports to instantiate
+ * Parse the environment variable specifying the transports to instantiate and optional configuration options
+ * if the transport selected is LARGE_DATA.
  */
-static BuiltinTransports get_builtin_transports_from_env_var()
+static void set_builtin_transports_from_env_var(
+        RTPSParticipantAttributes& attr)
 {
     static constexpr const char* env_var_name = "FASTDDS_BUILTIN_TRANSPORTS";
 
@@ -96,21 +99,96 @@ static BuiltinTransports get_builtin_transports_from_env_var()
     std::string env_value;
     if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
     {
-        if (!get_element_enum_value(env_value.c_str(), ret_val,
-                "NONE", BuiltinTransports::NONE,
-                "DEFAULT", BuiltinTransports::DEFAULT,
-                "DEFAULTv6", BuiltinTransports::DEFAULTv6,
-                "SHM", BuiltinTransports::SHM,
-                "UDPv4", BuiltinTransports::UDPv4,
-                "UDPv6", BuiltinTransports::UDPv6,
-                "LARGE_DATA", BuiltinTransports::LARGE_DATA,
-                "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
+        std::regex COMMON_REGEX(R"((\w+))");
+        std::regex OPTIONS_REGEX(
+            R"((\w+)\?(((max_msg_size|sockets_size)=(\d+)(\w*)&?)|(non_blocking=(\w+)&?)|(tcp_negotiation_timeout=(\d+)&?)){0,4})");
+        std::smatch mr;
+
+        if (std::regex_match(env_value, COMMON_REGEX, std::regex_constants::match_not_null))
+        {
+            // Only transport mode is specified
+            if (!get_element_enum_value(env_value.c_str(), ret_val,
+                    "NONE", BuiltinTransports::NONE,
+                    "DEFAULT", BuiltinTransports::DEFAULT,
+                    "DEFAULTv6", BuiltinTransports::DEFAULTv6,
+                    "SHM", BuiltinTransports::SHM,
+                    "UDPv4", BuiltinTransports::UDPv4,
+                    "UDPv6", BuiltinTransports::UDPv6,
+                    "LARGE_DATA", BuiltinTransports::LARGE_DATA,
+                    "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                        env_var_name << "'. Leaving as DEFAULT");
+            }
+        }
+        else if (std::regex_match(env_value, mr, OPTIONS_REGEX, std::regex_constants::match_not_null))
+        {
+            // Transport mode AND options are specified
+            std::regex msg_size_regex(R"((max_msg_size)=(\d+)(\w*))");
+            std::regex sockets_size_regex(R"((sockets_size)=(\d+)(\w*))");
+            std::regex non_blocking_regex(R"((non_blocking)=(true|false))");
+            std::regex tcp_timeout_regex(R"((tcp_negotiation_timeout)=(\d+))");
+
+            fastdds::rtps::BuiltinTransportsOptions options;
+
+            try
+            {
+                if (!get_element_enum_value(mr[1].str().c_str(), ret_val,
+                        "NONE", BuiltinTransports::NONE,
+                        "DEFAULT", BuiltinTransports::DEFAULT,
+                        "DEFAULTv6", BuiltinTransports::DEFAULTv6,
+                        "SHM", BuiltinTransports::SHM,
+                        "UDPv4", BuiltinTransports::UDPv4,
+                        "UDPv6", BuiltinTransports::UDPv6,
+                        "LARGE_DATA", BuiltinTransports::LARGE_DATA,
+                        "LARGE_DATAv6", BuiltinTransports::LARGE_DATAv6))
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
+                            env_var_name << "'. Leaving as DEFAULT");
+                }
+                // Max_msg_size parser
+                if (std::regex_search(env_value, mr, msg_size_regex, std::regex_constants::match_not_null))
+                {
+                    std::string value = mr[2];
+                    std::string unit = (mr[3] == "") ? "B" : mr[3].str();
+                    options.maxMessageSize = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
+                }
+                // Sockets_size parser
+                if (std::regex_search(env_value, mr, sockets_size_regex, std::regex_constants::match_not_null))
+                {
+                    std::string value = mr[2];
+                    std::string unit = (mr[3] == "") ? "B" : mr[3].str();
+                    options.sockets_buffer_size = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
+                }
+                // Non-blocking-send parser
+                if (std::regex_search(env_value, mr, non_blocking_regex, std::regex_constants::match_not_null))
+                {
+                    options.non_blocking_send = mr[2] == "true";
+                }
+                // TCP_negotiation_timeout parser
+                if (std::regex_search(env_value, mr, tcp_timeout_regex, std::regex_constants::match_not_null))
+                {
+                    options.tcp_negotiation_timeout = static_cast<uint32_t>(std::stoul(mr[2]));
+                }
+                attr.setup_transports(ret_val, options);
+                return;
+            }
+            catch (std::exception& e)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                        "Exception parsing environment variable: " << e.what() <<
+                        " Leaving LARGE_DATA with default options.");
+                attr.setup_transports(ret_val);
+                return;
+            }
+        }
+        else
         {
             EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Wrong value '" << env_value << "' for environment variable '" <<
                     env_var_name << "'. Leaving as DEFAULT");
         }
     }
-    return ret_val;
+    attr.setup_transports(ret_val);
 }
 
 static EntityId_t TrustedWriter(
@@ -201,7 +279,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // Setup builtin transports
     if (m_att.useBuiltinTransports)
     {
-        m_att.setup_transports(get_builtin_transports_from_env_var());
+        set_builtin_transports_from_env_var(m_att);
     }
 
     // BACKUP servers guid is its persistence one
@@ -240,7 +318,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // User defined transports
     for (const auto& transportDescriptor : m_att.userTransports)
     {
-        if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties))
+        if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties,
+                m_att.max_msg_size_no_frag))
         {
             has_shm_transport_ |=
                     (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);

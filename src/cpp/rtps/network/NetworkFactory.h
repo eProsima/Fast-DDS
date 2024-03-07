@@ -67,10 +67,13 @@ public:
      *
      * @param descriptor Structure that defines all initial configuration for a given transport.
      * @param properties Optional policy to specify additional parameters for the created transport.
+     * @param max_msg_size_no_frag Optional parameter that will allow to skip 65500 KB (s_maximumMessageSize) maxMessageSize limit.
+     * during the transport initialization.
      */
     bool RegisterTransport(
             const fastdds::rtps::TransportDescriptorInterface* descriptor,
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr);
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const uint32_t& max_msg_size_no_frag = 0);
 
     /**
      * Walk over the list of transports, opening every possible channel that can send through

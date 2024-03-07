@@ -487,12 +487,15 @@ public:
     }
 
     /**
-     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios.
+     * Provides a way of easily configuring transport related configuration on certain pre-defined scenarios with
+     * certain options.
      *
      * @param transports Defines the transport configuration scenario to setup.
+     * @param options Defines the options to be used in the transport configuration.
      */
     RTPS_DllAPI void setup_transports(
-            fastdds::rtps::BuiltinTransports transports);
+            fastdds::rtps::BuiltinTransports transports,
+            const fastdds::rtps::BuiltinTransportsOptions& options = fastdds::rtps::BuiltinTransportsOptions());
 
     /**
      * Default list of Unicast Locators to be used for any Endpoint defined inside this RTPSParticipant in the case
@@ -599,6 +602,12 @@ public:
     //! Thread settings for the security log thread
     fastdds::rtps::ThreadSettings security_log_thread;
 #endif // if HAVE_SECURITY
+
+    /*! Maximum message size used to avoid fragmentation, set ONLY in LARGE_DATA. If this value is
+     * not zero, the network factory will allow the initialization of UDP transports with maxMessageSize
+     * higher than 65500K.
+     */
+    uint32_t max_msg_size_no_frag = 0;
 
 private:
 

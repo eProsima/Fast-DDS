@@ -616,6 +616,8 @@ TEST_F(XMLParserTests, getXMLTransports)
  * 1. Correct parsing of all valid values of BuiltinTransport.
  * 2. Check a wrong definition of <builtinTransports>.
  * 3. Check an empty definition of <builtinTransports>.
+ * 4. Correct parsing arguments of LARGE_DATA.
+ * 4.a-4.d. Check all possible combinations of arguments for LARGE_DATA.
  */
 TEST_F(XMLParserTests, getXMLbuiltinTransports)
 {
@@ -632,7 +634,7 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
     constexpr size_t xml_len {500};
     char xml[xml_len];
 
-    // Valid XML
+    // 1. Valid XML with all possible builtin transports
     std::vector<std::string> bt_list;
     bt_list.push_back("NONE");
     bt_list.push_back("DEFAULT");
@@ -651,17 +653,121 @@ TEST_F(XMLParserTests, getXMLbuiltinTransports)
         ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident));
     }
 
-    // Wrong ID
+    // 2. Wrong Value
     snprintf(xml, xml_len, xml_p, "WrongBuiltinTransport");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident));
 
-    // Missing data
+    // 3. Missing data
     snprintf(xml, xml_len, xml_p, "");
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
     ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident));
+
+    // 4. LARGE_DATA with arguments
+    const char* xml_arguments =
+            "\
+            <builtinTransports%s>LARGE_DATA</builtinTransports>\
+            ";
+    eprosima::fastdds::rtps::BuiltinTransportsOptions bt_opts;
+    eprosima::fastdds::rtps::BuiltinTransportsOptions bt_opts_check;
+
+    // 4.a. Only max_msg_size
+    std::string arguments = " max_msg_size=\"50KIB\"";
+    bt_opts_check.maxMessageSize = 50 * 1024;
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.b. Only sockets_buffers_size
+    arguments = " sockets_size=\"50KB\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check.sockets_buffer_size = 50000;
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.c. Only non_blocking_send
+    arguments = " non_blocking=\"true\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check.non_blocking_send = true;
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.d. Only tcp_negotiation_timeout
+    arguments = " tcp_negotiation_timeout=\"50\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check.tcp_negotiation_timeout = 50;
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.e. All options
+    arguments = " max_msg_size=\"1MB\" non_blocking=\"true\" sockets_size=\"1MB\" tcp_negotiation_timeout=\"50\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check.maxMessageSize = 1000000;
+    bt_opts_check.sockets_buffer_size = 1000000;
+    bt_opts_check.non_blocking_send = true;
+    bt_opts_check.tcp_negotiation_timeout = 50;
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.f. Wrong units for argument defaults in LARGE_DATA with default config options
+    arguments = " max_msg_size=\"50TB\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.g. Exceed maximum value for argument defaults in LARGE_DATA with default config options
+    arguments = " sockets_size=\"5000000000\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.h. Wrong value for argument defaults in LARGE_DATA with default config options
+    arguments = " non_blocking=\"treu\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
+
+    // 4.i. Wrong value for argument defaults in LARGE_DATA with default config options
+    arguments = " tcp_negotiation_timeout=\"5000000000\"";
+    bt_opts = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    bt_opts_check = eprosima::fastdds::rtps::BuiltinTransportsOptions();
+    snprintf(xml, xml_len, xml_arguments, arguments.c_str());
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    ASSERT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::getXMLBuiltinTransports_wrapper(titleElement, &bt, ident, &bt_opts));
+    ASSERT_EQ(bt_opts, bt_opts_check);
 
     // Clean up
     xmlparser::XMLProfileManager::DeleteInstance();

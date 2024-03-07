@@ -742,6 +742,14 @@ public:
         return *this;
     }
 
+    PubSubReader& setup_transports(
+            eprosima::fastdds::rtps::BuiltinTransports transports,
+            const eprosima::fastdds::rtps::BuiltinTransportsOptions& options)
+    {
+        participant_attr_.rtps.setup_transports(transports, options);
+        return *this;
+    }
+
     PubSubReader& setup_large_data_tcp(
             bool v6 = false,
             const uint16_t& port = 0,

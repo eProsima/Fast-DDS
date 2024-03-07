@@ -21,10 +21,83 @@
 
 #include <ostream>
 #include <cstdint>
+#include <fastdds/rtps/transport/TransportInterface.h>
+
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
+
+
+/**
+ * @brief Options for configuring the built-in transports when using LARGE_DATA mode.
+ */
+struct RTPS_DllAPI BuiltinTransportsOptions
+{
+    //! Whether to use non-blocking send operation.
+    bool non_blocking_send = false;
+
+    /**
+     * @brief The maximum message size to be used.
+     *
+     * It specifies the maximum message size that will be used by the Network Factory
+     * to register every transport.
+     *
+     */
+    uint32_t maxMessageSize = fastdds::rtps::s_maximumMessageSize;
+
+    /**
+     * @brief The value used to configure the send and receive fuffer sizes of the sockets.
+     *
+     * It specifies the value that will be used to configure the send and receive buffer sizes of the sockets
+     * used by the transports created with the builtin transports.
+     * Zero value indicates to use default system buffer size.
+     *
+     */
+    uint32_t sockets_buffer_size = 0;
+
+    /**
+     * @brief Time to wait for logical port negotiation (ms).
+     *
+     * It specifies the value that will be used to configure the honomym attribute of the TCPTransportDescriptor used.
+     * It only takes effect if the LARGE_DATA mode is used.
+     * Zero value means no waiting (default).
+     *
+     */
+    uint32_t tcp_negotiation_timeout = 0;
+};
+
+/**
+ * @brief Equal to operator.
+ *
+ * @param bto1 Left hand side BuiltinTransportsOptions being compared.
+ * @param bto2 Right hand side BuiltinTransportsOptions being compared.
+ * @return true if \c bto1 is equal to  \c bto2.
+ * @return false otherwise.
+ */
+inline bool operator ==(
+        const BuiltinTransportsOptions& bto1,
+        const BuiltinTransportsOptions& bto2)
+{
+    if (bto1.non_blocking_send != bto2.non_blocking_send)
+    {
+        return false;
+    }
+    if (bto1.maxMessageSize != bto2.maxMessageSize)
+    {
+        return false;
+    }
+    if (bto1.sockets_buffer_size != bto2.sockets_buffer_size)
+    {
+        return false;
+    }
+    if (bto1.tcp_negotiation_timeout != bto2.tcp_negotiation_timeout)
+    {
+        return false;
+    }
+    return true;
+}
 
 /**
  * Defines the kind of transports automatically instantiated upon the creation of a participant

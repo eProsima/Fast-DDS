@@ -435,7 +435,8 @@ bool TCPTransportInterface::DoInputLocatorsMatch(
 }
 
 bool TCPTransportInterface::init(
-        const fastrtps::rtps::PropertyPolicy*)
+        const fastrtps::rtps::PropertyPolicy*,
+        const uint32_t& max_msg_size_no_frag)
 {
     if (!apply_tls_config())
     {
@@ -485,9 +486,12 @@ bool TCPTransportInterface::init(
         }
     }
 
-    if (configuration()->maxMessageSize > s_maximumMessageSize)
+    uint32_t maximumMessageSize = max_msg_size_no_frag == 0 ? s_maximumMessageSize : max_msg_size_no_frag;
+
+    if (configuration()->maxMessageSize > maximumMessageSize)
     {
-        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT, "maxMessageSize cannot be greater than 65000");
+        EPROSIMA_LOG_ERROR(RTCP_MSG_OUT,
+                "maxMessageSize cannot be greater than " << std::to_string(maximumMessageSize));
         return false;
     }
 

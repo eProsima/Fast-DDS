@@ -30,12 +30,13 @@ namespace dds {
 const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
 
 void DomainParticipantQos::setup_transports(
-        rtps::BuiltinTransports transports)
+        rtps::BuiltinTransports transports,
+        const rtps::BuiltinTransportsOptions& options)
 {
     fastrtps::rtps::RTPSParticipantAttributes attr;
     utils::set_attributes_from_qos(attr, *this);
 
-    attr.setup_transports(transports);
+    attr.setup_transports(transports, options);
 
     utils::set_qos_from_attributes(*this, attr);
 }

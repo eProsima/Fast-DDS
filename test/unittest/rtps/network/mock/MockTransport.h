@@ -59,7 +59,8 @@ public:
     ~MockTransport();
 
     bool init(
-            const PropertyPolicy* properties = nullptr) override;
+            const PropertyPolicy* properties = nullptr,
+            const uint32_t& max_msg_size_no_frag = 0) override;
 
     //API implementation
     bool IsInputChannelOpen(

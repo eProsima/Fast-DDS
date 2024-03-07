@@ -34,6 +34,7 @@
 #include <rtps/xmlparser/XMLParserUtils.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/string_utilities.hpp>
+#include <fastrtps/utils/UnitsParser.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -4596,7 +4597,7 @@ XMLP_ret XMLParser::getXMLThreadSettingsWithPort(
         }
     }
 
-    // Set ret to NOK is port attribute was not present
+    // Set ret to NOK if port attribute was not present
     if (ret == XMLP_ret::XML_OK && !port_found)
     {
         ret = XMLP_ret::XML_NOK;
@@ -4715,30 +4716,174 @@ XMLP_ret XMLParser::getXMLEntityFactoryQos(
 XMLP_ret XMLParser::getXMLBuiltinTransports(
         tinyxml2::XMLElement* elem,
         eprosima::fastdds::rtps::BuiltinTransports* bt,
+        eprosima::fastdds::rtps::BuiltinTransportsOptions* bt_opts,
         uint8_t /*ident*/)
 {
     /*
-        <xs:simpleType name="builtinTransports">
+        <xs:simpleType name="builtinTransportKind">
             <xs:restriction base="xs:string">
-                <xs:enumeration value="NONE"/>
-                <xs:enumeration value="DEFAULT"/>
-                <xs:enumeration value="DEFAULTv6"/>
-                <xs:enumeration value="SHM"/>
-                <xs:enumeration value="UDPv4"/>
-                <xs:enumeration value="UDPv6"/>
-                <xs:enumeration value="LARGE_DATA"/>
-                <xs:enumeration value="LARGE_DATAv6"/>
+                <xs:enumeration value="NONE" />
+                <xs:enumeration value="DEFAULT" />
+                <xs:enumeration value="DEFAULTv6" />
+                <xs:enumeration value="SHM" />
+                <xs:enumeration value="UDPv4" />
+                <xs:enumeration value="UDPv6" />
+                <xs:enumeration value="LARGE_DATA" />
+                <xs:enumeration value="LARGE_DATAv6" />
             </xs:restriction>
         </xs:simpleType>
+
+        <xs:complexType name="builtinTransportsType">
+            <xs:simpleContent>
+                <xs:extension base="builtinTransportKind">
+                    <xs:attribute name="max_msg_size" type="string" use="optional"/>
+                    <xs:attribute name="sockets_size" type="string" use="optional"/>
+                    <xs:attribute name="non_blocking" type="bool" use="optional"/>
+                    <xs:attribute name="tcp_negotiation_timeout" type="uint32" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
      */
-    std::string text = get_element_text(elem);
-    if (text.empty())
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    for (const tinyxml2::XMLAttribute* attrib = elem->FirstAttribute(); attrib != nullptr; attrib = attrib->Next())
+    {
+        if (strcmp(attrib->Name(), MAX_MSG_SIZE_LARGE_DATA) == 0)
+        {
+            // max_msg_size - stringType
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (attrib->Value()[0] == '-')
+                {
+                    throw std::invalid_argument("Negative value detected.");
+                }
+                std::regex msg_size_regex(R"((\d+)(\w*))");
+                std::smatch mr;
+                if (std::regex_search(temp, mr, msg_size_regex, std::regex_constants::match_not_null))
+                {
+                    std::string value = mr[1];
+                    std::string unit = (mr[2] == "") ? "B" : mr[2].str();
+                    bt_opts->maxMessageSize = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
+                }
+            }
+            catch (std::invalid_argument& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for max_msg_size attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(attrib->Name(), SOCKETS_SIZE_LARGE_DATA) == 0)
+        {
+            // sockets_size - stringType
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (attrib->Value()[0] == '-')
+                {
+                    throw std::invalid_argument("Negative value detected.");
+                }
+                std::regex sockets_size_regex(R"((\d+)(\w*))");
+                std::smatch mr;
+                if (std::regex_search(temp, mr, sockets_size_regex, std::regex_constants::match_not_null))
+                {
+                    std::string value = mr[1];
+                    std::string unit = (mr[2] == "") ? "B" : mr[2].str();
+                    bt_opts->sockets_buffer_size = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
+                }
+            }
+            catch (std::invalid_argument& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for sockets_size attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(attrib->Name(), NON_BLOCKING_LARGE_DATA) == 0)
+        {
+            // non_blocking - stringType
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (temp != "true" && temp != "false")
+                {
+                    throw std::invalid_argument("Only \"true\" or \"false\" values allowed.");
+                }
+                bt_opts->non_blocking_send = temp == "true" ? true : false;
+            }
+            catch (std::invalid_argument& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for non_blocking attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else if (strcmp(attrib->Name(), TCP_NEGOTIATION_TIMEOUT) == 0)
+        {
+            // tcp_negotiation_timeout - stringType
+            try
+            {
+                std::string temp = attrib->Value();
+                temp.erase(std::remove_if(temp.begin(), temp.end(), [](unsigned char c)
+                        {
+                            return std::isspace(c);
+                        }), temp.end());
+                if (attrib->Value()[0] == '-')
+                {
+                    throw std::invalid_argument("Negative value detected.");
+                }
+                uint64_t value = std::stoull(temp);
+                if (value > std::numeric_limits<std::uint32_t>::max())
+                {
+                    throw std::out_of_range("Value for timeout out of range. Max uint32_t.");
+                }
+                bt_opts->tcp_negotiation_timeout = static_cast<uint32_t>(std::stoul(temp));
+            }
+            catch (std::exception& except)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER,
+                        "Found wrong value " << attrib->Value() << " for tcp_negotiation_timeout attribute. " <<
+                        except.what());
+                ret = XMLP_ret::XML_ERROR;
+                break;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Found wrong attribute " << attrib->Name() << " in 'builtin_transports");
+            ret = XMLP_ret::XML_ERROR;
+            break;
+        }
+    }
+
+    std::string mode = get_element_text(elem);
+
+    if (mode.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
         return XMLP_ret::XML_ERROR;
     }
 
-    if (!get_element_enum_value(text.c_str(), *bt,
+    if (!get_element_enum_value(mode.c_str(), *bt,
             NONE, eprosima::fastdds::rtps::BuiltinTransports::NONE,
             DEFAULT_C, eprosima::fastdds::rtps::BuiltinTransports::DEFAULT,
             DEFAULTv6, eprosima::fastdds::rtps::BuiltinTransports::DEFAULTv6,
@@ -4749,10 +4894,10 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
             LARGE_DATAv6, eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATAv6))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
-        return XMLP_ret::XML_ERROR;
+        ret = XMLP_ret::XML_ERROR;
     }
 
-    return XMLP_ret::XML_OK;
+    return ret;
 }
 
 }  // namespace xmlparser

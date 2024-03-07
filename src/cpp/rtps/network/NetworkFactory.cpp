@@ -118,7 +118,8 @@ bool NetworkFactory::BuildReceiverResources(
 
 bool NetworkFactory::RegisterTransport(
         const TransportDescriptorInterface* descriptor,
-        const fastrtps::rtps::PropertyPolicy* properties)
+        const fastrtps::rtps::PropertyPolicy* properties,
+        const uint32_t& max_msg_size_no_frag)
 {
     bool wasRegistered = false;
 
@@ -131,7 +132,7 @@ bool NetworkFactory::RegisterTransport(
         int32_t kind = transport->kind();
         bool is_localhost_allowed = transport->is_localhost_allowed();
 
-        if (transport->init(properties))
+        if (transport->init(properties, max_msg_size_no_frag))
         {
             minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
             mRegisteredTransports.emplace_back(std::move(transport));

@@ -51,7 +51,8 @@ public:
     const SharedMemTransportDescriptor* configuration() const;
 
     bool init(
-            const fastrtps::rtps::PropertyPolicy* properties = nullptr) override;
+            const fastrtps::rtps::PropertyPolicy* properties = nullptr,
+            const uint32_t& max_msg_size_no_frag = 0) override;
 
     ~SharedMemTransport() override;
 

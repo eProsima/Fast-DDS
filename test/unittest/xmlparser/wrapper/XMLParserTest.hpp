@@ -156,9 +156,10 @@ public:
     static XMLP_ret getXMLBuiltinTransports_wrapper(
             tinyxml2::XMLElement* elem,
             eprosima::fastdds::rtps::BuiltinTransports* bt,
-            uint8_t ident)
+            uint8_t ident,
+            eprosima::fastdds::rtps::BuiltinTransportsOptions* bt_opts = nullptr)
     {
-        return getXMLBuiltinTransports(elem, bt, ident);
+        return getXMLBuiltinTransports(elem, bt, bt_opts, ident);
     }
 
     static XMLP_ret getXMLguidPrefix_wrapper(

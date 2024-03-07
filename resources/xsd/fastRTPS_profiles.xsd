@@ -129,7 +129,7 @@
             ├ userTransports                       [0~1],
             |   └ transport_id                     [1~*] [string],
             ├ useBuiltinTransports                 [bool],
-            ├ builtinTransports                    [0~1][string]
+            ├ builtinTransports                    [0~1],
             ├ propertiesPolicy                     [0~1],
             ├ allocation                           [0~1],
             ├ userData                             [0~1],
@@ -164,20 +164,7 @@
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="useBuiltinTransports" type="boolean" minOccurs="0" maxOccurs="1"/>
-                        <xs:element name="builtinTransports" minOccurs="0" maxOccurs="1">
-                            <xs:simpleType>
-                                <xs:restriction base="xs:string">
-                                    <xs:enumeration value="NONE"/>
-                                    <xs:enumeration value="DEFAULT"/>
-                                    <xs:enumeration value="DEFAULTv6"/>
-                                    <xs:enumeration value="SHM"/>
-                                    <xs:enumeration value="UDPv4"/>
-                                    <xs:enumeration value="UDPv6"/>
-                                    <xs:enumeration value="LARGE_DATA"/>
-                                    <xs:enumeration value="LARGE_DATAv6"/>
-                                </xs:restriction>
-                            </xs:simpleType>
-                        </xs:element>
+                        <xs:element name="builtinTransports" type="builtinTransportsType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="allocation" type="rtpsParticipantAllocationAttributesType"  minOccurs="0" maxOccurs="1"/>
                         <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -193,6 +180,25 @@
         </xs:all>
         <xs:attribute name="profile_name" type="string" use="required"/>
         <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
+    <!--Builtin Transports Enum Type:
+        | ╠ att. max_msg_size             [string],
+        | ╠ att. sockets_size             [string],
+        | ╠ att. non_blocking             [string],
+        | ╚ att. tcp_negotiation_timeout  [string]
+        |
+        └ (raw_data)                      [string]-->
+
+    <xs:complexType name="builtinTransportsType">
+        <xs:simpleContent>
+            <xs:extension base="builtinTransportKind">
+                <xs:attribute name="max_msg_size" type="string" use="optional"/>
+                <xs:attribute name="sockets_size" type="string" use="optional"/>
+                <xs:attribute name="non_blocking" type="boolean" use="optional"/>
+                <xs:attribute name="tcp_negotiation_timeout" type="uint32" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
     <!--Data writer / publisher:
@@ -1795,6 +1801,22 @@
             <xs:element name="reception_thread" type="threadSettingsWithPortType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
+
+
+    <!--Builtin Transport Kind list Type:
+        └ builtinTransport  [1]-->
+    <xs:simpleType name="builtinTransportKind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE" />
+            <xs:enumeration value="DEFAULT" />
+            <xs:enumeration value="DEFAULTv6" />
+            <xs:enumeration value="SHM" />
+            <xs:enumeration value="UDPv4" />
+            <xs:enumeration value="UDPv6" />
+            <xs:enumeration value="LARGE_DATA" />
+            <xs:enumeration value="LARGE_DATAv6" />
+        </xs:restriction>
+    </xs:simpleType>
 
 
     <!--| PRIMITIVE TYPES DEFINITION |-->
