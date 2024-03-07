@@ -724,11 +724,11 @@ TEST(DataWriterTests, InvalidQos)
     qos.history().depth = 0;
     EXPECT_EQ(inconsistent_code, datawriter->set_qos(qos)); // KEEP LAST 0 is inconsistent
     qos.history().depth = 2;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos)); // KEEP LAST 2 is OK
+    EXPECT_EQ(RETCODE_OK, datawriter->set_qos(qos)); // KEEP LAST 2 is OK
     // KEEP LAST 2000 but max_samples_per_instance default (400) is inconsistent but right now it only shows a warning
     // This test will fail whenever we enforce the consistency between depth and max_samples_per_instance.
     qos.history().depth = 2000;
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, datawriter->set_qos(qos));
+    EXPECT_EQ(RETCODE_OK, datawriter->set_qos(qos));
 
     ASSERT_TRUE(publisher->delete_datawriter(datawriter) == RETCODE_OK);
     ASSERT_TRUE(participant->delete_topic(topic) == RETCODE_OK);
@@ -2122,7 +2122,7 @@ TEST(DataWriterTests, history_depth_max_samples_per_instance_warning)
 
     /* Check that the datawriter can send data */
     FooType data;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, datawriter_1->write(&data, HANDLE_NIL));
+    ASSERT_EQ(RETCODE_OK, datawriter_1->write(&data, HANDLE_NIL));
 
     /* Check that a correctly initialized writer does not produce any warning */
     qos.history().depth = 10;

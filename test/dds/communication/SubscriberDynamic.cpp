@@ -57,7 +57,7 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info,
+            ParticipantDiscoveryInfo&& info,
             bool& /*should_be_ignored*/) override
     {
         if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)

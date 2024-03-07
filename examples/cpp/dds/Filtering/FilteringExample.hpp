@@ -78,7 +78,7 @@ public:
     eProsima_user_DllExport FilteringExample(
             const FilteringExample& x)
     {
-        m_sampleNumber = x.m_sampleNumber;
+                    m_sampleNumber = x.m_sampleNumber;
 
     }
 
@@ -100,7 +100,7 @@ public:
             const FilteringExample& x)
     {
 
-        m_sampleNumber = x.m_sampleNumber;
+                    m_sampleNumber = x.m_sampleNumber;
 
         return *this;
     }
@@ -164,6 +164,8 @@ public:
     {
         return m_sampleNumber;
     }
+
+
 
 private:
 

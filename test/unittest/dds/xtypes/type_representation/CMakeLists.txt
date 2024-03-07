@@ -28,7 +28,9 @@ target_include_directories(TypeObjectUtilsTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(TypeObjectUtilsTests fastrtps fastcdr
+target_link_libraries(TypeObjectUtilsTests
+    fastcdr
+    fastdds
     GTest::gtest
     ${CMAKE_DL_LIBS})
 gtest_discover_tests(TypeObjectUtilsTests SOURCES ${TYPEOBJECTUTILSTESTS_SOURCE})
@@ -42,7 +44,9 @@ target_include_directories(TypeObjectRegistryTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(TypeObjectRegistryTests fastrtps fastcdr
+target_link_libraries(TypeObjectRegistryTests
+    fastcdr
+    fastdds
     GTest::gtest
     ${CMAKE_DL_LIBS})
     gtest_discover_tests(TypeObjectRegistryTests SOURCES ${TYPEOBJECTREGISTRYTESTS_SOURCE})

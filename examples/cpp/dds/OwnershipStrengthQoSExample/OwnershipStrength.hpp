@@ -80,11 +80,11 @@ public:
     eProsima_user_DllExport ExampleMessage(
             const ExampleMessage& x)
     {
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
-        m_ownershipStrength = x.m_ownershipStrength;
+                    m_ownershipStrength = x.m_ownershipStrength;
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
     }
 
@@ -108,11 +108,11 @@ public:
             const ExampleMessage& x)
     {
 
-        m_index = x.m_index;
+                    m_index = x.m_index;
 
-        m_ownershipStrength = x.m_ownershipStrength;
+                    m_ownershipStrength = x.m_ownershipStrength;
 
-        m_message = x.m_message;
+                    m_message = x.m_message;
 
         return *this;
     }
@@ -139,8 +139,8 @@ public:
             const ExampleMessage& x) const
     {
         return (m_index == x.m_index &&
-               m_ownershipStrength == x.m_ownershipStrength &&
-               m_message == x.m_message);
+           m_ownershipStrength == x.m_ownershipStrength &&
+           m_message == x.m_message);
     }
 
     /*!
@@ -181,6 +181,7 @@ public:
         return m_index;
     }
 
+
     /*!
      * @brief This function sets a value in member ownershipStrength
      * @param _ownershipStrength New value for member ownershipStrength
@@ -208,6 +209,7 @@ public:
     {
         return m_ownershipStrength;
     }
+
 
     /*!
      * @brief This function copies the value in member message
@@ -246,6 +248,8 @@ public:
     {
         return m_message;
     }
+
+
 
 private:
 

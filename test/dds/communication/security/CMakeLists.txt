@@ -18,20 +18,17 @@ add_definitions(
     -DBOOST_ASIO_STANDALONE
     -DASIO_STANDALONE
     )
-    
+
 include_directories(${Asio_INCLUDE_DIR})
 
 ###############################################################################
 # Binaries
 ###############################################################################
 set(COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorld.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldv1.cxx
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldTypeObject.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSized.cxx
-    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedv1.cxx
+    ${PROJECT_SOURCE_DIR}/test/blackbox/types/HelloWorldTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/blackbox/types/FixedSizedTypeObjectSupport.cxx
     )
 
 set(DDS_PUBLISHER_SOURCE ${COMMON_SOURCE}

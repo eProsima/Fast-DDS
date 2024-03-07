@@ -20,10 +20,6 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-
-#include "idl/TypesTypeObject.h"
-#include "idl/WideEnumTypeObject.h"
 
 using namespace eprosima::fastrtps::types;
 

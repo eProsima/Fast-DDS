@@ -5209,13 +5209,13 @@ void register_MapStruct_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_2 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int32_t_2->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int32_t_2 = EK_COMPLETE;
                 }
@@ -5458,13 +5458,13 @@ void register_MapStructEqual_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_2 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int32_t_2->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int32_t_2 = EK_COMPLETE;
                 }
@@ -5707,13 +5707,13 @@ void register_MapBadKeyStruct_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_uint8_t_int32_t_2 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_uint8_t_int32_t_2->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_uint8_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_uint8_t_int32_t_2->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_uint8_t_int32_t_2 = EK_COMPLETE;
                 }
@@ -5956,13 +5956,13 @@ void register_MapBadElemStruct_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int64_t_2 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int64_t_2->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int64_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int64_t_2->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int64_t_2 = EK_COMPLETE;
                 }
@@ -6205,13 +6205,13 @@ void register_MapBoundsStruct_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_4 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int32_t_4->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_4->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_4->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int32_t_4 = EK_COMPLETE;
                 }
@@ -6460,13 +6460,13 @@ void register_MapMapStruct_type_identifier()
                         return;
                     }
                     EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_2 = EK_BOTH;
-                    if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() ||
+                    if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int32_t_2->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->_d()) ||
                             (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->seq_sdefn().header().equiv_kind()) ||
                             (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->seq_ldefn().header().equiv_kind()) ||
                             (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->array_sdefn().header().equiv_kind()) ||
                             (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().header().equiv_kind()))
+                            (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_sdefn().header().equiv_kind())) ||
+                            (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_2->map_ldefn().header().equiv_kind())))
                     {
                         equiv_kind_anonymous_map_int32_t_int32_t_2 = EK_COMPLETE;
                     }
@@ -6607,13 +6607,13 @@ void register_MapMapStruct_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_2_2 = EK_COMPLETE;
                 }
@@ -6862,13 +6862,13 @@ void register_MapMapBoundsStruct_type_identifier()
                         return;
                     }
                     EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_3 = EK_BOTH;
-                    if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->_d() ||
+                    if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int32_t_3->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->_d()) ||
                             (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->seq_sdefn().header().equiv_kind()) ||
                             (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->seq_ldefn().header().equiv_kind()) ||
                             (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->array_sdefn().header().equiv_kind()) ||
                             (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->array_ldefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->map_sdefn().header().equiv_kind()) ||
-                            (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->map_ldefn().header().equiv_kind()))
+                            (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->map_sdefn().header().equiv_kind())) ||
+                            (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_3->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_3->map_ldefn().header().equiv_kind())))
                     {
                         equiv_kind_anonymous_map_int32_t_int32_t_3 = EK_COMPLETE;
                     }
@@ -7009,13 +7009,13 @@ void register_MapMapBoundsStruct_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3 = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_anonymous_map_int32_t_int32_t_3_3 = EK_COMPLETE;
                 }
@@ -7190,7 +7190,7 @@ void register_SimpleUnion_type_identifier()
             UnionCaseLabelSeq label_seq_first;
             TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
             CommonUnionMember common_first;
-            MemberId member_id_first = 0x00000000;
+            MemberId member_id_first = 0x00000001;
             if (EK_COMPLETE == type_ids_SimpleUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7258,7 +7258,7 @@ void register_SimpleUnion_type_identifier()
             UnionCaseLabelSeq label_seq_second;
             TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
             CommonUnionMember common_second;
-            MemberId member_id_second = 0x00000001;
+            MemberId member_id_second = 0x00000002;
             if (EK_COMPLETE == type_ids_SimpleUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7389,7 +7389,7 @@ void register_SimpleUnionNames_type_identifier()
             UnionCaseLabelSeq label_seq_first_case;
             TypeObjectUtils::add_union_case_label(label_seq_first_case, static_cast<int32_t>(0));
             CommonUnionMember common_first_case;
-            MemberId member_id_first_case = 0x00000000;
+            MemberId member_id_first_case = 0x00000001;
             if (EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnionNames.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnionNames.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7457,7 +7457,7 @@ void register_SimpleUnionNames_type_identifier()
             UnionCaseLabelSeq label_seq_second_case;
             TypeObjectUtils::add_union_case_label(label_seq_second_case, static_cast<int32_t>(1));
             CommonUnionMember common_second_case;
-            MemberId member_id_second_case = 0x00000001;
+            MemberId member_id_second_case = 0x00000002;
             if (EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnionNames.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnionNames.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7588,7 +7588,7 @@ void register_SimpleTypeUnion_type_identifier()
             UnionCaseLabelSeq label_seq_first;
             TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
             CommonUnionMember common_first;
-            MemberId member_id_first = 0x00000000;
+            MemberId member_id_first = 0x00000001;
             if (EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleTypeUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleTypeUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7656,7 +7656,7 @@ void register_SimpleTypeUnion_type_identifier()
             UnionCaseLabelSeq label_seq_second;
             TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
             CommonUnionMember common_second;
-            MemberId member_id_second = 0x00000001;
+            MemberId member_id_second = 0x00000002;
             if (EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleTypeUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleTypeUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7787,7 +7787,7 @@ void register_SimpleBadUnion_type_identifier()
             UnionCaseLabelSeq label_seq_first;
             TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
             CommonUnionMember common_first;
-            MemberId member_id_first = 0x00000000;
+            MemberId member_id_first = 0x00000001;
             if (EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7855,7 +7855,7 @@ void register_SimpleBadUnion_type_identifier()
             UnionCaseLabelSeq label_seq_second;
             TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(2));
             CommonUnionMember common_second;
-            MemberId member_id_second = 0x00000001;
+            MemberId member_id_second = 0x00000002;
             if (EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -7986,7 +7986,7 @@ void register_SimpleBadDiscUnion_type_identifier()
             UnionCaseLabelSeq label_seq_first;
             TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
             CommonUnionMember common_first;
-            MemberId member_id_first = 0x00000000;
+            MemberId member_id_first = 0x00000001;
             if (EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadDiscUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadDiscUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8054,7 +8054,7 @@ void register_SimpleBadDiscUnion_type_identifier()
             UnionCaseLabelSeq label_seq_second;
             TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
             CommonUnionMember common_second;
-            MemberId member_id_second = 0x00000001;
+            MemberId member_id_second = 0x00000002;
             if (EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadDiscUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadDiscUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8204,7 +8204,7 @@ void register_SimpleUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
                         CommonUnionMember common_first;
-                        MemberId member_id_first = 0x00000000;
+                        MemberId member_id_first = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8272,7 +8272,7 @@ void register_SimpleUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
                         CommonUnionMember common_second;
-                        MemberId member_id_second = 0x00000001;
+                        MemberId member_id_second = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8493,7 +8493,7 @@ void register_SimpleUnionStructEqual_type_identifier()
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
                         CommonUnionMember common_first;
-                        MemberId member_id_first = 0x00000000;
+                        MemberId member_id_first = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8561,7 +8561,7 @@ void register_SimpleUnionStructEqual_type_identifier()
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
                         CommonUnionMember common_second;
-                        MemberId member_id_second = 0x00000001;
+                        MemberId member_id_second = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8782,7 +8782,7 @@ void register_SimpleUnionNamesStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_first_case;
                         TypeObjectUtils::add_union_case_label(label_seq_first_case, static_cast<int32_t>(0));
                         CommonUnionMember common_first_case;
-                        MemberId member_id_first_case = 0x00000000;
+                        MemberId member_id_first_case = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnionNames.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnionNames.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -8850,7 +8850,7 @@ void register_SimpleUnionNamesStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_second_case;
                         TypeObjectUtils::add_union_case_label(label_seq_second_case, static_cast<int32_t>(1));
                         CommonUnionMember common_second_case;
-                        MemberId member_id_second_case = 0x00000001;
+                        MemberId member_id_second_case = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1()._d() || TK_NONE == type_ids_SimpleUnionNames.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleUnionNames.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleUnionNames.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9071,7 +9071,7 @@ void register_SimpleTypeUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
                         CommonUnionMember common_first;
-                        MemberId member_id_first = 0x00000000;
+                        MemberId member_id_first = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleTypeUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleTypeUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9139,7 +9139,7 @@ void register_SimpleTypeUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
                         CommonUnionMember common_second;
-                        MemberId member_id_second = 0x00000001;
+                        MemberId member_id_second = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleTypeUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleTypeUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleTypeUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9360,7 +9360,7 @@ void register_SimpleBadUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
                         CommonUnionMember common_first;
-                        MemberId member_id_first = 0x00000000;
+                        MemberId member_id_first = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9428,7 +9428,7 @@ void register_SimpleBadUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(2));
                         CommonUnionMember common_second;
-                        MemberId member_id_second = 0x00000001;
+                        MemberId member_id_second = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleBadUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9649,7 +9649,7 @@ void register_SimplBadDiscUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(0));
                         CommonUnionMember common_first;
-                        MemberId member_id_first = 0x00000000;
+                        MemberId member_id_first = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadDiscUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadDiscUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -9717,7 +9717,7 @@ void register_SimplBadDiscUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(1));
                         CommonUnionMember common_second;
-                        MemberId member_id_second = 0x00000001;
+                        MemberId member_id_second = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleBadDiscUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleBadDiscUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleBadDiscUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||

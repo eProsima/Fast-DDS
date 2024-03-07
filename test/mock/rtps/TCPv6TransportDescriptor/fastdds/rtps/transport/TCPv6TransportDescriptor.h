@@ -33,7 +33,7 @@ class TCPTransportInterface;
  * - interfaceWhiteList: Lists the allowed interfaces.
  * @ingroup TRANSPORT_MODULE
  */
-typedef struct TCPv6TransportDescriptor : public TCPTransportDescriptor
+struct TCPv6TransportDescriptor : public TCPTransportDescriptor
 {
     virtual ~TCPv6TransportDescriptor()
     {

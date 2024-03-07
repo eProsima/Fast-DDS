@@ -334,7 +334,7 @@ void register_SimpleWideUnion_type_identifier()
             UnionCaseLabelSeq label_seq_first;
             TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(MyEnumWide::A));
             CommonUnionMember common_first;
-            MemberId member_id_first = 0x00000000;
+            MemberId member_id_first = 0x00000001;
             if (EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleWideUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -402,7 +402,7 @@ void register_SimpleWideUnion_type_identifier()
             UnionCaseLabelSeq label_seq_second;
             TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(MyEnumWide::B));
             CommonUnionMember common_second;
-            MemberId member_id_second = 0x00000001;
+            MemberId member_id_second = 0x00000002;
             if (EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleWideUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -470,7 +470,7 @@ void register_SimpleWideUnion_type_identifier()
             UnionCaseLabelSeq label_seq_third;
             TypeObjectUtils::add_union_case_label(label_seq_third, static_cast<int32_t>(MyEnumWide::D));
             CommonUnionMember common_third;
-            MemberId member_id_third = 0x00000002;
+            MemberId member_id_third = 0x00000003;
             if (EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnion.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleWideUnion.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -683,7 +683,7 @@ void register_SimpleWideUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_first;
                         TypeObjectUtils::add_union_case_label(label_seq_first, static_cast<int32_t>(MyEnumWide::A));
                         CommonUnionMember common_first;
-                        MemberId member_id_first = 0x00000000;
+                        MemberId member_id_first = 0x00000001;
                         if (EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleWideUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -751,7 +751,7 @@ void register_SimpleWideUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_second;
                         TypeObjectUtils::add_union_case_label(label_seq_second, static_cast<int32_t>(MyEnumWide::B));
                         CommonUnionMember common_second;
-                        MemberId member_id_second = 0x00000001;
+                        MemberId member_id_second = 0x00000002;
                         if (EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleWideUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -819,7 +819,7 @@ void register_SimpleWideUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_third;
                         TypeObjectUtils::add_union_case_label(label_seq_third, static_cast<int32_t>(MyEnumWide::D));
                         CommonUnionMember common_third;
-                        MemberId member_id_third = 0x00000002;
+                        MemberId member_id_third = 0x00000003;
                         if (EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1()._d() || TK_NONE == type_ids_SimpleWideUnion.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_SimpleWideUnion.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_SimpleWideUnion.type_identifier1().seq_sdefn().header().equiv_kind()) ||

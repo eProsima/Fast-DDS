@@ -710,7 +710,7 @@ TEST_F(DataReaderTests, InvalidQos)
     // return against RETCODE_INMUTABLE_POLICY we are testing that the setting are not considered inconsistent yet.
     // This test will fail whenever we enforce the consistency between depth and max_samples_per_instance.
     qos.history().depth = 2000;
-    EXPECT_EQ(ReturnCode_t::RETCODE_IMMUTABLE_POLICY, data_reader_->set_qos(qos));
+    EXPECT_EQ(RETCODE_IMMUTABLE_POLICY, data_reader_->set_qos(qos));
 
     /* Inmutable QoS */
     const ReturnCode_t inmutable_code = RETCODE_IMMUTABLE_POLICY;

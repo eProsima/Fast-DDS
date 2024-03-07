@@ -33,6 +33,7 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using MockTCPv4Transport  = eprosima::fastdds::rtps::MockTCPv4Transport;
 using SendResourceList = eprosima::fastdds::rtps::SendResourceList;
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
 using TCPv4TransportDescriptor = eprosima::fastdds::rtps::TCPv4TransportDescriptor;

@@ -134,14 +134,6 @@ bool EDP::newLocalReaderProxyData(
                 rpd->topicName(att.getTopicName());
                 rpd->typeName(att.getTopicDataType());
                 rpd->topicKind(att.getTopicKind());
-                if (att.type_id.m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
-                {
-                    rpd->type_id(att.type_id);
-                }
-                if (att.type.m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
-                {
-                    rpd->type(att.type);
-                }
                 if (att.type_information.assigned())
                 {
                     rpd->type_information(att.type_information);
@@ -262,14 +254,6 @@ bool EDP::newLocalWriterProxyData(
                 wpd->topicName(att.getTopicName());
                 wpd->typeName(att.getTopicDataType());
                 wpd->topicKind(att.getTopicKind());
-                if (att.type_id.m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
-                {
-                    wpd->type_id(att.type_id);
-                }
-                if (att.type.m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
-                {
-                    wpd->type(att.type);
-                }
                 if (att.type_information.assigned())
                 {
                     wpd->type_information(att.type_information);
