@@ -338,7 +338,7 @@ ReturnCode_t TypeObjectRegistry::get_type_information(
     return ret_code;
 }
 
-ReturnCode_t TypeObjectRegistry::get_direct_hash_type_dependencies(
+ReturnCode_t TypeObjectRegistry::get_type_dependencies(
         const TypeIdentifierSeq& type_identifiers,
         std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
 {
@@ -349,59 +349,7 @@ ReturnCode_t TypeObjectRegistry::get_direct_hash_type_dependencies(
             return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
     }
-    return get_type_dependencies(type_identifiers, type_dependencies);
-}
-
-ReturnCode_t TypeObjectRegistry::get_type_dependencies(
-        const TypeIdentifierSeq& type_identifiers,
-        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
-{
-    ReturnCode_t ret_code = eprosima::fastdds::dds::RETCODE_OK;
-    for (const TypeIdentifier& type_id : type_identifiers)
-    {
-        if (TypeObjectUtils::is_fully_descriptive_type_identifier(type_id))
-        {
-            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
-        }
-        else if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
-        {
-            TypeObject type_object;
-            ret_code = get_type_object(type_id, type_object);
-            if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
-            {
-                ret_code = get_dependencies_from_type_object(type_object, type_dependencies);
-                if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
-                {
-                    break;
-                }
-            }
-        }
-        else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
-        {
-            switch (type_id._d())
-            {
-                case TI_PLAIN_SEQUENCE_SMALL:
-                    get_indirect_hash_collection_dependencies(type_id.seq_sdefn(), type_dependencies);
-                    break;
-                case TI_PLAIN_SEQUENCE_LARGE:
-                    get_indirect_hash_collection_dependencies(type_id.seq_ldefn(), type_dependencies);
-                    break;
-                case TI_PLAIN_ARRAY_SMALL:
-                    get_indirect_hash_collection_dependencies(type_id.array_sdefn(), type_dependencies);
-                    break;
-                case TI_PLAIN_ARRAY_LARGE:
-                    get_indirect_hash_collection_dependencies(type_id.array_ldefn(), type_dependencies);
-                    break;
-                case TI_PLAIN_MAP_SMALL:
-                    get_indirect_hash_map_dependencies(type_id.map_sdefn(), type_dependencies);
-                    break;
-                case TI_PLAIN_MAP_LARGE:
-                    get_indirect_hash_map_dependencies(type_id.map_ldefn(), type_dependencies);
-                    break;
-            }
-        }
-    }
-    return ret_code;
+    return get_type_dependencies_impl(type_identifiers, type_dependencies);
 }
 
 bool TypeObjectRegistry::is_type_identifier_known(
@@ -597,6 +545,60 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     break;
             }
             break;
+    }
+    return ret_code;
+}
+
+ReturnCode_t TypeObjectRegistry::get_type_dependencies_impl(
+        const TypeIdentifierSeq& type_identifiers,
+        std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+{
+    ReturnCode_t ret_code = eprosima::fastdds::dds::RETCODE_OK;
+    for (const TypeIdentifier& type_id : type_identifiers)
+    {
+        if (TypeObjectUtils::is_fully_descriptive_type_identifier(type_id))
+        {
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+        }
+        else if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            TypeObject type_object;
+            ret_code = get_type_object(type_id, type_object);
+            if (eprosima::fastdds::dds::RETCODE_OK == ret_code)
+            {
+                ret_code = get_dependencies_from_type_object(type_object, type_dependencies);
+                if (eprosima::fastdds::dds::RETCODE_OK != ret_code)
+                {
+                    break;
+                }
+            }
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+        {
+            switch (type_id._d())
+            {
+                case TI_PLAIN_SEQUENCE_SMALL:
+                    get_indirect_hash_collection_dependencies(type_id.seq_sdefn(), type_dependencies);
+                    break;
+                case TI_PLAIN_SEQUENCE_LARGE:
+                    get_indirect_hash_collection_dependencies(type_id.seq_ldefn(), type_dependencies);
+                    break;
+                case TI_PLAIN_ARRAY_SMALL:
+                    get_indirect_hash_collection_dependencies(type_id.array_sdefn(), type_dependencies);
+                    break;
+                case TI_PLAIN_ARRAY_LARGE:
+                    get_indirect_hash_collection_dependencies(type_id.array_ldefn(), type_dependencies);
+                    break;
+                case TI_PLAIN_MAP_SMALL:
+                    get_indirect_hash_map_dependencies(type_id.map_sdefn(), type_dependencies);
+                    break;
+                case TI_PLAIN_MAP_LARGE:
+                    get_indirect_hash_map_dependencies(type_id.map_ldefn(), type_dependencies);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     return ret_code;
 }

@@ -189,18 +189,6 @@ public:
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is not a direct hash.
-     */
-    ReturnCode_t get_direct_hash_type_dependencies(
-            const TypeIdentifierSeq& type_identifiers,
-            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
-
-    /**
-     * @brief Get the type dependencies of the given type identifiers.
-     *
-     * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
-     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
-     * @return ReturnCode_t RETCODE_OK if the operation is successful.
-     *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
      *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
      */
     ReturnCode_t get_type_dependencies(
@@ -287,6 +275,19 @@ public:
     TypeObjectRegistry();
 
 protected:
+
+    /**
+     * @brief Get the type dependencies of the given type identifiers.
+     *
+     * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
+     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
+     */
+    ReturnCode_t get_type_dependencies_impl(
+            const TypeIdentifierSeq& type_identifiers,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
 
     /**
      * @brief Add type dependency to the sequence.

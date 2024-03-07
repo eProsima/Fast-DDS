@@ -2060,30 +2060,7 @@ EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
         if (eprosima::fastdds::dds::RETCODE_OK ==
                 type_object_registry_observer().get_type_object(identifier, type_object))
         {
-            if (EK_COMPLETE == type_object._d())
-            {
-                if (type_object.complete()._d() == TK_ALIAS)
-                {
-                    return get_map_component_equiv_kind_for_consistency(
-                        type_object.complete().alias_type().body().common().related_type(), is_key);
-                }
-                else
-                {
-                    return EK_COMPLETE;
-                }
-            }
-            else if (EK_MINIMAL == type_object._d())
-            {
-                if (type_object.minimal()._d() == TK_ALIAS)
-                {
-                    return get_map_component_equiv_kind_for_consistency(
-                        type_object.minimal().alias_type().body().common().related_type(), is_key);
-                }
-                else
-                {
-                    return EK_MINIMAL;
-                }
-            }
+            return type_object._d();
         }
         else
         {
@@ -2094,6 +2071,7 @@ EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
     {
         if (is_key)
         {
+            // indirecr hash for key is not allowed
             return TK_NONE;
         }
         EquivalenceKind element_equiv_kind;
@@ -2174,7 +2152,6 @@ EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
         return EK_BOTH;
     }
     return TK_NONE;
-
 }
 
 void TypeObjectUtils::plain_map_type_identifier_header_consistency(
