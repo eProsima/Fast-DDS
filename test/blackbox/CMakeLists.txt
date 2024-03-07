@@ -234,6 +234,19 @@ if(NOT LibP11_FOUND)
     endif() # GTEST_INDIVIDUAL
 endif() # LibP11_FOUND
 
+if(SECURITY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
+        ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainpubcert.pem
+        ${CMAKE_CURRENT_BINARY_DIR}/mainpubcert.pem COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/mainpubkey.pem
+        ${CMAKE_CURRENT_BINARY_DIR}/mainpubkey.pem COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/governance_helloworld_all_enable.smime
+        ${CMAKE_CURRENT_BINARY_DIR}/governance_helloworld_all_enable.smime COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
+        ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
+endif()
+
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cxx
@@ -338,6 +351,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions.xml
     ${CMAKE_CURRENT_BINARY_DIR}/partitions.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/builtin_transports_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/builtin_transports_profile.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/auth_handshake_props_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/auth_handshake_props_profile.xml COPYONLY)
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 if(FASTRTPS_API_TESTS)
