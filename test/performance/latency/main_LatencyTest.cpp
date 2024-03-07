@@ -186,6 +186,7 @@ int main(
         char** argv)
 {
 
+    using Log = eprosima::fastdds::dds::Log;
     Log::SetVerbosity(Log::Kind::Info);
     Log::SetCategoryFilter(std::regex("LatencyTest"));
 
