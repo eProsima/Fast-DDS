@@ -105,9 +105,26 @@ static bool append_message(
 
 bool RTPSMessageGroup::append_submessage()
 {
-    // If header_msg_ is reseted, append submessage_msg_ to header_msg_
-    // If not, put submessage_msg_ into a new buffer and add it to buffers_to_send_
-    // Final msg Struct: | header_msg_ + submessage_msg_ | payload | padding | submessage_msg_ | payload | padding | ...
+    // Three possible cases:
+    // - If the RTPS message is protected, submessage_msg_ with payload is always appended to header_msg_
+    //   Final msg Struct: | header_msg_ |
+    // - If header_msg_ is reseted, submessage_msg_ is appended to header_msg_. The submessage might contain the payload or not
+    // - If header_msg_ is not reseted, put submessage_msg_ into a new buffer and add it to buffers_to_send_
+    //   Final msg Struct: | header_msg_ + submessage_msg_ | payload | padding | submessage_msg_ | payload | padding | ...
+    //
+#if HAVE_SECURITY
+    if (participant_->security_attributes().is_rtps_protected)
+    {
+        // If the RTPS message is protected, the whole message will be encrypted at once
+        // so we need to keep the whole message in a single buffer
+        if (!append_message(participant_, header_msg_, submessage_msg_))
+        {
+            EPROSIMA_LOG_ERROR(RTPS_WRITER, "Cannot add RTPS submesage to the CDRMessage. Buffer too small");
+            return false;
+        }
+        return true;
+    }
+#endif // if HAVE_SECURITY
 
     if (header_msg_->pos == RTPSMESSAGE_HEADER_SIZE && header_msg_->length == RTPSMESSAGE_HEADER_SIZE)
     {
@@ -121,7 +138,8 @@ bool RTPSMessageGroup::append_submessage()
     {
         // header_msg_ is not reseted. This is not the first submessage
         // Create new copy of submessage_header and add it to buffers_to_send_
-        // submessage_msg_ only contains the header with gather-send or the whole message if copy_data is enabled
+        // The submessage will contain the payload if copy_data is enabled, otherwise gather-send will be used and
+        // the submessage will only contain the header. The payload will be added with pending_buffer_
         CDRMessage_t new_sub_msg = *submessage_msg_;
         copied_messages_.push_back(new_sub_msg);
 
@@ -357,9 +375,6 @@ void RTPSMessageGroup::send()
             }
 #endif // if HAVE_SECURITY
 
-            // TODO Carlos: Does mixing secure and non-secure messages work right now? All messages will be encrypted...
-            // We need to call encode_rtps_message() for every buffer in buffers_to_send_
-
             buffers_to_send_.push_front(NetworkBuffer(msgToSend->buffer, msgToSend->length));
             buffers_bytes_ += msgToSend->length;
 
@@ -566,7 +581,8 @@ bool RTPSMessageGroup::add_data(
     uint32_t from_buffer_position = submessage_msg_->pos;
     bool protect_payload = endpoint_->getAttributes().security_attributes().is_payload_protected;
     bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
-    copy_data = protect_payload || protect_submessage;
+    bool protect_rtps = participant_->security_attributes().is_rtps_protected;
+    copy_data = protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
@@ -673,7 +689,8 @@ bool RTPSMessageGroup::add_data_frag(
     uint32_t from_buffer_position = submessage_msg_->pos;
     bool protect_payload = endpoint_->getAttributes().security_attributes().is_payload_protected;
     bool protect_submessage = endpoint_->getAttributes().security_attributes().is_submessage_protected;
-    copy_data = protect_payload || protect_submessage;
+    bool protect_rtps = participant_->security_attributes().is_rtps_protected;
+    copy_data = protect_payload || protect_submessage || protect_rtps;
 #endif // if HAVE_SECURITY
     const EntityId_t& readerId = get_entity_id(sender_->remote_guids());
 
