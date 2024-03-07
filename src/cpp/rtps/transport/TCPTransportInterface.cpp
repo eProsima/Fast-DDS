@@ -265,7 +265,7 @@ Locator TCPTransportInterface::remote_endpoint_to_locator(
 {
     Locator locator;
     asio::error_code ec;
-    auto endpoint = channel->local_endpoint(ec);
+    auto endpoint = channel->remote_endpoint(ec);
     if (ec)
     {
         LOCATOR_INVALID(locator);
