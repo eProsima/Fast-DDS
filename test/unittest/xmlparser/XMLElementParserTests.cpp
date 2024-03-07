@@ -1772,7 +1772,7 @@ TEST_F(XMLParserTests, getXMLWriterReaderUnsupportedQosPolicies)
 TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
 {
     uint8_t ident = 1;
-    rtps::RTPSParticipantAllocationAttributes allocation;
+    eprosima::fastrtps::rtps::RTPSParticipantAllocationAttributes allocation;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 
@@ -1811,7 +1811,7 @@ TEST_F(XMLParserTests, ParticipantAllocationAttributesDataLimits)
 TEST_F(XMLParserTests, getXMLDiscoverySettingsStaticEDP)
 {
     uint8_t ident = 1;
-    rtps::DiscoverySettings settings;
+    eprosima::fastrtps::rtps::DiscoverySettings settings;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLElement* titleElement;
 

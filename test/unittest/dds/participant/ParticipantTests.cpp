@@ -78,7 +78,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::types::DynamicData_ptr;

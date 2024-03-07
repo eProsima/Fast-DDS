@@ -73,7 +73,6 @@ namespace dds {
 
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::ParticipantAttributes;
 using fastrtps::TopicAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::PublisherAttributes;

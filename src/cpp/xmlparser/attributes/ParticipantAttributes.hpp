@@ -17,13 +17,13 @@
  *
  */
 
-#ifndef PARTICIPANTATTRIBUTES_H_
-#define PARTICIPANTATTRIBUTES_H_
+#ifndef _FASTDDS_PARTICIPANTATTRIBUTES_H_
+#define _FASTDDS_PARTICIPANTATTRIBUTES_H_
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Class ParticipantAttributes, used by the user to define the attributes of a Participant.
@@ -39,7 +39,7 @@ public:
     uint32_t domainId = 0;
 
     //!Attributes of the associated RTPSParticipant.
-    rtps::RTPSParticipantAttributes rtps;
+    fastrtps::rtps::RTPSParticipantAttributes rtps;
 
     ParticipantAttributes()
     {
@@ -57,7 +57,7 @@ public:
 
 };
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif /* PARTICIPANTATTRIBUTES_H_ */
+#endif /* _FASTDDS_PARTICIPANTATTRIBUTES_H_ */

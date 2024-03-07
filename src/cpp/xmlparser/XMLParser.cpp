@@ -1558,7 +1558,7 @@ XMLP_ret XMLParser::parseXMLParticipantProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_participant_t participant_atts{new ParticipantAttributes};
+    up_participant_t participant_atts{new fastdds::ParticipantAttributes};
     up_node_participant_t participant_node{new node_participant_t{NodeType::PARTICIPANT, std::move(participant_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *participant_node))
     {
@@ -2189,7 +2189,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<ParticipantAttributes>& participant_node)
+        DataNode<fastdds::ParticipantAttributes>& participant_node)
 {
     /*
         <xs:complexType name="rtpsParticipantAttributesType">

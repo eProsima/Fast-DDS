@@ -41,6 +41,7 @@
 
 #include "../common/env_var_utils.hpp"
 
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::testing;
@@ -574,9 +575,9 @@ TEST_F(XMLProfileParserBasicTests, XMLParserParticipantDeprecated)
     std::string participant_profile = std::string("test_participant_profile");
     ParticipantAttributes participant_atts;
 
-    ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
+    ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
-    EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
     EXPECT_EQ(participant_atts.domainId, 2019102u);

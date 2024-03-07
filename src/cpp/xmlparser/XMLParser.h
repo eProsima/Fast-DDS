@@ -27,7 +27,6 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/ReplierAttributes.hpp>
 #include <fastrtps/attributes/RequesterAttributes.hpp>
@@ -35,6 +34,7 @@
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
+#include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {
@@ -65,8 +65,8 @@ typedef DataNode<fastdds::dds::DomainParticipantFactoryQos>        node_particip
 typedef node_participantfactory_t*                                 p_node_participantfactory_t;
 typedef std::unique_ptr<node_participantfactory_t>                 up_node_participantfactory_t;
 
-typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
-typedef DataNode<ParticipantAttributes>        node_participant_t;
+typedef std::unique_ptr<fastdds::ParticipantAttributes> up_participant_t;
+typedef DataNode<fastdds::ParticipantAttributes>        node_participant_t;
 typedef node_participant_t*                    p_node_participant_t;
 typedef std::unique_ptr<node_participant_t>    up_node_participant_t;
 
@@ -330,7 +330,7 @@ protected:
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
-            DataNode<ParticipantAttributes>& participant_node);
+            DataNode<fastdds::ParticipantAttributes>& participant_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
