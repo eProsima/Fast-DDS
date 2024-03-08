@@ -2080,105 +2080,60 @@ EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
         switch (identifier._d())
         {
             case TI_PLAIN_SEQUENCE_SMALL:
-                if ((*identifier.seq_sdefn().element_identifier())._d() == TK_NONE)
-                {
-                    return TK_NONE;
-                }
-                else
-                {
-                    return get_map_component_equiv_kind_for_consistency(*identifier.seq_sdefn().element_identifier());
-                }
+                return get_map_component_equiv_kind_for_consistency(*identifier.seq_sdefn().element_identifier());
             case TI_PLAIN_SEQUENCE_LARGE:
-                if ((*identifier.seq_ldefn().element_identifier())._d() == TK_NONE)
-                {
-                    return TK_NONE;
-                }
-                else
-                {
-                    return get_map_component_equiv_kind_for_consistency(*identifier.seq_ldefn().element_identifier());
-                }
+                return get_map_component_equiv_kind_for_consistency(*identifier.seq_ldefn().element_identifier());
             case TI_PLAIN_ARRAY_SMALL:
-                if ((*identifier.array_sdefn().element_identifier())._d() == TK_NONE)
-                {
-                    return TK_NONE;
-                }
-                else
-                {
-                    return get_map_component_equiv_kind_for_consistency(*identifier.array_sdefn().element_identifier());
-                }
-
+                return get_map_component_equiv_kind_for_consistency(*identifier.array_sdefn().element_identifier());
             case TI_PLAIN_ARRAY_LARGE:
-                if ((*identifier.array_ldefn().element_identifier())._d() == TK_NONE)
-                {
-                    return TK_NONE;
-                }
-                else
-                {
-                    return get_map_component_equiv_kind_for_consistency(*identifier.array_ldefn().element_identifier());
-                }
+                return get_map_component_equiv_kind_for_consistency(*identifier.array_ldefn().element_identifier());
             case TI_PLAIN_MAP_SMALL:
-                if ((*identifier.map_sdefn().element_identifier())._d() == TK_NONE ||
-                        (*identifier.map_sdefn().key_identifier())._d() == TK_NONE)
+                element_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_sdefn().element_identifier());
+                key_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_sdefn().key_identifier());
+
+                if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
                 {
-                    return TK_NONE;
+                    return EK_BOTH;
+                }
+                else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_COMPLETE;
+                }
+                else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_MINIMAL;
                 }
                 else
                 {
-                    element_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                        *identifier.map_sdefn().element_identifier());
-                    key_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                        *identifier.map_sdefn().key_identifier());
-
-                    if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
-                    {
-                        return EK_BOTH;
-                    }
-                    else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
-                            (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
-                    {
-                        return EK_COMPLETE;
-                    }
-                    else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
-                            (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
-                    {
-                        return EK_MINIMAL;
-                    }
-                    else
-                    {
-                        return TK_NONE;
-                    }
+                    return TK_NONE;
                 }
             case TI_PLAIN_MAP_LARGE:
-                if ((*identifier.map_ldefn().element_identifier())._d() == TK_NONE ||
-                        (*identifier.map_ldefn().key_identifier())._d() == TK_NONE)
+                element_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_ldefn().element_identifier());
+                key_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_ldefn().key_identifier());
+
+                if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
                 {
-                    return TK_NONE;
+                    return EK_BOTH;
+                }
+                else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_COMPLETE;
+                }
+                else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_MINIMAL;
                 }
                 else
                 {
-                    element_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                        *identifier.map_ldefn().element_identifier());
-                    key_equiv_kind = get_map_component_equiv_kind_for_consistency(
-                        *identifier.map_ldefn().key_identifier());
-
-                    if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
-                    {
-                        return EK_BOTH;
-                    }
-                    else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
-                            (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
-                    {
-                        return EK_COMPLETE;
-                    }
-                    else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
-                            (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
-                    {
-                        return EK_MINIMAL;
-                    }
-                    else
-                    {
-                        return TK_NONE;
-                    }
+                    return TK_NONE;
                 }
             default:
                 return TK_NONE;
