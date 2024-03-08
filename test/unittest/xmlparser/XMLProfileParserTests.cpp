@@ -28,7 +28,9 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/BlockedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
@@ -1713,6 +1715,8 @@ TEST_F(XMLProfileParserBasicTests, tls_config)
 
 TEST_F(XMLProfileParserBasicTests, UDP_transport_descriptors_config)
 {
+    using namespace eprosima::fastdds::rtps;
+
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("UDP_transport_descriptors_config_profile.xml"));
 
@@ -1731,10 +1735,10 @@ TEST_F(XMLProfileParserBasicTests, UDP_transport_descriptors_config)
     EXPECT_EQ(descriptor->interfaceWhiteList.size(), 2u);
     EXPECT_EQ(descriptor->interfaceWhiteList[0], "192.168.1.41");
     EXPECT_EQ(descriptor->interfaceWhiteList[1], "lo");
-    EXPECT_EQ(descriptor->netmask_filter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
-    EXPECT_EQ(descriptor->interface_allowlist[0], std::make_pair(std::string("wlp59s0"), eprosima::fastdds::rtps::NetmaskFilterKind::ON));
-    EXPECT_EQ(descriptor->interface_allowlist[1], std::make_pair(std::string("127.0.0.1"), eprosima::fastdds::rtps::NetmaskFilterKind::AUTO));
-    EXPECT_EQ(descriptor->interface_blocklist[0], "docker0");
+    EXPECT_EQ(descriptor->netmask_filter, NetmaskFilterKind::ON);
+    EXPECT_EQ(descriptor->interface_allowlist[0], AllowedNetworkInterface("wlp59s0", NetmaskFilterKind::ON));
+    EXPECT_EQ(descriptor->interface_allowlist[1], AllowedNetworkInterface("127.0.0.1", NetmaskFilterKind::AUTO));
+    EXPECT_EQ(descriptor->interface_blocklist[0], BlockedNetworkInterface("docker0"));
     EXPECT_EQ(descriptor->m_output_udp_socket, 5101u);
 }
 

@@ -285,7 +285,7 @@ public:
      *
      * Checks whether the given element is present in the collection (at least once).
      *
-     * @param val   Value to be looked for.
+     * @param val   Value to look for.
      *
      * @return true if the element is present in the collection (at least once), false otherwise.
      */

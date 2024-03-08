@@ -271,15 +271,14 @@ eProsimaUDPSocket UDPTransportInterface::OpenAndBindUnicastOutputSocket(
     auto it = std::find_if(
         allowed_interfaces_.begin(),
         allowed_interfaces_.end(),
-        [&locator](const std::pair<fastdds::rtps::LocatorWithMask,
-        NetmaskFilterKind>& entry)
+        [&locator](const AllowedNetworkInterface& entry)
         {
-            return locator == entry.first;
+            return locator == entry.locator;
         });
 
     if (it != allowed_interfaces_.end())
     {
-        socket.netmask_filter = it->second;
+        socket.netmask_filter = it->netmask_filter;
     }
     else
     {
@@ -744,7 +743,7 @@ void UDPTransportInterface::get_unknown_network_interfaces(
     locNames.clear();
     if (rescan_interfaces_)
     {
-        get_ips(locNames, return_loopback);
+        get_ips(locNames, return_loopback, false);
         for (auto& sender_resource : sender_resource_list)
         {
             UDPSenderResource* udp_sender_resource = UDPSenderResource::cast(*this, sender_resource.get());

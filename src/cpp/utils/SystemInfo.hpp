@@ -256,7 +256,7 @@ public:
     static bool get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& vec_name,
             bool return_loopback,
-            bool force_lookup = false);
+            bool force_lookup);
 
 private:
 

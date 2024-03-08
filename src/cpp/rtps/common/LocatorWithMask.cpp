@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Types.h>
-#include <rtps/network/NetmaskFilterUtils.hpp>
+#include <rtps/network/utils/network.hpp>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 
@@ -50,13 +50,13 @@ bool LocatorWithMask::matches(
             case LOCATOR_KIND_UDPv4:
             case LOCATOR_KIND_TCPv4:
                 assert(32 >= mask());
-                return NetmaskFilterUtils::address_matches(loc.address + 12, address + 12, mask());
+                return network::address_matches(loc.address + 12, address + 12, mask());
 
             case LOCATOR_KIND_UDPv6:
             case LOCATOR_KIND_TCPv6:
             case LOCATOR_KIND_SHM:
                 assert(128 >= mask());
-                return NetmaskFilterUtils::address_matches(loc.address, address, mask());
+                return network::address_matches(loc.address, address, mask());
         }
     }
 

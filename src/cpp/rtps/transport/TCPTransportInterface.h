@@ -24,7 +24,8 @@
 #include <asio/steady_timer.hpp>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -116,7 +117,7 @@ protected:
     std::mutex channel_pending_logical_ports_mutex_;
 
     NetmaskFilterKind netmask_filter_;
-    std::vector<std::pair<LocatorWithMask, NetmaskFilterKind>> allowed_interfaces_;
+    std::vector<AllowedNetworkInterface> allowed_interfaces_;
 
     TCPTransportInterface(
             int32_t transport_kind);
@@ -159,8 +160,8 @@ protected:
 
     virtual bool get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& loc_names,
-            bool return_loopback = false,
-            bool force_lookup = false) const = 0;
+            bool return_loopback,
+            bool force_lookup) const = 0;
 
     bool is_input_port_open(
             uint16_t port) const;

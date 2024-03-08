@@ -16,8 +16,7 @@
  * @file GuidPrefix_t.cpp
  */
 
-#include <fastdds/rtps/common/Types.h>
-#include <utils/SystemInfo.hpp>
+#include <rtps/common/GuidUtils.hpp>
 
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 
@@ -25,11 +24,26 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+bool GuidPrefix_t::is_on_same_host_as(
+        const GuidPrefix_t& other_guid_prefix) const
+{
+    return memcmp(value, other_guid_prefix.value, 4) == 0;
+}
+
 bool GuidPrefix_t::is_from_this_host() const
 {
-    uint16_t host_id = SystemInfo::instance().host_id();
-    return (value[2] == static_cast<octet>(host_id & 0xFF) &&
-           (value[3]) == static_cast<octet>((host_id >> 8) & 0xFF));
+    return is_on_same_host_as(fastdds::rtps::GuidUtils::instance().prefix());
+}
+
+bool GuidPrefix_t::is_on_same_process_as(
+        const GuidPrefix_t& other_guid_prefix) const
+{
+    return memcmp(value, other_guid_prefix.value, 8) == 0;
+}
+
+bool GuidPrefix_t::is_from_this_process() const
+{
+    return is_on_same_process_as(fastdds::rtps::GuidUtils::instance().prefix());
 }
 
 } // namsepace rtps

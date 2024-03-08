@@ -299,6 +299,11 @@ public:
     bool ignore_reader(
             const GUID_t& reader_guid);
 
+    /**
+     * Returns registered transports' netmask filter information (transport's netmask filter kind and allowlist).
+     */
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info() const;
+
 #if HAVE_SECURITY
 
     /**

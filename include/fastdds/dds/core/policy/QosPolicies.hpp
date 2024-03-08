@@ -33,7 +33,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>

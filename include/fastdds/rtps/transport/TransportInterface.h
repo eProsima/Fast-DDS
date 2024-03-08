@@ -24,7 +24,8 @@
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
@@ -45,7 +46,8 @@ static const std::string s_IPv4AddressAny = "0.0.0.0";
 static const std::string s_IPv6AddressAny = "::";
 
 using SendResourceList = std::vector<std::unique_ptr<fastrtps::rtps::SenderResource>>;
-using NetmaskFilterInfo = std::pair<NetmaskFilterKind, std::vector<std::pair<LocatorWithMask, NetmaskFilterKind>>>;
+using NetmaskFilterInfo = std::pair<NetmaskFilterKind, std::vector<AllowedNetworkInterface>>;
+using TransportNetmaskFilterInfo = std::pair<int32_t, NetmaskFilterInfo>;
 
 /**
  * Interface against which to implement a transport layer, decoupled from FastRTPS internals.
@@ -168,9 +170,9 @@ public:
      *   If there is an existing channel it registers the receiver interface.
      */
     virtual bool OpenInputChannel(
-        const Locator&,
-        TransportReceiverInterface*,
-        uint32_t) = 0;
+            const Locator&,
+            TransportReceiverInterface*,
+            uint32_t) = 0;
 
     /**
      * Must close the channel that maps to/from the given locator.
@@ -305,7 +307,7 @@ public:
         return true;
     }
 
-    //! Return netmask filter information (transport's netmask filter kind and allowlist)
+    //! Returns netmask filter information (transport's netmask filter kind and allowlist)
     virtual NetmaskFilterInfo netmask_filter_info() const
     {
         return {NetmaskFilterKind::AUTO, {}};

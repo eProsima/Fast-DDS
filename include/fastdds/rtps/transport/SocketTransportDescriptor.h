@@ -19,7 +19,9 @@
 #include <vector>
 #include <string>
 
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/BlockedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 
 namespace eprosima {
@@ -95,9 +97,9 @@ struct SocketTransportDescriptor : public PortBasedTransportDescriptor
     //! Transport's netmask filter configuration.
     NetmaskFilterKind netmask_filter;
     //! Allowed interfaces in an IP or device name string format, each with a specific netmask filter configuration.
-    std::vector<std::pair<std::string, NetmaskFilterKind>> interface_allowlist;
+    std::vector<AllowedNetworkInterface> interface_allowlist;
     //! Blocked interfaces in an IP or device name string format.
-    std::vector<std::string> interface_blocklist;
+    std::vector<BlockedNetworkInterface> interface_blocklist;
     //! Specified time to live (8bit - 255 max TTL)
     uint8_t TTL;
 };

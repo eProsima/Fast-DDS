@@ -17,9 +17,10 @@
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastrtps/utils/IPLocator.h>
 
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 
 using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastdds::rtps::network;
 using namespace eprosima::fastrtps::rtps;
 
 // -------------------- Auxiliary methods to compare locator lists --------------------
@@ -68,7 +69,7 @@ void single_participant_check(
         const RemoteLocatorList& def_check_locators,
         const RemoteLocatorList& meta_check_locators)
 {
-    ExternalLocatorsProcessor::add_external_locators(pdata, meta_ext_locators, def_ext_locators);
+    external_locators::add_external_locators(pdata, meta_ext_locators, def_ext_locators);
     ASSERT_TRUE(pdata.default_locators == def_check_locators);
     ASSERT_TRUE(pdata.metatraffic_locators == meta_check_locators);
 }
@@ -174,7 +175,7 @@ void test_add_external_locators_participant(
     }
 }
 
-TEST(ExternalLocatorsProcessorTests, add_external_locators_participant)
+TEST(ExternalLocatorsTests, add_external_locators_participant)
 {
     Locator multicast_loc;
     {
@@ -240,7 +241,7 @@ void single_endpoint_check(
         const ExternalLocators& ext_locators,
         const RemoteLocatorList& check_locators)
 {
-    ExternalLocatorsProcessor::add_external_locators(rdata, ext_locators);
+    external_locators::add_external_locators(rdata, ext_locators);
     ASSERT_TRUE(rdata.remote_locators() == check_locators);
 }
 
@@ -332,12 +333,12 @@ void test_add_external_locators_endpoint()
     }
 }
 
-TEST(ExternalLocatorsProcessorTests, add_external_locators_reader)
+TEST(ExternalLocatorsTests, add_external_locators_reader)
 {
     test_add_external_locators_endpoint<ReaderProxyData>();
 }
 
-TEST(ExternalLocatorsProcessorTests, add_external_locators_writer)
+TEST(ExternalLocatorsTests, add_external_locators_writer)
 {
     test_add_external_locators_endpoint<WriterProxyData>();
 }
@@ -582,14 +583,14 @@ void test_matching_locators_scenario(
             entry.multicast = discovered_data.metatraffic_locators.multicast;
             entry.unicast = discovered_data.metatraffic_locators.unicast;
 
-            ExternalLocatorsProcessor::filter_remote_locators(entry, meta_ext_locators, ignore_non_matching);
+            external_locators::filter_remote_locators(entry, meta_ext_locators, ignore_non_matching);
             ASSERT_TRUE(entry.multicast == discovered_data.metatraffic_locators.multicast);
             ASSERT_EQ(entry.unicast.size(), 1u);
             ASSERT_EQ(entry.unicast[0], expected_result.metatraffic);
 
             ParticipantProxyData filtered_data = discovered_data;
 
-            ExternalLocatorsProcessor::filter_remote_locators(
+            external_locators::filter_remote_locators(
                 filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
 
 
@@ -623,7 +624,7 @@ void test_matching_locators_scenario(
             entry.multicast = filtered_data.metatraffic_locators.multicast;
             entry.unicast = filtered_data.metatraffic_locators.unicast;
 
-            ExternalLocatorsProcessor::filter_remote_locators(entry, meta_ext_locators, ignore_non_matching);
+            external_locators::filter_remote_locators(entry, meta_ext_locators, ignore_non_matching);
 
             ASSERT_TRUE(entry.multicast == zz_discovered_data.metatraffic_locators.multicast);
             if (ignore_non_matching)
@@ -636,7 +637,7 @@ void test_matching_locators_scenario(
                 ASSERT_EQ(entry.unicast[0], zz_address.metatraffic);
             }
 
-            ExternalLocatorsProcessor::filter_remote_locators(
+            external_locators::filter_remote_locators(
                 filtered_data, meta_ext_locators, user_ext_locators, ignore_non_matching);
 
             ASSERT_TRUE(
@@ -662,7 +663,7 @@ void test_matching_locators_scenario(
             entry.multicast = filtered_data.metatraffic_locators.multicast;
             entry.unicast = filtered_data.metatraffic_locators.unicast;
 
-            ExternalLocatorsProcessor::filter_remote_locators(entry, zz_meta_locators, ignore_non_matching);
+            external_locators::filter_remote_locators(entry, zz_meta_locators, ignore_non_matching);
 
             ASSERT_TRUE(entry.multicast == node.announced_data.metatraffic_locators.multicast);
             if (ignore_non_matching)
@@ -674,7 +675,7 @@ void test_matching_locators_scenario(
                 ASSERT_TRUE(entry.unicast == node.announced_data.metatraffic_locators.unicast);
             }
 
-            ExternalLocatorsProcessor::filter_remote_locators(
+            external_locators::filter_remote_locators(
                 filtered_data, zz_meta_locators, zz_user_locators, ignore_non_matching);
 
             ASSERT_TRUE(
@@ -696,13 +697,13 @@ void test_matching_locators_scenario(
     }
 }
 
-TEST(ExternalLocatorsProcessorTests, matching_locators_scenario)
+TEST(ExternalLocatorsTests, matching_locators_scenario)
 {
     test_matching_locators_scenario(true);
     test_matching_locators_scenario(false);
 }
 
-TEST(ExternalLocatorsProcessorTests, matching_locators_mask_test)
+TEST(ExternalLocatorsTests, matching_locators_mask_test)
 {
     struct TestCase
     {
@@ -796,7 +797,7 @@ TEST(ExternalLocatorsProcessorTests, matching_locators_mask_test)
         LocatorSelectorEntry remote(4u, 1u);
         remote.unicast.push_back(remote_locator);
 
-        ExternalLocatorsProcessor::filter_remote_locators(remote, local, true);
+        external_locators::filter_remote_locators(remote, local, true);
         if (test.should_match)
         {
             ASSERT_EQ(remote.unicast.size(), 1u);

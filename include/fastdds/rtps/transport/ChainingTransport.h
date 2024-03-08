@@ -173,7 +173,7 @@ public:
 
     /*!
      * Call the low-level transport `netmask_filter_info()`.
-     * Return netmask filter information (transport's netmask filter kind and allowlist)
+     * Returns netmask filter information (transport's netmask filter kind and allowlist)
      */
     RTPS_DllAPI NetmaskFilterInfo netmask_filter_info() const override
     {

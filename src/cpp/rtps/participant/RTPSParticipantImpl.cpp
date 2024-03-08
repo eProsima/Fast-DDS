@@ -61,8 +61,8 @@
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
-#include <rtps/network/NetmaskFilterUtils.hpp>
+#include <rtps/network/utils/external_locators.hpp>
+#include <rtps/network/utils/netmask_filter.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
@@ -319,23 +319,40 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     // User defined transports
     for (const auto& transportDescriptor : m_att.userTransports)
     {
+        bool register_transport = true;
+
+        // Lock user's transport descriptor since it could be modified during registration
+        transportDescriptor->lock();
+
         auto socket_descriptor =
                 std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(transportDescriptor);
+        fastdds::rtps::NetmaskFilterKind socket_descriptor_netmask_filter;
         if (socket_descriptor != nullptr)
         {
-            if (!fastdds::rtps::NetmaskFilterUtils::validate_and_transform(socket_descriptor->netmask_filter,
+            // Copy original netmask filter value to restore it after registration
+            socket_descriptor_netmask_filter = socket_descriptor->netmask_filter;
+            if (!fastdds::rtps::network::netmask_filter::validate_and_transform(socket_descriptor->netmask_filter,
                     m_att.netmaskFilter))
             {
                 EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
                         "User transport failed to register. Provided descriptor's netmask filter ("
                         << socket_descriptor->netmask_filter << ") is incompatible with participant's ("
                         << m_att.netmaskFilter << ").");
-                continue;
+                register_transport = false;
             }
         }
 
-        if (m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties,
-                m_att.max_msg_size_no_frag))
+        bool transport_registered = register_transport && m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag);
+
+        if (socket_descriptor != nullptr)
+        {
+            // Restore original netmask filter value prior to unlock
+            socket_descriptor->netmask_filter = socket_descriptor_netmask_filter;
+        }
+
+        transportDescriptor->unlock();
+
+        if (transport_registered)
         {
             has_shm_transport_ |=
                     (dynamic_cast<fastdds::rtps::SharedMemTransportDescriptor*>(transportDescriptor.get()) != nullptr);
@@ -369,14 +386,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     // Check netmask filtering preconditions
-    std::vector<TransportNetmaskFilterInfo> netmask_filter_info = m_network_Factory.netmask_filter_info();
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info = m_network_Factory.netmask_filter_info();
     std::string error_msg;
-    if (!fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info, m_att.ignore_non_matching_locators,
+    if (!fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info, m_att.ignore_non_matching_locators,
             error_msg) ||
-            !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+            !fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
             m_att.builtin.metatraffic_external_unicast_locators,
             error_msg) ||
-            !fastdds::rtps::NetmaskFilterUtils::check_preconditions(netmask_filter_info,
+            !fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
             m_att.default_external_unicast_locators, error_msg))
     {
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, error_msg);
@@ -495,11 +512,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
     createReceiverResources(m_att.defaultMulticastLocatorList, true, false, true);
 
-    namespace ExternalLocatorsProcessor = fastdds::rtps::ExternalLocatorsProcessor;
-    ExternalLocatorsProcessor::set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
-            m_att.builtin.metatrafficUnicastLocatorList);
-    ExternalLocatorsProcessor::set_listening_locators(m_att.default_external_unicast_locators,
-            m_att.defaultUnicastLocatorList);
+    {
+        using namespace fastdds::rtps::network::external_locators;
+        set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
+                m_att.builtin.metatrafficUnicastLocatorList);
+        set_listening_locators(m_att.default_external_unicast_locators,
+                m_att.defaultUnicastLocatorList);
+    }
 
     // Check metatraffic multicast port
     if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
@@ -1456,15 +1475,15 @@ void RTPSParticipantImpl::update_attributes(
 
         // Update listening locators on external locators
         {
-            namespace ExternalLocatorsProcessor = fastdds::rtps::ExternalLocatorsProcessor;
+            using namespace fastdds::rtps::network::external_locators;
             if (local_interfaces_changed && internal_metatraffic_locators_)
             {
-                ExternalLocatorsProcessor::set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
+                set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
                         m_att.builtin.metatrafficUnicastLocatorList);
             }
             if (local_interfaces_changed && internal_default_locators_)
             {
-                ExternalLocatorsProcessor::set_listening_locators(m_att.default_external_unicast_locators,
+                set_listening_locators(m_att.default_external_unicast_locators,
                         m_att.defaultUnicastLocatorList);
             }
         }
@@ -1749,7 +1768,7 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
         createReceiverResources(attributes.multicastLocatorList, false, true, true);
     }
 
-    fastdds::rtps::ExternalLocatorsProcessor::set_listening_locators(attributes.external_unicast_locators,
+    fastdds::rtps::network::external_locators::set_listening_locators(attributes.external_unicast_locators,
             attributes.unicastLocatorList);
 
     // Associate the Endpoint with ReceiverControlBlock
@@ -2736,6 +2755,11 @@ bool RTPSParticipantImpl::ignore_reader(
         const GUID_t& /*reader_guid*/)
 {
     return false;
+}
+
+std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipantImpl::netmask_filter_info() const
+{
+    return m_network_Factory.netmask_filter_info();
 }
 
 #ifdef FASTDDS_STATISTICS

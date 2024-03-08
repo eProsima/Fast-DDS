@@ -31,8 +31,6 @@ namespace rtps {
 
 class RTPSParticipantAttributes;
 
-using TransportNetmaskFilterInfo = std::pair<int32_t, fastdds::rtps::NetmaskFilterInfo>;
-
 /**
  * Provides the FastRTPS library with abstract resources, which
  * in turn manage the SEND and RECEIVE operations over some transport.
@@ -103,8 +101,7 @@ public:
         return true;
     }
 
-    // TODO
-    std::vector<TransportNetmaskFilterInfo> netmask_filter_info() const
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info() const
     {
         return {};
     }

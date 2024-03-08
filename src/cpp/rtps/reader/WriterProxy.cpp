@@ -28,7 +28,7 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include "rtps/RTPSDomainImpl.hpp"
@@ -123,7 +123,7 @@ void WriterProxy::start(
         const SequenceNumber_t& initial_sequence,
         bool is_datasharing)
 {
-    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+    using fastdds::rtps::network::external_locators::filter_remote_locators;
 
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());
@@ -154,7 +154,7 @@ void WriterProxy::start(
 void WriterProxy::update(
         const WriterProxyData& attributes)
 {
-    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+    using fastdds::rtps::network::external_locators::filter_remote_locators;
 
 #ifdef SHOULD_DEBUG_LINUX
     assert(get_mutex_owner() == get_thread_id());

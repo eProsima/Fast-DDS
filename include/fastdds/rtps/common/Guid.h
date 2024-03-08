@@ -78,6 +78,8 @@ struct RTPS_DllAPI GUID_t
     /**
      * Checks whether this guid is from an entity on the same host as another guid.
      *
+     * @note This method assumes the value of \c other_guid was originally assigned by Fast-DDS vendor.
+     *
      * @param other_guid GUID_t to compare to.
      *
      * @return true when this guid is on the same host, false otherwise.
@@ -85,13 +87,13 @@ struct RTPS_DllAPI GUID_t
     bool is_on_same_host_as(
             const GUID_t& other_guid) const
     {
-        return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 4) == 0;
+        return guidPrefix.is_on_same_host_as(other_guid.guidPrefix);
     }
 
     /**
-     * Checks whether this guid is from an entity created on this host (from where this method is called).
+     * Checks whether this guid is from a (Fast-DDS) entity created on this host (from where this method is called).
      *
-     * @return true when this guid is from an entity created on this host, false otherwise.
+     * @return true when this guid is from a (Fast-DDS) entity created on this host, false otherwise.
      */
     bool is_from_this_host() const
     {
@@ -101,6 +103,8 @@ struct RTPS_DllAPI GUID_t
     /**
      * Checks whether this guid is for an entity on the same host and process as another guid.
      *
+     * @note This method assumes the value of \c other_guid was originally assigned by Fast-DDS vendor.
+     *
      * @param other_guid GUID_t to compare to.
      *
      * @return true when this guid is on the same host and process, false otherwise.
@@ -108,7 +112,17 @@ struct RTPS_DllAPI GUID_t
     bool is_on_same_process_as(
             const GUID_t& other_guid) const
     {
-        return memcmp(guidPrefix.value, other_guid.guidPrefix.value, 8) == 0;
+        return guidPrefix.is_on_same_process_as(other_guid.guidPrefix);
+    }
+
+    /**
+     * Checks whether this guid is from a (Fast-DDS) entity created on this process (from where this method is called).
+     *
+     * @return true when this guid is from a (Fast-DDS) entity created on this process, false otherwise.
+     */
+    bool is_from_this_process() const
+    {
+        return guidPrefix.is_from_this_process();
     }
 
     /**

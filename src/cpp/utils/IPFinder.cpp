@@ -138,7 +138,7 @@ bool IPFinder::getIPs(
                     }
 
                     // Parse IP
-                    bool success;
+                    bool success = false;
                     if (info.type == IP4)
                     {
                         success = parseIP4(info);
@@ -181,13 +181,87 @@ bool IPFinder::getIPs(
 
 #else
 
+bool parseIfaddr(
+        const ifaddrs* ifaddr,
+        IPFinder::info_IP& info,
+        bool return_loopback)
+{
+    int family, s;
+    char host[NI_MAXHOST];
+
+    IPFinder::IPTYPE ip_type;
+    bool ipv4; // Binary discriminator to distinguish between IP4/IP4_LOCAL and IP6/IP6_LOCAL types
+    family = ifaddr->ifa_addr->sa_family;
+    if (family == AF_INET)
+    {
+        ip_type = IPFinder::IP4;
+        ipv4 = true;
+    }
+    else if (family == AF_INET6)
+    {
+        ip_type = IPFinder::IP6;
+        ipv4 = false;
+    }
+    else
+    {
+        // Not an IP address -> abort
+        return false;
+    }
+
+    info.type = ip_type;
+    info.dev = std::string(ifaddr->ifa_name);
+
+    // Get interface name
+    s = getnameinfo(ifaddr->ifa_addr, ipv4 ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+                    host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+    if (s != 0)
+    {
+        EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
+        return false;
+    }
+    info.name = std::string(host);
+
+    // Get interface network mask
+    s = getnameinfo(ifaddr->ifa_netmask, ipv4 ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6),
+                    host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+    if (s != 0)
+    {
+        EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
+        return false;
+    }
+    auto netmask_str = std::string(host);
+
+    IPFinder::IPTYPE local_ip_type = ipv4 ? IPFinder::IP4_LOCAL : IPFinder::IP6_LOCAL;
+    if (ipv4 ? IPFinder::parseIP4(info) : IPFinder::parseIP6(info))
+    {
+        if (return_loopback || info.type != local_ip_type)
+        {
+            // Convert parsed netmask string to locator
+            Locator_t netmask_locator;
+            netmask_locator.kind = ipv4 ? LOCATOR_KIND_UDPv4 : LOCATOR_KIND_UDPv6;
+            netmask_locator.port = 0;
+            ipv4 ? IPLocator::setIPv4(netmask_locator, netmask_str) : IPLocator::setIPv6(netmask_locator, netmask_str);
+
+            // Get netmask length from locator
+            uint8_t netmask = 0;
+            for (const auto& addr_octet: netmask_locator.address)
+            {
+                netmask += static_cast<uint8_t>(std::bitset<8>(addr_octet).count());
+            }
+            info.masked_locator.mask(netmask);
+            info.masked_locator = info.locator; // NOTE: copy (kind and address) after parsing IP
+
+            return true;
+        }
+    }
+    return false;
+}
+
 bool IPFinder::getIPs(
         std::vector<info_IP>* vec_name,
         bool return_loopback)
 {
     struct ifaddrs* ifaddr, * ifa;
-    int family, s;
-    char host[NI_MAXHOST];
 
     // TODO arm64 doesn't seem to support getifaddrs
     if (getifaddrs(&ifaddr) == -1)
@@ -203,105 +277,10 @@ bool IPFinder::getIPs(
             continue;
         }
 
-        family = ifa->ifa_addr->sa_family;
-
-        if (family == AF_INET)
+        info_IP info;
+        if (parseIfaddr(ifa, info, return_loopback))
         {
-            info_IP info;
-            info.type = IP4;
-            info.dev = std::string(ifa->ifa_name);
-
-            // Get interface name
-            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-            if (s != 0)
-            {
-                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
-                continue;
-            }
-            info.name = std::string(host);
-
-            // Get interface network mask
-            s = getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-            if (s != 0)
-            {
-                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
-                continue;
-            }
-            auto netmask_str = std::string(host);
-
-            if (parseIP4(info))
-            {
-                if (return_loopback || info.type != IP4_LOCAL)
-                {
-                    // Convert parsed netmask string to locator
-                    Locator_t netmask_locator;
-                    netmask_locator.kind = LOCATOR_KIND_UDPv4;
-                    netmask_locator.port = 0;
-                    IPLocator::setIPv4(netmask_locator, netmask_str);
-
-                    // Get netmask length from locator
-                    uint8_t netmask = 0;
-                    for (const auto& addr_octet: netmask_locator.address)
-                    {
-                        netmask += static_cast<uint8_t>(std::bitset<8>(addr_octet).count());
-                    }
-                    info.masked_locator.mask(netmask);
-                    info.masked_locator = info.locator; // NOTE: copy (kind and address) after parseIP4
-
-                    vec_name->push_back(info);
-                }
-            }
-        }
-        else if (family == AF_INET6)
-        {
-            info_IP info;
-            info.type = IP6;
-            info.dev = std::string(ifa->ifa_name);
-
-            // Get interface name
-            s = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in6),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-            if (s != 0)
-            {
-                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
-                continue;
-            }
-            info.name = std::string(host);
-
-            // Get interface network mask
-            s = getnameinfo(ifa->ifa_netmask, sizeof(struct sockaddr_in6),
-                            host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-            if (s != 0)
-            {
-                EPROSIMA_LOG_WARNING(UTILS, "getnameinfo() failed: " << gai_strerror(s));
-                continue;
-            }
-            auto netmask_str = std::string(host);
-
-            if (parseIP6(info))
-            {
-                if (return_loopback || info.type != IP6_LOCAL)
-                {
-                    // Convert parsed netmask string to locator
-                    Locator_t netmask_locator;
-                    netmask_locator.kind = LOCATOR_KIND_UDPv6;
-                    netmask_locator.port = 0;
-                    IPLocator::setIPv6(netmask_locator, netmask_str);
-
-                    // Get netmask length from locator
-                    uint8_t netmask = 0;
-                    for (const auto& addr_octet: netmask_locator.address)
-                    {
-                        netmask += static_cast<uint8_t>(std::bitset<8>(addr_octet).count());
-                    }
-                    info.masked_locator.mask(netmask);
-                    info.masked_locator = info.locator; // NOTE: copy (kind and address) after parseIP6
-
-                    vec_name->push_back(info);
-                }
-            }
+            vec_name->push_back(info);
         }
     }
 

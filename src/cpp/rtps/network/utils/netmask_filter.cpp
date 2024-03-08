@@ -13,24 +13,29 @@
 // limitations under the License.
 
 /**
- * @file NetmaskFilterUtils.cpp
+ * @file netmask_filter.cpp
  */
 
-#include <algorithm>
-#include <cstdint>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/common/LocatorWithMask.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
-#include <rtps/network/NetmaskFilterUtils.hpp>
+#include <rtps/network/utils/netmask_filter.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace NetmaskFilterUtils {
+namespace network {
+namespace netmask_filter {
 
 NetmaskFilterKind string_to_netmask_filter_kind(
         const std::string& netmask_filter_str)
@@ -77,27 +82,6 @@ bool validate_and_transform(
     }
 }
 
-bool address_matches(
-        const uint8_t* addr1,
-        const uint8_t* addr2,
-        uint64_t num_bits)
-{
-    uint64_t full_bytes = num_bits / 8;
-    if ((0 == full_bytes) || std::equal(addr1, addr1 + full_bytes, addr2))
-    {
-        uint64_t rem_bits = num_bits % 8;
-        if (rem_bits == 0)
-        {
-            return true;
-        }
-
-        uint8_t mask = 0xFF << (8 - rem_bits);
-        return (addr1[full_bytes] & mask) == (addr2[full_bytes] & mask);
-    }
-
-    return false;
-}
-
 bool check_preconditions(
         const std::vector<TransportNetmaskFilterInfo>& factory_netmask_filter_info,
         bool ignore_non_matching_locators,
@@ -107,7 +91,7 @@ bool check_preconditions(
     {
         const NetmaskFilterInfo& netmask_filter_info = transport_netmask_filter_info.second;
         const fastdds::rtps::NetmaskFilterKind& netmask_filter = netmask_filter_info.first;
-        const std::vector<std::pair<LocatorWithMask, NetmaskFilterKind>>& allowlist = netmask_filter_info.second;
+        const std::vector<AllowedNetworkInterface>& allowlist = netmask_filter_info.second;
 
         if (netmask_filter == fastdds::rtps::NetmaskFilterKind::ON && allowlist.empty() &&
                 !ignore_non_matching_locators)
@@ -141,8 +125,7 @@ bool check_preconditions(
                     {
                         const int32_t& transport_kind = transport_netmask_filter_info.first;
                         const NetmaskFilterInfo& netmask_filter_info = transport_netmask_filter_info.second;
-                        const std::vector<std::pair<LocatorWithMask,
-                                NetmaskFilterKind>>& allowlist = netmask_filter_info.second;
+                        const std::vector<AllowedNetworkInterface>& allowlist = netmask_filter_info.second;
 
                         if (locator.kind != transport_kind)
                         {
@@ -156,8 +139,8 @@ bool check_preconditions(
 
                         for (const auto& allowed_interface : allowlist)
                         {
-                            if (allowed_interface.second != fastdds::rtps::NetmaskFilterKind::ON ||
-                                    allowed_interface.first.matches(locator))
+                            if (allowed_interface.netmask_filter != fastdds::rtps::NetmaskFilterKind::ON ||
+                                    allowed_interface.locator.matches(locator))
                             {
                                 return true;
                             }
@@ -180,7 +163,8 @@ bool check_preconditions(
     return true;
 }
 
-} // namespace NetmaskFilterUtils
+} // namespace netmask_filter
+} // namespace network
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

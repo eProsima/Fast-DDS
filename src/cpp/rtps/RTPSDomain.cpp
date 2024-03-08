@@ -47,7 +47,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <rtps/common/GuidUtils.hpp>
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 #include <utils/Host.hpp>
 #include <utils/SystemInfo.hpp>
 
@@ -189,7 +189,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     {
         fastdds::rtps::LocatorList locators;
         fastrtps::rtps::IPFinder::getIP4Address(&locators);
-        fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(locators,
+        fastdds::rtps::network::external_locators::add_external_locators(locators,
                 PParam.builtin.metatraffic_external_unicast_locators);
         uint16_t host_id = Host::compute_id(locators);
         guidP.value[2] = static_cast<octet>(host_id & 0xFF);

@@ -1,4 +1,4 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,13 @@
 // limitations under the License.
 
 /**
- * @file ExternalLocatorsProcessor.cpp
+ * @file external_locators.cpp
  */
 
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
-
 #include <algorithm>
+#include <cstdint>
+#include <limits>
+#include <vector>
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -26,14 +27,17 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/LocatorSelectorEntry.hpp>
+#include <fastdds/rtps/common/LocatorWithMask.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <rtps/network/NetmaskFilterUtils.hpp>
 #include <utils/SystemInfo.hpp>
+
+#include <rtps/network/utils/external_locators.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace ExternalLocatorsProcessor {
+namespace network {
+namespace external_locators {
 
 static uint8_t get_locator_mask(
         const Locator& locator)
@@ -41,7 +45,7 @@ static uint8_t get_locator_mask(
     uint8_t ret = 24;
 
     std::vector<fastrtps::rtps::IPFinder::info_IP> infoIPs;
-    SystemInfo::get_ips(infoIPs, true);
+    SystemInfo::get_ips(infoIPs, true, false);
     for (const fastrtps::rtps::IPFinder::info_IP& infoIP : infoIPs)
     {
         if (infoIP.locator.kind == locator.kind &&
@@ -337,7 +341,8 @@ void filter_remote_locators(
     filter_remote_locators(locators.unicast, external_locators, ignore_non_matching);
 }
 
-} // namespace ExternalLocatorsProcessor
+} // namespace external_locators
+} // namespace network
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

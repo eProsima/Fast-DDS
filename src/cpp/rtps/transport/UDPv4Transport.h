@@ -125,8 +125,8 @@ protected:
     asio::ip::udp generate_protocol() const override;
     bool get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback = false,
-            bool force_lookup = false) const override;
+            bool return_loopback,
+            bool force_lookup) const override;
     const std::string& localhost_name() override;
     eProsimaUDPSocket OpenAndBindInputSocket(
             const std::string& sIp,

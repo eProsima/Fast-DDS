@@ -33,8 +33,6 @@ namespace rtps {
 
 class RTPSParticipantAttributes;
 
-using TransportNetmaskFilterInfo = std::pair<int32_t, fastdds::rtps::NetmaskFilterInfo>;
-
 /**
  * Provides the FastRTPS library with abstract resources, which
  * in turn manage the SEND and RECEIVE operations over some transport.
@@ -108,7 +106,7 @@ public:
      * to the corresponding local address if allowed by both local and remote transports.
      *
      * @param [in]  remote_locator Locator to be converted.
-     * @param [out] result_locator Converted locator.
+     * @param [in, out] result_locator Converted locator.
      * @param [in]  remote_network_config Remote network configuration.
      *
      * @return false if the input locator is not supported/allowed by any of the registered transports,
@@ -126,7 +124,7 @@ public:
      * and if allowed by both local and remote transports.
      *
      * @param [in]  remote_locator Locator to be converted.
-     * @param [out] result_locator Converted locator.
+     * @param [in, out] result_locator Converted locator.
      * @param [in]  remote_network_config Remote network configuration.
      * @param [in]  is_fastdds_local Whether the remote locator is from a Fast-DDS entity
      *                               created in this host (from where this method is called).
@@ -311,9 +309,9 @@ public:
             const LocatorList_t& participant_initial_peers) const;
 
     /**
-     * Return transports' netmask filter information (transport's netmask filter kind and allowlist).
+     * Returns transports' netmask filter information (transport's netmask filter kind and allowlist).
      */
-    std::vector<TransportNetmaskFilterInfo> netmask_filter_info() const;
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info() const;
 
 private:
 

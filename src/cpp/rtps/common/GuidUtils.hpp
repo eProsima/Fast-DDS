@@ -63,6 +63,16 @@ public:
     }
 
     /**
+     * Get a copy of \c prefix_ attribute.
+     *
+     * @return copy of \c prefix_ attribute.
+     */
+    GuidPrefix_t prefix() const
+    {
+        return prefix_;
+    }
+
+    /**
      * Get a reference to the singleton instance.
      *
      * @return reference to the singleton instance.

@@ -25,7 +25,7 @@
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -35,7 +35,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
-#include <rtps/network/NetmaskFilterUtils.hpp>
+#include <rtps/network/utils/netmask_filter.hpp>
 #include <rtps/xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
@@ -630,7 +630,7 @@ XMLP_ret XMLParser::parseXMLSocketTransportData(
 
             try
             {
-                p_transport->netmask_filter = fastdds::rtps::NetmaskFilterUtils::string_to_netmask_filter_kind(
+                p_transport->netmask_filter = fastdds::rtps::network::netmask_filter::string_to_netmask_filter_kind(
                     netmask_filter_str);
             }
             catch (const std::invalid_argument& e)
@@ -748,7 +748,7 @@ XMLP_ret XMLParser::parseXMLAllowlist(
             {
                 try
                 {
-                    netmask_filter = fastdds::rtps::NetmaskFilterUtils::string_to_netmask_filter_kind(
+                    netmask_filter = fastdds::rtps::network::netmask_filter::string_to_netmask_filter_kind(
                         netmask_filter_attr->Value());
                 }
                 catch (const std::invalid_argument& e)
@@ -766,7 +766,7 @@ XMLP_ret XMLParser::parseXMLAllowlist(
                 return XMLP_ret::XML_ERROR;
             }
             // Add valid item to allowlist
-            p_transport->interface_allowlist.push_back({iface_name, netmask_filter});
+            p_transport->interface_allowlist.emplace_back(iface_name, netmask_filter);
         }
         else
         {
@@ -2373,7 +2373,7 @@ XMLP_ret XMLParser::fillDataNode(
             try
             {
                 participant_node.get()->rtps.netmaskFilter =
-                        fastdds::rtps::NetmaskFilterUtils::string_to_netmask_filter_kind(netmask_filter_str);
+                        fastdds::rtps::network::netmask_filter::string_to_netmask_filter_kind(netmask_filter_str);
             }
             catch (const std::invalid_argument& e)
             {

@@ -77,10 +77,11 @@ set(${PROJECT_NAME}_source_files
     rtps/messages/submessages/DataMsg.hpp
     rtps/messages/submessages/GapMsg.hpp
     rtps/messages/submessages/HeartbeatMsg.hpp
-    rtps/network/ExternalLocatorsProcessor.cpp
-    rtps/network/NetmaskFilterUtils.cpp
     rtps/network/NetworkFactory.cpp
     rtps/network/ReceiverResource.cpp
+    rtps/network/utils/external_locators.cpp
+    rtps/network/utils/netmask_filter.cpp
+    rtps/network/utils/network.cpp
     rtps/attributes/RTPSParticipantAttributes.cpp
     rtps/participant/RTPSParticipant.cpp
     rtps/participant/RTPSParticipantImpl.cpp
@@ -130,6 +131,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/TransportInterface.cpp
     rtps/transport/ChainingTransport.cpp
     rtps/transport/ChannelResource.cpp
+    rtps/transport/network/NetmaskFilterKind.cpp
     rtps/transport/PortBasedTransportDescriptor.cpp
     rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp

@@ -12,31 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @file NetmaskFilterKind.hpp
+/*!
+ * @file NetmaskFilterKind.cpp
  */
 
-#ifndef _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_HPP_
-#define _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_HPP_
-
 #include <ostream>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-enum RTPS_DllAPI NetmaskFilterKind
-{
-    OFF,
-    AUTO,
-    ON
-};
-
-inline std::ostream& operator <<(
+std::ostream& operator <<(
         std::ostream& output,
         const NetmaskFilterKind& netmask_filter_kind)
 {
@@ -57,8 +49,6 @@ inline std::ostream& operator <<(
     return output << netmask_filter_kind_str;
 }
 
-} // namespace rtps
+} // namsepace rtps
 } // namespace fastdds
 } // namespace eprosima
-
-#endif // _FASTDDS_RTPS_TRANSPORT_NETMASKFILTER_HPP_

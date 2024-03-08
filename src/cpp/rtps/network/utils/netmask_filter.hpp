@@ -13,25 +13,24 @@
 // limitations under the License.
 
 /**
- * @file NetmaskFilterUtils.hpp
+ * @file netmask_filter.hpp
  */
 
-#ifndef _RTPS_NETWORK_NETMASKFILTERUTILS_HPP_
-#define _RTPS_NETWORK_NETMASKFILTERUTILS_HPP_
+#ifndef _RTPS_NETWORK_UTILS_NETMASK_FILTER_HPP_
+#define _RTPS_NETWORK_UTILS_NETMASK_FILTER_HPP_
 
-#include <cstdint>
 #include <vector>
+#include <string>
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
-#include <fastdds/rtps/transport/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
+#include <fastdds/rtps/transport/TransportInterface.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace NetmaskFilterUtils {
-
-using NetmaskFilterInfo = std::pair<NetmaskFilterKind, std::vector<std::pair<LocatorWithMask, NetmaskFilterKind>>>;
-using TransportNetmaskFilterInfo = std::pair<int32_t, NetmaskFilterInfo>;
+namespace network {
+namespace netmask_filter {
 
 /**
  * Convert string to \c NetmaskFilterKind if possible.
@@ -54,7 +53,7 @@ NetmaskFilterKind string_to_netmask_filter_kind(
  *
  * The contained netmask filter value will adopt the container's one if the former is AUTO (and the latter is not).
  *
- * @param [in] contained_netmask_filter  Contained netmask filter value.
+ * @param [in, out] contained_netmask_filter  Contained netmask filter value.
  * @param [in] container_netmask_filter  Container netmask filter value.
  *
  * @return true if container and contained netmask filter configurations are compatible, false otherwise.
@@ -62,20 +61,6 @@ NetmaskFilterKind string_to_netmask_filter_kind(
 bool validate_and_transform(
         NetmaskFilterKind& contained_netmask_filter,
         const NetmaskFilterKind& container_netmask_filter);
-
-/**
- * Checks whether two given addresses are equal in their first \c num_bits bits.
- *
- * @param [in] addr1     First address to compare.
- * @param [in] addr2     Second address to compare.
- * @param [in] num_bits  Number of bits to be taken into consideration.
- *
- * @return true if they match, false otherwise.
- */
-bool address_matches(
-        const uint8_t* addr1,
-        const uint8_t* addr2,
-        uint64_t num_bits);
 
 /**
  * Check whether netmask filtering configuration is consistent with \c ignore_non_matching_locators parameter.
@@ -115,9 +100,10 @@ bool check_preconditions(
         const ExternalLocators& external_locators,
         std::string& error_msg);
 
-} // namespace NetmaskFilterUtils
+} // namespace netmask_filter
+} // namespace network
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _RTPS_NETWORK_NETMASKFILTERUTILS_HPP_
+#endif  // _RTPS_NETWORK_UTILS_NETMASK_FILTER_HPP_
