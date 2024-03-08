@@ -54,6 +54,7 @@ namespace dds {
 
 DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
+    , default_domain_id_(0)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
     , topic_pool_(fastrtps::rtps::TopicPayloadPoolRegistry::instance())
     , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
@@ -206,6 +207,14 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     return dom_part;
 }
 
+DomainParticipant* DomainParticipantFactory::create_participant(
+        const DomainParticipantQos& qos,
+        DomainParticipantListener* listen,
+        const StatusMask& mask)
+{
+    return create_participant(default_domain_id_, qos, listen, mask);
+}
+
 DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
         DomainId_t did,
         const std::string& profile_name,
@@ -239,7 +248,8 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     {
         DomainParticipantQos qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
-        return create_participant(attr.domainId, qos, listen, mask);
+        default_domain_id_ = attr.domainId;
+        return create_participant(default_domain_id_, qos, listen, mask);
     }
 
     return nullptr;
@@ -423,6 +433,7 @@ void DomainParticipantFactory::reset_default_participant_qos()
         ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
         utils::set_qos_from_attributes(default_participant_qos_, attr.rtps);
+        default_domain_id_ = attr.domainId;
     }
 }
 

@@ -99,6 +99,19 @@ public:
     /**
      * Create a Participant.
      *
+     * @param qos DomainParticipantQos Reference.
+     * @param listener DomainParticipantListener Pointer (default: nullptr)
+     * @param mask StatusMask Reference (default: all)
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     */
+    RTPS_DllAPI DomainParticipant* create_participant(
+            const DomainParticipantQos& qos,
+            DomainParticipantListener* listener = nullptr,
+            const StatusMask& mask = StatusMask::all());
+
+    /**
+     * Create a Participant.
+     *
      * @param domain_id Domain Id.
      * @param profile_name Participant profile name.
      * @param listener DomainParticipantListener Pointer (default: nullptr)
@@ -341,6 +354,8 @@ protected:
     mutable std::mutex mtx_participants_;
 
     mutable bool default_xml_profiles_loaded;
+
+    DomainId_t default_domain_id_;
 
     DomainParticipantFactoryQos factory_qos_;
 
