@@ -2135,19 +2135,18 @@ protected:
 
     /**
      * @brief Check consistency between a given PlainCollectionHeader of a map and the related TypeIdentifier:
-     *        1. TypeIdentifier initialized
-     *        2. Consistency of EquivalenceKinds
+     *        1. Key TypeIdentifier is valid
+     *        2. TypeIdentifier initialized
+     *        3. Consistency of EquivalenceKinds
      *
      * @param[in] header PlainCollectionHeader of the map to be checked.
-     * @param[in] element_identifier TypeIdentifier of the map elements to be checked.
-     * @param[in] key_identifier TypeIdentifier of the map keys to be checked.
+     * @param[in] type_identifier TypeIdentifier to be checked.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
      *            consistent.
      */
-    static void plain_map_type_identifier_header_consistency(
+    static void plain_map_type_components_consistency(
             const PlainCollectionHeader& header,
-            const TypeIdentifier& element_identifier,
-            const TypeIdentifier& key_identifier);
+            const TypeIdentifier& type_identifier);
 
     /**
      * @brief Check map key_identifier consistency.
