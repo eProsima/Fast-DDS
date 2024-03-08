@@ -97,15 +97,11 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     /**
-     * Create a Participant.
+     * Create a Participant with default domain id and qos.
      *
-     * @param listener DomainParticipantListener Pointer (default: nullptr)
-     * @param mask StatusMask Reference (default: all)
      * @return DomainParticipant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI DomainParticipant* create_participant_with_default_profile(
-            DomainParticipantListener* listener = nullptr,
-            const StatusMask& mask = StatusMask::all());
+    RTPS_DllAPI DomainParticipant* create_participant_with_default_profile();
 
     /**
      * Create a Participant.

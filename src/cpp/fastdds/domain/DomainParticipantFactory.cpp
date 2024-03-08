@@ -156,7 +156,7 @@ ReturnCode_t DomainParticipantFactory::delete_participant(
 DomainParticipant* DomainParticipantFactory::create_participant(
         DomainId_t did,
         const DomainParticipantQos& qos,
-        DomainParticipantListener* listen,
+        DomainParticipantListener* listener,
         const StatusMask& mask)
 {
     load_profiles();
@@ -165,10 +165,10 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
     DomainParticipant* dom_part = new DomainParticipant(mask);
 #ifndef FASTDDS_STATISTICS
-    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
+    DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listener);
 #else
     eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
-            new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
+            new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listener);
 #endif // FASTDDS_STATISTICS
 
     if (fastrtps::rtps::GUID_t::unknown() != dom_part_impl->guid())
@@ -207,18 +207,16 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     return dom_part;
 }
 
-DomainParticipant* DomainParticipantFactory::create_participant_with_default_profile(
-        DomainParticipantListener* listen,
-        const StatusMask& mask)
+DomainParticipant* DomainParticipantFactory::create_participant_with_default_profile()
 {
     load_profiles();
-    return create_participant(default_domain_id_, default_participant_qos_, listen, mask);
+    return create_participant(default_domain_id_, default_participant_qos_, nullptr, StatusMask::all());
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
         DomainId_t did,
         const std::string& profile_name,
-        DomainParticipantListener* listen,
+        DomainParticipantListener* listener,
         const StatusMask& mask)
 {
     load_profiles();
@@ -229,7 +227,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     {
         DomainParticipantQos qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
-        return create_participant(did, qos, listen, mask);
+        return create_participant(did, qos, listener, mask);
     }
 
     return nullptr;
@@ -237,7 +235,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
 
 DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
         const std::string& profile_name,
-        DomainParticipantListener* listen,
+        DomainParticipantListener* listener,
         const StatusMask& mask)
 {
     load_profiles();
@@ -248,8 +246,7 @@ DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
     {
         DomainParticipantQos qos = default_participant_qos_;
         utils::set_qos_from_attributes(qos, attr.rtps);
-        default_domain_id_ = attr.domainId;
-        return create_participant(default_domain_id_, qos, listen, mask);
+        return create_participant(attr.domainId, qos, listener, mask);
     }
 
     return nullptr;
