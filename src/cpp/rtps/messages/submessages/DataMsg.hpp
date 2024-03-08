@@ -42,7 +42,8 @@ struct DataMsgUtils
     {
         inlineQosFlag =
                 (nullptr != inlineQos) ||
-                ((WITH_KEY == topicKind) && (expectsInlineQos || change->kind != ALIVE)) ||
+                ((WITH_KEY == topicKind) &&
+                (!change->writerGUID.is_builtin() || expectsInlineQos || change->kind != ALIVE)) ||
                 (change->write_params.related_sample_identity() != SampleIdentity::unknown());
 
         dataFlag = ALIVE == change->kind &&
@@ -129,7 +130,7 @@ struct DataMsgUtils
                     change->write_params.related_sample_identity());
         }
 
-        if (WITH_KEY == topicKind && (expectsInlineQos || ALIVE != change->kind))
+        if (WITH_KEY == topicKind && (!change->writerGUID.is_builtin() || expectsInlineQos || ALIVE != change->kind))
         {
             fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_key(msg, change->instanceHandle);
 
