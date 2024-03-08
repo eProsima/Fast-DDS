@@ -209,8 +209,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
 DomainParticipant* DomainParticipantFactory::create_participant_with_default_profile()
 {
-    load_profiles();
-    return create_participant(default_domain_id_, default_participant_qos_, nullptr, StatusMask::none());
+    return create_participant_with_default_profile(nullptr, StatusMask::none());
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant_with_default_profile(
