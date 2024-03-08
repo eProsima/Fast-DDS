@@ -53,7 +53,7 @@ class StringLTypeDefn;
 
 /*!
  * @brief This class represents the structure StringSTypeDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class StringSTypeDefn final
 {
@@ -164,7 +164,7 @@ private:
 };
 /*!
  * @brief This class represents the structure StringLTypeDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class StringLTypeDefn final
 {
@@ -275,7 +275,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainCollectionHeader defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainCollectionHeader final
 {
@@ -410,7 +410,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainSequenceSElemDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainSequenceSElemDefn final
 {
@@ -580,7 +580,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainSequenceLElemDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainSequenceLElemDefn final
 {
@@ -750,7 +750,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainArraySElemDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainArraySElemDefn final
 {
@@ -930,7 +930,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainArrayLElemDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainArrayLElemDefn final
 {
@@ -1110,7 +1110,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainMapSTypeDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainMapSTypeDefn final
 {
@@ -1333,7 +1333,7 @@ private:
 };
 /*!
  * @brief This class represents the structure PlainMapLTypeDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class PlainMapLTypeDefn final
 {
@@ -1556,7 +1556,7 @@ private:
 };
 /*!
  * @brief This class represents the structure StronglyConnectedComponentId defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class StronglyConnectedComponentId final
 {
@@ -1729,7 +1729,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ExtendedTypeDefn defined by the user in the IDL file.
- * @ingroup TYPEIDENTIFIERTYPES
+ * @ingroup TYPES_MODULE
  */
 class ExtendedTypeDefn final
 {
