@@ -225,6 +225,40 @@ void TCPTransportInterface::clean()
     }
 }
 
+Locator TCPTransportInterface::remote_endpoint_to_locator(
+        const std::shared_ptr<TCPChannelResource>& channel) const
+{
+    Locator locator;
+    asio::error_code ec;
+    auto endpoint = channel->remote_endpoint(ec);
+    if (ec)
+    {
+        LOCATOR_INVALID(locator);
+    }
+    else
+    {
+        endpoint_to_locator(endpoint, locator);
+    }
+    return locator;
+}
+
+Locator TCPTransportInterface::local_endpoint_to_locator(
+        const std::shared_ptr<TCPChannelResource>& channel) const
+{
+    Locator locator;
+    asio::error_code ec;
+    auto endpoint = channel->local_endpoint(ec);
+    if (ec)
+    {
+        LOCATOR_INVALID(locator);
+    }
+    else
+    {
+        endpoint_to_locator(endpoint, locator);
+    }
+    return locator;
+}
+
 void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
