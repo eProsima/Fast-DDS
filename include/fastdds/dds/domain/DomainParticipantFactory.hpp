@@ -99,13 +99,11 @@ public:
     /**
      * Create a Participant.
      *
-     * @param qos DomainParticipantQos Reference.
      * @param listener DomainParticipantListener Pointer (default: nullptr)
      * @param mask StatusMask Reference (default: all)
      * @return DomainParticipant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI DomainParticipant* create_participant(
-            const DomainParticipantQos& qos,
+    RTPS_DllAPI DomainParticipant* create_participant_with_default_profile(
             DomainParticipantListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
 

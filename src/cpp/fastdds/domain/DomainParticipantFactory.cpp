@@ -207,12 +207,12 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     return dom_part;
 }
 
-DomainParticipant* DomainParticipantFactory::create_participant(
-        const DomainParticipantQos& qos,
+DomainParticipant* DomainParticipantFactory::create_participant_with_default_profile(
         DomainParticipantListener* listen,
         const StatusMask& mask)
 {
-    return create_participant(default_domain_id_, qos, listen, mask);
+    load_profiles();
+    return create_participant(default_domain_id_, default_participant_qos_, listen, mask);
 }
 
 DomainParticipant* DomainParticipantFactory::create_participant_with_profile(
