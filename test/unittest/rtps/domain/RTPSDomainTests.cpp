@@ -14,11 +14,9 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
-
-#include <xmlparser/XMLParserCommon.h>
-#include <xmlparser/XMLProfileManager.h>
 
 /**
  * This test checks the getter and setter for the library settings in the RTPS layer.
@@ -49,12 +47,13 @@ TEST(RTPSDomainTests, library_settings_test)
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_USER_DATA_ONLY, library_settings.intraprocess_delivery);
     // Remove RTPSParticipant
-    eprosima::fastrtps::rtps::RTPSDomain::stopAll();
+    EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant));
     library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
     // Setting LibrarySettings with no participants shall suceed
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::set_library_settings(library_settings));
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_library_settings(library_settings));
     EXPECT_EQ(eprosima::fastdds::INTRAPROCESS_OFF, library_settings.intraprocess_delivery);
+    eprosima::fastrtps::rtps::RTPSDomain::stopAll();
 }
 
 /**
@@ -85,8 +84,8 @@ TEST(RTPSDomainTests, get_topic_attributes_from_profile_test)
     </topic>
 </profiles>)";
 
-    EXPECT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK,
-            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLString(xml.c_str(), xml.length()));
+    EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(xml.c_str(),
+            xml.length()), ReturnCode_t::RETCODE_OK);
     EXPECT_TRUE(eprosima::fastrtps::rtps::RTPSDomain::get_topic_attributes_from_profile(profile_name, topic_att));
     EXPECT_EQ(topic_att.topicName, "Test");
     EXPECT_EQ(topic_att.topicDataType, "DataTest");

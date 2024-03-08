@@ -16,23 +16,6 @@ set(RTPS_DOMAIN_TESTS_EXEC RTPSDomainTests)
 
 file(GLOB RTPS_DOMAIN_TESTS_SOURCE
     RTPSDomainTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/RTPSDomain.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/PortBasedTransportDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/utils/UnitsParser.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/xmlparser/*.cpp
     )
 
 # External sources
@@ -65,29 +48,6 @@ target_compile_definitions(${RTPS_DOMAIN_TESTS_EXEC} PRIVATE
 target_include_directories(
     ${RTPS_DOMAIN_TESTS_EXEC}
     PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ResourceEvent
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipant
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantAttributes
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ServerAttributes
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv4TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPv6TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterProxyData
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
@@ -99,6 +59,7 @@ target_link_libraries(
     GTest::gmock
     ${CMAKE_DL_LIBS}
     fastcdr
+    fastdds
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     ${TINYXML2_LIBRARY}
     )
