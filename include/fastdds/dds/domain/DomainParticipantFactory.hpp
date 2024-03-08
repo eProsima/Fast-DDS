@@ -103,6 +103,18 @@ public:
      */
     RTPS_DllAPI DomainParticipant* create_participant_with_default_profile();
 
+
+    /**
+     * Create a Participant with default domain id and qos.
+     *
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     * @param listener DomainParticipantListener Pointer
+     * @param mask StatusMask Reference
+     */
+    RTPS_DllAPI DomainParticipant* create_participant_with_default_profile(
+            DomainParticipantListener* listener,
+            const StatusMask& mask);
+
     /**
      * Create a Participant.
      *
