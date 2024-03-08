@@ -472,6 +472,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
 
+message(WARNING "Using TINYXML2_INCLUDE_DIR: " ${TINYXML2_INCLUDE_DIR})
+message(WARNING "Using TINYXML2_SOURCE_DIR: " ${TINYXML2_SOURCE_DIR})
+
 # No need to expose linked libs when target is a shared library on MSVC.
 if(BUILD_SHARED_LIBS AND MSVC)
     set(PRIVACY "PRIVATE")
