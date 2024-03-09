@@ -21,13 +21,13 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
+#include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/XMLParser.h>
 #include <xmlparser/XMLParserCommon.h>
 
@@ -168,12 +168,12 @@ public:
      */
     static XMLP_ret fillPublisherAttributes(
             const std::string& profile_name,
-            PublisherAttributes& atts,
+            fastdds::PublisherAttributes& atts,
             bool log_error = true);
 
     //!Fills publisher_attributes with the default values.
     static void getDefaultPublisherAttributes(
-            PublisherAttributes& publisher_attributes);
+            fastdds::PublisherAttributes& publisher_attributes);
 
     /**
      * Search for the profile specified and fill the structure.

@@ -1578,7 +1578,7 @@ XMLP_ret XMLParser::parseXMLPublisherProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_publisher_t publisher_atts{new PublisherAttributes};
+    up_publisher_t publisher_atts{new fastdds::PublisherAttributes};
     up_node_publisher_t publisher_node{new node_publisher_t{NodeType::PUBLISHER, std::move(publisher_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *publisher_node))
     {
@@ -2517,7 +2517,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<PublisherAttributes>& publisher_node)
+        DataNode<fastdds::PublisherAttributes>& publisher_node)
 {
     if (nullptr == p_profile)
     {

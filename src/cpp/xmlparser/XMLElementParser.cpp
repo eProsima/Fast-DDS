@@ -4177,7 +4177,7 @@ XMLP_ret XMLParser::getXMLDomainParticipantFactoryQos(
 
 XMLP_ret XMLParser::getXMLPublisherAttributes(
         tinyxml2::XMLElement* elem,
-        PublisherAttributes& publisher,
+        fastdds::PublisherAttributes& publisher,
         uint8_t ident)
 {
     /*

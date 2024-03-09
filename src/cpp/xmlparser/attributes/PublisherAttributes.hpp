@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file PublisherAttributes.h
+ * @file PublisherAttributes.hpp
  */
 
-#ifndef PUBLISHERATTRIBUTES_H_
-#define PUBLISHERATTRIBUTES_H_
+#ifndef _FASTDDS_PUBLISHERATTRIBUTES_H_
+#define _FASTDDS_PUBLISHERATTRIBUTES_H_
 
 #include <fastdds/rtps/resources/ResourceManagement.h>
 
@@ -31,7 +31,7 @@
 #include <fastrtps/qos/WriterQos.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Class PublisherAttributes, used by the user to define the attributes of a Publisher.
@@ -61,41 +61,41 @@ public:
     }
 
     //! Topic Attributes for the Publisher
-    TopicAttributes topic;
+    fastrtps::TopicAttributes topic;
 
     //! QOS for the Publisher
-    WriterQos qos;
+    fastrtps::WriterQos qos;
 
     //! Writer Attributes
-    rtps::WriterTimes times;
+    fastrtps::rtps::WriterTimes times;
 
     //! Unicast locator list
-    rtps::LocatorList_t unicastLocatorList;
+    fastrtps::rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    rtps::LocatorList_t multicastLocatorList;
+    fastrtps::rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    rtps::LocatorList_t remoteLocatorList;
+    fastrtps::rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
-    fastdds::rtps::ExternalLocators external_unicast_locators;
+    rtps::ExternalLocators external_unicast_locators;
 
     //! Whether locators that don't match with the announced locators should be kept.
     bool ignore_non_matching_locators = false;
 
     //! Throughput controller
-    rtps::ThroughputControllerDescriptor throughputController;
+    fastrtps::rtps::ThroughputControllerDescriptor throughputController;
 
     //! Underlying History memory policy
-    rtps::MemoryManagementPolicy_t historyMemoryPolicy =
-            rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            fastrtps::rtps::MemoryManagementPolicy_t::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    rtps::PropertyPolicy properties;
+    fastrtps::rtps::PropertyPolicy properties;
 
     //! Allocation limits on the matched subscribers collections
-    ResourceLimitedContainerConfig matched_subscriber_allocation;
+    fastrtps::ResourceLimitedContainerConfig matched_subscriber_allocation;
 
     /**
      * Get the user defined ID
@@ -143,7 +143,7 @@ private:
     int16_t m_entityID = -1;
 };
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
-#endif /* PUBLISHERATTRIBUTES_H_ */
+#endif /* _FASTDDS_PUBLISHERATTRIBUTES_H_ */

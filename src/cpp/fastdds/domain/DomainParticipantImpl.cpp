@@ -54,7 +54,6 @@
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
-#include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
@@ -65,6 +64,7 @@
 
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
@@ -77,7 +77,6 @@ using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::TopicAttributes;
 using fastrtps::SubscriberAttributes;
-using fastrtps::PublisherAttributes;
 using fastrtps::rtps::ParticipantDiscoveryInfo;
 using fastrtps::rtps::RTPSDomain;
 using fastrtps::rtps::RTPSDomainImpl;
