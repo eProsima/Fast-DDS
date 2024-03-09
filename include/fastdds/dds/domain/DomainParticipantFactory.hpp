@@ -27,6 +27,8 @@
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -266,6 +268,42 @@ public:
      */
     RTPS_DllAPI ReturnCode_t set_qos(
             const DomainParticipantFactoryQos& qos);
+
+    /**
+     * @brief This operation returns the value of the DomainParticipant library settings.
+     *
+     * @param library_settings LibrarySettings reference where the settings are returned.
+     * @return RETCODE_OK
+     */
+    RTPS_DllAPI ReturnCode_t get_library_settings(
+            LibrarySettings& library_settings) const;
+
+    /**
+     * @brief This operation sets the library settings.
+     *
+     * Library settings must be set before enabling the DomainParticipants.
+     * Otherwise, failure of the setting operation is expected.
+     *
+     * @param library_settings LibrarySettings to be set.
+     * @return RETCODE_PRECONDITION_NOT_MET if any DomainParticipant is already enabled.
+     *         RETCODE_OK otherwise.
+     */
+    RTPS_DllAPI ReturnCode_t set_library_settings(
+            const LibrarySettings& library_settings);
+
+    /**
+     * @brief Get the DynamicTypeBuilder defined in XML file.
+     *        The XML file shall be previously loaded.
+     *
+     * @param type_name Dynamic type name.
+     * @param type Reference where the Dynamic type builder is returned.
+     * @return RETCODE_BAD_PARAMETER if type_name is empty.
+     *         RETCODE_NO_DATA if type_name is unknown.
+     *         RETCODE_OK otherwise.
+     */
+    RTPS_DllAPI ReturnCode_t get_dynamic_type_builder_from_xml_by_name(
+            const std::string& type_name,
+            fastrtps::types::DynamicTypeBuilder*& type);
 
 protected:
 

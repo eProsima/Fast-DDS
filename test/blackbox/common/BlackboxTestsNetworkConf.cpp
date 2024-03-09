@@ -278,15 +278,15 @@ void interface_whitelist_test(
     }
 
     // include the interfaces in the transport descriptor
-    for (const auto& interface : pub_interfaces)
+    for (const auto& network_interface : pub_interfaces)
     {
         if (!interface_name)
         {
-            pub_udp_descriptor->interfaceWhiteList.push_back(interface.name);
+            pub_udp_descriptor->interfaceWhiteList.push_back(network_interface.name);
         }
         else
         {
-            pub_udp_descriptor->interfaceWhiteList.push_back(interface.dev);
+            pub_udp_descriptor->interfaceWhiteList.push_back(network_interface.dev);
         }
     }
 
@@ -309,15 +309,15 @@ void interface_whitelist_test(
     }
 
     // include the interfaces in the transport descriptor
-    for (const auto& interface : sub_interfaces)
+    for (const auto& network_interface : sub_interfaces)
     {
         if (!interface_name)
         {
-            sub_udp_descriptor->interfaceWhiteList.push_back(interface.name);
+            sub_udp_descriptor->interfaceWhiteList.push_back(network_interface.name);
         }
         else
         {
-            sub_udp_descriptor->interfaceWhiteList.push_back(interface.dev);
+            sub_udp_descriptor->interfaceWhiteList.push_back(network_interface.dev);
         }
     }
 
@@ -588,10 +588,11 @@ TEST_P(NetworkConfig, PubGetSendingLocatorsWhitelist)
     constexpr uint32_t port = 31337u;
 
     descriptor_->m_output_udp_socket = static_cast<uint16_t>(port);
-    for (const auto& interface : interfaces)
+    for (const auto& network_interface : interfaces)
     {
-        std::cout << "Adding interface '" << interface.name << "' (" << interface.name.size() << ")" << std::endl;
-        descriptor_->interfaceWhiteList.push_back(interface.name);
+        std::cout << "Adding interface '" << network_interface.name << "' (" << network_interface.name.size() << ")" <<
+            std::endl;
+        descriptor_->interfaceWhiteList.push_back(network_interface.name);
     }
 
     writer.disable_builtin_transport().

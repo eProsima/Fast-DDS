@@ -40,6 +40,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/types/TypesBase.h>
 
+// TODO(jlbueno): remove private headers
 #include <rtps/transport/test_UDPv4Transport.h>
 
 #include "BlackboxTests.hpp"

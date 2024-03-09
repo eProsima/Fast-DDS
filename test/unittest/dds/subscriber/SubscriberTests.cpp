@@ -12,10 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastcdr/Cdr.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
-#include <fastcdr/Cdr.h>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -29,18 +28,12 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::SubscriberAttributes;
 using fastrtps::rtps::PropertyPolicyHelper;
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-
 
 class FooType
 {
@@ -535,53 +528,10 @@ void check_datareader_with_profile (
     DataReaderQos qos;
     datareader->get_qos(qos);
 
-    SubscriberAttributes subscriber_atts;
-    XMLProfileManager::fillSubscriberAttributes(profile_name, subscriber_atts);
-
-    //Values taken from profile
-    ASSERT_TRUE(
-        qos.reader_resource_limits().matched_publisher_allocation ==
-        subscriber_atts.matched_publisher_allocation);
-    if (subscriber_atts.qos.m_partition.names().empty())
-    {
-        ASSERT_TRUE(qos.properties() == subscriber_atts.properties);
-    }
-    else
-    {
-        ASSERT_NE(PropertyPolicyHelper::find_property(qos.properties(), "partitions"), nullptr);
-        for (auto partition: subscriber_atts.qos.m_partition.names())
-        {
-            ASSERT_NE(PropertyPolicyHelper::find_property(qos.properties(), "partitions")->find(
-                        partition), std::string::npos);
-        }
-    }
-    ASSERT_TRUE(qos.expects_inline_qos() == subscriber_atts.expectsInlineQos);
-    ASSERT_TRUE(qos.endpoint().unicast_locator_list == subscriber_atts.unicastLocatorList);
-    ASSERT_TRUE(qos.endpoint().multicast_locator_list == subscriber_atts.multicastLocatorList);
-    ASSERT_TRUE(qos.endpoint().remote_locator_list == subscriber_atts.remoteLocatorList);
-    ASSERT_TRUE(qos.endpoint().history_memory_policy == subscriber_atts.historyMemoryPolicy);
-    ASSERT_TRUE(qos.endpoint().user_defined_id == subscriber_atts.getUserDefinedID());
-    ASSERT_TRUE(qos.endpoint().entity_id == subscriber_atts.getEntityID());
-    ASSERT_TRUE(qos.reliable_reader_qos().times == subscriber_atts.times);
-    ASSERT_TRUE(qos.reliable_reader_qos().disable_positive_ACKs == subscriber_atts.qos.m_disablePositiveACKs);
-    ASSERT_TRUE(qos.durability() == subscriber_atts.qos.m_durability);
-    ASSERT_TRUE(qos.durability_service() == subscriber_atts.qos.m_durabilityService);
-    ASSERT_TRUE(qos.deadline() == subscriber_atts.qos.m_deadline);
-    ASSERT_TRUE(qos.latency_budget() == subscriber_atts.qos.m_latencyBudget);
-    ASSERT_TRUE(qos.liveliness() == subscriber_atts.qos.m_liveliness);
-    ASSERT_TRUE(qos.reliability() == subscriber_atts.qos.m_reliability);
-    ASSERT_TRUE(qos.lifespan() == subscriber_atts.qos.m_lifespan);
-    ASSERT_TRUE(qos.user_data().data_vec() == subscriber_atts.qos.m_userData.data_vec());
-    ASSERT_TRUE(qos.ownership() == subscriber_atts.qos.m_ownership);
-    ASSERT_TRUE(qos.destination_order() == subscriber_atts.qos.m_destinationOrder);
-    ASSERT_TRUE(qos.type_consistency().type_consistency == subscriber_atts.qos.type_consistency);
-    ASSERT_TRUE(qos.type_consistency().representation == subscriber_atts.qos.representation);
-    ASSERT_TRUE(qos.time_based_filter() == subscriber_atts.qos.m_timeBasedFilter);
-    ASSERT_TRUE(qos.history() == subscriber_atts.topic.historyQos);
-    ASSERT_TRUE(qos.resource_limits() == subscriber_atts.topic.resourceLimitsQos);
-
-    //Values not implemented on attributes (taken from default QoS)
-    ASSERT_TRUE(qos.reader_data_lifecycle() == DATAREADER_QOS_DEFAULT.reader_data_lifecycle());
+    DataReaderQos profile_qos;
+    EXPECT_EQ(datareader->get_subscriber()->get_datareader_qos_from_profile(profile_name, profile_qos),
+            ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(qos, profile_qos);
 }
 
 TEST(SubscriberTests, CreateDataReaderWithProfile)
