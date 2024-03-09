@@ -24,12 +24,11 @@
 #include <type_traits>
 
 #include <asio.hpp>
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <fastcdr/Cdr.h>
-
+#include "fastdds/dds/common/InstanceHandle.hpp"
+#include "fastdds/dds/core/policy/QosPolicies.hpp"
 #include <fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/Entity.hpp>
@@ -54,15 +53,13 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "../../common/CustomPayloadPool.hpp"
 #include "../../logging/mock/MockConsumer.h"
-#include "fastdds/dds/common/InstanceHandle.hpp"
-#include "fastdds/dds/core/policy/QosPolicies.hpp"
 #include "FooBoundedType.hpp"
 #include "FooBoundedTypeSupport.hpp"
 #include "FooType.hpp"
@@ -2664,9 +2661,9 @@ TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 // Regression test for #12133.
 TEST_F(DataReaderTests, read_samples_with_future_changes)
 {
-    eprosima::fastrtps::LibrarySettingsAttributes att;
-    att.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_OFF;
-    eprosima::fastrtps::xmlparser::XMLProfileManager::library_settings(att);
+    eprosima::fastdds::LibrarySettings att;
+    att.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+    DomainParticipantFactory::get_instance()->set_library_settings(att);
     static constexpr int32_t num_samples = 8;
     static constexpr int32_t expected_samples = 4;
     const ReturnCode_t& ok_code = ReturnCode_t::RETCODE_OK;

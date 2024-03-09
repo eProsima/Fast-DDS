@@ -44,5 +44,5 @@ target_include_directories(LoanableSequenceTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LoanableSequenceTests GTest::gtest)
+target_link_libraries(LoanableSequenceTests fastcdr GTest::gtest)
 gtest_discover_tests(LoanableSequenceTests)

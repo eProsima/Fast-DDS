@@ -27,9 +27,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
@@ -56,12 +56,12 @@ public:
 
     void SetUp() override
     {
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -74,12 +74,12 @@ public:
 
     void TearDown() override
     {
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -256,7 +256,7 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
     // The reader should not take nor read any sample in this test
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, false, false, false);
 
-    auto testTransport_1 = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto testTransport_1 = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
     EntityId_t writer1_id;
     EntityId_t reader_id;
@@ -355,9 +355,9 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
 TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
 {
     //! Manually set intraprocess
-    LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    eprosima::fastdds::LibrarySettings library_settings;
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_FULL;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
 
     auto participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230,
@@ -410,8 +410,8 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
     ASSERT_TRUE(unread_count > 0);
 
     //! Reset back to INTRAPROCESS_OFF
-    library_settings.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
 }
 
 /**

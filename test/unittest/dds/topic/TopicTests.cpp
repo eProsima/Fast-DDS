@@ -22,17 +22,10 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-using fastrtps::TopicAttributes;
-using fastrtps::xmlparser::XMLProfileManager;
-using fastrtps::xmlparser::XMLP_ret;
-
 
 class FooType
 {

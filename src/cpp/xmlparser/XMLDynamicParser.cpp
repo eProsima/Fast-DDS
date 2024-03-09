@@ -13,24 +13,23 @@
 // limitations under the License.
 //
 
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLTree.h>
+#include <cstdlib>
+#include <iostream>
 
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
+#include <tinyxml2.h>
 
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 
-#include <tinyxml2.h>
-#include <iostream>
-#include <cstdlib>
+#include <xmlparser/XMLParser.h>
+#include <xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLProfileManager.h>
+#include <xmlparser/XMLTree.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
