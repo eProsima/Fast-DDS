@@ -1635,7 +1635,7 @@ XMLP_ret XMLParser::parseXMLRequesterProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_requester_t requester_atts{new RequesterAttributes};
+    up_requester_t requester_atts{new fastdds::RequesterAttributes};
     up_node_requester_t requester_node{new node_requester_t{NodeType::REQUESTER, std::move(requester_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *requester_node))
     {
@@ -1654,7 +1654,7 @@ XMLP_ret XMLParser::parseXMLReplierProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_replier_t replier_atts{new ReplierAttributes};
+    up_replier_t replier_atts{new fastdds::ReplierAttributes};
     up_node_replier_t replier_node{new node_replier_t{NodeType::REPLIER, std::move(replier_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *replier_node))
     {
@@ -2559,20 +2559,20 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<RequesterAttributes>& requester_node)
+        DataNode<fastdds::RequesterAttributes>& requester_node)
 {
     /*
-        <xs:complexType name="requesterProfileType">
-            <xs:all>
-                <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
-                <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
-                <xs:element name="publisher" type="publisherProfileType"/>
-                <xs:element name="subscriber" type="subscriberProfileType"/>
+        <xs:complexType name="replierRequesterProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="request_topic_name" type="string" minOccurs="0"/>
+                <xs:element name="reply_topic_name" type="string" minOccurs="0"/>
+                <xs:element name="data_writer" type="publisherProfileNoAttributesType" minOccurs="0"/>
+                <xs:element name="data_reader" type="subscriberProfileNoAttributesType" minOccurs="0"/>
             </xs:all>
-            <xs:attribute name="profile_name" type="stringType" use="required"/>
-            <xs:attribute name="service_name" type="stringType" use="required"/>
-            <xs:attribute name="request_type" type="stringType" use="required"/>
-            <xs:attribute name="reply_type" type="stringType" use="required"/>
+            <xs:attribute name="profile_name" type="string" use="required"/>
+            <xs:attribute name="service_name" type="string" use="required"/>
+            <xs:attribute name="request_type" type="string" use="required"/>
+            <xs:attribute name="reply_type" type="string" use="required"/>
         </xs:complexType>
      */
 
@@ -2641,14 +2641,14 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, PUBLISHER) == 0)
+        else if (strcmp(name, PUBLISHER) == 0 || strcmp(name, DATA_WRITER) == 0)
         {
             if (XMLP_ret::XML_OK != getXMLPublisherAttributes(p_aux0, requester_node.get()->publisher, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, SUBSCRIBER) == 0)
+        else if (strcmp(name, SUBSCRIBER) == 0 || strcmp(name, DATA_READER) == 0)
         {
             if (XMLP_ret::XML_OK != getXMLSubscriberAttributes(p_aux0, requester_node.get()->subscriber, ident))
             {
@@ -2674,20 +2674,20 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<ReplierAttributes>& replier_node)
+        DataNode<fastdds::ReplierAttributes>& replier_node)
 {
     /*
-        <xs:complexType name="replierProfileType">
-            <xs:all>
-                <xs:element name="request_topic_name" type="stringType" minOccurs="0"/>
-                <xs:element name="reply_topic_name" type="stringType" minOccurs="0"/>
-                <xs:element name="publisher" type="publisherProfileType"/>
-                <xs:element name="subscriber" type="subscriberProfileType"/>
+        <xs:complexType name="replierRequesterProfileType">
+            <xs:all minOccurs="0">
+                <xs:element name="request_topic_name" type="string" minOccurs="0"/>
+                <xs:element name="reply_topic_name" type="string" minOccurs="0"/>
+                <xs:element name="data_writer" type="publisherProfileNoAttributesType" minOccurs="0"/>
+                <xs:element name="data_reader" type="subscriberProfileNoAttributesType" minOccurs="0"/>
             </xs:all>
-            <xs:attribute name="profile_name" type="stringType" use="required"/>
-            <xs:attribute name="service_name" type="stringType" use="required"/>
-            <xs:attribute name="request_type" type="stringType" use="required"/>
-            <xs:attribute name="reply_type" type="stringType" use="required"/>
+            <xs:attribute name="profile_name" type="string" use="required"/>
+            <xs:attribute name="service_name" type="string" use="required"/>
+            <xs:attribute name="request_type" type="string" use="required"/>
+            <xs:attribute name="reply_type" type="string" use="required"/>
         </xs:complexType>
      */
 
@@ -2756,14 +2756,14 @@ XMLP_ret XMLParser::fillDataNode(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, PUBLISHER) == 0)
+        else if (strcmp(name, PUBLISHER) == 0 || strcmp(name, DATA_WRITER) == 0)
         {
             if (XMLP_ret::XML_OK != getXMLPublisherAttributes(p_aux0, replier_node.get()->publisher, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, SUBSCRIBER) == 0)
+        else if (strcmp(name, SUBSCRIBER) == 0 || strcmp(name, DATA_READER) == 0)
         {
             if (XMLP_ret::XML_OK != getXMLSubscriberAttributes(p_aux0, replier_node.get()->subscriber, ident))
             {

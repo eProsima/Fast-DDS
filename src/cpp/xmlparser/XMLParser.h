@@ -28,13 +28,13 @@
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/ReplierAttributes.hpp>
-#include <fastrtps/attributes/RequesterAttributes.hpp>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
+#include <xmlparser/attributes/ReplierAttributes.hpp>
+#include <xmlparser/attributes/RequesterAttributes.hpp>
 #include <xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {
@@ -85,13 +85,13 @@ typedef DataNode<TopicAttributes>              node_topic_t;
 typedef node_topic_t*                          p_node_topic_t;
 typedef std::unique_ptr<node_topic_t>          up_node_topic_t;
 
-typedef std::unique_ptr<RequesterAttributes>   up_requester_t;
-typedef DataNode<RequesterAttributes>          node_requester_t;
+typedef std::unique_ptr<fastdds::RequesterAttributes>   up_requester_t;
+typedef DataNode<fastdds::RequesterAttributes>          node_requester_t;
 typedef node_requester_t*                      p_node_requester_t;
 typedef std::unique_ptr<node_requester_t>      up_node_requester_t;
 
-typedef std::unique_ptr<ReplierAttributes>     up_replier_t;
-typedef DataNode<ReplierAttributes>            node_replier_t;
+typedef std::unique_ptr<fastdds::ReplierAttributes>     up_replier_t;
+typedef DataNode<fastdds::ReplierAttributes>            node_replier_t;
 typedef node_replier_t*                        p_node_replier_t;
 typedef std::unique_ptr<node_replier_t>        up_node_replier_t;
 
@@ -346,11 +346,11 @@ protected:
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
-            DataNode<RequesterAttributes>& requester_node);
+            DataNode<fastdds::RequesterAttributes>& requester_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
-            DataNode<ReplierAttributes>& replier_node);
+            DataNode<fastdds::ReplierAttributes>& replier_node);
 
     template <typename T>
     static void addAllAttributes(

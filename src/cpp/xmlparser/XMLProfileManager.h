@@ -232,7 +232,7 @@ public:
      */
     static XMLP_ret fillRequesterAttributes(
             const std::string& profile_name,
-            RequesterAttributes& atts);
+            fastdds::RequesterAttributes& atts);
 
     /**
      * Search for the profile specified and fill the structure.
@@ -242,7 +242,7 @@ public:
      */
     static XMLP_ret fillReplierAttributes(
             const std::string& profile_name,
-            ReplierAttributes& atts);
+            fastdds::ReplierAttributes& atts);
 
     /**
      * Deletes the XMLProfileManager instance.

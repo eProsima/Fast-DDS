@@ -16,21 +16,23 @@
  * @file RequesterAttributes.hpp
  */
 
-#ifndef REQUESTERATTRIBUTES_HPP_
-#define REQUESTERATTRIBUTES_HPP_
+#ifndef _FASTDDS_REQUESTERATTRIBUTES_HPP_
+#define _FASTDDS_REQUESTERATTRIBUTES_HPP_
 
-#include "PublisherAttributes.h"
-#include "SubscriberAttributes.h"
+#include <fastrtps/attributes/PublisherAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 class RequesterAttributes
 {
 public:
+
     RequesterAttributes() = default;
 
-    bool operator==(const RequesterAttributes& b) const
+    bool operator ==(
+            const RequesterAttributes& b) const
     {
         return (this->service_name == b.service_name) &&
                (this->request_topic_name == b.request_topic_name) &&
@@ -44,12 +46,12 @@ public:
     std::string reply_type;
     std::string request_topic_name;
     std::string reply_topic_name;
-    PublisherAttributes publisher;
-    SubscriberAttributes subscriber;
+    fastrtps::PublisherAttributes publisher;
+    fastrtps::SubscriberAttributes subscriber;
 };
 
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
-#endif /* REQUESTERATTRIBUTES_HPP_ */
+#endif /* _FASTDDS_REQUESTERATTRIBUTES_HPP_ */

@@ -27,20 +27,22 @@
 
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/TypeIdentifier.h>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -666,6 +668,28 @@ public:
     FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
             TopicQos& qos) const;
+
+    /**
+     * Fills the ReplierQos with the values of the XML profile.
+     *
+     * @param profile_name Replier profile name.
+     * @param qos ReplierQos object where the qos is returned.
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_replier_qos_from_profile(
+            const std::string& profile_name,
+            ReplierQos& qos) const;
+
+    /**
+     * Fills the RequesterQos with the values of the XML profile.
+     *
+     * @param profile_name Requester profile name.
+     * @param qos RequesterQos object where the qos is returned.
+     * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
+     */
+    FASTDDS_EXPORTED_API ReturnCode_t get_requester_qos_from_profile(
+            const std::string& profile_name,
+            RequesterQos& qos) const;
 
     /**
      * Retrieves the list of DomainParticipants that have been discovered in the domain and are not "ignored".
