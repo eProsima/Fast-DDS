@@ -25,15 +25,17 @@
 #include <gtest/gtest.h>
 #include <tinyxml2.h>
 
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLTree.h>
+
+#include <xmlparser/XMLParser.h>
+#include <xmlparser/XMLProfileManager.h>
+#include <xmlparser/XMLTree.h>
 
 #include "../common/env_var_utils.hpp"
 #include "../logging/mock/MockConsumer.h"
-#include "rtps/xmlparser/XMLParserUtils.hpp"
+#include "xmlparser/XMLParserUtils.hpp"
 #include "wrapper/XMLParserTest.hpp"
 
 using namespace eprosima::fastdds::dds;
@@ -3374,7 +3376,7 @@ TEST_F(XMLParserTests, getXMLEnum_NegativeClauses)
 
     // IntraprocessDeliveryType Enum
     {
-        IntraprocessDeliveryType e;
+        eprosima::fastdds::IntraprocessDeliveryType e;
         const char* enum_p =
                 "\
                 <IntraprocessDelivery>\
@@ -3475,7 +3477,7 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
 
     // IntraprocessDeliveryType Enum
     {
-        IntraprocessDeliveryType e;
+        eprosima::fastdds::IntraprocessDeliveryType e;
         const char* enum_p =
                 "\
                 <IntraprocessDelivery>OFF</IntraprocessDelivery>\
@@ -3485,12 +3487,12 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_OFF, e);
+        EXPECT_EQ(eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF, e);
     }
 
     // IntraprocessDeliveryType Enum
     {
-        IntraprocessDeliveryType e;
+        eprosima::fastdds::IntraprocessDeliveryType e;
         const char* enum_p =
                 "\
                 <IntraprocessDelivery>USER_DATA_ONLY</IntraprocessDelivery>\
@@ -3500,7 +3502,7 @@ TEST_F(XMLParserTests, getXMLEnum_positive)
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(enum_p));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLEnum_wrapper(titleElement, &e, ident));
-        EXPECT_EQ(IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY, e);
+        EXPECT_EQ(eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY, e);
     }
 
     // DiscoveryProtocol Enum

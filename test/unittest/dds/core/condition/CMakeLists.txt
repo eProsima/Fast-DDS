@@ -57,7 +57,7 @@ target_include_directories(ConditionTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(ConditionTests GTest::gtest)
+target_link_libraries(ConditionTests fastcdr GTest::gtest)
 gtest_discover_tests(ConditionTests)
 
 ### ConditionNotifier ###
@@ -91,7 +91,7 @@ target_include_directories(ConditionNotifierTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(ConditionNotifierTests GTest::gtest GTest::gmock)
+target_link_libraries(ConditionNotifierTests fastcdr GTest::gtest GTest::gmock)
 gtest_discover_tests(ConditionNotifierTests)
 
 ### StatusConditionImpl ###
@@ -126,7 +126,7 @@ target_include_directories(StatusConditionImplTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(StatusConditionImplTests GTest::gtest GTest::gmock)
+target_link_libraries(StatusConditionImplTests fastcdr GTest::gtest GTest::gmock)
 gtest_discover_tests(StatusConditionImplTests)
 
 ### WaitSetImpl ###
@@ -160,5 +160,5 @@ target_include_directories(WaitSetImplTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(WaitSetImplTests GTest::gtest GTest::gmock)
+target_link_libraries(WaitSetImplTests fastcdr GTest::gtest GTest::gmock)
 gtest_discover_tests(WaitSetImplTests)

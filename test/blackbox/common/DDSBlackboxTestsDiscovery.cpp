@@ -12,24 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cstdlib>
-#include <ctime>
-
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
+#include <cstdlib>
+#include <ctime>
 #include <future>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
-
-#include "BlackboxTests.hpp"
-#include "PubSubParticipant.hpp"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -41,9 +33,16 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
+
+// TODO(jlbueno): remove private header
 #include <rtps/transport/test_UDPv4Transport.h>
-#include <utils/SystemInfo.hpp>
+
+#include "BlackboxTests.hpp"
+#include "PubSubParticipant.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+
 
 // Regression test for redmine issue 11857
 TEST(DDSDiscovery, IgnoreParticipantFlags)
@@ -1792,6 +1791,7 @@ TEST(DDSDiscovery, WaitSetMatchedStatus)
 TEST(DDSDiscovery, DataracePDP)
 {
     using namespace eprosima;
+    using namespace eprosima::fastdds;
     using namespace eprosima::fastdds::dds;
     using namespace eprosima::fastdds::rtps;
 
@@ -1851,10 +1851,11 @@ TEST(DDSDiscovery, DataracePDP)
     };
 
     // Disable intraprocess
-    auto settings = fastrtps::xmlparser::XMLProfileManager::library_settings();
+    LibrarySettings settings;
+    DomainParticipantFactory::get_instance()->get_library_settings(settings);
     auto prev_intraprocess_delivery = settings.intraprocess_delivery;
-    settings.intraprocess_delivery = fastrtps::INTRAPROCESS_OFF;
-    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
+    settings.intraprocess_delivery = INTRAPROCESS_OFF;
+    DomainParticipantFactory::get_instance()->set_library_settings(settings);
 
     // DDS Domain Id
     const unsigned int DOMAIN_ID = (uint32_t)GET_PID() % 230;
@@ -1922,5 +1923,5 @@ TEST(DDSDiscovery, DataracePDP)
 
     // Reestablish previous intraprocess configuration
     settings.intraprocess_delivery = prev_intraprocess_delivery;
-    fastrtps::xmlparser::XMLProfileManager::library_settings(settings);
+    DomainParticipantFactory::get_instance()->set_library_settings(settings);
 }

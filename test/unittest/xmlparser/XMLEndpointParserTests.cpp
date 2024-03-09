@@ -26,7 +26,8 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/xmlparser/XMLEndpointParser.h>
+
+#include <xmlparser/XMLEndpointParser.h>
 
 #include "../logging/mock/MockConsumer.h"
 
