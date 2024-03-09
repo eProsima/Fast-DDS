@@ -42,6 +42,12 @@ jobs:
       os-image: ${{ matrix.os-image }}
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
+<<<<<<< HEAD
       cmake-args: ${{ inputs.cmake-args || "-DSECURITY=ON" }}
       ctest-args: ${{ inputs.ctest-args || "-LE xfail" }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '2.10.x' }}
+=======
+      cmake-args: ${{ inputs.cmake-args || '-DSECURITY=ON' }}
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || 'master' }}
+>>>>>>> a97e7ab7d (Fix input branch on reusable windows CI (#4539))
