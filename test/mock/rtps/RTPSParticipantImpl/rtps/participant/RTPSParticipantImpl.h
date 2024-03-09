@@ -28,6 +28,7 @@
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
@@ -103,6 +104,27 @@ class RTPSParticipantImpl
 public:
 
     RTPSParticipantImpl()
+    {
+        events_.init_thread();
+    }
+
+    RTPSParticipantImpl(
+            uint32_t,
+            const RTPSParticipantAttributes&,
+            const GuidPrefix_t&,
+            RTPSParticipant*,
+            RTPSParticipantListener*)
+    {
+        events_.init_thread();
+    }
+
+    RTPSParticipantImpl(
+            uint32_t,
+            const RTPSParticipantAttributes&,
+            const GuidPrefix_t&,
+            const GuidPrefix_t&,
+            RTPSParticipant*,
+            RTPSParticipantListener*)
     {
         events_.init_thread();
     }
@@ -334,6 +356,72 @@ public:
     MOCK_METHOD(bool, ignore_participant, (const GuidPrefix_t&));
 
     MOCK_METHOD(bool, update_removed_participant, (rtps::LocatorList_t&));
+
+    uint32_t getRTPSParticipantID() const
+    {
+        return 0;
+    }
+
+    bool is_initialized() const
+    {
+        return true;
+    }
+
+    bool did_mutation_took_place_on_meta(
+            const LocatorList_t&,
+            const LocatorList_t&) const
+    {
+        return false;
+    }
+
+    bool networkFactoryHasRegisteredTransports() const
+    {
+        return true;
+    }
+
+    void environment_file_has_changed()
+    {
+    }
+
+    void enable()
+    {
+    }
+
+    void disable()
+    {
+    }
+
+    bool create_writer(
+            RTPSWriter**,
+            WriterAttributes&,
+            const std::shared_ptr<IPayloadPool>&,
+            const std::shared_ptr<IChangePool>&,
+            WriterHistory*,
+            WriterListener*,
+            const EntityId_t& entityId = c_EntityId_Unknown,
+            bool isBuiltin = false)
+    {
+        static_cast<void>(entityId);
+        static_cast<void>(isBuiltin);
+        return true;
+    }
+
+    void client_override(
+            bool)
+    {
+    }
+
+    RTPSReader* find_local_reader(
+            const GUID_t&)
+    {
+        return nullptr;
+    }
+
+    RTPSWriter* find_local_writer(
+            const GUID_t&)
+    {
+        return nullptr;
+    }
 
 private:
 

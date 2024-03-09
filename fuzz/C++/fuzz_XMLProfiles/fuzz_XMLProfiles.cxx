@@ -1,6 +1,6 @@
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-
 #include "fuzz_utils.h"
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;

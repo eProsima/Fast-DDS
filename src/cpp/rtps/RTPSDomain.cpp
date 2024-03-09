@@ -27,28 +27,27 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-
-#include <rtps/transport/UDPv4Transport.h>
-#include <rtps/transport/UDPv6Transport.h>
-#include <rtps/transport/test_UDPv4Transport.h>
-#include <rtps/transport/TCPv4Transport.h>
-#include <rtps/transport/TCPv6Transport.h>
-
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <rtps/RTPSDomainImpl.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <rtps/common/GuidUtils.hpp>
 #include <rtps/network/utils/external_locators.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/RTPSDomainImpl.hpp>
+#include <rtps/transport/TCPv4Transport.h>
+#include <rtps/transport/TCPv6Transport.h>
+#include <rtps/transport/test_UDPv4Transport.h>
+#include <rtps/transport/UDPv4Transport.h>
+#include <rtps/transport/UDPv6Transport.h>
 #include <utils/Host.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -836,13 +835,13 @@ bool RTPSDomainImpl::should_intraprocess_between(
 
     switch (xmlparser::XMLProfileManager::library_settings().intraprocess_delivery)
     {
-        case IntraprocessDeliveryType::INTRAPROCESS_FULL:
+        case fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL:
             return true;
 
-        case IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY:
+        case fastdds::IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY:
             return !matched_guid.is_builtin();
 
-        case IntraprocessDeliveryType::INTRAPROCESS_OFF:
+        case fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF:
         default:
             break;
     }
@@ -874,6 +873,55 @@ void RTPSDomainImpl::set_filewatch_thread_config(
     std::lock_guard<std::mutex> guard(instance->m_mutex);
     instance->watch_thread_config_ = watch_thread;
     instance->callback_thread_config_ = callback_thread;
+}
+
+bool RTPSDomain::get_library_settings(
+        fastdds::LibrarySettings& library_settings)
+{
+    return RTPSDomainImpl::get_library_settings(library_settings);
+}
+
+bool RTPSDomainImpl::get_library_settings(
+        fastdds::LibrarySettings& library_settings)
+{
+    library_settings = xmlparser::XMLProfileManager::library_settings();
+    return true;
+}
+
+bool RTPSDomain::set_library_settings(
+        const fastdds::LibrarySettings& library_settings)
+{
+    return RTPSDomainImpl::set_library_settings(library_settings);
+}
+
+bool RTPSDomainImpl::set_library_settings(
+        const fastdds::LibrarySettings& library_settings)
+{
+    if (!get_instance()->m_RTPSParticipants.empty())
+    {
+        return false;
+    }
+    xmlparser::XMLProfileManager::library_settings(library_settings);
+    return true;
+}
+
+bool RTPSDomain::get_topic_attributes_from_profile(
+        const std::string& profile_name,
+        TopicAttributes& topic_attributes)
+{
+    return RTPSDomainImpl::get_topic_attributes_from_profile(profile_name, topic_attributes);
+}
+
+bool RTPSDomainImpl::get_topic_attributes_from_profile(
+        const std::string& profile_name,
+        TopicAttributes& topic_attributes)
+{
+    if (xmlparser::XMLP_ret::XML_OK ==
+            xmlparser::XMLProfileManager::fillTopicAttributes(profile_name, topic_attributes))
+    {
+        return true;
+    }
+    return false;
 }
 
 } // namespace rtps

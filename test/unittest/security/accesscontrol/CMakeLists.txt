@@ -171,6 +171,7 @@ target_include_directories(
 
 target_link_libraries(
     ${DISTINGUISHEDNAME_TEST_NAME}
+    fastcdr
     GTest::gtest
 )
 

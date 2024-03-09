@@ -18,29 +18,24 @@
  */
 
 #include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/subscriber/DataReaderImpl.hpp>
-#include <fastdds/topic/TopicDescriptionImpl.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/utils/QosConverters.hpp>
-
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-
-#include <rtps/network/utils/netmask_filter.hpp>
-
+#include <fastdds/subscriber/DataReaderImpl.hpp>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
+#include <fastdds/utils/QosConverters.hpp>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
+#include <rtps/network/utils/netmask_filter.hpp>
+#include <xmlparser/XMLProfileManager.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
 #endif //FASTDDS_STATISTICS

@@ -217,12 +217,6 @@ set(${PROJECT_NAME}_source_files
     rtps/writer/StatefulWriter.cpp
     rtps/writer/StatelessPersistentWriter.cpp
     rtps/writer/StatelessWriter.cpp
-    rtps/xmlparser/XMLDynamicParser.cpp
-    rtps/xmlparser/XMLElementParser.cpp
-    rtps/xmlparser/XMLEndpointParser.cpp
-    rtps/xmlparser/XMLParser.cpp
-    rtps/xmlparser/XMLParserCommon.cpp
-    rtps/xmlparser/XMLProfileManager.cpp
     statistics/fastdds/domain/DomainParticipant.cpp
     statistics/fastdds/publisher/qos/DataWriterQos.cpp
     statistics/fastdds/subscriber/qos/DataReaderQos.cpp
@@ -234,6 +228,12 @@ set(${PROJECT_NAME}_source_files
     utils/SystemInfo.cpp
     utils/TimedConditionVariable.cpp
     utils/UnitsParser.cpp
+    xmlparser/XMLDynamicParser.cpp
+    xmlparser/XMLElementParser.cpp
+    xmlparser/XMLEndpointParser.cpp
+    xmlparser/XMLParser.cpp
+    xmlparser/XMLParserCommon.cpp
+    xmlparser/XMLProfileManager.cpp
     )
 
 # Statistics support

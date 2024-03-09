@@ -12,18 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <gtest/gtest.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
 
-#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+// TODO(jlbueno): remove private header
 #include <statistics/rtps/StatisticsBase.hpp>
-#include <statistics/types/monitorservice_typesPubSubTypes.h>
 
+#include "../types/statistics/monitorservice_typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
-#include "../dds-pim/PubSubReader.hpp"
+#include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
 using namespace eprosima::fastdds;
@@ -1225,9 +1224,9 @@ TEST(DDSMonitorServiceTest, monitor_service_environment_variable)
     const char* value = "NETWORK_LATENCY_TOPIC;MONITOR_SERVICE_TOPIC";
 
     #ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
+    ASSERT_EQ(0, _putenv_s("FASTDDS_STATISTICS", value));
     #else
-    ASSERT_EQ(0, setenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
+    ASSERT_EQ(0, setenv("FASTDDS_STATISTICS", value, 1));
     #endif // ifdef _WIN32
 
     //! Setup

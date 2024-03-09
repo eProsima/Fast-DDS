@@ -18,37 +18,37 @@
 
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 #include <asio.hpp>
+
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
+#include <fastrtps/attributes/PublisherAttributes.h>
 
-#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/utils/QosConverters.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
 #include <statistics/fastdds/subscriber/SubscriberImpl.hpp>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <statistics/types/types.h>
 #include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
-
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastdds/utils/QosConverters.hpp>
+#include <xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
