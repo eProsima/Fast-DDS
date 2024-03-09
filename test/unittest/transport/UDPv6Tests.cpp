@@ -508,9 +508,9 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast)
 
     if (interfaces.size() > 0)
     {
-        for (const auto& interface : interfaces)
+        for (const auto& network_interface : interfaces)
         {
-            descriptor.interfaceWhiteList.push_back(interface.name);
+            descriptor.interfaceWhiteList.push_back(network_interface.name);
         }
         UDPv6Transport transportUnderTest(descriptor);
         transportUnderTest.init();
@@ -570,9 +570,9 @@ TEST_F(UDPv6Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
 
     if (interfaces.size() > 0)
     {
-        for (const auto& interface : interfaces)
+        for (const auto& network_interface : interfaces)
         {
-            descriptor.interfaceWhiteList.push_back(interface.name);
+            descriptor.interfaceWhiteList.push_back(network_interface.name);
         }
         UDPv6Transport transportUnderTest(descriptor);
         transportUnderTest.init();

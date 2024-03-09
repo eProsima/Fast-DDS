@@ -6,6 +6,7 @@ Forthcoming
 * Remove API marked as deprecated.
 * Removed deprecated FastRTPS API tests.
 * Removed no longer supported `FASTRTPS_API_TESTS` CMake options.
+* XML Parser API no longer public.
 
 Version 2.14.0
 --------------

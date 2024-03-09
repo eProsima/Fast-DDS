@@ -19,9 +19,8 @@
 
 #include "LatencyTestPublisher.hpp"
 
-#include <inttypes.h>
-
 #include <chrono>
+#include <cinttypes>
 #include <cmath>
 #include <fstream>
 #include <numeric>
@@ -36,8 +35,6 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 
 #define TIME_LIMIT_US 10000
 
