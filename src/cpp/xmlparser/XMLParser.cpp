@@ -1597,7 +1597,7 @@ XMLP_ret XMLParser::parseXMLSubscriberProf(
         BaseNode& rootNode)
 {
     XMLP_ret ret = XMLP_ret::XML_OK;
-    up_subscriber_t subscriber_atts{new SubscriberAttributes};
+    up_subscriber_t subscriber_atts{new fastdds::SubscriberAttributes};
     up_node_subscriber_t subscriber_node{new node_subscriber_t{NodeType::SUBSCRIBER, std::move(subscriber_atts)}};
     if (XMLP_ret::XML_OK == fillDataNode(p_root, *subscriber_node))
     {
@@ -2538,7 +2538,7 @@ XMLP_ret XMLParser::fillDataNode(
 
 XMLP_ret XMLParser::fillDataNode(
         tinyxml2::XMLElement* p_profile,
-        DataNode<SubscriberAttributes>& subscriber_node)
+        DataNode<fastdds::SubscriberAttributes>& subscriber_node)
 {
     if (nullptr == p_profile)
     {

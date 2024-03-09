@@ -54,7 +54,6 @@
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -67,6 +66,7 @@
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
@@ -76,12 +76,10 @@ namespace dds {
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::TopicAttributes;
-using fastrtps::SubscriberAttributes;
 using fastrtps::rtps::ParticipantDiscoveryInfo;
 using fastrtps::rtps::RTPSDomain;
 using fastrtps::rtps::RTPSDomainImpl;
 using fastrtps::rtps::RTPSParticipant;
-using fastrtps::SubscriberAttributes;
 using fastrtps::TopicAttributes;
 using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::xmlparser::XMLProfileManager;

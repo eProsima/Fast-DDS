@@ -20,7 +20,7 @@
 #define _FASTDDS_REPLIERATTRIBUTES_HPP_
 
 #include <xmlparser/attributes/PublisherAttributes.hpp>
-#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -47,7 +47,7 @@ public:
     std::string request_topic_name;
     std::string reply_topic_name;
     PublisherAttributes publisher;
-    fastrtps::SubscriberAttributes subscriber;
+    SubscriberAttributes subscriber;
 };
 
 } /* namespace fastdds */

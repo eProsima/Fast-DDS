@@ -28,18 +28,17 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace utils {
 
-using fastrtps::SubscriberAttributes;
 using fastrtps::TopicAttributes;
 
 /**

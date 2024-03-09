@@ -21,13 +21,13 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 #include <xmlparser/XMLParser.h>
 #include <xmlparser/XMLParserCommon.h>
 
@@ -184,12 +184,12 @@ public:
      */
     static XMLP_ret fillSubscriberAttributes(
             const std::string& profile_name,
-            SubscriberAttributes& atts,
+            fastdds::SubscriberAttributes& atts,
             bool log_error = true);
 
     //!Fills subscriber_attributes with the default values.
     static void getDefaultSubscriberAttributes(
-            SubscriberAttributes& subscriber_attributes);
+            fastdds::SubscriberAttributes& subscriber_attributes);
 
     //!Add a new transport instance along with its id.
     static bool insertTransportById(

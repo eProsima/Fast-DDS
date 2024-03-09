@@ -4344,7 +4344,7 @@ XMLP_ret XMLParser::getXMLPublisherAttributes(
 
 XMLP_ret XMLParser::getXMLSubscriberAttributes(
         tinyxml2::XMLElement* elem,
-        SubscriberAttributes& subscriber,
+        fastdds::SubscriberAttributes& subscriber,
         uint8_t ident)
 {
     /*

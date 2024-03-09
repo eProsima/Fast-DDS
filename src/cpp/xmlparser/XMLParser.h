@@ -27,7 +27,6 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
@@ -35,6 +34,7 @@
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/ReplierAttributes.hpp>
 #include <xmlparser/attributes/RequesterAttributes.hpp>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 #include <xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {
@@ -75,8 +75,8 @@ typedef DataNode<fastdds::PublisherAttributes>          node_publisher_t;
 typedef node_publisher_t*                      p_node_publisher_t;
 typedef std::unique_ptr<node_publisher_t>      up_node_publisher_t;
 
-typedef std::unique_ptr<SubscriberAttributes>  up_subscriber_t;
-typedef DataNode<SubscriberAttributes>         node_subscriber_t;
+typedef std::unique_ptr<fastdds::SubscriberAttributes>  up_subscriber_t;
+typedef DataNode<fastdds::SubscriberAttributes>         node_subscriber_t;
 typedef node_subscriber_t*                     p_node_subscriber_t;
 typedef std::unique_ptr<node_subscriber_t>     up_node_subscriber_t;
 
@@ -338,7 +338,7 @@ protected:
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
-            DataNode<SubscriberAttributes>& subscriber_node);
+            DataNode<fastdds::SubscriberAttributes>& subscriber_node);
 
     static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
@@ -663,7 +663,7 @@ protected:
 
     static XMLP_ret getXMLSubscriberAttributes(
             tinyxml2::XMLElement* elem,
-            SubscriberAttributes& subscriber,
+            fastdds::SubscriberAttributes& subscriber,
             uint8_t ident);
 
     static XMLP_ret getXMLThreadSettings(

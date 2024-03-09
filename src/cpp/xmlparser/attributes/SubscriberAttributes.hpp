@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file SubscriberAttributes.h
+ * @file <xmlparser/attributes/SubscriberAttributes.hpp>
  */
 
-#ifndef SUBSCRIBERATTRIBUTES_H_
-#define SUBSCRIBERATTRIBUTES_H_
+#ifndef _FASTDDS_SUBSCRIBERATTRIBUTES_H_
+#define _FASTDDS_SUBSCRIBERATTRIBUTES_H_
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
@@ -29,7 +29,7 @@
 #include <fastrtps/qos/ReaderQos.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Class SubscriberAttributes, used by the user to define the attributes of a Subscriber.
@@ -40,22 +40,22 @@ class SubscriberAttributes
 public:
 
     //! Topic Attributes
-    TopicAttributes topic;
+    fastrtps::TopicAttributes topic;
 
     //! Reader QOs.
-    ReaderQos qos;
+    fastrtps::ReaderQos qos;
 
     //! Times for a RELIABLE Reader
-    rtps::ReaderTimes times;
+    fastrtps::rtps::ReaderTimes times;
 
     //! Unicast locator list
-    rtps::LocatorList_t unicastLocatorList;
+    fastrtps::rtps::LocatorList_t unicastLocatorList;
 
     //! Multicast locator list
-    rtps::LocatorList_t multicastLocatorList;
+    fastrtps::rtps::LocatorList_t multicastLocatorList;
 
     //! Remote locator list
-    rtps::LocatorList_t remoteLocatorList;
+    fastrtps::rtps::LocatorList_t remoteLocatorList;
 
     //! The collection of external locators to use for communication.
     fastdds::rtps::ExternalLocators external_unicast_locators;
@@ -67,13 +67,14 @@ public:
     bool expectsInlineQos = false;
 
     //! Underlying History memory policy
-    rtps::MemoryManagementPolicy_t historyMemoryPolicy = rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    fastrtps::rtps::MemoryManagementPolicy_t historyMemoryPolicy =
+            fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
 
     //! Properties
-    rtps::PropertyPolicy properties;
+    fastrtps::rtps::PropertyPolicy properties;
 
     //! Matched publishers allocation limits
-    ResourceLimitedContainerConfig matched_publisher_allocation;
+    fastrtps::ResourceLimitedContainerConfig matched_publisher_allocation;
 
     SubscriberAttributes() = default;
 
@@ -145,7 +146,7 @@ private:
     int16_t m_entityID = -1;
 };
 
-} /* namespace fastrtps */
+} /* namespace fastdds */
 } /* namespace eprosima */
 
 #endif /* SUBSCRIBERPARAMS_H_ */
