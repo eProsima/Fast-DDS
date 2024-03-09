@@ -28,6 +28,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
 #include <fastdds/rtps/transport/network/BlockedNetworkInterface.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
@@ -35,7 +36,8 @@
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <xmlparser/XMLProfileManager.h>
 
 #include "../common/env_var_utils.hpp"
 
@@ -331,8 +333,9 @@ TEST_F(XMLProfileParserBasicTests, XMLParserRootLibrarySettings)
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings_profile.xml"));
 
-    const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
-    EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY);
+    const eprosima::fastdds::LibrarySettings& library_settings = xmlparser::XMLProfileManager::library_settings();
+    EXPECT_EQ(library_settings.intraprocess_delivery,
+            eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY);
 }
 
 TEST_F(XMLProfileParserBasicTests, XMLoadProfiles)
@@ -457,8 +460,8 @@ TEST_P(XMLProfileParserTests, XMLParserLibrarySettings)
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile(xml_filename_));
 
-    const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
-    EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
+    const eprosima::fastdds::LibrarySettings& library_settings = xmlparser::XMLProfileManager::library_settings();
+    EXPECT_EQ(library_settings.intraprocess_delivery, eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL);
 }
 
 /*

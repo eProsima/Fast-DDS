@@ -30,8 +30,9 @@
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLParser.h>
+
+#include <xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLParser.h>
 
 namespace tinyxml2 {
 class XMLElement;
