@@ -459,6 +459,7 @@ public:
 };
 
 // auxiliary conversion functions
+// TODO(jlbueno): private headers shall not export API
 RTPS_DllAPI detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
 RTPS_DllAPI fastrtps::rtps::Locator_t to_fastdds_type(
         detail::Locator_s);

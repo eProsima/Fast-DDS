@@ -26,7 +26,6 @@
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <gtest/gtest.h>
 
 #define TIME_LIMIT_US 10000
@@ -215,22 +214,6 @@ void VideoTestPublisher::init(
 
     // Create Data Publisher
     std::string profile_name = "publisher_profile";
-<<<<<<< HEAD
-=======
-    PublisherAttributes PubDataparam;
-
-    if (!reliable)
-    {
-        PubDataparam.qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    }
-    PubDataparam.properties = property_policy;
-    if (large_data)
-    {
-        PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind =
-                eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
-    }
->>>>>>> 021566dac (Branch-out v3.0.0 (#4251))
 
     if (m_sXMLConfigFile.length() > 0)
     {
@@ -292,17 +275,7 @@ void VideoTestPublisher::init(
     {
         command_topic_name << asio::ip::host_name() << "_";
     }
-<<<<<<< HEAD
     command_topic_name << pid << "_PUB2SUB";
-=======
-    pct << pid << "_PUB2SUB";
-    PubCommandParam.topic.topicName = pct.str();
-    PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    PubCommandParam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
-    mp_commandpub = Domain::createPublisher(mp_participant, PubCommandParam, &this->m_commandpublistener);
->>>>>>> 021566dac (Branch-out v3.0.0 (#4251))
 
     mp_command_pub_topic = mp_participant->create_topic(command_topic_name.str(),
                     "TestCommandType", TOPIC_QOS_DEFAULT);

@@ -88,6 +88,12 @@ void add_external_locators(
 {
 }
 
+void add_external_locators(
+        LocatorList&,
+        const ExternalLocators&)
+{
+}
+
 /**
  * Filter the locators of a remote participant according to the matching algorithm.
  *

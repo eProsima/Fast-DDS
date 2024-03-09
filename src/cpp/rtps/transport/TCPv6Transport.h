@@ -102,7 +102,7 @@ protected:
 
     //! Checks if the given interface is allowed by the white list.
     virtual bool is_interface_allowed(
-            const std::string& interface) const override;
+            const std::string& tcp_interface) const override;
 
     //! Checks if the given interface is allowed by the white list.
     bool is_interface_allowed(

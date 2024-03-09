@@ -358,7 +358,7 @@ bool UDPv6Transport::OpenInputChannel(
             auto& channelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
             for (UDPChannelResource* channelResource : channelResources)
             {
-                if (locatorAddressStr == channelResource->interface())
+                if (locatorAddressStr == channelResource->udp_interface())
                 {
                     found = true;
                     break;
@@ -400,7 +400,7 @@ bool UDPv6Transport::OpenInputChannel(
             auto pChannelResources = mInputSockets.at(IPLocator::getPhysicalPort(locator));
             for (auto& channelResource : pChannelResources)
             {
-                if (channelResource->interface() == s_IPv6AddressAny)
+                if (channelResource->udp_interface() == s_IPv6AddressAny)
                 {
                     std::vector<IPFinder::info_IP> locNames;
                     get_ipv6s_unique_interfaces(locNames, true);
@@ -422,7 +422,7 @@ bool UDPv6Transport::OpenInputChannel(
                 }
                 else
                 {
-                    auto ip = asio::ip::address_v6::from_string(channelResource->interface());
+                    auto ip = asio::ip::address_v6::from_string(channelResource->udp_interface());
                     try
                     {
                         channelResource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip.scope_id()));
@@ -459,21 +459,21 @@ std::vector<std::string> UDPv6Transport::get_binding_interfaces_list()
 }
 
 bool UDPv6Transport::is_interface_allowed(
-        const std::string& interface) const
+        const std::string& udp_interface) const
 {
     if (interface_whitelist_.empty())
     {
         return true;
     }
 
-    if (asio::ip::address_v6::from_string(interface) == ip::address_v6::any())
+    if (asio::ip::address_v6::from_string(udp_interface) == ip::address_v6::any())
     {
         return true;
     }
 
     for (auto& whitelist : interface_whitelist_)
     {
-        if (compare_ips(whitelist.to_string(), interface))
+        if (compare_ips(whitelist.to_string(), udp_interface))
         {
             return true;
         }

@@ -51,7 +51,7 @@ public:
      */
     TCPAcceptorSecure(
             asio::io_service& io_service,
-            const std::string& interface,
+            const std::string& tcp_interface,
             const Locator& locator);
 
     /**

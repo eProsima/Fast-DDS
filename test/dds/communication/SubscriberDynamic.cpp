@@ -248,18 +248,10 @@ int main(
                 return -1;
             }
 
-            //xml_file = argv[arg_count];
         }
 
         ++arg_count;
     }
-
-    /* TODO - XMLProfileManager doesn't support DDS yet
-       if(xml_file)
-       {
-        DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
-       }
-     */
 
     ParListener participant_listener;
     DomainParticipant* participant = nullptr;

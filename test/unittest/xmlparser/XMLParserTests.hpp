@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-
 #include <gtest/gtest.h>
 
-#include "../logging/mock/MockConsumer.h"
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/attributes/ParticipantAttributes.h>
 
+#include <xmlparser/XMLTree.h>
+
+#include "../logging/mock/MockConsumer.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
