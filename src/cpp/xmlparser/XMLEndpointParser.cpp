@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastrtps/xmlparser/XMLEndpointParser.h>
+#include <xmlparser/XMLEndpointParser.h>
 
 #include <cstdlib>
 #include <string>
@@ -30,7 +30,7 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
 namespace fastrtps {

@@ -33,7 +33,6 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;

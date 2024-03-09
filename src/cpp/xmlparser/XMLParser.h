@@ -23,10 +23,10 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/ReplierAttributes.hpp>
@@ -34,7 +34,8 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
+
+#include <xmlparser/XMLParserCommon.h>
 
 namespace tinyxml2 {
 class XMLElement;
@@ -107,7 +108,7 @@ public:
      * Load the default XML file.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadDefaultXMLFile(
+    static XMLP_ret loadDefaultXMLFile(
             up_base_node_t& root);
 
     /**
@@ -116,7 +117,7 @@ public:
      * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXML(
+    static XMLP_ret loadXML(
             const std::string& filename,
             up_base_node_t& root);
 
@@ -127,7 +128,7 @@ public:
      * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXML(
+    static XMLP_ret loadXML(
             const char* data,
             size_t length,
             up_base_node_t& root);
@@ -138,7 +139,7 @@ public:
      * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXML(
+    static XMLP_ret loadXML(
             tinyxml2::XMLDocument& xmlDoc,
             up_base_node_t& root);
 
@@ -148,7 +149,7 @@ public:
      * @param root Root node.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLProfiles(
+    static XMLP_ret loadXMLProfiles(
             tinyxml2::XMLElement& profiles,
             up_base_node_t& root);
 
@@ -157,20 +158,20 @@ public:
      * @param types Node to be loaded.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret loadXMLDynamicTypes(
+    static XMLP_ret loadXMLDynamicTypes(
             tinyxml2::XMLElement& types);
 
 protected:
 
-    RTPS_DllAPI static XMLP_ret parseXML(
+    static XMLP_ret parseXML(
             tinyxml2::XMLDocument& xmlDoc,
             up_base_node_t& root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLProfiles(
+    static XMLP_ret parseXMLProfiles(
             tinyxml2::XMLElement& profiles,
             up_base_node_t& root);
 
-    RTPS_DllAPI static XMLP_ret parseProfiles(
+    static XMLP_ret parseProfiles(
             tinyxml2::XMLElement* p_root,
             BaseNode& profilesNode);
 
@@ -180,86 +181,86 @@ protected:
      * @param p_root Node to be loaded.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret parseLogConfig(
+    static XMLP_ret parseLogConfig(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLLibrarySettings(
+    static XMLP_ret parseXMLLibrarySettings(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLTransportsProf(
+    static XMLP_ret parseXMLTransportsProf(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLDomainParticipantFactoryProf(
+    static XMLP_ret parseXMLDomainParticipantFactoryProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLParticipantProf(
+    static XMLP_ret parseXMLParticipantProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLPublisherProf(
+    static XMLP_ret parseXMLPublisherProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLSubscriberProf(
+    static XMLP_ret parseXMLSubscriberProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLTopicData(
+    static XMLP_ret parseXMLTopicData(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLRequesterProf(
+    static XMLP_ret parseXMLRequesterProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLReplierProf(
+    static XMLP_ret parseXMLReplierProf(
             tinyxml2::XMLElement* p_root,
             BaseNode& rootNode);
 
-    RTPS_DllAPI static XMLP_ret parseXMLTransportData(
+    static XMLP_ret parseXMLTransportData(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret validateXMLTransportElements(
+    static XMLP_ret validateXMLTransportElements(
             tinyxml2::XMLElement& p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLCommonTransportData(
+    static XMLP_ret parseXMLCommonTransportData(
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLPortBasedTransportData(
+    static XMLP_ret parseXMLPortBasedTransportData(
             tinyxml2::XMLElement* p_root,
             std::shared_ptr<fastdds::rtps::PortBasedTransportDescriptor> p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLSocketTransportData(
+    static XMLP_ret parseXMLSocketTransportData(
             tinyxml2::XMLElement* p_root,
             std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLInterfaces(
+    static XMLP_ret parseXMLInterfaces(
             tinyxml2::XMLElement* p_root,
             std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLAllowlist(
+    static XMLP_ret parseXMLAllowlist(
             tinyxml2::XMLElement* p_root,
             std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLBlocklist(
+    static XMLP_ret parseXMLBlocklist(
             tinyxml2::XMLElement* p_root,
             std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLCommonTCPTransportData(
+    static XMLP_ret parseXMLCommonTCPTransportData(
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLCommonSharedMemTransportData(
+    static XMLP_ret parseXMLCommonSharedMemTransportData(
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
 
-    RTPS_DllAPI static XMLP_ret parse_tls_config(
+    static XMLP_ret parse_tls_config(
             tinyxml2::XMLElement* p_root,
             sp_transport_t tcp_transport);
 
-    RTPS_DllAPI static XMLP_ret parseXMLReceptionThreads(
+    static XMLP_ret parseXMLReceptionThreads(
             tinyxml2::XMLElement& p_root,
             fastdds::rtps::PortBasedTransportDescriptor::ReceptionThreadsConfigMap& reception_threads);
 
@@ -268,105 +269,105 @@ protected:
      * @param consumer Node to be loaded.
      * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
      */
-    RTPS_DllAPI static XMLP_ret parseXMLConsumer(
+    static XMLP_ret parseXMLConsumer(
             tinyxml2::XMLElement& consumer);
 
-    RTPS_DllAPI static XMLP_ret parseXMLDynamicTypes(
+    static XMLP_ret parseXMLDynamicTypes(
             tinyxml2::XMLElement& types);
 
-    RTPS_DllAPI static XMLP_ret parseDynamicTypes(
+    static XMLP_ret parseDynamicTypes(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLTypes(
+    static XMLP_ret parseXMLTypes(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLDynamicType(
+    static XMLP_ret parseXMLDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLStructDynamicType(
+    static XMLP_ret parseXMLStructDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLUnionDynamicType(
+    static XMLP_ret parseXMLUnionDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLEnumDynamicType(
+    static XMLP_ret parseXMLEnumDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLAliasDynamicType(
+    static XMLP_ret parseXMLAliasDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLBitsetDynamicType(
+    static XMLP_ret parseXMLBitsetDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static XMLP_ret parseXMLBitmaskDynamicType(
+    static XMLP_ret parseXMLBitmaskDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
+    static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId,
             uint16_t& position);
 
-    RTPS_DllAPI static XMLP_ret parseXMLBitvalueDynamicType(
+    static XMLP_ret parseXMLBitvalueDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             uint16_t& position);
 
-    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
+    static p_dynamictypebuilder_t parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId);
 
-    RTPS_DllAPI static p_dynamictypebuilder_t parseXMLMemberDynamicType(
+    static p_dynamictypebuilder_t parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
             types::MemberId mId,
             const std::string& values);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
             DataNode<fastdds::dds::DomainParticipantFactoryQos>& factory_node);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
             DataNode<ParticipantAttributes>& participant_node);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
             DataNode<PublisherAttributes>& publisher_node);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* p_profile,
             DataNode<SubscriberAttributes>& subscriber_node);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
             DataNode<TopicAttributes>& topic_node);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
             DataNode<RequesterAttributes>& requester_node);
 
-    RTPS_DllAPI static XMLP_ret fillDataNode(
+    static XMLP_ret fillDataNode(
             tinyxml2::XMLElement* node,
             DataNode<ReplierAttributes>& replier_node);
 
     template <typename T>
-    RTPS_DllAPI static void addAllAttributes(
+    static void addAllAttributes(
             tinyxml2::XMLElement* p_profile,
             DataNode<T>& node);
 
-    RTPS_DllAPI static XMLP_ret getXMLEnum(
+    static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
-            fastrtps::IntraprocessDeliveryType* e,
+            fastdds::IntraprocessDeliveryType* e,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLPropertiesPolicy(
+    static XMLP_ret getXMLPropertiesPolicy(
             tinyxml2::XMLElement* elem,
             rtps::PropertyPolicy& propertiesPolicy,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLHistoryMemoryPolicy(
+    static XMLP_ret getXMLHistoryMemoryPolicy(
             tinyxml2::XMLElement* elem,
             rtps::MemoryManagementPolicy_t& historyMemoryPolicy,
             uint8_t ident);
@@ -376,296 +377,296 @@ protected:
             fastdds::rtps::ExternalLocators& external_locators,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLocatorList(
+    static XMLP_ret getXMLLocatorList(
             tinyxml2::XMLElement* elem,
             rtps::LocatorList_t& locatorList,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLocatorUDPv4(
+    static XMLP_ret getXMLLocatorUDPv4(
             tinyxml2::XMLElement* elem,
             rtps::Locator_t& locator,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLocatorUDPv6(
+    static XMLP_ret getXMLLocatorUDPv6(
             tinyxml2::XMLElement* elem,
             rtps::Locator_t& locator,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLocatorTCPv4(
+    static XMLP_ret getXMLLocatorTCPv4(
             tinyxml2::XMLElement* elem,
             rtps::Locator_t& locator,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLocatorTCPv6(
+    static XMLP_ret getXMLLocatorTCPv6(
             tinyxml2::XMLElement* elem,
             rtps::Locator_t& locator,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLWriterTimes(
+    static XMLP_ret getXMLWriterTimes(
             tinyxml2::XMLElement* elem,
             rtps::WriterTimes& times,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLReaderTimes(
+    static XMLP_ret getXMLReaderTimes(
             tinyxml2::XMLElement* elem,
             rtps::ReaderTimes& times,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDuration(
+    static XMLP_ret getXMLDuration(
             tinyxml2::XMLElement* elem,
             Duration_t& duration,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLWriterQosPolicies(
+    static XMLP_ret getXMLWriterQosPolicies(
             tinyxml2::XMLElement* elem,
             WriterQos& qos,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLReaderQosPolicies(
+    static XMLP_ret getXMLReaderQosPolicies(
             tinyxml2::XMLElement* elem,
             ReaderQos& qos,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLPublishModeQos(
+    static XMLP_ret getXMLPublishModeQos(
             tinyxml2::XMLElement* elem,
             PublishModeQosPolicy& publishMode,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLGroupDataQos(
+    static XMLP_ret getXMLGroupDataQos(
             tinyxml2::XMLElement* elem,
             GroupDataQosPolicy& groupData,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLTopicDataQos(
+    static XMLP_ret getXMLTopicDataQos(
             tinyxml2::XMLElement* elem,
             TopicDataQosPolicy& topicData,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLPartitionQos(
+    static XMLP_ret getXMLPartitionQos(
             tinyxml2::XMLElement* elem,
             PartitionQosPolicy& partition,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLPresentationQos(
+    static XMLP_ret getXMLPresentationQos(
             tinyxml2::XMLElement* elem,
             PresentationQosPolicy& presentation,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDestinationOrderQos(
+    static XMLP_ret getXMLDestinationOrderQos(
             tinyxml2::XMLElement* elem,
             DestinationOrderQosPolicy& destinationOrder,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLOwnershipStrengthQos(
+    static XMLP_ret getXMLOwnershipStrengthQos(
             tinyxml2::XMLElement* elem,
             OwnershipStrengthQosPolicy& ownershipStrength,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLOwnershipQos(
+    static XMLP_ret getXMLOwnershipQos(
             tinyxml2::XMLElement* elem,
             OwnershipQosPolicy& ownership,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLTimeBasedFilterQos(
+    static XMLP_ret getXMLTimeBasedFilterQos(
             tinyxml2::XMLElement* elem,
             TimeBasedFilterQosPolicy& timeBasedFilter,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLUserDataQos(
+    static XMLP_ret getXMLUserDataQos(
             tinyxml2::XMLElement* elem,
             UserDataQosPolicy& userData,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLifespanQos(
+    static XMLP_ret getXMLLifespanQos(
             tinyxml2::XMLElement* elem,
             LifespanQosPolicy& lifespan,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLReliabilityQos(
+    static XMLP_ret getXMLReliabilityQos(
             tinyxml2::XMLElement* elem,
             ReliabilityQosPolicy& reliability,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLivelinessQos(
+    static XMLP_ret getXMLLivelinessQos(
             tinyxml2::XMLElement* elem,
             LivelinessQosPolicy& liveliness,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLLatencyBudgetQos(
+    static XMLP_ret getXMLLatencyBudgetQos(
             tinyxml2::XMLElement* elem,
             LatencyBudgetQosPolicy& latencyBudget,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDeadlineQos(
+    static XMLP_ret getXMLDeadlineQos(
             tinyxml2::XMLElement* elem,
             DeadlineQosPolicy& deadline,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDurabilityServiceQos(
+    static XMLP_ret getXMLDurabilityServiceQos(
             tinyxml2::XMLElement* elem,
             DurabilityServiceQosPolicy& durabilityService,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDurabilityQos(
+    static XMLP_ret getXMLDurabilityQos(
             tinyxml2::XMLElement* elem,
             DurabilityQosPolicy& durability,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLTopicAttributes(
+    static XMLP_ret getXMLTopicAttributes(
             tinyxml2::XMLElement* elem,
             TopicAttributes& topic,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLHistoryQosPolicy(
+    static XMLP_ret getXMLHistoryQosPolicy(
             tinyxml2::XMLElement* elem,
             HistoryQosPolicy& historyQos,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLResourceLimitsQos(
+    static XMLP_ret getXMLResourceLimitsQos(
             tinyxml2::XMLElement* elem,
             ResourceLimitsQosPolicy& resourceLimitsQos,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLContainerAllocationConfig(
+    static XMLP_ret getXMLContainerAllocationConfig(
             tinyxml2::XMLElement* elem,
             ResourceLimitedContainerConfig& resourceLimitsQos,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLThroughputController(
+    static XMLP_ret getXMLThroughputController(
             tinyxml2::XMLElement* elem,
             rtps::ThroughputControllerDescriptor& throughputController,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLPortParameters(
+    static XMLP_ret getXMLPortParameters(
             tinyxml2::XMLElement* elem,
             rtps::PortParameters& port,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLParticipantAllocationAttributes(
+    static XMLP_ret getXMLParticipantAllocationAttributes(
             tinyxml2::XMLElement* elem,
             rtps::RTPSParticipantAllocationAttributes& allocation,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLRemoteLocatorsAllocationAttributes(
+    static XMLP_ret getXMLRemoteLocatorsAllocationAttributes(
             tinyxml2::XMLElement* elem,
             rtps::RemoteLocatorsAllocationAttributes& allocation,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLSendBuffersAllocationAttributes(
+    static XMLP_ret getXMLSendBuffersAllocationAttributes(
             tinyxml2::XMLElement* elem,
             rtps::SendBuffersAllocationAttributes& allocation,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDiscoverySettings(
+    static XMLP_ret getXMLDiscoverySettings(
             tinyxml2::XMLElement* elem,
             rtps::DiscoverySettings& settings,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLTypeLookupSettings(
+    static XMLP_ret getXMLTypeLookupSettings(
             tinyxml2::XMLElement* elem,
             rtps::TypeLookupSettings& settings,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLInitialAnnouncementsConfig(
+    static XMLP_ret getXMLInitialAnnouncementsConfig(
             tinyxml2::XMLElement* elem,
             rtps::InitialAnnouncementConfig& config,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLBuiltinAttributes(
+    static XMLP_ret getXMLBuiltinAttributes(
             tinyxml2::XMLElement* elem,
             rtps::BuiltinAttributes& builtin,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLOctetVector(
+    static XMLP_ret getXMLOctetVector(
             tinyxml2::XMLElement* elem,
             std::vector<rtps::octet>& octet_vector,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLInt(
+    static XMLP_ret getXMLInt(
             tinyxml2::XMLElement* elem,
             int* i,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLUint(
+    static XMLP_ret getXMLUint(
             tinyxml2::XMLElement* elem,
             unsigned int* ui,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLUint(
+    static XMLP_ret getXMLUint(
             tinyxml2::XMLElement* elem,
             uint16_t* ui16,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLUint(
+    static XMLP_ret getXMLUint(
             tinyxml2::XMLElement* elem,
             uint64_t* ui64,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLBool(
+    static XMLP_ret getXMLBool(
             tinyxml2::XMLElement* elem,
             bool* b,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLEnum(
+    static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
             rtps::DiscoveryProtocol_t* e,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLList(
+    static XMLP_ret getXMLList(
             tinyxml2::XMLElement* elem,
             eprosima::fastdds::rtps::RemoteServerList_t& list,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLEnum(
+    static XMLP_ret getXMLEnum(
             tinyxml2::XMLElement* elem,
             rtps::ParticipantFilteringFlags_t* e,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLRemoteServer(
+    static XMLP_ret getXMLRemoteServer(
             tinyxml2::XMLElement* elem,
             eprosima::fastdds::rtps::RemoteServerAttributes& server,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLString(
+    static XMLP_ret getXMLString(
             tinyxml2::XMLElement* elem,
             std::string* s,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLTransports(
+    static XMLP_ret getXMLTransports(
             tinyxml2::XMLElement* elem,
             std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>>& transports,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDisablePositiveAcksQos(
+    static XMLP_ret getXMLDisablePositiveAcksQos(
             tinyxml2::XMLElement* elem,
             DisablePositiveACKsQosPolicy& disablePositiveAcks,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDataSharingQos(
+    static XMLP_ret getXMLDataSharingQos(
             tinyxml2::XMLElement* elem,
             DataSharingQosPolicy& data_sharing,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLguidPrefix(
+    static XMLP_ret getXMLguidPrefix(
             tinyxml2::XMLElement* elem,
             rtps::GuidPrefix_t& prefix,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLDomainParticipantFactoryQos(
+    static XMLP_ret getXMLDomainParticipantFactoryQos(
             tinyxml2::XMLElement& elem,
             fastdds::dds::DomainParticipantFactoryQos& qos);
 
-    RTPS_DllAPI static XMLP_ret getXMLPublisherAttributes(
+    static XMLP_ret getXMLPublisherAttributes(
             tinyxml2::XMLElement* elem,
             PublisherAttributes& publisher,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLSubscriberAttributes(
+    static XMLP_ret getXMLSubscriberAttributes(
             tinyxml2::XMLElement* elem,
             SubscriberAttributes& subscriber,
             uint8_t ident);
 
-    RTPS_DllAPI static XMLP_ret getXMLThreadSettings(
+    static XMLP_ret getXMLThreadSettings(
             tinyxml2::XMLElement& elem,
             fastdds::rtps::ThreadSettings& thread_setting);
 
@@ -673,16 +674,16 @@ protected:
         Return XMLP_ret::XML_OK when OK, XMLP_ret::XML_NOK when port attribute is not present, and
         XMLP_ret::XML_ERROR if error
      */
-    RTPS_DllAPI static XMLP_ret getXMLThreadSettingsWithPort(
+    static XMLP_ret getXMLThreadSettingsWithPort(
             tinyxml2::XMLElement& elem,
             fastdds::rtps::ThreadSettings& thread_setting,
             uint32_t& port);
 
-    RTPS_DllAPI static XMLP_ret getXMLEntityFactoryQos(
+    static XMLP_ret getXMLEntityFactoryQos(
             tinyxml2::XMLElement& elem,
             fastdds::dds::EntityFactoryQosPolicy& entity_factory);
 
-    RTPS_DllAPI static XMLP_ret getXMLBuiltinTransports(
+    static XMLP_ret getXMLBuiltinTransports(
             tinyxml2::XMLElement* elem,
             eprosima::fastdds::rtps::BuiltinTransports* bt,
             eprosima::fastdds::rtps::BuiltinTransportsOptions* bt_opts,
