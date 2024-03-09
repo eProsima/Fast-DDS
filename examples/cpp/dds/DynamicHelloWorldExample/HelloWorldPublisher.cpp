@@ -27,7 +27,6 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastdds::dds;
 
@@ -39,8 +38,8 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init()
 {
-    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile("helloworld_example_type_profile.xml"))
+    if (ReturnCode_t::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file("helloworld_example_type_profile.xml"))
     {
         std::cout <<
             "Cannot open XML file \"helloworld_example_type_profile.xml\". Please, run the publisher from the folder "
@@ -48,8 +47,16 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    eprosima::fastrtps::types::DynamicType_ptr dyn_type =
-            eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("HelloWorld")->build();
+    eprosima::fastrtps::types::DynamicTypeBuilder* type;
+    if (ReturnCode_t::RETCODE_OK !=
+            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("HelloWorld", type))
+    {
+        std::cout <<
+            "Error getting dynamic type \"HelloWorld\"." << std::endl;
+        return false;
+    }
+
+    eprosima::fastrtps::types::DynamicType_ptr dyn_type = type->build();
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     m_Hello = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
 

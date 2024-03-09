@@ -41,7 +41,7 @@ UDPChannelResource::UDPChannelResource(
     , message_receiver_(receiver)
     , socket_(moveSocket(socket))
     , only_multicast_purpose_(false)
-    , interface_(sInterface)
+    , udp_interface_(sInterface)
     , transport_(transport)
 {
     auto fn = [this, locator]()

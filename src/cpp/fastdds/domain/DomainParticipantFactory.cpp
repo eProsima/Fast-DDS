@@ -17,10 +17,11 @@
  *
  */
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+
 #include <thread>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -31,14 +32,14 @@
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/xmlparser/XMLEndpointParser.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/shared_memory/SharedMemWatchdog.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLEndpointParser.h>
+#include <xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastrtps::xmlparser;
 
@@ -479,6 +480,39 @@ void DomainParticipantFactory::participant_has_been_deleted(
             participants_.erase(it);
         }
     }
+}
+
+ReturnCode_t DomainParticipantFactory::get_library_settings(
+        LibrarySettings& library_settings) const
+{
+    rtps_domain_->get_library_settings(library_settings);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DomainParticipantFactory::set_library_settings(
+        const LibrarySettings& library_settings)
+{
+    if (rtps_domain_->set_library_settings(library_settings))
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+}
+
+ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name(
+        const std::string& type_name,
+        fastrtps::types::DynamicTypeBuilder*& type)
+{
+    if (type_name.empty())
+    {
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+    type = XMLProfileManager::getDynamicTypeByName(type_name);
+    if (nullptr == type)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
+    return ReturnCode_t::RETCODE_OK;
 }
 
 } /* namespace dds */

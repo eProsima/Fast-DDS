@@ -134,7 +134,7 @@ protected:
 
     //! Checks if the given interface is allowed by the white list.
     bool is_interface_allowed(
-            const std::string& interface) const override;
+            const std::string& udp_interface) const override;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
