@@ -17,24 +17,22 @@
  *
  */
 
+#include <mutex>
+#include <sstream>
+
+#include <tinyxml2.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastrtps/xmlparser/XMLEndpointParser.h>
-
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
-#include <fastdds/dds/log/Log.hpp>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <mutex>
-#include <sstream>
-#include <tinyxml2.h>
+#include <xmlparser/XMLEndpointParser.h>
 
 namespace eprosima {
 namespace fastrtps {

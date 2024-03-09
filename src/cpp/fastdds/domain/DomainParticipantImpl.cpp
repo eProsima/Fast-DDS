@@ -17,16 +17,15 @@
  *
  */
 
-#include "fastdds/rtps/common/Guid.h"
-#include "fastdds/rtps/common/GuidPrefix_t.hpp"
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+
 #include <chrono>
-#include <fastrtps/types/TypesBase.h>
 #include <string>
 
 #include <asio.hpp>
 
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-
+#include "fastdds/rtps/common/Guid.h"
+#include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -39,7 +38,6 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
@@ -55,9 +53,10 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
@@ -66,6 +65,7 @@
 #include <fastdds/utils/QosConverters.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {

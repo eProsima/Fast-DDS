@@ -16,8 +16,6 @@
 
 #include <gtest/gtest.h>
 
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"

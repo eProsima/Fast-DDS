@@ -27,14 +27,14 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <rtps/xmlparser/XMLParserUtils.hpp>
-#include <utils/SystemInfo.hpp>
-#include <utils/string_utilities.hpp>
 #include <fastrtps/utils/UnitsParser.hpp>
+
+#include <utils/string_utilities.hpp>
+#include <utils/SystemInfo.hpp>
+#include <xmlparser/XMLParser.h>
+#include <xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLParserUtils.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -3823,7 +3823,7 @@ XMLP_ret XMLParser::getXMLBool(
 
 XMLP_ret XMLParser::getXMLEnum(
         tinyxml2::XMLElement* elem,
-        IntraprocessDeliveryType* e,
+        fastdds::IntraprocessDeliveryType* e,
         uint8_t /*ident*/)
 {
     //<xs:simpleType name="IntraprocessDeliveryType">
@@ -3848,9 +3848,9 @@ XMLP_ret XMLParser::getXMLEnum(
     }
 
     if (!get_element_enum_value(text.c_str(), *e,
-            OFF, IntraprocessDeliveryType::INTRAPROCESS_OFF,
-            USER_DATA_ONLY, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY,
-            FULL, IntraprocessDeliveryType::INTRAPROCESS_FULL))
+            OFF, fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF,
+            USER_DATA_ONLY, fastdds::IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY,
+            FULL, fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
         return XMLP_ret::XML_ERROR;

@@ -18,30 +18,25 @@
  */
 
 #include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/publisher/DataWriterImpl.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/topic/TopicDescriptionImpl.hpp>
-
-#include <fastdds/utils/QosConverters.hpp>
-
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/PublisherListener.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-
-#include <rtps/network/utils/netmask_filter.hpp>
-
-#include <fastrtps/attributes/PublisherAttributes.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <functional>
 
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/publisher/PublisherListener.hpp>
+#include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/rtps/participant/RTPSParticipant.h>
+#include <fastdds/topic/TopicDescriptionImpl.hpp>
+#include <fastdds/utils/QosConverters.hpp>
+#include <fastrtps/attributes/PublisherAttributes.h>
+
+#include <rtps/network/utils/netmask_filter.hpp>
+#include <xmlparser/XMLProfileManager.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
 #endif //FASTDDS_STATISTICS
