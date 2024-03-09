@@ -16,13 +16,11 @@
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 
 #include <atomic>
-#include <fastdds/rtps/common/InstanceHandle.h>
 #include <map>
 #include <mutex>
 #include <string>
 #include <vector>
 
-#include <gmock/gmock.h>
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -34,19 +32,21 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Types.h>
-#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gmock/gmock.h>
 
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 

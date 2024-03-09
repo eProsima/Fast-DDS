@@ -18,6 +18,8 @@
  */
 #include "VideoTestSubscriber.hpp"
 
+#include "VideoTestSubscriber.hpp"
+
 #include <cmath>
 #include <fstream>
 #include <numeric>
@@ -25,7 +27,6 @@
 
 #include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <gtest/gtest.h>
 
 using namespace eprosima;

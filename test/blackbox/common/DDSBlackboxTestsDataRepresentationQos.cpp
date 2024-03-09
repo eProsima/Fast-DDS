@@ -12,19 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "BlackboxTests.hpp"
-
-#include <vector>
 #include <tuple>
-
-#include <gtest/gtest.h>
+#include <vector>
 
 #include <fastcdr/Cdr.h>
+#include <gtest/gtest.h>
 
+#include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 using namespace eprosima::fastdds::dds;
 

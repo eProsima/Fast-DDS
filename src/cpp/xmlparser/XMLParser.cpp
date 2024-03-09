@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <fastrtps/xmlparser/XMLParser.h>
+#include <xmlparser/XMLParser.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -24,6 +24,7 @@
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
@@ -31,12 +32,13 @@
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/xmlparser/XMLTree.h>
 
 #include <rtps/network/utils/netmask_filter.hpp>
-#include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <xmlparser/XMLParserUtils.hpp>
+#include <xmlparser/XMLParserCommon.h>
+#include <xmlparser/XMLParserUtils.hpp>
+#include <xmlparser/XMLProfileManager.h>
+#include <xmlparser/XMLTree.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -1518,7 +1520,7 @@ XMLP_ret XMLParser::parseXMLLibrarySettings(
     }
     else
     {
-        LibrarySettingsAttributes library_settings;
+        fastdds::LibrarySettings library_settings;
         if (XMLP_ret::XML_OK != getXMLEnum(p_aux0, &library_settings.intraprocess_delivery, ident))
         {
             return XMLP_ret::XML_ERROR;

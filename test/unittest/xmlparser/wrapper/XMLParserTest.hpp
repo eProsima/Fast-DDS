@@ -13,9 +13,11 @@
 // limitations under the License.
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
-#include <fastrtps/xmlparser/XMLParser.h>
+
+#include <xmlparser/XMLParser.h>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -412,7 +414,7 @@ public:
 
     static XMLP_ret getXMLEnum_wrapper(
             tinyxml2::XMLElement* elem,
-            IntraprocessDeliveryType* e,
+            eprosima::fastdds::IntraprocessDeliveryType* e,
             uint8_t ident)
     {
         return getXMLEnum(elem, e, ident);

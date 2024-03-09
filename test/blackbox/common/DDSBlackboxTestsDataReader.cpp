@@ -14,9 +14,9 @@
 
 #include <thread>
 
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/LibrarySettings.hpp>
 #include <gtest/gtest.h>
-
-#include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
@@ -43,12 +43,12 @@ public:
 
     void SetUp() override
     {
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
@@ -61,12 +61,12 @@ public:
 
     void TearDown() override
     {
-        LibrarySettingsAttributes library_settings;
+        eprosima::fastdds::LibrarySettings library_settings;
         switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
+                library_settings.intraprocess_delivery = eprosima::fastdds::IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = false;
@@ -238,9 +238,9 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
 TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
 {
     //! Manually set intraprocess
-    LibrarySettingsAttributes library_settings;
-    library_settings.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_FULL;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    eprosima::fastdds::LibrarySettings library_settings;
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_FULL;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
 
     auto participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230,
@@ -293,8 +293,8 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
     ASSERT_TRUE(unread_count > 0);
 
     //! Reset back to INTRAPROCESS_OFF
-    library_settings.intraprocess_delivery = eprosima::fastrtps::INTRAPROCESS_OFF;
-    xmlparser::XMLProfileManager::library_settings(library_settings);
+    library_settings.intraprocess_delivery = eprosima::fastdds::INTRAPROCESS_OFF;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->set_library_settings(library_settings);
 }
 
 /**
