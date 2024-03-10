@@ -40,7 +40,6 @@
 #include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
@@ -61,6 +60,7 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypesBase.h>
 
+#include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>

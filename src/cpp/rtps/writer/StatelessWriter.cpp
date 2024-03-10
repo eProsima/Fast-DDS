@@ -23,12 +23,12 @@
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>

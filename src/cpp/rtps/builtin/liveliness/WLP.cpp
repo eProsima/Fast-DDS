@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <rtps/builtin/liveliness/WLP.h>
 
 #include <limits>
 #include <mutex>
@@ -25,7 +25,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -38,6 +37,7 @@
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/liveliness/WLPListener.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
