@@ -52,7 +52,6 @@
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/utils/IPFinder.h>
-#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/UnitsParser.hpp>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
@@ -66,6 +65,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
+#include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/XMLProfileManager.h>
