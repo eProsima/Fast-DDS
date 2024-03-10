@@ -22,7 +22,6 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -32,6 +31,7 @@
 #include <fastdds/rtps/writer/LivelinessManager.h>
 #include <fastrtps/utils/TimeConversion.h>
 
+#include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>

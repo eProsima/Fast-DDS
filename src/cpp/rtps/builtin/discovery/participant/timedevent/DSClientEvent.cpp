@@ -24,9 +24,9 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastrtps/utils/shared_mutex.hpp>
 
+#include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>

@@ -28,7 +28,6 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -46,6 +45,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/utils/IPLocator.h>
+#include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/endpoint/EDPStatic.h>

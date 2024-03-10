@@ -17,7 +17,7 @@
  *
  */
 
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/BuiltinProtocols.h>
 
 #include <algorithm>
 

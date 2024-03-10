@@ -29,7 +29,6 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/EntityId_t.hpp>
@@ -53,6 +52,7 @@
 #include <fastdds/utils/IPFinder.h>
 #include <fastrtps/utils/UnitsParser.hpp>
 
+#include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
