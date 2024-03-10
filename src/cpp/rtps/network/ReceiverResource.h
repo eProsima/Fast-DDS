@@ -20,8 +20,9 @@
 #include <memory>
 #include <vector>
 
-#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+
+#include <rtps/messages/MessageReceiver.h>
 
 namespace eprosima {
 namespace fastrtps {

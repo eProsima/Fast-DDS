@@ -35,7 +35,6 @@
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/StatefulPersistentReader.h>
@@ -60,6 +59,7 @@
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/history/BasicPayloadPool.hpp>
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/network/utils/netmask_filter.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
