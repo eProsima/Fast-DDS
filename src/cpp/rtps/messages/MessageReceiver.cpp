@@ -28,12 +28,12 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/utils/shared_mutex.hpp>
 
 #include <rtps/messages/MessageReceiver.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
+#include <utils/shared_mutex.hpp>
 
 #define INFO_SRC_SUBMSG_LENGTH 20
 

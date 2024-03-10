@@ -22,9 +22,9 @@
 
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/utils/shared_mutex.hpp>
 
 #include <rtps/writer/LivelinessData.hpp>
+#include <utils/shared_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

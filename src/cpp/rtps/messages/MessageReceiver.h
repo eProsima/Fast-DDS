@@ -25,7 +25,8 @@
 
 #include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastrtps/utils/shared_mutex.hpp>
+
+#include <utils/shared_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

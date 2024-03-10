@@ -22,7 +22,6 @@
 #include <mutex>
 #include <chrono>
 
-#include "fastrtps/utils/shared_mutex.hpp"
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -54,6 +53,7 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/shared_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

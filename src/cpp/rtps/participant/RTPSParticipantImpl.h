@@ -46,7 +46,6 @@
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#include <fastrtps/utils/shared_mutex.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
 #include <rtps/messages/MessageReceiver.h>
@@ -56,6 +55,7 @@
 #include <rtps/network/ReceiverResource.h>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/types/monitorservice_types.h>
+#include <utils/shared_mutex.hpp>
 #include <utils/Semaphore.hpp>
 
 #if HAVE_SECURITY

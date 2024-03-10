@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
-#include <fastrtps/utils/shared_mutex.hpp>
+#include <utils/shared_mutex.hpp>
 
 namespace eprosima {
 
