@@ -21,9 +21,10 @@
 #include <mutex>
 
 #include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastdds/rtps/writer/LivelinessData.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
+
+#include <rtps/writer/LivelinessData.hpp>
 
 namespace eprosima {
 namespace fastrtps {
