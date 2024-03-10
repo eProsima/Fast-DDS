@@ -21,6 +21,9 @@
 #define _FASTDDS_RTPS_EDP_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
+
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/PublicationMatchedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -29,10 +32,8 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastrtps/utils/ProxyPool.hpp>
 
-#include <foonathan/memory/container.hpp>
-#include <foonathan/memory/memory_pool.hpp>
+#include <fastrtps/utils/ProxyPool.hpp>
 
 #define MATCH_FAILURE_REASON_COUNT size_t(16)
 

@@ -21,7 +21,7 @@
 #define _FASTDDS_RTPS_BUILTIN_DISCOVERY_PARTICIPANT_PDPSIMPLE_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <rtps/builtin/discovery/participant/PDP.h>
 
 namespace eprosima {
 namespace fastrtps {

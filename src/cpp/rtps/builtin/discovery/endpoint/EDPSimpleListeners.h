@@ -23,12 +23,10 @@
 
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {

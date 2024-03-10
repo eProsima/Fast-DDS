@@ -16,7 +16,7 @@
  * @file PDPSimple.cpp
  *
  */
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
 
 #include <mutex>
 
@@ -27,9 +27,6 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -38,10 +35,13 @@
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/TimeConversion.h>
 
+#include <fastdds/utils/IPLocator.h>
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <rtps/builtin/discovery/endpoint/EDPStatic.h>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpoints.hpp>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpointsSecure.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>

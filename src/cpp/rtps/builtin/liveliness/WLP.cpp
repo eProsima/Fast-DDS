@@ -16,32 +16,30 @@
  * @file WLP.cpp
  *
  */
-#include <limits>
 
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
-#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
 
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <limits>
+#include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/TimeConversion.h>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+#include <fastrtps/utils/TimeConversion.h>
 
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-
-#include <mutex>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -23,7 +23,7 @@
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 
 namespace eprosima {

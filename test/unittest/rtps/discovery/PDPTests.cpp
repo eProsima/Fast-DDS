@@ -30,9 +30,9 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
