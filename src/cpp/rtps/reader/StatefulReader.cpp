@@ -27,7 +27,6 @@
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
@@ -37,6 +36,7 @@
 #include <rtps/history/HistoryAttributesExtension.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/WriterProxy.h>
+#include <rtps/writer/LivelinessManager.hpp>
 
 #include "rtps/RTPSDomainImpl.hpp"
 

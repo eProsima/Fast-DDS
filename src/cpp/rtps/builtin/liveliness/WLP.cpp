@@ -30,7 +30,7 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
+
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/utils/TimeConversion.h>
@@ -40,6 +40,7 @@
 #include <rtps/builtin/liveliness/WLPListener.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/writer/LivelinessManager.hpp>
 
 namespace eprosima {
 namespace fastrtps {

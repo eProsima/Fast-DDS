@@ -1,4 +1,4 @@
-// Copyright 2016-2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
 #ifndef _FASTDDS_RTPS_LIVELINESS_MANAGER_H_
 #define _FASTDDS_RTPS_LIVELINESS_MANAGER_H_
 
+#include <mutex>
+
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/LivelinessData.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
-
-#include <mutex>
 
 namespace eprosima {
 namespace fastrtps {

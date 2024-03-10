@@ -34,11 +34,11 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/writer/LivelinessManager.hpp>
 
 namespace eprosima {
 namespace fastrtps {
