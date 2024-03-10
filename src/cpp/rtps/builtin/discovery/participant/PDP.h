@@ -37,7 +37,8 @@
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/utils/ProxyPool.hpp>
+
+#include <utils/ProxyPool.hpp>
 
 namespace eprosima {
 

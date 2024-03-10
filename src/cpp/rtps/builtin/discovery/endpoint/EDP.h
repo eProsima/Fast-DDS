@@ -33,7 +33,7 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
 
-#include <fastrtps/utils/ProxyPool.hpp>
+#include <utils/ProxyPool.hpp>
 
 #define MATCH_FAILURE_REASON_COUNT size_t(16)
 

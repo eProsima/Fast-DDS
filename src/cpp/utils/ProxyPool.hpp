@@ -16,8 +16,8 @@
  * @file ProxyPool.hpp
  */
 
-#ifndef FASTRTPS_UTILS_PROXY_POOL_HPP_
-#define FASTRTPS_UTILS_PROXY_POOL_HPP_
+#ifndef _FASTDDS_UTILS_PROXY_POOL_HPP_
+#define _FASTDDS_UTILS_PROXY_POOL_HPP_
 
 #include <array>
 #include <bitset>
@@ -240,4 +240,4 @@ public:
 
 } // eprosima namespace
 
-#endif /* FASTRTPS_UTILS_PROXY_POOL_HPP_ */
+#endif /* _FASTDDS_UTILS_PROXY_POOL_HPP_ */

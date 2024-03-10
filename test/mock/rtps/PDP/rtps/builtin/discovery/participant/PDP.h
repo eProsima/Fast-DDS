@@ -23,9 +23,10 @@
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastrtps/utils/ProxyPool.hpp>
+
+#include <rtps/builtin/discovery/endpoint/EDP.h>
+#include <utils/ProxyPool.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
