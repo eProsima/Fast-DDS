@@ -35,7 +35,7 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/utils/StringMatching.h>
+#include <utils/StringMatching.hpp>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/builtin/discovery/participant/PDP.h>
@@ -43,6 +43,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/collections/node_size_helpers.hpp>
 
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 using eprosima::fastdds::dds::PublicationMatchedStatus;
