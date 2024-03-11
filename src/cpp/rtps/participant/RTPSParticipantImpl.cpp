@@ -326,7 +326,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
         auto socket_descriptor =
                 std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(transportDescriptor);
-        fastdds::rtps::NetmaskFilterKind socket_descriptor_netmask_filter;
+        fastdds::rtps::NetmaskFilterKind socket_descriptor_netmask_filter{};
         if (socket_descriptor != nullptr)
         {
             // Copy original netmask filter value to restore it after registration

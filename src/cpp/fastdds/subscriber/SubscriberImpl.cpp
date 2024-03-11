@@ -34,10 +34,8 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <rtps/network/NetworkFactory.h>
+
 #include <rtps/network/utils/netmask_filter.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/RTPSDomainImpl.hpp>
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 

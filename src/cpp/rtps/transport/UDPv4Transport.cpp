@@ -24,10 +24,11 @@
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <rtps/network/utils/netmask_filter.hpp>
-#include <utils/SystemInfo.hpp>
 
 #include <rtps/network/ReceiverResource.h>
+#include <rtps/network/utils/netmask_filter.hpp>
+
+#include <utils/SystemInfo.hpp>
 
 using namespace std;
 using namespace asio;

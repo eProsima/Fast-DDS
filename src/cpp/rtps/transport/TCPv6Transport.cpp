@@ -198,7 +198,7 @@ TCPv6Transport::TCPv6Transport(
     {
         if (configuration_.listening_ports.size() > 1)
         {
-            EPROSIMA_LOG_ERROR(RTCP,
+            EPROSIMA_LOG_ERROR(TRANSPORT_TCPV6,
                     "Only one listening port is allowed for TCP transport. Only the first port will be used.");
             configuration_.listening_ports.erase(
                 configuration_.listening_ports.begin() + 1, configuration_.listening_ports.end());

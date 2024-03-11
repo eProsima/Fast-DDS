@@ -151,6 +151,7 @@ bool IPFinder::getIPs(
                     // Abort if parsing failed
                     if (!success)
                     {
+                        EPROSIMA_LOG_WARNING(UTILS, "Failed to parse IP address: " << info.name);
                         continue;
                     }
 
@@ -253,6 +254,10 @@ bool parseIfaddr(
 
             return true;
         }
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(UTILS, "Failed to parse IP address: " << info.name);
     }
     return false;
 }
