@@ -26,11 +26,10 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <fastrtps/rtps/writer/WriterListener.h>
-
 #include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/rtps/reader/ReaderListener.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>
