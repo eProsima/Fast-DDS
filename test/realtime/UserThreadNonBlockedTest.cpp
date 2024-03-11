@@ -2,7 +2,10 @@
 #include <chrono>
 #include <future>
 
+#include <gtest/gtest.h>
+
 #include <fastcdr/Cdr.h>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -15,10 +18,9 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/utils/TimeConversion.h>
-#include <gtest/gtest.h>
 
 #include "mutex_testing_tool/TMutex.hpp"
+#include <TimeConversion.hpp>
 
 #if defined(_WIN32)
 #define GET_PID _getpid

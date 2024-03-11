@@ -35,7 +35,6 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
@@ -48,6 +47,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/TimeConversion.hpp>
 
 using namespace eprosima::fastrtps;
 

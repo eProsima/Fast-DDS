@@ -28,7 +28,6 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/PDP.h>

@@ -27,7 +27,6 @@
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/liveliness/WLP.h>

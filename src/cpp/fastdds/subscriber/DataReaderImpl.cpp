@@ -24,6 +24,8 @@
 #endif // if defined(__has_include) && __has_include(<version>)
 
 #include <fastdds/config.h>
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -33,24 +35,22 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastrtps/utils/TimeConversion.h>
-
-#include <fastdds/core/condition/StatusConditionImpl.hpp>
-#include <fastdds/core/policy/QosPolicyUtils.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 #include <fastdds/subscriber/ReadConditionImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
+
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/TimeConversion.hpp>
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>

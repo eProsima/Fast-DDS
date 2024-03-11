@@ -40,7 +40,6 @@
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/utils/IPLocator.h>
 #include <rtps/builtin/BuiltinProtocols.h>
@@ -54,6 +53,7 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/shared_mutex.hpp>
+#include <utils/TimeConversion.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -1347,7 +1347,8 @@ void PDP::check_remote_participant_liveliness(
         // If overcame, remove participant.
         auto now = std::chrono::steady_clock::now();
         auto real_lease_tm = remote_participant->last_received_message_tm() +
-                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(remote_participant->m_leaseDuration));
+                std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(remote_participant->
+                                m_leaseDuration));
         if (now > real_lease_tm)
         {
             guard.unlock();

@@ -31,7 +31,6 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/utils/TimedMutex.hpp>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
@@ -47,6 +46,7 @@
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/TimeConversion.hpp>
 
 namespace eprosima {
 namespace fastdds {

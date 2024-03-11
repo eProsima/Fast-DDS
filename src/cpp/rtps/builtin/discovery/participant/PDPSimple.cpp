@@ -33,7 +33,6 @@
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <fastdds/utils/IPLocator.h>
 #include <rtps/builtin/BuiltinProtocols.h>
