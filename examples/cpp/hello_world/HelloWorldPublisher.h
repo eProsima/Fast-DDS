@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file hello_world_publisher.h
+ * @file HelloWorldPublisher.h
  *
  */
 
@@ -47,6 +47,11 @@ public:
     //! Run publisher
     void run();
 
+    //! Return the current state of execution
+    static bool is_stopped();
+
+    //! Trigger the end of execution
+    static void stop();
 private:
 
     HelloWorld hello_;
@@ -61,7 +66,7 @@ private:
 
     TypeSupport type_;
 
-    std::atomic<bool> stop_;
+    static std::atomic<bool> stop_;
 
     int16_t matched_;
 };

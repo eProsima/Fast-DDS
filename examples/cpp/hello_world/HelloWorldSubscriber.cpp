@@ -19,6 +19,8 @@
 
 #include "HelloWorldSubscriber.h"
 
+#include <condition_variable>
+#include <csignal>
 #include <stdexcept>
 #include <thread>
 
@@ -31,6 +33,10 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 using namespace eprosima::fastdds::dds;
+
+std::atomic<bool> HelloWorldSubscriber::stop_(false);
+std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
+std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : participant_(nullptr)
@@ -119,7 +125,7 @@ void HelloWorldSubscriber::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK && !is_stopped())
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
@@ -132,6 +138,26 @@ void HelloWorldSubscriber::on_data_available(
 
 void HelloWorldSubscriber::run()
 {
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber at any time." << std::endl;
-    std::cin.ignore();
+    std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
+    signal(SIGINT, [](int signum)
+            {
+                std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
+                static_cast<void>(signum); HelloWorldSubscriber::stop();
+            });
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, []
+            {
+                return is_stopped();
+            });
+}
+
+bool HelloWorldSubscriber::is_stopped()
+{
+    return stop_;
+}
+
+void HelloWorldSubscriber::stop()
+{
+    stop_ = true;
+    terminate_cv_.notify_all();
 }

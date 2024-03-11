@@ -19,6 +19,7 @@
 
 #include "HelloWorldPublisher.h"
 
+#include <csignal>
 #include <stdexcept>
 #include <thread>
 
@@ -30,13 +31,14 @@
 
 using namespace eprosima::fastdds::dds;
 
+std::atomic<bool> HelloWorldPublisher::stop_(false);
+
 HelloWorldPublisher::HelloWorldPublisher()
     : participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
-    , stop_(false)
 {
     // Set up the data type with initial values
     hello_.index(0);
@@ -123,7 +125,7 @@ void HelloWorldPublisher::run()
 {
     std::thread pub_thread([&]
             {
-                while (!stop_.load())
+                while (!is_stopped())
                 {
                     if (publish())
                     {
@@ -133,9 +135,12 @@ void HelloWorldPublisher::run()
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 }
             });
-    std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-    std::cin.ignore();
-    stop_.store(true);
+    std::cout << "Publisher running. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
+    signal(SIGINT, [](int signum)
+            {
+                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
+                static_cast<void>(signum); HelloWorldPublisher::stop();
+            });
     pub_thread.join();
 }
 
@@ -148,4 +153,14 @@ bool HelloWorldPublisher::publish()
         return true;
     }
     return false;
+}
+
+bool HelloWorldPublisher::is_stopped()
+{
+    return stop_;
+}
+
+void HelloWorldPublisher::stop()
+{
+    stop_ = true;
 }

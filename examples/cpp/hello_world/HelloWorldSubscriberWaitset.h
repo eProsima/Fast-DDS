@@ -43,6 +43,11 @@ public:
     //! Run subscriber
     void run();
 
+    //! Return the current state of execution
+    static bool is_stopped();
+
+    //! Trigger the end of execution
+    static void stop();
 private:
 
     HelloWorld hello_;
@@ -59,9 +64,9 @@ private:
 
     WaitSet wait_set_;
 
-    GuardCondition terminate_condition_;
+    static std::atomic<bool> stop_;
 
-    std::atomic<bool> stop_;
+    static GuardCondition terminate_condition_;
 };
 
 #endif /* HELLO_WORLD_SUBSCRIBER_WAITSET_H_ */

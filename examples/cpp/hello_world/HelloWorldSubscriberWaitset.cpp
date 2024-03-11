@@ -20,6 +20,7 @@
 #include "HelloWorldSubscriberWaitset.h"
 
 #include <condition_variable>
+#include <csignal>
 #include <stdexcept>
 #include <thread>
 
@@ -34,6 +35,9 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
 using namespace eprosima::fastdds::dds;
+
+std::atomic<bool> HelloWorldSubscriberWaitset::stop_(false);
+GuardCondition HelloWorldSubscriberWaitset::terminate_condition_;
 
 HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset()
     : participant_(nullptr)
@@ -163,10 +167,23 @@ void HelloWorldSubscriberWaitset::run()
                     }
                 }
             });
-    std::cout << "Waitset Subscriber running. Please press enter to stop the Waitset Subscriber at any time."
+    std::cout << "Waitset Subscriber running. Please press Ctrl+C to stop the Waitset Subscriber at any time."
               << std::endl;
-    std::cin.ignore();
-    terminate_condition_.set_trigger_value(true);
-    stop_.store(true);
+    signal(SIGINT, [](int signum)
+            {
+                std::cout << "SIGINT received, stopping Waitset Subscriber execution." << std::endl;
+                static_cast<void>(signum); HelloWorldSubscriberWaitset::stop();
+            });
     sub_thread.join();
+}
+
+bool HelloWorldSubscriberWaitset::is_stopped()
+{
+    return stop_;
+}
+
+void HelloWorldSubscriberWaitset::stop()
+{
+    stop_ = true;
+    terminate_condition_.set_trigger_value(true);
 }
