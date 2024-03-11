@@ -132,6 +132,8 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/ChainingTransport.cpp
     rtps/transport/ChannelResource.cpp
     rtps/transport/network/NetmaskFilterKind.cpp
+    rtps/transport/network/NetworkInterface.cpp
+    rtps/transport/network/NetworkInterfaceWithFilter.cpp
     rtps/transport/PortBasedTransportDescriptor.cpp
     rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp

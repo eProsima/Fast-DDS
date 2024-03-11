@@ -38,19 +38,13 @@ struct RTPS_DllAPI NetworkInterface
 {
     //! Constructor by name
     NetworkInterface(
-            const std::string& name)
-        : name(name)
-    {
-    }
+            const std::string& name);
 
-    //! Constructor by device name and IP address
+    //! Constructor by device name, IP address string and locator with mask
     NetworkInterface(
             const std::string& device,
-            const LocatorWithMask& locator)
-        : device(device)
-        , locator(locator)
-    {
-    }
+            const std::string& ip,
+            const LocatorWithMask& locator);
 
     //! Destructor
     virtual ~NetworkInterface() = default;
@@ -73,18 +67,15 @@ struct RTPS_DllAPI NetworkInterface
 
     //! Comparison operator
     bool operator ==(
-            const NetworkInterface& iface) const
-    {
-        return (this->name == iface.name &&
-           this->device == iface.device &&
-           this->locator == iface.locator);
-    }
+            const NetworkInterface& iface) const;
 
     //! Interface device name or IP address in string format (to be filled by the user)
     std::string name;
 
     //! Interface device name
     std::string device;
+    //! IP address in string format (includes scope ID in the IPv6 case)
+    std::string ip;
     //! IP address with network mask
     LocatorWithMask locator;
 };

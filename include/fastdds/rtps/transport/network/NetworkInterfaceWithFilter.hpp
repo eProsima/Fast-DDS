@@ -40,36 +40,24 @@ struct RTPS_DllAPI NetworkInterfaceWithFilter : public NetworkInterface
     //! Constructor by name and netmask filter
     NetworkInterfaceWithFilter(
             const std::string& name,
-            NetmaskFilterKind netmask_filter)
-        : NetworkInterface(name)
-        , netmask_filter(netmask_filter)
-    {
-    }
+            NetmaskFilterKind netmask_filter);
 
     //! Constructor by name
     NetworkInterfaceWithFilter(
-            const std::string& name)
-        : NetworkInterfaceWithFilter(name, NetmaskFilterKind::AUTO)
-    {
-    }
+            const std::string& name);
 
-    //! Constructor by device name, IP address and netmask filter
+    //! Constructor by device name, IP address string, locator with mask and netmask filter
     NetworkInterfaceWithFilter(
             const std::string& device,
+            const std::string& ip,
             const LocatorWithMask& locator,
-            NetmaskFilterKind netmask_filter)
-        : NetworkInterface(device, locator)
-        , netmask_filter(netmask_filter)
-    {
-    }
+            NetmaskFilterKind netmask_filter);
 
-    //! Constructor by device name and IP address
+    //! Constructor by device name, IP address string and locator with mask
     NetworkInterfaceWithFilter(
             const std::string& device,
-            const LocatorWithMask& locator)
-        : NetworkInterfaceWithFilter(device, locator, NetmaskFilterKind::AUTO)
-    {
-    }
+            const std::string& ip,
+            const LocatorWithMask& locator);
 
     //! Destructor
     virtual ~NetworkInterfaceWithFilter() = default;
@@ -92,11 +80,7 @@ struct RTPS_DllAPI NetworkInterfaceWithFilter : public NetworkInterface
 
     //! Comparison operator
     bool operator ==(
-            const NetworkInterfaceWithFilter& iface) const
-    {
-        return (this->netmask_filter == iface.netmask_filter &&
-           NetworkInterface::operator ==(iface));
-    }
+            const NetworkInterfaceWithFilter& iface) const;
 
     //! Netmask filter configuration
     NetmaskFilterKind netmask_filter;

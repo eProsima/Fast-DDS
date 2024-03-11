@@ -41,6 +41,8 @@ set(SOURCES_SECURITY_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/logging/Logging.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/security/SecurityManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetmaskFilterKind.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterface.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/transport/network/NetworkInterfaceWithFilter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/LocatorSelectorSender.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/security/cryptography/AESGCMGMAC_Types.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
