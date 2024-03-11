@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com" >
+    <participant profile_name="hello_world_multimedia_participant_profile" is_default_profile="true">
+        <domainId>0</domainId>
+        <rtps>
+            <name>hello_world_multimedia_participant</name>
+            <builtinTransports>UDPv4</builtinTransports>
+        </rtps>
+    </participant>
+    <data_writer profile_name="hello_world_multimedia_dataWriter_profile" is_default_profile="true">
+        <qos>
+            <durability>
+                <kind>VOLATILE</kind>
+            </durability>
+            <reliability>
+                <kind>BEST_EFFORT</kind>
+            </reliability>
+        </qos>
+        <topic>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>1</depth>
+            </historyQos>
+        </topic>
+    </data_writer>
+
+    <data_reader profile_name="hello_world_multimedia_dataReader_profile" is_default_profile="true">
+        <qos>
+            <durability>
+                <kind>VOLATILE</kind>
+            </durability>
+            <reliability>
+                <kind>BEST_EFFORT</kind>
+            </reliability>
+        </qos>
+        <topic>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>1</depth>
+            </historyQos>
+        </topic>
+    </data_reader>
+</profiles>

@@ -160,17 +160,33 @@ The *eProsima Fast DDS* entities can be configured through an XML profile from t
 #### Ubuntu ( / MacOS )
 
 ```shell
-user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=example_path
+user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=example_profile.xml
 ```
 
 #### Windows
 
 ```powershell
-example_path> set FASTDDS_DEFAULT_PROFILES_FILE=example_path
+example_path> set FASTDDS_DEFAULT_PROFILES_FILE=example_profile.xml
 ```
 
 Other alternative is naming the XML profiles file as DEFAULT_FASTDDS_PROFILES.xml and make sure the file is besides the ``hello_world`` executable.
 
-The following list contains a set of XML profiles files with certain QoS:
+The following list contains a set of given XML profiles files with certain QoS:
 
-TODO: do the XMLs and the list
+- **Multimedia feed** (HelloWorld_multimedia_profile.xml): Audio and Video transmission have a common characteristic: having a stable, high data-rate feed is more important than having a 100% lossless transmission. For that reason, this scenario is characterized by the following QoS configuration:
+    - Best-effort reliability: a fast transmission is required, so if a sample is lost, it can be recovered via error-correcting algorithms.
+    - Volatile durability: while data from the past is not crucial, the transmission of data from the present is.
+	- Keep-last history with low depth: once displayed or recorded on the receiving application, data is not needed in the History.
+
+- **Periodic controllers:** (HelloWorld_controller_profile.xml): in this scenario, it is recreated a scenario where periodic sensor data in a distributed network is sent to a single main computer, which makes decisions based on the data. The recommended configuration for this scenario would be:
+
+    - Reliable reliability: samples cannot be lost. Furthermore, since reliable more ensures data delivery, it allows detecting hardware problems when a sensor does not publish data.
+    - Transient local durability: sensor losing connection temporarily needs tp retrieve all samples, so any sample lost is avoided.
+	- Keep-last history with high depth: having access to past samples is required in order to be able to compute delta values.
+
+- **Event-based transmission** (HelloWorld_event_profile.xml): scenarios when data transmission is required only under certain circumstances, e.g. an image from a surveillance camera that has detected any movement, it is important that all data reaches its destination. In those cases, the most appropriate configuration would be:
+
+	- Reliable reliability: all samples must reach their destination.
+    - Volatile durability: since corrective actions are taken as events come, past triggers have no use.
+	- Keep-last history with low depth: no past alarm information is necessary for present-time transmissions.
+    - Reduced heartbeat period: dictates system response velocity when a sample is lost. A lower heartbeat period equals fast response on data delivery.
