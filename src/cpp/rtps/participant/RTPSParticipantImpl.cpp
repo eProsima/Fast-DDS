@@ -50,7 +50,6 @@
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/utils/IPFinder.h>
-#include <fastrtps/utils/UnitsParser.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
@@ -69,6 +68,7 @@
 #include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/UnitsParser.hpp>
 #include <xmlparser/XMLProfileManager.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
