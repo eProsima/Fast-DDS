@@ -33,6 +33,7 @@
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+enum communication_type 
 {
     TRANSPORT
 };
