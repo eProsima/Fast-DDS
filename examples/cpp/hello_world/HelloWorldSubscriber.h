@@ -55,6 +55,7 @@ public:
 
     //! Trigger the end of execution
     static void stop();
+
 private:
 
     HelloWorld hello_;
