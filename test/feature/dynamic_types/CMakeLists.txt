@@ -24,6 +24,7 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     dds_types_tests/DynamicTypesAliasesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesArraysDDSTypesTests.cpp
+    dds_types_tests/DynamicTypesMapsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesPrimitivesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesSequencesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesStringsDDSTypesTests.cpp
@@ -37,6 +38,8 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/primitivesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/primitivesTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/sequencesPubSubTypes.cxx
@@ -63,8 +66,6 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritanceTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/keyTypeObjectSupport.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsPubSubTypes.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mapsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/member_idTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/mutablePubSubTypes.cxx
@@ -102,7 +103,7 @@ target_link_libraries(DynamicTypesDDSTypesTest GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     fastcdr
-    fastrtps
+    fastdds
     )
 gtest_discover_tests(DynamicTypesDDSTypesTest)
 
