@@ -10,7 +10,10 @@ In this case, the *hello world* example describes the simplest deployment of a F
 
 ## Example in deep
 
-TODO: talk about entities creation, and XML profile from environment.
+Each entity of the example (publisher and subscriber) creates different nested DDS entities: domain participant, publisher & dataWriter, and subscriber & dataReader, respectively.
+In both cases, the three DDS entities (domain participant, publisher/subscriber and dataWriter/dataReader) load their default configuration from the environment.
+If the environment does not specify the expected configuration, they take the default configuration per entity.
+For further information regarding the configuration environment, please refer to the *[XML profile playground](#xml-profile-playground)* subsection in the *[advanced configuration](#advanced-configuration)* section.
 
 The *hello world* example, together with the remain examples, would include a listening callback on the subscriber side. The subscriber will manage the new available data in the same thread as the main subscriber application.
 For simplicity, the ``HelloWorldSubscriber`` implements it own callback.
@@ -169,7 +172,7 @@ user@machine:example_path$ export FASTDDS_DEFAULT_PROFILES_FILE=example_profile.
 example_path> set FASTDDS_DEFAULT_PROFILES_FILE=example_profile.xml
 ```
 
-Other alternative is naming the XML profiles file as DEFAULT_FASTDDS_PROFILES.xml and make sure the file is besides the ``hello_world`` executable.
+Other alternative is naming the XML profiles file as ``DEFAULT_FASTDDS_PROFILES.xml`` and make sure the file is besides the ``hello_world`` executable.
 
 The following list contains a set of given XML profiles files with certain QoS:
 
@@ -190,3 +193,6 @@ The following list contains a set of given XML profiles files with certain QoS:
     - Volatile durability: since corrective actions are taken as events come, past triggers have no use.
 	- Keep-last history with low depth: no past alarm information is necessary for present-time transmissions.
     - Reduced heartbeat period: dictates system response velocity when a sample is lost. A lower heartbeat period equals fast response on data delivery.
+
+Applying each different configuration to the entities would change the sample management behavior, among other configurations, but in any case these configurations would affect in the behavior of the *hello_world* example.
+The expected output would be exactly the same as launching it with no environment configuration.
