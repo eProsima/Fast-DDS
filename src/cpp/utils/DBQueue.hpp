@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#ifndef DBQUEUE_H
-#define DBQUEUE_H
+#ifndef _FASTDDS_DBQUEUE_HPP
+#define _FASTDDS_DBQUEUE_HPP
 
-#include <queue>
-#include <mutex>
-#include <memory>
 #include <condition_variable>
+#include <memory>
+#include <mutex>
+#include <queue>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 
 /**
  * Double buffered, threadsafe queue for MPSC (multi-producer, single-consumer) comms.
@@ -151,7 +151,7 @@ private:
 };
 
 
-} // namespace fastrtps
+} // namespace fastdds
 } // namespace eprosima
 
 #endif // ifndef DBQUEUE_H
