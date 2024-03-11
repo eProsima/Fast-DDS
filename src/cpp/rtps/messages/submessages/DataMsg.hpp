@@ -471,7 +471,7 @@ bool RTPSMessageCreator::addSubmessageDataFrag(
     // TODO(Ricardo) This should be on cachechange.
     // Align submessage to rtps alignment (4).
     submessage_size = uint16_t(msg->pos - position_size_count_size);
-    for (; 0 != (submessage_size& 3); ++submessage_size)
+    for (; 0 != (submessage_size & 3); ++submessage_size)
     {
         if (copy_data)
         {

@@ -1641,5 +1641,6 @@ bool StatefulReader::send_sync_nts(
         const Locators& locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
-    return mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid, locators_begin, locators_end, max_blocking_time_point);
+    return mp_RTPSParticipant->sendSync(buffers, total_bytes, m_guid, locators_begin, locators_end,
+                   max_blocking_time_point);
 }

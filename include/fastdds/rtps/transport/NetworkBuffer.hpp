@@ -38,16 +38,40 @@ struct NetworkBuffer final
     //! Number of bytes to use starting at @c buffer.
     size_t size;
 
-    NetworkBuffer(const void* ptr, size_t s) : buffer(ptr), size(s) {}
+    NetworkBuffer(
+            const void* ptr,
+            size_t s)
+        : buffer(ptr)
+        , size(s)
+    {
+    }
 
-    NetworkBuffer() : buffer(nullptr), size(0) {}
+    NetworkBuffer()
+        : buffer(nullptr)
+        , size(0)
+    {
+    }
 
-    NetworkBuffer(const fastrtps::rtps::octet* ptr, size_t s) : buffer(ptr), size(s) {}
+    NetworkBuffer(
+            const fastrtps::rtps::octet* ptr,
+            size_t s)
+        : buffer(ptr)
+        , size(s)
+    {
+    }
 
-    NetworkBuffer(const NetworkBuffer& copy) : buffer(copy.buffer), size(copy.size) {}
+    NetworkBuffer(
+            const NetworkBuffer& copy)
+        : buffer(copy.buffer)
+        , size(copy.size)
+    {
+    }
 
-    NetworkBuffer& operator=(const NetworkBuffer& copy) {
-        if (this != &copy) {
+    NetworkBuffer& operator =(
+            const NetworkBuffer& copy)
+    {
+        if (this != &copy)
+        {
             buffer = copy.buffer;
             size = copy.size;
         }

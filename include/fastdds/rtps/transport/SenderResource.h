@@ -63,8 +63,8 @@ public:
             LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
-            return send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
-                        max_blocking_time_point);
+        return send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                       max_blocking_time_point);
     }
 
     /**

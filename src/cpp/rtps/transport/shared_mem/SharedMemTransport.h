@@ -255,9 +255,9 @@ private:
      * @param max_blocking_time_point Maximum time this function will block.
      */
     std::shared_ptr<SharedMemManager::Buffer> copy_to_shared_buffer(
-        const std::list<NetworkBuffer>& buffers,
-        const uint32_t total_bytes,
-        const std::chrono::steady_clock::time_point& max_blocking_time_point);
+            const std::list<NetworkBuffer>& buffers,
+            const uint32_t total_bytes,
+            const std::chrono::steady_clock::time_point& max_blocking_time_point);
 
     bool send(
             const std::shared_ptr<SharedMemManager::Buffer>& buffer,

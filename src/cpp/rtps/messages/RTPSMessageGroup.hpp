@@ -279,8 +279,8 @@ private:
             bool is_big_submessage);
 
     bool check_space(
-        CDRMessage_t* msg,
-        const uint32_t length);
+            CDRMessage_t* msg,
+            const uint32_t length);
 
 
     /**

@@ -172,7 +172,8 @@ inline bool is_statistics_buffer(
         const NetworkBuffer& stat_buffer)
 {
     return statistics_submessage_length == stat_buffer.size &&
-           FASTDDS_STATISTICS_NETWORK_SUBMESSAGE == static_cast<const eprosima::fastrtps::rtps::octet*>(stat_buffer.buffer)[0];
+           FASTDDS_STATISTICS_NETWORK_SUBMESSAGE ==
+           static_cast<const eprosima::fastrtps::rtps::octet*>(stat_buffer.buffer)[0];
 }
 
 #endif // FASTDDS_STATISTICS
