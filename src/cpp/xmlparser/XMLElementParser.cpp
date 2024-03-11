@@ -1243,7 +1243,7 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(
 
 XMLP_ret XMLParser::getXMLWriterQosPolicies(
         tinyxml2::XMLElement* elem,
-        WriterQos& qos,
+        fastdds::dds::WriterQos& qos,
         uint8_t ident)
 {
     /*
@@ -1428,7 +1428,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
 
 XMLP_ret XMLParser::getXMLReaderQosPolicies(
         tinyxml2::XMLElement* elem,
-        ReaderQos& qos,
+        fastdds::dds::ReaderQos& qos,
         uint8_t ident)
 {
     /*

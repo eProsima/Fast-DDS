@@ -421,12 +421,12 @@ protected:
 
     static XMLP_ret getXMLWriterQosPolicies(
             tinyxml2::XMLElement* elem,
-            WriterQos& qos,
+            fastdds::dds::WriterQos& qos,
             uint8_t ident);
 
     static XMLP_ret getXMLReaderQosPolicies(
             tinyxml2::XMLElement* elem,
-            ReaderQos& qos,
+            fastdds::dds::ReaderQos& qos,
             uint8_t ident);
 
     static XMLP_ret getXMLPublishModeQos(
