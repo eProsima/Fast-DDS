@@ -27,7 +27,7 @@ def test_basic_configuration():
 
             print(line)
 
-        if sent * 2 == received:
+        if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
             raise subprocess.CalledProcessError(1, '')
@@ -65,7 +65,7 @@ def test_hello_world():
 
             print(line)
 
-        if sent * 2 == received:
+        if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
             raise subprocess.CalledProcessError(1, '')
