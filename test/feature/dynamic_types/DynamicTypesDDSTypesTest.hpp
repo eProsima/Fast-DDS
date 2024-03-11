@@ -17,7 +17,6 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
@@ -126,7 +125,7 @@ public:
     }
 
     /**
-     * Auxiliary methods to create helper types 
+     * Auxiliary methods to create helper types
      */
     static DynamicType::_ref_type create_inner_enum_helper();
     static DynamicType::_ref_type create_inner_bitmask_helper();
