@@ -42,10 +42,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(LogMacrosAllActiveTests ${LOGMACROS_SOURCE})
 target_compile_definitions(LogMacrosAllActiveTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosAllActiveTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosAllActiveTests GTest::gtest ${MOCKS}
@@ -63,10 +66,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(LogMacrosNoInfoTests ${LOGMACROS_SOURCE})
 target_compile_definitions(LogMacrosNoInfoTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosNoInfoTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoInfoTests GTest::gtest ${MOCKS}
@@ -84,10 +90,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(LogMacrosNoWarningTests ${LOGMACROS_SOURCE})
 target_compile_definitions(LogMacrosNoWarningTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosNoWarningTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoWarningTests GTest::gtest ${MOCKS}
@@ -105,10 +114,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(LogMacrosNoErrorTests ${LOGMACROS_SOURCE})
 target_compile_definitions(LogMacrosNoErrorTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosNoErrorTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoErrorTests GTest::gtest ${MOCKS}
@@ -126,10 +138,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(LogMacrosDefaultTests ${LOGMACROS_SOURCE})
 target_compile_definitions(LogMacrosDefaultTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosDefaultTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosDefaultTests GTest::gtest ${MOCKS}
@@ -149,10 +164,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(LogMacrosInternalDebugOffTests ${LOGMACROS_SOURCE})
 target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosInternalDebugOffTests GTest::gtest ${MOCKS}
@@ -169,10 +187,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(OldLogMacrosTests ${LOGMACROS_SOURCE})
 target_compile_definitions(OldLogMacrosTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(OldLogMacrosTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosTests GTest::gtest ${MOCKS}
@@ -190,10 +211,13 @@ set(LOGMACROS_SOURCE
 
 add_executable(OldLogMacrosDisableTests ${LOGMACROS_SOURCE})
 target_compile_definitions(OldLogMacrosDisableTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(OldLogMacrosDisableTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosDisableTests GTest::gtest ${MOCKS}

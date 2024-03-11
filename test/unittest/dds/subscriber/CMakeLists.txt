@@ -66,6 +66,8 @@ endif()
 
 add_executable(SubscriberTests ${SUBSCRIBERTESTS_SOURCE})
 target_compile_definitions(SubscriberTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -87,6 +89,7 @@ target_compile_definitions(DataReaderTests PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DataReaderTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}
@@ -98,10 +101,13 @@ gtest_discover_tests(DataReaderTests)
 
 add_executable(DataReaderInstanceTests ${DATAREADERINSTANCETESTS_SOURCE})
 target_compile_definitions(DataReaderInstanceTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(DataReaderInstanceTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
@@ -112,6 +118,8 @@ gtest_discover_tests(DataReaderInstanceTests)
 
 add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
 target_compile_definitions(DataReaderHistoryTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
@@ -119,6 +127,7 @@ target_compile_definitions(DataReaderHistoryTests PRIVATE
     $<$<AND:$<BOOL:${MSVC}>,$<VERSION_LESS:${CMAKE_CXX_COMPILER_VERSION},19.29.30140.0>>:_ENABLE_ATOMIC_ALIGNMENT_FIX>
     )
 target_include_directories(DataReaderHistoryTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
     ${PROJECT_SOURCE_DIR}/test/mock/dds/Topic

@@ -34,39 +34,39 @@ namespace rtps {
  * @note When using this structure to interact with Fast-DDS, \c name is the only attribute the user needs to provide.
  * The rest of the attributes are internally filled, and are in fact ignored even if already provided by the user.
  */
-struct RTPS_DllAPI NetworkInterface
+struct NetworkInterface
 {
     //! Constructor by name
-    NetworkInterface(
+    RTPS_DllAPI NetworkInterface(
             const std::string& name);
 
     //! Constructor by device name, IP address string and locator with mask
-    NetworkInterface(
+    RTPS_DllAPI NetworkInterface(
             const std::string& device,
             const std::string& ip,
             const LocatorWithMask& locator);
 
     //! Destructor
-    virtual ~NetworkInterface() = default;
+    virtual RTPS_DllAPI ~NetworkInterface() = default;
 
     //! Copy constructor
-    NetworkInterface(
+    RTPS_DllAPI NetworkInterface(
             const NetworkInterface& iface) = default;
 
     //! Copy assignment
-    NetworkInterface& operator =(
+    RTPS_DllAPI NetworkInterface& operator =(
             const NetworkInterface& iface) = default;
 
     //! Move constructor
-    NetworkInterface(
+    RTPS_DllAPI NetworkInterface(
             NetworkInterface&& iface) = default;
 
     //! Move assignment
-    NetworkInterface& operator =(
+    RTPS_DllAPI NetworkInterface& operator =(
             NetworkInterface&& iface) = default;
 
     //! Comparison operator
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const NetworkInterface& iface) const;
 
     //! Interface device name or IP address in string format (to be filled by the user)

@@ -34,7 +34,7 @@ enum class NetmaskFilterKind
     ON
 };
 
-std::ostream& operator <<(
+RTPS_DllAPI std::ostream& operator <<(
         std::ostream& output,
         const NetmaskFilterKind& netmask_filter_kind);
 

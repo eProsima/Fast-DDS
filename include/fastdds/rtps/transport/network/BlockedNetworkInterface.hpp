@@ -32,27 +32,27 @@ namespace rtps {
  * @note When using this structure to interact with Fast-DDS, \c name is the only attribute the user needs to provide.
  * The rest of the attributes are internally filled, and are in fact ignored even if already provided by the user.
  */
-struct RTPS_DllAPI BlockedNetworkInterface : public NetworkInterface
+struct BlockedNetworkInterface : public NetworkInterface
 {
     using NetworkInterface::NetworkInterface;
 
     //! Destructor
-    virtual ~BlockedNetworkInterface() = default;
+    virtual RTPS_DllAPI ~BlockedNetworkInterface() = default;
 
     //! Copy constructor
-    BlockedNetworkInterface(
+    RTPS_DllAPI BlockedNetworkInterface(
             const BlockedNetworkInterface& iface) = default;
 
     //! Copy assignment
-    BlockedNetworkInterface& operator =(
+    RTPS_DllAPI BlockedNetworkInterface& operator =(
             const BlockedNetworkInterface& iface) = default;
 
     //! Move constructor
-    BlockedNetworkInterface(
+    RTPS_DllAPI BlockedNetworkInterface(
             BlockedNetworkInterface&& iface) = default;
 
     //! Move assignment
-    BlockedNetworkInterface& operator =(
+    RTPS_DllAPI BlockedNetworkInterface& operator =(
             BlockedNetworkInterface&& iface) = default;
 };
 

@@ -35,10 +35,13 @@ set(LOANABLE_SEQUENCE_TESTS_SOURCE
 
 add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
 target_compile_definitions(LoanableSequenceTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(LoanableSequenceTests PRIVATE
+    ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LoanableSequenceTests GTest::gtest)

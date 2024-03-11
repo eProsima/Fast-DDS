@@ -70,7 +70,7 @@ private:
     uint8_t mask_ = 24;
 };
 
-std::ostream& operator <<(
+RTPS_DllAPI std::ostream& operator <<(
         std::ostream& output,
         const LocatorWithMask& loc);
 

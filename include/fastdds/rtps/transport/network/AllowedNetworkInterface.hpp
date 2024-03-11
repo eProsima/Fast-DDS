@@ -32,27 +32,27 @@ namespace rtps {
  * @note When using this structure to interact with Fast-DDS, \c name is the only attribute the user needs to provide.
  * The rest of the attributes are internally filled, and are in fact ignored even if already provided by the user.
  */
-struct RTPS_DllAPI AllowedNetworkInterface : public NetworkInterfaceWithFilter
+struct AllowedNetworkInterface : public NetworkInterfaceWithFilter
 {
     using NetworkInterfaceWithFilter::NetworkInterfaceWithFilter;
 
     //! Destructor
-    virtual ~AllowedNetworkInterface() = default;
+    virtual RTPS_DllAPI ~AllowedNetworkInterface() = default;
 
     //! Copy constructor
-    AllowedNetworkInterface(
+    RTPS_DllAPI AllowedNetworkInterface(
             const AllowedNetworkInterface& iface) = default;
 
     //! Copy assignment
-    AllowedNetworkInterface& operator =(
+    RTPS_DllAPI AllowedNetworkInterface& operator =(
             const AllowedNetworkInterface& iface) = default;
 
     //! Move constructor
-    AllowedNetworkInterface(
+    RTPS_DllAPI AllowedNetworkInterface(
             AllowedNetworkInterface&& iface) = default;
 
     //! Move assignment
-    AllowedNetworkInterface& operator =(
+    RTPS_DllAPI AllowedNetworkInterface& operator =(
             AllowedNetworkInterface&& iface) = default;
 };
 

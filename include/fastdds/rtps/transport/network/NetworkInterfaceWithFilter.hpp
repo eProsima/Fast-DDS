@@ -35,15 +35,15 @@ namespace rtps {
  * @note When using this structure to interact with Fast-DDS, \c name is the only attribute the user needs to provide.
  * The rest of the attributes are internally filled, and are in fact ignored even if already provided by the user.
  */
-struct RTPS_DllAPI NetworkInterfaceWithFilter : public NetworkInterface
+struct NetworkInterfaceWithFilter : public NetworkInterface
 {
     //! Constructor by name and netmask filter
-    NetworkInterfaceWithFilter(
+    RTPS_DllAPI NetworkInterfaceWithFilter(
             const std::string& name,
             NetmaskFilterKind netmask_filter);
 
     //! Constructor by name
-    NetworkInterfaceWithFilter(
+    RTPS_DllAPI NetworkInterfaceWithFilter(
             const std::string& name);
 
     //! Constructor by device name, IP address string, locator with mask and netmask filter
@@ -54,32 +54,32 @@ struct RTPS_DllAPI NetworkInterfaceWithFilter : public NetworkInterface
             NetmaskFilterKind netmask_filter);
 
     //! Constructor by device name, IP address string and locator with mask
-    NetworkInterfaceWithFilter(
+    RTPS_DllAPI NetworkInterfaceWithFilter(
             const std::string& device,
             const std::string& ip,
             const LocatorWithMask& locator);
 
     //! Destructor
-    virtual ~NetworkInterfaceWithFilter() = default;
+    virtual RTPS_DllAPI ~NetworkInterfaceWithFilter() = default;
 
     //! Copy constructor
-    NetworkInterfaceWithFilter(
+    RTPS_DllAPI NetworkInterfaceWithFilter(
             const NetworkInterfaceWithFilter& iface) = default;
 
     //! Copy assignment
-    NetworkInterfaceWithFilter& operator =(
+    RTPS_DllAPI NetworkInterfaceWithFilter& operator =(
             const NetworkInterfaceWithFilter& iface) = default;
 
     //! Move constructor
-    NetworkInterfaceWithFilter(
+    RTPS_DllAPI NetworkInterfaceWithFilter(
             NetworkInterfaceWithFilter&& iface) = default;
 
     //! Move assignment
-    NetworkInterfaceWithFilter& operator =(
+    RTPS_DllAPI NetworkInterfaceWithFilter& operator =(
             NetworkInterfaceWithFilter&& iface) = default;
 
     //! Comparison operator
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const NetworkInterfaceWithFilter& iface) const;
 
     //! Netmask filter configuration
