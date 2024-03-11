@@ -205,6 +205,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+    }
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
@@ -225,7 +230,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_ports)
                 {
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
-                    sent |= send_resource->send(message, 5, &locators_begin, &locators_end,
+                    sent |= send_resource->send(buffer_list, 5, &locators_begin, &locators_end,
                                     (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
                     if (sent)
                     {
@@ -265,6 +270,11 @@ TEST_F(UDPv4Tests, send_to_loopback)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(multicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+    }
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
@@ -285,7 +295,7 @@ TEST_F(UDPv4Tests, send_to_loopback)
                 {
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
-                    sent |= send_resource->send(message, 5, &locators_begin, &locators_end,
+                    sent |= send_resource->send(buffer_list, 5, &locators_begin, &locators_end,
                                     (std::chrono::steady_clock::now() + std::chrono::microseconds(100)));
                     if (sent)
                     {
@@ -326,7 +336,9 @@ TEST_F(UDPv4Tests, send_is_rejected_if_buffer_size_is_bigger_to_size_specified_i
 
     // Then
     std::vector<octet> receiveBufferWrongSize(descriptor.sendBufferSize + 1);
-    ASSERT_FALSE(send_resource_list.at(0)->send(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size(),
+    std::list<NetworkBuffer> buffer_list;
+    buffer_list.push_back(NetworkBuffer(receiveBufferWrongSize.data(), (uint32_t)receiveBufferWrongSize.size()));
+    ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, (uint32_t)receiveBufferWrongSize.size(),
             &locators_begin, &locators_end, (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
 }
 
@@ -390,8 +402,13 @@ TEST_F(UDPv4Tests, send_to_wrong_interface)
     Locators locators_begin(locator_list.begin());
     Locators locators_end(locator_list.end());
 
-    std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
-    ASSERT_FALSE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(), &locators_begin,
+    octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+    }
+    ASSERT_FALSE(send_resource_list.at(0)->send(buffer_list, 5, &locators_begin,
             &locators_end,
             (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
 }
@@ -452,8 +469,13 @@ TEST_F(UDPv4Tests, send_to_allowed_interface)
             Locators locators_end(locator_list.end());
 
             // Sending through a ALLOWED IP will work
-            std::vector<octet> message = { 'H', 'e', 'l', 'l', 'o' };
-            ASSERT_TRUE(send_resource_list.at(0)->send(message.data(), (uint32_t)message.size(),
+            octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+            std::list<NetworkBuffer> buffer_list;
+            for (size_t i = 0; i < 5; ++i)
+            {
+                buffer_list.push_back(NetworkBuffer(&message[i], 1));
+            }
+            ASSERT_TRUE(send_resource_list.at(0)->send(buffer_list, 5,
                     &locators_begin, &locators_end,
                     (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
         }
@@ -505,6 +527,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+    }
 
     Semaphore sem;
     std::function<void()> recCallback = [&]()
@@ -520,7 +547,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_localhost)
                 Locators locators_begin(locator_list.begin());
                 Locators locators_end(locator_list.end());
 
-                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, 5, &locators_begin, &locators_end,
                         (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
             };
 
@@ -566,6 +593,11 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+        std::list<NetworkBuffer> buffer_list;
+        for (size_t i = 0; i < 5; ++i)
+        {
+            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        }
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
@@ -581,7 +613,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast)
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
 
-                    EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                    EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, 5, &locators_begin, &locators_end,
                             (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
                 };
 
@@ -628,6 +660,12 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+        std::list<NetworkBuffer> buffer_list;
+        for (size_t i = 0; i < 5; ++i)
+        {
+            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        }
+
 
         Semaphore sem;
         std::function<void()> recCallback = [&]()
@@ -643,7 +681,7 @@ TEST_F(UDPv4Tests, send_and_receive_between_allowed_sockets_using_unicast_to_mul
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
 
-                    EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                    EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, 5, &locators_begin, &locators_end,
                             (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
                 };
 
@@ -720,6 +758,11 @@ TEST_F(UDPv4Tests, simple_throughput)
 
     octet sample_data[sample_size];
     memset(sample_data, 0, sizeof(sample_data));
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < sample_size; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&sample_data[i], 1));
+    }
 
     Locator_t sub_locator;
     sub_locator.kind = LOCATOR_KIND_UDPv4;
@@ -761,7 +804,7 @@ TEST_F(UDPv4Tests, simple_throughput)
         Locators locators_begin(send_locators_list.begin());
         Locators locators_end(send_locators_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(sample_data, sizeof(sample_data), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, sizeof(sample_data), &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::milliseconds(100))));
     }
 

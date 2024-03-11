@@ -742,6 +742,11 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
     ASSERT_FALSE(send_resource_list.empty());
     ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
     octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 5; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+    }
 
     std::function<void()> recCallback = [&]()
             {
@@ -758,7 +763,7 @@ TEST_F(SHMTransportTests, send_and_receive_between_ports)
                 Locators locators_begin(locator_list.begin());
                 Locators locators_end(locator_list.end());
 
-                EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, 5, &locators_begin, &locators_end,
                         (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
             };
 
@@ -804,6 +809,11 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
     ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, outputChannelLocator));
     ASSERT_FALSE(send_resource_list.empty());
     octet message[4] = { 'H', 'e', 'l', 'l'};
+    std::list<NetworkBuffer> buffer_list;
+    for (size_t i = 0; i < 4; ++i)
+    {
+        buffer_list.push_back(NetworkBuffer(&message[i], 1));
+    }
 
     LocatorList locator_list;
     locator_list.push_back(unicastLocator);
@@ -814,8 +824,10 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         // Internally the segment is bigger than "my_descriptor.segment_size" so a bigger buffer is tried
         // to cause segment overflow
         octet message_big[4096] = { 'H', 'e', 'l', 'l'};
+        std::list<NetworkBuffer> buffer_list_big;
+        buffer_list_big.push_back(NetworkBuffer(message_big, 4096));
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message_big, sizeof(message_big), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list_big, sizeof(message_big), &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
@@ -826,7 +838,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_end(locator_list.end());
 
         // At least 4 msgs of 4 bytes are allowed
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, sizeof(message), &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
@@ -844,7 +856,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, sizeof(message), &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
@@ -853,7 +865,7 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
         Locators locators_begin(locator_list.begin());
         Locators locators_end(locator_list.end());
 
-        EXPECT_TRUE(send_resource_list.at(0)->send(message, sizeof(message), &locators_begin, &locators_end,
+        EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, sizeof(message), &locators_begin, &locators_end,
                 (std::chrono::steady_clock::now() + std::chrono::microseconds(100))));
     }
 
@@ -2055,6 +2067,11 @@ TEST_F(SHMTransportTests, dump_file)
         ASSERT_FALSE(send_resource_list.empty());
         ASSERT_TRUE(transportUnderTest.IsInputChannelOpen(unicastLocator));
         octet message[5] = { 'H', 'e', 'l', 'l', 'o' };
+        std::list<NetworkBuffer> buffer_list;
+        for (size_t i = 0; i < 5; ++i)
+        {
+            buffer_list.push_back(NetworkBuffer(&message[i], 1));
+        }
 
         std::function<void()> recCallback = [&]()
                 {
@@ -2071,7 +2088,7 @@ TEST_F(SHMTransportTests, dump_file)
                     Locators locators_begin(locator_list.begin());
                     Locators locators_end(locator_list.end());
 
-                    EXPECT_TRUE(send_resource_list.at(0)->send(message, 5, &locators_begin, &locators_end,
+                    EXPECT_TRUE(send_resource_list.at(0)->send(buffer_list, 5, &locators_begin, &locators_end,
                             (std::chrono::steady_clock::now() + std::chrono::microseconds(1000))));
                 };
 

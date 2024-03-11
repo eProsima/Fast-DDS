@@ -39,22 +39,6 @@ public:
                     // low_sender_resources_ makes its clean up on destruction.
                 };
 
-        send_lambda_ = [this, &transport](
-            const fastrtps::rtps::octet* data,
-            uint32_t dataSize,
-            fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            fastrtps::rtps::LocatorsIterator* destination_locators_end,
-            const std::chrono::steady_clock::time_point& timeout) -> bool
-                {
-                    if (low_sender_resource_)
-                    {
-                        return transport.send(low_sender_resource_.get(), data, dataSize,
-                                       destination_locators_begin, destination_locators_end, timeout);
-                    }
-
-                    return false;
-                };
-
         send_buffers_lambda_ = [this, &transport](
             const std::list<NetworkBuffer>& buffers,
             uint32_t total_bytes,

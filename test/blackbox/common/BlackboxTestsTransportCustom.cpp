@@ -84,21 +84,6 @@ public:
 
     bool send(
             eprosima::fastrtps::rtps::SenderResource* low_sender_resource,
-            const eprosima::fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size,
-            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_begin,
-            eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_end,
-            const std::chrono::steady_clock::time_point& timeout) override
-    {
-        descriptor_.send_function_called();
-
-        // Call low level transport
-        return low_sender_resource->send(send_buffer, send_buffer_size, destination_locators_begin,
-                       destination_locators_end, timeout);
-    }
-
-    bool send(
-            eprosima::fastrtps::rtps::SenderResource* low_sender_resource,
             const std::list<NetworkBuffer>& buffers,
             uint32_t total_bytes,
             eprosima::fastrtps::rtps::LocatorsIterator* destination_locators_begin,

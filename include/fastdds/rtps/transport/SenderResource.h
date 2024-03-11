@@ -48,44 +48,6 @@ public:
 
     /**
      * Sends to a destination locator, through the channel managed by this resource.
-     * @param data Raw data slice to be sent.
-     * @param dataLength Length of the data to be sent. Will be used as a boundary for
-     * the previous parameter.
-     * @param destination_locators_begin destination endpoint Locators iterator begin.
-     * @param destination_locators_end destination endpoint Locators iterator end.
-     * @param max_blocking_time_point If transport supports it then it will use it as maximum blocking time.
-     * @return Success of the send operation.
-     */
-    bool send(
-            const octet* data,
-            uint32_t dataLength,
-            LocatorsIterator* destination_locators_begin,
-            LocatorsIterator* destination_locators_end,
-            const std::chrono::steady_clock::time_point& max_blocking_time_point)
-    {
-        bool returned_value = false;
-
-        if (send_lambda_ && !send_buffers_lambda_)
-        {
-            EPROSIMA_LOG_WARNING(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
-                    << std::endl << "Please implement send_buffers_lambda_ instead.");
-            return send_lambda_(data, dataLength,
-                            destination_locators_begin, destination_locators_end, max_blocking_time_point);
-        }
-
-        // Use a list of NetworkBuffer to send the message
-        std::list<NetworkBuffer> buffers;
-        buffers.push_back(NetworkBuffer(data, dataLength));
-        uint32_t total_bytes = dataLength;
-
-        returned_value = send(buffers, total_bytes, destination_locators_begin, destination_locators_end,
-                        max_blocking_time_point);
-
-        return returned_value;
-    }
-
-    /**
-     * Sends to a destination locator, through the channel managed by this resource.
      * @param buffers List of buffers to send.
      * @param total_bytes Length of all buffers to be sent. Will be used as a boundary for
      * the previous parameter.
@@ -101,22 +63,8 @@ public:
             LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point)
     {
-        bool returned_value = false;
-
-        if (send_buffers_lambda_)
-        {
-            returned_value = send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
-                            max_blocking_time_point);
-        }
-
-        if (send_lambda_)
-        {
-            EPROSIMA_LOG_ERROR(RTPS, "The usage of send_lambda_ on SenderResource has been deprecated."
-                    << std::endl << "Please implement send_buffers_lambda_ instead.");
-            send_lambda_ = nullptr;
-        }
-
-        return returned_value;
+            return send_buffers_lambda_(buffers, total_bytes, destination_locators_begin, destination_locators_end,
+                        max_blocking_time_point);
     }
 
     /**
@@ -127,7 +75,7 @@ public:
             SenderResource&& rValueResource)
     {
         clean_up.swap(rValueResource.clean_up);
-        send_lambda_.swap(rValueResource.send_lambda_);
+        send_buffers_lambda_.swap(rValueResource.send_buffers_lambda_);
     }
 
     virtual ~SenderResource() = default;
@@ -159,12 +107,6 @@ protected:
     int32_t transport_kind_;
 
     std::function<void()> clean_up;
-    std::function<bool(
-                const octet*,
-                uint32_t,
-                LocatorsIterator* destination_locators_begin,
-                LocatorsIterator* destination_locators_end,
-                const std::chrono::steady_clock::time_point&)> send_lambda_;
 
     std::function<bool(
                 const std::list<NetworkBuffer>&,
