@@ -1385,8 +1385,10 @@ void TCPTransportInterface::SocketAccepted(
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
-                    << local_endpoint_to_locator(channel) << ", remote: "
-                    << remote_endpoint_to_locator(channel) << ")");
+                    << channel->local_endpoint().address() << ":"
+                    << channel->local_endpoint().port() << "), remote: "
+                    << channel->remote_endpoint().address() << ":"
+                    << channel->remote_endpoint().port() << ")");
         }
         else
         {
@@ -1431,8 +1433,10 @@ void TCPTransportInterface::SecureSocketAccepted(
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: "
-                    << local_endpoint_to_locator(secure_channel) << ", remote: "
-                    << remote_endpoint_to_locator(secure_channel) << ")");
+                    << socket->lowest_layer().local_endpoint().address() << ":"
+                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
+                    << socket->lowest_layer().remote_endpoint().address() << ":"
+                    << socket->lowest_layer().remote_endpoint().port() << ")");
         }
         else
         {

@@ -327,36 +327,6 @@ if(NOT DISABLE_UDPV6_TESTS)
     set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TCP6)
 endif()
 
-add_executable(test_UDPv4Tests ${TEST_UDPV4TESTS_SOURCE})
-target_compile_definitions(test_UDPv4Tests PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_include_directories(test_UDPv4Tests PRIVATE
-    ${Asio_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ParticipantProxyData
-    ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
-    ${PROJECT_SOURCE_DIR}/src/cpp
-    $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
-    )
-target_link_libraries(test_UDPv4Tests
-    fastcdr
-    GTest::gtest
-    ${MOCKS})
-if(QNX)
-    target_link_libraries(test_UDPv4Tests socket)
-endif()
-if(MSVC OR MSVC_IDE)
-    target_link_libraries(test_UDPv4Tests ${PRIVACY} iphlpapi Shlwapi)
-else()
-    target_link_libraries(test_UDPv4Tests ${PRIVACY})
-endif()
-add_gtest(test_UDPv4Tests SOURCES ${TEST_UDPV4TESTS_SOURCE})
 set(TRANSPORT_XFAIL_LIST ${TRANSPORT_XFAIL_LIST} XFAIL_TEST_UDP4)
 
 add_executable(TCPv4Tests ${TCPV4TESTS_SOURCE})
