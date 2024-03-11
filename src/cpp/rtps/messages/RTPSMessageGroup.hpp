@@ -282,6 +282,21 @@ private:
         CDRMessage_t* msg,
         const uint32_t length);
 
+
+    /**
+     * Appends a submessage to the RTPS Message so it can be sent.
+     * The submessage is copied into the header_msg_ buffer if it is the first submessage
+     * of the RTPS message. Otherwise, it is copied into copied_msgs_ and added to buffers_to_send_.
+     * Then, if there is a data payload in pending_buffer_ it is added to buffers_to_send_.
+     *
+     * In gather-send operation, the submessage appended only contains the header and pending_buffer_
+     * points to the data payload.
+     *
+     * If gather-send operation is not possible (i.e. Security), the submessage received will contain
+     * the header AND the data payload. The whole submessage will be copied into copied_msgs_.
+     *
+     * @return True if the submessage was successfully appended, false if the copy operation failed.
+     */
     bool append_submessage();
 
     bool add_info_dst_in_buffer(
