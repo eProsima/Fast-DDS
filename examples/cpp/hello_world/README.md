@@ -32,14 +32,14 @@ To launch this test open two different consoles. One of them will run the publis
 
 ```shell
 user@machine:example_path$ ./hello_world publisher
-Publisher running. Please press enter to stop the Publisher at any time.
+Publisher running. Please press Ctrl+C to stop the Publisher at any time.
 ```
 
 #### Windows
 
 ```powershell
 example_path> hello_world.exe publisher
-Publisher running. Please press enter to stop the Publisher at any time.
+Publisher running. Please press Ctrl+C to stop the Publisher at any time.
 ```
 
 ### Hello world subscriber
@@ -48,25 +48,25 @@ Publisher running. Please press enter to stop the Publisher at any time.
 
 ```shell
 user@machine:example_path$ ./hello_world subscriber
-Subscriber running. Please press enter to stop the Subscriber at any time.
+Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
 ```
 
 #### Windows
 
 ```powershell
 example_path> hello_world.exe subscriber
-Subscriber running. Please press enter to stop the Subscriber at any time.
+Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
 ```
 
 ## Expected output
 
 It does not matter which entity is launched first, because the publisher has a condition to wait until the first match to start sending hello world samples.
-The expected output on both cases is a first displayed message acknowledging they have matched, followed by the amount of samples sent or received until user press ENTER.
+The expected output on both cases is a first displayed message acknowledging they have matched, followed by the amount of samples sent or received until user press Ctrl+C.
 
 ### Hello world publisher
 
 ```shell
-Publisher running. Please press enter to stop the Publisher at any time.
+Publisher running. Please press Ctrl+C to stop the Publisher at any time.
 Publisher matched.
 Message: 'Hello world' with index: '1' SENT
 Message: 'Hello world' with index: '2' SENT
@@ -77,7 +77,7 @@ Message: 'Hello world' with index: '3' SENT
 ### Hello world subscriber
 
 ```shell
-Subscriber running. Please press enter to stop the Subscriber at any time.
+Subscriber running. Please press Ctrl+C to stop the Subscriber at any time.
 Subscriber matched.
 Message: 'Hello world' with index: '1' RECEIVED
 Message: 'Hello world' with index: '2' RECEIVED
@@ -85,7 +85,7 @@ Message: 'Hello world' with index: '3' RECEIVED
 ...
 ```
 
-When pressed ENTER to stop one of the applications, the other will detect the unmatched status, and will display an informative message.
+When pressed Ctrl+C to stop one of the applications, the other will detect the unmatched status, and will display an informative message.
 This output example represents stopping the subscriber application.
 
 ### Hello world publisher

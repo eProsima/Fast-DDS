@@ -20,6 +20,8 @@
 #ifndef HELLO_WORLD_SUBSCRIBER_H_
 #define HELLO_WORLD_SUBSCRIBER_H_
 
+#include <condition_variable>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
@@ -48,6 +50,11 @@ public:
     //! Run subscriber
     void run();
 
+    //! Return the current state of execution
+    static bool is_stopped();
+
+    //! Trigger the end of execution
+    static void stop();
 private:
 
     HelloWorld hello_;
@@ -61,6 +68,12 @@ private:
     DataReader* reader_;
 
     TypeSupport type_;
+
+    static std::atomic<bool> stop_;
+
+    static std::mutex terminate_cv_mtx_;
+
+    static std::condition_variable terminate_cv_;
 };
 
 #endif /* HELLO_WORLD_SUBSCRIBER_H_ */
