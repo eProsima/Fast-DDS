@@ -297,14 +297,15 @@ const PlainMapSTypeDefn TypeObjectUtils::build_plain_map_s_type_defn(
     type_identifier_consistency(*element_identifier);
     collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
-    plain_collection_type_identifier_header_consistency(header, *element_identifier);
-    map_key_type_identifier_consistency(*key_identifier);
     PlainMapSTypeDefn plain_map_s_type_defn;
+    plain_map_s_type_defn.element_identifier(element_identifier);
+    plain_map_s_type_defn.key_identifier(key_identifier);
+    TypeIdentifier type_identifier;
+    type_identifier.map_sdefn(plain_map_s_type_defn);
+    plain_map_type_components_consistency(header, type_identifier);
     plain_map_s_type_defn.header(header);
     plain_map_s_type_defn.bound(bound);
-    plain_map_s_type_defn.element_identifier(element_identifier);
     plain_map_s_type_defn.key_flags(key_flags);
-    plain_map_s_type_defn.key_identifier(key_identifier);
     return plain_map_s_type_defn;
 }
 
@@ -321,14 +322,15 @@ const PlainMapLTypeDefn TypeObjectUtils::build_plain_map_l_type_defn(
     collection_element_flag_consistency(key_flags);
 #endif // !defined(NDEBUG)
     l_bound_consistency(bound);
-    plain_collection_type_identifier_header_consistency(header, *element_identifier);
-    map_key_type_identifier_consistency(*key_identifier);
     PlainMapLTypeDefn plain_map_l_type_defn;
+    plain_map_l_type_defn.element_identifier(element_identifier);
+    plain_map_l_type_defn.key_identifier(key_identifier);
+    TypeIdentifier type_identifier;
+    type_identifier.map_ldefn(plain_map_l_type_defn);
+    plain_map_type_components_consistency(header, type_identifier);
+    plain_map_l_type_defn.key_flags(key_flags);
     plain_map_l_type_defn.header(header);
     plain_map_l_type_defn.bound(bound);
-    plain_map_l_type_defn.element_identifier(element_identifier);
-    plain_map_l_type_defn.key_flags(key_flags);
-    plain_map_l_type_defn.key_identifier(key_identifier);
     return plain_map_l_type_defn;
 }
 
@@ -2050,6 +2052,122 @@ void TypeObjectUtils::plain_collection_type_identifier_header_consistency(
     }
 }
 
+EquivalenceKind TypeObjectUtils::get_map_component_equiv_kind_for_consistency(
+        const TypeIdentifier& identifier)
+{
+    if (identifier._d() == TK_NONE)
+    {
+        return TK_NONE;
+    }
+    else if (is_direct_hash_type_identifier(identifier))
+    {
+        TypeObject type_object;
+        if (eprosima::fastdds::dds::RETCODE_OK ==
+                type_object_registry_observer().get_type_object(identifier, type_object))
+        {
+            return type_object._d();
+        }
+        else
+        {
+            throw InvalidArgumentError("Given TypeIdentifier is not found in TypeObjectRegistry");
+        }
+    }
+    else if (is_indirect_hash_type_identifier(identifier))
+    {
+        EquivalenceKind element_equiv_kind;
+        EquivalenceKind key_equiv_kind;
+
+        switch (identifier._d())
+        {
+            case TI_PLAIN_SEQUENCE_SMALL:
+                return get_map_component_equiv_kind_for_consistency(*identifier.seq_sdefn().element_identifier());
+            case TI_PLAIN_SEQUENCE_LARGE:
+                return get_map_component_equiv_kind_for_consistency(*identifier.seq_ldefn().element_identifier());
+            case TI_PLAIN_ARRAY_SMALL:
+                return get_map_component_equiv_kind_for_consistency(*identifier.array_sdefn().element_identifier());
+            case TI_PLAIN_ARRAY_LARGE:
+                return get_map_component_equiv_kind_for_consistency(*identifier.array_ldefn().element_identifier());
+            case TI_PLAIN_MAP_SMALL:
+                element_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_sdefn().element_identifier());
+                key_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_sdefn().key_identifier());
+
+                if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
+                {
+                    return EK_BOTH;
+                }
+                else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_COMPLETE;
+                }
+                else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_MINIMAL;
+                }
+                else
+                {
+                    return TK_NONE;
+                }
+            case TI_PLAIN_MAP_LARGE:
+                element_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_ldefn().element_identifier());
+                key_equiv_kind = get_map_component_equiv_kind_for_consistency(
+                    *identifier.map_ldefn().key_identifier());
+
+                if (EK_BOTH == element_equiv_kind && EK_BOTH == key_equiv_kind)
+                {
+                    return EK_BOTH;
+                }
+                else if ((EK_COMPLETE == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_COMPLETE == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_COMPLETE;
+                }
+                else if ((EK_MINIMAL == element_equiv_kind || EK_BOTH == element_equiv_kind) &&
+                        (EK_MINIMAL == key_equiv_kind || EK_BOTH == key_equiv_kind))
+                {
+                    return EK_MINIMAL;
+                }
+                else
+                {
+                    return TK_NONE;
+                }
+            default:
+                return TK_NONE;
+        }
+    }
+    else
+    {
+        return EK_BOTH;
+    }
+}
+
+void TypeObjectUtils::plain_map_type_components_consistency(
+        const PlainCollectionHeader& header,
+        const TypeIdentifier& identifier)
+{
+    switch (identifier._d())
+    {
+        case TI_PLAIN_MAP_SMALL:
+            map_key_type_identifier_consistency(*identifier.map_sdefn().key_identifier());
+            break;
+        case TI_PLAIN_MAP_LARGE:
+            map_key_type_identifier_consistency(*identifier.map_ldefn().key_identifier());
+            break;
+        default:
+            throw InvalidArgumentError("Inconsistent TypeIdentifier, it is not a map type");
+    }
+
+    if (header.equiv_kind() != get_map_component_equiv_kind_for_consistency(identifier))
+    {
+        throw InvalidArgumentError(
+                  "Inconsistent PlainCollectionHeader, different equiv_kind between header and components");
+    }
+}
+
 void TypeObjectUtils::map_key_type_identifier_consistency(
         const TypeIdentifier& key_identifier)
 {
@@ -2142,7 +2260,9 @@ void TypeObjectUtils::map_sdefn_consistency(
     plain_collection_header_consistency(plain_map.header());
     type_identifier_consistency(*plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
+    TypeIdentifier type_identifier;
+    type_identifier.map_sdefn(plain_map);
+    plain_map_type_components_consistency(plain_map.header(), type_identifier);
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 
@@ -2153,7 +2273,10 @@ void TypeObjectUtils::map_ldefn_consistency(
     l_bound_consistency(plain_map.bound());
     type_identifier_consistency(*plain_map.element_identifier());
     collection_element_flag_consistency(plain_map.key_flags());
-    plain_collection_type_identifier_header_consistency(plain_map.header(), *plain_map.element_identifier());
+    TypeIdentifier type_identifier;
+    type_identifier.map_ldefn(plain_map);
+    plain_map_type_components_consistency(plain_map.header(), type_identifier);
+
     map_key_type_identifier_consistency(*plain_map.key_identifier());
 }
 

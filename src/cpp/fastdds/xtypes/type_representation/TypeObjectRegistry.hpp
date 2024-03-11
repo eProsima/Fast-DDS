@@ -182,9 +182,9 @@ public:
             TypeInformation& type_information);
 
     /**
-     * @brief Get the type dependencies of the given type identifiers.
+     * @brief Get the type dependencies of the given direct hash type identifiers.
      *
-     * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
+     * @param[in] type_identifiers Sequence with the queried direct hash TypeIdentifiers.
      * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
      * @return ReturnCode_t RETCODE_OK if the operation is successful.
      *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
@@ -276,6 +276,19 @@ public:
 protected:
 
     /**
+     * @brief Get the type dependencies of the given type identifiers.
+     *
+     * @param[in] type_identifiers Sequence with the queried TypeIdentifiers.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any given TypeIdentifier is unknown to the registry.
+     *                      RETCODE_BAD_PARAMETER if any given TypeIdentifier is fully descriptive.
+     */
+    ReturnCode_t get_type_dependencies_impl(
+            const TypeIdentifierSeq& type_identifiers,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
      * @brief Add type dependency to the sequence.
      *
      * @param[in] type_id TypeIdentifier to be added.
@@ -284,6 +297,82 @@ protected:
     void add_dependency(
             const TypeIdentifier& type_id,
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies);
+
+    /**
+     * @brief Get the type dependencies of plain sequences or arrays.
+     *
+     * @tparam T Either PlainSequenceSElemDefn, PlainSequenceLElemDefn, PlainArraySElemDefn or PlainArrayLElemDefn.
+     * @param[in] collection_type Plain collection Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     *                      RETCODE_BAD_PARAMETER if the collection type is fully descriptive.
+     */
+    template<typename T>
+    ReturnCode_t get_indirect_hash_collection_dependencies(
+            const T& collection_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+
+        TypeIdentifier type_id = *collection_type.element_identifier();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
+        {
+            add_dependency(type_id, type_dependencies);
+            type_ids.push_back(type_id);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+        {
+            type_ids.push_back(type_id);
+        }
+
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies_impl(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+    }
+
+    /**
+     * @brief Get the type dependencies of plain maps.
+     *
+     * @tparam T Either PlainMapSTypeDefn or PlainMapLTypeDefn.
+     * @param[in] map_type Plain map Type.
+     * @param[in out] type_dependencies Unordered set of TypeIdentifiers with related TypeObject serialized size.
+     * @return ReturnCode_t RETCODE_OK if the operation is successful.
+     *                      RETCODE_NO_DATA if any dependent TypeIdentifier is unknown to the registry.
+     *                      RETCODE_BAD_PARAMETER if both the key and the elements types are fully descriptive.
+     */
+    template<typename T>
+    ReturnCode_t get_indirect_hash_map_dependencies(
+            const T& map_type,
+            std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
+    {
+        TypeIdentifierSeq type_ids;
+
+        TypeIdentifier key_id = *map_type.key_identifier();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(key_id))
+        {
+            add_dependency(key_id, type_dependencies);
+            type_ids.push_back(key_id);
+        }
+        TypeIdentifier element_id = *map_type.element_identifier();
+        if (TypeObjectUtils::is_direct_hash_type_identifier(element_id))
+        {
+            add_dependency(element_id, type_dependencies);
+            type_ids.push_back(element_id);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(element_id))
+        {
+            type_ids.push_back(element_id);
+        }
+
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies_impl(type_ids, type_dependencies);
+        }
+        return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
+    }
 
     /**
      * @brief Get the alias type dependencies.
@@ -299,13 +388,22 @@ protected:
             const T& alias_type,
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
+        TypeIdentifierSeq type_ids;
+
         TypeIdentifier type_id = alias_type.body().common().related_type();
         if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
         {
             add_dependency(type_id, type_dependencies);
-            TypeIdentifierSeq type_ids;
             type_ids.push_back(type_id);
-            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+        {
+            type_ids.push_back(type_id);
+        }
+
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -325,6 +423,7 @@ protected:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
         TypeIdentifierSeq type_ids;
+
         for (auto member : annotation_type.member_seq())
         {
             TypeIdentifier type_id = member.common().member_type_id();
@@ -334,9 +433,10 @@ protected:
                 type_ids.push_back(type_id);
             }
         }
+
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -370,10 +470,14 @@ protected:
                 add_dependency(type_id, type_dependencies);
                 type_ids.push_back(type_id);
             }
+            else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+            {
+                type_ids.push_back(type_id);
+            }
         }
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -393,6 +497,7 @@ protected:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
         TypeIdentifierSeq type_ids;
+
         TypeIdentifier discriminator_type_id = union_type.discriminator().common().type_id();
         if (TypeObjectUtils::is_direct_hash_type_identifier(discriminator_type_id))
         {
@@ -407,10 +512,15 @@ protected:
                 add_dependency(type_id, type_dependencies);
                 type_ids.push_back(type_id);
             }
+            else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+            {
+                type_ids.push_back(type_id);
+            }
         }
+
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -429,13 +539,22 @@ protected:
             const T& collection_type,
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
+        TypeIdentifierSeq type_ids;
+
         TypeIdentifier type_id = collection_type.element().common().type();
         if (TypeObjectUtils::is_direct_hash_type_identifier(type_id))
         {
             add_dependency(type_id, type_dependencies);
-            TypeIdentifierSeq type_ids;
             type_ids.push_back(type_id);
-            return get_type_dependencies(type_ids, type_dependencies);
+        }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(type_id))
+        {
+            type_ids.push_back(type_id);
+        }
+
+        if (!type_ids.empty())
+        {
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }
@@ -455,6 +574,7 @@ protected:
             std::unordered_set<TypeIdentfierWithSize>& type_dependencies)
     {
         TypeIdentifierSeq type_ids;
+
         TypeIdentifier key_type_id = map_type.key().common().type();
         if (TypeObjectUtils::is_direct_hash_type_identifier(key_type_id))
         {
@@ -467,9 +587,14 @@ protected:
             add_dependency(element_type_id, type_dependencies);
             type_ids.push_back(element_type_id);
         }
+        else if (TypeObjectUtils::is_indirect_hash_type_identifier(element_type_id))
+        {
+            type_ids.push_back(element_type_id);
+        }
+
         if (!type_ids.empty())
         {
-            return get_type_dependencies(type_ids, type_dependencies);
+            return get_type_dependencies_impl(type_ids, type_dependencies);
         }
         return eprosima::fastdds::dds::RETCODE_OK;
     }

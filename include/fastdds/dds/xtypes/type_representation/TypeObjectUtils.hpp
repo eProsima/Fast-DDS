@@ -2122,6 +2122,33 @@ protected:
             const TypeIdentifier& element_identifier);
 
     /**
+     * @brief Retrieves the equivalence kind of a component within a map.
+     *
+     * @param[in] identifier TypeIdentifier of the component to be checked.
+     * @return EK_COMPLETE if the component equivalence kind is EK_COMPLETE.
+     * @return EK_MINIMAL if the component equivalence kind is EK_MINIMAL.
+     * @return EK_BOTH if the component equivalence kind is EK_BOTH.
+     * @return TK_NONE if the component type is invalid.
+     */
+    static EquivalenceKind get_map_component_equiv_kind_for_consistency(
+            const TypeIdentifier& identifier);
+
+    /**
+     * @brief Check consistency between a given PlainCollectionHeader of a map and the related TypeIdentifier:
+     *        1. Key TypeIdentifier is valid
+     *        2. TypeIdentifier initialized
+     *        3. Consistency of EquivalenceKinds
+     *
+     * @param[in] header PlainCollectionHeader of the map to be checked.
+     * @param[in] type_identifier TypeIdentifier to be checked.
+     * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given parameters are not
+     *            consistent.
+     */
+    static void plain_map_type_components_consistency(
+            const PlainCollectionHeader& header,
+            const TypeIdentifier& type_identifier);
+
+    /**
      * @brief Check map key_identifier consistency.
      *        XTypes v1.3 Clause 7.2.2.4.3: Implementers of this specification need only support key elements of signed
      *        and unsigned integer types and of narrow and wide string types.
