@@ -845,7 +845,7 @@ XMLP_ret XMLParser::getXMLPortParameters(
 
 XMLP_ret XMLParser::getXMLTransports(
         tinyxml2::XMLElement* elem,
-        std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
+        std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>>& transports,
         uint8_t /*ident*/)
 {
     /*
@@ -874,7 +874,8 @@ XMLP_ret XMLParser::getXMLTransports(
         }
         else
         {
-            std::shared_ptr<TransportDescriptorInterface> pDescriptor = XMLProfileManager::getTransportById(text);
+            std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> pDescriptor =
+                    XMLProfileManager::getTransportById(text);
             if (pDescriptor != nullptr)
             {
                 transports.emplace_back(pDescriptor);
