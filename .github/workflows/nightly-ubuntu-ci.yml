@@ -19,7 +19,7 @@ jobs:
           - '2.12.x'
           - '2.10.x'
           - '2.6.x'
-
+          - '3.0.x-devel'
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
       os-image: ${{ matrix.os-image }}
@@ -27,11 +27,3 @@ jobs:
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
       fastdds-branch: '${{ matrix.fastdds-branch }}'
-
-  nightly-3_0_x-ubuntu-ci:
-    uses: ./.github/workflows/reusable-ubuntu-ci.yml
-    with:
-      label: 'nightly-3.0.x-ubuntu-ci'
-      cmake-args: "-DSECURITY=ON"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '3.0.x-devel'
