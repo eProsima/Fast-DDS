@@ -24,7 +24,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {

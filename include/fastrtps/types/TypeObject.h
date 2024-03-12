@@ -44,87 +44,87 @@ class CommonStructMember
 {
 public:
 
-    RTPS_DllAPI CommonStructMember();
-    RTPS_DllAPI ~CommonStructMember();
-    RTPS_DllAPI CommonStructMember(
+    FASTDDS_EXPORTED_API CommonStructMember();
+    FASTDDS_EXPORTED_API ~CommonStructMember();
+    FASTDDS_EXPORTED_API CommonStructMember(
             const CommonStructMember& x);
-    RTPS_DllAPI CommonStructMember(
+    FASTDDS_EXPORTED_API CommonStructMember(
             CommonStructMember&& x);
-    RTPS_DllAPI CommonStructMember& operator =(
+    FASTDDS_EXPORTED_API CommonStructMember& operator =(
             const CommonStructMember& x);
-    RTPS_DllAPI CommonStructMember& operator =(
+    FASTDDS_EXPORTED_API CommonStructMember& operator =(
             CommonStructMember&& x);
 
-    RTPS_DllAPI inline void member_id(
+    FASTDDS_EXPORTED_API inline void member_id(
             const MemberId& _member_id)
     {
         m_member_id = _member_id;
     }
 
-    RTPS_DllAPI inline void member_id(
+    FASTDDS_EXPORTED_API inline void member_id(
             MemberId&& _member_id)
     {
         m_member_id = std::move(_member_id);
     }
 
-    RTPS_DllAPI inline const MemberId& member_id() const
+    FASTDDS_EXPORTED_API inline const MemberId& member_id() const
     {
         return m_member_id;
     }
 
-    RTPS_DllAPI inline MemberId& member_id()
+    FASTDDS_EXPORTED_API inline MemberId& member_id()
     {
         return m_member_id;
     }
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             const StructMemberFlag& _member_flags)
     {
         m_member_flags = _member_flags;
     }
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             StructMemberFlag&& _member_flags)
     {
         m_member_flags = std::move(_member_flags);
     }
 
-    RTPS_DllAPI inline const StructMemberFlag& member_flags() const
+    FASTDDS_EXPORTED_API inline const StructMemberFlag& member_flags() const
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline StructMemberFlag& member_flags()
+    FASTDDS_EXPORTED_API inline StructMemberFlag& member_flags()
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline void member_type_id(
+    FASTDDS_EXPORTED_API inline void member_type_id(
             const TypeIdentifier& _member_type_id)
     {
         m_member_type_id = _member_type_id;
     }
 
-    RTPS_DllAPI inline void member_type_id(
+    FASTDDS_EXPORTED_API inline void member_type_id(
             TypeIdentifier&& _member_type_id)
     {
         m_member_type_id = std::move(_member_type_id);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& member_type_id() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& member_type_id() const
     {
         return m_member_type_id;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& member_type_id()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& member_type_id()
     {
         return m_member_type_id;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonStructMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonStructMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -145,87 +145,87 @@ class CompleteMemberDetail
 {
 public:
 
-    RTPS_DllAPI CompleteMemberDetail();
-    RTPS_DllAPI ~CompleteMemberDetail();
-    RTPS_DllAPI CompleteMemberDetail(
+    FASTDDS_EXPORTED_API CompleteMemberDetail();
+    FASTDDS_EXPORTED_API ~CompleteMemberDetail();
+    FASTDDS_EXPORTED_API CompleteMemberDetail(
             const CompleteMemberDetail& x);
-    RTPS_DllAPI CompleteMemberDetail(
+    FASTDDS_EXPORTED_API CompleteMemberDetail(
             CompleteMemberDetail&& x);
-    RTPS_DllAPI CompleteMemberDetail& operator =(
+    FASTDDS_EXPORTED_API CompleteMemberDetail& operator =(
             const CompleteMemberDetail& x);
-    RTPS_DllAPI CompleteMemberDetail& operator =(
+    FASTDDS_EXPORTED_API CompleteMemberDetail& operator =(
             CompleteMemberDetail&& x);
 
-    RTPS_DllAPI inline void name(
+    FASTDDS_EXPORTED_API inline void name(
             const MemberName& _name)
     {
         m_name = _name;
     }
 
-    RTPS_DllAPI inline void name(
+    FASTDDS_EXPORTED_API inline void name(
             MemberName&& _name)
     {
         m_name = std::move(_name);
     }
 
-    RTPS_DllAPI inline const MemberName& name() const
+    FASTDDS_EXPORTED_API inline const MemberName& name() const
     {
         return m_name;
     }
 
-    RTPS_DllAPI inline MemberName& name()
+    FASTDDS_EXPORTED_API inline MemberName& name()
     {
         return m_name;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             const AppliedBuiltinMemberAnnotations& _ann_builtin)
     {
         m_ann_builtin = _ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             AppliedBuiltinMemberAnnotations&& _ann_builtin)
     {
         m_ann_builtin = std::move(_ann_builtin);
     }
 
-    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
+    FASTDDS_EXPORTED_API inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin()
+    FASTDDS_EXPORTED_API inline AppliedBuiltinMemberAnnotations& ann_builtin()
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             const AppliedAnnotationSeq& _ann_custom)
     {
         m_ann_custom = _ann_custom;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             AppliedAnnotationSeq&& _ann_custom)
     {
         m_ann_custom = std::move(_ann_custom);
     }
 
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    FASTDDS_EXPORTED_API inline const AppliedAnnotationSeq& ann_custom() const
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    FASTDDS_EXPORTED_API inline AppliedAnnotationSeq& ann_custom()
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteMemberDetail& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteMemberDetail& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -245,43 +245,43 @@ class MinimalMemberDetail final
 {
 public:
 
-    RTPS_DllAPI MinimalMemberDetail();
-    RTPS_DllAPI ~MinimalMemberDetail();
-    RTPS_DllAPI MinimalMemberDetail(
+    FASTDDS_EXPORTED_API MinimalMemberDetail();
+    FASTDDS_EXPORTED_API ~MinimalMemberDetail();
+    FASTDDS_EXPORTED_API MinimalMemberDetail(
             const MinimalMemberDetail& x);
-    RTPS_DllAPI MinimalMemberDetail(
+    FASTDDS_EXPORTED_API MinimalMemberDetail(
             MinimalMemberDetail&& x);
-    RTPS_DllAPI MinimalMemberDetail& operator =(
+    FASTDDS_EXPORTED_API MinimalMemberDetail& operator =(
             const MinimalMemberDetail& x);
-    RTPS_DllAPI MinimalMemberDetail& operator =(
+    FASTDDS_EXPORTED_API MinimalMemberDetail& operator =(
             MinimalMemberDetail&& x);
 
-    RTPS_DllAPI inline void name_hash(
+    FASTDDS_EXPORTED_API inline void name_hash(
             const NameHash& _name_hash)
     {
         m_name_hash = _name_hash;
     }
 
-    RTPS_DllAPI inline void name_hash(
+    FASTDDS_EXPORTED_API inline void name_hash(
             NameHash&& _name_hash)
     {
         m_name_hash = std::move(_name_hash);
     }
 
-    RTPS_DllAPI inline const NameHash& name_hash() const
+    FASTDDS_EXPORTED_API inline const NameHash& name_hash() const
     {
         return m_name_hash;
     }
 
-    RTPS_DllAPI inline NameHash& name_hash()
+    FASTDDS_EXPORTED_API inline NameHash& name_hash()
     {
         return m_name_hash;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalMemberDetail& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalMemberDetail& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -299,65 +299,65 @@ class CompleteStructMember
 {
 public:
 
-    RTPS_DllAPI CompleteStructMember();
-    RTPS_DllAPI ~CompleteStructMember();
-    RTPS_DllAPI CompleteStructMember(
+    FASTDDS_EXPORTED_API CompleteStructMember();
+    FASTDDS_EXPORTED_API ~CompleteStructMember();
+    FASTDDS_EXPORTED_API CompleteStructMember(
             const CompleteStructMember& x);
-    RTPS_DllAPI CompleteStructMember(
+    FASTDDS_EXPORTED_API CompleteStructMember(
             CompleteStructMember&& x);
-    RTPS_DllAPI CompleteStructMember& operator =(
+    FASTDDS_EXPORTED_API CompleteStructMember& operator =(
             const CompleteStructMember& x);
-    RTPS_DllAPI CompleteStructMember& operator =(
+    FASTDDS_EXPORTED_API CompleteStructMember& operator =(
             CompleteStructMember&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonStructMember& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonStructMember&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonStructMember& common() const
+    FASTDDS_EXPORTED_API inline const CommonStructMember& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonStructMember& common()
+    FASTDDS_EXPORTED_API inline CommonStructMember& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteStructMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteStructMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -379,65 +379,65 @@ class MinimalStructMember
 {
 public:
 
-    RTPS_DllAPI MinimalStructMember();
-    RTPS_DllAPI ~MinimalStructMember();
-    RTPS_DllAPI MinimalStructMember(
+    FASTDDS_EXPORTED_API MinimalStructMember();
+    FASTDDS_EXPORTED_API ~MinimalStructMember();
+    FASTDDS_EXPORTED_API MinimalStructMember(
             const MinimalStructMember& x);
-    RTPS_DllAPI MinimalStructMember(
+    FASTDDS_EXPORTED_API MinimalStructMember(
             MinimalStructMember&& x);
-    RTPS_DllAPI MinimalStructMember& operator =(
+    FASTDDS_EXPORTED_API MinimalStructMember& operator =(
             const MinimalStructMember& x);
-    RTPS_DllAPI MinimalStructMember& operator =(
+    FASTDDS_EXPORTED_API MinimalStructMember& operator =(
             MinimalStructMember&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonStructMember& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonStructMember&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonStructMember& common() const
+    FASTDDS_EXPORTED_API inline const CommonStructMember& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonStructMember& common()
+    FASTDDS_EXPORTED_API inline CommonStructMember& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const MinimalMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             MinimalMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const MinimalMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline MinimalMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalStructMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalStructMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -457,43 +457,43 @@ class AppliedBuiltinTypeAnnotations
 {
 public:
 
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations();
-    RTPS_DllAPI ~AppliedBuiltinTypeAnnotations();
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations(
+    FASTDDS_EXPORTED_API AppliedBuiltinTypeAnnotations();
+    FASTDDS_EXPORTED_API ~AppliedBuiltinTypeAnnotations();
+    FASTDDS_EXPORTED_API AppliedBuiltinTypeAnnotations(
             const AppliedBuiltinTypeAnnotations& x);
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations(
+    FASTDDS_EXPORTED_API AppliedBuiltinTypeAnnotations(
             AppliedBuiltinTypeAnnotations&& x);
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations& operator =(
+    FASTDDS_EXPORTED_API AppliedBuiltinTypeAnnotations& operator =(
             const AppliedBuiltinTypeAnnotations& x);
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations& operator =(
+    FASTDDS_EXPORTED_API AppliedBuiltinTypeAnnotations& operator =(
             AppliedBuiltinTypeAnnotations&& x);
 
-    RTPS_DllAPI inline void verbatim(
+    FASTDDS_EXPORTED_API inline void verbatim(
             const AppliedVerbatimAnnotation& _verbatim)
     {
         m_verbatim = _verbatim;
     }
 
-    RTPS_DllAPI inline void verbatim(
+    FASTDDS_EXPORTED_API inline void verbatim(
             AppliedVerbatimAnnotation&& _verbatim)
     {
         m_verbatim = std::move(_verbatim);
     }
 
-    RTPS_DllAPI inline const AppliedVerbatimAnnotation& verbatim() const
+    FASTDDS_EXPORTED_API inline const AppliedVerbatimAnnotation& verbatim() const
     {
         return m_verbatim;
     }
 
-    RTPS_DllAPI inline AppliedVerbatimAnnotation& verbatim()
+    FASTDDS_EXPORTED_API inline AppliedVerbatimAnnotation& verbatim()
     {
         return m_verbatim;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const AppliedBuiltinTypeAnnotations& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const AppliedBuiltinTypeAnnotations& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -509,24 +509,24 @@ class MinimalTypeDetail
 {
 public:
 
-    RTPS_DllAPI MinimalTypeDetail();
-    RTPS_DllAPI ~MinimalTypeDetail();
-    RTPS_DllAPI MinimalTypeDetail(
+    FASTDDS_EXPORTED_API MinimalTypeDetail();
+    FASTDDS_EXPORTED_API ~MinimalTypeDetail();
+    FASTDDS_EXPORTED_API MinimalTypeDetail(
             const MinimalTypeDetail& x);
-    RTPS_DllAPI MinimalTypeDetail(
+    FASTDDS_EXPORTED_API MinimalTypeDetail(
             MinimalTypeDetail&& x);
-    RTPS_DllAPI MinimalTypeDetail& operator =(
+    FASTDDS_EXPORTED_API MinimalTypeDetail& operator =(
             const MinimalTypeDetail& x);
-    RTPS_DllAPI MinimalTypeDetail& operator =(
+    FASTDDS_EXPORTED_API MinimalTypeDetail& operator =(
             MinimalTypeDetail&& x);
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalTypeDetail&) const
     {
         return true;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalTypeDetail& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -543,87 +543,87 @@ class CompleteTypeDetail
 {
 public:
 
-    RTPS_DllAPI CompleteTypeDetail();
-    RTPS_DllAPI ~CompleteTypeDetail();
-    RTPS_DllAPI CompleteTypeDetail(
+    FASTDDS_EXPORTED_API CompleteTypeDetail();
+    FASTDDS_EXPORTED_API ~CompleteTypeDetail();
+    FASTDDS_EXPORTED_API CompleteTypeDetail(
             const CompleteTypeDetail& x);
-    RTPS_DllAPI CompleteTypeDetail(
+    FASTDDS_EXPORTED_API CompleteTypeDetail(
             CompleteTypeDetail&& x);
-    RTPS_DllAPI CompleteTypeDetail& operator =(
+    FASTDDS_EXPORTED_API CompleteTypeDetail& operator =(
             const CompleteTypeDetail& x);
-    RTPS_DllAPI CompleteTypeDetail& operator =(
+    FASTDDS_EXPORTED_API CompleteTypeDetail& operator =(
             CompleteTypeDetail&& x);
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             const AppliedBuiltinTypeAnnotations& _ann_builtin)
     {
         m_ann_builtin = _ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             AppliedBuiltinTypeAnnotations&& _ann_builtin)
     {
         m_ann_builtin = std::move(_ann_builtin);
     }
 
-    RTPS_DllAPI inline const AppliedBuiltinTypeAnnotations& ann_builtin() const
+    FASTDDS_EXPORTED_API inline const AppliedBuiltinTypeAnnotations& ann_builtin() const
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline AppliedBuiltinTypeAnnotations& ann_builtin()
+    FASTDDS_EXPORTED_API inline AppliedBuiltinTypeAnnotations& ann_builtin()
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             const AppliedAnnotationSeq& _ann_custom)
     {
         m_ann_custom = _ann_custom;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             AppliedAnnotationSeq&& _ann_custom)
     {
         m_ann_custom = std::move(_ann_custom);
     }
 
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    FASTDDS_EXPORTED_API inline const AppliedAnnotationSeq& ann_custom() const
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    FASTDDS_EXPORTED_API inline AppliedAnnotationSeq& ann_custom()
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI inline void type_name(
+    FASTDDS_EXPORTED_API inline void type_name(
             const QualifiedTypeName& _type_name)
     {
         m_type_name = _type_name;
     }
 
-    RTPS_DllAPI inline void type_name(
+    FASTDDS_EXPORTED_API inline void type_name(
             QualifiedTypeName&& _type_name)
     {
         m_type_name = std::move(_type_name);
     }
 
-    RTPS_DllAPI inline const QualifiedTypeName& type_name() const
+    FASTDDS_EXPORTED_API inline const QualifiedTypeName& type_name() const
     {
         return m_type_name;
     }
 
-    RTPS_DllAPI inline QualifiedTypeName& type_name()
+    FASTDDS_EXPORTED_API inline QualifiedTypeName& type_name()
     {
         return m_type_name;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteTypeDetail& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteTypeDetail& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -641,65 +641,65 @@ class CompleteStructHeader
 {
 public:
 
-    RTPS_DllAPI CompleteStructHeader();
-    RTPS_DllAPI ~CompleteStructHeader();
-    RTPS_DllAPI CompleteStructHeader(
+    FASTDDS_EXPORTED_API CompleteStructHeader();
+    FASTDDS_EXPORTED_API ~CompleteStructHeader();
+    FASTDDS_EXPORTED_API CompleteStructHeader(
             const CompleteStructHeader& x);
-    RTPS_DllAPI CompleteStructHeader(
+    FASTDDS_EXPORTED_API CompleteStructHeader(
             CompleteStructHeader&& x);
-    RTPS_DllAPI CompleteStructHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteStructHeader& operator =(
             const CompleteStructHeader& x);
-    RTPS_DllAPI CompleteStructHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteStructHeader& operator =(
             CompleteStructHeader&& x);
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             const TypeIdentifier& _base_type)
     {
         m_base_type = _base_type;
     }
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             TypeIdentifier&& _base_type)
     {
         m_base_type = std::move(_base_type);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& base_type() const
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& base_type()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& base_type()
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteStructHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteStructHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -716,65 +716,65 @@ class MinimalStructHeader
 {
 public:
 
-    RTPS_DllAPI MinimalStructHeader();
-    RTPS_DllAPI ~MinimalStructHeader();
-    RTPS_DllAPI MinimalStructHeader(
+    FASTDDS_EXPORTED_API MinimalStructHeader();
+    FASTDDS_EXPORTED_API ~MinimalStructHeader();
+    FASTDDS_EXPORTED_API MinimalStructHeader(
             const MinimalStructHeader& x);
-    RTPS_DllAPI MinimalStructHeader(
+    FASTDDS_EXPORTED_API MinimalStructHeader(
             MinimalStructHeader&& x);
-    RTPS_DllAPI MinimalStructHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalStructHeader& operator =(
             const MinimalStructHeader& x);
-    RTPS_DllAPI MinimalStructHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalStructHeader& operator =(
             MinimalStructHeader&& x);
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             const TypeIdentifier& _base_type)
     {
         m_base_type = _base_type;
     }
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             TypeIdentifier&& _base_type)
     {
         m_base_type = std::move(_base_type);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& base_type() const
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& base_type()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& base_type()
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const MinimalTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             MinimalTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const MinimalTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const MinimalTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline MinimalTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline MinimalTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalStructHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalStructHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -793,87 +793,87 @@ class CompleteStructType
 {
 public:
 
-    RTPS_DllAPI CompleteStructType();
-    RTPS_DllAPI ~CompleteStructType();
-    RTPS_DllAPI CompleteStructType(
+    FASTDDS_EXPORTED_API CompleteStructType();
+    FASTDDS_EXPORTED_API ~CompleteStructType();
+    FASTDDS_EXPORTED_API CompleteStructType(
             const CompleteStructType& x);
-    RTPS_DllAPI CompleteStructType(
+    FASTDDS_EXPORTED_API CompleteStructType(
             CompleteStructType&& x);
-    RTPS_DllAPI CompleteStructType& operator =(
+    FASTDDS_EXPORTED_API CompleteStructType& operator =(
             const CompleteStructType& x);
-    RTPS_DllAPI CompleteStructType& operator =(
+    FASTDDS_EXPORTED_API CompleteStructType& operator =(
             CompleteStructType&& x);
 
-    RTPS_DllAPI inline void struct_flags(
+    FASTDDS_EXPORTED_API inline void struct_flags(
             const StructTypeFlag& _struct_flags)
     {
         m_struct_flags = _struct_flags;
     }
 
-    RTPS_DllAPI inline void struct_flags(
+    FASTDDS_EXPORTED_API inline void struct_flags(
             StructTypeFlag&& _struct_flags)
     {
         m_struct_flags = std::move(_struct_flags);
     }
 
-    RTPS_DllAPI inline const StructTypeFlag& struct_flags() const
+    FASTDDS_EXPORTED_API inline const StructTypeFlag& struct_flags() const
     {
         return m_struct_flags;
     }
 
-    RTPS_DllAPI inline StructTypeFlag& struct_flags()
+    FASTDDS_EXPORTED_API inline StructTypeFlag& struct_flags()
     {
         return m_struct_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteStructHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteStructHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteStructHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteStructHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteStructHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteStructHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             const CompleteStructMemberSeq& _member_seq)
     {
         m_member_seq = _member_seq;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             CompleteStructMemberSeq&& _member_seq)
     {
         m_member_seq = std::move(_member_seq);
     }
 
-    RTPS_DllAPI inline const CompleteStructMemberSeq& member_seq() const
+    FASTDDS_EXPORTED_API inline const CompleteStructMemberSeq& member_seq() const
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI inline CompleteStructMemberSeq& member_seq()
+    FASTDDS_EXPORTED_API inline CompleteStructMemberSeq& member_seq()
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteStructType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteStructType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -893,87 +893,87 @@ class MinimalStructType
 {
 public:
 
-    RTPS_DllAPI MinimalStructType();
-    RTPS_DllAPI ~MinimalStructType();
-    RTPS_DllAPI MinimalStructType(
+    FASTDDS_EXPORTED_API MinimalStructType();
+    FASTDDS_EXPORTED_API ~MinimalStructType();
+    FASTDDS_EXPORTED_API MinimalStructType(
             const MinimalStructType& x);
-    RTPS_DllAPI MinimalStructType(
+    FASTDDS_EXPORTED_API MinimalStructType(
             MinimalStructType&& x);
-    RTPS_DllAPI MinimalStructType& operator =(
+    FASTDDS_EXPORTED_API MinimalStructType& operator =(
             const MinimalStructType& x);
-    RTPS_DllAPI MinimalStructType& operator =(
+    FASTDDS_EXPORTED_API MinimalStructType& operator =(
             MinimalStructType&& x);
 
-    RTPS_DllAPI inline void struct_flags(
+    FASTDDS_EXPORTED_API inline void struct_flags(
             const StructTypeFlag& _struct_flags)
     {
         m_struct_flags = _struct_flags;
     }
 
-    RTPS_DllAPI inline void struct_flags(
+    FASTDDS_EXPORTED_API inline void struct_flags(
             StructTypeFlag&& _struct_flags)
     {
         m_struct_flags = std::move(_struct_flags);
     }
 
-    RTPS_DllAPI inline const StructTypeFlag& struct_flags() const
+    FASTDDS_EXPORTED_API inline const StructTypeFlag& struct_flags() const
     {
         return m_struct_flags;
     }
 
-    RTPS_DllAPI inline StructTypeFlag& struct_flags()
+    FASTDDS_EXPORTED_API inline StructTypeFlag& struct_flags()
     {
         return m_struct_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalStructHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalStructHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalStructHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalStructHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalStructHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalStructHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             const MinimalStructMemberSeq& _member_seq)
     {
         m_member_seq = _member_seq;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             MinimalStructMemberSeq&& _member_seq)
     {
         m_member_seq = std::move(_member_seq);
     }
 
-    RTPS_DllAPI inline const MinimalStructMemberSeq& member_seq() const
+    FASTDDS_EXPORTED_API inline const MinimalStructMemberSeq& member_seq() const
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI inline MinimalStructMemberSeq& member_seq()
+    FASTDDS_EXPORTED_API inline MinimalStructMemberSeq& member_seq()
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalStructType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalStructType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1000,109 +1000,109 @@ class CommonUnionMember
 {
 public:
 
-    RTPS_DllAPI CommonUnionMember();
-    RTPS_DllAPI ~CommonUnionMember();
-    RTPS_DllAPI CommonUnionMember(
+    FASTDDS_EXPORTED_API CommonUnionMember();
+    FASTDDS_EXPORTED_API ~CommonUnionMember();
+    FASTDDS_EXPORTED_API CommonUnionMember(
             const CommonUnionMember& x);
-    RTPS_DllAPI CommonUnionMember(
+    FASTDDS_EXPORTED_API CommonUnionMember(
             CommonUnionMember&& x);
-    RTPS_DllAPI CommonUnionMember& operator =(
+    FASTDDS_EXPORTED_API CommonUnionMember& operator =(
             const CommonUnionMember& x);
-    RTPS_DllAPI CommonUnionMember& operator =(
+    FASTDDS_EXPORTED_API CommonUnionMember& operator =(
             CommonUnionMember&& x);
 
-    RTPS_DllAPI inline void member_id(
+    FASTDDS_EXPORTED_API inline void member_id(
             const MemberId& _member_id)
     {
         m_member_id = _member_id;
     }
 
-    RTPS_DllAPI inline void member_id(
+    FASTDDS_EXPORTED_API inline void member_id(
             MemberId&& _member_id)
     {
         m_member_id = std::move(_member_id);
     }
 
-    RTPS_DllAPI inline const MemberId& member_id() const
+    FASTDDS_EXPORTED_API inline const MemberId& member_id() const
     {
         return m_member_id;
     }
 
-    RTPS_DllAPI inline MemberId& member_id()
+    FASTDDS_EXPORTED_API inline MemberId& member_id()
     {
         return m_member_id;
     }
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             const UnionMemberFlag& _member_flags)
     {
         m_member_flags = _member_flags;
     }
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             UnionMemberFlag&& _member_flags)
     {
         m_member_flags = std::move(_member_flags);
     }
 
-    RTPS_DllAPI inline const UnionMemberFlag& member_flags() const
+    FASTDDS_EXPORTED_API inline const UnionMemberFlag& member_flags() const
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline UnionMemberFlag& member_flags()
+    FASTDDS_EXPORTED_API inline UnionMemberFlag& member_flags()
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline void type_id(
+    FASTDDS_EXPORTED_API inline void type_id(
             const TypeIdentifier& _type_id)
     {
         m_type_id = _type_id;
     }
 
-    RTPS_DllAPI inline void type_id(
+    FASTDDS_EXPORTED_API inline void type_id(
             TypeIdentifier&& _type_id)
     {
         m_type_id = std::move(_type_id);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type_id() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type_id() const
     {
         return m_type_id;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type_id()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type_id()
     {
         return m_type_id;
     }
 
-    RTPS_DllAPI inline void label_seq(
+    FASTDDS_EXPORTED_API inline void label_seq(
             const UnionCaseLabelSeq& _label_seq)
     {
         m_label_seq = _label_seq;
     }
 
-    RTPS_DllAPI inline void label_seq(
+    FASTDDS_EXPORTED_API inline void label_seq(
             UnionCaseLabelSeq&& _label_seq)
     {
         m_label_seq = std::move(_label_seq);
     }
 
-    RTPS_DllAPI inline const UnionCaseLabelSeq& label_seq() const
+    FASTDDS_EXPORTED_API inline const UnionCaseLabelSeq& label_seq() const
     {
         return m_label_seq;
     }
 
-    RTPS_DllAPI inline UnionCaseLabelSeq& label_seq()
+    FASTDDS_EXPORTED_API inline UnionCaseLabelSeq& label_seq()
     {
         return m_label_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonUnionMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonUnionMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1123,65 +1123,65 @@ class CompleteUnionMember
 {
 public:
 
-    RTPS_DllAPI CompleteUnionMember();
-    RTPS_DllAPI ~CompleteUnionMember();
-    RTPS_DllAPI CompleteUnionMember(
+    FASTDDS_EXPORTED_API CompleteUnionMember();
+    FASTDDS_EXPORTED_API ~CompleteUnionMember();
+    FASTDDS_EXPORTED_API CompleteUnionMember(
             const CompleteUnionMember& x);
-    RTPS_DllAPI CompleteUnionMember(
+    FASTDDS_EXPORTED_API CompleteUnionMember(
             CompleteUnionMember&& x);
-    RTPS_DllAPI CompleteUnionMember& operator =(
+    FASTDDS_EXPORTED_API CompleteUnionMember& operator =(
             const CompleteUnionMember& x);
-    RTPS_DllAPI CompleteUnionMember& operator =(
+    FASTDDS_EXPORTED_API CompleteUnionMember& operator =(
             CompleteUnionMember&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonUnionMember& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonUnionMember&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonUnionMember& common() const
+    FASTDDS_EXPORTED_API inline const CommonUnionMember& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonUnionMember& common()
+    FASTDDS_EXPORTED_API inline CommonUnionMember& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteUnionMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteUnionMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1203,65 +1203,65 @@ class MinimalUnionMember
 {
 public:
 
-    RTPS_DllAPI MinimalUnionMember();
-    RTPS_DllAPI ~MinimalUnionMember();
-    RTPS_DllAPI MinimalUnionMember(
+    FASTDDS_EXPORTED_API MinimalUnionMember();
+    FASTDDS_EXPORTED_API ~MinimalUnionMember();
+    FASTDDS_EXPORTED_API MinimalUnionMember(
             const MinimalUnionMember& x);
-    RTPS_DllAPI MinimalUnionMember(
+    FASTDDS_EXPORTED_API MinimalUnionMember(
             MinimalUnionMember&& x);
-    RTPS_DllAPI MinimalUnionMember& operator =(
+    FASTDDS_EXPORTED_API MinimalUnionMember& operator =(
             const MinimalUnionMember& x);
-    RTPS_DllAPI MinimalUnionMember& operator =(
+    FASTDDS_EXPORTED_API MinimalUnionMember& operator =(
             MinimalUnionMember&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonUnionMember& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonUnionMember&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonUnionMember& common() const
+    FASTDDS_EXPORTED_API inline const CommonUnionMember& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonUnionMember& common()
+    FASTDDS_EXPORTED_API inline CommonUnionMember& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const MinimalMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             MinimalMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const MinimalMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline MinimalMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalUnionMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalUnionMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1282,65 +1282,65 @@ class CommonDiscriminatorMember
 {
 public:
 
-    RTPS_DllAPI CommonDiscriminatorMember();
-    RTPS_DllAPI ~CommonDiscriminatorMember();
-    RTPS_DllAPI CommonDiscriminatorMember(
+    FASTDDS_EXPORTED_API CommonDiscriminatorMember();
+    FASTDDS_EXPORTED_API ~CommonDiscriminatorMember();
+    FASTDDS_EXPORTED_API CommonDiscriminatorMember(
             const CommonDiscriminatorMember& x);
-    RTPS_DllAPI CommonDiscriminatorMember(
+    FASTDDS_EXPORTED_API CommonDiscriminatorMember(
             CommonDiscriminatorMember&& x);
-    RTPS_DllAPI CommonDiscriminatorMember& operator =(
+    FASTDDS_EXPORTED_API CommonDiscriminatorMember& operator =(
             const CommonDiscriminatorMember& x);
-    RTPS_DllAPI CommonDiscriminatorMember& operator =(
+    FASTDDS_EXPORTED_API CommonDiscriminatorMember& operator =(
             CommonDiscriminatorMember&& x);
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             const UnionDiscriminatorFlag& _member_flags)
     {
         m_member_flags = _member_flags;
     }
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             UnionDiscriminatorFlag&& _member_flags)
     {
         m_member_flags = std::move(_member_flags);
     }
 
-    RTPS_DllAPI inline const UnionDiscriminatorFlag& member_flags() const
+    FASTDDS_EXPORTED_API inline const UnionDiscriminatorFlag& member_flags() const
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline UnionDiscriminatorFlag& member_flags()
+    FASTDDS_EXPORTED_API inline UnionDiscriminatorFlag& member_flags()
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline void type_id(
+    FASTDDS_EXPORTED_API inline void type_id(
             const TypeIdentifier& _type_id)
     {
         m_type_id = _type_id;
     }
 
-    RTPS_DllAPI inline void type_id(
+    FASTDDS_EXPORTED_API inline void type_id(
             TypeIdentifier&& _type_id)
     {
         m_type_id = std::move(_type_id);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type_id() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type_id() const
     {
         return m_type_id;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type_id()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type_id()
     {
         return m_type_id;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonDiscriminatorMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonDiscriminatorMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1360,87 +1360,87 @@ class CompleteDiscriminatorMember
 {
 public:
 
-    RTPS_DllAPI CompleteDiscriminatorMember();
-    RTPS_DllAPI ~CompleteDiscriminatorMember();
-    RTPS_DllAPI CompleteDiscriminatorMember(
+    FASTDDS_EXPORTED_API CompleteDiscriminatorMember();
+    FASTDDS_EXPORTED_API ~CompleteDiscriminatorMember();
+    FASTDDS_EXPORTED_API CompleteDiscriminatorMember(
             const CompleteDiscriminatorMember& x);
-    RTPS_DllAPI CompleteDiscriminatorMember(
+    FASTDDS_EXPORTED_API CompleteDiscriminatorMember(
             CompleteDiscriminatorMember&& x);
-    RTPS_DllAPI CompleteDiscriminatorMember& operator =(
+    FASTDDS_EXPORTED_API CompleteDiscriminatorMember& operator =(
             const CompleteDiscriminatorMember& x);
-    RTPS_DllAPI CompleteDiscriminatorMember& operator =(
+    FASTDDS_EXPORTED_API CompleteDiscriminatorMember& operator =(
             CompleteDiscriminatorMember&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonDiscriminatorMember& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonDiscriminatorMember&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonDiscriminatorMember& common() const
+    FASTDDS_EXPORTED_API inline const CommonDiscriminatorMember& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonDiscriminatorMember& common()
+    FASTDDS_EXPORTED_API inline CommonDiscriminatorMember& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             const AppliedBuiltinTypeAnnotations& _ann_builtin)
     {
         m_ann_builtin = _ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             AppliedBuiltinTypeAnnotations&& _ann_builtin)
     {
         m_ann_builtin = std::move(_ann_builtin);
     }
 
-    RTPS_DllAPI inline const AppliedBuiltinTypeAnnotations& ann_builtin() const
+    FASTDDS_EXPORTED_API inline const AppliedBuiltinTypeAnnotations& ann_builtin() const
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline AppliedBuiltinTypeAnnotations& ann_builtin()
+    FASTDDS_EXPORTED_API inline AppliedBuiltinTypeAnnotations& ann_builtin()
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             const AppliedAnnotationSeq& _ann_custom)
     {
         m_ann_custom = _ann_custom;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             AppliedAnnotationSeq&& _ann_custom)
     {
         m_ann_custom = std::move(_ann_custom);
     }
 
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    FASTDDS_EXPORTED_API inline const AppliedAnnotationSeq& ann_custom() const
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    FASTDDS_EXPORTED_API inline AppliedAnnotationSeq& ann_custom()
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteDiscriminatorMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteDiscriminatorMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1459,43 +1459,43 @@ class MinimalDiscriminatorMember
 {
 public:
 
-    RTPS_DllAPI MinimalDiscriminatorMember();
-    RTPS_DllAPI ~MinimalDiscriminatorMember();
-    RTPS_DllAPI MinimalDiscriminatorMember(
+    FASTDDS_EXPORTED_API MinimalDiscriminatorMember();
+    FASTDDS_EXPORTED_API ~MinimalDiscriminatorMember();
+    FASTDDS_EXPORTED_API MinimalDiscriminatorMember(
             const MinimalDiscriminatorMember& x);
-    RTPS_DllAPI MinimalDiscriminatorMember(
+    FASTDDS_EXPORTED_API MinimalDiscriminatorMember(
             MinimalDiscriminatorMember&& x);
-    RTPS_DllAPI MinimalDiscriminatorMember& operator =(
+    FASTDDS_EXPORTED_API MinimalDiscriminatorMember& operator =(
             const MinimalDiscriminatorMember& x);
-    RTPS_DllAPI MinimalDiscriminatorMember& operator =(
+    FASTDDS_EXPORTED_API MinimalDiscriminatorMember& operator =(
             MinimalDiscriminatorMember&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonDiscriminatorMember& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonDiscriminatorMember&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonDiscriminatorMember& common() const
+    FASTDDS_EXPORTED_API inline const CommonDiscriminatorMember& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonDiscriminatorMember& common()
+    FASTDDS_EXPORTED_API inline CommonDiscriminatorMember& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalDiscriminatorMember& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalDiscriminatorMember& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1511,43 +1511,43 @@ class CompleteUnionHeader
 {
 public:
 
-    RTPS_DllAPI CompleteUnionHeader();
-    RTPS_DllAPI ~CompleteUnionHeader();
-    RTPS_DllAPI CompleteUnionHeader(
+    FASTDDS_EXPORTED_API CompleteUnionHeader();
+    FASTDDS_EXPORTED_API ~CompleteUnionHeader();
+    FASTDDS_EXPORTED_API CompleteUnionHeader(
             const CompleteUnionHeader& x);
-    RTPS_DllAPI CompleteUnionHeader(
+    FASTDDS_EXPORTED_API CompleteUnionHeader(
             CompleteUnionHeader&& x);
-    RTPS_DllAPI CompleteUnionHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteUnionHeader& operator =(
             const CompleteUnionHeader& x);
-    RTPS_DllAPI CompleteUnionHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteUnionHeader& operator =(
             CompleteUnionHeader&& x);
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteUnionHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteUnionHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1563,43 +1563,43 @@ class MinimalUnionHeader
 {
 public:
 
-    RTPS_DllAPI MinimalUnionHeader();
-    RTPS_DllAPI ~MinimalUnionHeader();
-    RTPS_DllAPI MinimalUnionHeader(
+    FASTDDS_EXPORTED_API MinimalUnionHeader();
+    FASTDDS_EXPORTED_API ~MinimalUnionHeader();
+    FASTDDS_EXPORTED_API MinimalUnionHeader(
             const MinimalUnionHeader& x);
-    RTPS_DllAPI MinimalUnionHeader(
+    FASTDDS_EXPORTED_API MinimalUnionHeader(
             MinimalUnionHeader&& x);
-    RTPS_DllAPI MinimalUnionHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalUnionHeader& operator =(
             const MinimalUnionHeader& x);
-    RTPS_DllAPI MinimalUnionHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalUnionHeader& operator =(
             MinimalUnionHeader&& x);
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const MinimalTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             MinimalTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const MinimalTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const MinimalTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline MinimalTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline MinimalTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalUnionHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalUnionHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1618,109 +1618,109 @@ class CompleteUnionType
 {
 public:
 
-    RTPS_DllAPI CompleteUnionType();
-    RTPS_DllAPI ~CompleteUnionType();
-    RTPS_DllAPI CompleteUnionType(
+    FASTDDS_EXPORTED_API CompleteUnionType();
+    FASTDDS_EXPORTED_API ~CompleteUnionType();
+    FASTDDS_EXPORTED_API CompleteUnionType(
             const CompleteUnionType& x);
-    RTPS_DllAPI CompleteUnionType(
+    FASTDDS_EXPORTED_API CompleteUnionType(
             CompleteUnionType&& x);
-    RTPS_DllAPI CompleteUnionType& operator =(
+    FASTDDS_EXPORTED_API CompleteUnionType& operator =(
             const CompleteUnionType& x);
-    RTPS_DllAPI CompleteUnionType& operator =(
+    FASTDDS_EXPORTED_API CompleteUnionType& operator =(
             CompleteUnionType&& x);
 
-    RTPS_DllAPI inline void union_flags(
+    FASTDDS_EXPORTED_API inline void union_flags(
             const UnionTypeFlag& _union_flags)
     {
         m_union_flags = _union_flags;
     }
 
-    RTPS_DllAPI inline void union_flags(
+    FASTDDS_EXPORTED_API inline void union_flags(
             UnionTypeFlag&& _union_flags)
     {
         m_union_flags = std::move(_union_flags);
     }
 
-    RTPS_DllAPI inline const UnionTypeFlag& union_flags() const
+    FASTDDS_EXPORTED_API inline const UnionTypeFlag& union_flags() const
     {
         return m_union_flags;
     }
 
-    RTPS_DllAPI inline UnionTypeFlag& union_flags()
+    FASTDDS_EXPORTED_API inline UnionTypeFlag& union_flags()
     {
         return m_union_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteUnionHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteUnionHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteUnionHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteUnionHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteUnionHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteUnionHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void discriminator(
+    FASTDDS_EXPORTED_API inline void discriminator(
             const CompleteDiscriminatorMember& _discriminator)
     {
         m_discriminator = _discriminator;
     }
 
-    RTPS_DllAPI inline void discriminator(
+    FASTDDS_EXPORTED_API inline void discriminator(
             CompleteDiscriminatorMember&& _discriminator)
     {
         m_discriminator = std::move(_discriminator);
     }
 
-    RTPS_DllAPI inline const CompleteDiscriminatorMember& discriminator() const
+    FASTDDS_EXPORTED_API inline const CompleteDiscriminatorMember& discriminator() const
     {
         return m_discriminator;
     }
 
-    RTPS_DllAPI inline CompleteDiscriminatorMember& discriminator()
+    FASTDDS_EXPORTED_API inline CompleteDiscriminatorMember& discriminator()
     {
         return m_discriminator;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             const CompleteUnionMemberSeq& _member_seq)
     {
         m_member_seq = _member_seq;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             CompleteUnionMemberSeq&& _member_seq)
     {
         m_member_seq = std::move(_member_seq);
     }
 
-    RTPS_DllAPI inline const CompleteUnionMemberSeq& member_seq() const
+    FASTDDS_EXPORTED_API inline const CompleteUnionMemberSeq& member_seq() const
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI inline CompleteUnionMemberSeq& member_seq()
+    FASTDDS_EXPORTED_API inline CompleteUnionMemberSeq& member_seq()
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteUnionType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteUnionType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1742,109 +1742,109 @@ class MinimalUnionType
 {
 public:
 
-    RTPS_DllAPI MinimalUnionType();
-    RTPS_DllAPI ~MinimalUnionType();
-    RTPS_DllAPI MinimalUnionType(
+    FASTDDS_EXPORTED_API MinimalUnionType();
+    FASTDDS_EXPORTED_API ~MinimalUnionType();
+    FASTDDS_EXPORTED_API MinimalUnionType(
             const MinimalUnionType& x);
-    RTPS_DllAPI MinimalUnionType(
+    FASTDDS_EXPORTED_API MinimalUnionType(
             MinimalUnionType&& x);
-    RTPS_DllAPI MinimalUnionType& operator =(
+    FASTDDS_EXPORTED_API MinimalUnionType& operator =(
             const MinimalUnionType& x);
-    RTPS_DllAPI MinimalUnionType& operator =(
+    FASTDDS_EXPORTED_API MinimalUnionType& operator =(
             MinimalUnionType&& x);
 
-    RTPS_DllAPI inline void union_flags(
+    FASTDDS_EXPORTED_API inline void union_flags(
             const UnionTypeFlag& _union_flags)
     {
         m_union_flags = _union_flags;
     }
 
-    RTPS_DllAPI inline void union_flags(
+    FASTDDS_EXPORTED_API inline void union_flags(
             UnionTypeFlag&& _union_flags)
     {
         m_union_flags = std::move(_union_flags);
     }
 
-    RTPS_DllAPI inline const UnionTypeFlag& union_flags() const
+    FASTDDS_EXPORTED_API inline const UnionTypeFlag& union_flags() const
     {
         return m_union_flags;
     }
 
-    RTPS_DllAPI inline UnionTypeFlag& union_flags()
+    FASTDDS_EXPORTED_API inline UnionTypeFlag& union_flags()
     {
         return m_union_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalUnionHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalUnionHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalUnionHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalUnionHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalUnionHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalUnionHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void discriminator(
+    FASTDDS_EXPORTED_API inline void discriminator(
             const MinimalDiscriminatorMember& _discriminator)
     {
         m_discriminator = _discriminator;
     }
 
-    RTPS_DllAPI inline void discriminator(
+    FASTDDS_EXPORTED_API inline void discriminator(
             MinimalDiscriminatorMember&& _discriminator)
     {
         m_discriminator = std::move(_discriminator);
     }
 
-    RTPS_DllAPI inline const MinimalDiscriminatorMember& discriminator() const
+    FASTDDS_EXPORTED_API inline const MinimalDiscriminatorMember& discriminator() const
     {
         return m_discriminator;
     }
 
-    RTPS_DllAPI inline MinimalDiscriminatorMember& discriminator()
+    FASTDDS_EXPORTED_API inline MinimalDiscriminatorMember& discriminator()
     {
         return m_discriminator;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             const MinimalUnionMemberSeq& _member_seq)
     {
         m_member_seq = _member_seq;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             MinimalUnionMemberSeq&& _member_seq)
     {
         m_member_seq = std::move(_member_seq);
     }
 
-    RTPS_DllAPI inline const MinimalUnionMemberSeq& member_seq() const
+    FASTDDS_EXPORTED_API inline const MinimalUnionMemberSeq& member_seq() const
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI inline MinimalUnionMemberSeq& member_seq()
+    FASTDDS_EXPORTED_API inline MinimalUnionMemberSeq& member_seq()
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalUnionType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalUnionType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1865,65 +1865,65 @@ class CommonAnnotationParameter
 {
 public:
 
-    RTPS_DllAPI CommonAnnotationParameter();
-    RTPS_DllAPI ~CommonAnnotationParameter();
-    RTPS_DllAPI CommonAnnotationParameter(
+    FASTDDS_EXPORTED_API CommonAnnotationParameter();
+    FASTDDS_EXPORTED_API ~CommonAnnotationParameter();
+    FASTDDS_EXPORTED_API CommonAnnotationParameter(
             const CommonAnnotationParameter& x);
-    RTPS_DllAPI CommonAnnotationParameter(
+    FASTDDS_EXPORTED_API CommonAnnotationParameter(
             CommonAnnotationParameter&& x);
-    RTPS_DllAPI CommonAnnotationParameter& operator =(
+    FASTDDS_EXPORTED_API CommonAnnotationParameter& operator =(
             const CommonAnnotationParameter& x);
-    RTPS_DllAPI CommonAnnotationParameter& operator =(
+    FASTDDS_EXPORTED_API CommonAnnotationParameter& operator =(
             CommonAnnotationParameter&& x);
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             const AnnotationParameterFlag& _member_flags)
     {
         m_member_flags = _member_flags;
     }
 
-    RTPS_DllAPI inline void member_flags(
+    FASTDDS_EXPORTED_API inline void member_flags(
             AnnotationParameterFlag&& _member_flags)
     {
         m_member_flags = std::move(_member_flags);
     }
 
-    RTPS_DllAPI inline const AnnotationParameterFlag& member_flags() const
+    FASTDDS_EXPORTED_API inline const AnnotationParameterFlag& member_flags() const
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline AnnotationParameterFlag& member_flags()
+    FASTDDS_EXPORTED_API inline AnnotationParameterFlag& member_flags()
     {
         return m_member_flags;
     }
 
-    RTPS_DllAPI inline void member_type_id(
+    FASTDDS_EXPORTED_API inline void member_type_id(
             const TypeIdentifier& _member_type_id)
     {
         m_member_type_id = _member_type_id;
     }
 
-    RTPS_DllAPI inline void member_type_id(
+    FASTDDS_EXPORTED_API inline void member_type_id(
             TypeIdentifier&& _member_type_id)
     {
         m_member_type_id = std::move(_member_type_id);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& member_type_id() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& member_type_id() const
     {
         return m_member_type_id;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& member_type_id()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& member_type_id()
     {
         return m_member_type_id;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonAnnotationParameter& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonAnnotationParameter& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1944,87 +1944,87 @@ class CompleteAnnotationParameter
 {
 public:
 
-    RTPS_DllAPI CompleteAnnotationParameter();
-    RTPS_DllAPI ~CompleteAnnotationParameter();
-    RTPS_DllAPI CompleteAnnotationParameter(
+    FASTDDS_EXPORTED_API CompleteAnnotationParameter();
+    FASTDDS_EXPORTED_API ~CompleteAnnotationParameter();
+    FASTDDS_EXPORTED_API CompleteAnnotationParameter(
             const CompleteAnnotationParameter& x);
-    RTPS_DllAPI CompleteAnnotationParameter(
+    FASTDDS_EXPORTED_API CompleteAnnotationParameter(
             CompleteAnnotationParameter&& x);
-    RTPS_DllAPI CompleteAnnotationParameter& operator =(
+    FASTDDS_EXPORTED_API CompleteAnnotationParameter& operator =(
             const CompleteAnnotationParameter& x);
-    RTPS_DllAPI CompleteAnnotationParameter& operator =(
+    FASTDDS_EXPORTED_API CompleteAnnotationParameter& operator =(
             CompleteAnnotationParameter&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonAnnotationParameter& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonAnnotationParameter&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonAnnotationParameter& common() const
+    FASTDDS_EXPORTED_API inline const CommonAnnotationParameter& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonAnnotationParameter& common()
+    FASTDDS_EXPORTED_API inline CommonAnnotationParameter& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void name(
+    FASTDDS_EXPORTED_API inline void name(
             const MemberName& _name)
     {
         m_name = _name;
     }
 
-    RTPS_DllAPI inline void name(
+    FASTDDS_EXPORTED_API inline void name(
             MemberName&& _name)
     {
         m_name = std::move(_name);
     }
 
-    RTPS_DllAPI inline const MemberName& name() const
+    FASTDDS_EXPORTED_API inline const MemberName& name() const
     {
         return m_name;
     }
 
-    RTPS_DllAPI inline MemberName& name()
+    FASTDDS_EXPORTED_API inline MemberName& name()
     {
         return m_name;
     }
 
-    RTPS_DllAPI inline void default_value(
+    FASTDDS_EXPORTED_API inline void default_value(
             const AnnotationParameterValue& _default_value)
     {
         m_default_value = _default_value;
     }
 
-    RTPS_DllAPI inline void default_value(
+    FASTDDS_EXPORTED_API inline void default_value(
             AnnotationParameterValue&& _default_value)
     {
         m_default_value = std::move(_default_value);
     }
 
-    RTPS_DllAPI inline const AnnotationParameterValue& default_value() const
+    FASTDDS_EXPORTED_API inline const AnnotationParameterValue& default_value() const
     {
         return m_default_value;
     }
 
-    RTPS_DllAPI inline AnnotationParameterValue& default_value()
+    FASTDDS_EXPORTED_API inline AnnotationParameterValue& default_value()
     {
         return m_default_value;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteAnnotationParameter& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteAnnotationParameter& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -2045,87 +2045,87 @@ class MinimalAnnotationParameter
 {
 public:
 
-    RTPS_DllAPI MinimalAnnotationParameter();
-    RTPS_DllAPI ~MinimalAnnotationParameter();
-    RTPS_DllAPI MinimalAnnotationParameter(
+    FASTDDS_EXPORTED_API MinimalAnnotationParameter();
+    FASTDDS_EXPORTED_API ~MinimalAnnotationParameter();
+    FASTDDS_EXPORTED_API MinimalAnnotationParameter(
             const MinimalAnnotationParameter& x);
-    RTPS_DllAPI MinimalAnnotationParameter(
+    FASTDDS_EXPORTED_API MinimalAnnotationParameter(
             MinimalAnnotationParameter&& x);
-    RTPS_DllAPI MinimalAnnotationParameter& operator =(
+    FASTDDS_EXPORTED_API MinimalAnnotationParameter& operator =(
             const MinimalAnnotationParameter& x);
-    RTPS_DllAPI MinimalAnnotationParameter& operator =(
+    FASTDDS_EXPORTED_API MinimalAnnotationParameter& operator =(
             MinimalAnnotationParameter&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonAnnotationParameter& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonAnnotationParameter&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonAnnotationParameter& common() const
+    FASTDDS_EXPORTED_API inline const CommonAnnotationParameter& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonAnnotationParameter& common()
+    FASTDDS_EXPORTED_API inline CommonAnnotationParameter& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void name(
+    FASTDDS_EXPORTED_API inline void name(
             const MemberName& _name)
     {
         m_name = _name;
     }
 
-    RTPS_DllAPI inline void name(
+    FASTDDS_EXPORTED_API inline void name(
             MemberName&& _name)
     {
         m_name = std::move(_name);
     }
 
-    RTPS_DllAPI inline const MemberName& name() const
+    FASTDDS_EXPORTED_API inline const MemberName& name() const
     {
         return m_name;
     }
 
-    RTPS_DllAPI inline MemberName& name()
+    FASTDDS_EXPORTED_API inline MemberName& name()
     {
         return m_name;
     }
 
-    RTPS_DllAPI inline void default_value(
+    FASTDDS_EXPORTED_API inline void default_value(
             const AnnotationParameterValue& _default_value)
     {
         m_default_value = _default_value;
     }
 
-    RTPS_DllAPI inline void default_value(
+    FASTDDS_EXPORTED_API inline void default_value(
             AnnotationParameterValue&& _default_value)
     {
         m_default_value = std::move(_default_value);
     }
 
-    RTPS_DllAPI inline const AnnotationParameterValue& default_value() const
+    FASTDDS_EXPORTED_API inline const AnnotationParameterValue& default_value() const
     {
         return m_default_value;
     }
 
-    RTPS_DllAPI inline AnnotationParameterValue& default_value()
+    FASTDDS_EXPORTED_API inline AnnotationParameterValue& default_value()
     {
         return m_default_value;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalAnnotationParameter& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalAnnotationParameter& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -2145,43 +2145,43 @@ class CompleteAnnotationHeader
 {
 public:
 
-    RTPS_DllAPI CompleteAnnotationHeader();
-    RTPS_DllAPI ~CompleteAnnotationHeader();
-    RTPS_DllAPI CompleteAnnotationHeader(
+    FASTDDS_EXPORTED_API CompleteAnnotationHeader();
+    FASTDDS_EXPORTED_API ~CompleteAnnotationHeader();
+    FASTDDS_EXPORTED_API CompleteAnnotationHeader(
             const CompleteAnnotationHeader& x);
-    RTPS_DllAPI CompleteAnnotationHeader(
+    FASTDDS_EXPORTED_API CompleteAnnotationHeader(
             CompleteAnnotationHeader&& x);
-    RTPS_DllAPI CompleteAnnotationHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteAnnotationHeader& operator =(
             const CompleteAnnotationHeader& x);
-    RTPS_DllAPI CompleteAnnotationHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteAnnotationHeader& operator =(
             CompleteAnnotationHeader&& x);
 
-    RTPS_DllAPI inline void annotation_name(
+    FASTDDS_EXPORTED_API inline void annotation_name(
             const QualifiedTypeName& _annotation_name)
     {
         m_annotation_name = _annotation_name;
     }
 
-    RTPS_DllAPI inline void annotation_name(
+    FASTDDS_EXPORTED_API inline void annotation_name(
             QualifiedTypeName&& _annotation_name)
     {
         m_annotation_name = std::move(_annotation_name);
     }
 
-    RTPS_DllAPI inline const QualifiedTypeName& annotation_name() const
+    FASTDDS_EXPORTED_API inline const QualifiedTypeName& annotation_name() const
     {
         return m_annotation_name;
     }
 
-    RTPS_DllAPI inline QualifiedTypeName& annotation_name()
+    FASTDDS_EXPORTED_API inline QualifiedTypeName& annotation_name()
     {
         return m_annotation_name;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteAnnotationHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteAnnotationHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -2197,24 +2197,24 @@ class MinimalAnnotationHeader
 {
 public:
 
-    RTPS_DllAPI MinimalAnnotationHeader();
-    RTPS_DllAPI ~MinimalAnnotationHeader();
-    RTPS_DllAPI MinimalAnnotationHeader(
+    FASTDDS_EXPORTED_API MinimalAnnotationHeader();
+    FASTDDS_EXPORTED_API ~MinimalAnnotationHeader();
+    FASTDDS_EXPORTED_API MinimalAnnotationHeader(
             const MinimalAnnotationHeader& x);
-    RTPS_DllAPI MinimalAnnotationHeader(
+    FASTDDS_EXPORTED_API MinimalAnnotationHeader(
             MinimalAnnotationHeader&& x);
-    RTPS_DllAPI MinimalAnnotationHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalAnnotationHeader& operator =(
             const MinimalAnnotationHeader& x);
-    RTPS_DllAPI MinimalAnnotationHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalAnnotationHeader& operator =(
             MinimalAnnotationHeader&& x);
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalAnnotationHeader&) const
     {
         return true;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalAnnotationHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -2231,87 +2231,87 @@ class CompleteAnnotationType final
 {
 public:
 
-    RTPS_DllAPI CompleteAnnotationType();
-    RTPS_DllAPI ~CompleteAnnotationType();
-    RTPS_DllAPI CompleteAnnotationType(
+    FASTDDS_EXPORTED_API CompleteAnnotationType();
+    FASTDDS_EXPORTED_API ~CompleteAnnotationType();
+    FASTDDS_EXPORTED_API CompleteAnnotationType(
             const CompleteAnnotationType& x);
-    RTPS_DllAPI CompleteAnnotationType(
+    FASTDDS_EXPORTED_API CompleteAnnotationType(
             CompleteAnnotationType&& x);
-    RTPS_DllAPI CompleteAnnotationType& operator =(
+    FASTDDS_EXPORTED_API CompleteAnnotationType& operator =(
             const CompleteAnnotationType& x);
-    RTPS_DllAPI CompleteAnnotationType& operator =(
+    FASTDDS_EXPORTED_API CompleteAnnotationType& operator =(
             CompleteAnnotationType&& x);
 
-    RTPS_DllAPI inline void annotation_flag(
+    FASTDDS_EXPORTED_API inline void annotation_flag(
             const AnnotationTypeFlag& _annotation_flag)
     {
         m_annotation_flag = _annotation_flag;
     }
 
-    RTPS_DllAPI inline void annotation_flag(
+    FASTDDS_EXPORTED_API inline void annotation_flag(
             AnnotationTypeFlag&& _annotation_flag)
     {
         m_annotation_flag = std::move(_annotation_flag);
     }
 
-    RTPS_DllAPI inline const AnnotationTypeFlag& annotation_flag() const
+    FASTDDS_EXPORTED_API inline const AnnotationTypeFlag& annotation_flag() const
     {
         return m_annotation_flag;
     }
 
-    RTPS_DllAPI inline AnnotationTypeFlag& annotation_flag()
+    FASTDDS_EXPORTED_API inline AnnotationTypeFlag& annotation_flag()
     {
         return m_annotation_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteAnnotationHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteAnnotationHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteAnnotationHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteAnnotationHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteAnnotationHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteAnnotationHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             const CompleteAnnotationParameterSeq& _member_seq)
     {
         m_member_seq = _member_seq;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             CompleteAnnotationParameterSeq&& _member_seq)
     {
         m_member_seq = std::move(_member_seq);
     }
 
-    RTPS_DllAPI inline const CompleteAnnotationParameterSeq& member_seq() const
+    FASTDDS_EXPORTED_API inline const CompleteAnnotationParameterSeq& member_seq() const
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI inline CompleteAnnotationParameterSeq& member_seq()
+    FASTDDS_EXPORTED_API inline CompleteAnnotationParameterSeq& member_seq()
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteAnnotationType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteAnnotationType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -2330,87 +2330,87 @@ class MinimalAnnotationType final
 {
 public:
 
-    RTPS_DllAPI MinimalAnnotationType();
-    RTPS_DllAPI ~MinimalAnnotationType();
-    RTPS_DllAPI MinimalAnnotationType(
+    FASTDDS_EXPORTED_API MinimalAnnotationType();
+    FASTDDS_EXPORTED_API ~MinimalAnnotationType();
+    FASTDDS_EXPORTED_API MinimalAnnotationType(
             const MinimalAnnotationType& x);
-    RTPS_DllAPI MinimalAnnotationType(
+    FASTDDS_EXPORTED_API MinimalAnnotationType(
             MinimalAnnotationType&& x);
-    RTPS_DllAPI MinimalAnnotationType& operator =(
+    FASTDDS_EXPORTED_API MinimalAnnotationType& operator =(
             const MinimalAnnotationType& x);
-    RTPS_DllAPI MinimalAnnotationType& operator =(
+    FASTDDS_EXPORTED_API MinimalAnnotationType& operator =(
             MinimalAnnotationType&& x);
 
-    RTPS_DllAPI inline void annotation_flag(
+    FASTDDS_EXPORTED_API inline void annotation_flag(
             const AnnotationTypeFlag& _annotation_flag)
     {
         m_annotation_flag = _annotation_flag;
     }
 
-    RTPS_DllAPI inline void annotation_flag(
+    FASTDDS_EXPORTED_API inline void annotation_flag(
             AnnotationTypeFlag&& _annotation_flag)
     {
         m_annotation_flag = std::move(_annotation_flag);
     }
 
-    RTPS_DllAPI inline const AnnotationTypeFlag& annotation_flag() const
+    FASTDDS_EXPORTED_API inline const AnnotationTypeFlag& annotation_flag() const
     {
         return m_annotation_flag;
     }
 
-    RTPS_DllAPI inline AnnotationTypeFlag& annotation_flag()
+    FASTDDS_EXPORTED_API inline AnnotationTypeFlag& annotation_flag()
     {
         return m_annotation_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalAnnotationHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalAnnotationHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalAnnotationHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalAnnotationHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalAnnotationHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalAnnotationHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             const MinimalAnnotationParameterSeq& _member_seq)
     {
         m_member_seq = _member_seq;
     }
 
-    RTPS_DllAPI inline void member_seq(
+    FASTDDS_EXPORTED_API inline void member_seq(
             MinimalAnnotationParameterSeq&& _member_seq)
     {
         m_member_seq = std::move(_member_seq);
     }
 
-    RTPS_DllAPI inline const MinimalAnnotationParameterSeq& member_seq() const
+    FASTDDS_EXPORTED_API inline const MinimalAnnotationParameterSeq& member_seq() const
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI inline MinimalAnnotationParameterSeq& member_seq()
+    FASTDDS_EXPORTED_API inline MinimalAnnotationParameterSeq& member_seq()
     {
         return m_member_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalAnnotationType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalAnnotationType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -2430,65 +2430,65 @@ class CommonAliasBody
 {
 public:
 
-    RTPS_DllAPI CommonAliasBody();
-    RTPS_DllAPI ~CommonAliasBody();
-    RTPS_DllAPI CommonAliasBody(
+    FASTDDS_EXPORTED_API CommonAliasBody();
+    FASTDDS_EXPORTED_API ~CommonAliasBody();
+    FASTDDS_EXPORTED_API CommonAliasBody(
             const CommonAliasBody& x);
-    RTPS_DllAPI CommonAliasBody(
+    FASTDDS_EXPORTED_API CommonAliasBody(
             CommonAliasBody&& x);
-    RTPS_DllAPI CommonAliasBody& operator =(
+    FASTDDS_EXPORTED_API CommonAliasBody& operator =(
             const CommonAliasBody& x);
-    RTPS_DllAPI CommonAliasBody& operator =(
+    FASTDDS_EXPORTED_API CommonAliasBody& operator =(
             CommonAliasBody&& x);
 
-    RTPS_DllAPI inline void related_flags(
+    FASTDDS_EXPORTED_API inline void related_flags(
             const AliasMemberFlag& _related_flags)
     {
         m_related_flags = _related_flags;
     }
 
-    RTPS_DllAPI inline void related_flags(
+    FASTDDS_EXPORTED_API inline void related_flags(
             AliasMemberFlag&& _related_flags)
     {
         m_related_flags = std::move(_related_flags);
     }
 
-    RTPS_DllAPI inline const AliasMemberFlag& related_flags() const
+    FASTDDS_EXPORTED_API inline const AliasMemberFlag& related_flags() const
     {
         return m_related_flags;
     }
 
-    RTPS_DllAPI inline AliasMemberFlag& related_flags()
+    FASTDDS_EXPORTED_API inline AliasMemberFlag& related_flags()
     {
         return m_related_flags;
     }
 
-    RTPS_DllAPI inline void related_type(
+    FASTDDS_EXPORTED_API inline void related_type(
             const TypeIdentifier& _related_type)
     {
         m_related_type = _related_type;
     }
 
-    RTPS_DllAPI inline void related_type(
+    FASTDDS_EXPORTED_API inline void related_type(
             TypeIdentifier&& _related_type)
     {
         m_related_type = std::move(_related_type);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& related_type() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& related_type() const
     {
         return m_related_type;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& related_type()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& related_type()
     {
         return m_related_type;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonAliasBody& other) const;
 
-    //    RTPS_DllAPI bool consistent(const CommonAliasBody &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const CommonAliasBody &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2506,87 +2506,87 @@ class CompleteAliasBody
 {
 public:
 
-    RTPS_DllAPI CompleteAliasBody();
-    RTPS_DllAPI ~CompleteAliasBody();
-    RTPS_DllAPI CompleteAliasBody(
+    FASTDDS_EXPORTED_API CompleteAliasBody();
+    FASTDDS_EXPORTED_API ~CompleteAliasBody();
+    FASTDDS_EXPORTED_API CompleteAliasBody(
             const CompleteAliasBody& x);
-    RTPS_DllAPI CompleteAliasBody(
+    FASTDDS_EXPORTED_API CompleteAliasBody(
             CompleteAliasBody&& x);
-    RTPS_DllAPI CompleteAliasBody& operator =(
+    FASTDDS_EXPORTED_API CompleteAliasBody& operator =(
             const CompleteAliasBody& x);
-    RTPS_DllAPI CompleteAliasBody& operator =(
+    FASTDDS_EXPORTED_API CompleteAliasBody& operator =(
             CompleteAliasBody&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonAliasBody& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonAliasBody&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonAliasBody& common() const
+    FASTDDS_EXPORTED_API inline const CommonAliasBody& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonAliasBody& common()
+    FASTDDS_EXPORTED_API inline CommonAliasBody& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             const AppliedBuiltinMemberAnnotations& _ann_builtin)
     {
         m_ann_builtin = _ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             AppliedBuiltinMemberAnnotations&& _ann_builtin)
     {
         m_ann_builtin = std::move(_ann_builtin);
     }
 
-    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
+    FASTDDS_EXPORTED_API inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin()
+    FASTDDS_EXPORTED_API inline AppliedBuiltinMemberAnnotations& ann_builtin()
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             const AppliedAnnotationSeq& _ann_custom)
     {
         m_ann_custom = _ann_custom;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             AppliedAnnotationSeq&& _ann_custom)
     {
         m_ann_custom = std::move(_ann_custom);
     }
 
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    FASTDDS_EXPORTED_API inline const AppliedAnnotationSeq& ann_custom() const
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    FASTDDS_EXPORTED_API inline AppliedAnnotationSeq& ann_custom()
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteAliasBody& other) const;
 
-    //    RTPS_DllAPI bool consistent(const CompleteAliasBody &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const CompleteAliasBody &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2603,43 +2603,43 @@ class MinimalAliasBody
 {
 public:
 
-    RTPS_DllAPI MinimalAliasBody();
-    RTPS_DllAPI ~MinimalAliasBody();
-    RTPS_DllAPI MinimalAliasBody(
+    FASTDDS_EXPORTED_API MinimalAliasBody();
+    FASTDDS_EXPORTED_API ~MinimalAliasBody();
+    FASTDDS_EXPORTED_API MinimalAliasBody(
             const MinimalAliasBody& x);
-    RTPS_DllAPI MinimalAliasBody(
+    FASTDDS_EXPORTED_API MinimalAliasBody(
             MinimalAliasBody&& x);
-    RTPS_DllAPI MinimalAliasBody& operator =(
+    FASTDDS_EXPORTED_API MinimalAliasBody& operator =(
             const MinimalAliasBody& x);
-    RTPS_DllAPI MinimalAliasBody& operator =(
+    FASTDDS_EXPORTED_API MinimalAliasBody& operator =(
             MinimalAliasBody&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonAliasBody& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonAliasBody&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonAliasBody& common() const
+    FASTDDS_EXPORTED_API inline const CommonAliasBody& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonAliasBody& common()
+    FASTDDS_EXPORTED_API inline CommonAliasBody& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalAliasBody& other) const;
 
-    //    RTPS_DllAPI bool consistent(const MinimalAliasBody &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const MinimalAliasBody &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2654,43 +2654,43 @@ class CompleteAliasHeader
 {
 public:
 
-    RTPS_DllAPI CompleteAliasHeader();
-    RTPS_DllAPI ~CompleteAliasHeader();
-    RTPS_DllAPI CompleteAliasHeader(
+    FASTDDS_EXPORTED_API CompleteAliasHeader();
+    FASTDDS_EXPORTED_API ~CompleteAliasHeader();
+    FASTDDS_EXPORTED_API CompleteAliasHeader(
             const CompleteAliasHeader& x);
-    RTPS_DllAPI CompleteAliasHeader(
+    FASTDDS_EXPORTED_API CompleteAliasHeader(
             CompleteAliasHeader&& x);
-    RTPS_DllAPI CompleteAliasHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteAliasHeader& operator =(
             const CompleteAliasHeader& x);
-    RTPS_DllAPI CompleteAliasHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteAliasHeader& operator =(
             CompleteAliasHeader&& x);
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteAliasHeader& other) const;
 
-    //    RTPS_DllAPI bool consistent(const CompleteAliasHeader &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const CompleteAliasHeader &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2705,24 +2705,24 @@ class MinimalAliasHeader
 {
 public:
 
-    RTPS_DllAPI MinimalAliasHeader();
-    RTPS_DllAPI ~MinimalAliasHeader();
-    RTPS_DllAPI MinimalAliasHeader(
+    FASTDDS_EXPORTED_API MinimalAliasHeader();
+    FASTDDS_EXPORTED_API ~MinimalAliasHeader();
+    FASTDDS_EXPORTED_API MinimalAliasHeader(
             const MinimalAliasHeader& x);
-    RTPS_DllAPI MinimalAliasHeader(
+    FASTDDS_EXPORTED_API MinimalAliasHeader(
             MinimalAliasHeader&& x);
-    RTPS_DllAPI MinimalAliasHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalAliasHeader& operator =(
             const MinimalAliasHeader& x);
-    RTPS_DllAPI MinimalAliasHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalAliasHeader& operator =(
             MinimalAliasHeader&& x);
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalAliasHeader&) const
     {
         return true;
     }
 
-    //    RTPS_DllAPI bool consistent(const MinimalAliasHeader &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const MinimalAliasHeader &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2738,87 +2738,87 @@ class CompleteAliasType
 {
 public:
 
-    RTPS_DllAPI CompleteAliasType();
-    RTPS_DllAPI ~CompleteAliasType();
-    RTPS_DllAPI CompleteAliasType(
+    FASTDDS_EXPORTED_API CompleteAliasType();
+    FASTDDS_EXPORTED_API ~CompleteAliasType();
+    FASTDDS_EXPORTED_API CompleteAliasType(
             const CompleteAliasType& x);
-    RTPS_DllAPI CompleteAliasType(
+    FASTDDS_EXPORTED_API CompleteAliasType(
             CompleteAliasType&& x);
-    RTPS_DllAPI CompleteAliasType& operator =(
+    FASTDDS_EXPORTED_API CompleteAliasType& operator =(
             const CompleteAliasType& x);
-    RTPS_DllAPI CompleteAliasType& operator =(
+    FASTDDS_EXPORTED_API CompleteAliasType& operator =(
             CompleteAliasType&& x);
 
-    RTPS_DllAPI inline void alias_flags(
+    FASTDDS_EXPORTED_API inline void alias_flags(
             const AliasTypeFlag& _alias_flags)
     {
         m_alias_flags = _alias_flags;
     }
 
-    RTPS_DllAPI inline void alias_flags(
+    FASTDDS_EXPORTED_API inline void alias_flags(
             AliasTypeFlag&& _alias_flags)
     {
         m_alias_flags = std::move(_alias_flags);
     }
 
-    RTPS_DllAPI inline const AliasTypeFlag& alias_flags() const
+    FASTDDS_EXPORTED_API inline const AliasTypeFlag& alias_flags() const
     {
         return m_alias_flags;
     }
 
-    RTPS_DllAPI inline AliasTypeFlag& alias_flags()
+    FASTDDS_EXPORTED_API inline AliasTypeFlag& alias_flags()
     {
         return m_alias_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteAliasHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteAliasHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteAliasHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteAliasHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteAliasHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteAliasHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void body(
+    FASTDDS_EXPORTED_API inline void body(
             const CompleteAliasBody& _body)
     {
         m_body = _body;
     }
 
-    RTPS_DllAPI inline void body(
+    FASTDDS_EXPORTED_API inline void body(
             CompleteAliasBody&& _body)
     {
         m_body = std::move(_body);
     }
 
-    RTPS_DllAPI inline const CompleteAliasBody& body() const
+    FASTDDS_EXPORTED_API inline const CompleteAliasBody& body() const
     {
         return m_body;
     }
 
-    RTPS_DllAPI inline CompleteAliasBody& body()
+    FASTDDS_EXPORTED_API inline CompleteAliasBody& body()
     {
         return m_body;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteAliasType& other) const;
 
-    //    RTPS_DllAPI bool consistent(const CompleteAliasType &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const CompleteAliasType &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2836,87 +2836,87 @@ class MinimalAliasType
 {
 public:
 
-    RTPS_DllAPI MinimalAliasType();
-    RTPS_DllAPI ~MinimalAliasType();
-    RTPS_DllAPI MinimalAliasType(
+    FASTDDS_EXPORTED_API MinimalAliasType();
+    FASTDDS_EXPORTED_API ~MinimalAliasType();
+    FASTDDS_EXPORTED_API MinimalAliasType(
             const MinimalAliasType& x);
-    RTPS_DllAPI MinimalAliasType(
+    FASTDDS_EXPORTED_API MinimalAliasType(
             MinimalAliasType&& x);
-    RTPS_DllAPI MinimalAliasType& operator =(
+    FASTDDS_EXPORTED_API MinimalAliasType& operator =(
             const MinimalAliasType& x);
-    RTPS_DllAPI MinimalAliasType& operator =(
+    FASTDDS_EXPORTED_API MinimalAliasType& operator =(
             MinimalAliasType&& x);
 
-    RTPS_DllAPI inline void alias_flags(
+    FASTDDS_EXPORTED_API inline void alias_flags(
             const AliasTypeFlag& _alias_flags)
     {
         m_alias_flags = _alias_flags;
     }
 
-    RTPS_DllAPI inline void alias_flags(
+    FASTDDS_EXPORTED_API inline void alias_flags(
             AliasTypeFlag&& _alias_flags)
     {
         m_alias_flags = std::move(_alias_flags);
     }
 
-    RTPS_DllAPI inline const AliasTypeFlag& alias_flags() const
+    FASTDDS_EXPORTED_API inline const AliasTypeFlag& alias_flags() const
     {
         return m_alias_flags;
     }
 
-    RTPS_DllAPI inline AliasTypeFlag& alias_flags()
+    FASTDDS_EXPORTED_API inline AliasTypeFlag& alias_flags()
     {
         return m_alias_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalAliasHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalAliasHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalAliasHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalAliasHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalAliasHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalAliasHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void body(
+    FASTDDS_EXPORTED_API inline void body(
             const MinimalAliasBody& _body)
     {
         m_body = _body;
     }
 
-    RTPS_DllAPI inline void body(
+    FASTDDS_EXPORTED_API inline void body(
             MinimalAliasBody&& _body)
     {
         m_body = std::move(_body);
     }
 
-    RTPS_DllAPI inline const MinimalAliasBody& body() const
+    FASTDDS_EXPORTED_API inline const MinimalAliasBody& body() const
     {
         return m_body;
     }
 
-    RTPS_DllAPI inline MinimalAliasBody& body()
+    FASTDDS_EXPORTED_API inline MinimalAliasBody& body()
     {
         return m_body;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalAliasType& other) const;
 
-    //    RTPS_DllAPI bool consistent(const MinimalAliasType &x,
+    //    FASTDDS_EXPORTED_API bool consistent(const MinimalAliasType &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
 private:
@@ -2935,65 +2935,65 @@ class CompleteElementDetail
 {
 public:
 
-    RTPS_DllAPI CompleteElementDetail();
-    RTPS_DllAPI ~CompleteElementDetail();
-    RTPS_DllAPI CompleteElementDetail(
+    FASTDDS_EXPORTED_API CompleteElementDetail();
+    FASTDDS_EXPORTED_API ~CompleteElementDetail();
+    FASTDDS_EXPORTED_API CompleteElementDetail(
             const CompleteElementDetail& x);
-    RTPS_DllAPI CompleteElementDetail(
+    FASTDDS_EXPORTED_API CompleteElementDetail(
             CompleteElementDetail&& x);
-    RTPS_DllAPI CompleteElementDetail& operator =(
+    FASTDDS_EXPORTED_API CompleteElementDetail& operator =(
             const CompleteElementDetail& x);
-    RTPS_DllAPI CompleteElementDetail& operator =(
+    FASTDDS_EXPORTED_API CompleteElementDetail& operator =(
             CompleteElementDetail&& x);
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             const AppliedBuiltinMemberAnnotations& _ann_builtin)
     {
         m_ann_builtin = _ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_builtin(
+    FASTDDS_EXPORTED_API inline void ann_builtin(
             AppliedBuiltinMemberAnnotations&& _ann_builtin)
     {
         m_ann_builtin = std::move(_ann_builtin);
     }
 
-    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
+    FASTDDS_EXPORTED_API inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin()
+    FASTDDS_EXPORTED_API inline AppliedBuiltinMemberAnnotations& ann_builtin()
     {
         return m_ann_builtin;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             const AppliedAnnotationSeq& _ann_custom)
     {
         m_ann_custom = _ann_custom;
     }
 
-    RTPS_DllAPI inline void ann_custom(
+    FASTDDS_EXPORTED_API inline void ann_custom(
             AppliedAnnotationSeq&& _ann_custom)
     {
         m_ann_custom = std::move(_ann_custom);
     }
 
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    FASTDDS_EXPORTED_API inline const AppliedAnnotationSeq& ann_custom() const
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    FASTDDS_EXPORTED_API inline AppliedAnnotationSeq& ann_custom()
     {
         return m_ann_custom;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteElementDetail& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteElementDetail& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3010,65 +3010,65 @@ class CommonCollectionElement final
 {
 public:
 
-    RTPS_DllAPI CommonCollectionElement();
-    RTPS_DllAPI ~CommonCollectionElement();
-    RTPS_DllAPI CommonCollectionElement(
+    FASTDDS_EXPORTED_API CommonCollectionElement();
+    FASTDDS_EXPORTED_API ~CommonCollectionElement();
+    FASTDDS_EXPORTED_API CommonCollectionElement(
             const CommonCollectionElement& x);
-    RTPS_DllAPI CommonCollectionElement(
+    FASTDDS_EXPORTED_API CommonCollectionElement(
             CommonCollectionElement&& x);
-    RTPS_DllAPI CommonCollectionElement& operator =(
+    FASTDDS_EXPORTED_API CommonCollectionElement& operator =(
             const CommonCollectionElement& x);
-    RTPS_DllAPI CommonCollectionElement& operator =(
+    FASTDDS_EXPORTED_API CommonCollectionElement& operator =(
             CommonCollectionElement&& x);
 
-    RTPS_DllAPI inline void element_flags(
+    FASTDDS_EXPORTED_API inline void element_flags(
             const CollectionElementFlag& _element_flags)
     {
         m_element_flags = _element_flags;
     }
 
-    RTPS_DllAPI inline void element_flags(
+    FASTDDS_EXPORTED_API inline void element_flags(
             CollectionElementFlag&& _element_flags)
     {
         m_element_flags = std::move(_element_flags);
     }
 
-    RTPS_DllAPI inline const CollectionElementFlag& element_flags() const
+    FASTDDS_EXPORTED_API inline const CollectionElementFlag& element_flags() const
     {
         return m_element_flags;
     }
 
-    RTPS_DllAPI inline CollectionElementFlag& element_flags()
+    FASTDDS_EXPORTED_API inline CollectionElementFlag& element_flags()
     {
         return m_element_flags;
     }
 
-    RTPS_DllAPI inline void type(
+    FASTDDS_EXPORTED_API inline void type(
             const TypeIdentifier& _type)
     {
         m_type = _type;
     }
 
-    RTPS_DllAPI inline void type(
+    FASTDDS_EXPORTED_API inline void type(
             TypeIdentifier&& _type)
     {
         m_type = std::move(_type);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type() const
     {
         return m_type;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type()
     {
         return m_type;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonCollectionElement& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonCollectionElement& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3086,65 +3086,65 @@ class CompleteCollectionElement
 {
 public:
 
-    RTPS_DllAPI CompleteCollectionElement();
-    RTPS_DllAPI ~CompleteCollectionElement();
-    RTPS_DllAPI CompleteCollectionElement(
+    FASTDDS_EXPORTED_API CompleteCollectionElement();
+    FASTDDS_EXPORTED_API ~CompleteCollectionElement();
+    FASTDDS_EXPORTED_API CompleteCollectionElement(
             const CompleteCollectionElement& x);
-    RTPS_DllAPI CompleteCollectionElement(
+    FASTDDS_EXPORTED_API CompleteCollectionElement(
             CompleteCollectionElement&& x);
-    RTPS_DllAPI CompleteCollectionElement& operator =(
+    FASTDDS_EXPORTED_API CompleteCollectionElement& operator =(
             const CompleteCollectionElement& x);
-    RTPS_DllAPI CompleteCollectionElement& operator =(
+    FASTDDS_EXPORTED_API CompleteCollectionElement& operator =(
             CompleteCollectionElement&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonCollectionElement& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonCollectionElement&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonCollectionElement& common() const
+    FASTDDS_EXPORTED_API inline const CommonCollectionElement& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonCollectionElement& common()
+    FASTDDS_EXPORTED_API inline CommonCollectionElement& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteElementDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteElementDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteElementDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteElementDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteElementDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteElementDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteCollectionElement& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteCollectionElement& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3161,43 +3161,43 @@ class MinimalCollectionElement
 {
 public:
 
-    RTPS_DllAPI MinimalCollectionElement();
-    RTPS_DllAPI ~MinimalCollectionElement();
-    RTPS_DllAPI MinimalCollectionElement(
+    FASTDDS_EXPORTED_API MinimalCollectionElement();
+    FASTDDS_EXPORTED_API ~MinimalCollectionElement();
+    FASTDDS_EXPORTED_API MinimalCollectionElement(
             const MinimalCollectionElement& x);
-    RTPS_DllAPI MinimalCollectionElement(
+    FASTDDS_EXPORTED_API MinimalCollectionElement(
             MinimalCollectionElement&& x);
-    RTPS_DllAPI MinimalCollectionElement& operator =(
+    FASTDDS_EXPORTED_API MinimalCollectionElement& operator =(
             const MinimalCollectionElement& x);
-    RTPS_DllAPI MinimalCollectionElement& operator =(
+    FASTDDS_EXPORTED_API MinimalCollectionElement& operator =(
             MinimalCollectionElement&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonCollectionElement& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonCollectionElement&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonCollectionElement& common() const
+    FASTDDS_EXPORTED_API inline const CommonCollectionElement& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonCollectionElement& common()
+    FASTDDS_EXPORTED_API inline CommonCollectionElement& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalCollectionElement& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalCollectionElement& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3213,43 +3213,43 @@ class CommonCollectionHeader
 {
 public:
 
-    RTPS_DllAPI CommonCollectionHeader();
-    RTPS_DllAPI ~CommonCollectionHeader();
-    RTPS_DllAPI CommonCollectionHeader(
+    FASTDDS_EXPORTED_API CommonCollectionHeader();
+    FASTDDS_EXPORTED_API ~CommonCollectionHeader();
+    FASTDDS_EXPORTED_API CommonCollectionHeader(
             const CommonCollectionHeader& x);
-    RTPS_DllAPI CommonCollectionHeader(
+    FASTDDS_EXPORTED_API CommonCollectionHeader(
             CommonCollectionHeader&& x);
-    RTPS_DllAPI CommonCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API CommonCollectionHeader& operator =(
             const CommonCollectionHeader& x);
-    RTPS_DllAPI CommonCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API CommonCollectionHeader& operator =(
             CommonCollectionHeader&& x);
 
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             const LBound& _bound)
     {
         m_bound = _bound;
     }
 
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             LBound&& _bound)
     {
         m_bound = std::move(_bound);
     }
 
-    RTPS_DllAPI inline const LBound& bound() const
+    FASTDDS_EXPORTED_API inline const LBound& bound() const
     {
         return m_bound;
     }
 
-    RTPS_DllAPI inline LBound& bound()
+    FASTDDS_EXPORTED_API inline LBound& bound()
     {
         return m_bound;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonCollectionHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonCollectionHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3266,65 +3266,65 @@ class CompleteCollectionHeader
 {
 public:
 
-    RTPS_DllAPI CompleteCollectionHeader();
-    RTPS_DllAPI ~CompleteCollectionHeader();
-    RTPS_DllAPI CompleteCollectionHeader(
+    FASTDDS_EXPORTED_API CompleteCollectionHeader();
+    FASTDDS_EXPORTED_API ~CompleteCollectionHeader();
+    FASTDDS_EXPORTED_API CompleteCollectionHeader(
             const CompleteCollectionHeader& x);
-    RTPS_DllAPI CompleteCollectionHeader(
+    FASTDDS_EXPORTED_API CompleteCollectionHeader(
             CompleteCollectionHeader&& x);
-    RTPS_DllAPI CompleteCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteCollectionHeader& operator =(
             const CompleteCollectionHeader& x);
-    RTPS_DllAPI CompleteCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteCollectionHeader& operator =(
             CompleteCollectionHeader&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonCollectionHeader& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonCollectionHeader&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonCollectionHeader& common() const
+    FASTDDS_EXPORTED_API inline const CommonCollectionHeader& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonCollectionHeader& common()
+    FASTDDS_EXPORTED_API inline CommonCollectionHeader& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteCollectionHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteCollectionHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3341,43 +3341,43 @@ class MinimalCollectionHeader
 {
 public:
 
-    RTPS_DllAPI MinimalCollectionHeader();
-    RTPS_DllAPI ~MinimalCollectionHeader();
-    RTPS_DllAPI MinimalCollectionHeader(
+    FASTDDS_EXPORTED_API MinimalCollectionHeader();
+    FASTDDS_EXPORTED_API ~MinimalCollectionHeader();
+    FASTDDS_EXPORTED_API MinimalCollectionHeader(
             const MinimalCollectionHeader& x);
-    RTPS_DllAPI MinimalCollectionHeader(
+    FASTDDS_EXPORTED_API MinimalCollectionHeader(
             MinimalCollectionHeader&& x);
-    RTPS_DllAPI MinimalCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalCollectionHeader& operator =(
             const MinimalCollectionHeader& x);
-    RTPS_DllAPI MinimalCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalCollectionHeader& operator =(
             MinimalCollectionHeader&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonCollectionHeader& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonCollectionHeader&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonCollectionHeader& common() const
+    FASTDDS_EXPORTED_API inline const CommonCollectionHeader& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonCollectionHeader& common()
+    FASTDDS_EXPORTED_API inline CommonCollectionHeader& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalCollectionHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalCollectionHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3396,87 +3396,87 @@ class CompleteSequenceType
 {
 public:
 
-    RTPS_DllAPI CompleteSequenceType();
-    RTPS_DllAPI ~CompleteSequenceType();
-    RTPS_DllAPI CompleteSequenceType(
+    FASTDDS_EXPORTED_API CompleteSequenceType();
+    FASTDDS_EXPORTED_API ~CompleteSequenceType();
+    FASTDDS_EXPORTED_API CompleteSequenceType(
             const CompleteSequenceType& x);
-    RTPS_DllAPI CompleteSequenceType(
+    FASTDDS_EXPORTED_API CompleteSequenceType(
             CompleteSequenceType&& x);
-    RTPS_DllAPI CompleteSequenceType& operator =(
+    FASTDDS_EXPORTED_API CompleteSequenceType& operator =(
             const CompleteSequenceType& x);
-    RTPS_DllAPI CompleteSequenceType& operator =(
+    FASTDDS_EXPORTED_API CompleteSequenceType& operator =(
             CompleteSequenceType&& x);
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             const CollectionTypeFlag& _collection_flag)
     {
         m_collection_flag = _collection_flag;
     }
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             CollectionTypeFlag&& _collection_flag)
     {
         m_collection_flag = std::move(_collection_flag);
     }
 
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    FASTDDS_EXPORTED_API inline const CollectionTypeFlag& collection_flag() const
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    FASTDDS_EXPORTED_API inline CollectionTypeFlag& collection_flag()
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteCollectionHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteCollectionHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteCollectionHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteCollectionHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             const CompleteCollectionElement& _element)
     {
         m_element = _element;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             CompleteCollectionElement&& _element)
     {
         m_element = std::move(_element);
     }
 
-    RTPS_DllAPI inline const CompleteCollectionElement& element() const
+    FASTDDS_EXPORTED_API inline const CompleteCollectionElement& element() const
     {
         return m_element;
     }
 
-    RTPS_DllAPI inline CompleteCollectionElement& element()
+    FASTDDS_EXPORTED_API inline CompleteCollectionElement& element()
     {
         return m_element;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteSequenceType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteSequenceType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3496,87 +3496,87 @@ class MinimalSequenceType
 {
 public:
 
-    RTPS_DllAPI MinimalSequenceType();
-    RTPS_DllAPI ~MinimalSequenceType();
-    RTPS_DllAPI MinimalSequenceType(
+    FASTDDS_EXPORTED_API MinimalSequenceType();
+    FASTDDS_EXPORTED_API ~MinimalSequenceType();
+    FASTDDS_EXPORTED_API MinimalSequenceType(
             const MinimalSequenceType& x);
-    RTPS_DllAPI MinimalSequenceType(
+    FASTDDS_EXPORTED_API MinimalSequenceType(
             MinimalSequenceType&& x);
-    RTPS_DllAPI MinimalSequenceType& operator =(
+    FASTDDS_EXPORTED_API MinimalSequenceType& operator =(
             const MinimalSequenceType& x);
-    RTPS_DllAPI MinimalSequenceType& operator =(
+    FASTDDS_EXPORTED_API MinimalSequenceType& operator =(
             MinimalSequenceType&& x);
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             const CollectionTypeFlag& _collection_flag)
     {
         m_collection_flag = _collection_flag;
     }
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             CollectionTypeFlag&& _collection_flag)
     {
         m_collection_flag = std::move(_collection_flag);
     }
 
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    FASTDDS_EXPORTED_API inline const CollectionTypeFlag& collection_flag() const
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    FASTDDS_EXPORTED_API inline CollectionTypeFlag& collection_flag()
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalCollectionHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalCollectionHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalCollectionHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalCollectionHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             const MinimalCollectionElement& _element)
     {
         m_element = _element;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             MinimalCollectionElement&& _element)
     {
         m_element = std::move(_element);
     }
 
-    RTPS_DllAPI inline const MinimalCollectionElement& element() const
+    FASTDDS_EXPORTED_API inline const MinimalCollectionElement& element() const
     {
         return m_element;
     }
 
-    RTPS_DllAPI inline MinimalCollectionElement& element()
+    FASTDDS_EXPORTED_API inline MinimalCollectionElement& element()
     {
         return m_element;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalSequenceType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalSequenceType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3595,43 +3595,43 @@ class CommonArrayHeader
 {
 public:
 
-    RTPS_DllAPI CommonArrayHeader();
-    RTPS_DllAPI ~CommonArrayHeader();
-    RTPS_DllAPI CommonArrayHeader(
+    FASTDDS_EXPORTED_API CommonArrayHeader();
+    FASTDDS_EXPORTED_API ~CommonArrayHeader();
+    FASTDDS_EXPORTED_API CommonArrayHeader(
             const CommonArrayHeader& x);
-    RTPS_DllAPI CommonArrayHeader(
+    FASTDDS_EXPORTED_API CommonArrayHeader(
             CommonArrayHeader&& x);
-    RTPS_DllAPI CommonArrayHeader& operator =(
+    FASTDDS_EXPORTED_API CommonArrayHeader& operator =(
             const CommonArrayHeader& x);
-    RTPS_DllAPI CommonArrayHeader& operator =(
+    FASTDDS_EXPORTED_API CommonArrayHeader& operator =(
             CommonArrayHeader&& x);
 
-    RTPS_DllAPI inline void bound_seq(
+    FASTDDS_EXPORTED_API inline void bound_seq(
             const LBoundSeq& _bound_seq)
     {
         m_bound_seq = _bound_seq;
     }
 
-    RTPS_DllAPI inline void bound_seq(
+    FASTDDS_EXPORTED_API inline void bound_seq(
             LBoundSeq&& _bound_seq)
     {
         m_bound_seq = std::move(_bound_seq);
     }
 
-    RTPS_DllAPI inline const LBoundSeq& bound_seq() const
+    FASTDDS_EXPORTED_API inline const LBoundSeq& bound_seq() const
     {
         return m_bound_seq;
     }
 
-    RTPS_DllAPI inline LBoundSeq& bound_seq()
+    FASTDDS_EXPORTED_API inline LBoundSeq& bound_seq()
     {
         return m_bound_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonArrayHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonArrayHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3648,65 +3648,65 @@ class CompleteArrayHeader
 {
 public:
 
-    RTPS_DllAPI CompleteArrayHeader();
-    RTPS_DllAPI ~CompleteArrayHeader();
-    RTPS_DllAPI CompleteArrayHeader(
+    FASTDDS_EXPORTED_API CompleteArrayHeader();
+    FASTDDS_EXPORTED_API ~CompleteArrayHeader();
+    FASTDDS_EXPORTED_API CompleteArrayHeader(
             const CompleteArrayHeader& x);
-    RTPS_DllAPI CompleteArrayHeader(
+    FASTDDS_EXPORTED_API CompleteArrayHeader(
             CompleteArrayHeader&& x);
-    RTPS_DllAPI CompleteArrayHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteArrayHeader& operator =(
             const CompleteArrayHeader& x);
-    RTPS_DllAPI CompleteArrayHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteArrayHeader& operator =(
             CompleteArrayHeader&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonArrayHeader& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonArrayHeader&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonArrayHeader& common() const
+    FASTDDS_EXPORTED_API inline const CommonArrayHeader& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonArrayHeader& common()
+    FASTDDS_EXPORTED_API inline CommonArrayHeader& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteArrayHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteArrayHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3723,43 +3723,43 @@ class MinimalArrayHeader
 {
 public:
 
-    RTPS_DllAPI MinimalArrayHeader();
-    RTPS_DllAPI ~MinimalArrayHeader();
-    RTPS_DllAPI MinimalArrayHeader(
+    FASTDDS_EXPORTED_API MinimalArrayHeader();
+    FASTDDS_EXPORTED_API ~MinimalArrayHeader();
+    FASTDDS_EXPORTED_API MinimalArrayHeader(
             const MinimalArrayHeader& x);
-    RTPS_DllAPI MinimalArrayHeader(
+    FASTDDS_EXPORTED_API MinimalArrayHeader(
             MinimalArrayHeader&& x);
-    RTPS_DllAPI MinimalArrayHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalArrayHeader& operator =(
             const MinimalArrayHeader& x);
-    RTPS_DllAPI MinimalArrayHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalArrayHeader& operator =(
             MinimalArrayHeader&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonArrayHeader& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonArrayHeader&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonArrayHeader& common() const
+    FASTDDS_EXPORTED_API inline const CommonArrayHeader& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonArrayHeader& common()
+    FASTDDS_EXPORTED_API inline CommonArrayHeader& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalArrayHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalArrayHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3777,87 +3777,87 @@ class CompleteArrayType
 {
 public:
 
-    RTPS_DllAPI CompleteArrayType();
-    RTPS_DllAPI ~CompleteArrayType();
-    RTPS_DllAPI CompleteArrayType(
+    FASTDDS_EXPORTED_API CompleteArrayType();
+    FASTDDS_EXPORTED_API ~CompleteArrayType();
+    FASTDDS_EXPORTED_API CompleteArrayType(
             const CompleteArrayType& x);
-    RTPS_DllAPI CompleteArrayType(
+    FASTDDS_EXPORTED_API CompleteArrayType(
             CompleteArrayType&& x);
-    RTPS_DllAPI CompleteArrayType& operator =(
+    FASTDDS_EXPORTED_API CompleteArrayType& operator =(
             const CompleteArrayType& x);
-    RTPS_DllAPI CompleteArrayType& operator =(
+    FASTDDS_EXPORTED_API CompleteArrayType& operator =(
             CompleteArrayType&& x);
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             const CollectionTypeFlag& _collection_flag)
     {
         m_collection_flag = _collection_flag;
     }
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             CollectionTypeFlag&& _collection_flag)
     {
         m_collection_flag = std::move(_collection_flag);
     }
 
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    FASTDDS_EXPORTED_API inline const CollectionTypeFlag& collection_flag() const
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    FASTDDS_EXPORTED_API inline CollectionTypeFlag& collection_flag()
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteArrayHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteArrayHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteArrayHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteArrayHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteArrayHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteArrayHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             const CompleteCollectionElement& _element)
     {
         m_element = _element;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             CompleteCollectionElement&& _element)
     {
         m_element = std::move(_element);
     }
 
-    RTPS_DllAPI inline const CompleteCollectionElement& element() const
+    FASTDDS_EXPORTED_API inline const CompleteCollectionElement& element() const
     {
         return m_element;
     }
 
-    RTPS_DllAPI inline CompleteCollectionElement& element()
+    FASTDDS_EXPORTED_API inline CompleteCollectionElement& element()
     {
         return m_element;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteArrayType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteArrayType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3877,87 +3877,87 @@ class MinimalArrayType
 {
 public:
 
-    RTPS_DllAPI MinimalArrayType();
-    RTPS_DllAPI ~MinimalArrayType();
-    RTPS_DllAPI MinimalArrayType(
+    FASTDDS_EXPORTED_API MinimalArrayType();
+    FASTDDS_EXPORTED_API ~MinimalArrayType();
+    FASTDDS_EXPORTED_API MinimalArrayType(
             const MinimalArrayType& x);
-    RTPS_DllAPI MinimalArrayType(
+    FASTDDS_EXPORTED_API MinimalArrayType(
             MinimalArrayType&& x);
-    RTPS_DllAPI MinimalArrayType& operator =(
+    FASTDDS_EXPORTED_API MinimalArrayType& operator =(
             const MinimalArrayType& x);
-    RTPS_DllAPI MinimalArrayType& operator =(
+    FASTDDS_EXPORTED_API MinimalArrayType& operator =(
             MinimalArrayType&& x);
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             const CollectionTypeFlag& _collection_flag)
     {
         m_collection_flag = _collection_flag;
     }
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             CollectionTypeFlag&& _collection_flag)
     {
         m_collection_flag = std::move(_collection_flag);
     }
 
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    FASTDDS_EXPORTED_API inline const CollectionTypeFlag& collection_flag() const
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    FASTDDS_EXPORTED_API inline CollectionTypeFlag& collection_flag()
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalArrayHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalArrayHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalArrayHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalArrayHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalArrayHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalArrayHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             const MinimalCollectionElement& _element)
     {
         m_element = _element;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             MinimalCollectionElement&& _element)
     {
         m_element = std::move(_element);
     }
 
-    RTPS_DllAPI inline const MinimalCollectionElement& element() const
+    FASTDDS_EXPORTED_API inline const MinimalCollectionElement& element() const
     {
         return m_element;
     }
 
-    RTPS_DllAPI inline MinimalCollectionElement& element()
+    FASTDDS_EXPORTED_API inline MinimalCollectionElement& element()
     {
         return m_element;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalArrayType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalArrayType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -3979,109 +3979,109 @@ class CompleteMapType final
 {
 public:
 
-    RTPS_DllAPI CompleteMapType();
-    RTPS_DllAPI ~CompleteMapType();
-    RTPS_DllAPI CompleteMapType(
+    FASTDDS_EXPORTED_API CompleteMapType();
+    FASTDDS_EXPORTED_API ~CompleteMapType();
+    FASTDDS_EXPORTED_API CompleteMapType(
             const CompleteMapType& x);
-    RTPS_DllAPI CompleteMapType(
+    FASTDDS_EXPORTED_API CompleteMapType(
             CompleteMapType&& x);
-    RTPS_DllAPI CompleteMapType& operator =(
+    FASTDDS_EXPORTED_API CompleteMapType& operator =(
             const CompleteMapType& x);
-    RTPS_DllAPI CompleteMapType& operator =(
+    FASTDDS_EXPORTED_API CompleteMapType& operator =(
             CompleteMapType&& x);
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             const CollectionTypeFlag& _collection_flag)
     {
         m_collection_flag = _collection_flag;
     }
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             CollectionTypeFlag&& _collection_flag)
     {
         m_collection_flag = std::move(_collection_flag);
     }
 
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    FASTDDS_EXPORTED_API inline const CollectionTypeFlag& collection_flag() const
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    FASTDDS_EXPORTED_API inline CollectionTypeFlag& collection_flag()
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteCollectionHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteCollectionHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteCollectionHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteCollectionHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void key(
+    FASTDDS_EXPORTED_API inline void key(
             const CompleteCollectionElement& _key)
     {
         m_key = _key;
     }
 
-    RTPS_DllAPI inline void key(
+    FASTDDS_EXPORTED_API inline void key(
             CompleteCollectionElement&& _key)
     {
         m_key = std::move(_key);
     }
 
-    RTPS_DllAPI inline const CompleteCollectionElement& key() const
+    FASTDDS_EXPORTED_API inline const CompleteCollectionElement& key() const
     {
         return m_key;
     }
 
-    RTPS_DllAPI inline CompleteCollectionElement& key()
+    FASTDDS_EXPORTED_API inline CompleteCollectionElement& key()
     {
         return m_key;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             const CompleteCollectionElement& _element)
     {
         m_element = _element;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             CompleteCollectionElement&& _element)
     {
         m_element = std::move(_element);
     }
 
-    RTPS_DllAPI inline const CompleteCollectionElement& element() const
+    FASTDDS_EXPORTED_API inline const CompleteCollectionElement& element() const
     {
         return m_element;
     }
 
-    RTPS_DllAPI inline CompleteCollectionElement& element()
+    FASTDDS_EXPORTED_API inline CompleteCollectionElement& element()
     {
         return m_element;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteMapType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteMapType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4102,109 +4102,109 @@ class MinimalMapType final
 {
 public:
 
-    RTPS_DllAPI MinimalMapType();
-    RTPS_DllAPI ~MinimalMapType();
-    RTPS_DllAPI MinimalMapType(
+    FASTDDS_EXPORTED_API MinimalMapType();
+    FASTDDS_EXPORTED_API ~MinimalMapType();
+    FASTDDS_EXPORTED_API MinimalMapType(
             const MinimalMapType& x);
-    RTPS_DllAPI MinimalMapType(
+    FASTDDS_EXPORTED_API MinimalMapType(
             MinimalMapType&& x);
-    RTPS_DllAPI MinimalMapType& operator =(
+    FASTDDS_EXPORTED_API MinimalMapType& operator =(
             const MinimalMapType& x);
-    RTPS_DllAPI MinimalMapType& operator =(
+    FASTDDS_EXPORTED_API MinimalMapType& operator =(
             MinimalMapType&& x);
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             const CollectionTypeFlag& _collection_flag)
     {
         m_collection_flag = _collection_flag;
     }
 
-    RTPS_DllAPI inline void collection_flag(
+    FASTDDS_EXPORTED_API inline void collection_flag(
             CollectionTypeFlag&& _collection_flag)
     {
         m_collection_flag = std::move(_collection_flag);
     }
 
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    FASTDDS_EXPORTED_API inline const CollectionTypeFlag& collection_flag() const
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    FASTDDS_EXPORTED_API inline CollectionTypeFlag& collection_flag()
     {
         return m_collection_flag;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalCollectionHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalCollectionHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalCollectionHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalCollectionHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void key(
+    FASTDDS_EXPORTED_API inline void key(
             const MinimalCollectionElement& _key)
     {
         m_key = _key;
     }
 
-    RTPS_DllAPI inline void key(
+    FASTDDS_EXPORTED_API inline void key(
             MinimalCollectionElement&& _key)
     {
         m_key = std::move(_key);
     }
 
-    RTPS_DllAPI inline const MinimalCollectionElement& key() const
+    FASTDDS_EXPORTED_API inline const MinimalCollectionElement& key() const
     {
         return m_key;
     }
 
-    RTPS_DllAPI inline MinimalCollectionElement& key()
+    FASTDDS_EXPORTED_API inline MinimalCollectionElement& key()
     {
         return m_key;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             const MinimalCollectionElement& _element)
     {
         m_element = _element;
     }
 
-    RTPS_DllAPI inline void element(
+    FASTDDS_EXPORTED_API inline void element(
             MinimalCollectionElement&& _element)
     {
         m_element = std::move(_element);
     }
 
-    RTPS_DllAPI inline const MinimalCollectionElement& element() const
+    FASTDDS_EXPORTED_API inline const MinimalCollectionElement& element() const
     {
         return m_element;
     }
 
-    RTPS_DllAPI inline MinimalCollectionElement& element()
+    FASTDDS_EXPORTED_API inline MinimalCollectionElement& element()
     {
         return m_element;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalMapType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalMapType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4229,65 +4229,65 @@ class CommonEnumeratedLiteral
 {
 public:
 
-    RTPS_DllAPI CommonEnumeratedLiteral();
-    RTPS_DllAPI ~CommonEnumeratedLiteral();
-    RTPS_DllAPI CommonEnumeratedLiteral(
+    FASTDDS_EXPORTED_API CommonEnumeratedLiteral();
+    FASTDDS_EXPORTED_API ~CommonEnumeratedLiteral();
+    FASTDDS_EXPORTED_API CommonEnumeratedLiteral(
             const CommonEnumeratedLiteral& x);
-    RTPS_DllAPI CommonEnumeratedLiteral(
+    FASTDDS_EXPORTED_API CommonEnumeratedLiteral(
             CommonEnumeratedLiteral&& x);
-    RTPS_DllAPI CommonEnumeratedLiteral& operator =(
+    FASTDDS_EXPORTED_API CommonEnumeratedLiteral& operator =(
             const CommonEnumeratedLiteral& x);
-    RTPS_DllAPI CommonEnumeratedLiteral& operator =(
+    FASTDDS_EXPORTED_API CommonEnumeratedLiteral& operator =(
             CommonEnumeratedLiteral&& x);
 
-    RTPS_DllAPI inline void value(
+    FASTDDS_EXPORTED_API inline void value(
             const int32_t& _value)
     {
         m_value = _value;
     }
 
-    RTPS_DllAPI inline void value(
+    FASTDDS_EXPORTED_API inline void value(
             int32_t&& _value)
     {
         m_value = std::move(_value);
     }
 
-    RTPS_DllAPI inline const int32_t& value() const
+    FASTDDS_EXPORTED_API inline const int32_t& value() const
     {
         return m_value;
     }
 
-    RTPS_DllAPI inline int32_t& value()
+    FASTDDS_EXPORTED_API inline int32_t& value()
     {
         return m_value;
     }
 
-    RTPS_DllAPI inline void flags(
+    FASTDDS_EXPORTED_API inline void flags(
             const EnumeratedLiteralFlag& _flags)
     {
         m_flags = _flags;
     }
 
-    RTPS_DllAPI inline void flags(
+    FASTDDS_EXPORTED_API inline void flags(
             EnumeratedLiteralFlag&& _flags)
     {
         m_flags = std::move(_flags);
     }
 
-    RTPS_DllAPI inline const EnumeratedLiteralFlag& flags() const
+    FASTDDS_EXPORTED_API inline const EnumeratedLiteralFlag& flags() const
     {
         return m_flags;
     }
 
-    RTPS_DllAPI inline EnumeratedLiteralFlag& flags()
+    FASTDDS_EXPORTED_API inline EnumeratedLiteralFlag& flags()
     {
         return m_flags;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonEnumeratedLiteral& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonEnumeratedLiteral& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4307,65 +4307,65 @@ class CompleteEnumeratedLiteral
 {
 public:
 
-    RTPS_DllAPI CompleteEnumeratedLiteral();
-    RTPS_DllAPI ~CompleteEnumeratedLiteral();
-    RTPS_DllAPI CompleteEnumeratedLiteral(
+    FASTDDS_EXPORTED_API CompleteEnumeratedLiteral();
+    FASTDDS_EXPORTED_API ~CompleteEnumeratedLiteral();
+    FASTDDS_EXPORTED_API CompleteEnumeratedLiteral(
             const CompleteEnumeratedLiteral& x);
-    RTPS_DllAPI CompleteEnumeratedLiteral(
+    FASTDDS_EXPORTED_API CompleteEnumeratedLiteral(
             CompleteEnumeratedLiteral&& x);
-    RTPS_DllAPI CompleteEnumeratedLiteral& operator =(
+    FASTDDS_EXPORTED_API CompleteEnumeratedLiteral& operator =(
             const CompleteEnumeratedLiteral& x);
-    RTPS_DllAPI CompleteEnumeratedLiteral& operator =(
+    FASTDDS_EXPORTED_API CompleteEnumeratedLiteral& operator =(
             CompleteEnumeratedLiteral&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonEnumeratedLiteral& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonEnumeratedLiteral&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonEnumeratedLiteral& common() const
+    FASTDDS_EXPORTED_API inline const CommonEnumeratedLiteral& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonEnumeratedLiteral& common()
+    FASTDDS_EXPORTED_API inline CommonEnumeratedLiteral& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteEnumeratedLiteral& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteEnumeratedLiteral& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4387,65 +4387,65 @@ class MinimalEnumeratedLiteral
 {
 public:
 
-    RTPS_DllAPI MinimalEnumeratedLiteral();
-    RTPS_DllAPI ~MinimalEnumeratedLiteral();
-    RTPS_DllAPI MinimalEnumeratedLiteral(
+    FASTDDS_EXPORTED_API MinimalEnumeratedLiteral();
+    FASTDDS_EXPORTED_API ~MinimalEnumeratedLiteral();
+    FASTDDS_EXPORTED_API MinimalEnumeratedLiteral(
             const MinimalEnumeratedLiteral& x);
-    RTPS_DllAPI MinimalEnumeratedLiteral(
+    FASTDDS_EXPORTED_API MinimalEnumeratedLiteral(
             MinimalEnumeratedLiteral&& x);
-    RTPS_DllAPI MinimalEnumeratedLiteral& operator =(
+    FASTDDS_EXPORTED_API MinimalEnumeratedLiteral& operator =(
             const MinimalEnumeratedLiteral& x);
-    RTPS_DllAPI MinimalEnumeratedLiteral& operator =(
+    FASTDDS_EXPORTED_API MinimalEnumeratedLiteral& operator =(
             MinimalEnumeratedLiteral&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonEnumeratedLiteral& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonEnumeratedLiteral&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonEnumeratedLiteral& common() const
+    FASTDDS_EXPORTED_API inline const CommonEnumeratedLiteral& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonEnumeratedLiteral& common()
+    FASTDDS_EXPORTED_API inline CommonEnumeratedLiteral& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const MinimalMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             MinimalMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const MinimalMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline MinimalMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalEnumeratedLiteral& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalEnumeratedLiteral& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4465,43 +4465,43 @@ class CommonEnumeratedHeader final
 {
 public:
 
-    RTPS_DllAPI CommonEnumeratedHeader();
-    RTPS_DllAPI ~CommonEnumeratedHeader();
-    RTPS_DllAPI CommonEnumeratedHeader(
+    FASTDDS_EXPORTED_API CommonEnumeratedHeader();
+    FASTDDS_EXPORTED_API ~CommonEnumeratedHeader();
+    FASTDDS_EXPORTED_API CommonEnumeratedHeader(
             const CommonEnumeratedHeader& x);
-    RTPS_DllAPI CommonEnumeratedHeader(
+    FASTDDS_EXPORTED_API CommonEnumeratedHeader(
             CommonEnumeratedHeader&& x);
-    RTPS_DllAPI CommonEnumeratedHeader& operator =(
+    FASTDDS_EXPORTED_API CommonEnumeratedHeader& operator =(
             const CommonEnumeratedHeader& x);
-    RTPS_DllAPI CommonEnumeratedHeader& operator =(
+    FASTDDS_EXPORTED_API CommonEnumeratedHeader& operator =(
             CommonEnumeratedHeader&& x);
 
-    RTPS_DllAPI inline void bit_bound(
+    FASTDDS_EXPORTED_API inline void bit_bound(
             const BitBound& _bit_bound)
     {
         m_bit_bound = _bit_bound;
     }
 
-    RTPS_DllAPI inline void bit_bound(
+    FASTDDS_EXPORTED_API inline void bit_bound(
             BitBound&& _bit_bound)
     {
         m_bit_bound = std::move(_bit_bound);
     }
 
-    RTPS_DllAPI inline const BitBound& bit_bound() const
+    FASTDDS_EXPORTED_API inline const BitBound& bit_bound() const
     {
         return m_bit_bound;
     }
 
-    RTPS_DllAPI inline BitBound& bit_bound()
+    FASTDDS_EXPORTED_API inline BitBound& bit_bound()
     {
         return m_bit_bound;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonEnumeratedHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonEnumeratedHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4518,65 +4518,65 @@ class CompleteEnumeratedHeader
 {
 public:
 
-    RTPS_DllAPI CompleteEnumeratedHeader();
-    RTPS_DllAPI ~CompleteEnumeratedHeader();
-    RTPS_DllAPI CompleteEnumeratedHeader(
+    FASTDDS_EXPORTED_API CompleteEnumeratedHeader();
+    FASTDDS_EXPORTED_API ~CompleteEnumeratedHeader();
+    FASTDDS_EXPORTED_API CompleteEnumeratedHeader(
             const CompleteEnumeratedHeader& x);
-    RTPS_DllAPI CompleteEnumeratedHeader(
+    FASTDDS_EXPORTED_API CompleteEnumeratedHeader(
             CompleteEnumeratedHeader&& x);
-    RTPS_DllAPI CompleteEnumeratedHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteEnumeratedHeader& operator =(
             const CompleteEnumeratedHeader& x);
-    RTPS_DllAPI CompleteEnumeratedHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteEnumeratedHeader& operator =(
             CompleteEnumeratedHeader&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonEnumeratedHeader& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonEnumeratedHeader&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonEnumeratedHeader& common() const
+    FASTDDS_EXPORTED_API inline const CommonEnumeratedHeader& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonEnumeratedHeader& common()
+    FASTDDS_EXPORTED_API inline CommonEnumeratedHeader& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteEnumeratedHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteEnumeratedHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4593,43 +4593,43 @@ class MinimalEnumeratedHeader
 {
 public:
 
-    RTPS_DllAPI MinimalEnumeratedHeader();
-    RTPS_DllAPI ~MinimalEnumeratedHeader();
-    RTPS_DllAPI MinimalEnumeratedHeader(
+    FASTDDS_EXPORTED_API MinimalEnumeratedHeader();
+    FASTDDS_EXPORTED_API ~MinimalEnumeratedHeader();
+    FASTDDS_EXPORTED_API MinimalEnumeratedHeader(
             const MinimalEnumeratedHeader& x);
-    RTPS_DllAPI MinimalEnumeratedHeader(
+    FASTDDS_EXPORTED_API MinimalEnumeratedHeader(
             MinimalEnumeratedHeader&& x);
-    RTPS_DllAPI MinimalEnumeratedHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalEnumeratedHeader& operator =(
             const MinimalEnumeratedHeader& x);
-    RTPS_DllAPI MinimalEnumeratedHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalEnumeratedHeader& operator =(
             MinimalEnumeratedHeader&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonEnumeratedHeader& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonEnumeratedHeader&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonEnumeratedHeader& common() const
+    FASTDDS_EXPORTED_API inline const CommonEnumeratedHeader& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonEnumeratedHeader& common()
+    FASTDDS_EXPORTED_API inline CommonEnumeratedHeader& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalEnumeratedHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalEnumeratedHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4648,87 +4648,87 @@ class CompleteEnumeratedType
 {
 public:
 
-    RTPS_DllAPI CompleteEnumeratedType();
-    RTPS_DllAPI ~CompleteEnumeratedType();
-    RTPS_DllAPI CompleteEnumeratedType(
+    FASTDDS_EXPORTED_API CompleteEnumeratedType();
+    FASTDDS_EXPORTED_API ~CompleteEnumeratedType();
+    FASTDDS_EXPORTED_API CompleteEnumeratedType(
             const CompleteEnumeratedType& x);
-    RTPS_DllAPI CompleteEnumeratedType(
+    FASTDDS_EXPORTED_API CompleteEnumeratedType(
             CompleteEnumeratedType&& x);
-    RTPS_DllAPI CompleteEnumeratedType& operator =(
+    FASTDDS_EXPORTED_API CompleteEnumeratedType& operator =(
             const CompleteEnumeratedType& x);
-    RTPS_DllAPI CompleteEnumeratedType& operator =(
+    FASTDDS_EXPORTED_API CompleteEnumeratedType& operator =(
             CompleteEnumeratedType&& x);
 
-    RTPS_DllAPI inline void enum_flags(
+    FASTDDS_EXPORTED_API inline void enum_flags(
             const EnumTypeFlag& _enum_flags)
     {
         m_enum_flags = _enum_flags;
     }
 
-    RTPS_DllAPI inline void enum_flags(
+    FASTDDS_EXPORTED_API inline void enum_flags(
             EnumTypeFlag&& _enum_flags)
     {
         m_enum_flags = std::move(_enum_flags);
     }
 
-    RTPS_DllAPI inline const EnumTypeFlag& enum_flags() const
+    FASTDDS_EXPORTED_API inline const EnumTypeFlag& enum_flags() const
     {
         return m_enum_flags;
     }
 
-    RTPS_DllAPI inline EnumTypeFlag& enum_flags()
+    FASTDDS_EXPORTED_API inline EnumTypeFlag& enum_flags()
     {
         return m_enum_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteEnumeratedHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteEnumeratedHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteEnumeratedHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteEnumeratedHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteEnumeratedHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteEnumeratedHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void literal_seq(
+    FASTDDS_EXPORTED_API inline void literal_seq(
             const CompleteEnumeratedLiteralSeq& _literal_seq)
     {
         m_literal_seq = _literal_seq;
     }
 
-    RTPS_DllAPI inline void literal_seq(
+    FASTDDS_EXPORTED_API inline void literal_seq(
             CompleteEnumeratedLiteralSeq&& _literal_seq)
     {
         m_literal_seq = std::move(_literal_seq);
     }
 
-    RTPS_DllAPI inline const CompleteEnumeratedLiteralSeq& literal_seq() const
+    FASTDDS_EXPORTED_API inline const CompleteEnumeratedLiteralSeq& literal_seq() const
     {
         return m_literal_seq;
     }
 
-    RTPS_DllAPI inline CompleteEnumeratedLiteralSeq& literal_seq()
+    FASTDDS_EXPORTED_API inline CompleteEnumeratedLiteralSeq& literal_seq()
     {
         return m_literal_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteEnumeratedType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteEnumeratedType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4748,87 +4748,87 @@ class MinimalEnumeratedType
 {
 public:
 
-    RTPS_DllAPI MinimalEnumeratedType();
-    RTPS_DllAPI ~MinimalEnumeratedType();
-    RTPS_DllAPI MinimalEnumeratedType(
+    FASTDDS_EXPORTED_API MinimalEnumeratedType();
+    FASTDDS_EXPORTED_API ~MinimalEnumeratedType();
+    FASTDDS_EXPORTED_API MinimalEnumeratedType(
             const MinimalEnumeratedType& x);
-    RTPS_DllAPI MinimalEnumeratedType(
+    FASTDDS_EXPORTED_API MinimalEnumeratedType(
             MinimalEnumeratedType&& x);
-    RTPS_DllAPI MinimalEnumeratedType& operator =(
+    FASTDDS_EXPORTED_API MinimalEnumeratedType& operator =(
             const MinimalEnumeratedType& x);
-    RTPS_DllAPI MinimalEnumeratedType& operator =(
+    FASTDDS_EXPORTED_API MinimalEnumeratedType& operator =(
             MinimalEnumeratedType&& x);
 
-    RTPS_DllAPI inline void enum_flags(
+    FASTDDS_EXPORTED_API inline void enum_flags(
             const EnumTypeFlag& _enum_flags)
     {
         m_enum_flags = _enum_flags;
     }
 
-    RTPS_DllAPI inline void enum_flags(
+    FASTDDS_EXPORTED_API inline void enum_flags(
             EnumTypeFlag&& _enum_flags)
     {
         m_enum_flags = std::move(_enum_flags);
     }
 
-    RTPS_DllAPI inline const EnumTypeFlag& enum_flags() const
+    FASTDDS_EXPORTED_API inline const EnumTypeFlag& enum_flags() const
     {
         return m_enum_flags;
     }
 
-    RTPS_DllAPI inline EnumTypeFlag& enum_flags()
+    FASTDDS_EXPORTED_API inline EnumTypeFlag& enum_flags()
     {
         return m_enum_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalEnumeratedHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalEnumeratedHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalEnumeratedHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalEnumeratedHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalEnumeratedHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalEnumeratedHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void literal_seq(
+    FASTDDS_EXPORTED_API inline void literal_seq(
             const MinimalEnumeratedLiteralSeq& _literal_seq)
     {
         m_literal_seq = _literal_seq;
     }
 
-    RTPS_DllAPI inline void literal_seq(
+    FASTDDS_EXPORTED_API inline void literal_seq(
             MinimalEnumeratedLiteralSeq&& _literal_seq)
     {
         m_literal_seq = std::move(_literal_seq);
     }
 
-    RTPS_DllAPI inline const MinimalEnumeratedLiteralSeq& literal_seq() const
+    FASTDDS_EXPORTED_API inline const MinimalEnumeratedLiteralSeq& literal_seq() const
     {
         return m_literal_seq;
     }
 
-    RTPS_DllAPI inline MinimalEnumeratedLiteralSeq& literal_seq()
+    FASTDDS_EXPORTED_API inline MinimalEnumeratedLiteralSeq& literal_seq()
     {
         return m_literal_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalEnumeratedType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalEnumeratedType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4849,65 +4849,65 @@ class CommonBitflag final
 {
 public:
 
-    RTPS_DllAPI CommonBitflag();
-    RTPS_DllAPI ~CommonBitflag();
-    RTPS_DllAPI CommonBitflag(
+    FASTDDS_EXPORTED_API CommonBitflag();
+    FASTDDS_EXPORTED_API ~CommonBitflag();
+    FASTDDS_EXPORTED_API CommonBitflag(
             const CommonBitflag& x);
-    RTPS_DllAPI CommonBitflag(
+    FASTDDS_EXPORTED_API CommonBitflag(
             CommonBitflag&& x);
-    RTPS_DllAPI CommonBitflag& operator =(
+    FASTDDS_EXPORTED_API CommonBitflag& operator =(
             const CommonBitflag& x);
-    RTPS_DllAPI CommonBitflag& operator =(
+    FASTDDS_EXPORTED_API CommonBitflag& operator =(
             CommonBitflag&& x);
 
-    RTPS_DllAPI inline void position(
+    FASTDDS_EXPORTED_API inline void position(
             const uint16_t& _position)
     {
         m_position = _position;
     }
 
-    RTPS_DllAPI inline void position(
+    FASTDDS_EXPORTED_API inline void position(
             uint16_t&& _position)
     {
         m_position = std::move(_position);
     }
 
-    RTPS_DllAPI inline const uint16_t& position() const
+    FASTDDS_EXPORTED_API inline const uint16_t& position() const
     {
         return m_position;
     }
 
-    RTPS_DllAPI inline uint16_t& position()
+    FASTDDS_EXPORTED_API inline uint16_t& position()
     {
         return m_position;
     }
 
-    RTPS_DllAPI inline void flags(
+    FASTDDS_EXPORTED_API inline void flags(
             const BitflagFlag& _flags)
     {
         m_flags = _flags;
     }
 
-    RTPS_DllAPI inline void flags(
+    FASTDDS_EXPORTED_API inline void flags(
             BitflagFlag&& _flags)
     {
         m_flags = std::move(_flags);
     }
 
-    RTPS_DllAPI inline const BitflagFlag& flags() const
+    FASTDDS_EXPORTED_API inline const BitflagFlag& flags() const
     {
         return m_flags;
     }
 
-    RTPS_DllAPI inline BitflagFlag& flags()
+    FASTDDS_EXPORTED_API inline BitflagFlag& flags()
     {
         return m_flags;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonBitflag& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonBitflag& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -4925,65 +4925,65 @@ class CompleteBitflag
 {
 public:
 
-    RTPS_DllAPI CompleteBitflag();
-    RTPS_DllAPI ~CompleteBitflag();
-    RTPS_DllAPI CompleteBitflag(
+    FASTDDS_EXPORTED_API CompleteBitflag();
+    FASTDDS_EXPORTED_API ~CompleteBitflag();
+    FASTDDS_EXPORTED_API CompleteBitflag(
             const CompleteBitflag& x);
-    RTPS_DllAPI CompleteBitflag(
+    FASTDDS_EXPORTED_API CompleteBitflag(
             CompleteBitflag&& x);
-    RTPS_DllAPI CompleteBitflag& operator =(
+    FASTDDS_EXPORTED_API CompleteBitflag& operator =(
             const CompleteBitflag& x);
-    RTPS_DllAPI CompleteBitflag& operator =(
+    FASTDDS_EXPORTED_API CompleteBitflag& operator =(
             CompleteBitflag&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonBitflag& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonBitflag&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonBitflag& common() const
+    FASTDDS_EXPORTED_API inline const CommonBitflag& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonBitflag& common()
+    FASTDDS_EXPORTED_API inline CommonBitflag& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteBitflag& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteBitflag& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5002,65 +5002,65 @@ class MinimalBitflag
 {
 public:
 
-    RTPS_DllAPI MinimalBitflag();
-    RTPS_DllAPI ~MinimalBitflag();
-    RTPS_DllAPI MinimalBitflag(
+    FASTDDS_EXPORTED_API MinimalBitflag();
+    FASTDDS_EXPORTED_API ~MinimalBitflag();
+    FASTDDS_EXPORTED_API MinimalBitflag(
             const MinimalBitflag& x);
-    RTPS_DllAPI MinimalBitflag(
+    FASTDDS_EXPORTED_API MinimalBitflag(
             MinimalBitflag&& x);
-    RTPS_DllAPI MinimalBitflag& operator =(
+    FASTDDS_EXPORTED_API MinimalBitflag& operator =(
             const MinimalBitflag& x);
-    RTPS_DllAPI MinimalBitflag& operator =(
+    FASTDDS_EXPORTED_API MinimalBitflag& operator =(
             MinimalBitflag&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonBitflag& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonBitflag&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonBitflag& common() const
+    FASTDDS_EXPORTED_API inline const CommonBitflag& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonBitflag& common()
+    FASTDDS_EXPORTED_API inline CommonBitflag& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const MinimalMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             MinimalMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const MinimalMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline MinimalMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalBitflag& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalBitflag& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5080,43 +5080,43 @@ class CommonBitmaskHeader final
 {
 public:
 
-    RTPS_DllAPI CommonBitmaskHeader();
-    RTPS_DllAPI ~CommonBitmaskHeader();
-    RTPS_DllAPI CommonBitmaskHeader(
+    FASTDDS_EXPORTED_API CommonBitmaskHeader();
+    FASTDDS_EXPORTED_API ~CommonBitmaskHeader();
+    FASTDDS_EXPORTED_API CommonBitmaskHeader(
             const CommonBitmaskHeader& x);
-    RTPS_DllAPI CommonBitmaskHeader(
+    FASTDDS_EXPORTED_API CommonBitmaskHeader(
             CommonBitmaskHeader&& x);
-    RTPS_DllAPI CommonBitmaskHeader& operator =(
+    FASTDDS_EXPORTED_API CommonBitmaskHeader& operator =(
             const CommonBitmaskHeader& x);
-    RTPS_DllAPI CommonBitmaskHeader& operator =(
+    FASTDDS_EXPORTED_API CommonBitmaskHeader& operator =(
             CommonBitmaskHeader&& x);
 
-    RTPS_DllAPI inline void bit_bound(
+    FASTDDS_EXPORTED_API inline void bit_bound(
             const BitBound& _bit_bound)
     {
         m_bit_bound = _bit_bound;
     }
 
-    RTPS_DllAPI inline void bit_bound(
+    FASTDDS_EXPORTED_API inline void bit_bound(
             BitBound&& _bit_bound)
     {
         m_bit_bound = std::move(_bit_bound);
     }
 
-    RTPS_DllAPI inline const BitBound& bit_bound() const
+    FASTDDS_EXPORTED_API inline const BitBound& bit_bound() const
     {
         return m_bit_bound;
     }
 
-    RTPS_DllAPI inline BitBound& bit_bound()
+    FASTDDS_EXPORTED_API inline BitBound& bit_bound()
     {
         return m_bit_bound;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonBitmaskHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonBitmaskHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5136,87 +5136,87 @@ class CompleteBitmaskType
 {
 public:
 
-    RTPS_DllAPI CompleteBitmaskType();
-    RTPS_DllAPI ~CompleteBitmaskType();
-    RTPS_DllAPI CompleteBitmaskType(
+    FASTDDS_EXPORTED_API CompleteBitmaskType();
+    FASTDDS_EXPORTED_API ~CompleteBitmaskType();
+    FASTDDS_EXPORTED_API CompleteBitmaskType(
             const CompleteBitmaskType& x);
-    RTPS_DllAPI CompleteBitmaskType(
+    FASTDDS_EXPORTED_API CompleteBitmaskType(
             CompleteBitmaskType&& x);
-    RTPS_DllAPI CompleteBitmaskType& operator =(
+    FASTDDS_EXPORTED_API CompleteBitmaskType& operator =(
             const CompleteBitmaskType& x);
-    RTPS_DllAPI CompleteBitmaskType& operator =(
+    FASTDDS_EXPORTED_API CompleteBitmaskType& operator =(
             CompleteBitmaskType&& x);
 
-    RTPS_DllAPI inline void bitmask_flags(
+    FASTDDS_EXPORTED_API inline void bitmask_flags(
             const BitmaskTypeFlag& _bitmask_flags)
     {
         m_bitmask_flags = _bitmask_flags;
     }
 
-    RTPS_DllAPI inline void bitmask_flags(
+    FASTDDS_EXPORTED_API inline void bitmask_flags(
             BitmaskTypeFlag&& _bitmask_flags)
     {
         m_bitmask_flags = std::move(_bitmask_flags);
     }
 
-    RTPS_DllAPI inline const BitmaskTypeFlag& bitmask_flags() const
+    FASTDDS_EXPORTED_API inline const BitmaskTypeFlag& bitmask_flags() const
     {
         return m_bitmask_flags;
     }
 
-    RTPS_DllAPI inline BitmaskTypeFlag& bitmask_flags()
+    FASTDDS_EXPORTED_API inline BitmaskTypeFlag& bitmask_flags()
     {
         return m_bitmask_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteBitmaskHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteBitmaskHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteBitmaskHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteBitmaskHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteBitmaskHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteBitmaskHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void flag_seq(
+    FASTDDS_EXPORTED_API inline void flag_seq(
             const CompleteBitflagSeq& _flag_seq)
     {
         m_flag_seq = _flag_seq;
     }
 
-    RTPS_DllAPI inline void flag_seq(
+    FASTDDS_EXPORTED_API inline void flag_seq(
             CompleteBitflagSeq&& _flag_seq)
     {
         m_flag_seq = std::move(_flag_seq);
     }
 
-    RTPS_DllAPI inline const CompleteBitflagSeq& flag_seq() const
+    FASTDDS_EXPORTED_API inline const CompleteBitflagSeq& flag_seq() const
     {
         return m_flag_seq;
     }
 
-    RTPS_DllAPI inline CompleteBitflagSeq& flag_seq()
+    FASTDDS_EXPORTED_API inline CompleteBitflagSeq& flag_seq()
     {
         return m_flag_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteBitmaskType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteBitmaskType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5236,87 +5236,87 @@ class MinimalBitmaskType
 {
 public:
 
-    RTPS_DllAPI MinimalBitmaskType();
-    RTPS_DllAPI ~MinimalBitmaskType();
-    RTPS_DllAPI MinimalBitmaskType(
+    FASTDDS_EXPORTED_API MinimalBitmaskType();
+    FASTDDS_EXPORTED_API ~MinimalBitmaskType();
+    FASTDDS_EXPORTED_API MinimalBitmaskType(
             const MinimalBitmaskType& x);
-    RTPS_DllAPI MinimalBitmaskType(
+    FASTDDS_EXPORTED_API MinimalBitmaskType(
             MinimalBitmaskType&& x);
-    RTPS_DllAPI MinimalBitmaskType& operator =(
+    FASTDDS_EXPORTED_API MinimalBitmaskType& operator =(
             const MinimalBitmaskType& x);
-    RTPS_DllAPI MinimalBitmaskType& operator =(
+    FASTDDS_EXPORTED_API MinimalBitmaskType& operator =(
             MinimalBitmaskType&& x);
 
-    RTPS_DllAPI inline void bitmask_flags(
+    FASTDDS_EXPORTED_API inline void bitmask_flags(
             const BitmaskTypeFlag& _bitmask_flags)
     {
         m_bitmask_flags = _bitmask_flags;
     }
 
-    RTPS_DllAPI inline void bitmask_flags(
+    FASTDDS_EXPORTED_API inline void bitmask_flags(
             BitmaskTypeFlag&& _bitmask_flags)
     {
         m_bitmask_flags = std::move(_bitmask_flags);
     }
 
-    RTPS_DllAPI inline const BitmaskTypeFlag& bitmask_flags() const
+    FASTDDS_EXPORTED_API inline const BitmaskTypeFlag& bitmask_flags() const
     {
         return m_bitmask_flags;
     }
 
-    RTPS_DllAPI inline BitmaskTypeFlag& bitmask_flags()
+    FASTDDS_EXPORTED_API inline BitmaskTypeFlag& bitmask_flags()
     {
         return m_bitmask_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalBitmaskHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalBitmaskHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalBitmaskHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalBitmaskHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalBitmaskHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalBitmaskHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void flag_seq(
+    FASTDDS_EXPORTED_API inline void flag_seq(
             const MinimalBitflagSeq& _flag_seq)
     {
         m_flag_seq = _flag_seq;
     }
 
-    RTPS_DllAPI inline void flag_seq(
+    FASTDDS_EXPORTED_API inline void flag_seq(
             MinimalBitflagSeq&& _flag_seq)
     {
         m_flag_seq = std::move(_flag_seq);
     }
 
-    RTPS_DllAPI inline const MinimalBitflagSeq& flag_seq() const
+    FASTDDS_EXPORTED_API inline const MinimalBitflagSeq& flag_seq() const
     {
         return m_flag_seq;
     }
 
-    RTPS_DllAPI inline MinimalBitflagSeq& flag_seq()
+    FASTDDS_EXPORTED_API inline MinimalBitflagSeq& flag_seq()
     {
         return m_flag_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalBitmaskType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalBitmaskType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5338,109 +5338,109 @@ class CommonBitfield final
 {
 public:
 
-    RTPS_DllAPI CommonBitfield();
-    RTPS_DllAPI ~CommonBitfield();
-    RTPS_DllAPI CommonBitfield(
+    FASTDDS_EXPORTED_API CommonBitfield();
+    FASTDDS_EXPORTED_API ~CommonBitfield();
+    FASTDDS_EXPORTED_API CommonBitfield(
             const CommonBitfield& x);
-    RTPS_DllAPI CommonBitfield(
+    FASTDDS_EXPORTED_API CommonBitfield(
             CommonBitfield&& x);
-    RTPS_DllAPI CommonBitfield& operator =(
+    FASTDDS_EXPORTED_API CommonBitfield& operator =(
             const CommonBitfield& x);
-    RTPS_DllAPI CommonBitfield& operator =(
+    FASTDDS_EXPORTED_API CommonBitfield& operator =(
             CommonBitfield&& x);
 
-    RTPS_DllAPI inline void position(
+    FASTDDS_EXPORTED_API inline void position(
             const uint16_t& _position)
     {
         m_position = _position;
     }
 
-    RTPS_DllAPI inline void position(
+    FASTDDS_EXPORTED_API inline void position(
             uint16_t&& _position)
     {
         m_position = std::move(_position);
     }
 
-    RTPS_DllAPI inline const uint16_t& position() const
+    FASTDDS_EXPORTED_API inline const uint16_t& position() const
     {
         return m_position;
     }
 
-    RTPS_DllAPI inline uint16_t& position()
+    FASTDDS_EXPORTED_API inline uint16_t& position()
     {
         return m_position;
     }
 
-    RTPS_DllAPI inline void flags(
+    FASTDDS_EXPORTED_API inline void flags(
             const BitsetMemberFlag& _flags)
     {
         m_flags = _flags;
     }
 
-    RTPS_DllAPI inline void flags(
+    FASTDDS_EXPORTED_API inline void flags(
             BitsetMemberFlag&& _flags)
     {
         m_flags = std::move(_flags);
     }
 
-    RTPS_DllAPI inline const BitsetMemberFlag& flags() const
+    FASTDDS_EXPORTED_API inline const BitsetMemberFlag& flags() const
     {
         return m_flags;
     }
 
-    RTPS_DllAPI inline BitsetMemberFlag& flags()
+    FASTDDS_EXPORTED_API inline BitsetMemberFlag& flags()
     {
         return m_flags;
     }
 
-    RTPS_DllAPI inline void bitcount(
+    FASTDDS_EXPORTED_API inline void bitcount(
             const octet& _bitcount)
     {
         m_bitcount = _bitcount;
     }
 
-    RTPS_DllAPI inline void bitcount(
+    FASTDDS_EXPORTED_API inline void bitcount(
             octet&& _bitcount)
     {
         m_bitcount = std::move(_bitcount);
     }
 
-    RTPS_DllAPI inline const octet& bitcount() const
+    FASTDDS_EXPORTED_API inline const octet& bitcount() const
     {
         return m_bitcount;
     }
 
-    RTPS_DllAPI inline octet& bitcount()
+    FASTDDS_EXPORTED_API inline octet& bitcount()
     {
         return m_bitcount;
     }
 
-    RTPS_DllAPI inline void holder_type(
+    FASTDDS_EXPORTED_API inline void holder_type(
             const TypeKind& _holder_type)
     {
         m_holder_type = _holder_type;
     }
 
-    RTPS_DllAPI inline void holder_type(
+    FASTDDS_EXPORTED_API inline void holder_type(
             TypeKind&& _holder_type)
     {
         m_holder_type = std::move(_holder_type);
     }
 
-    RTPS_DllAPI inline const TypeKind& holder_type() const
+    FASTDDS_EXPORTED_API inline const TypeKind& holder_type() const
     {
         return m_holder_type;
     }
 
-    RTPS_DllAPI inline TypeKind& holder_type()
+    FASTDDS_EXPORTED_API inline TypeKind& holder_type()
     {
         return m_holder_type;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CommonBitfield& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CommonBitfield& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5460,65 +5460,65 @@ class CompleteBitfield
 {
 public:
 
-    RTPS_DllAPI CompleteBitfield();
-    RTPS_DllAPI ~CompleteBitfield();
-    RTPS_DllAPI CompleteBitfield(
+    FASTDDS_EXPORTED_API CompleteBitfield();
+    FASTDDS_EXPORTED_API ~CompleteBitfield();
+    FASTDDS_EXPORTED_API CompleteBitfield(
             const CompleteBitfield& x);
-    RTPS_DllAPI CompleteBitfield(
+    FASTDDS_EXPORTED_API CompleteBitfield(
             CompleteBitfield&& x);
-    RTPS_DllAPI CompleteBitfield& operator =(
+    FASTDDS_EXPORTED_API CompleteBitfield& operator =(
             const CompleteBitfield& x);
-    RTPS_DllAPI CompleteBitfield& operator =(
+    FASTDDS_EXPORTED_API CompleteBitfield& operator =(
             CompleteBitfield&& x);
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonBitfield& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonBitfield&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonBitfield& common() const
+    FASTDDS_EXPORTED_API inline const CommonBitfield& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonBitfield& common()
+    FASTDDS_EXPORTED_API inline CommonBitfield& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteMemberDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteMemberDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteMemberDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteMemberDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteBitfield& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteBitfield& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5537,65 +5537,65 @@ class MinimalBitfield
 {
 public:
 
-    RTPS_DllAPI MinimalBitfield();
-    RTPS_DllAPI ~MinimalBitfield();
-    RTPS_DllAPI MinimalBitfield(
+    FASTDDS_EXPORTED_API MinimalBitfield();
+    FASTDDS_EXPORTED_API ~MinimalBitfield();
+    FASTDDS_EXPORTED_API MinimalBitfield(
             const MinimalBitfield& x);
-    RTPS_DllAPI MinimalBitfield(
+    FASTDDS_EXPORTED_API MinimalBitfield(
             MinimalBitfield&& x);
-    RTPS_DllAPI MinimalBitfield& operator =(
+    FASTDDS_EXPORTED_API MinimalBitfield& operator =(
             const MinimalBitfield& x);
-    RTPS_DllAPI MinimalBitfield& operator =(
+    FASTDDS_EXPORTED_API MinimalBitfield& operator =(
             MinimalBitfield&& x);
 
-    RTPS_DllAPI inline void name_hash(
+    FASTDDS_EXPORTED_API inline void name_hash(
             const NameHash& _name_hash)
     {
         m_name_hash = _name_hash;
     }
 
-    RTPS_DllAPI inline void name_hash(
+    FASTDDS_EXPORTED_API inline void name_hash(
             NameHash&& _name_hash)
     {
         m_name_hash = std::move(_name_hash);
     }
 
-    RTPS_DllAPI inline const NameHash& name_hash() const
+    FASTDDS_EXPORTED_API inline const NameHash& name_hash() const
     {
         return m_name_hash;
     }
 
-    RTPS_DllAPI inline NameHash& name_hash()
+    FASTDDS_EXPORTED_API inline NameHash& name_hash()
     {
         return m_name_hash;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             const CommonBitfield& _common)
     {
         m_common = _common;
     }
 
-    RTPS_DllAPI inline void common(
+    FASTDDS_EXPORTED_API inline void common(
             CommonBitfield&& _common)
     {
         m_common = std::move(_common);
     }
 
-    RTPS_DllAPI inline const CommonBitfield& common() const
+    FASTDDS_EXPORTED_API inline const CommonBitfield& common() const
     {
         return m_common;
     }
 
-    RTPS_DllAPI inline CommonBitfield& common()
+    FASTDDS_EXPORTED_API inline CommonBitfield& common()
     {
         return m_common;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalBitfield& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalBitfield& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5613,65 +5613,65 @@ class CompleteBitsetHeader
 {
 public:
 
-    RTPS_DllAPI CompleteBitsetHeader();
-    RTPS_DllAPI ~CompleteBitsetHeader();
-    RTPS_DllAPI CompleteBitsetHeader(
+    FASTDDS_EXPORTED_API CompleteBitsetHeader();
+    FASTDDS_EXPORTED_API ~CompleteBitsetHeader();
+    FASTDDS_EXPORTED_API CompleteBitsetHeader(
             const CompleteBitsetHeader& x);
-    RTPS_DllAPI CompleteBitsetHeader(
+    FASTDDS_EXPORTED_API CompleteBitsetHeader(
             CompleteBitsetHeader&& x);
-    RTPS_DllAPI CompleteBitsetHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteBitsetHeader& operator =(
             const CompleteBitsetHeader& x);
-    RTPS_DllAPI CompleteBitsetHeader& operator =(
+    FASTDDS_EXPORTED_API CompleteBitsetHeader& operator =(
             CompleteBitsetHeader&& x);
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             const TypeIdentifier& _base_type)
     {
         m_base_type = _base_type;
     }
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             TypeIdentifier&& _base_type)
     {
         m_base_type = std::move(_base_type);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& base_type() const
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& base_type()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& base_type()
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             const CompleteTypeDetail& _detail)
     {
         m_detail = _detail;
     }
 
-    RTPS_DllAPI inline void detail(
+    FASTDDS_EXPORTED_API inline void detail(
             CompleteTypeDetail&& _detail)
     {
         m_detail = std::move(_detail);
     }
 
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    FASTDDS_EXPORTED_API inline const CompleteTypeDetail& detail() const
     {
         return m_detail;
     }
 
-    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    FASTDDS_EXPORTED_API inline CompleteTypeDetail& detail()
     {
         return m_detail;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteBitsetHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteBitsetHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5688,43 +5688,43 @@ class MinimalBitsetHeader
 {
 public:
 
-    RTPS_DllAPI MinimalBitsetHeader();
-    RTPS_DllAPI ~MinimalBitsetHeader();
-    RTPS_DllAPI MinimalBitsetHeader(
+    FASTDDS_EXPORTED_API MinimalBitsetHeader();
+    FASTDDS_EXPORTED_API ~MinimalBitsetHeader();
+    FASTDDS_EXPORTED_API MinimalBitsetHeader(
             const MinimalBitsetHeader& x);
-    RTPS_DllAPI MinimalBitsetHeader(
+    FASTDDS_EXPORTED_API MinimalBitsetHeader(
             MinimalBitsetHeader&& x);
-    RTPS_DllAPI MinimalBitsetHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalBitsetHeader& operator =(
             const MinimalBitsetHeader& x);
-    RTPS_DllAPI MinimalBitsetHeader& operator =(
+    FASTDDS_EXPORTED_API MinimalBitsetHeader& operator =(
             MinimalBitsetHeader&& x);
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             const TypeIdentifier& _base_type)
     {
         m_base_type = _base_type;
     }
 
-    RTPS_DllAPI inline void base_type(
+    FASTDDS_EXPORTED_API inline void base_type(
             TypeIdentifier&& _base_type)
     {
         m_base_type = std::move(_base_type);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& base_type() const
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& base_type()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& base_type()
     {
         return m_base_type;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalBitsetHeader& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalBitsetHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5741,87 +5741,87 @@ class CompleteBitsetType
 {
 public:
 
-    RTPS_DllAPI CompleteBitsetType();
-    RTPS_DllAPI ~CompleteBitsetType();
-    RTPS_DllAPI CompleteBitsetType(
+    FASTDDS_EXPORTED_API CompleteBitsetType();
+    FASTDDS_EXPORTED_API ~CompleteBitsetType();
+    FASTDDS_EXPORTED_API CompleteBitsetType(
             const CompleteBitsetType& x);
-    RTPS_DllAPI CompleteBitsetType(
+    FASTDDS_EXPORTED_API CompleteBitsetType(
             CompleteBitsetType&& x);
-    RTPS_DllAPI CompleteBitsetType& operator =(
+    FASTDDS_EXPORTED_API CompleteBitsetType& operator =(
             const CompleteBitsetType& x);
-    RTPS_DllAPI CompleteBitsetType& operator =(
+    FASTDDS_EXPORTED_API CompleteBitsetType& operator =(
             CompleteBitsetType&& x);
 
-    RTPS_DllAPI inline void bitset_flags(
+    FASTDDS_EXPORTED_API inline void bitset_flags(
             const BitsetTypeFlag& _bitset_flags)
     {
         m_bitset_flags = _bitset_flags;
     }
 
-    RTPS_DllAPI inline void bitset_flags(
+    FASTDDS_EXPORTED_API inline void bitset_flags(
             BitsetTypeFlag&& _bitset_flags)
     {
         m_bitset_flags = std::move(_bitset_flags);
     }
 
-    RTPS_DllAPI inline const BitsetTypeFlag& bitset_flags() const
+    FASTDDS_EXPORTED_API inline const BitsetTypeFlag& bitset_flags() const
     {
         return m_bitset_flags;
     }
 
-    RTPS_DllAPI inline BitsetTypeFlag& bitset_flags()
+    FASTDDS_EXPORTED_API inline BitsetTypeFlag& bitset_flags()
     {
         return m_bitset_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const CompleteBitsetHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             CompleteBitsetHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const CompleteBitsetHeader& header() const
+    FASTDDS_EXPORTED_API inline const CompleteBitsetHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline CompleteBitsetHeader& header()
+    FASTDDS_EXPORTED_API inline CompleteBitsetHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void field_seq(
+    FASTDDS_EXPORTED_API inline void field_seq(
             const CompleteBitfieldSeq& _field_seq)
     {
         m_field_seq = _field_seq;
     }
 
-    RTPS_DllAPI inline void field_seq(
+    FASTDDS_EXPORTED_API inline void field_seq(
             CompleteBitfieldSeq&& _field_seq)
     {
         m_field_seq = std::move(_field_seq);
     }
 
-    RTPS_DllAPI inline const CompleteBitfieldSeq& field_seq() const
+    FASTDDS_EXPORTED_API inline const CompleteBitfieldSeq& field_seq() const
     {
         return m_field_seq;
     }
 
-    RTPS_DllAPI inline CompleteBitfieldSeq& field_seq()
+    FASTDDS_EXPORTED_API inline CompleteBitfieldSeq& field_seq()
     {
         return m_field_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteBitsetType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteBitsetType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5841,87 +5841,87 @@ class MinimalBitsetType
 {
 public:
 
-    RTPS_DllAPI MinimalBitsetType();
-    RTPS_DllAPI ~MinimalBitsetType();
-    RTPS_DllAPI MinimalBitsetType(
+    FASTDDS_EXPORTED_API MinimalBitsetType();
+    FASTDDS_EXPORTED_API ~MinimalBitsetType();
+    FASTDDS_EXPORTED_API MinimalBitsetType(
             const MinimalBitsetType& x);
-    RTPS_DllAPI MinimalBitsetType(
+    FASTDDS_EXPORTED_API MinimalBitsetType(
             MinimalBitsetType&& x);
-    RTPS_DllAPI MinimalBitsetType& operator =(
+    FASTDDS_EXPORTED_API MinimalBitsetType& operator =(
             const MinimalBitsetType& x);
-    RTPS_DllAPI MinimalBitsetType& operator =(
+    FASTDDS_EXPORTED_API MinimalBitsetType& operator =(
             MinimalBitsetType&& x);
 
-    RTPS_DllAPI inline void bitset_flags(
+    FASTDDS_EXPORTED_API inline void bitset_flags(
             const BitsetTypeFlag& _bitset_flags)
     {
         m_bitset_flags = _bitset_flags;
     }
 
-    RTPS_DllAPI inline void bitset_flags(
+    FASTDDS_EXPORTED_API inline void bitset_flags(
             BitsetTypeFlag&& _bitset_flags)
     {
         m_bitset_flags = std::move(_bitset_flags);
     }
 
-    RTPS_DllAPI inline const BitsetTypeFlag& bitset_flags() const
+    FASTDDS_EXPORTED_API inline const BitsetTypeFlag& bitset_flags() const
     {
         return m_bitset_flags;
     }
 
-    RTPS_DllAPI inline BitsetTypeFlag& bitset_flags()
+    FASTDDS_EXPORTED_API inline BitsetTypeFlag& bitset_flags()
     {
         return m_bitset_flags;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const MinimalBitsetHeader& _header)
     {
         m_header = _header;
     }
 
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             MinimalBitsetHeader&& _header)
     {
         m_header = std::move(_header);
     }
 
-    RTPS_DllAPI inline const MinimalBitsetHeader& header() const
+    FASTDDS_EXPORTED_API inline const MinimalBitsetHeader& header() const
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline MinimalBitsetHeader& header()
+    FASTDDS_EXPORTED_API inline MinimalBitsetHeader& header()
     {
         return m_header;
     }
 
-    RTPS_DllAPI inline void field_seq(
+    FASTDDS_EXPORTED_API inline void field_seq(
             const MinimalBitfieldSeq& _field_seq)
     {
         m_field_seq = _field_seq;
     }
 
-    RTPS_DllAPI inline void field_seq(
+    FASTDDS_EXPORTED_API inline void field_seq(
             MinimalBitfieldSeq&& _field_seq)
     {
         m_field_seq = std::move(_field_seq);
     }
 
-    RTPS_DllAPI inline const MinimalBitfieldSeq& field_seq() const
+    FASTDDS_EXPORTED_API inline const MinimalBitfieldSeq& field_seq() const
     {
         return m_field_seq;
     }
 
-    RTPS_DllAPI inline MinimalBitfieldSeq& field_seq()
+    FASTDDS_EXPORTED_API inline MinimalBitfieldSeq& field_seq()
     {
         return m_field_seq;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalBitsetType& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalBitsetType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5943,24 +5943,24 @@ class CompleteExtendedType
 {
 public:
 
-    RTPS_DllAPI CompleteExtendedType();
-    RTPS_DllAPI ~CompleteExtendedType();
-    RTPS_DllAPI CompleteExtendedType(
+    FASTDDS_EXPORTED_API CompleteExtendedType();
+    FASTDDS_EXPORTED_API ~CompleteExtendedType();
+    FASTDDS_EXPORTED_API CompleteExtendedType(
             const CompleteExtendedType& x);
-    RTPS_DllAPI CompleteExtendedType(
+    FASTDDS_EXPORTED_API CompleteExtendedType(
             CompleteExtendedType&& x);
-    RTPS_DllAPI CompleteExtendedType& operator =(
+    FASTDDS_EXPORTED_API CompleteExtendedType& operator =(
             const CompleteExtendedType& x);
-    RTPS_DllAPI CompleteExtendedType& operator =(
+    FASTDDS_EXPORTED_API CompleteExtendedType& operator =(
             CompleteExtendedType&& x);
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteExtendedType&) const
     {
         return true;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteExtendedType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -5975,24 +5975,24 @@ class MinimalExtendedType
 {
 public:
 
-    RTPS_DllAPI MinimalExtendedType();
-    RTPS_DllAPI ~MinimalExtendedType();
-    RTPS_DllAPI MinimalExtendedType(
+    FASTDDS_EXPORTED_API MinimalExtendedType();
+    FASTDDS_EXPORTED_API ~MinimalExtendedType();
+    FASTDDS_EXPORTED_API MinimalExtendedType(
             const MinimalExtendedType& x);
-    RTPS_DllAPI MinimalExtendedType(
+    FASTDDS_EXPORTED_API MinimalExtendedType(
             MinimalExtendedType&& x);
-    RTPS_DllAPI MinimalExtendedType& operator =(
+    FASTDDS_EXPORTED_API MinimalExtendedType& operator =(
             const MinimalExtendedType& x);
-    RTPS_DllAPI MinimalExtendedType& operator =(
+    FASTDDS_EXPORTED_API MinimalExtendedType& operator =(
             MinimalExtendedType&& x);
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalExtendedType&) const
     {
         return true;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalExtendedType& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -6004,80 +6004,80 @@ class CompleteTypeObject final
 {
 public:
 
-    RTPS_DllAPI CompleteTypeObject();
-    RTPS_DllAPI ~CompleteTypeObject();
-    RTPS_DllAPI CompleteTypeObject(
+    FASTDDS_EXPORTED_API CompleteTypeObject();
+    FASTDDS_EXPORTED_API ~CompleteTypeObject();
+    FASTDDS_EXPORTED_API CompleteTypeObject(
             const CompleteTypeObject& x);
-    RTPS_DllAPI CompleteTypeObject(
+    FASTDDS_EXPORTED_API CompleteTypeObject(
             CompleteTypeObject&& x);
-    RTPS_DllAPI CompleteTypeObject& operator =(
+    FASTDDS_EXPORTED_API CompleteTypeObject& operator =(
             const CompleteTypeObject& x);
-    RTPS_DllAPI CompleteTypeObject& operator =(
+    FASTDDS_EXPORTED_API CompleteTypeObject& operator =(
             CompleteTypeObject&& x);
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             octet __d);
-    RTPS_DllAPI octet _d() const;
-    RTPS_DllAPI octet& _d();
+    FASTDDS_EXPORTED_API octet _d() const;
+    FASTDDS_EXPORTED_API octet& _d();
 
-    RTPS_DllAPI void alias_type(
+    FASTDDS_EXPORTED_API void alias_type(
             CompleteAliasType _alias_type);
-    RTPS_DllAPI const CompleteAliasType& alias_type() const;
-    RTPS_DllAPI CompleteAliasType& alias_type();
+    FASTDDS_EXPORTED_API const CompleteAliasType& alias_type() const;
+    FASTDDS_EXPORTED_API CompleteAliasType& alias_type();
 
-    RTPS_DllAPI void annotation_type(
+    FASTDDS_EXPORTED_API void annotation_type(
             CompleteAnnotationType _annotation_type);
-    RTPS_DllAPI const CompleteAnnotationType& annotation_type() const;
-    RTPS_DllAPI CompleteAnnotationType& annotation_type();
+    FASTDDS_EXPORTED_API const CompleteAnnotationType& annotation_type() const;
+    FASTDDS_EXPORTED_API CompleteAnnotationType& annotation_type();
 
-    RTPS_DllAPI void struct_type(
+    FASTDDS_EXPORTED_API void struct_type(
             CompleteStructType _struct_type);
-    RTPS_DllAPI const CompleteStructType& struct_type() const;
-    RTPS_DllAPI CompleteStructType& struct_type();
+    FASTDDS_EXPORTED_API const CompleteStructType& struct_type() const;
+    FASTDDS_EXPORTED_API CompleteStructType& struct_type();
 
-    RTPS_DllAPI void union_type(
+    FASTDDS_EXPORTED_API void union_type(
             CompleteUnionType _union_type);
-    RTPS_DllAPI const CompleteUnionType& union_type() const;
-    RTPS_DllAPI CompleteUnionType& union_type();
+    FASTDDS_EXPORTED_API const CompleteUnionType& union_type() const;
+    FASTDDS_EXPORTED_API CompleteUnionType& union_type();
 
-    RTPS_DllAPI void bitset_type(
+    FASTDDS_EXPORTED_API void bitset_type(
             CompleteBitsetType _bitset_type);
-    RTPS_DllAPI const CompleteBitsetType& bitset_type() const;
-    RTPS_DllAPI CompleteBitsetType& bitset_type();
+    FASTDDS_EXPORTED_API const CompleteBitsetType& bitset_type() const;
+    FASTDDS_EXPORTED_API CompleteBitsetType& bitset_type();
 
-    RTPS_DllAPI void sequence_type(
+    FASTDDS_EXPORTED_API void sequence_type(
             CompleteSequenceType _sequence_type);
-    RTPS_DllAPI const CompleteSequenceType& sequence_type() const;
-    RTPS_DllAPI CompleteSequenceType& sequence_type();
+    FASTDDS_EXPORTED_API const CompleteSequenceType& sequence_type() const;
+    FASTDDS_EXPORTED_API CompleteSequenceType& sequence_type();
 
-    RTPS_DllAPI void array_type(
+    FASTDDS_EXPORTED_API void array_type(
             CompleteArrayType _array_type);
-    RTPS_DllAPI const CompleteArrayType& array_type() const;
-    RTPS_DllAPI CompleteArrayType& array_type();
+    FASTDDS_EXPORTED_API const CompleteArrayType& array_type() const;
+    FASTDDS_EXPORTED_API CompleteArrayType& array_type();
 
-    RTPS_DllAPI void map_type(
+    FASTDDS_EXPORTED_API void map_type(
             CompleteMapType _map_type);
-    RTPS_DllAPI const CompleteMapType& map_type() const;
-    RTPS_DllAPI CompleteMapType& map_type();
+    FASTDDS_EXPORTED_API const CompleteMapType& map_type() const;
+    FASTDDS_EXPORTED_API CompleteMapType& map_type();
 
-    RTPS_DllAPI void enumerated_type(
+    FASTDDS_EXPORTED_API void enumerated_type(
             CompleteEnumeratedType _enumerated_type);
-    RTPS_DllAPI const CompleteEnumeratedType& enumerated_type() const;
-    RTPS_DllAPI CompleteEnumeratedType& enumerated_type();
+    FASTDDS_EXPORTED_API const CompleteEnumeratedType& enumerated_type() const;
+    FASTDDS_EXPORTED_API CompleteEnumeratedType& enumerated_type();
 
-    RTPS_DllAPI void bitmask_type(
+    FASTDDS_EXPORTED_API void bitmask_type(
             CompleteBitmaskType _bitmask_type);
-    RTPS_DllAPI const CompleteBitmaskType& bitmask_type() const;
-    RTPS_DllAPI CompleteBitmaskType& bitmask_type();
+    FASTDDS_EXPORTED_API const CompleteBitmaskType& bitmask_type() const;
+    FASTDDS_EXPORTED_API CompleteBitmaskType& bitmask_type();
 
-    RTPS_DllAPI void extended_type(
+    FASTDDS_EXPORTED_API void extended_type(
             CompleteExtendedType _extended_type);
-    RTPS_DllAPI const CompleteExtendedType& extended_type() const;
-    RTPS_DllAPI CompleteExtendedType& extended_type();
+    FASTDDS_EXPORTED_API const CompleteExtendedType& extended_type() const;
+    FASTDDS_EXPORTED_API CompleteExtendedType& extended_type();
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const CompleteTypeObject& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const CompleteTypeObject& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -6102,80 +6102,80 @@ class MinimalTypeObject final
 {
 public:
 
-    RTPS_DllAPI MinimalTypeObject();
-    RTPS_DllAPI ~MinimalTypeObject();
-    RTPS_DllAPI MinimalTypeObject(
+    FASTDDS_EXPORTED_API MinimalTypeObject();
+    FASTDDS_EXPORTED_API ~MinimalTypeObject();
+    FASTDDS_EXPORTED_API MinimalTypeObject(
             const MinimalTypeObject& x);
-    RTPS_DllAPI MinimalTypeObject(
+    FASTDDS_EXPORTED_API MinimalTypeObject(
             MinimalTypeObject&& x);
-    RTPS_DllAPI MinimalTypeObject& operator =(
+    FASTDDS_EXPORTED_API MinimalTypeObject& operator =(
             const MinimalTypeObject& x);
-    RTPS_DllAPI MinimalTypeObject& operator =(
+    FASTDDS_EXPORTED_API MinimalTypeObject& operator =(
             MinimalTypeObject&& x);
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             octet __d);
-    RTPS_DllAPI octet _d() const;
-    RTPS_DllAPI octet& _d();
+    FASTDDS_EXPORTED_API octet _d() const;
+    FASTDDS_EXPORTED_API octet& _d();
 
-    RTPS_DllAPI void alias_type(
+    FASTDDS_EXPORTED_API void alias_type(
             MinimalAliasType _alias_type);
-    RTPS_DllAPI const MinimalAliasType& alias_type() const;
-    RTPS_DllAPI MinimalAliasType& alias_type();
+    FASTDDS_EXPORTED_API const MinimalAliasType& alias_type() const;
+    FASTDDS_EXPORTED_API MinimalAliasType& alias_type();
 
-    RTPS_DllAPI void annotation_type(
+    FASTDDS_EXPORTED_API void annotation_type(
             MinimalAnnotationType _annotation_type);
-    RTPS_DllAPI const MinimalAnnotationType& annotation_type() const;
-    RTPS_DllAPI MinimalAnnotationType& annotation_type();
+    FASTDDS_EXPORTED_API const MinimalAnnotationType& annotation_type() const;
+    FASTDDS_EXPORTED_API MinimalAnnotationType& annotation_type();
 
-    RTPS_DllAPI void struct_type(
+    FASTDDS_EXPORTED_API void struct_type(
             MinimalStructType _struct_type);
-    RTPS_DllAPI const MinimalStructType& struct_type() const;
-    RTPS_DllAPI MinimalStructType& struct_type();
+    FASTDDS_EXPORTED_API const MinimalStructType& struct_type() const;
+    FASTDDS_EXPORTED_API MinimalStructType& struct_type();
 
-    RTPS_DllAPI void union_type(
+    FASTDDS_EXPORTED_API void union_type(
             MinimalUnionType _union_type);
-    RTPS_DllAPI const MinimalUnionType& union_type() const;
-    RTPS_DllAPI MinimalUnionType& union_type();
+    FASTDDS_EXPORTED_API const MinimalUnionType& union_type() const;
+    FASTDDS_EXPORTED_API MinimalUnionType& union_type();
 
-    RTPS_DllAPI void bitset_type(
+    FASTDDS_EXPORTED_API void bitset_type(
             MinimalBitsetType _bitset_type);
-    RTPS_DllAPI const MinimalBitsetType& bitset_type() const;
-    RTPS_DllAPI MinimalBitsetType& bitset_type();
+    FASTDDS_EXPORTED_API const MinimalBitsetType& bitset_type() const;
+    FASTDDS_EXPORTED_API MinimalBitsetType& bitset_type();
 
-    RTPS_DllAPI void sequence_type(
+    FASTDDS_EXPORTED_API void sequence_type(
             MinimalSequenceType _sequence_type);
-    RTPS_DllAPI const MinimalSequenceType& sequence_type() const;
-    RTPS_DllAPI MinimalSequenceType& sequence_type();
+    FASTDDS_EXPORTED_API const MinimalSequenceType& sequence_type() const;
+    FASTDDS_EXPORTED_API MinimalSequenceType& sequence_type();
 
-    RTPS_DllAPI void array_type(
+    FASTDDS_EXPORTED_API void array_type(
             MinimalArrayType _array_type);
-    RTPS_DllAPI const MinimalArrayType& array_type() const;
-    RTPS_DllAPI MinimalArrayType& array_type();
+    FASTDDS_EXPORTED_API const MinimalArrayType& array_type() const;
+    FASTDDS_EXPORTED_API MinimalArrayType& array_type();
 
-    RTPS_DllAPI void map_type(
+    FASTDDS_EXPORTED_API void map_type(
             MinimalMapType _map_type);
-    RTPS_DllAPI const MinimalMapType& map_type() const;
-    RTPS_DllAPI MinimalMapType& map_type();
+    FASTDDS_EXPORTED_API const MinimalMapType& map_type() const;
+    FASTDDS_EXPORTED_API MinimalMapType& map_type();
 
-    RTPS_DllAPI void enumerated_type(
+    FASTDDS_EXPORTED_API void enumerated_type(
             MinimalEnumeratedType _enumerated_type);
-    RTPS_DllAPI const MinimalEnumeratedType& enumerated_type() const;
-    RTPS_DllAPI MinimalEnumeratedType& enumerated_type();
+    FASTDDS_EXPORTED_API const MinimalEnumeratedType& enumerated_type() const;
+    FASTDDS_EXPORTED_API MinimalEnumeratedType& enumerated_type();
 
-    RTPS_DllAPI void bitmask_type(
+    FASTDDS_EXPORTED_API void bitmask_type(
             MinimalBitmaskType _bitmask_type);
-    RTPS_DllAPI const MinimalBitmaskType& bitmask_type() const;
-    RTPS_DllAPI MinimalBitmaskType& bitmask_type();
+    FASTDDS_EXPORTED_API const MinimalBitmaskType& bitmask_type() const;
+    FASTDDS_EXPORTED_API MinimalBitmaskType& bitmask_type();
 
-    RTPS_DllAPI void extended_type(
+    FASTDDS_EXPORTED_API void extended_type(
             MinimalExtendedType _extended_type);
-    RTPS_DllAPI const MinimalExtendedType& extended_type() const;
-    RTPS_DllAPI MinimalExtendedType& extended_type();
+    FASTDDS_EXPORTED_API const MinimalExtendedType& extended_type() const;
+    FASTDDS_EXPORTED_API MinimalExtendedType& extended_type();
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const MinimalTypeObject& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const MinimalTypeObject& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -6202,39 +6202,39 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI TypeObject();
+    FASTDDS_EXPORTED_API TypeObject();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~TypeObject();
+    FASTDDS_EXPORTED_API ~TypeObject();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object TypeObject that will be copied.
      */
-    RTPS_DllAPI TypeObject(
+    FASTDDS_EXPORTED_API TypeObject(
             const TypeObject& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object TypeObject that will be copied.
      */
-    RTPS_DllAPI TypeObject(
+    FASTDDS_EXPORTED_API TypeObject(
             TypeObject&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object TypeObject that will be copied.
      */
-    RTPS_DllAPI TypeObject& operator =(
+    FASTDDS_EXPORTED_API TypeObject& operator =(
             const TypeObject& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeObject that will be copied.
      */
-    RTPS_DllAPI TypeObject& operator =(
+    FASTDDS_EXPORTED_API TypeObject& operator =(
             TypeObject&& x);
 
     /*!
@@ -6242,33 +6242,33 @@ public:
      * @param __d New value for the discriminator.
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             uint8_t __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    RTPS_DllAPI uint8_t _d() const;
+    FASTDDS_EXPORTED_API uint8_t _d() const;
 
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    RTPS_DllAPI uint8_t& _d();
+    FASTDDS_EXPORTED_API uint8_t& _d();
 
     /*!
      * @brief This function copies the value in member complete
      * @param _complete New value to be copied in member complete
      */
-    RTPS_DllAPI void complete(
+    FASTDDS_EXPORTED_API void complete(
             const CompleteTypeObject& _complete);
 
     /*!
      * @brief This function moves the value in member complete
      * @param _complete New value to be moved in member complete
      */
-    RTPS_DllAPI void complete(
+    FASTDDS_EXPORTED_API void complete(
             CompleteTypeObject&& _complete);
 
     /*!
@@ -6276,26 +6276,26 @@ public:
      * @return Constant reference to member complete
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const CompleteTypeObject& complete() const;
+    FASTDDS_EXPORTED_API const CompleteTypeObject& complete() const;
 
     /*!
      * @brief This function returns a reference to member complete
      * @return Reference to member complete
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI CompleteTypeObject& complete();
+    FASTDDS_EXPORTED_API CompleteTypeObject& complete();
     /*!
      * @brief This function copies the value in member minimal
      * @param _minimal New value to be copied in member minimal
      */
-    RTPS_DllAPI void minimal(
+    FASTDDS_EXPORTED_API void minimal(
             const MinimalTypeObject& _minimal);
 
     /*!
      * @brief This function moves the value in member minimal
      * @param _minimal New value to be moved in member minimal
      */
-    RTPS_DllAPI void minimal(
+    FASTDDS_EXPORTED_API void minimal(
             MinimalTypeObject&& _minimal);
 
     /*!
@@ -6303,16 +6303,16 @@ public:
      * @return Constant reference to member minimal
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const MinimalTypeObject& minimal() const;
+    FASTDDS_EXPORTED_API const MinimalTypeObject& minimal() const;
 
     /*!
      * @brief This function returns a reference to member minimal
      * @return Reference to member minimal
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI MinimalTypeObject& minimal();
+    FASTDDS_EXPORTED_API MinimalTypeObject& minimal();
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const TypeObject& other) const;
 
     /*!
@@ -6320,7 +6320,7 @@ public:
      * @param x TypeObject to check if can be assigned to the current instance.
      * @param consistency fastdds::dds::TypeConsistencyEnforcementQoSPolicy to apply.
      */
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const TypeObject& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -6348,57 +6348,57 @@ class TypeIdentifierTypeObjectPair final
 {
 public:
 
-    RTPS_DllAPI TypeIdentifierTypeObjectPair();
-    RTPS_DllAPI ~TypeIdentifierTypeObjectPair();
-    RTPS_DllAPI TypeIdentifierTypeObjectPair(
+    FASTDDS_EXPORTED_API TypeIdentifierTypeObjectPair();
+    FASTDDS_EXPORTED_API ~TypeIdentifierTypeObjectPair();
+    FASTDDS_EXPORTED_API TypeIdentifierTypeObjectPair(
             const TypeIdentifierTypeObjectPair& x);
-    RTPS_DllAPI TypeIdentifierTypeObjectPair(
+    FASTDDS_EXPORTED_API TypeIdentifierTypeObjectPair(
             TypeIdentifierTypeObjectPair&& x);
-    RTPS_DllAPI TypeIdentifierTypeObjectPair& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierTypeObjectPair& operator =(
             const TypeIdentifierTypeObjectPair& x);
-    RTPS_DllAPI TypeIdentifierTypeObjectPair& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierTypeObjectPair& operator =(
             TypeIdentifierTypeObjectPair&& x);
 
-    RTPS_DllAPI inline void type_identifier(
+    FASTDDS_EXPORTED_API inline void type_identifier(
             const TypeIdentifier& _type_identifier)
     {
         m_type_identifier = _type_identifier;
     }
 
-    RTPS_DllAPI inline void type_identifier(
+    FASTDDS_EXPORTED_API inline void type_identifier(
             TypeIdentifier&& _type_identifier)
     {
         m_type_identifier = std::move(_type_identifier);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type_identifier() const
     {
         return m_type_identifier;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type_identifier()
     {
         return m_type_identifier;
     }
 
-    RTPS_DllAPI inline void type_object(
+    FASTDDS_EXPORTED_API inline void type_object(
             const TypeObject& _type_object)
     {
         m_type_object = _type_object;
     }
 
-    RTPS_DllAPI inline void type_object(
+    FASTDDS_EXPORTED_API inline void type_object(
             TypeObject&& _type_object)
     {
         m_type_object = std::move(_type_object);
     }
 
-    RTPS_DllAPI inline const TypeObject& type_object() const
+    FASTDDS_EXPORTED_API inline const TypeObject& type_object() const
     {
         return m_type_object;
     }
 
-    RTPS_DllAPI inline TypeObject& type_object()
+    FASTDDS_EXPORTED_API inline TypeObject& type_object()
     {
         return m_type_object;
     }
@@ -6418,57 +6418,57 @@ class TypeIdentifierPair final
 {
 public:
 
-    RTPS_DllAPI TypeIdentifierPair();
-    RTPS_DllAPI ~TypeIdentifierPair();
-    RTPS_DllAPI TypeIdentifierPair(
+    FASTDDS_EXPORTED_API TypeIdentifierPair();
+    FASTDDS_EXPORTED_API ~TypeIdentifierPair();
+    FASTDDS_EXPORTED_API TypeIdentifierPair(
             const TypeIdentifierPair& x);
-    RTPS_DllAPI TypeIdentifierPair(
+    FASTDDS_EXPORTED_API TypeIdentifierPair(
             TypeIdentifierPair&& x);
-    RTPS_DllAPI TypeIdentifierPair& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierPair& operator =(
             const TypeIdentifierPair& x);
-    RTPS_DllAPI TypeIdentifierPair& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierPair& operator =(
             TypeIdentifierPair&& x);
 
-    RTPS_DllAPI inline void type_identifier1(
+    FASTDDS_EXPORTED_API inline void type_identifier1(
             const TypeIdentifier& _type_identifier1)
     {
         m_type_identifier1 = _type_identifier1;
     }
 
-    RTPS_DllAPI inline void type_identifier1(
+    FASTDDS_EXPORTED_API inline void type_identifier1(
             TypeIdentifier&& _type_identifier1)
     {
         m_type_identifier1 = std::move(_type_identifier1);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type_identifier1() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type_identifier1() const
     {
         return m_type_identifier1;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type_identifier1()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type_identifier1()
     {
         return m_type_identifier1;
     }
 
-    RTPS_DllAPI inline void type_identifier2(
+    FASTDDS_EXPORTED_API inline void type_identifier2(
             const TypeIdentifier& _type_identifier2)
     {
         m_type_identifier2 = _type_identifier2;
     }
 
-    RTPS_DllAPI inline void type_identifier2(
+    FASTDDS_EXPORTED_API inline void type_identifier2(
             TypeIdentifier&& _type_identifier2)
     {
         m_type_identifier2 = std::move(_type_identifier2);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type_identifier2() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type_identifier2() const
     {
         return m_type_identifier2;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type_identifier2()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type_identifier2()
     {
         return m_type_identifier2;
     }
@@ -6488,57 +6488,57 @@ class TypeIdentifierWithSize
 {
 public:
 
-    RTPS_DllAPI TypeIdentifierWithSize();
-    RTPS_DllAPI ~TypeIdentifierWithSize();
-    RTPS_DllAPI TypeIdentifierWithSize(
+    FASTDDS_EXPORTED_API TypeIdentifierWithSize();
+    FASTDDS_EXPORTED_API ~TypeIdentifierWithSize();
+    FASTDDS_EXPORTED_API TypeIdentifierWithSize(
             const TypeIdentifierWithSize& x);
-    RTPS_DllAPI TypeIdentifierWithSize(
+    FASTDDS_EXPORTED_API TypeIdentifierWithSize(
             TypeIdentifierWithSize&& x);
-    RTPS_DllAPI TypeIdentifierWithSize& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierWithSize& operator =(
             const TypeIdentifierWithSize& x);
-    RTPS_DllAPI TypeIdentifierWithSize& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierWithSize& operator =(
             TypeIdentifierWithSize&& x);
 
-    RTPS_DllAPI inline void type_id(
+    FASTDDS_EXPORTED_API inline void type_id(
             const TypeIdentifier& _type_id)
     {
         m_type_id = _type_id;
     }
 
-    RTPS_DllAPI inline void type_id(
+    FASTDDS_EXPORTED_API inline void type_id(
             TypeIdentifier&& _type_id)
     {
         m_type_id = std::move(_type_id);
     }
 
-    RTPS_DllAPI inline const TypeIdentifier& type_id() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier& type_id() const
     {
         return m_type_id;
     }
 
-    RTPS_DllAPI inline TypeIdentifier& type_id()
+    FASTDDS_EXPORTED_API inline TypeIdentifier& type_id()
     {
         return m_type_id;
     }
 
-    RTPS_DllAPI inline void typeobject_serialized_size(
+    FASTDDS_EXPORTED_API inline void typeobject_serialized_size(
             const uint32_t& _typeobject_serialized_size)
     {
         m_typeobject_serialized_size = _typeobject_serialized_size;
     }
 
-    RTPS_DllAPI inline void typeobject_serialized_size(
+    FASTDDS_EXPORTED_API inline void typeobject_serialized_size(
             uint32_t&& _typeobject_serialized_size)
     {
         m_typeobject_serialized_size = std::move(_typeobject_serialized_size);
     }
 
-    RTPS_DllAPI inline const uint32_t& typeobject_serialized_size() const
+    FASTDDS_EXPORTED_API inline const uint32_t& typeobject_serialized_size() const
     {
         return m_typeobject_serialized_size;
     }
 
-    RTPS_DllAPI inline uint32_t& typeobject_serialized_size()
+    FASTDDS_EXPORTED_API inline uint32_t& typeobject_serialized_size()
     {
         return m_typeobject_serialized_size;
     }
@@ -6561,79 +6561,79 @@ class TypeIdentifierWithDependencies
 {
 public:
 
-    RTPS_DllAPI TypeIdentifierWithDependencies();
-    RTPS_DllAPI ~TypeIdentifierWithDependencies();
-    RTPS_DllAPI TypeIdentifierWithDependencies(
+    FASTDDS_EXPORTED_API TypeIdentifierWithDependencies();
+    FASTDDS_EXPORTED_API ~TypeIdentifierWithDependencies();
+    FASTDDS_EXPORTED_API TypeIdentifierWithDependencies(
             const TypeIdentifierWithDependencies& x);
-    RTPS_DllAPI TypeIdentifierWithDependencies(
+    FASTDDS_EXPORTED_API TypeIdentifierWithDependencies(
             TypeIdentifierWithDependencies&& x);
-    RTPS_DllAPI TypeIdentifierWithDependencies& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierWithDependencies& operator =(
             const TypeIdentifierWithDependencies& x);
-    RTPS_DllAPI TypeIdentifierWithDependencies& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifierWithDependencies& operator =(
             TypeIdentifierWithDependencies&& x);
 
-    RTPS_DllAPI inline void typeid_with_size(
+    FASTDDS_EXPORTED_API inline void typeid_with_size(
             const TypeIdentifierWithSize& _typeid_with_size)
     {
         m_typeid_with_size = _typeid_with_size;
     }
 
-    RTPS_DllAPI inline void typeid_with_size(
+    FASTDDS_EXPORTED_API inline void typeid_with_size(
             TypeIdentifierWithSize&& _typeid_with_size)
     {
         m_typeid_with_size = std::move(_typeid_with_size);
     }
 
-    RTPS_DllAPI inline const TypeIdentifierWithSize& typeid_with_size() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifierWithSize& typeid_with_size() const
     {
         return m_typeid_with_size;
     }
 
-    RTPS_DllAPI inline TypeIdentifierWithSize& typeid_with_size()
+    FASTDDS_EXPORTED_API inline TypeIdentifierWithSize& typeid_with_size()
     {
         return m_typeid_with_size;
     }
 
-    RTPS_DllAPI inline void dependent_typeid_count(
+    FASTDDS_EXPORTED_API inline void dependent_typeid_count(
             const int32_t& _dependent_typeid_count)
     {
         m_dependent_typeid_count = _dependent_typeid_count;
     }
 
-    RTPS_DllAPI inline void dependent_typeid_count(
+    FASTDDS_EXPORTED_API inline void dependent_typeid_count(
             int32_t&& _dependent_typeid_count)
     {
         m_dependent_typeid_count = std::move(_dependent_typeid_count);
     }
 
-    RTPS_DllAPI inline const int32_t& dependent_typeid_count() const
+    FASTDDS_EXPORTED_API inline const int32_t& dependent_typeid_count() const
     {
         return m_dependent_typeid_count;
     }
 
-    RTPS_DllAPI inline int32_t& dependent_typeid_count()
+    FASTDDS_EXPORTED_API inline int32_t& dependent_typeid_count()
     {
         return m_dependent_typeid_count;
     }
 
-    RTPS_DllAPI inline void dependent_typeids(
+    FASTDDS_EXPORTED_API inline void dependent_typeids(
             const TypeIdentifierWithSizeSeq& _dependent_typeids)
     {
         m_dependent_typeids = _dependent_typeids;
     }
 
-    RTPS_DllAPI inline void dependent_typeids(
+    FASTDDS_EXPORTED_API inline void dependent_typeids(
             TypeIdentifierWithSizeSeq&& _dependent_typeids)
     {
         m_dependent_typeids = std::move(_dependent_typeids);
     }
 
-    RTPS_DllAPI inline const TypeIdentifierWithSizeSeq& dependent_typeids() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifierWithSizeSeq& dependent_typeids() const
     {
         return m_dependent_typeids;
     }
 
-    RTPS_DllAPI inline TypeIdentifierWithSizeSeq& dependent_typeids()
+    FASTDDS_EXPORTED_API inline TypeIdentifierWithSizeSeq& dependent_typeids()
     {
         return m_dependent_typeids;
     }
@@ -6659,57 +6659,57 @@ class TypeInformation
 {
 public:
 
-    RTPS_DllAPI TypeInformation();
-    RTPS_DllAPI ~TypeInformation();
-    RTPS_DllAPI TypeInformation(
+    FASTDDS_EXPORTED_API TypeInformation();
+    FASTDDS_EXPORTED_API ~TypeInformation();
+    FASTDDS_EXPORTED_API TypeInformation(
             const TypeInformation& x);
-    RTPS_DllAPI TypeInformation(
+    FASTDDS_EXPORTED_API TypeInformation(
             TypeInformation&& x);
-    RTPS_DllAPI TypeInformation& operator =(
+    FASTDDS_EXPORTED_API TypeInformation& operator =(
             const TypeInformation& x);
-    RTPS_DllAPI TypeInformation& operator =(
+    FASTDDS_EXPORTED_API TypeInformation& operator =(
             TypeInformation&& x);
 
-    RTPS_DllAPI inline void minimal(
+    FASTDDS_EXPORTED_API inline void minimal(
             const TypeIdentifierWithDependencies& _minimal)
     {
         m_minimal = _minimal;
     }
 
-    RTPS_DllAPI inline void minimal(
+    FASTDDS_EXPORTED_API inline void minimal(
             TypeIdentifierWithDependencies&& _minimal)
     {
         m_minimal = std::move(_minimal);
     }
 
-    RTPS_DllAPI inline const TypeIdentifierWithDependencies& minimal() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifierWithDependencies& minimal() const
     {
         return m_minimal;
     }
 
-    RTPS_DllAPI inline TypeIdentifierWithDependencies& minimal()
+    FASTDDS_EXPORTED_API inline TypeIdentifierWithDependencies& minimal()
     {
         return m_minimal;
     }
 
-    RTPS_DllAPI inline void complete(
+    FASTDDS_EXPORTED_API inline void complete(
             const TypeIdentifierWithDependencies& _complete)
     {
         m_complete = _complete;
     }
 
-    RTPS_DllAPI inline void complete(
+    FASTDDS_EXPORTED_API inline void complete(
             TypeIdentifierWithDependencies&& _complete)
     {
         m_complete = std::move(_complete);
     }
 
-    RTPS_DllAPI inline const TypeIdentifierWithDependencies& complete() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifierWithDependencies& complete() const
     {
         return m_complete;
     }
 
-    RTPS_DllAPI inline TypeIdentifierWithDependencies& complete()
+    FASTDDS_EXPORTED_API inline TypeIdentifierWithDependencies& complete()
     {
         return m_complete;
     }

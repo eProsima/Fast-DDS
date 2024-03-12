@@ -33,26 +33,26 @@ public:
     using Base::operator *;
     using Base::operator bool;
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr()
+    FASTDDS_EXPORTED_API DynamicTypeBuilder_ptr()
     {
     }
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder_ptr(
             DynamicTypeBuilder* pType);
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder_ptr(
             DynamicTypeBuilder_ptr&& other) = default;
 
-    RTPS_DllAPI DynamicTypeBuilder_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder_ptr& operator =(
             DynamicTypeBuilder_ptr&&) = default;
 
-    RTPS_DllAPI bool operator !=(
+    FASTDDS_EXPORTED_API bool operator !=(
             std::nullptr_t) const
     {
         return bool(*this);
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             std::nullptr_t) const
     {
         return !*this;

@@ -43,7 +43,7 @@ class UDPv6Transport : public UDPTransportInterface
 {
 public:
 
-    RTPS_DllAPI UDPv6Transport(
+    FASTDDS_EXPORTED_API UDPv6Transport(
             const UDPv6TransportDescriptor&);
 
     ~UDPv6Transport() override;

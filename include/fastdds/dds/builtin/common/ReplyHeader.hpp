@@ -39,7 +39,7 @@ struct ReplyHeader
 
     RemoteExceptionCode_t remoteEx;
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }

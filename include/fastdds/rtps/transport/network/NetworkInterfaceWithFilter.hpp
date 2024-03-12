@@ -23,7 +23,7 @@
 
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/network/NetworkInterface.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -38,12 +38,12 @@ namespace rtps {
 struct NetworkInterfaceWithFilter : public NetworkInterface
 {
     //! Constructor by name and netmask filter
-    RTPS_DllAPI NetworkInterfaceWithFilter(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter(
             const std::string& name,
             NetmaskFilterKind netmask_filter);
 
     //! Constructor by name
-    RTPS_DllAPI NetworkInterfaceWithFilter(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter(
             const std::string& name);
 
     //! Constructor by device name, IP address string, locator with mask and netmask filter
@@ -54,32 +54,32 @@ struct NetworkInterfaceWithFilter : public NetworkInterface
             NetmaskFilterKind netmask_filter);
 
     //! Constructor by device name, IP address string and locator with mask
-    RTPS_DllAPI NetworkInterfaceWithFilter(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter(
             const std::string& device,
             const std::string& ip,
             const LocatorWithMask& locator);
 
     //! Destructor
-    virtual RTPS_DllAPI ~NetworkInterfaceWithFilter() = default;
+    virtual FASTDDS_EXPORTED_API ~NetworkInterfaceWithFilter() = default;
 
     //! Copy constructor
-    RTPS_DllAPI NetworkInterfaceWithFilter(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter(
             const NetworkInterfaceWithFilter& iface) = default;
 
     //! Copy assignment
-    RTPS_DllAPI NetworkInterfaceWithFilter& operator =(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter& operator =(
             const NetworkInterfaceWithFilter& iface) = default;
 
     //! Move constructor
-    RTPS_DllAPI NetworkInterfaceWithFilter(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter(
             NetworkInterfaceWithFilter&& iface) = default;
 
     //! Move assignment
-    RTPS_DllAPI NetworkInterfaceWithFilter& operator =(
+    FASTDDS_EXPORTED_API NetworkInterfaceWithFilter& operator =(
             NetworkInterfaceWithFilter&& iface) = default;
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const NetworkInterfaceWithFilter& iface) const;
 
     //! Netmask filter configuration

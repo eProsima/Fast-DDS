@@ -24,7 +24,7 @@
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -66,7 +66,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter(
+    FASTDDS_EXPORTED_API ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const eprosima::fastdds::dds::DataWriterQos& dwqos);
 
@@ -81,7 +81,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI ReturnCode_t enable_statistics_datawriter_with_profile(
+    FASTDDS_EXPORTED_API ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name,
             const std::string& topic_name);
 
@@ -93,7 +93,7 @@ public:
      * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
      * and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI ReturnCode_t disable_statistics_datawriter(
+    FASTDDS_EXPORTED_API ReturnCode_t disable_statistics_datawriter(
             const std::string& topic_name);
 
     /**
@@ -102,7 +102,7 @@ public:
      * @return Reference to the Statistics DomainParticipant if successful.
      * nullptr otherwise.
      */
-    RTPS_DllAPI static DomainParticipant* narrow(
+    FASTDDS_EXPORTED_API static DomainParticipant* narrow(
             eprosima::fastdds::dds::DomainParticipant* domain_participant);
 
     /**
@@ -111,7 +111,7 @@ public:
      * @return Constant reference to the Statistics DomainParticipant if successful.
      * nullptr otherwise.
      */
-    RTPS_DllAPI static const DomainParticipant* narrow(
+    FASTDDS_EXPORTED_API static const DomainParticipant* narrow(
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
 
     /**
@@ -123,7 +123,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t enable_monitor_service();
+    FASTDDS_EXPORTED_API ReturnCode_t enable_monitor_service();
 
     /**
      * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
@@ -135,7 +135,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t disable_monitor_service();
+    FASTDDS_EXPORTED_API ReturnCode_t disable_monitor_service();
 
     /**
      * fills in the ParticipantProxyData from a MonitorService Message
@@ -146,7 +146,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    FASTDDS_EXPORTED_API ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
@@ -159,7 +159,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    FASTDDS_EXPORTED_API ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
@@ -172,7 +172,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    FASTDDS_EXPORTED_API ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
@@ -185,7 +185,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    FASTDDS_EXPORTED_API ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
             const statistics::MonitorServiceStatusData& msg);
 
@@ -198,7 +198,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    FASTDDS_EXPORTED_API ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
             const statistics::MonitorServiceStatusData& msg);
 
@@ -211,7 +211,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    FASTDDS_EXPORTED_API ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
             const statistics::MonitorServiceStatusData& msg);
 

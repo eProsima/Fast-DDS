@@ -41,14 +41,14 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI SubscriberQos()
+    FASTDDS_EXPORTED_API SubscriberQos()
     {
     }
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~SubscriberQos()
+    FASTDDS_EXPORTED_API virtual ~SubscriberQos()
     {
     }
 
@@ -200,7 +200,7 @@ private:
     EntityFactoryQosPolicy entity_factory_;
 };
 
-RTPS_DllAPI extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
+FASTDDS_EXPORTED_API extern const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 
 } /* namespace dds */

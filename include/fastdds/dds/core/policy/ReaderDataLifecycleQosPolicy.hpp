@@ -48,7 +48,7 @@ public:
     /**
      * @brief Destructor
      */
-    virtual RTPS_DllAPI ~ReaderDataLifecycleQosPolicy()
+    virtual FASTDDS_EXPORTED_API ~ReaderDataLifecycleQosPolicy()
     {
     }
 

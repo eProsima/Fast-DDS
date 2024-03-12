@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_TOPICLISTENER_HPP_
 #define _FASTDDS_TOPICLISTENER_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 
 namespace eprosima {
@@ -33,7 +33,7 @@ class Topic;
  *
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI TopicListener
+class FASTDDS_EXPORTED_API TopicListener
 {
 public:
 
