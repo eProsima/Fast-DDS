@@ -70,7 +70,8 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitmask_helper()
     bitmask_descriptor->name(bitmask_name);
     bitmask_descriptor->element_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
     bitmask_descriptor->bound().push_back(32);
-    DynamicTypeBuilder::_ref_type bitmask_builder {DynamicTypeBuilderFactory::get_instance()->create_type(bitmask_descriptor)};
+    DynamicTypeBuilder::_ref_type bitmask_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                       bitmask_descriptor)};
 
     MemberDescriptor::_ref_type bitfield_descriptor {traits<MemberDescriptor>::make_shared()};
     bitfield_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
@@ -134,13 +135,26 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_union_helper()
     return union_builder->build();
 }
 
+DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_empty_struct_helper()
+{
+    TypeDescriptor::_ref_type struct_descriptor {traits<TypeDescriptor>::make_shared()};
+    struct_descriptor->kind(TK_STRUCTURE);
+    struct_descriptor->name(empty_struct_name);
+    struct_descriptor->is_nested(true);
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      struct_descriptor)};
+
+    return struct_builder->build();
+}
+
 DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_struct_helper()
 {
     TypeDescriptor::_ref_type struct_descriptor {traits<TypeDescriptor>::make_shared()};
     struct_descriptor->kind(TK_STRUCTURE);
     struct_descriptor->name(struct_name);
     struct_descriptor->is_nested(true);
-    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(struct_descriptor)};
+    DynamicTypeBuilder::_ref_type struct_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      struct_descriptor)};
 
     MemberDescriptor::_ref_type struct_member {traits<MemberDescriptor>::make_shared()};
     struct_member->name(struct_long_member_name);
@@ -160,7 +174,8 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitset_helper()
     bitset_descriptor->kind(TK_BITSET);
     bitset_descriptor->name(bitset_name);
     bitset_descriptor->bound({3, 1, 10, 12});
-    DynamicTypeBuilder::_ref_type bitset_builder {DynamicTypeBuilderFactory::get_instance()->create_type(bitset_descriptor)};
+    DynamicTypeBuilder::_ref_type bitset_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                      bitset_descriptor)};
 
     MemberDescriptor::_ref_type bitset_member {traits<MemberDescriptor>::make_shared()};
     bitset_member->name(bitfield_a);
@@ -211,7 +226,8 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_array_helper
     TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(array_alias);
-    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), {2})->build());
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_array_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT16), {2})->build());
 
     return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
 }
@@ -221,7 +237,9 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_sequence_hel
     TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(seq_alias);
-    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT16), LENGTH_UNLIMITED)->build());
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_sequence_type(
+                DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
+                    TK_INT16), LENGTH_UNLIMITED)->build());
 
     return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
 }
@@ -231,9 +249,38 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
     TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(map_alias);
-    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32), LENGTH_UNLIMITED)->build());
+    alias_descriptor->base_type(DynamicTypeBuilderFactory::get_instance()->create_map_type(DynamicTypeBuilderFactory::
+                    get_instance()->get_primitive_type(TK_INT32),
+            DynamicTypeBuilderFactory::get_instance()->get_primitive_type(
+                TK_INT32), LENGTH_UNLIMITED)->build());
 
     return DynamicTypeBuilderFactory::get_instance()->create_type(alias_descriptor)->build();
+}
+
+DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_struct_helper_alias()
+{
+    TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(inner_struct_helper_alias_struct_name);
+    alias_descriptor->base_type(create_inner_struct_helper());
+
+    DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                     alias_descriptor)};
+
+    return alias_builder->build();
+}
+
+DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitset_helper_alias()
+{
+    TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
+    alias_descriptor->kind(TK_ALIAS);
+    alias_descriptor->name(inner_bitset_helper_alias_struct_name);
+    alias_descriptor->base_type(create_inner_struct_helper_alias());
+
+    DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                     alias_descriptor)};
+
+    return alias_builder->build();
 }
 
 // /*********
@@ -263,7 +310,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = bitset_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -307,7 +354,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         BitsetStructPubSubType wbitsetpb;
 
 //         SerializedPayload_t dynamic_payload(payloadSize);
-//         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));        
+//         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
 //         ASSERT_TRUE(wbitsetpb.deserialize(&dynamic_payload, &wbitset));
 
 //         uint32_t static_payloadSize = static_cast<uint32_t>(wbitsetpb.getSerializedSizeProvider(&wbitset)());
@@ -353,8 +400,8 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(struct_base_type_builder->add_member(1, "field2", struct_base_type2) == ReturnCode_t::RETCODE_OK);
 
 //         DynamicType_ptr struct_base_type = struct_base_type_builder->build();
-//         ASSERT_TRUE(struct_base_type != nullptr);    
-        
+//         ASSERT_TRUE(struct_base_type != nullptr);
+
 
 //         DynamicTypeBuilder_ptr union_base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
 //         DynamicType_ptr union_base_type = union_base_type_builder->build();
@@ -452,20 +499,20 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(struct_base_type_builder->add_member(1, "field2", struct_base_type2) == ReturnCode_t::RETCODE_OK);
 
 //         DynamicType_ptr struct_base_type = struct_base_type_builder->build();
-//         ASSERT_TRUE(struct_base_type != nullptr);    
-        
+//         ASSERT_TRUE(struct_base_type != nullptr);
+
 //         uint32_t sequence_length = eprosima::fastrtps::types::BOUND_UNLIMITED;
 //         DynamicTypeBuilder_ptr sequence_struct_base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(struct_base_type_builder.get(), sequence_length);
 //         DynamicType_ptr sequence_struct_base_type = sequence_struct_base_type_builder->build();
 //         ASSERT_TRUE(sequence_struct_base_type_builder != nullptr);
 //         ASSERT_TRUE(sequence_struct_base_type != nullptr);
-        
+
 //         sequence_length = 10;
 //         DynamicTypeBuilder_ptr sequence_struct_base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(struct_base_type_builder.get(), sequence_length);
 //         DynamicType_ptr sequence_struct_base_type2 = sequence_struct_base_type_builder2->build();
 //         ASSERT_TRUE(sequence_struct_base_type_builder2 != nullptr);
 //         ASSERT_TRUE(sequence_struct_base_type2 != nullptr);
-        
+
 //         DynamicTypeBuilder_ptr union_base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
 //         DynamicType_ptr union_base_type1 = union_base_type_builder1->build();
 //         ASSERT_TRUE(union_base_type_builder1!= nullptr);
@@ -504,7 +551,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         DynamicType_ptr sequence_union_base_typetype2 = sequence_union_base_typetype_builder2->build();
 //         ASSERT_TRUE(sequence_union_base_typetype_builder2 != nullptr);
 //         ASSERT_TRUE(sequence_union_base_typetype2 != nullptr);
-               
+
 //         DynamicTypeBuilder_ptr forward_struct_base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
 //         ASSERT_TRUE(forward_struct_base_type_builder != nullptr);
 
@@ -573,8 +620,8 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(struct_base_type_builder->add_member(1, "field2", struct_base_type2) == ReturnCode_t::RETCODE_OK);
 
 //         DynamicType_ptr struct_base_type = struct_base_type_builder->build();
-//         ASSERT_TRUE(struct_base_type != nullptr);    
-        
+//         ASSERT_TRUE(struct_base_type != nullptr);
+
 
 //         DynamicTypeBuilder_ptr union_base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
 //         DynamicType_ptr union_base_type = union_base_type_builder->build();
@@ -672,20 +719,20 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(struct_base_type_builder->add_member(1, "field2", struct_base_type2) == ReturnCode_t::RETCODE_OK);
 
 //         DynamicType_ptr struct_base_type = struct_base_type_builder->build();
-//         ASSERT_TRUE(struct_base_type != nullptr);    
-        
+//         ASSERT_TRUE(struct_base_type != nullptr);
+
 //         uint32_t sequence_length = eprosima::fastrtps::types::BOUND_UNLIMITED;
 //         DynamicTypeBuilder_ptr sequence_struct_base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(struct_base_type_builder.get(), sequence_length);
 //         DynamicType_ptr sequence_struct_base_type = sequence_struct_base_type_builder->build();
 //         ASSERT_TRUE(sequence_struct_base_type_builder != nullptr);
 //         ASSERT_TRUE(sequence_struct_base_type != nullptr);
-        
+
 //         sequence_length = 10;
 //         DynamicTypeBuilder_ptr sequence_struct_base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(struct_base_type_builder.get(), sequence_length);
 //         DynamicType_ptr sequence_struct_base_type2 = sequence_struct_base_type_builder2->build();
 //         ASSERT_TRUE(sequence_struct_base_type_builder2 != nullptr);
 //         ASSERT_TRUE(sequence_struct_base_type2 != nullptr);
-        
+
 //         DynamicTypeBuilder_ptr union_base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
 //         DynamicType_ptr union_base_type1 = union_base_type_builder1->build();
 //         ASSERT_TRUE(union_base_type_builder1!= nullptr);
@@ -724,7 +771,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         DynamicType_ptr sequence_union_base_typetype2 = sequence_union_base_typetype_builder2->build();
 //         ASSERT_TRUE(sequence_union_base_typetype_builder2 != nullptr);
 //         ASSERT_TRUE(sequence_union_base_typetype2 != nullptr);
-               
+
 //         DynamicTypeBuilder_ptr forward_struct_base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
 //         ASSERT_TRUE(forward_struct_base_type_builder != nullptr);
 
@@ -786,7 +833,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //     {
 //         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_enum_builder();
 //         ASSERT_TRUE(created_builder != nullptr);
-        
+
 //         // Add three members to the enum.
 //         ASSERT_TRUE(created_builder->add_empty_member(0, "DEFAULT") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(created_builder->add_empty_member(1, "FIRST") == ReturnCode_t::RETCODE_OK);
@@ -794,7 +841,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         // Try to add a descriptor with the same name.
 //         ASSERT_FALSE(created_builder->add_empty_member(4, "DEFAULT") == ReturnCode_t::RETCODE_OK);
-        
+
 //         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(created_builder.get());
 //         ASSERT_TRUE(created_type != nullptr);
 //         DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
@@ -859,11 +906,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(base_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(base_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(base_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(base_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(base_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(base_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(base_type_builder.get());
 //         ASSERT_TRUE(created_type != nullptr);
@@ -1433,7 +1480,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -1445,7 +1492,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to Add the same key twice.
 //         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
-        
+
 //         MemberId keyId2;
 //         MemberId valueId2;
 //         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -1528,7 +1575,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -1622,7 +1669,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -1717,7 +1764,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -1812,7 +1859,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -1906,7 +1953,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2096,7 +2143,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2286,7 +2333,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2381,7 +2428,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2476,7 +2523,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2571,7 +2618,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2761,7 +2808,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2856,7 +2903,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -2959,7 +3006,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -3048,11 +3095,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -3065,7 +3112,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -3095,7 +3142,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -3176,7 +3223,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -3276,7 +3323,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -3333,7 +3380,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -3412,7 +3459,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -3461,7 +3508,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -3545,7 +3592,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -3602,7 +3649,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -3708,7 +3755,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -3742,7 +3789,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -3856,7 +3903,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 
@@ -3865,7 +3912,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -3942,7 +3989,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -3995,7 +4042,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -4076,7 +4123,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4171,7 +4218,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4266,7 +4313,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4361,7 +4408,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4456,7 +4503,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4551,7 +4598,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4646,7 +4693,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -4836,7 +4883,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5026,7 +5073,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5121,7 +5168,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5216,7 +5263,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5311,7 +5358,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5501,7 +5548,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5509,7 +5556,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
 //         ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
-      
+
 //         // Try to Add the same key twice.
 //         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
@@ -5596,7 +5643,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5699,7 +5746,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -5788,11 +5835,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -5805,7 +5852,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -5835,7 +5882,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -5916,7 +5963,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -6016,7 +6063,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -6073,7 +6120,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -6152,7 +6199,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -6201,7 +6248,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -6285,7 +6332,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -6342,7 +6389,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -6448,7 +6495,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -6482,7 +6529,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -6596,7 +6643,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -6604,7 +6651,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -6681,7 +6728,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -6734,7 +6781,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -6815,7 +6862,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -6910,7 +6957,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7005,7 +7052,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7100,7 +7147,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7195,7 +7242,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7290,7 +7337,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7385,7 +7432,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7575,7 +7622,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7765,7 +7812,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7860,7 +7907,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -7955,7 +8002,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -8050,7 +8097,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -8240,7 +8287,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -8335,7 +8382,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -8438,7 +8485,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -8527,11 +8574,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -8544,7 +8591,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -8574,7 +8621,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -8655,7 +8702,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -8755,7 +8802,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -8812,7 +8859,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -8891,7 +8938,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -8940,7 +8987,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -9024,7 +9071,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -9081,7 +9128,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -9187,7 +9234,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -9221,7 +9268,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -9335,7 +9382,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -9343,7 +9390,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -9420,7 +9467,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -9473,7 +9520,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -9554,7 +9601,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -9649,7 +9696,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -9744,7 +9791,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -9839,7 +9886,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -9934,7 +9981,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10029,7 +10076,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10124,7 +10171,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10314,7 +10361,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10504,7 +10551,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10599,7 +10646,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10694,7 +10741,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10789,7 +10836,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -10979,7 +11026,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -11074,7 +11121,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -11177,7 +11224,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -11266,11 +11313,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -11283,7 +11330,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -11313,7 +11360,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -11394,7 +11441,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -11494,7 +11541,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -11551,7 +11598,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -11630,7 +11677,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -11679,7 +11726,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -11763,7 +11810,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -11820,7 +11867,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -11926,7 +11973,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -11960,7 +12007,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -12074,7 +12121,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -12082,7 +12129,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -12159,7 +12206,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -12212,7 +12259,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -12293,7 +12340,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -12388,7 +12435,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -12483,7 +12530,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -12578,7 +12625,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -12673,7 +12720,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -12768,7 +12815,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -12863,7 +12910,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13053,7 +13100,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13243,7 +13290,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13338,7 +13385,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13433,7 +13480,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13528,7 +13575,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13718,7 +13765,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13813,7 +13860,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -13916,7 +13963,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -14005,11 +14052,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -14022,7 +14069,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -14052,7 +14099,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -14133,7 +14180,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -14233,7 +14280,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -14290,7 +14337,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -14369,7 +14416,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -14418,7 +14465,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -14502,7 +14549,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -14559,7 +14606,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -14665,7 +14712,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -14699,7 +14746,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -14813,7 +14860,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -14821,7 +14868,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -14898,7 +14945,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -14951,7 +14998,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -15032,7 +15079,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15127,7 +15174,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15222,7 +15269,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15317,7 +15364,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15412,7 +15459,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15507,7 +15554,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15602,7 +15649,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15792,7 +15839,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -15982,7 +16029,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16077,7 +16124,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16172,7 +16219,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16267,7 +16314,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16457,7 +16504,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16552,7 +16599,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16655,7 +16702,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16744,11 +16791,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -16761,7 +16808,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -16791,7 +16838,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -16872,7 +16919,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -16972,7 +17019,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -17029,7 +17076,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -17108,7 +17155,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -17157,7 +17204,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -17241,7 +17288,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -17298,7 +17345,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -17404,7 +17451,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -17438,7 +17485,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -17552,7 +17599,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -17560,7 +17607,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -17637,7 +17684,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -17690,7 +17737,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -17771,7 +17818,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -17866,7 +17913,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -17961,7 +18008,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18056,7 +18103,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18151,7 +18198,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18246,7 +18293,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18341,7 +18388,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18531,7 +18578,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18721,7 +18768,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18816,7 +18863,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -18911,7 +18958,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -19006,7 +19053,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -19196,7 +19243,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -19291,7 +19338,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -19394,7 +19441,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -19483,11 +19530,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -19500,7 +19547,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -19530,7 +19577,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -19611,7 +19658,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -19711,7 +19758,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -19768,7 +19815,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -19847,7 +19894,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -19896,7 +19943,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -19980,7 +20027,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -20037,7 +20084,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -20143,7 +20190,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -20177,7 +20224,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -20291,7 +20338,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -20299,7 +20346,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -20376,7 +20423,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -20429,7 +20476,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -20510,7 +20557,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -20605,7 +20652,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -20700,7 +20747,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -20795,7 +20842,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -20890,7 +20937,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -20985,7 +21032,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21080,7 +21127,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21270,7 +21317,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21460,7 +21507,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21555,7 +21602,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21650,7 +21697,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21745,7 +21792,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -21935,7 +21982,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -22030,7 +22077,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -22133,7 +22180,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -22222,11 +22269,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -22239,7 +22286,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -22269,7 +22316,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -22350,7 +22397,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -22450,7 +22497,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -22507,7 +22554,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -22586,7 +22633,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -22635,7 +22682,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -22719,7 +22766,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -22776,7 +22823,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -22882,7 +22929,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -22916,7 +22963,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -23030,7 +23077,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -23038,7 +23085,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -23115,7 +23162,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -23168,7 +23215,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -23249,7 +23296,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -23344,7 +23391,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -23439,7 +23486,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -23534,7 +23581,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -23629,7 +23676,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -23724,7 +23771,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -23819,7 +23866,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24009,7 +24056,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24199,7 +24246,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24294,7 +24341,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24389,7 +24436,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24484,7 +24531,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24674,7 +24721,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24769,7 +24816,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24872,7 +24919,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -24961,11 +25008,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -24978,7 +25025,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -25008,7 +25055,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25089,7 +25136,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -25189,7 +25236,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -25246,7 +25293,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25325,7 +25372,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -25374,7 +25421,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25458,7 +25505,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -25515,7 +25562,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25621,7 +25668,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -25655,7 +25702,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25769,7 +25816,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -25777,7 +25824,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25854,7 +25901,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -25907,7 +25954,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -25988,7 +26035,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26083,7 +26130,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint16_t test_value_1 = 123;
 //         uint16_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26178,7 +26225,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26273,7 +26320,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint32_t test_value_1 = 123;
 //         uint32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26368,7 +26415,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int64_t test_value_1 = 123;
 //         int64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26463,7 +26510,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 123;
 //         uint64_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26558,7 +26605,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         float_t test_value_1 = 123.0f;
 //         float_t test_value_2 = 0.0f;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26748,7 +26795,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         long double test_value_1 = 123.0;
 //         long double test_value_2 = 0.0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_float128_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -26938,7 +26985,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         octet test_value_1 = 255;
 //         octet test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_byte_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27033,7 +27080,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         char test_value_1 = 'a';
 //         char test_value_2 = 'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char8_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27128,7 +27175,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         wchar_t test_value_1 = L'a';
 //         wchar_t test_value_2 = L'b';
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_char16_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27223,7 +27270,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "STRING_TEST";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27413,7 +27460,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "A";
 //         std::string test_value_2 = "";
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_string_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27508,7 +27555,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::wstring test_value_1 = L"A";
 //         std::wstring test_value_2 = L"";
-                
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_wstring_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27611,7 +27658,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         std::string test_value_1 = "SECOND";
 //         std::string test_value_2;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_enum_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27700,11 +27747,11 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
-        
+
 //         // Try to add a descriptor with the same name
 //         ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
 //         // Out of bounds
-//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+//         ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK);
 
 //         DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
 //         DynamicType_ptr map_type = map_type_builder->build();
@@ -27717,7 +27764,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         uint64_t test_value_1 = 55;// 00110111
 //         uint64_t test_value_2;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -27747,7 +27794,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 
 //         ASSERT_TRUE(test_value_1 == test_value_2);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -27828,7 +27875,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -27928,7 +27975,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -27985,7 +28032,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Try to set a value out of the array.
 //         ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -28064,7 +28111,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -28113,7 +28160,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Check that the sequence is empty.
 //         ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -28197,7 +28244,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -28254,7 +28301,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(loaned_value1->get_item_count() == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -28360,7 +28407,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         uint64_t label;
 //         int16_t test_value_1 = 123;
 //         int16_t test_value_2 = 0;
-        
+
 //         MemberId keyId;
 //         MemberId valueId;
 //         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
@@ -28394,7 +28441,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_TRUE(label == 0);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -28508,7 +28555,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_set_values(loaned_value1, expected_types, &test_value_1, 0);
 //         check_get_values(loaned_value1, expected_types, &test_value_2, 0);
 //         ASSERT_TRUE(test_value_1 == test_value_2);
-        
+
 //         float test_value_3 = 123.0f;
 //         float test_value_4 = 0.0f;
 //         std::vector<ExpectedType> expected_types2 = {ExpectedType::Float};
@@ -28516,7 +28563,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         check_get_values(loaned_value1, expected_types2, &test_value_4, 1);
 //         ASSERT_TRUE(test_value_3 == test_value_4);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -28593,7 +28640,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
 //         value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
 //         value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
-//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+//         value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10");
 
 //         DynamicType_ptr bitset_type = value_type_builder->build();
 //         ASSERT_TRUE(bitset_type != nullptr);
@@ -28646,7 +28693,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // 00000000000000101010110011101010 (20 bits)
 //         ASSERT_TRUE(test4 == 175338);
 
-//         // Return the pointer 
+//         // Return the pointer
 //         ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
 //         ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
@@ -28727,7 +28774,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
@@ -28823,7 +28870,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_map_helper()
 //         // Set and get a value.
 //         int32_t test_value_1 = 123;
 //         int32_t test_value_2 = 0;
-        
+
 //         // Try to write on an empty position
 //         ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
