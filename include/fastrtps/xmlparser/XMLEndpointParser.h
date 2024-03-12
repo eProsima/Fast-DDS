@@ -26,8 +26,6 @@
 #include <string>
 #include <vector>
 
-#include <tinyxml2.h>
-
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
