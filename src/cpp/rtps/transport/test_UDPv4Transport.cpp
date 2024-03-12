@@ -531,6 +531,7 @@ bool test_UDPv4Transport::log_drop(
         const std::list<NetworkBuffer>& buffers,
         uint32_t size)
 {
+    static_cast<void>(size);
     if (test_UDPv4Transport_DropLog.size() < test_UDPv4Transport_DropLogLength)
     {
         vector<octet> message;

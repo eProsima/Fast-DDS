@@ -603,6 +603,12 @@ bool UDPTransportInterface::send(
     return success;
 }
 
+//! NetworkBuffer conversion operator to asio::const_buffer.
+NetworkBuffer::operator asio::const_buffer() const
+{
+    return asio::const_buffer(buffer, size);
+}
+
 /**
  * Invalidate all selector entries containing certain multicast locator.
  *

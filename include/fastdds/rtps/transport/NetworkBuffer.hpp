@@ -19,9 +19,12 @@
 #ifndef _FASTDDS_RTPS_NETWORK_NETWORKBUFFER_HPP
 #define _FASTDDS_RTPS_NETWORK_NETWORKBUFFER_HPP
 
-#include <cstdint>  // uint32_t
-#include <cstdlib>  // size_t
-#include <asio.hpp>
+#include <cstdint>
+
+namespace asio {
+// Forward declaration of asio::const_buffer
+class const_buffer;
+} // namespace asio
 
 namespace eprosima {
 namespace fastdds {
@@ -36,11 +39,11 @@ struct NetworkBuffer final
     //! Pointer to the buffer where the data is stored.
     const void* buffer;
     //! Number of bytes to use starting at @c buffer.
-    size_t size;
+    uint32_t size;
 
     NetworkBuffer(
             const void* ptr,
-            size_t s)
+            uint32_t s)
         : buffer(ptr)
         , size(s)
     {
@@ -54,7 +57,7 @@ struct NetworkBuffer final
 
     NetworkBuffer(
             const fastrtps::rtps::octet* ptr,
-            size_t s)
+            uint32_t s)
         : buffer(ptr)
         , size(s)
     {
@@ -79,9 +82,7 @@ struct NetworkBuffer final
     }
 
     //! Conversion operator to asio::const_buffer.
-    operator asio::const_buffer() const {
-        return asio::const_buffer(buffer, size);
-    }
+    operator asio::const_buffer() const;
 };
 
 }  // namespace rtps

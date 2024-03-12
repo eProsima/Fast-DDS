@@ -152,7 +152,7 @@ public:
             const fastrtps::rtps::octet* header,
             size_t header_size,
             const fastrtps::rtps::octet* data,
-            size_t data_size,
+            uint32_t data_size,
             asio::error_code& ec)
     {
         NetworkBuffer buffers(data, data_size);

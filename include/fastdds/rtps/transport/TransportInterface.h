@@ -30,7 +30,6 @@
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastdds {
