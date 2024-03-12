@@ -806,13 +806,9 @@ private:
 
     Authentication* authentication_plugin_;
 
-<<<<<<< HEAD
     AccessControl* access_plugin_;
-=======
-    AuthenticationHandshakeProperties auth_handshake_props_;
 
-    IdentityHandle* local_identity_handle_ = nullptr;
->>>>>>> da58d84ae (Expose Authentication Handshake Properties (#4435))
+    AuthenticationHandshakeProperties auth_handshake_props_;
 
     Cryptography* crypto_plugin_;
 
