@@ -82,20 +82,6 @@ jobs:
       # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
-      - name: Prepare colcon workspace
-        id: colcon_ws_setup
-        run: |
-          REPOS_PATH="./src/fastrtps/.github/workflows/config/ci.repos"
-          META_PATH="./src/fastrtps/.github/workflows/config/ci.meta"
-
-          echo "CI repos file:"
-          cat ${REPOS_PATH}
-          echo "REPOS_PATH=$REPOS_PATH" >> $GITHUB_ENV
-
-          echo "CI metas file:"
-          cp ${META_PATH} ci.meta
-          cat ci.meta
-
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
@@ -106,11 +92,9 @@ jobs:
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ env.REPOS_PATH }}
+          vcs_repos_file: ./src/fastrtps/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
-        env:
-          REPOS_PATH: ${{ env.REPOS_PATH }}
 
       # TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
       #   - Issue: https://github.com/boostorg/mpl/issues/69.
@@ -120,7 +104,7 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/ci.meta
+          colcon_meta_file: ./src/fastrtps/.github/workflows/config/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wno-enum-constexpr-conversion"

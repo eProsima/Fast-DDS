@@ -115,26 +115,6 @@ jobs:
           # Show the result
           gc $hostfile
 
-      - name: Prepare colcon workspace
-        run: |
-          # Get some convenient tools
-          Install-Module -Name ConvertBase64Strings -Force -AllowClobber
-          Import-Module -name ConvertBase64Strings -Prefix CI
-          Install-Module powershell-yaml -Force
-
-          $repos_path = ".\src\fastrtps\.github\workflows\config\ci.repos"
-          $meta_path = ".\src\fastrtps\.github\workflows\config\ci.meta"
-
-          Write-Output "CI repos file: $repos_path"
-          Write-Output "CI metas file: $meta_path"
-          echo "REPOS_PATH=$repos_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-          # Generate the meta file
-          "::group::deployed colcon.meta file"
-          $meta = Get-Content $meta_path | ConvertFrom-Yaml
-          $meta | ConvertTo-Json -Depth 3 | Tee-Object -FilePath ci.meta -Encoding OEM
-          "::endgroup::"
-
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
@@ -145,18 +125,16 @@ jobs:
       - name: Fetch Fast DDS CI dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ env.REPOS_PATH }}
+          vcs_repos_file: .\src\fastrtps\.github\workflows\config\ci.repos
           destination_workspace: src
           skip_existing: 'true'
-        env:
-          REPOS_PATH: ${{ env.REPOS_PATH }}
 
       - name: Build
         id: build
         continue-on-error: false
         uses: eProsima/eProsima-CI/windows/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/ci.meta
+          colcon_meta_file: .\src\fastrtps\.github\workflows\config\ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           # The following Fast DDS CMake options need to be specified here instead of in the ci.meta file
           # because they vary from platform to platform
