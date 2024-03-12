@@ -35,18 +35,18 @@ struct TCPv6TransportDescriptor : public TCPTransportDescriptor
     virtual TransportInterface* create_transport() const override;
 
     //! Constructor
-    RTPS_DllAPI TCPv6TransportDescriptor();
+    FASTDDS_EXPORTED_API TCPv6TransportDescriptor();
 
     //! Copy constructor
-    RTPS_DllAPI TCPv6TransportDescriptor(
+    FASTDDS_EXPORTED_API TCPv6TransportDescriptor(
             const TCPv6TransportDescriptor& t);
 
     //! Copy assignment
-    RTPS_DllAPI TCPv6TransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API TCPv6TransportDescriptor& operator =(
             const TCPv6TransportDescriptor& t) = default;
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const TCPv6TransportDescriptor& t) const;
 };
 

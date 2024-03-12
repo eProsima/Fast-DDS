@@ -21,7 +21,7 @@
 
 #include <ostream>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -34,7 +34,7 @@ enum class NetmaskFilterKind
     ON
 };
 
-RTPS_DllAPI std::ostream& operator <<(
+FASTDDS_EXPORTED_API std::ostream& operator <<(
         std::ostream& output,
         const NetmaskFilterKind& netmask_filter_kind);
 

@@ -56,7 +56,7 @@ class ChainingTransport : public TransportInterface
 public:
 
     //!  Constructor
-    RTPS_DllAPI ChainingTransport(
+    FASTDDS_EXPORTED_API ChainingTransport(
             const ChainingTransportDescriptor& t)
         : TransportInterface(0)
         , low_level_transport_(t.low_level_descriptor->create_transport())
@@ -65,7 +65,7 @@ public:
     }
 
     //! Destructor
-    RTPS_DllAPI virtual ~ChainingTransport() = default;
+    FASTDDS_EXPORTED_API virtual ~ChainingTransport() = default;
 
     /*!
      * Initialize the low-level transport. This method will prepare all the internals of the transport.
@@ -73,7 +73,7 @@ public:
      * @param max_msg_size_no_frag Optional maximum message size to avoid 65500 KB fragmentation limit.
      * @return True when the transport was correctly initialized.
      */
-    RTPS_DllAPI bool init(
+    FASTDDS_EXPORTED_API bool init(
             const fastrtps::rtps::PropertyPolicy* properties = nullptr,
             const uint32_t& max_msg_size_no_frag = 0) override
     {
@@ -85,7 +85,7 @@ public:
      * Must report whether the input channel associated to this locator is open. Channels must either be
      * fully closed or fully open, so that "open" and "close" operations are whole and definitive.
      */
-    RTPS_DllAPI bool IsInputChannelOpen(
+    FASTDDS_EXPORTED_API bool IsInputChannelOpen(
             const fastrtps::rtps::Locator_t& loc) const override
     {
         return low_level_transport_->IsInputChannelOpen(loc);
@@ -95,7 +95,7 @@ public:
      * Call the low-level transport `IsLocatorSupported()`.
      * Must report whether the given locator is supported by this transport (typically inspecting its "kind" value).
      */
-    RTPS_DllAPI bool IsLocatorSupported(
+    FASTDDS_EXPORTED_API bool IsLocatorSupported(
             const fastrtps::rtps::Locator_t& loc) const override
     {
         return low_level_transport_->IsLocatorSupported(loc);
@@ -105,7 +105,7 @@ public:
      * Call the low-level transport `RemoteToMainLocal()`.
      * Returns the locator describing the main (most general) channel that can write to the provided remote locator.
      */
-    RTPS_DllAPI fastrtps::rtps::Locator_t RemoteToMainLocal(
+    FASTDDS_EXPORTED_API fastrtps::rtps::Locator_t RemoteToMainLocal(
             const fastrtps::rtps::Locator_t& loc) const override
     {
         return low_level_transport_->RemoteToMainLocal(loc);
@@ -116,7 +116,7 @@ public:
      * Opens an input channel to receive incoming connections.
      *   If there is an existing channel it registers the receiver interface.
      */
-    RTPS_DllAPI bool OpenInputChannel(
+    FASTDDS_EXPORTED_API bool OpenInputChannel(
             const fastrtps::rtps::Locator_t& loc,
             TransportReceiverInterface* receiver_interface,
             uint32_t max_message_size) override;
@@ -126,7 +126,7 @@ public:
      * Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
      * any resources that are needed for said channel.
      */
-    RTPS_DllAPI bool OpenOutputChannel(
+    FASTDDS_EXPORTED_API bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
             const fastrtps::rtps::Locator_t& loc) override;
 
@@ -136,7 +136,7 @@ public:
      * IMPORTANT: It MUST be safe to call this method even during a Receive operation on another thread. You must implement
      * any necessary mutual exclusion and timeout mechanisms to make sure the channel can be closed without damage.
      */
-    RTPS_DllAPI bool CloseInputChannel(
+    FASTDDS_EXPORTED_API bool CloseInputChannel(
             const fastrtps::rtps::Locator_t& loc) override
     {
         return low_level_transport_->CloseInputChannel(loc);
@@ -146,7 +146,7 @@ public:
      * Call the low-level transport `NormalizeLocator()`.
      * Performs locator normalization (assign valid IP if not defined by user)
      */
-    RTPS_DllAPI fastrtps::rtps::LocatorList_t NormalizeLocator(
+    FASTDDS_EXPORTED_API fastrtps::rtps::LocatorList_t NormalizeLocator(
             const fastrtps::rtps::Locator_t& locator) override
     {
         return low_level_transport_->NormalizeLocator(locator);
@@ -156,7 +156,7 @@ public:
      * Call the low-level transport `is_local_locator()`.
      * Must report whether the given locator is from the local host
      */
-    RTPS_DllAPI bool is_local_locator(
+    FASTDDS_EXPORTED_API bool is_local_locator(
             const fastrtps::rtps::Locator_t& locator) const override
     {
         return low_level_transport_->is_local_locator(locator);
@@ -166,7 +166,7 @@ public:
      * Call the low-level transport `is_localhost_allowed()`.
      * Must report whether localhost locator is allowed
      */
-    RTPS_DllAPI bool is_localhost_allowed() const override
+    FASTDDS_EXPORTED_API bool is_localhost_allowed() const override
     {
         return low_level_transport_->is_localhost_allowed();
     }
@@ -175,7 +175,7 @@ public:
      * Call the low-level transport `netmask_filter_info()`.
      * Returns netmask filter information (transport's netmask filter kind and allowlist)
      */
-    RTPS_DllAPI NetmaskFilterInfo netmask_filter_info() const override
+    FASTDDS_EXPORTED_API NetmaskFilterInfo netmask_filter_info() const override
     {
         return low_level_transport_->netmask_filter_info();
     }
@@ -184,7 +184,7 @@ public:
      * Call the low-level transport `DoInputLocatorsMatch()`.
      * Must report whether two locators map to the same internal channel.
      */
-    RTPS_DllAPI bool DoInputLocatorsMatch(
+    FASTDDS_EXPORTED_API bool DoInputLocatorsMatch(
             const fastrtps::rtps::Locator_t& locator_1,
             const fastrtps::rtps::Locator_t& locator_2) const override
     {
@@ -195,7 +195,7 @@ public:
      * Call the low-level transport `select_locators()`.
      * Performs the locator selection algorithm for this transport.
      */
-    RTPS_DllAPI void select_locators(
+    FASTDDS_EXPORTED_API void select_locators(
             fastrtps::rtps::LocatorSelector& selector) const override
     {
         return low_level_transport_->select_locators(selector);
@@ -205,7 +205,7 @@ public:
      * Call the low-level transport `AddDefaultOutputLocator()`.
      * Add default output locator to the locator list
      */
-    RTPS_DllAPI void AddDefaultOutputLocator(
+    FASTDDS_EXPORTED_API void AddDefaultOutputLocator(
             fastrtps::rtps::LocatorList_t& defaultList) override
     {
         return low_level_transport_->AddDefaultOutputLocator(defaultList);
@@ -215,7 +215,7 @@ public:
      * Call the low-level transport `getDefaultMetatrafficMulticastLocators()`.
      * Add metatraffic multicast locator with the given port
      */
-    RTPS_DllAPI bool getDefaultMetatrafficMulticastLocators(
+    FASTDDS_EXPORTED_API bool getDefaultMetatrafficMulticastLocators(
             fastrtps::rtps::LocatorList_t& locators,
             uint32_t metatraffic_multicast_port) const override
     {
@@ -226,7 +226,7 @@ public:
      * Call the low-level transport `getDefaultMetatrafficUnicastLocators()`.
      * Add metatraffic unicast locator with the given port
      */
-    RTPS_DllAPI bool getDefaultMetatrafficUnicastLocators(
+    FASTDDS_EXPORTED_API bool getDefaultMetatrafficUnicastLocators(
             fastrtps::rtps::LocatorList_t& locators,
             uint32_t metatraffic_unicast_port) const override
     {
@@ -237,7 +237,7 @@ public:
      * Call the low-level transport `getDefaultUnicastLocators()`.
      * Add unicast locator with the given port
      */
-    RTPS_DllAPI bool getDefaultUnicastLocators(
+    FASTDDS_EXPORTED_API bool getDefaultUnicastLocators(
             fastrtps::rtps::LocatorList_t& locators,
             uint32_t unicast_port) const override
     {
@@ -248,7 +248,7 @@ public:
      * Call the low-level transport `fillMetatrafficMulticastLocator()`.
      * Assign port to the given metatraffic multicast locator if not already defined
      */
-    RTPS_DllAPI bool fillMetatrafficMulticastLocator(
+    FASTDDS_EXPORTED_API bool fillMetatrafficMulticastLocator(
             fastrtps::rtps::Locator_t& locator,
             uint32_t metatraffic_multicast_port) const override
     {
@@ -259,7 +259,7 @@ public:
      * Call the low-level transport `fillMetatrafficUnicastLocator()`.
      * Assign port to the given metatraffic unicast locator if not already defined
      */
-    RTPS_DllAPI bool fillMetatrafficUnicastLocator(
+    FASTDDS_EXPORTED_API bool fillMetatrafficUnicastLocator(
             fastrtps::rtps::Locator_t& locator,
             uint32_t metatraffic_unicast_port) const override
     {
@@ -270,7 +270,7 @@ public:
      * Call the low-level transport `configureInitialPeerLocator()`.
      * Configure the initial peer locators list
      */
-    RTPS_DllAPI bool configureInitialPeerLocator(
+    FASTDDS_EXPORTED_API bool configureInitialPeerLocator(
             fastrtps::rtps::Locator_t& locator,
             const fastrtps::rtps::PortParameters& port_params,
             uint32_t domainId,
@@ -283,7 +283,7 @@ public:
      * Call the low-level transport `fillUnicastLocator()`.
      * Assign port to the given unicast locator if not already defined
      */
-    RTPS_DllAPI bool fillUnicastLocator(
+    FASTDDS_EXPORTED_API bool fillUnicastLocator(
             fastrtps::rtps::Locator_t& locator,
             uint32_t well_known_port) const override
     {
@@ -292,7 +292,7 @@ public:
 
     //! Call the low-level transport `transform_remote_locator()`.
     //! Transforms a remote locator into a locator optimized for local communications.
-    RTPS_DllAPI bool transform_remote_locator(
+    FASTDDS_EXPORTED_API bool transform_remote_locator(
             const fastrtps::rtps::Locator_t& remote_locator,
             fastrtps::rtps::Locator_t& result_locator) const override
     {
@@ -303,7 +303,7 @@ public:
      * Call the low-level transport `max_recv_buffer_size()`.
      * @return The maximum datagram size for reception supported by the transport
      */
-    RTPS_DllAPI uint32_t max_recv_buffer_size() const override
+    FASTDDS_EXPORTED_API uint32_t max_recv_buffer_size() const override
     {
         return low_level_transport_->max_recv_buffer_size();
     }
@@ -326,7 +326,7 @@ public:
      * we're sending to.
      * @param timeout Maximum blocking time.
      */
-    RTPS_DllAPI virtual bool send(
+    FASTDDS_EXPORTED_API virtual bool send(
             fastrtps::rtps::SenderResource* low_sender_resource,
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
@@ -349,14 +349,14 @@ public:
      * @param local_locator Locator mapping to the local channel we're listening to.
      * @param[out] remote_locator Locator describing the remote destination we received a packet from.
      */
-    RTPS_DllAPI virtual void receive(
+    FASTDDS_EXPORTED_API virtual void receive(
             TransportReceiverInterface* next_receiver,
             const fastrtps::rtps::octet* receive_buffer,
             uint32_t receive_buffer_size,
             const fastrtps::rtps::Locator_t& local_locator,
             const fastrtps::rtps::Locator_t& remote_locator) = 0;
 
-    RTPS_DllAPI void update_network_interfaces() override
+    FASTDDS_EXPORTED_API void update_network_interfaces() override
     {
         low_level_transport_->update_network_interfaces();
     }
@@ -364,7 +364,7 @@ public:
     //! Call the low-level transport `transform_remote_locator()`.
     //! Transforms a remote locator into a locator optimized for local communications,
     //! if allowed by both local and remote transports.
-    RTPS_DllAPI bool transform_remote_locator(
+    FASTDDS_EXPORTED_API bool transform_remote_locator(
             const fastrtps::rtps::Locator_t& remote_locator,
             fastrtps::rtps::Locator_t& result_locator,
             bool allowed_remote_localhost,
@@ -378,7 +378,7 @@ public:
      * Call the low-level transport `is_locator_allowed()`.
      * Must report whether the given locator is allowed by this transport.
      */
-    RTPS_DllAPI bool is_locator_allowed(
+    FASTDDS_EXPORTED_API bool is_locator_allowed(
             const fastrtps::rtps::Locator_t& locator) const override
     {
         return low_level_transport_->is_locator_allowed(locator);

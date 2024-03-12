@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_TIME_T_H_
 #define _FASTDDS_RTPS_TIME_T_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <cmath>
 #include <cstdint>
@@ -32,7 +32,7 @@ namespace fastrtps {
  * Structure Time_t, used to describe times.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI Time_t
+struct FASTDDS_EXPORTED_API Time_t
 {
     static constexpr int32_t INFINITE_SECONDS = 0x7fffffff;
     static constexpr uint32_t INFINITE_NANOSECONDS = 0xffffffffu;
@@ -96,7 +96,7 @@ namespace rtps {
  * Structure Time_t, used to describe times at RTPS protocol.
  * @ingroup COMMON_MODULE
  */
-class RTPS_DllAPI Time_t
+class FASTDDS_EXPORTED_API Time_t
 {
 public:
 

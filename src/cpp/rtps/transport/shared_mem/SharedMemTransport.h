@@ -45,7 +45,7 @@ class SharedMemTransport : public TransportInterface
 {
 public:
 
-    RTPS_DllAPI SharedMemTransport(
+    FASTDDS_EXPORTED_API SharedMemTransport(
             const SharedMemTransportDescriptor&);
 
     const SharedMemTransportDescriptor* configuration() const;

@@ -47,48 +47,48 @@ protected:
 
 public:
 
-    RTPS_DllAPI DynamicTypeMember();
+    FASTDDS_EXPORTED_API DynamicTypeMember();
 
-    RTPS_DllAPI DynamicTypeMember(
+    FASTDDS_EXPORTED_API DynamicTypeMember(
             const DynamicTypeMember* other);
 
-    RTPS_DllAPI DynamicTypeMember(
+    FASTDDS_EXPORTED_API DynamicTypeMember(
             const MemberDescriptor* descriptor,
             MemberId id);
 
     ~DynamicTypeMember();
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
             AnnotationDescriptor& descriptor);
 
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    FASTDDS_EXPORTED_API ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
 
-    RTPS_DllAPI bool equals(
+    FASTDDS_EXPORTED_API bool equals(
             const DynamicTypeMember*) const;
 
-    RTPS_DllAPI ReturnCode_t get_annotation(
+    FASTDDS_EXPORTED_API ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
             uint32_t idx);
 
-    RTPS_DllAPI uint32_t get_annotation_count();
+    FASTDDS_EXPORTED_API uint32_t get_annotation_count();
 
-    RTPS_DllAPI bool key_annotation() const;
+    FASTDDS_EXPORTED_API bool key_annotation() const;
 
-    RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
+    FASTDDS_EXPORTED_API std::vector<uint64_t> get_union_labels() const;
 
-    RTPS_DllAPI ReturnCode_t get_descriptor(
+    FASTDDS_EXPORTED_API ReturnCode_t get_descriptor(
             MemberDescriptor* descriptor) const;
 
-    RTPS_DllAPI MemberId get_id() const;
+    FASTDDS_EXPORTED_API MemberId get_id() const;
 
-    RTPS_DllAPI std::string get_name() const;
+    FASTDDS_EXPORTED_API std::string get_name() const;
 
-    RTPS_DllAPI bool is_default_union_value() const;
+    FASTDDS_EXPORTED_API bool is_default_union_value() const;
 
-    RTPS_DllAPI const MemberDescriptor* get_descriptor() const
+    FASTDDS_EXPORTED_API const MemberDescriptor* get_descriptor() const
     {
         return &descriptor_;
     }

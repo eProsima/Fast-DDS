@@ -38,7 +38,7 @@ class RTPSParticipant;
  * Class RTPSParticipantListener with virtual method that the user can overload to respond to certain events.
  * @ingroup RTPS_MODULE
  */
-class RTPS_DllAPI RTPSParticipantListener
+class FASTDDS_EXPORTED_API RTPSParticipantListener
 {
 public:
 
