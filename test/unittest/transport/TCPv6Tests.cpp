@@ -414,6 +414,32 @@ TEST_F(TCPv6Tests, reconnect_after_open_port_failure)
     client_resource_list.clear();
 }
 
+TEST_F(TCPv6Tests, opening_output_channel_with_same_locator_as_local_listening_port)
+{
+    descriptor.add_listener_port(g_default_port);
+    TCPv6Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    // Two locators with the same port as the local listening port, but different addresses
+    Locator_t lowerOutputChannelLocator;
+    lowerOutputChannelLocator.kind = LOCATOR_KIND_TCPv6;
+    lowerOutputChannelLocator.port = g_default_port;
+    IPLocator::setLogicalPort(lowerOutputChannelLocator, g_default_port);
+    Locator_t higherOutputChannelLocator = lowerOutputChannelLocator;
+    IPLocator::setIPv6(lowerOutputChannelLocator, "::");
+    IPLocator::setIPv6(higherOutputChannelLocator, "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff");
+
+    SendResourceList send_resource_list;
+
+    // If the remote address is lower than the local one, no channel must be created but it must be added to the send_resource_list
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, lowerOutputChannelLocator));
+    ASSERT_FALSE(transportUnderTest.is_output_channel_open_for(lowerOutputChannelLocator));
+    ASSERT_EQ(send_resource_list.size(), 1);
+    // If the remote address is higher than the local one, a CONNECT channel must be created and added to the send_resource_list
+    ASSERT_TRUE(transportUnderTest.OpenOutputChannel(send_resource_list, higherOutputChannelLocator));
+    ASSERT_TRUE(transportUnderTest.is_output_channel_open_for(higherOutputChannelLocator));
+    ASSERT_EQ(send_resource_list.size(), 2);
+}
 
 /*
    TEST_F(TCPv6Tests, send_and_receive_between_both_secure_ports)
