@@ -255,6 +255,12 @@ endif()
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
+    types/Data1mb.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/Data64kb.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/FixedSized.cxx
+    types/FixedSizedPubSubTypes.cxx
     types/HelloWorld.cxx
     types/HelloWorldPubSubTypes.cxx
     types/KeyedHelloWorld.cxx
@@ -269,6 +275,8 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/KeyedData1mbPubSubTypes.cxx
     types/FixedSized.cxx
     types/FixedSizedPubSubTypes.cxx
+    types/UnboundedHelloWorld.cxx
+    types/UnboundedHelloWorldPubSubTypes.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
@@ -290,6 +298,12 @@ add_blackbox_gtest(BlackboxTests_RTPS SOURCES ${RTPS_BLACKBOXTESTS_TEST_SOURCE} 
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
+    types/Data1mb.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/Data64kb.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/FixedSized.cxx
+    types/FixedSizedPubSubTypes.cxx
     types/HelloWorld.cxx
     types/HelloWorldPubSubTypes.cxx
     types/HelloWorldTypeObject.cxx
@@ -310,6 +324,9 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/TestRegression3361.cxx
     types/TestRegression3361PubSubTypes.cxx
     types/TestRegression3361TypeObject.cxx
+    types/UnboundedHelloWorld.cxx
+    types/UnboundedHelloWorldPubSubTypes.cxx
+    types/UnboundedHelloWorldv1.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
