@@ -24,7 +24,7 @@
 #include <limits>
 #include <vector>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/utils/fixed_size_bitmap.hpp>
 #include <fastdds/rtps/common/Types.h>
 
@@ -35,7 +35,7 @@ namespace rtps {
 
 //!@brief Structure SequenceNumber_t, different for each change in the same writer.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI SequenceNumber_t
+struct FASTDDS_EXPORTED_API SequenceNumber_t
 {
     //!
     int32_t high = 0;

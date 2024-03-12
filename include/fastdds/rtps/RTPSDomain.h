@@ -65,7 +65,7 @@ public:
      * @param watch_thread     Settings for the thread watching the environment file.
      * @param callback_thread  Settings for the thread executing the callback when the environment file changed.
      */
-    RTPS_DllAPI static void set_filewatch_thread_config(
+    FASTDDS_EXPORTED_API static void set_filewatch_thread_config(
             const fastdds::rtps::ThreadSettings& watch_thread,
             const fastdds::rtps::ThreadSettings& callback_thread);
 
@@ -77,7 +77,7 @@ public:
      * \post After this call, all the pointers to RTPS entities are invalidated and their use may
      *       result in undefined behaviour.
      */
-    RTPS_DllAPI static void stopAll();
+    FASTDDS_EXPORTED_API static void stopAll();
 
     /**
      * @brief Create a RTPSParticipant.
@@ -89,7 +89,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSParticipant* createParticipant(
+    FASTDDS_EXPORTED_API static RTPSParticipant* createParticipant(
             uint32_t domain_id,
             const RTPSParticipantAttributes& attrs,
             RTPSParticipantListener* plisten = nullptr);
@@ -105,7 +105,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSParticipant() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSParticipant* createParticipant(
+    FASTDDS_EXPORTED_API static RTPSParticipant* createParticipant(
             uint32_t domain_id,
             bool enabled,
             const RTPSParticipantAttributes& attrs,
@@ -122,7 +122,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+    FASTDDS_EXPORTED_API static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
             WriterAttributes& watt,
             WriterHistory* hist,
@@ -140,7 +140,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+    FASTDDS_EXPORTED_API static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
             WriterAttributes& watt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
@@ -160,7 +160,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+    FASTDDS_EXPORTED_API static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
             WriterAttributes& watt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
@@ -182,7 +182,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+    FASTDDS_EXPORTED_API static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
             const EntityId_t& entity_id,
             WriterAttributes& watt,
@@ -204,7 +204,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSWriter() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSWriter* createRTPSWriter(
+    FASTDDS_EXPORTED_API static RTPSWriter* createRTPSWriter(
             RTPSParticipant* p,
             const EntityId_t& entity_id,
             WriterAttributes& watt,
@@ -217,7 +217,7 @@ public:
      * @param writer Pointer to the writer you want to remove.
      * @return  True if correctly removed.
      */
-    RTPS_DllAPI static bool removeRTPSWriter(
+    FASTDDS_EXPORTED_API static bool removeRTPSWriter(
             RTPSWriter* writer);
 
     /**
@@ -231,7 +231,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSReader() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSReader* createRTPSReader(
+    FASTDDS_EXPORTED_API static RTPSReader* createRTPSReader(
             RTPSParticipant* p,
             ReaderAttributes& ratt,
             ReaderHistory* hist,
@@ -249,7 +249,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSReader() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSReader* createRTPSReader(
+    FASTDDS_EXPORTED_API static RTPSReader* createRTPSReader(
             RTPSParticipant* p,
             ReaderAttributes& ratt,
             const std::shared_ptr<IPayloadPool>& payload_pool,
@@ -269,7 +269,7 @@ public:
      * \warning The returned pointer is invalidated after a call to removeRTPSReader() or stopAll(),
      *          so its use may result in undefined behaviour.
      */
-    RTPS_DllAPI static RTPSReader* createRTPSReader(
+    FASTDDS_EXPORTED_API static RTPSReader* createRTPSReader(
             RTPSParticipant* p,
             const EntityId_t& entity_id,
             ReaderAttributes& ratt,
@@ -282,7 +282,7 @@ public:
      * @param reader Pointer to the reader you want to remove.
      * @return  True if correctly removed.
      */
-    RTPS_DllAPI static bool removeRTPSReader(
+    FASTDDS_EXPORTED_API static bool removeRTPSReader(
             RTPSReader* reader);
 
     /**
@@ -290,7 +290,7 @@ public:
      * @param[in] p Pointer to the RTPSParticipant;
      * @return True if correct.
      */
-    RTPS_DllAPI static bool removeRTPSParticipant(
+    FASTDDS_EXPORTED_API static bool removeRTPSParticipant(
             RTPSParticipant* p);
 
     /**
@@ -299,7 +299,7 @@ public:
      * @param library_settings LibrarySettings reference where the settings are returned.
      * @return True.
      */
-    RTPS_DllAPI static bool get_library_settings(
+    FASTDDS_EXPORTED_API static bool get_library_settings(
             fastdds::LibrarySettings& library_settings);
 
     /**
@@ -309,7 +309,7 @@ public:
      * @return False if there is any RTPSParticipant already created.
      *         True if correctly set.
      */
-    RTPS_DllAPI static bool set_library_settings(
+    FASTDDS_EXPORTED_API static bool set_library_settings(
             const fastdds::LibrarySettings& library_settings);
 
     /**
@@ -320,7 +320,7 @@ public:
      * @return bool true if the profile exists.
      *              false otherwise.
      */
-    RTPS_DllAPI static bool get_topic_attributes_from_profile(
+    FASTDDS_EXPORTED_API static bool get_topic_attributes_from_profile(
             const std::string& profile_name,
             TopicAttributes& topic_att);
 

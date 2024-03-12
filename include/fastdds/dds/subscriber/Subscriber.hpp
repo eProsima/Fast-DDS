@@ -100,14 +100,14 @@ public:
      * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the participant creating this
      *         Subscriber is not enabled.
      */
-    RTPS_DllAPI ReturnCode_t enable() override;
+    FASTDDS_EXPORTED_API ReturnCode_t enable() override;
 
     /**
      * Allows accessing the Subscriber Qos.
      *
      * @return SubscriberQos reference
      */
-    RTPS_DllAPI const SubscriberQos& get_qos() const;
+    FASTDDS_EXPORTED_API const SubscriberQos& get_qos() const;
 
     /**
      * Retrieves the Subscriber Qos.
@@ -115,7 +115,7 @@ public:
      * @param qos SubscriberQos where the qos is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_qos(
             SubscriberQos& qos) const;
 
     /**
@@ -126,7 +126,7 @@ public:
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
      * self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_qos(
             const SubscriberQos& qos);
 
     /**
@@ -134,7 +134,7 @@ public:
      *
      * @return Pointer to the SubscriberListener
      */
-    RTPS_DllAPI const SubscriberListener* get_listener() const;
+    FASTDDS_EXPORTED_API const SubscriberListener* get_listener() const;
 
     /**
      * Modifies the SubscriberListener, sets the mask to StatusMask::all()
@@ -142,7 +142,7 @@ public:
      * @param listener new value for SubscriberListener
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             SubscriberListener* listener);
 
     /**
@@ -152,7 +152,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to.
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             SubscriberListener* listener,
             const StatusMask& mask);
     /**
@@ -165,7 +165,7 @@ public:
      * @param payload_pool IPayloadPool shared pointer that defines reader payload (default: nullptr).
      * @return Pointer to the created DataReader. nullptr if failed.
      */
-    RTPS_DllAPI DataReader* create_datareader(
+    FASTDDS_EXPORTED_API DataReader* create_datareader(
             TopicDescription* topic,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener = nullptr,
@@ -182,7 +182,7 @@ public:
      * @param payload_pool IPayloadPool shared pointer that defines reader payload (default: nullptr).
      * @return Pointer to the created DataReader. nullptr if failed.
      */
-    RTPS_DllAPI DataReader* create_datareader_with_profile(
+    FASTDDS_EXPORTED_API DataReader* create_datareader_with_profile(
             TopicDescription* topic,
             const std::string& profile_name,
             DataReaderListener* listener = nullptr,
@@ -200,7 +200,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if the datareader does not belong to this subscriber, RETCODE_OK if it is correctly
      * deleted and RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t delete_datareader(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_datareader(
             const DataReader* reader);
 
     /**
@@ -213,7 +213,7 @@ public:
      * @param topic_name Name of the topic associated to the DataReader
      * @return Pointer to a previously created DataReader created on a Topic with that topic_name
      */
-    RTPS_DllAPI DataReader* lookup_datareader(
+    FASTDDS_EXPORTED_API DataReader* lookup_datareader(
             const std::string& topic_name) const;
 
     /**
@@ -222,7 +222,7 @@ public:
      * @param readers Vector of DataReader where the list of existing readers is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_datareaders(
+    FASTDDS_EXPORTED_API ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers) const;
 
     /**
@@ -236,7 +236,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_datareaders(
+    FASTDDS_EXPORTED_API ReturnCode_t get_datareaders(
             std::vector<DataReader*>& readers,
             const std::vector<SampleStateKind>& sample_states,
             const std::vector<ViewStateKind>& view_states,
@@ -247,7 +247,7 @@ public:
      *
      * @return true if the subscriber has one or several DataReaders, false in other case
      */
-    RTPS_DllAPI bool has_datareaders() const;
+    FASTDDS_EXPORTED_API bool has_datareaders() const;
 
     /**
      * @brief Indicates that the application is about to access the data samples in any of the DataReader objects
@@ -256,7 +256,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t begin_access();
+    FASTDDS_EXPORTED_API ReturnCode_t begin_access();
 
     /**
      * @brief Indicates that the application has finished accessing the data samples in DataReader objects managed by
@@ -265,7 +265,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t end_access();
+    FASTDDS_EXPORTED_API ReturnCode_t end_access();
 
 
     /**
@@ -277,7 +277,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t notify_datareaders() const;
+    FASTDDS_EXPORTED_API ReturnCode_t notify_datareaders() const;
 
     /**
      * @brief Deletes all contained DataReaders. If the DataReaders have any QueryCondition or ReadCondition, they are
@@ -285,7 +285,7 @@ public:
      *
      * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t delete_contained_entities();
+    FASTDDS_EXPORTED_API ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataReader QoS policies which will be used for newly created
@@ -301,7 +301,7 @@ public:
      * @param qos new value for DataReaderQos to set as default
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_default_datareader_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_default_datareader_qos(
             const DataReaderQos& qos);
 
     /**
@@ -314,7 +314,7 @@ public:
      *
      * @return Current default DataReaderQos.
      */
-    RTPS_DllAPI const DataReaderQos& get_default_datareader_qos() const;
+    FASTDDS_EXPORTED_API const DataReaderQos& get_default_datareader_qos() const;
 
 
     /**
@@ -327,7 +327,7 @@ public:
      *
      * @return Current default DataReaderQos.
      */
-    RTPS_DllAPI DataReaderQos& get_default_datareader_qos();
+    FASTDDS_EXPORTED_API DataReaderQos& get_default_datareader_qos();
 
     /**
      * This operation retrieves the default value of the DataReader QoS, that is, the QoS policies which will be
@@ -340,7 +340,7 @@ public:
      * @param qos DataReaderQos where the default_qos is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_default_datareader_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_datareader_qos(
             DataReaderQos& qos) const;
 
     /**
@@ -350,7 +350,7 @@ public:
      * @param qos DataReaderQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
-    RTPS_DllAPI ReturnCode_t get_datareader_qos_from_profile(
+    FASTDDS_EXPORTED_API ReturnCode_t get_datareader_qos_from_profile(
             const std::string& profile_name,
             DataReaderQos& qos) const;
 
@@ -362,7 +362,7 @@ public:
      * @return RETCODE_OK if successful, an error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI static ReturnCode_t copy_from_topic_qos(
+    FASTDDS_EXPORTED_API static ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,
             const TopicQos& topic_qos);
 
@@ -371,14 +371,14 @@ public:
      *
      * @return DomainParticipant Pointer
      */
-    RTPS_DllAPI const DomainParticipant* get_participant() const;
+    FASTDDS_EXPORTED_API const DomainParticipant* get_participant() const;
 
     /**
      * Returns the Subscriber's handle.
      *
      * @return InstanceHandle of this Subscriber.
      */
-    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
+    FASTDDS_EXPORTED_API const InstanceHandle_t& get_instance_handle() const;
 
 protected:
 

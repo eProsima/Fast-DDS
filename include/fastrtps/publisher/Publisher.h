@@ -20,7 +20,7 @@
 #ifndef PUBLISHER_H_
 #define PUBLISHER_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
@@ -43,7 +43,7 @@ class PublisherImpl;
  * Class Publisher, used to send data to associated subscribers.
  * @ingroup FASTRTPS_MODULE
  */
-class RTPS_DllAPI Publisher
+class FASTDDS_EXPORTED_API Publisher
 {
     friend class PublisherImpl;
     virtual ~Publisher();

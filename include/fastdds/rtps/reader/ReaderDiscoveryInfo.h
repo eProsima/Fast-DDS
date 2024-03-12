@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__
 #define _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 
 namespace eprosima {
@@ -38,7 +38,7 @@ public:
     //!Enum DISCOVERY_STATUS, four different status for discovered readers.
     //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
-    enum RTPS_DllAPI DISCOVERY_STATUS
+    enum FASTDDS_EXPORTED_API DISCOVERY_STATUS
 #else
     enum DISCOVERY_STATUS
 #endif // if defined(_WIN32)

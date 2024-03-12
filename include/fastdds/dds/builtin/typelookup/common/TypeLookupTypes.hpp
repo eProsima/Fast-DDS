@@ -47,22 +47,22 @@ struct TypeLookup_getTypes_In
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_In& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -78,22 +78,22 @@ struct TypeLookup_getTypes_Out
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_Out& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -104,58 +104,59 @@ class TypeLookup_getTypes_Result
 {
 public:
 
-    RTPS_DllAPI TypeLookup_getTypes_Result();
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Result();
 
-    RTPS_DllAPI ~TypeLookup_getTypes_Result();
+    FASTDDS_EXPORTED_API ~TypeLookup_getTypes_Result();
 
-    RTPS_DllAPI TypeLookup_getTypes_Result(
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Result(
             const TypeLookup_getTypes_Result& x);
 
-    RTPS_DllAPI TypeLookup_getTypes_Result(
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Result(
             TypeLookup_getTypes_Result&& x);
 
-    RTPS_DllAPI TypeLookup_getTypes_Result& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Result& operator =(
             const TypeLookup_getTypes_Result& x);
 
-    RTPS_DllAPI TypeLookup_getTypes_Result& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Result& operator =(
             TypeLookup_getTypes_Result&& x);
 
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             int32_t __d);
 
-    RTPS_DllAPI int32_t _d() const;
+    FASTDDS_EXPORTED_API int32_t _d() const;
 
-    RTPS_DllAPI int32_t& _d();
+    FASTDDS_EXPORTED_API int32_t& _d();
 
-    RTPS_DllAPI void result(
+    FASTDDS_EXPORTED_API void result(
             const TypeLookup_getTypes_Out& _result);
 
-    RTPS_DllAPI void result(
+    FASTDDS_EXPORTED_API void result(
             TypeLookup_getTypes_Out&& _result);
 
-    RTPS_DllAPI const TypeLookup_getTypes_Out& result() const;
+    FASTDDS_EXPORTED_API const TypeLookup_getTypes_Out& result() const;
 
-    RTPS_DllAPI TypeLookup_getTypes_Out& result();
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Out& result();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::getCdrSerializedSize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypes_Result& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -178,22 +179,23 @@ public:
     FASTDDS_SER_METHOD_DEPRECATED(3,
             "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypeDependencies_In& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -212,22 +214,23 @@ public:
     FASTDDS_SER_METHOD_DEPRECATED(3,
             "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypeDependencies_Out& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -238,59 +241,61 @@ class TypeLookup_getTypeDependencies_Result
 {
 public:
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Result();
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Result();
 
-    RTPS_DllAPI ~TypeLookup_getTypeDependencies_Result();
+    FASTDDS_EXPORTED_API ~TypeLookup_getTypeDependencies_Result();
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Result(
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Result(
             const TypeLookup_getTypeDependencies_Result& x);
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Result(
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Result(
             TypeLookup_getTypeDependencies_Result&& x);
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Result& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Result& operator =(
             const TypeLookup_getTypeDependencies_Result& x);
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Result& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Result& operator =(
             TypeLookup_getTypeDependencies_Result&& x);
 
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             int32_t __d);
 
-    RTPS_DllAPI int32_t _d() const;
+    FASTDDS_EXPORTED_API int32_t _d() const;
 
-    RTPS_DllAPI int32_t& _d();
+    FASTDDS_EXPORTED_API int32_t& _d();
 
-    RTPS_DllAPI void result(
+    FASTDDS_EXPORTED_API void result(
             const TypeLookup_getTypeDependencies_Out& _result);
 
-    RTPS_DllAPI void result(
+    FASTDDS_EXPORTED_API void result(
             TypeLookup_getTypeDependencies_Out&& _result);
 
-    RTPS_DllAPI const TypeLookup_getTypeDependencies_Out& result() const;
+    FASTDDS_EXPORTED_API const TypeLookup_getTypeDependencies_Out& result() const;
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Out& result();
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Out& result();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3,
             "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_getTypeDependencies_Result& data,
             size_t current_alignment = 0);
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::serialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
-    FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::deserialize()",
+    FASTDDS_SER_METHOD_DEPRECATED(3,
+            "eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -305,68 +310,68 @@ class TypeLookup_Call
 {
 public:
 
-    RTPS_DllAPI TypeLookup_Call();
+    FASTDDS_EXPORTED_API TypeLookup_Call();
 
-    RTPS_DllAPI ~TypeLookup_Call();
+    FASTDDS_EXPORTED_API ~TypeLookup_Call();
 
-    RTPS_DllAPI TypeLookup_Call(
+    FASTDDS_EXPORTED_API TypeLookup_Call(
             const TypeLookup_Call& x);
 
-    RTPS_DllAPI TypeLookup_Call(
+    FASTDDS_EXPORTED_API TypeLookup_Call(
             TypeLookup_Call&& x);
 
-    RTPS_DllAPI TypeLookup_Call& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_Call& operator =(
             const TypeLookup_Call& x);
 
-    RTPS_DllAPI TypeLookup_Call& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_Call& operator =(
             TypeLookup_Call&& x);
 
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             int32_t __d);
 
-    RTPS_DllAPI int32_t _d() const;
+    FASTDDS_EXPORTED_API int32_t _d() const;
 
-    RTPS_DllAPI int32_t& _d();
+    FASTDDS_EXPORTED_API int32_t& _d();
 
-    RTPS_DllAPI void getTypes(
+    FASTDDS_EXPORTED_API void getTypes(
             const TypeLookup_getTypes_In& _getTypes);
 
-    RTPS_DllAPI void getTypes(
+    FASTDDS_EXPORTED_API void getTypes(
             TypeLookup_getTypes_In&& _getTypes);
 
-    RTPS_DllAPI const TypeLookup_getTypes_In& getTypes() const;
+    FASTDDS_EXPORTED_API const TypeLookup_getTypes_In& getTypes() const;
 
-    RTPS_DllAPI TypeLookup_getTypes_In& getTypes();
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_In& getTypes();
 
-    RTPS_DllAPI void getTypeDependencies(
+    FASTDDS_EXPORTED_API void getTypeDependencies(
             const TypeLookup_getTypeDependencies_In& _getTypeDependencies);
 
-    RTPS_DllAPI void getTypeDependencies(
+    FASTDDS_EXPORTED_API void getTypeDependencies(
             TypeLookup_getTypeDependencies_In&& _getTypeDependencies);
 
-    RTPS_DllAPI const TypeLookup_getTypeDependencies_In& getTypeDependencies() const;
+    FASTDDS_EXPORTED_API const TypeLookup_getTypeDependencies_In& getTypeDependencies() const;
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_In& getTypeDependencies();
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_In& getTypeDependencies();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_Call& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Call::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -390,22 +395,22 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_Request& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Request::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -416,68 +421,68 @@ class TypeLookup_Return
 {
 public:
 
-    RTPS_DllAPI TypeLookup_Return();
+    FASTDDS_EXPORTED_API TypeLookup_Return();
 
-    RTPS_DllAPI ~TypeLookup_Return();
+    FASTDDS_EXPORTED_API ~TypeLookup_Return();
 
-    RTPS_DllAPI TypeLookup_Return(
+    FASTDDS_EXPORTED_API TypeLookup_Return(
             const TypeLookup_Return& x);
 
-    RTPS_DllAPI TypeLookup_Return(
+    FASTDDS_EXPORTED_API TypeLookup_Return(
             TypeLookup_Return&& x);
 
-    RTPS_DllAPI TypeLookup_Return& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_Return& operator =(
             const TypeLookup_Return& x);
 
-    RTPS_DllAPI TypeLookup_Return& operator =(
+    FASTDDS_EXPORTED_API TypeLookup_Return& operator =(
             TypeLookup_Return&& x);
 
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             int32_t __d);
 
-    RTPS_DllAPI int32_t _d() const;
+    FASTDDS_EXPORTED_API int32_t _d() const;
 
-    RTPS_DllAPI int32_t& _d();
+    FASTDDS_EXPORTED_API int32_t& _d();
 
-    RTPS_DllAPI void getType(
+    FASTDDS_EXPORTED_API void getType(
             const TypeLookup_getTypes_Result& _getType);
 
-    RTPS_DllAPI void getType(
+    FASTDDS_EXPORTED_API void getType(
             TypeLookup_getTypes_Result&& _getType);
 
-    RTPS_DllAPI const TypeLookup_getTypes_Result& getType() const;
+    FASTDDS_EXPORTED_API const TypeLookup_getTypes_Result& getType() const;
 
-    RTPS_DllAPI TypeLookup_getTypes_Result& getType();
+    FASTDDS_EXPORTED_API TypeLookup_getTypes_Result& getType();
 
-    RTPS_DllAPI void getTypeDependencies(
+    FASTDDS_EXPORTED_API void getTypeDependencies(
             const TypeLookup_getTypeDependencies_Result& _getTypeDependencies);
 
-    RTPS_DllAPI void getTypeDependencies(
+    FASTDDS_EXPORTED_API void getTypeDependencies(
             TypeLookup_getTypeDependencies_Result&& _getTypeDependencies);
 
-    RTPS_DllAPI const TypeLookup_getTypeDependencies_Result& getTypeDependencies() const;
+    FASTDDS_EXPORTED_API const TypeLookup_getTypeDependencies_Result& getTypeDependencies() const;
 
-    RTPS_DllAPI TypeLookup_getTypeDependencies_Result& getTypeDependencies();
+    FASTDDS_EXPORTED_API TypeLookup_getTypeDependencies_Result& getTypeDependencies();
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_Return& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Return::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -501,22 +506,22 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
-    RTPS_DllAPI static size_t getCdrSerializedSize(
+    FASTDDS_EXPORTED_API static size_t getCdrSerializedSize(
             const TypeLookup_Reply& data,
             size_t current_alignment = 0);
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::serialize()",
             "In favor of version using eprosima::fastcdr::serialize.")
-    RTPS_DllAPI void serialize(
+    FASTDDS_EXPORTED_API void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
     FASTDDS_SER_METHOD_DEPRECATED(3, "eprosima::fastdds::dds::builtin::TypeLookup_Reply::deserialize()",
             "In favor of version using eprosima::fastcdr::deserialize.")
-    RTPS_DllAPI void deserialize(
+    FASTDDS_EXPORTED_API void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }
@@ -588,25 +593,25 @@ class TypeLookup_RequestTypeSupport : public TypeSupport
 {
 public:
 
-    RTPS_DllAPI bool serialize(
+    FASTDDS_EXPORTED_API bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     }
 
-    RTPS_DllAPI bool serialize(
+    FASTDDS_EXPORTED_API bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    RTPS_DllAPI bool deserialize(
+    FASTDDS_EXPORTED_API bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
 
-    RTPS_DllAPI void* create_data() override;
+    FASTDDS_EXPORTED_API void* create_data() override;
 
-    RTPS_DllAPI void delete_data(
+    FASTDDS_EXPORTED_API void delete_data(
             void* data) override;
 };
 
@@ -614,25 +619,25 @@ class TypeLookup_ReplyTypeSupport : public TypeSupport
 {
 public:
 
-    RTPS_DllAPI bool serialize(
+    FASTDDS_EXPORTED_API bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     }
 
-    RTPS_DllAPI bool serialize(
+    FASTDDS_EXPORTED_API bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    RTPS_DllAPI bool deserialize(
+    FASTDDS_EXPORTED_API bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
 
-    RTPS_DllAPI void* create_data() override;
+    FASTDDS_EXPORTED_API void* create_data() override;
 
-    RTPS_DllAPI void delete_data(
+    FASTDDS_EXPORTED_API void delete_data(
             void* data) override;
 };
 

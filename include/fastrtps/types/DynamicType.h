@@ -52,15 +52,15 @@ protected:
 
     DynamicType();
 
-    RTPS_DllAPI DynamicType(
+    FASTDDS_EXPORTED_API DynamicType(
             const TypeDescriptor* descriptor);
 
     DynamicType(
             const DynamicTypeBuilder* other);
 
-    RTPS_DllAPI virtual ~DynamicType();
+    FASTDDS_EXPORTED_API virtual ~DynamicType();
 
-    RTPS_DllAPI virtual void clear();
+    FASTDDS_EXPORTED_API virtual void clear();
 
     ReturnCode_t copy_from_builder(
             const DynamicTypeBuilder* other);
@@ -122,54 +122,54 @@ protected:
 
 public:
 
-    RTPS_DllAPI bool equals(
+    FASTDDS_EXPORTED_API bool equals(
             const DynamicType* other) const;
 
-    RTPS_DllAPI ReturnCode_t get_all_members(
+    FASTDDS_EXPORTED_API ReturnCode_t get_all_members(
             std::map<MemberId, DynamicTypeMember*>& members);
 
-    RTPS_DllAPI ReturnCode_t get_all_members_by_name(
+    FASTDDS_EXPORTED_API ReturnCode_t get_all_members_by_name(
             std::map<std::string, DynamicTypeMember*>& members);
 
-    RTPS_DllAPI uint32_t get_bounds(
+    FASTDDS_EXPORTED_API uint32_t get_bounds(
             uint32_t index = 0) const;
 
-    RTPS_DllAPI uint32_t get_bounds_size() const;
+    FASTDDS_EXPORTED_API uint32_t get_bounds_size() const;
 
-    RTPS_DllAPI ReturnCode_t get_descriptor(
+    FASTDDS_EXPORTED_API ReturnCode_t get_descriptor(
             TypeDescriptor* descriptor) const;
 
-    RTPS_DllAPI const TypeDescriptor* get_descriptor() const;
+    FASTDDS_EXPORTED_API const TypeDescriptor* get_descriptor() const;
 
-    RTPS_DllAPI TypeDescriptor* get_descriptor();
+    FASTDDS_EXPORTED_API TypeDescriptor* get_descriptor();
 
-    RTPS_DllAPI bool key_annotation() const;
+    FASTDDS_EXPORTED_API bool key_annotation() const;
 
-    RTPS_DllAPI inline TypeKind get_kind() const
+    FASTDDS_EXPORTED_API inline TypeKind get_kind() const
     {
         return kind_;
     }
 
-    RTPS_DllAPI std::string get_name() const;
+    FASTDDS_EXPORTED_API std::string get_name() const;
 
-    RTPS_DllAPI MemberId get_members_count() const;
+    FASTDDS_EXPORTED_API MemberId get_members_count() const;
 
-    RTPS_DllAPI uint32_t get_total_bounds() const;
+    FASTDDS_EXPORTED_API uint32_t get_total_bounds() const;
 
-    RTPS_DllAPI const TypeDescriptor* get_type_descriptor() const
+    FASTDDS_EXPORTED_API const TypeDescriptor* get_type_descriptor() const
     {
         return descriptor_;
     }
 
-    RTPS_DllAPI bool has_children() const;
+    FASTDDS_EXPORTED_API bool has_children() const;
 
-    RTPS_DllAPI bool is_consistent() const;
+    FASTDDS_EXPORTED_API bool is_consistent() const;
 
-    RTPS_DllAPI bool is_complex_kind() const;
+    FASTDDS_EXPORTED_API bool is_complex_kind() const;
 
-    RTPS_DllAPI bool is_discriminator_type() const;
+    FASTDDS_EXPORTED_API bool is_discriminator_type() const;
 
-    RTPS_DllAPI size_t get_size() const;
+    FASTDDS_EXPORTED_API size_t get_size() const;
 
 };
 

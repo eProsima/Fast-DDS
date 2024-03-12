@@ -42,14 +42,14 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI PublisherListener()
+    FASTDDS_EXPORTED_API PublisherListener()
     {
     }
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~PublisherListener()
+    FASTDDS_EXPORTED_API virtual ~PublisherListener()
     {
     }
 

@@ -125,189 +125,189 @@ protected:
 
 public:
 
-    RTPS_DllAPI static DynamicTypeBuilderFactory* get_instance();
+    FASTDDS_EXPORTED_API static DynamicTypeBuilderFactory* get_instance();
 
-    RTPS_DllAPI static ReturnCode_t delete_instance();
+    FASTDDS_EXPORTED_API static ReturnCode_t delete_instance();
 
     ~DynamicTypeBuilderFactory();
 
-    RTPS_DllAPI DynamicType_ptr get_primitive_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr get_primitive_type(
             TypeKind kind);
 
-    RTPS_DllAPI ReturnCode_t delete_builder(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_builder(
             DynamicTypeBuilder* builder);
 
-    RTPS_DllAPI ReturnCode_t delete_type(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_type(
             DynamicType* type);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_custom_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_custom_builder(
             const TypeDescriptor* descriptor,
             const std::string& name = "");
 
-    RTPS_DllAPI DynamicTypeBuilder* create_builder_copy(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_builder_copy(
             const DynamicTypeBuilder* type);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_int32_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_int32_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_uint32_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_uint32_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_int16_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_int16_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_uint16_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_uint16_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_int64_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_int64_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_uint64_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_uint64_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_float32_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_float32_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_float64_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_float64_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_float128_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_float128_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_char8_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_char8_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_char16_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_char16_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_bool_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_bool_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_byte_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_byte_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_string_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_string_builder(
             uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_wstring_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_wstring_builder(
             uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_sequence_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_sequence_builder(
             const DynamicTypeBuilder* element_type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_sequence_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_sequence_builder(
             const DynamicType_ptr type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_array_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_array_builder(
             const DynamicTypeBuilder* element_type,
             const std::vector<uint32_t>& bounds);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_array_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_array_builder(
             const DynamicType_ptr type,
             const std::vector<uint32_t>& bounds);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_map_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_map_builder(
             DynamicTypeBuilder* key_element_type,
             DynamicTypeBuilder* element_type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_map_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_map_builder(
             DynamicType_ptr key_type,
             DynamicType_ptr value_type,
             uint32_t bound = MAX_ELEMENTS_COUNT);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_bitmask_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_bitmask_builder(
             uint32_t bound);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_bitset_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_bitset_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_alias_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_alias_builder(
             DynamicTypeBuilder* base_type,
             const std::string& sName);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_alias_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_alias_builder(
             DynamicType_ptr base_type,
             const std::string& sName);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_enum_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_enum_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_struct_builder();
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_struct_builder();
 
-    RTPS_DllAPI DynamicTypeBuilder* create_child_struct_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_child_struct_builder(
             DynamicTypeBuilder* parent_type);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_union_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_union_builder(
             DynamicTypeBuilder* discriminator_type);
 
-    RTPS_DllAPI DynamicTypeBuilder* create_union_builder(
+    FASTDDS_EXPORTED_API DynamicTypeBuilder* create_union_builder(
             DynamicType_ptr discriminator_type);
 
-    RTPS_DllAPI DynamicType_ptr create_annotation_primitive(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_annotation_primitive(
             const std::string& name);
 
-    RTPS_DllAPI DynamicType_ptr create_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_type(
             const TypeDescriptor* descriptor,
             const std::string& name = "");
 
-    RTPS_DllAPI DynamicType_ptr create_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_type(
             const DynamicTypeBuilder* other);
 
-    RTPS_DllAPI DynamicType_ptr create_alias_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_alias_type(
             DynamicTypeBuilder* base_type,
             const std::string& sName);
 
-    RTPS_DllAPI DynamicType_ptr create_alias_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_alias_type(
             DynamicType_ptr base_type,
             const std::string& sName);
 
-    RTPS_DllAPI DynamicType_ptr create_int32_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_int32_type();
 
-    RTPS_DllAPI DynamicType_ptr create_uint32_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_uint32_type();
 
-    RTPS_DllAPI DynamicType_ptr create_int16_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_int16_type();
 
-    RTPS_DllAPI DynamicType_ptr create_uint16_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_uint16_type();
 
-    RTPS_DllAPI DynamicType_ptr create_int64_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_int64_type();
 
-    RTPS_DllAPI DynamicType_ptr create_uint64_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_uint64_type();
 
-    RTPS_DllAPI DynamicType_ptr create_float32_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_float32_type();
 
-    RTPS_DllAPI DynamicType_ptr create_float64_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_float64_type();
 
-    RTPS_DllAPI DynamicType_ptr create_float128_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_float128_type();
 
-    RTPS_DllAPI DynamicType_ptr create_char8_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_char8_type();
 
-    RTPS_DllAPI DynamicType_ptr create_char16_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_char16_type();
 
-    RTPS_DllAPI DynamicType_ptr create_bool_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_bool_type();
 
-    RTPS_DllAPI DynamicType_ptr create_byte_type();
+    FASTDDS_EXPORTED_API DynamicType_ptr create_byte_type();
 
-    RTPS_DllAPI DynamicType_ptr create_string_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_string_type(
             uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicType_ptr create_wstring_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_wstring_type(
             uint32_t bound = MAX_STRING_LENGTH);
 
-    RTPS_DllAPI DynamicType_ptr create_bitset_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr create_bitset_type(
             uint32_t bound);
 
-    RTPS_DllAPI void build_type_identifier(
+    FASTDDS_EXPORTED_API void build_type_identifier(
             const DynamicType_ptr type,
             TypeIdentifier& identifier,
             bool complete = true) const;
 
-    RTPS_DllAPI void build_type_identifier(
+    FASTDDS_EXPORTED_API void build_type_identifier(
             const TypeDescriptor* descriptor,
             TypeIdentifier& identifier,
             bool complete = true) const;
 
-    RTPS_DllAPI void build_type_object(
+    FASTDDS_EXPORTED_API void build_type_object(
             const DynamicType_ptr type,
             TypeObject& object,
             bool complete = true,
             bool force = false) const;
 
-    RTPS_DllAPI void build_type_object(
+    FASTDDS_EXPORTED_API void build_type_object(
             const TypeDescriptor* descriptor,
             TypeObject& object,
             const std::vector<const MemberDescriptor*>* members = nullptr,
             bool complete = true,
             bool force = false) const;
 
-    RTPS_DllAPI bool is_empty() const;
+    FASTDDS_EXPORTED_API bool is_empty() const;
 };
 
 } // namespace types

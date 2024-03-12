@@ -137,12 +137,12 @@ public:
                        }, changeKind, handle);
     }
 
-    RTPS_DllAPI CacheChange_t* new_change(
+    FASTDDS_EXPORTED_API CacheChange_t* new_change(
             const std::function<uint32_t()>& dataCdrSerializedSize,
             ChangeKind_t changeKind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
-    RTPS_DllAPI CacheChange_t* new_change(
+    FASTDDS_EXPORTED_API CacheChange_t* new_change(
             ChangeKind_t changeKind,
             InstanceHandle_t handle = c_InstanceHandle_Unknown);
 
@@ -159,7 +159,7 @@ public:
      *
      * @post memory pointed to by @c change is not accessed
      */
-    RTPS_DllAPI bool release_change(
+    FASTDDS_EXPORTED_API bool release_change(
             CacheChange_t* change);
 
     /**
@@ -167,7 +167,7 @@ public:
      * @param data Pointer to the ReaderProxyData object added.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool matched_reader_add(
+    FASTDDS_EXPORTED_API virtual bool matched_reader_add(
             const ReaderProxyData& data) = 0;
 
     /**
@@ -175,7 +175,7 @@ public:
      * @param reader_guid GUID of the reader to remove.
      * @return True if removed.
      */
-    RTPS_DllAPI virtual bool matched_reader_remove(
+    FASTDDS_EXPORTED_API virtual bool matched_reader_remove(
             const GUID_t& reader_guid) = 0;
 
     /**
@@ -183,7 +183,7 @@ public:
      * @param reader_guid GUID of the reader to check.
      * @return True if it was matched.
      */
-    RTPS_DllAPI virtual bool matched_reader_is_matched(
+    FASTDDS_EXPORTED_API virtual bool matched_reader_is_matched(
             const GUID_t& reader_guid) = 0;
 
     /**
@@ -195,7 +195,7 @@ public:
      * @param filter  The content filter to use on this writer. May be @c nullptr to remove the content filter
      *                (i.e. treat all samples as relevant).
      */
-    RTPS_DllAPI virtual void reader_data_filter(
+    FASTDDS_EXPORTED_API virtual void reader_data_filter(
             fastdds::rtps::IReaderDataFilter* filter) = 0;
 
     /**
@@ -203,7 +203,7 @@ public:
      *
      * @return The content filter used on this writer.
      */
-    RTPS_DllAPI virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
+    FASTDDS_EXPORTED_API virtual const fastdds::rtps::IReaderDataFilter* reader_data_filter() const = 0;
 
     /**
      * @brief Check if a specific change has been delivered to the transport layer of every matched remote RTPSReader
@@ -212,7 +212,7 @@ public:
      * @param seq_num Sequence number of the change to check.
      * @return true if delivered. False otherwise.
      */
-    RTPS_DllAPI virtual bool has_been_fully_delivered(
+    FASTDDS_EXPORTED_API virtual bool has_been_fully_delivered(
             const SequenceNumber_t& seq_num) const
     {
         static_cast<void>(seq_num);
@@ -224,7 +224,7 @@ public:
      * Is only useful in reliable Writer. In BE Writers returns false when pending to be sent.
      * @return True if acknowledged by all.
      */
-    RTPS_DllAPI virtual bool is_acked_by_all(
+    FASTDDS_EXPORTED_API virtual bool is_acked_by_all(
             const CacheChange_t* /*a_change*/) const
     {
         return false;
@@ -234,7 +234,7 @@ public:
      * Waits until all changes were acknowledged or max_wait.
      * @return True if all were acknowledged.
      */
-    RTPS_DllAPI virtual bool wait_for_all_acked(
+    FASTDDS_EXPORTED_API virtual bool wait_for_all_acked(
             const Duration_t& /*max_wait*/)
     {
         return true;
@@ -244,26 +244,26 @@ public:
      * Update the Attributes of the Writer.
      * @param att New attributes
      */
-    RTPS_DllAPI virtual void updateAttributes(
+    FASTDDS_EXPORTED_API virtual void updateAttributes(
             const WriterAttributes& att) = 0;
 
     /**
      * Get Min Seq Num in History.
      * @return Minimum sequence number in history
      */
-    RTPS_DllAPI SequenceNumber_t get_seq_num_min();
+    FASTDDS_EXPORTED_API SequenceNumber_t get_seq_num_min();
 
     /**
      * Get Max Seq Num in History.
      * @return Maximum sequence number in history
      */
-    RTPS_DllAPI SequenceNumber_t get_seq_num_max();
+    FASTDDS_EXPORTED_API SequenceNumber_t get_seq_num_max();
 
     /**
      * Get maximum size of the serialized type
      * @return Maximum size of the serialized type
      */
-    RTPS_DllAPI uint32_t getTypeMaxSerialized();
+    FASTDDS_EXPORTED_API uint32_t getTypeMaxSerialized();
 
     //!Get maximum size of the data
     uint32_t getMaxDataSize();
@@ -276,12 +276,12 @@ public:
      * Get listener
      * @return Listener
      */
-    RTPS_DllAPI inline WriterListener* getListener()
+    FASTDDS_EXPORTED_API inline WriterListener* getListener()
     {
         return mp_listener;
     }
 
-    RTPS_DllAPI inline bool set_listener(
+    FASTDDS_EXPORTED_API inline bool set_listener(
             WriterListener* listener)
     {
         mp_listener = listener;
@@ -292,7 +292,7 @@ public:
      * Get the publication mode
      * @return publication mode
      */
-    RTPS_DllAPI inline bool isAsync() const
+    FASTDDS_EXPORTED_API inline bool isAsync() const
     {
         return is_async_;
     }
@@ -302,7 +302,7 @@ public:
      * @param max Maximum number of changes to remove.
      * @return at least one change has been removed
      */
-    RTPS_DllAPI bool remove_older_changes(
+    FASTDDS_EXPORTED_API bool remove_older_changes(
             unsigned int max = 0);
 
     /**
@@ -311,7 +311,7 @@ public:
      * @return Best effort writers always return false.
      *         Reliable writers override this method.
      */
-    RTPS_DllAPI virtual bool get_disable_positive_acks() const
+    FASTDDS_EXPORTED_API virtual bool get_disable_positive_acks() const
     {
         return false;
     }
@@ -345,7 +345,7 @@ public:
      * @param listener
      * @return true if successfully added
      */
-    RTPS_DllAPI bool add_statistics_listener(
+    FASTDDS_EXPORTED_API bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /**
@@ -353,7 +353,7 @@ public:
      * @param listener
      * @return true if successfully removed
      */
-    RTPS_DllAPI bool remove_statistics_listener(
+    FASTDDS_EXPORTED_API bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /**
@@ -361,7 +361,7 @@ public:
      *
      * @param enabled_writers The new mask to set
      */
-    RTPS_DllAPI void set_enabled_statistics_writers_mask(
+    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
 
     /**
@@ -370,7 +370,7 @@ public:
      * @param [out] connection_list of the writer
      * @return True if could be retrieved
      */
-    RTPS_DllAPI virtual bool get_connections(
+    FASTDDS_EXPORTED_API virtual bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) = 0;
 
 #endif // FASTDDS_STATISTICS

@@ -39,7 +39,7 @@ struct RequestHeader
 
     InstanceName instanceName;
 
-    RTPS_DllAPI static bool isKeyDefined()
+    FASTDDS_EXPORTED_API static bool isKeyDefined()
     {
         return false;
     }

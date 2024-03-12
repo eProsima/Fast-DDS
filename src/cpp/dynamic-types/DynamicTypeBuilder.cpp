@@ -183,7 +183,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     }
 }
 
-RTPS_DllAPI MemberId DynamicTypeBuilder::get_member_id_by_name(
+FASTDDS_EXPORTED_API MemberId DynamicTypeBuilder::get_member_id_by_name(
         const std::string& name) const
 {
     auto it = member_by_name_.find(name);

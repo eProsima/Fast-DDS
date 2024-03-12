@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_TOPIC_HPP_
 #define _FASTDDS_TOPIC_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/core/Entity.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
@@ -91,7 +91,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_inconsistent_topic_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_inconsistent_topic_status(
             InconsistentTopicStatus& status);
 
     /**
@@ -99,7 +99,7 @@ public:
      *
      * @return reference to TopicQos
      */
-    RTPS_DllAPI const TopicQos& get_qos() const;
+    FASTDDS_EXPORTED_API const TopicQos& get_qos() const;
 
     /**
      * Retrieves the Topic Qos.
@@ -107,7 +107,7 @@ public:
      * @param qos TopicQos where the qos is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_qos(
             TopicQos& qos) const;
 
     /**
@@ -119,7 +119,7 @@ public:
      * @retval RETCODE_INCONSISTENT_POLICY if new qos has inconsistent values.
      * @retval RETCODE_OK if qos was updated.
      */
-    RTPS_DllAPI ReturnCode_t set_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_qos(
             const TopicQos& qos);
 
     /**
@@ -127,7 +127,7 @@ public:
      *
      * @return pointer to TopicListener
      */
-    RTPS_DllAPI const TopicListener* get_listener() const;
+    FASTDDS_EXPORTED_API const TopicListener* get_listener() const;
 
     /**
      * Modifies the TopicListener.
@@ -136,7 +136,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             TopicListener* listener,
             const StatusMask& mask = StatusMask::all());
 

@@ -38,7 +38,7 @@ class SampleInfo_t;
  * This class should not be instantiated directly.
  * DomainRTPSParticipant class should be used to correctly create this element.
  */
-class RTPS_DllAPI Subscriber
+class FASTDDS_EXPORTED_API Subscriber
 {
     friend class SubscriberImpl;
 

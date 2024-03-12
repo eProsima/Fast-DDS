@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_
 #define _FASTDDS_RTPS_COMMON_ENTITYID_T_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 #include <cstdint>
@@ -73,7 +73,7 @@ namespace rtps {
 
 //!@brief Structure EntityId_t, entity id part of GUID_t.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI EntityId_t
+struct FASTDDS_EXPORTED_API EntityId_t
 {
     static constexpr unsigned int size = 4;
     octet value[size];

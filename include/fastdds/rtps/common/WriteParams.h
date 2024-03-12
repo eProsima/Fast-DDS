@@ -30,7 +30,7 @@ namespace rtps {
  *
  * @ingroup COMMON_MODULE
  */
-class RTPS_DllAPI WriteParams
+class FASTDDS_EXPORTED_API WriteParams
 {
 public:
 

@@ -1,7 +1,7 @@
 #ifndef _TYPE_NAMES_GENERATOR_
 #define _TYPE_NAMES_GENERATOR_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <cstdint>
 #include <string>
@@ -15,28 +15,28 @@ class TypeNamesGenerator
 {
 public:
 
-    RTPS_DllAPI static std::string get_string_type_name(
+    FASTDDS_EXPORTED_API static std::string get_string_type_name(
             uint32_t bound,
             bool wide,
             bool generate_identifier = true);
 
-    RTPS_DllAPI static std::string get_sequence_type_name(
+    FASTDDS_EXPORTED_API static std::string get_sequence_type_name(
             const std::string& type_name,
             uint32_t bound,
             bool generate_identifier = true);
 
-    RTPS_DllAPI static std::string get_array_type_name(
+    FASTDDS_EXPORTED_API static std::string get_array_type_name(
             const std::string& type_name,
             const std::vector<uint32_t>& bound,
             bool generate_identifier = true);
 
-    RTPS_DllAPI static std::string get_array_type_name(
+    FASTDDS_EXPORTED_API static std::string get_array_type_name(
             const std::string& type_name,
             const std::vector<uint32_t>& bound,
             uint32_t& ret_size,
             bool generate_identifier = true);
 
-    RTPS_DllAPI static std::string get_map_type_name(
+    FASTDDS_EXPORTED_API static std::string get_map_type_name(
             const std::string& key_type_name,
             const std::string& value_type_name,
             uint32_t bound,

@@ -37,7 +37,7 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>
@@ -117,7 +117,7 @@ public:
      * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the Subscriber creating this
      *         DataReader is not enabled.
      */
-    RTPS_DllAPI ReturnCode_t enable() override;
+    FASTDDS_EXPORTED_API ReturnCode_t enable() override;
 
     /**
      * Method to block the current thread until an unread message is available.
@@ -126,7 +126,7 @@ public:
      *
      * @return true if there is new unread message, false if timeout
      */
-    RTPS_DllAPI bool wait_for_unread_message(
+    FASTDDS_EXPORTED_API bool wait_for_unread_message(
             const fastrtps::Duration_t& timeout);
 
     /**
@@ -138,7 +138,7 @@ public:
      * @return RETCODE_OK if there is new unread message, ReturnCode_t::RETCODE_TIMEOUT if timeout
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t wait_for_historical_data(
+    FASTDDS_EXPORTED_API ReturnCode_t wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
 
 
@@ -305,7 +305,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t read(
+    FASTDDS_EXPORTED_API ReturnCode_t read(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
@@ -336,7 +336,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t read_w_condition(
+    FASTDDS_EXPORTED_API ReturnCode_t read_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
@@ -376,7 +376,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t read_instance(
+    FASTDDS_EXPORTED_API ReturnCode_t read_instance(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
@@ -441,7 +441,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t read_next_instance(
+    FASTDDS_EXPORTED_API ReturnCode_t read_next_instance(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
@@ -479,7 +479,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t read_next_instance_w_condition(
+    FASTDDS_EXPORTED_API ReturnCode_t read_next_instance_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
@@ -505,7 +505,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t read_next_sample(
+    FASTDDS_EXPORTED_API ReturnCode_t read_next_sample(
             void* data,
             SampleInfo* info);
 
@@ -540,7 +540,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t take(
+    FASTDDS_EXPORTED_API ReturnCode_t take(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
@@ -569,7 +569,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t take_w_condition(
+    FASTDDS_EXPORTED_API ReturnCode_t take_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
@@ -603,7 +603,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t take_instance(
+    FASTDDS_EXPORTED_API ReturnCode_t take_instance(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
@@ -642,7 +642,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t take_next_instance(
+    FASTDDS_EXPORTED_API ReturnCode_t take_next_instance(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples = LENGTH_UNLIMITED,
@@ -679,7 +679,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t take_next_instance_w_condition(
+    FASTDDS_EXPORTED_API ReturnCode_t take_next_instance_w_condition(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos,
             int32_t max_samples,
@@ -707,7 +707,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t take_next_sample(
+    FASTDDS_EXPORTED_API ReturnCode_t take_next_sample(
             void* data,
             SampleInfo* info);
 
@@ -746,7 +746,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t return_loan(
+    FASTDDS_EXPORTED_API ReturnCode_t return_loan(
             LoanableCollection& data_values,
             SampleInfoSeq& sample_infos);
 
@@ -766,7 +766,7 @@ public:
      * @return Any of the standard return codes.
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_key_value(
+    FASTDDS_EXPORTED_API ReturnCode_t get_key_value(
             void* key_holder,
             const InstanceHandle_t& handle);
 
@@ -781,7 +781,7 @@ public:
      * @return HANDLE_NIL if @c instance is nullptr.
      * @return HANDLE_NIL if there is no instance on the DataReader's history with the same key as @c instance.
      */
-    RTPS_DllAPI InstanceHandle_t lookup_instance(
+    FASTDDS_EXPORTED_API InstanceHandle_t lookup_instance(
             const void* instance) const;
 
     /**
@@ -791,7 +791,7 @@ public:
      *
      * @return RETCODE_OK if sample info was returned. RETCODE_NO_DATA if there is no sample to take.
      */
-    RTPS_DllAPI ReturnCode_t get_first_untaken_info(
+    FASTDDS_EXPORTED_API ReturnCode_t get_first_untaken_info(
             SampleInfo* info);
 
     /**
@@ -801,7 +801,7 @@ public:
      *
      * @return the number of samples on the reader history that have never been read.
      */
-    RTPS_DllAPI uint64_t get_unread_count() const;
+    FASTDDS_EXPORTED_API uint64_t get_unread_count() const;
 
     /**
      * Get the number of samples pending to be read.
@@ -810,7 +810,7 @@ public:
      *
      * @return the number of samples on the reader history that have never been read.
      */
-    RTPS_DllAPI uint64_t get_unread_count(
+    FASTDDS_EXPORTED_API uint64_t get_unread_count(
             bool mark_as_read) const;
 
     /**
@@ -818,42 +818,42 @@ public:
      *
      * @return Associated GUID
      */
-    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid();
+    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid();
 
     /**
      * Get associated GUID.
      *
      * @return Associated GUID
      */
-    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
+    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid() const;
 
     /**
      * @brief Getter for the associated InstanceHandle.
      *
      * @return Copy of the InstanceHandle
      */
-    RTPS_DllAPI InstanceHandle_t get_instance_handle() const;
+    FASTDDS_EXPORTED_API InstanceHandle_t get_instance_handle() const;
 
     /**
      * Getter for the data type.
      *
      * @return TypeSupport associated to the DataReader.
      */
-    RTPS_DllAPI TypeSupport type();
+    FASTDDS_EXPORTED_API TypeSupport type();
 
     /**
      * Get TopicDescription.
      *
      * @return TopicDescription pointer.
      */
-    RTPS_DllAPI const TopicDescription* get_topicdescription() const;
+    FASTDDS_EXPORTED_API const TopicDescription* get_topicdescription() const;
 
     /**
      * @brief Get the requested deadline missed status.
      *
      * @return The deadline missed status.
      */
-    RTPS_DllAPI ReturnCode_t get_requested_deadline_missed_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_requested_deadline_missed_status(
             RequestedDeadlineMissedStatus& status);
 
     /**
@@ -863,7 +863,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_requested_incompatible_qos_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_requested_incompatible_qos_status(
             RequestedIncompatibleQosStatus& status);
 
     /**
@@ -874,7 +874,7 @@ public:
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is
      *         not self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_qos(
             const DataReaderQos& qos);
 
     /**
@@ -882,7 +882,7 @@ public:
      *
      * @return Pointer to the DataReaderQos.
      */
-    RTPS_DllAPI const DataReaderQos& get_qos() const;
+    FASTDDS_EXPORTED_API const DataReaderQos& get_qos() const;
 
     /**
      * @brief Getter for the DataReaderQos.
@@ -891,7 +891,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_qos(
             DataReaderQos& qos) const;
 
     /**
@@ -901,7 +901,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DataReaderListener* listener);
 
     /**
@@ -912,7 +912,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DataReaderListener* listener,
             const StatusMask& mask);
     /**
@@ -920,10 +920,10 @@ public:
      *
      * @return Pointer to the DataReaderListener
      */
-    RTPS_DllAPI const DataReaderListener* get_listener() const;
+    FASTDDS_EXPORTED_API const DataReaderListener* get_listener() const;
 
     /* TODO
-       RTPS_DllAPI bool get_key_value(
+       FASTDDS_EXPORTED_API bool get_key_value(
             void* data,
             const InstanceHandle_t& handle);
      */
@@ -935,7 +935,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_liveliness_changed_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_liveliness_changed_status(
             LivelinessChangedStatus& status) const;
 
 
@@ -946,7 +946,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_sample_lost_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_sample_lost_status(
             SampleLostStatus& status) const;
 
     /**
@@ -956,7 +956,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_sample_rejected_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_sample_rejected_status(
             SampleRejectedStatus& status) const;
 
     /**
@@ -965,7 +965,7 @@ public:
      * @param[out] status subscription matched status struct
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_subscription_matched_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_subscription_matched_status(
             SubscriptionMatchedStatus& status) const;
 
     /**
@@ -976,7 +976,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_matched_publication_data(
+    FASTDDS_EXPORTED_API ReturnCode_t get_matched_publication_data(
             builtin::PublicationBuiltinTopicData& publication_data,
             const fastrtps::rtps::InstanceHandle_t& publication_handle) const;
 
@@ -987,7 +987,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_matched_publications(
+    FASTDDS_EXPORTED_API ReturnCode_t get_matched_publications(
             std::vector<InstanceHandle_t>& publication_handles) const;
 
     /**
@@ -1000,7 +1000,7 @@ public:
      *
      * @return pointer to the created ReadCondition, nullptr in case of error.
      */
-    RTPS_DllAPI ReadCondition* create_readcondition(
+    FASTDDS_EXPORTED_API ReadCondition* create_readcondition(
             SampleStateMask sample_states,
             ViewStateMask view_states,
             InstanceStateMask instance_states);
@@ -1017,7 +1017,7 @@ public:
      *
      * @return pointer to the created QueryCondition, nullptr in case of error.
      */
-    RTPS_DllAPI QueryCondition* create_querycondition(
+    FASTDDS_EXPORTED_API QueryCondition* create_querycondition(
             SampleStateMask sample_states,
             ViewStateMask view_states,
             InstanceStateMask instance_states,
@@ -1030,14 +1030,14 @@ public:
      * @param a_condition pointer to a ReadCondition belonging to the DataReader
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t delete_readcondition(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_readcondition(
             ReadCondition* a_condition);
 
     /**
      * @brief Getter for the Subscriber
      * @return Subscriber pointer
      */
-    RTPS_DllAPI const Subscriber* get_subscriber() const;
+    FASTDDS_EXPORTED_API const Subscriber* get_subscriber() const;
 
     /**
      * This operation deletes all the entities that were created by means of the “create” operations on the DataReader.
@@ -1048,7 +1048,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t delete_contained_entities();
+    FASTDDS_EXPORTED_API ReturnCode_t delete_contained_entities();
 
     /**
      * Checks whether a loaned sample is still valid or is corrupted.
@@ -1060,7 +1060,7 @@ public:
      *
      * @return true if the sample is valid
      */
-    RTPS_DllAPI bool is_sample_valid(
+    FASTDDS_EXPORTED_API bool is_sample_valid(
             const void* data,
             const SampleInfo* info) const;
 
@@ -1072,7 +1072,7 @@ public:
      * @return NOT_ENABLED if the reader has not been enabled.
      * @return OK if a list of locators is returned.
      */
-    RTPS_DllAPI ReturnCode_t get_listening_locators(
+    FASTDDS_EXPORTED_API ReturnCode_t get_listening_locators(
             rtps::LocatorList& locators) const;
 
 protected:

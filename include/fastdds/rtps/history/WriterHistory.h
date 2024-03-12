@@ -50,16 +50,16 @@ public:
     /**
      * Constructor of the WriterHistory.
      */
-    RTPS_DllAPI WriterHistory(
+    FASTDDS_EXPORTED_API WriterHistory(
             const HistoryAttributes&  att);
-    RTPS_DllAPI virtual ~WriterHistory() override;
+    FASTDDS_EXPORTED_API virtual ~WriterHistory() override;
 
     /**
      * Add a CacheChange_t to the WriterHistory.
      * @param a_change Pointer to the CacheChange_t to be added.
      * @return True if added.
      */
-    RTPS_DllAPI bool add_change(
+    FASTDDS_EXPORTED_API bool add_change(
             CacheChange_t* a_change);
 
     /**
@@ -68,7 +68,7 @@ public:
      * @param wparams Extra write parameters.
      * @return True if added.
      */
-    RTPS_DllAPI bool add_change(
+    FASTDDS_EXPORTED_API bool add_change(
             CacheChange_t* a_change,
             WriteParams& wparams);
 
@@ -79,7 +79,7 @@ public:
      * @param release specifies if the change should be return to the pool
      * @return iterator to the next change if any
      */
-    RTPS_DllAPI iterator remove_change_nts(
+    FASTDDS_EXPORTED_API iterator remove_change_nts(
             const_iterator removal,
             bool release = true) override;
 
@@ -91,7 +91,7 @@ public:
      * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return iterator to the next change if any
      */
-    RTPS_DllAPI iterator remove_change_nts(
+    FASTDDS_EXPORTED_API iterator remove_change_nts(
             const_iterator removal,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
             bool release = true) override;
@@ -102,52 +102,52 @@ public:
      * @param outer change for comparison
      * @return true if inner matches outer criteria
      */
-    RTPS_DllAPI bool matches_change(
+    FASTDDS_EXPORTED_API bool matches_change(
             const CacheChange_t* inner,
             CacheChange_t* outer) override;
 
     //! Introduce base class method into scope
     using History::remove_change;
 
-    RTPS_DllAPI virtual bool remove_change_g(
+    FASTDDS_EXPORTED_API virtual bool remove_change_g(
             CacheChange_t* a_change);
 
-    RTPS_DllAPI virtual bool remove_change_g(
+    FASTDDS_EXPORTED_API virtual bool remove_change_g(
             CacheChange_t* a_change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
-    RTPS_DllAPI bool remove_change(
+    FASTDDS_EXPORTED_API bool remove_change(
             const SequenceNumber_t& sequence_number);
 
-    RTPS_DllAPI CacheChange_t* remove_change_and_reuse(
+    FASTDDS_EXPORTED_API CacheChange_t* remove_change_and_reuse(
             const SequenceNumber_t& sequence_number);
 
     /**
      * Remove the CacheChange_t with the minimum sequenceNumber.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI bool remove_min_change();
+    FASTDDS_EXPORTED_API bool remove_min_change();
 
     /**
      * Remove the CacheChange_t with the minimum sequenceNumber.
      * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI bool remove_min_change(
+    FASTDDS_EXPORTED_API bool remove_min_change(
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
-    RTPS_DllAPI SequenceNumber_t next_sequence_number() const
+    FASTDDS_EXPORTED_API SequenceNumber_t next_sequence_number() const
     {
         return m_lastCacheChangeSeqNum + 1;
     }
 
 protected:
 
-    RTPS_DllAPI bool do_reserve_cache(
+    FASTDDS_EXPORTED_API bool do_reserve_cache(
             CacheChange_t** change,
             uint32_t size) override;
 
-    RTPS_DllAPI void do_release_cache(
+    FASTDDS_EXPORTED_API void do_release_cache(
             CacheChange_t* ch) override;
 
     /**

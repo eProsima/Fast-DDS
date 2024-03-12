@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_DDS_TOPIC_ICONTENTFILTER_HPP_
 #define _FASTDDS_DDS_TOPIC_ICONTENTFILTER_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/dds/core/LoanableTypedCollection.hpp>
 

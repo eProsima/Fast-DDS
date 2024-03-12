@@ -15,7 +15,7 @@
 #ifndef _FASTDDS_RTPS_THROUGHPUT_CONTROLLER_DESCRIPTOR_H
 #define _FASTDDS_RTPS_THROUGHPUT_CONTROLLER_DESCRIPTOR_H
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <cstdint>
 
 namespace eprosima {
@@ -35,8 +35,8 @@ struct ThroughputControllerDescriptor
     //! Window of time in which no more than 'bytesPerPeriod' bytes are allowed.
     uint32_t periodMillisecs;
 
-    RTPS_DllAPI ThroughputControllerDescriptor();
-    RTPS_DllAPI ThroughputControllerDescriptor(
+    FASTDDS_EXPORTED_API ThroughputControllerDescriptor();
+    FASTDDS_EXPORTED_API ThroughputControllerDescriptor(
             uint32_t size,
             uint32_t time);
 

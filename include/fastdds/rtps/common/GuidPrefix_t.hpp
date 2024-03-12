@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_GUIDPREFIX_T_HPP_
 #define _FASTDDS_RTPS_COMMON_GUIDPREFIX_T_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 #include <cstdint>
@@ -33,7 +33,7 @@ namespace rtps {
 
 //!@brief Structure GuidPrefix_t, Guid Prefix of GUID_t.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI GuidPrefix_t
+struct FASTDDS_EXPORTED_API GuidPrefix_t
 {
     static constexpr unsigned int size = 12;
     octet value[size];

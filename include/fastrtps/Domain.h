@@ -67,7 +67,7 @@ public:
      * @param listen ParticipantListener Pointer.
      * @return Participant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI DEPRECATED static Participant* createParticipant(
+    FASTDDS_EXPORTED_API DEPRECATED static Participant* createParticipant(
             const std::string& participant_profile,
             ParticipantListener* listen = nullptr);
 
@@ -77,12 +77,12 @@ public:
      * @param listen ParticipantListener Pointer.
      * @return Participant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI DEPRECATED static Participant* createParticipant(
+    FASTDDS_EXPORTED_API DEPRECATED static Participant* createParticipant(
             const ParticipantAttributes& att,
             ParticipantListener* listen = nullptr);
 
     //!Fills participant_attributes with the default values.
-    RTPS_DllAPI static void getDefaultParticipantAttributes(
+    FASTDDS_EXPORTED_API static void getDefaultParticipantAttributes(
             ParticipantAttributes& participant_attributes);
 
     /**
@@ -92,7 +92,7 @@ public:
      * @param listen Pointer to the PublisherListener.
      * @return Pointer to the created Publisher (nullptr if not created).
      */
-    RTPS_DllAPI static Publisher* createPublisher(
+    FASTDDS_EXPORTED_API static Publisher* createPublisher(
             Participant* part,
             const std::string& publisher_profile,
             PublisherListener* listen = nullptr);
@@ -104,13 +104,13 @@ public:
      * @param listen Pointer to the PublisherListener.
      * @return Pointer to the created Publisher (nullptr if not created).
      */
-    RTPS_DllAPI static Publisher* createPublisher(
+    FASTDDS_EXPORTED_API static Publisher* createPublisher(
             Participant* part,
             const PublisherAttributes& att,
             PublisherListener* listen = nullptr);
 
     //!Fills publisher_attributes with the default values.
-    RTPS_DllAPI static void getDefaultPublisherAttributes(
+    FASTDDS_EXPORTED_API static void getDefaultPublisherAttributes(
             PublisherAttributes& publisher_attributes);
 
     /**
@@ -120,7 +120,7 @@ public:
      * @param listen Pointer to the SubscriberListener.
      * @return Pointer to the created Subscriber (nullptr if not created).
      */
-    RTPS_DllAPI static Subscriber* createSubscriber(
+    FASTDDS_EXPORTED_API static Subscriber* createSubscriber(
             Participant* part,
             const std::string& subscriber_profile,
             SubscriberListener* listen = nullptr);
@@ -132,13 +132,13 @@ public:
      * @param listen Pointer to the SubscriberListener.
      * @return Pointer to the created Subscriber (nullptr if not created).
      */
-    RTPS_DllAPI static Subscriber* createSubscriber(
+    FASTDDS_EXPORTED_API static Subscriber* createSubscriber(
             Participant* part,
             const SubscriberAttributes& att,
             SubscriberListener* listen = nullptr);
 
     //!Fills subscriber_attributes with the default values.
-    RTPS_DllAPI static void getDefaultSubscriberAttributes(
+    FASTDDS_EXPORTED_API static void getDefaultSubscriberAttributes(
             SubscriberAttributes& subscriber_attributes);
 
     /**
@@ -146,7 +146,7 @@ public:
      * @param part Pointer to the participant.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI static bool removeParticipant(
+    FASTDDS_EXPORTED_API static bool removeParticipant(
             Participant* part);
 
     /**
@@ -154,7 +154,7 @@ public:
      * @param pub Pointer to the Publisher.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI static bool removePublisher(
+    FASTDDS_EXPORTED_API static bool removePublisher(
             Publisher* pub);
 
     /**
@@ -162,7 +162,7 @@ public:
      * @param sub Pointer to the Subscriber.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI static bool removeSubscriber(
+    FASTDDS_EXPORTED_API static bool removeSubscriber(
             Subscriber* sub);
 
     /**
@@ -172,7 +172,7 @@ public:
      * @param type Returned type.
      * @return True if type was found.
      */
-    RTPS_DllAPI static bool getRegisteredType(
+    FASTDDS_EXPORTED_API static bool getRegisteredType(
             Participant* part,
             const char* typeName,
             fastdds::dds::TopicDataType** type);
@@ -183,7 +183,7 @@ public:
      * @param type Pointer to the Type.
      * @return True if correctly registered.
      */
-    RTPS_DllAPI static bool registerType(
+    FASTDDS_EXPORTED_API static bool registerType(
             Participant* part,
             fastdds::dds::TopicDataType* type);
 
@@ -193,7 +193,7 @@ public:
      * @param type Pointer to the Type.
      * @return True if correctly registered.
      */
-    RTPS_DllAPI static bool registerDynamicType(
+    FASTDDS_EXPORTED_API static bool registerDynamicType(
             Participant* part,
             types::DynamicPubSubType* type);
 
@@ -203,21 +203,21 @@ public:
      * @param typeName Name of the type.
      * @return True if correctly unregistered.
      */
-    RTPS_DllAPI static bool unregisterType(
+    FASTDDS_EXPORTED_API static bool unregisterType(
             Participant* part,
             const char* typeName);
 
     /**
      * Stop and remove all participants, publishers and subscribers in this Domain.
      */
-    RTPS_DllAPI static void stopAll();
+    FASTDDS_EXPORTED_API static void stopAll();
 
     /**
      * Load profiles from XML file.
      * @param xml_profile_file XML profile file.
      * @return True if correctly loaded.
      */
-    RTPS_DllAPI static bool loadXMLProfilesFile(
+    FASTDDS_EXPORTED_API static bool loadXMLProfilesFile(
             const std::string& xml_profile_file);
 
     /**
@@ -226,7 +226,7 @@ public:
      * @param length length of data.
      * @return True if correctly loaded.
      */
-    RTPS_DllAPI static bool loadXMLProfilesString(
+    FASTDDS_EXPORTED_API static bool loadXMLProfilesString(
             const char* data,
             size_t length);
 

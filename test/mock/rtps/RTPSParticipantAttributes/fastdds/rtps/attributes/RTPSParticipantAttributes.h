@@ -39,7 +39,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -550,7 +550,7 @@ public:
     //! Optionally allows user to define the GuidPrefix_t
     GuidPrefix_t prefix;
 
-    RTPS_DllAPI inline bool ReadguidPrefix(
+    FASTDDS_EXPORTED_API inline bool ReadguidPrefix(
             const char* pfx)
     {
         return bool(std::istringstream(pfx) >> prefix);

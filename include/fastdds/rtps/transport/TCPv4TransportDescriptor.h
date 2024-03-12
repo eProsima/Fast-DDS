@@ -81,18 +81,18 @@ struct TCPv4TransportDescriptor : public TCPTransportDescriptor
     }
 
     //! Constructor
-    RTPS_DllAPI TCPv4TransportDescriptor();
+    FASTDDS_EXPORTED_API TCPv4TransportDescriptor();
 
     //! Copy constructor
-    RTPS_DllAPI TCPv4TransportDescriptor(
+    FASTDDS_EXPORTED_API TCPv4TransportDescriptor(
             const TCPv4TransportDescriptor& t);
 
     //! Copy assignment
-    RTPS_DllAPI TCPv4TransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API TCPv4TransportDescriptor& operator =(
             const TCPv4TransportDescriptor& t);
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const TCPv4TransportDescriptor& t) const;
 };
 

@@ -38,7 +38,7 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI DataReaderQos();
+    FASTDDS_EXPORTED_API DataReaderQos();
 };
 
 /**
@@ -53,7 +53,7 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI MonitorServiceDataReaderQos();
+    FASTDDS_EXPORTED_API MonitorServiceDataReaderQos();
 };
 
 //! Constant to access default Statistics DataReader Qos

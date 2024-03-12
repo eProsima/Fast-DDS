@@ -65,12 +65,12 @@ typedef struct TCPv4TransportDescriptor : public TCPTransportDescriptor
         wan_addr[3] = (eprosima::fastrtps::rtps::octet)d;
     }
 
-    RTPS_DllAPI TCPv4TransportDescriptor()
+    FASTDDS_EXPORTED_API TCPv4TransportDescriptor()
     {
 
     }
 
-    RTPS_DllAPI TCPv4TransportDescriptor(
+    FASTDDS_EXPORTED_API TCPv4TransportDescriptor(
             const TCPv4TransportDescriptor& /*t*/)
         : TCPv4TransportDescriptor()
     {

@@ -30,7 +30,7 @@ namespace rtps {
  * @brief This class is used to specify a sample
  * @ingroup COMMON_MODULE
  */
-class RTPS_DllAPI SampleIdentity
+class FASTDDS_EXPORTED_API SampleIdentity
 {
 public:
 

@@ -53,14 +53,14 @@ public:
     virtual LocatorList NormalizeLocator(
             const Locator& locator) override;
 
-    RTPS_DllAPI static std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork;
+    FASTDDS_EXPORTED_API static std::atomic<bool> test_UDPv4Transport_ShutdownAllNetwork;
     // Handle to a persistent log of dropped packets. Defaults to length 0 (no logging) to prevent wasted resources.
-    RTPS_DllAPI static std::vector<std::vector<fastrtps::rtps::octet>> test_UDPv4Transport_DropLog;
-    RTPS_DllAPI static std::atomic<uint32_t> test_UDPv4Transport_DropLogLength;
-    RTPS_DllAPI static std::atomic<bool> always_drop_participant_builtin_topic_data;
-    RTPS_DllAPI static std::atomic<bool> simulate_no_interfaces;
+    FASTDDS_EXPORTED_API static std::vector<std::vector<fastrtps::rtps::octet>> test_UDPv4Transport_DropLog;
+    FASTDDS_EXPORTED_API static std::atomic<uint32_t> test_UDPv4Transport_DropLogLength;
+    FASTDDS_EXPORTED_API static std::atomic<bool> always_drop_participant_builtin_topic_data;
+    FASTDDS_EXPORTED_API static std::atomic<bool> simulate_no_interfaces;
 
-    RTPS_DllAPI static test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter;
+    FASTDDS_EXPORTED_API static test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter;
 
 protected:
 

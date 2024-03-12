@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -41,23 +41,23 @@ public:
     using ReceptionThreadsConfigMap = std::map<uint32_t, ThreadSettings>;
 
     //! Constructor
-    RTPS_DllAPI PortBasedTransportDescriptor(
+    FASTDDS_EXPORTED_API PortBasedTransportDescriptor(
             uint32_t maximumMessageSize,
             uint32_t maximumInitialPeersRange);
 
     //! Copy constructor
-    RTPS_DllAPI PortBasedTransportDescriptor(
+    FASTDDS_EXPORTED_API PortBasedTransportDescriptor(
             const PortBasedTransportDescriptor& t) = default;
 
     //! Copy assignment
-    RTPS_DllAPI PortBasedTransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API PortBasedTransportDescriptor& operator =(
             const PortBasedTransportDescriptor& t) = default;
 
     //! Destructor
-    virtual RTPS_DllAPI ~PortBasedTransportDescriptor() = default;
+    virtual FASTDDS_EXPORTED_API ~PortBasedTransportDescriptor() = default;
 
     //! Comparison operator
-    bool RTPS_DllAPI operator ==(
+    bool FASTDDS_EXPORTED_API operator ==(
             const PortBasedTransportDescriptor& t) const;
 
     /**
@@ -76,25 +76,25 @@ public:
      *
      * @return The ThreadSettings for the given port.
      */
-    virtual RTPS_DllAPI const ThreadSettings& get_thread_config_for_port(
+    virtual FASTDDS_EXPORTED_API const ThreadSettings& get_thread_config_for_port(
             uint32_t port) const;
 
-    virtual RTPS_DllAPI bool set_thread_config_for_port(
+    virtual FASTDDS_EXPORTED_API bool set_thread_config_for_port(
             const uint32_t& port,
             const ThreadSettings& thread_settings);
 
     //! Returns the ThreadSettings for the default reception threads
-    RTPS_DllAPI const ThreadSettings& default_reception_threads() const;
+    FASTDDS_EXPORTED_API const ThreadSettings& default_reception_threads() const;
 
     //! Set the ThreadSettings for the default reception threads
-    virtual RTPS_DllAPI void default_reception_threads(
+    virtual FASTDDS_EXPORTED_API void default_reception_threads(
             const ThreadSettings& default_reception_threads);
 
     //! Returns the ThreadSettings for the user-configured reception threads
-    RTPS_DllAPI const ReceptionThreadsConfigMap& reception_threads() const;
+    FASTDDS_EXPORTED_API const ReceptionThreadsConfigMap& reception_threads() const;
 
     //! Set the ThreadSettings for the user-configured reception threads
-    virtual RTPS_DllAPI bool reception_threads(
+    virtual FASTDDS_EXPORTED_API bool reception_threads(
             const ReceptionThreadsConfigMap& reception_threads);
 
 protected:

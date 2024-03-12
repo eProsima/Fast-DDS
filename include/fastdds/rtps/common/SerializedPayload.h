@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 /*!
@@ -53,7 +53,7 @@ namespace rtps {
 
 //!@brief Structure SerializedPayload_t.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI SerializedPayload_t
+struct FASTDDS_EXPORTED_API SerializedPayload_t
 {
     //!Size in bytes of the representation header as specified in the RTPS 2.3 specification chapter 10.
     static constexpr size_t representation_header_size = 4u;

@@ -26,7 +26,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Time_t.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -93,21 +93,21 @@ public:
      * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the participant creating this
      *         Publisher is not enabled.
      */
-    RTPS_DllAPI ReturnCode_t enable() override;
+    FASTDDS_EXPORTED_API ReturnCode_t enable() override;
 
     /**
      * Allows accessing the Publisher Qos.
      *
      * @return PublisherQos reference
      */
-    RTPS_DllAPI const PublisherQos& get_qos() const;
+    FASTDDS_EXPORTED_API const PublisherQos& get_qos() const;
 
     /**
      * Retrieves the Publisher Qos.
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_qos(
             PublisherQos& qos) const;
 
     /**
@@ -118,7 +118,7 @@ public:
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
      * self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_qos(
             const PublisherQos& qos);
 
     /**
@@ -126,7 +126,7 @@ public:
      *
      * @return PublisherListener pointer
      */
-    RTPS_DllAPI const PublisherListener* get_listener() const;
+    FASTDDS_EXPORTED_API const PublisherListener* get_listener() const;
 
     /**
      * Modifies the PublisherListener, sets the mask to StatusMask::all()
@@ -134,7 +134,7 @@ public:
      * @param listener new value for the PublisherListener
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             PublisherListener* listener);
 
     /**
@@ -144,7 +144,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             PublisherListener* listener,
             const StatusMask& mask);
 
@@ -158,7 +158,7 @@ public:
      * @param payload_pool IPayloadPool shared pointer that defines writer payload (default: nullptr).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
-    RTPS_DllAPI DataWriter* create_datawriter(
+    FASTDDS_EXPORTED_API DataWriter* create_datawriter(
             Topic* topic,
             const DataWriterQos& qos,
             DataWriterListener* listener = nullptr,
@@ -175,7 +175,7 @@ public:
      * @param payload_pool IPayloadPool shared pointer that defines writer payload (default: nullptr).
      * @return Pointer to the created DataWriter. nullptr if failed.
      */
-    RTPS_DllAPI DataWriter* create_datawriter_with_profile(
+    FASTDDS_EXPORTED_API DataWriter* create_datawriter_with_profile(
             Topic* topic,
             const std::string& profile_name,
             DataWriterListener* listener = nullptr,
@@ -197,7 +197,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if it does not belong to this Publisher, RETCODE_OK if it is correctly deleted and
      * RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t delete_datawriter(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_datawriter(
             const DataWriter* writer);
 
     /**
@@ -210,7 +210,7 @@ public:
      * @param topic_name Name of the Topic
      * @return Pointer to a previously created DataWriter associated to a Topic with the requested topic_name
      */
-    RTPS_DllAPI DataWriter* lookup_datawriter(
+    FASTDDS_EXPORTED_API DataWriter* lookup_datawriter(
             const std::string& topic_name) const;
 
     /**
@@ -219,7 +219,7 @@ public:
      * @return RETCODE_OK if successful, an error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t suspend_publications();
+    FASTDDS_EXPORTED_API ReturnCode_t suspend_publications();
 
     /**
      * @brief Indicates to FastDDS that the modifications to the DataWriters are complete.
@@ -227,7 +227,7 @@ public:
      * @return RETCODE_OK if successful, an error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t resume_publications();
+    FASTDDS_EXPORTED_API ReturnCode_t resume_publications();
 
     /**
      * @brief Signals the beginning of a set of coherent cache changes using the Datawriters attached to the publisher
@@ -235,7 +235,7 @@ public:
      * @return RETCODE_OK if successful, an error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t begin_coherent_changes();
+    FASTDDS_EXPORTED_API ReturnCode_t begin_coherent_changes();
 
     /**
      * @brief Signals the end of a set of coherent cache changes
@@ -243,7 +243,7 @@ public:
      * @return RETCODE_OK if successful, an error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t end_coherent_changes();
+    FASTDDS_EXPORTED_API ReturnCode_t end_coherent_changes();
 
     /**
      * This operation blocks the calling thread until either all data written by the reliable DataWriter entities
@@ -256,7 +256,7 @@ public:
      * @return RETCODE_TIMEOUT if the function takes more than the maximum blocking time established, RETCODE_OK if the
      * Publisher receives the acknowledgments and RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
+    FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
@@ -264,14 +264,14 @@ public:
      *
      * @return Pointer to the DomainParticipant
      */
-    RTPS_DllAPI const DomainParticipant* get_participant() const;
+    FASTDDS_EXPORTED_API const DomainParticipant* get_participant() const;
 
     /**
      * @brief Deletes all contained DataWriters
      *
      * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t delete_contained_entities();
+    FASTDDS_EXPORTED_API ReturnCode_t delete_contained_entities();
 
     /**
      * This operation sets a default value of the DataWriter QoS policies which will be used for newly created
@@ -287,7 +287,7 @@ public:
      * @param qos DataWriterQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_default_datawriter_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_default_datawriter_qos(
             const DataWriterQos& qos);
 
     /**
@@ -300,7 +300,7 @@ public:
      *
      * @return Current default WriterQos
      */
-    RTPS_DllAPI const DataWriterQos& get_default_datawriter_qos() const;
+    FASTDDS_EXPORTED_API const DataWriterQos& get_default_datawriter_qos() const;
 
     /**
      * This operation retrieves the default value of the DataWriter QoS, that is, the QoS policies which will be used
@@ -313,7 +313,7 @@ public:
      * @param qos Reference to the current default WriterQos.
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_default_datawriter_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_datawriter_qos(
             DataWriterQos& qos) const;
 
     /**
@@ -324,7 +324,7 @@ public:
      * @return RETCODE_OK if successful, an error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t copy_from_topic_qos(
             fastdds::dds::DataWriterQos& writer_qos,
             const fastdds::dds::TopicQos& topic_qos) const;
 
@@ -335,7 +335,7 @@ public:
      * @param qos DataWriterQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
-    RTPS_DllAPI ReturnCode_t get_datawriter_qos_from_profile(
+    FASTDDS_EXPORTED_API ReturnCode_t get_datawriter_qos_from_profile(
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
@@ -344,7 +344,7 @@ public:
      *
      * @return InstanceHandle of this Publisher.
      */
-    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
+    FASTDDS_EXPORTED_API const InstanceHandle_t& get_instance_handle() const;
 
     /**
      * Fills the given vector with all the datawriters of this publisher.
@@ -352,7 +352,7 @@ public:
      * @param writers Vector where the DataWriters are returned
      * @return true
      */
-    RTPS_DllAPI bool get_datawriters(
+    FASTDDS_EXPORTED_API bool get_datawriters(
             std::vector<DataWriter*>& writers) const;
 
     /**
@@ -360,7 +360,7 @@ public:
      *
      * @return true if the publisher has one or several DataWriters, false otherwise
      */
-    RTPS_DllAPI bool has_datawriters() const;
+    FASTDDS_EXPORTED_API bool has_datawriters() const;
 
 protected:
 

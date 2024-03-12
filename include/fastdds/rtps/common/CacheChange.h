@@ -72,7 +72,7 @@ struct CacheChangeReaderInfo_t
  * Structure CacheChange_t, contains information on a specific CacheChange.
  * @ingroup COMMON_MODULE
  */
-struct RTPS_DllAPI CacheChange_t
+struct FASTDDS_EXPORTED_API CacheChange_t
 {
     //!Kind of change, default value ALIVE.
     ChangeKind_t kind = ALIVE;

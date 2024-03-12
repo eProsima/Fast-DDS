@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_CHANGEKINDT_HPP_
 #define _FASTDDS_RTPS_COMMON_CHANGEKINDT_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -29,7 +29,7 @@ namespace rtps {
  * @enum ChangeKind_t, different types of CacheChange_t.
  * @ingroup COMMON_MODULE
  */
-enum RTPS_DllAPI ChangeKind_t
+enum FASTDDS_EXPORTED_API ChangeKind_t
 {
     ALIVE,                            //!< ALIVE
     NOT_ALIVE_DISPOSED,               //!< NOT_ALIVE_DISPOSED

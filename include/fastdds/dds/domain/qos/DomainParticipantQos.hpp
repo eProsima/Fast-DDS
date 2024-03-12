@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -52,7 +52,7 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI DomainParticipantQos()
+    FASTDDS_EXPORTED_API DomainParticipantQos()
     {
 #ifdef FASTDDS_STATISTICS
         /*
@@ -69,7 +69,7 @@ public:
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~DomainParticipantQos()
+    FASTDDS_EXPORTED_API virtual ~DomainParticipantQos()
     {
     }
 
@@ -356,7 +356,7 @@ public:
      * @param transports Defines the transport configuration scenario to setup.
      * @param options Defines the options to be used in the transport configuration.
      */
-    RTPS_DllAPI void setup_transports(
+    FASTDDS_EXPORTED_API void setup_transports(
             rtps::BuiltinTransports transports,
             const rtps::BuiltinTransportsOptions& options = rtps::BuiltinTransportsOptions());
 
@@ -512,7 +512,7 @@ private:
 
 };
 
-RTPS_DllAPI extern const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
+FASTDDS_EXPORTED_API extern const DomainParticipantQos PARTICIPANT_QOS_DEFAULT;
 
 
 } /* namespace dds */

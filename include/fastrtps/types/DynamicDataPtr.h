@@ -29,30 +29,30 @@ public:
 
     typedef std::shared_ptr<DynamicData> Base;
 
-    using Base::operator->;
-    using Base::operator*;
+    using Base::operator ->;
+    using Base::operator *;
     using Base::operator bool;
 
-    RTPS_DllAPI DynamicData_ptr()
+    FASTDDS_EXPORTED_API DynamicData_ptr()
     {
     }
 
-    RTPS_DllAPI explicit DynamicData_ptr(
+    FASTDDS_EXPORTED_API explicit DynamicData_ptr(
             DynamicData* pData);
 
-    RTPS_DllAPI DynamicData_ptr(
+    FASTDDS_EXPORTED_API DynamicData_ptr(
             const DynamicData_ptr& other) = default;
 
-    RTPS_DllAPI DynamicData_ptr(
+    FASTDDS_EXPORTED_API DynamicData_ptr(
             DynamicData_ptr&& other) = default;
 
-    RTPS_DllAPI DynamicData_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicData_ptr& operator =(
             const DynamicData_ptr&) = default;
 
-    RTPS_DllAPI DynamicData_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicData_ptr& operator =(
             DynamicData_ptr&&) = default;
 
-    RTPS_DllAPI DynamicData_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicData_ptr& operator =(
             DynamicData*);
 };
 

@@ -34,7 +34,7 @@ private:
      * Called by Log consume to get the correct stream
      * @param Log::Entry to consume.
      */
-    RTPS_DllAPI virtual std::ostream& get_stream(
+    FASTDDS_EXPORTED_API virtual std::ostream& get_stream(
             const Log::Entry& entry) override;
 };
 

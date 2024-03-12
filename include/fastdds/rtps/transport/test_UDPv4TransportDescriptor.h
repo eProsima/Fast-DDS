@@ -81,7 +81,7 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     uint32_t dropLogLength;
 
     //! Constructor
-    RTPS_DllAPI test_UDPv4TransportDescriptor();
+    FASTDDS_EXPORTED_API test_UDPv4TransportDescriptor();
 
     //! Destructor
     virtual ~test_UDPv4TransportDescriptor() = default;
@@ -90,24 +90,24 @@ struct test_UDPv4TransportDescriptor : public SocketTransportDescriptor
     virtual TransportInterface* create_transport() const override;
 
     //! Copy constructor
-    RTPS_DllAPI test_UDPv4TransportDescriptor(
+    FASTDDS_EXPORTED_API test_UDPv4TransportDescriptor(
             const test_UDPv4TransportDescriptor& t) = delete;
 
     //! Copy assignment
-    RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API test_UDPv4TransportDescriptor& operator =(
             const test_UDPv4TransportDescriptor& t) = delete;
 
     //! Move constructor
-    RTPS_DllAPI test_UDPv4TransportDescriptor(
+    FASTDDS_EXPORTED_API test_UDPv4TransportDescriptor(
             test_UDPv4TransportDescriptor&& t) = delete;
 
     //! Move assignment
-    RTPS_DllAPI test_UDPv4TransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API test_UDPv4TransportDescriptor& operator =(
             test_UDPv4TransportDescriptor&& t) = delete;
 
     //! Comparison operator
     // Filters are not included
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const test_UDPv4TransportDescriptor& t) const;
 };
 

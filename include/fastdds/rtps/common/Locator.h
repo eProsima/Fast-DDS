@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_ELEM_LOCATOR_H_
 #define _FASTDDS_RTPS_ELEM_LOCATOR_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/Types.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -68,7 +68,7 @@ namespace rtps {
  * For example, an address + port combination in the case of UDP.
  * @ingroup COMMON_MODULE
  */
-class RTPS_DllAPI Locator_t
+class FASTDDS_EXPORTED_API Locator_t
 {
 public:
 

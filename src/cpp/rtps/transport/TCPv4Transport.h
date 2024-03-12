@@ -121,7 +121,7 @@ protected:
 
 public:
 
-    RTPS_DllAPI TCPv4Transport(
+    FASTDDS_EXPORTED_API TCPv4Transport(
             const TCPv4TransportDescriptor&);
 
     virtual ~TCPv4Transport() override;

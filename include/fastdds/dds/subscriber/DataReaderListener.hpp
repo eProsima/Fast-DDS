@@ -25,7 +25,7 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/dds/core/status/SampleRejectedStatus.hpp>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -44,14 +44,14 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI DataReaderListener()
+    FASTDDS_EXPORTED_API DataReaderListener()
     {
     }
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~DataReaderListener()
+    FASTDDS_EXPORTED_API virtual ~DataReaderListener()
     {
     }
 
@@ -60,7 +60,7 @@ public:
      *
      * @param reader DataReader
      */
-    RTPS_DllAPI virtual void on_data_available(
+    FASTDDS_EXPORTED_API virtual void on_data_available(
             DataReader* reader)
     {
         (void)reader;
@@ -72,7 +72,7 @@ public:
      * @param reader DataReader
      * @param info The subscription matched status
      */
-    RTPS_DllAPI virtual void on_subscription_matched(
+    FASTDDS_EXPORTED_API virtual void on_subscription_matched(
             DataReader* reader,
             const fastdds::dds::SubscriptionMatchedStatus& info)
     {
@@ -86,7 +86,7 @@ public:
      * @param reader DataReader
      * @param status The requested deadline missed status
      */
-    RTPS_DllAPI virtual void on_requested_deadline_missed(
+    FASTDDS_EXPORTED_API virtual void on_requested_deadline_missed(
             DataReader* reader,
             const RequestedDeadlineMissedStatus& status)
     {
@@ -100,7 +100,7 @@ public:
      * @param reader The DataReader
      * @param status The liveliness changed status
      */
-    RTPS_DllAPI virtual void on_liveliness_changed(
+    FASTDDS_EXPORTED_API virtual void on_liveliness_changed(
             DataReader* reader,
             const LivelinessChangedStatus& status)
     {
@@ -114,7 +114,7 @@ public:
      * @param reader The DataReader
      * @param status The rejected status
      */
-    RTPS_DllAPI virtual void on_sample_rejected(
+    FASTDDS_EXPORTED_API virtual void on_sample_rejected(
             DataReader* reader,
             const SampleRejectedStatus& status)
     {
@@ -128,7 +128,7 @@ public:
      * @param reader The DataReader
      * @param status The requested incompatible QoS status
      */
-    RTPS_DllAPI virtual void on_requested_incompatible_qos(
+    FASTDDS_EXPORTED_API virtual void on_requested_incompatible_qos(
             DataReader* reader,
             const RequestedIncompatibleQosStatus& status)
     {
@@ -142,7 +142,7 @@ public:
      * @param reader The DataReader
      * @param status The sample lost status
      */
-    RTPS_DllAPI virtual void on_sample_lost(
+    FASTDDS_EXPORTED_API virtual void on_sample_lost(
             DataReader* reader,
             const SampleLostStatus& status)
     {

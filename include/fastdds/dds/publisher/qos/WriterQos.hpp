@@ -37,8 +37,8 @@ class WriterQos
 {
 public:
 
-    RTPS_DllAPI WriterQos();
-    RTPS_DllAPI virtual ~WriterQos();
+    FASTDDS_EXPORTED_API WriterQos();
+    FASTDDS_EXPORTED_API virtual ~WriterQos();
 
     bool operator ==(
             const WriterQos& b) const
@@ -133,7 +133,7 @@ public:
      * @param qos Reference from a WriterQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
-    RTPS_DllAPI void setQos(
+    FASTDDS_EXPORTED_API void setQos(
             const WriterQos& qos,
             bool first_time);
 
@@ -141,15 +141,15 @@ public:
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
      */
-    RTPS_DllAPI bool checkQos() const;
+    FASTDDS_EXPORTED_API bool checkQos() const;
 
-    RTPS_DllAPI bool canQosBeUpdated(
+    FASTDDS_EXPORTED_API bool canQosBeUpdated(
             const WriterQos& qos) const;
 
     void clear();
 };
 
-//RTPS_DllAPI extern const WriterQos DATAWRITER_QOS_DEFAULT;
+//FASTDDS_EXPORTED_API extern const WriterQos DATAWRITER_QOS_DEFAULT;
 
 } //namespace dds
 } //namespace fastdds

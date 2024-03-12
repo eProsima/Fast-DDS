@@ -63,13 +63,13 @@ class ParticipantProxyData
 {
 public:
 
-    RTPS_DllAPI ParticipantProxyData(
+    FASTDDS_EXPORTED_API ParticipantProxyData(
             const RTPSParticipantAllocationAttributes& allocation);
 
-    RTPS_DllAPI ParticipantProxyData(
+    FASTDDS_EXPORTED_API ParticipantProxyData(
             const ParticipantProxyData& pdata);
 
-    RTPS_DllAPI virtual ~ParticipantProxyData();
+    FASTDDS_EXPORTED_API virtual ~ParticipantProxyData();
 
     //!Protocol version
     ProtocolVersion_t m_protocolVersion;
@@ -127,7 +127,7 @@ public:
      * @param pdata Object to copy the data from
      * @return True on success
      */
-    RTPS_DllAPI bool updateData(
+    FASTDDS_EXPORTED_API bool updateData(
             ParticipantProxyData& pdata);
 
     /**
@@ -135,14 +135,14 @@ public:
      * @param include_encapsulation Whether to include the size of the encapsulation info.
      * @return size in bytes of the CDR serialization.
      */
-    RTPS_DllAPI uint32_t get_serialized_size(
+    FASTDDS_EXPORTED_API uint32_t get_serialized_size(
             bool include_encapsulation) const;
 
     /**
      * Write as a parameter list on a CDRMessage_t
      * @return True on success
      */
-    RTPS_DllAPI bool writeToCDRMessage(
+    FASTDDS_EXPORTED_API bool writeToCDRMessage(
             CDRMessage_t* msg,
             bool write_encapsulation);
 
@@ -150,7 +150,7 @@ public:
      * Read the parameter list from a received CDRMessage_t
      * @return True on success
      */
-    RTPS_DllAPI bool readFromCDRMessage(
+    FASTDDS_EXPORTED_API bool readFromCDRMessage(
             CDRMessage_t* msg,
             bool use_encapsulation,
             const NetworkFactory& network,
@@ -159,62 +159,62 @@ public:
             fastdds::rtps::VendorId_t source_vendor_id = c_VendorId_eProsima);
 
     //! Clear the data (restore to default state).
-    RTPS_DllAPI void clear();
+    FASTDDS_EXPORTED_API void clear();
 
     /**
      * Copy the data from another object.
      * @param pdata Object to copy the data from
      */
-    RTPS_DllAPI void copy(
+    FASTDDS_EXPORTED_API void copy(
             const ParticipantProxyData& pdata);
 
     /**
      * Set participant persistent GUID_t
      * @param guid valid GUID_t
      */
-    RTPS_DllAPI void set_persistence_guid(
+    FASTDDS_EXPORTED_API void set_persistence_guid(
             const GUID_t& guid);
 
     /**
      * Retrieve participant persistent GUID_t
      * @return guid persistent GUID_t or c_Guid_Unknown
      */
-    RTPS_DllAPI GUID_t get_persistence_guid() const;
+    FASTDDS_EXPORTED_API GUID_t get_persistence_guid() const;
 
     /**
      * Set participant client server sample identity
      * @param sid valid SampleIdentity
      */
-    RTPS_DllAPI void set_sample_identity(
+    FASTDDS_EXPORTED_API void set_sample_identity(
             const SampleIdentity& sid);
 
     /**
      * Retrieve participant SampleIdentity
      * @return SampleIdentity
      */
-    RTPS_DllAPI SampleIdentity get_sample_identity() const;
+    FASTDDS_EXPORTED_API SampleIdentity get_sample_identity() const;
 
     /**
      * Identifies the participant as client of the given server
      * @param guid valid backup server GUID
      */
-    RTPS_DllAPI void set_backup_stamp(
+    FASTDDS_EXPORTED_API void set_backup_stamp(
             const GUID_t& guid);
 
     /**
      * Retrieves BACKUP server stamp. On deserialization hints if lease duration must be enforced
      * @return GUID
      */
-    RTPS_DllAPI GUID_t get_backup_stamp() const;
+    FASTDDS_EXPORTED_API GUID_t get_backup_stamp() const;
 
-    RTPS_DllAPI void assert_liveliness();
+    FASTDDS_EXPORTED_API void assert_liveliness();
 
-    RTPS_DllAPI const std::chrono::steady_clock::time_point& last_received_message_tm() const
+    FASTDDS_EXPORTED_API const std::chrono::steady_clock::time_point& last_received_message_tm() const
     {
         return last_received_message_tm_;
     }
 
-    RTPS_DllAPI const std::chrono::microseconds& lease_duration() const
+    FASTDDS_EXPORTED_API const std::chrono::microseconds& lease_duration() const
     {
         return lease_duration_;
     }

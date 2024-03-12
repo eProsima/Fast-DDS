@@ -26,7 +26,7 @@ class test_SharedMemTransport : public SharedMemTransport
 {
 public:
 
-    RTPS_DllAPI test_SharedMemTransport(
+    FASTDDS_EXPORTED_API test_SharedMemTransport(
             const test_SharedMemTransportDescriptor&);
 
     bool send(

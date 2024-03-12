@@ -174,7 +174,7 @@ public:
     /**
      * @brief Constructor without parameters
      */
-    RTPS_DllAPI Parameter_t()
+    FASTDDS_EXPORTED_API Parameter_t()
         : Pid(PID_PAD)
         , length(0)
     {
@@ -186,7 +186,7 @@ public:
      * @param pid Pid of the parameter
      * @param length Its associated length
      */
-    RTPS_DllAPI Parameter_t(
+    FASTDDS_EXPORTED_API Parameter_t(
             ParameterId_t pid,
             uint16_t length)
         : Pid(pid)
@@ -197,7 +197,7 @@ public:
     /**
      * @brief Destructor
      */
-    virtual RTPS_DllAPI ~Parameter_t()
+    virtual FASTDDS_EXPORTED_API ~Parameter_t()
     {
     }
 

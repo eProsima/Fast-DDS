@@ -24,7 +24,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-RTPS_DllAPI const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
+FASTDDS_EXPORTED_API const SubscriberQos SUBSCRIBER_QOS_DEFAULT;
 
 } /* namespace dds */
 } /* namespace fastdds */

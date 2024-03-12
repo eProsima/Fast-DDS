@@ -19,7 +19,7 @@
 #ifndef SUBLISTENER_H_
 #define SUBLISTENER_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/qos/DeadlineMissedStatus.h>
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 
@@ -35,7 +35,7 @@ class Subscriber;
 /**
  * Class SubscriberListener, it should be used by the end user to implement specific callbacks to certain actions.
  */
-class RTPS_DllAPI SubscriberListener
+class FASTDDS_EXPORTED_API SubscriberListener
 {
 public:
 

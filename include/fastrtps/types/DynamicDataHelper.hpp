@@ -30,17 +30,17 @@ class DynamicDataHelper
 {
 public:
 
-    RTPS_DllAPI static void print(
+    FASTDDS_EXPORTED_API static void print(
             const DynamicData_ptr& data);
 
-    RTPS_DllAPI static std::ostream& print(
+    FASTDDS_EXPORTED_API static std::ostream& print(
             std::ostream& output,
             const DynamicData_ptr& data);
 
-    RTPS_DllAPI static void print(
+    FASTDDS_EXPORTED_API static void print(
             const DynamicData* data);
 
-    RTPS_DllAPI static std::ostream& print(
+    FASTDDS_EXPORTED_API static std::ostream& print(
             std::ostream& output,
             const DynamicData* data);
 

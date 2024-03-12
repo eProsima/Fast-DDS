@@ -18,7 +18,7 @@
 #include <cstdint>
 #include <vector>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -41,7 +41,7 @@ class TransportInterface;
 struct TransportDescriptorInterface
 {
     //! Constructor
-    RTPS_DllAPI TransportDescriptorInterface(
+    FASTDDS_EXPORTED_API TransportDescriptorInterface(
             uint32_t maximumMessageSize,
             uint32_t maximumInitialPeersRange)
         : maxMessageSize(maximumMessageSize)
@@ -50,28 +50,28 @@ struct TransportDescriptorInterface
     }
 
     //! Copy constructor
-    RTPS_DllAPI TransportDescriptorInterface(
+    FASTDDS_EXPORTED_API TransportDescriptorInterface(
             const TransportDescriptorInterface& t) = default;
 
     //! Copy assignment
-    RTPS_DllAPI TransportDescriptorInterface& operator =(
+    FASTDDS_EXPORTED_API TransportDescriptorInterface& operator =(
             const TransportDescriptorInterface& t) = default;
 
     //! Destructor
-    virtual RTPS_DllAPI ~TransportDescriptorInterface() = default;
+    virtual FASTDDS_EXPORTED_API ~TransportDescriptorInterface() = default;
 
     /**
      * Factory method pattern. It will create and return a TransportInterface
      * corresponding to this descriptor. This provides an interface to the NetworkFactory
      * to create the transports without the need to know about their type
      */
-    virtual RTPS_DllAPI TransportInterface* create_transport() const = 0;
+    virtual FASTDDS_EXPORTED_API TransportInterface* create_transport() const = 0;
 
     //! Returns the minimum size required for a send operation.
-    virtual RTPS_DllAPI uint32_t min_send_buffer_size() const = 0;
+    virtual FASTDDS_EXPORTED_API uint32_t min_send_buffer_size() const = 0;
 
     //! Returns the maximum size expected for received messages.
-    virtual RTPS_DllAPI uint32_t max_message_size() const
+    virtual FASTDDS_EXPORTED_API uint32_t max_message_size() const
     {
         return maxMessageSize;
     }
@@ -79,13 +79,13 @@ struct TransportDescriptorInterface
     /** Returns the maximum number of opened channels for each initial remote peer
      * (maximum number of guessed initial peers to try to connect)
      */
-    virtual RTPS_DllAPI uint32_t max_initial_peers_range() const
+    virtual FASTDDS_EXPORTED_API uint32_t max_initial_peers_range() const
     {
         return maxInitialPeersRange;
     }
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const TransportDescriptorInterface& t) const
     {
         return (this->maxMessageSize == t.max_message_size() &&

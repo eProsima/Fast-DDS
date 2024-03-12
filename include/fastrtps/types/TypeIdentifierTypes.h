@@ -63,46 +63,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI StringSTypeDefn();
+    FASTDDS_EXPORTED_API StringSTypeDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~StringSTypeDefn();
+    FASTDDS_EXPORTED_API ~StringSTypeDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object StringSTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringSTypeDefn(
+    FASTDDS_EXPORTED_API StringSTypeDefn(
             const StringSTypeDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object StringSTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringSTypeDefn(
+    FASTDDS_EXPORTED_API StringSTypeDefn(
             StringSTypeDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object StringSTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringSTypeDefn& operator =(
+    FASTDDS_EXPORTED_API StringSTypeDefn& operator =(
             const StringSTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object StringSTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringSTypeDefn& operator =(
+    FASTDDS_EXPORTED_API StringSTypeDefn& operator =(
             StringSTypeDefn&& x);
 
     /*!
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
      */
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             SBound _bound)
     {
         m_bound = _bound;
@@ -112,7 +112,7 @@ public:
      * @brief This function returns the value of member bound
      * @return Value of member bound
      */
-    RTPS_DllAPI inline SBound bound() const
+    FASTDDS_EXPORTED_API inline SBound bound() const
     {
         return m_bound;
     }
@@ -121,16 +121,16 @@ public:
      * @brief This function returns a reference to member bound
      * @return Reference to member bound
      */
-    RTPS_DllAPI inline SBound& bound()
+    FASTDDS_EXPORTED_API inline SBound& bound()
     {
         return m_bound;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const StringSTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const StringLTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -149,46 +149,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI StringLTypeDefn();
+    FASTDDS_EXPORTED_API StringLTypeDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~StringLTypeDefn();
+    FASTDDS_EXPORTED_API ~StringLTypeDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object StringLTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringLTypeDefn(
+    FASTDDS_EXPORTED_API StringLTypeDefn(
             const StringLTypeDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object StringLTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringLTypeDefn(
+    FASTDDS_EXPORTED_API StringLTypeDefn(
             StringLTypeDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object StringLTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringLTypeDefn& operator =(
+    FASTDDS_EXPORTED_API StringLTypeDefn& operator =(
             const StringLTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object StringLTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringLTypeDefn& operator =(
+    FASTDDS_EXPORTED_API StringLTypeDefn& operator =(
             StringLTypeDefn&& x);
 
     /*!
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
      */
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             LBound _bound)
     {
         m_bound = _bound;
@@ -198,7 +198,7 @@ public:
      * @brief This function returns the value of member bound
      * @return Value of member bound
      */
-    RTPS_DllAPI inline LBound bound() const
+    FASTDDS_EXPORTED_API inline LBound bound() const
     {
         return m_bound;
     }
@@ -207,16 +207,16 @@ public:
      * @brief This function returns a reference to member bound
      * @return Reference to member bound
      */
-    RTPS_DllAPI inline LBound& bound()
+    FASTDDS_EXPORTED_API inline LBound& bound()
     {
         return m_bound;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const StringLTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const StringSTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -235,46 +235,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainCollectionHeader();
+    FASTDDS_EXPORTED_API PlainCollectionHeader();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainCollectionHeader();
+    FASTDDS_EXPORTED_API ~PlainCollectionHeader();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainCollectionHeader that will be copied.
      */
-    RTPS_DllAPI PlainCollectionHeader(
+    FASTDDS_EXPORTED_API PlainCollectionHeader(
             const PlainCollectionHeader& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainCollectionHeader that will be copied.
      */
-    RTPS_DllAPI PlainCollectionHeader(
+    FASTDDS_EXPORTED_API PlainCollectionHeader(
             PlainCollectionHeader&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainCollectionHeader that will be copied.
      */
-    RTPS_DllAPI PlainCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API PlainCollectionHeader& operator =(
             const PlainCollectionHeader& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainCollectionHeader that will be copied.
      */
-    RTPS_DllAPI PlainCollectionHeader& operator =(
+    FASTDDS_EXPORTED_API PlainCollectionHeader& operator =(
             PlainCollectionHeader&& x);
 
     /*!
      * @brief This function sets a value in member equiv_kind
      * @param _equiv_kind New value for member equiv_kind
      */
-    RTPS_DllAPI inline void equiv_kind(
+    FASTDDS_EXPORTED_API inline void equiv_kind(
             EquivalenceKind _equiv_kind)
     {
         m_equiv_kind = _equiv_kind;
@@ -284,7 +284,7 @@ public:
      * @brief This function returns the value of member equiv_kind
      * @return Value of member equiv_kind
      */
-    RTPS_DllAPI inline EquivalenceKind equiv_kind() const
+    FASTDDS_EXPORTED_API inline EquivalenceKind equiv_kind() const
     {
         return m_equiv_kind;
     }
@@ -293,7 +293,7 @@ public:
      * @brief This function returns a reference to member equiv_kind
      * @return Reference to member equiv_kind
      */
-    RTPS_DllAPI inline EquivalenceKind& equiv_kind()
+    FASTDDS_EXPORTED_API inline EquivalenceKind& equiv_kind()
     {
         return m_equiv_kind;
     }
@@ -302,7 +302,7 @@ public:
      * @brief This function sets a value in member element_flags
      * @param _element_flags New value for member element_flags
      */
-    RTPS_DllAPI inline void element_flags(
+    FASTDDS_EXPORTED_API inline void element_flags(
             CollectionElementFlag _element_flags)
     {
         m_element_flags = _element_flags;
@@ -312,7 +312,7 @@ public:
      * @brief This function returns the value of member element_flags
      * @return Value of member element_flags
      */
-    RTPS_DllAPI inline CollectionElementFlag element_flags() const
+    FASTDDS_EXPORTED_API inline CollectionElementFlag element_flags() const
     {
         return m_element_flags;
     }
@@ -321,12 +321,12 @@ public:
      * @brief This function returns a reference to member element_flags
      * @return Reference to member element_flags
      */
-    RTPS_DllAPI inline CollectionElementFlag& element_flags()
+    FASTDDS_EXPORTED_API inline CollectionElementFlag& element_flags()
     {
         return m_element_flags;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainCollectionHeader& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -346,46 +346,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn();
+    FASTDDS_EXPORTED_API PlainSequenceSElemDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainSequenceSElemDefn();
+    FASTDDS_EXPORTED_API ~PlainSequenceSElemDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainSequenceSElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn(
+    FASTDDS_EXPORTED_API PlainSequenceSElemDefn(
             const PlainSequenceSElemDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainSequenceSElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn(
+    FASTDDS_EXPORTED_API PlainSequenceSElemDefn(
             PlainSequenceSElemDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainSequenceSElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainSequenceSElemDefn& operator =(
             const PlainSequenceSElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainSequenceSElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainSequenceSElemDefn& operator =(
             PlainSequenceSElemDefn&& x);
 
     /*!
      * @brief This function copies the value in member header
      * @param _header New value to be copied in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const PlainCollectionHeader& _header)
     {
         m_header = _header;
@@ -395,7 +395,7 @@ public:
      * @brief This function moves the value in member header
      * @param _header New value to be moved in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             PlainCollectionHeader&& _header)
     {
         m_header = std::move(_header);
@@ -405,7 +405,7 @@ public:
      * @brief This function returns a constant reference to member header
      * @return Constant reference to member header
      */
-    RTPS_DllAPI inline const PlainCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const PlainCollectionHeader& header() const
     {
         return m_header;
     }
@@ -414,7 +414,7 @@ public:
      * @brief This function returns a reference to member header
      * @return Reference to member header
      */
-    RTPS_DllAPI inline PlainCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline PlainCollectionHeader& header()
     {
         return m_header;
     }
@@ -423,7 +423,7 @@ public:
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
      */
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             SBound _bound)
     {
         m_bound = _bound;
@@ -433,7 +433,7 @@ public:
      * @brief This function returns the value of member bound
      * @return Value of member bound
      */
-    RTPS_DllAPI inline SBound bound() const
+    FASTDDS_EXPORTED_API inline SBound bound() const
     {
         return m_bound;
     }
@@ -442,7 +442,7 @@ public:
      * @brief This function returns a reference to member bound
      * @return Reference to member bound
      */
-    RTPS_DllAPI inline SBound& bound()
+    FASTDDS_EXPORTED_API inline SBound& bound()
     {
         return m_bound;
     }
@@ -451,14 +451,14 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    RTPS_DllAPI void element_identifier(
+    FASTDDS_EXPORTED_API void element_identifier(
             const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* element_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -467,12 +467,12 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* element_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainSequenceSElemDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -493,46 +493,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn();
+    FASTDDS_EXPORTED_API PlainSequenceLElemDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainSequenceLElemDefn();
+    FASTDDS_EXPORTED_API ~PlainSequenceLElemDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainSequenceLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn(
+    FASTDDS_EXPORTED_API PlainSequenceLElemDefn(
             const PlainSequenceLElemDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainSequenceLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn(
+    FASTDDS_EXPORTED_API PlainSequenceLElemDefn(
             PlainSequenceLElemDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainSequenceLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainSequenceLElemDefn& operator =(
             const PlainSequenceLElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainSequenceLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainSequenceLElemDefn& operator =(
             PlainSequenceLElemDefn&& x);
 
     /*!
      * @brief This function copies the value in member header
      * @param _header New value to be copied in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const PlainCollectionHeader& _header)
     {
         m_header = _header;
@@ -542,7 +542,7 @@ public:
      * @brief This function moves the value in member header
      * @param _header New value to be moved in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             PlainCollectionHeader&& _header)
     {
         m_header = std::move(_header);
@@ -552,7 +552,7 @@ public:
      * @brief This function returns a constant reference to member header
      * @return Constant reference to member header
      */
-    RTPS_DllAPI inline const PlainCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const PlainCollectionHeader& header() const
     {
         return m_header;
     }
@@ -561,7 +561,7 @@ public:
      * @brief This function returns a reference to member header
      * @return Reference to member header
      */
-    RTPS_DllAPI inline PlainCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline PlainCollectionHeader& header()
     {
         return m_header;
     }
@@ -570,7 +570,7 @@ public:
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
      */
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             LBound _bound)
     {
         m_bound = _bound;
@@ -580,7 +580,7 @@ public:
      * @brief This function returns the value of member bound
      * @return Value of member bound
      */
-    RTPS_DllAPI inline LBound bound() const
+    FASTDDS_EXPORTED_API inline LBound bound() const
     {
         return m_bound;
     }
@@ -589,7 +589,7 @@ public:
      * @brief This function returns a reference to member bound
      * @return Reference to member bound
      */
-    RTPS_DllAPI inline LBound& bound()
+    FASTDDS_EXPORTED_API inline LBound& bound()
     {
         return m_bound;
     }
@@ -598,14 +598,14 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    RTPS_DllAPI void element_identifier(
+    FASTDDS_EXPORTED_API void element_identifier(
             const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* element_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -614,12 +614,12 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* element_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainSequenceLElemDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -640,46 +640,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainArraySElemDefn();
+    FASTDDS_EXPORTED_API PlainArraySElemDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainArraySElemDefn();
+    FASTDDS_EXPORTED_API ~PlainArraySElemDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainArraySElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArraySElemDefn(
+    FASTDDS_EXPORTED_API PlainArraySElemDefn(
             const PlainArraySElemDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainArraySElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArraySElemDefn(
+    FASTDDS_EXPORTED_API PlainArraySElemDefn(
             PlainArraySElemDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainArraySElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArraySElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainArraySElemDefn& operator =(
             const PlainArraySElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainArraySElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArraySElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainArraySElemDefn& operator =(
             PlainArraySElemDefn&& x);
 
     /*!
      * @brief This function copies the value in member header
      * @param _header New value to be copied in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const PlainCollectionHeader& _header)
     {
         m_header = _header;
@@ -689,7 +689,7 @@ public:
      * @brief This function moves the value in member header
      * @param _header New value to be moved in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             PlainCollectionHeader&& _header)
     {
         m_header = std::move(_header);
@@ -699,7 +699,7 @@ public:
      * @brief This function returns a constant reference to member header
      * @return Constant reference to member header
      */
-    RTPS_DllAPI inline const PlainCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const PlainCollectionHeader& header() const
     {
         return m_header;
     }
@@ -708,7 +708,7 @@ public:
      * @brief This function returns a reference to member header
      * @return Reference to member header
      */
-    RTPS_DllAPI inline PlainCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline PlainCollectionHeader& header()
     {
         return m_header;
     }
@@ -717,7 +717,7 @@ public:
      * @brief This function copies the value in member array_bound_seq
      * @param _array_bound_seq New value to be copied in member array_bound_seq
      */
-    RTPS_DllAPI inline void array_bound_seq(
+    FASTDDS_EXPORTED_API inline void array_bound_seq(
             const SBoundSeq& _array_bound_seq)
     {
         m_array_bound_seq = _array_bound_seq;
@@ -727,7 +727,7 @@ public:
      * @brief This function moves the value in member array_bound_seq
      * @param _array_bound_seq New value to be moved in member array_bound_seq
      */
-    RTPS_DllAPI inline void array_bound_seq(
+    FASTDDS_EXPORTED_API inline void array_bound_seq(
             SBoundSeq&& _array_bound_seq)
     {
         m_array_bound_seq = std::move(_array_bound_seq);
@@ -737,7 +737,7 @@ public:
      * @brief This function returns a constant reference to member array_bound_seq
      * @return Constant reference to member array_bound_seq
      */
-    RTPS_DllAPI inline const SBoundSeq& array_bound_seq() const
+    FASTDDS_EXPORTED_API inline const SBoundSeq& array_bound_seq() const
     {
         return m_array_bound_seq;
     }
@@ -746,7 +746,7 @@ public:
      * @brief This function returns a reference to member array_bound_seq
      * @return Reference to member array_bound_seq
      */
-    RTPS_DllAPI inline SBoundSeq& array_bound_seq()
+    FASTDDS_EXPORTED_API inline SBoundSeq& array_bound_seq()
     {
         return m_array_bound_seq;
     }
@@ -755,14 +755,14 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    RTPS_DllAPI void element_identifier(
+    FASTDDS_EXPORTED_API void element_identifier(
             const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* element_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -771,12 +771,12 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* element_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainArraySElemDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -797,46 +797,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainArrayLElemDefn();
+    FASTDDS_EXPORTED_API PlainArrayLElemDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainArrayLElemDefn();
+    FASTDDS_EXPORTED_API ~PlainArrayLElemDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainArrayLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArrayLElemDefn(
+    FASTDDS_EXPORTED_API PlainArrayLElemDefn(
             const PlainArrayLElemDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainArrayLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArrayLElemDefn(
+    FASTDDS_EXPORTED_API PlainArrayLElemDefn(
             PlainArrayLElemDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainArrayLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArrayLElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainArrayLElemDefn& operator =(
             const PlainArrayLElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainArrayLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArrayLElemDefn& operator =(
+    FASTDDS_EXPORTED_API PlainArrayLElemDefn& operator =(
             PlainArrayLElemDefn&& x);
 
     /*!
      * @brief This function copies the value in member header
      * @param _header New value to be copied in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const PlainCollectionHeader& _header)
     {
         m_header = _header;
@@ -846,7 +846,7 @@ public:
      * @brief This function moves the value in member header
      * @param _header New value to be moved in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             PlainCollectionHeader&& _header)
     {
         m_header = std::move(_header);
@@ -856,7 +856,7 @@ public:
      * @brief This function returns a constant reference to member header
      * @return Constant reference to member header
      */
-    RTPS_DllAPI inline const PlainCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const PlainCollectionHeader& header() const
     {
         return m_header;
     }
@@ -865,7 +865,7 @@ public:
      * @brief This function returns a reference to member header
      * @return Reference to member header
      */
-    RTPS_DllAPI inline PlainCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline PlainCollectionHeader& header()
     {
         return m_header;
     }
@@ -874,7 +874,7 @@ public:
      * @brief This function copies the value in member array_bound_seq
      * @param _array_bound_seq New value to be copied in member array_bound_seq
      */
-    RTPS_DllAPI inline void array_bound_seq(
+    FASTDDS_EXPORTED_API inline void array_bound_seq(
             const LBoundSeq& _array_bound_seq)
     {
         m_array_bound_seq = _array_bound_seq;
@@ -884,7 +884,7 @@ public:
      * @brief This function moves the value in member array_bound_seq
      * @param _array_bound_seq New value to be moved in member array_bound_seq
      */
-    RTPS_DllAPI inline void array_bound_seq(
+    FASTDDS_EXPORTED_API inline void array_bound_seq(
             LBoundSeq&& _array_bound_seq)
     {
         m_array_bound_seq = std::move(_array_bound_seq);
@@ -894,7 +894,7 @@ public:
      * @brief This function returns a constant reference to member array_bound_seq
      * @return Constant reference to member array_bound_seq
      */
-    RTPS_DllAPI inline const LBoundSeq& array_bound_seq() const
+    FASTDDS_EXPORTED_API inline const LBoundSeq& array_bound_seq() const
     {
         return m_array_bound_seq;
     }
@@ -903,7 +903,7 @@ public:
      * @brief This function returns a reference to member array_bound_seq
      * @return Reference to member array_bound_seq
      */
-    RTPS_DllAPI inline LBoundSeq& array_bound_seq()
+    FASTDDS_EXPORTED_API inline LBoundSeq& array_bound_seq()
     {
         return m_array_bound_seq;
     }
@@ -912,14 +912,14 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    RTPS_DllAPI void element_identifier(
+    FASTDDS_EXPORTED_API void element_identifier(
             const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* element_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -928,12 +928,12 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* element_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainArrayLElemDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -954,46 +954,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainMapSTypeDefn();
+    FASTDDS_EXPORTED_API PlainMapSTypeDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainMapSTypeDefn();
+    FASTDDS_EXPORTED_API ~PlainMapSTypeDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainMapSTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapSTypeDefn(
+    FASTDDS_EXPORTED_API PlainMapSTypeDefn(
             const PlainMapSTypeDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainMapSTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapSTypeDefn(
+    FASTDDS_EXPORTED_API PlainMapSTypeDefn(
             PlainMapSTypeDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainMapSTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapSTypeDefn& operator =(
+    FASTDDS_EXPORTED_API PlainMapSTypeDefn& operator =(
             const PlainMapSTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainMapSTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapSTypeDefn& operator =(
+    FASTDDS_EXPORTED_API PlainMapSTypeDefn& operator =(
             PlainMapSTypeDefn&& x);
 
     /*!
      * @brief This function copies the value in member header
      * @param _header New value to be copied in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const PlainCollectionHeader& _header)
     {
         m_header = _header;
@@ -1003,7 +1003,7 @@ public:
      * @brief This function moves the value in member header
      * @param _header New value to be moved in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             PlainCollectionHeader&& _header)
     {
         m_header = std::move(_header);
@@ -1013,7 +1013,7 @@ public:
      * @brief This function returns a constant reference to member header
      * @return Constant reference to member header
      */
-    RTPS_DllAPI inline const PlainCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const PlainCollectionHeader& header() const
     {
         return m_header;
     }
@@ -1022,7 +1022,7 @@ public:
      * @brief This function returns a reference to member header
      * @return Reference to member header
      */
-    RTPS_DllAPI inline PlainCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline PlainCollectionHeader& header()
     {
         return m_header;
     }
@@ -1031,7 +1031,7 @@ public:
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
      */
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             SBound _bound)
     {
         m_bound = _bound;
@@ -1041,7 +1041,7 @@ public:
      * @brief This function returns the value of member bound
      * @return Value of member bound
      */
-    RTPS_DllAPI inline SBound bound() const
+    FASTDDS_EXPORTED_API inline SBound bound() const
     {
         return m_bound;
     }
@@ -1050,7 +1050,7 @@ public:
      * @brief This function returns a reference to member bound
      * @return Reference to member bound
      */
-    RTPS_DllAPI inline SBound& bound()
+    FASTDDS_EXPORTED_API inline SBound& bound()
     {
         return m_bound;
     }
@@ -1059,14 +1059,14 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    RTPS_DllAPI void element_identifier(
+    FASTDDS_EXPORTED_API void element_identifier(
             const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* element_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -1075,7 +1075,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* element_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -1084,7 +1084,7 @@ public:
      * @brief This function sets a value in member key_flags
      * @param _key_flags New value for member key_flags
      */
-    RTPS_DllAPI inline void key_flags(
+    FASTDDS_EXPORTED_API inline void key_flags(
             CollectionElementFlag _key_flags)
     {
         m_key_flags = _key_flags;
@@ -1094,7 +1094,7 @@ public:
      * @brief This function returns the value of member key_flags
      * @return Value of member key_flags
      */
-    RTPS_DllAPI inline CollectionElementFlag key_flags() const
+    FASTDDS_EXPORTED_API inline CollectionElementFlag key_flags() const
     {
         return m_key_flags;
     }
@@ -1103,7 +1103,7 @@ public:
      * @brief This function returns a reference to member key_flags
      * @return Reference to member key_flags
      */
-    RTPS_DllAPI inline CollectionElementFlag& key_flags()
+    FASTDDS_EXPORTED_API inline CollectionElementFlag& key_flags()
     {
         return m_key_flags;
     }
@@ -1112,14 +1112,14 @@ public:
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
      */
-    RTPS_DllAPI void key_identifier(
+    FASTDDS_EXPORTED_API void key_identifier(
             const TypeIdentifier* _key_identifier);
 
     /*!
      * @brief This function returns the value of member key_identifier
      * @return Value of member key_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* key_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* key_identifier() const
     {
         return m_key_identifier;
     }
@@ -1128,12 +1128,12 @@ public:
      * @brief This function returns a reference to member key_identifier
      * @return Reference to member key_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* key_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* key_identifier()
     {
         return m_key_identifier;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainMapSTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1156,46 +1156,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI PlainMapLTypeDefn();
+    FASTDDS_EXPORTED_API PlainMapLTypeDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~PlainMapLTypeDefn();
+    FASTDDS_EXPORTED_API ~PlainMapLTypeDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object PlainMapLTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapLTypeDefn(
+    FASTDDS_EXPORTED_API PlainMapLTypeDefn(
             const PlainMapLTypeDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object PlainMapLTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapLTypeDefn(
+    FASTDDS_EXPORTED_API PlainMapLTypeDefn(
             PlainMapLTypeDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object PlainMapLTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapLTypeDefn& operator =(
+    FASTDDS_EXPORTED_API PlainMapLTypeDefn& operator =(
             const PlainMapLTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainMapLTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapLTypeDefn& operator =(
+    FASTDDS_EXPORTED_API PlainMapLTypeDefn& operator =(
             PlainMapLTypeDefn&& x);
 
     /*!
      * @brief This function copies the value in member header
      * @param _header New value to be copied in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             const PlainCollectionHeader& _header)
     {
         m_header = _header;
@@ -1205,7 +1205,7 @@ public:
      * @brief This function moves the value in member header
      * @param _header New value to be moved in member header
      */
-    RTPS_DllAPI inline void header(
+    FASTDDS_EXPORTED_API inline void header(
             PlainCollectionHeader&& _header)
     {
         m_header = std::move(_header);
@@ -1215,7 +1215,7 @@ public:
      * @brief This function returns a constant reference to member header
      * @return Constant reference to member header
      */
-    RTPS_DllAPI inline const PlainCollectionHeader& header() const
+    FASTDDS_EXPORTED_API inline const PlainCollectionHeader& header() const
     {
         return m_header;
     }
@@ -1224,7 +1224,7 @@ public:
      * @brief This function returns a reference to member header
      * @return Reference to member header
      */
-    RTPS_DllAPI inline PlainCollectionHeader& header()
+    FASTDDS_EXPORTED_API inline PlainCollectionHeader& header()
     {
         return m_header;
     }
@@ -1233,7 +1233,7 @@ public:
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
      */
-    RTPS_DllAPI inline void bound(
+    FASTDDS_EXPORTED_API inline void bound(
             LBound _bound)
     {
         m_bound = _bound;
@@ -1243,7 +1243,7 @@ public:
      * @brief This function returns the value of member bound
      * @return Value of member bound
      */
-    RTPS_DllAPI inline LBound bound() const
+    FASTDDS_EXPORTED_API inline LBound bound() const
     {
         return m_bound;
     }
@@ -1252,7 +1252,7 @@ public:
      * @brief This function returns a reference to member bound
      * @return Reference to member bound
      */
-    RTPS_DllAPI inline LBound& bound()
+    FASTDDS_EXPORTED_API inline LBound& bound()
     {
         return m_bound;
     }
@@ -1261,14 +1261,14 @@ public:
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
      */
-    RTPS_DllAPI void element_identifier(
+    FASTDDS_EXPORTED_API void element_identifier(
             const TypeIdentifier* _element_identifier);
 
     /*!
      * @brief This function returns the value of member element_identifier
      * @return Value of member element_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* element_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* element_identifier() const
     {
         return m_element_identifier;
     }
@@ -1277,7 +1277,7 @@ public:
      * @brief This function returns a reference to member element_identifier
      * @return Reference to member element_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* element_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* element_identifier()
     {
         return m_element_identifier;
     }
@@ -1286,7 +1286,7 @@ public:
      * @brief This function sets a value in member key_flags
      * @param _key_flags New value for member key_flags
      */
-    RTPS_DllAPI inline void key_flags(
+    FASTDDS_EXPORTED_API inline void key_flags(
             CollectionElementFlag _key_flags)
     {
         m_key_flags = _key_flags;
@@ -1296,7 +1296,7 @@ public:
      * @brief This function returns the value of member key_flags
      * @return Value of member key_flags
      */
-    RTPS_DllAPI inline CollectionElementFlag key_flags() const
+    FASTDDS_EXPORTED_API inline CollectionElementFlag key_flags() const
     {
         return m_key_flags;
     }
@@ -1305,7 +1305,7 @@ public:
      * @brief This function returns a reference to member key_flags
      * @return Reference to member key_flags
      */
-    RTPS_DllAPI inline CollectionElementFlag& key_flags()
+    FASTDDS_EXPORTED_API inline CollectionElementFlag& key_flags()
     {
         return m_key_flags;
     }
@@ -1314,14 +1314,14 @@ public:
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
      */
-    RTPS_DllAPI void key_identifier(
+    FASTDDS_EXPORTED_API void key_identifier(
             const TypeIdentifier* _key_identifier);
 
     /*!
      * @brief This function returns the value of member key_identifier
      * @return Value of member key_identifier
      */
-    RTPS_DllAPI inline const TypeIdentifier* key_identifier() const
+    FASTDDS_EXPORTED_API inline const TypeIdentifier* key_identifier() const
     {
         return m_key_identifier;
     }
@@ -1330,12 +1330,12 @@ public:
      * @brief This function returns a reference to member key_identifier
      * @return Reference to member key_identifier
      */
-    RTPS_DllAPI inline TypeIdentifier* key_identifier()
+    FASTDDS_EXPORTED_API inline TypeIdentifier* key_identifier()
     {
         return m_key_identifier;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const PlainMapLTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1358,46 +1358,46 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI StronglyConnectedComponentId();
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~StronglyConnectedComponentId();
+    FASTDDS_EXPORTED_API ~StronglyConnectedComponentId();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object StronglyConnectedComponentId that will be copied.
      */
-    RTPS_DllAPI StronglyConnectedComponentId(
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId(
             const StronglyConnectedComponentId& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object StronglyConnectedComponentId that will be copied.
      */
-    RTPS_DllAPI StronglyConnectedComponentId(
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId(
             StronglyConnectedComponentId&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object StronglyConnectedComponentId that will be copied.
      */
-    RTPS_DllAPI StronglyConnectedComponentId& operator =(
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId& operator =(
             const StronglyConnectedComponentId& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object StronglyConnectedComponentId that will be copied.
      */
-    RTPS_DllAPI StronglyConnectedComponentId& operator =(
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId& operator =(
             StronglyConnectedComponentId&& x);
 
     /*!
      * @brief This function copies the value in member sc_component_id
      * @param _sc_component_id New value to be copied in member sc_component_id
      */
-    RTPS_DllAPI inline void sc_component_id(
+    FASTDDS_EXPORTED_API inline void sc_component_id(
             const TypeObjectHashId& _sc_component_id)
     {
         m_sc_component_id = _sc_component_id;
@@ -1407,7 +1407,7 @@ public:
      * @brief This function moves the value in member sc_component_id
      * @param _sc_component_id New value to be moved in member sc_component_id
      */
-    RTPS_DllAPI inline void sc_component_id(
+    FASTDDS_EXPORTED_API inline void sc_component_id(
             TypeObjectHashId&& _sc_component_id)
     {
         m_sc_component_id = std::move(_sc_component_id);
@@ -1417,7 +1417,7 @@ public:
      * @brief This function returns a constant reference to member sc_component_id
      * @return Constant reference to member sc_component_id
      */
-    RTPS_DllAPI inline const TypeObjectHashId& sc_component_id() const
+    FASTDDS_EXPORTED_API inline const TypeObjectHashId& sc_component_id() const
     {
         return m_sc_component_id;
     }
@@ -1426,7 +1426,7 @@ public:
      * @brief This function returns a reference to member sc_component_id
      * @return Reference to member sc_component_id
      */
-    RTPS_DllAPI inline TypeObjectHashId& sc_component_id()
+    FASTDDS_EXPORTED_API inline TypeObjectHashId& sc_component_id()
     {
         return m_sc_component_id;
     }
@@ -1435,7 +1435,7 @@ public:
      * @brief This function sets a value in member scc_length
      * @param _scc_length New value for member scc_length
      */
-    RTPS_DllAPI inline void scc_length(
+    FASTDDS_EXPORTED_API inline void scc_length(
             int32_t _scc_length)
     {
         m_scc_length = _scc_length;
@@ -1445,7 +1445,7 @@ public:
      * @brief This function returns the value of member scc_length
      * @return Value of member scc_length
      */
-    RTPS_DllAPI inline int32_t scc_length() const
+    FASTDDS_EXPORTED_API inline int32_t scc_length() const
     {
         return m_scc_length;
     }
@@ -1454,7 +1454,7 @@ public:
      * @brief This function returns a reference to member scc_length
      * @return Reference to member scc_length
      */
-    RTPS_DllAPI inline int32_t& scc_length()
+    FASTDDS_EXPORTED_API inline int32_t& scc_length()
     {
         return m_scc_length;
     }
@@ -1463,7 +1463,7 @@ public:
      * @brief This function sets a value in member scc_index
      * @param _scc_index New value for member scc_index
      */
-    RTPS_DllAPI inline void scc_index(
+    FASTDDS_EXPORTED_API inline void scc_index(
             int32_t _scc_index)
     {
         m_scc_index = _scc_index;
@@ -1473,7 +1473,7 @@ public:
      * @brief This function returns the value of member scc_index
      * @return Value of member scc_index
      */
-    RTPS_DllAPI inline int32_t scc_index() const
+    FASTDDS_EXPORTED_API inline int32_t scc_index() const
     {
         return m_scc_index;
     }
@@ -1482,12 +1482,12 @@ public:
      * @brief This function returns a reference to member scc_index
      * @return Reference to member scc_index
      */
-    RTPS_DllAPI inline int32_t& scc_index()
+    FASTDDS_EXPORTED_API inline int32_t& scc_index()
     {
         return m_scc_index;
     }
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const StronglyConnectedComponentId& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -1508,42 +1508,42 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI ExtendedTypeDefn();
+    FASTDDS_EXPORTED_API ExtendedTypeDefn();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI virtual ~ExtendedTypeDefn();
+    FASTDDS_EXPORTED_API virtual ~ExtendedTypeDefn();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    RTPS_DllAPI ExtendedTypeDefn(
+    FASTDDS_EXPORTED_API ExtendedTypeDefn(
             const ExtendedTypeDefn& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    RTPS_DllAPI ExtendedTypeDefn(
+    FASTDDS_EXPORTED_API ExtendedTypeDefn(
             ExtendedTypeDefn&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    RTPS_DllAPI virtual ExtendedTypeDefn& operator =(
+    FASTDDS_EXPORTED_API virtual ExtendedTypeDefn& operator =(
             const ExtendedTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    RTPS_DllAPI virtual ExtendedTypeDefn& operator =(
+    FASTDDS_EXPORTED_API virtual ExtendedTypeDefn& operator =(
             ExtendedTypeDefn&& x);
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const ExtendedTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 

@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_RTPS_GUID_H_
 #define _FASTDDS_RTPS_RTPS_GUID_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/EntityId_t.hpp>
@@ -36,7 +36,7 @@ struct InstanceHandle_t;
 
 //!@brief Structure GUID_t, entity identifier, unique in DDS-RTPS Domain.
 //!@ingroup COMMON_MODULE
-struct RTPS_DllAPI GUID_t
+struct FASTDDS_EXPORTED_API GUID_t
 {
     //!Guid prefix
     GuidPrefix_t guidPrefix;
