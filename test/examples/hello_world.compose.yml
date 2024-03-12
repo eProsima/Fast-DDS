@@ -2,28 +2,28 @@
 version: "3"
 
 services:
-  publisher:
+  waitset-subscriber:
     image: @DOCKER_IMAGE_NAME@
     volumes:
       - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
       - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
-      - @PROJECT_BINARY_DIR@/examples/cpp/hello_world/HelloWorld_controller_profile.xml:@PROJECT_BINARY_DIR@/examples/cpp/hello_world/HelloWorld_controller_profile.xml
-    environment:
-      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
-      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
-      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/HelloWorld_controller_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher  & $${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --waitset"
-
-  subscriber:
-    image: @DOCKER_IMAGE_NAME@
-    volumes:
-      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
-      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
-      - @PROJECT_BINARY_DIR@/examples/cpp/hello_world/HelloWorld_controller_profile.xml:@PROJECT_BINARY_DIR@/examples/cpp/hello_world/HelloWorld_controller_profile.xml
     environment:
       # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world@FILE_EXTENSION@
-      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/HelloWorld_controller_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber"
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --waitset"
+
+  subscriber-publisher:
+    image: @DOCKER_IMAGE_NAME@
+    volumes:
+      - @PROJECT_BINARY_DIR@:@PROJECT_BINARY_DIR@
+      - @fastcdr_LIB_DIR@:@fastcdr_LIB_DIR@
+    environment:
+      # TODO(eduponz): LD_LIBRARY_PATH is not the correct variable for Windows
+      LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
+      EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world
+      FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber & $${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher"
+    depends_on:
+      - waitset-subscriber

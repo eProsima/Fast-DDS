@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,13 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldPublisher.cpp
+ * @file Publisher.cpp
  *
  */
 
-#include "HelloWorldPublisher.h"
+#include "Publisher.hpp"
 
+#include <condition_variable>
 #include <csignal>
 #include <stdexcept>
 #include <thread>
@@ -58,7 +59,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     // Create the publisher
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
     participant_->get_default_publisher_qos(pub_qos);
-    publisher_ = participant_->create_publisher(pub_qos, nullptr);
+    publisher_ = participant_->create_publisher(pub_qos);
     if (publisher_ == nullptr)
     {
         throw std::runtime_error("Publisher initialization failed");
@@ -67,7 +68,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     // Create the topic
     TopicQos topic_qos = TOPIC_QOS_DEFAULT;
     participant_->get_default_topic_qos(topic_qos);
-    topic_ = participant_->create_topic("Hello_world_topic", "HelloWorld", topic_qos);
+    topic_ = participant_->create_topic("hello_world_topic", type_.get_type_name(), topic_qos);
     if (topic_ == nullptr)
     {
         throw std::runtime_error("Topic initialization failed");
@@ -85,29 +86,22 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    if (writer_ != nullptr)
-    {
-        publisher_->delete_datawriter(writer_);
-    }
-    if (publisher_ != nullptr)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
+    // Delete DDS entities contained within the DomainParticipant
+    participant_->delete_contained_entities();
+
+    // Delete DomainParticipant
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void HelloWorldPublisher::on_publication_matched(
-        DataWriter*,
+        DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
     if (info.current_count_change == 1)
     {
         matched_ = info.total_count;
         std::cout << "Publisher matched." << std::endl;
+        matched_cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
@@ -132,35 +126,54 @@ void HelloWorldPublisher::run()
                         std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                                   << "' SENT" << std::endl;
                     }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(period_));
                 }
             });
     std::cout << "Publisher running. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
-    signal(SIGINT, [](int signum)
+    signal(SIGINT, [](int /*signum*/)
             {
-                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
-                static_cast<void>(signum); HelloWorldPublisher::stop();
+                std::cout << "\nSIGINT received, stopping Publisher execution." << std::endl;
+                HelloWorldPublisher::stop();
             });
+    signal(SIGTERM, [](int /*signum*/)
+            {
+                std::cout << "\nSIGTERM received, stopping Publisher execution." << std::endl;
+                HelloWorldPublisher::stop();
+            });
+#ifndef _WIN32
+    signal(SIGQUIT, [](int /*signum*/)
+            {
+                std::cout << "\nSIGQUIT received, stopping Publisher execution." << std::endl;
+                HelloWorldPublisher::stop();
+            });
+    signal(SIGHUP, [](int /*signum*/)
+            {
+                std::cout << "\nSIGHUP received, stopping Publisher execution." << std::endl;
+                HelloWorldPublisher::stop();
+            });
+#endif // _WIN32
     pub_thread.join();
 }
 
 bool HelloWorldPublisher::publish()
 {
-    if (matched_ > 0)
-    {
-        hello_.index(hello_.index() + 1);
-        writer_->write(&hello_);
-        return true;
-    }
-    return false;
+    // Wait for the data endpoints discovery
+    std::unique_lock<std::mutex> matched_lock(mutex_);
+    matched_cv_.wait(matched_lock, [&]()
+            {
+                // at least one has been discovered
+                return matched_ > 0;
+            });
+    hello_.index(hello_.index() + 1);
+    return writer_->write(&hello_);
 }
 
 bool HelloWorldPublisher::is_stopped()
 {
-    return stop_;
+    return stop_.load();
 }
 
 void HelloWorldPublisher::stop()
 {
-    stop_ = true;
+    stop_.store(true);
 }

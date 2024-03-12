@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include "cli_options.hpp"
-#include "HelloWorldPublisher.h"
-#include "HelloWorldSubscriber.h"
-#include "HelloWorldSubscriberWaitset.h"
+#include "Publisher.hpp"
+#include "Subscriber.hpp"
+#include "SubscriberWaitset.hpp"
 
 using eprosima::fastdds::dds::Log;
 
@@ -81,9 +81,8 @@ int main(
     // example should never reach this point
     else
     {
-        std::cerr << "Error: unknown entity " << config.entity << "\n";
-        print_help();
-        ret = EXIT_FAILURE;
+        EPROSIMA_LOG_ERROR(CLI_PARSE, "unknown entity " + config.entity);
+        print_help(EXIT_FAILURE);
     }
 
     Log::Reset();

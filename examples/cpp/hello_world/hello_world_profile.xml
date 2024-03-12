@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles xmlns="http://www.eprosima.com" >
-    <participant profile_name="hello_world_controllers_participant_profile" is_default_profile="true">
+    <participant profile_name="hello_world_participant_profile" is_default_profile="true">
         <domainId>0</domainId>
         <rtps>
-            <name>hello_world_controllers_participant</name>
-            <builtinTransports>UDPv4</builtinTransports>
+            <name>hello_world_participant</name>
         </rtps>
     </participant>
-    <data_writer profile_name="hello_world_controllers_dataWriter_profile" is_default_profile="true">
+    <data_writer profile_name="hello_world_datawriter_profile" is_default_profile="true">
         <qos>
             <durability>
                 <kind>TRANSIENT_LOCAL</kind>
@@ -29,7 +28,7 @@
         </topic>
     </data_writer>
 
-    <data_reader profile_name="hello_world_controllers_dataReader_profile" is_default_profile="true">
+    <data_reader profile_name="hello_world_datareader_profile" is_default_profile="true">
         <qos>
             <durability>
                 <kind>TRANSIENT_LOCAL</kind>
