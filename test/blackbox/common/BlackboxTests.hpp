@@ -31,13 +31,14 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/Data1mbPubSubTypes.h"
+#include "../types/Data64kbPubSubTypes.h"
 #include "../types/FixedSizedPubSubTypes.h"
+#include "../types/HelloWorldPubSubTypes.h"
+#include "../types/KeyedData1mbPubSubTypes.h"
 #include "../types/KeyedHelloWorldPubSubTypes.h"
 #include "../types/StringTestPubSubTypes.h"
-#include "../types/Data64kbPubSubTypes.h"
-#include "../types/Data1mbPubSubTypes.h"
-#include "../types/KeyedData1mbPubSubTypes.h"
+#include "../types/UnboundedHelloWorldPubSubTypes.h"
 
 #include <algorithm>
 #include <cstddef>
@@ -168,6 +169,9 @@ std::list<Data1mb> default_data96kb_data300kb_data_generator(
         size_t max = 0);
 
 std::list<KeyedData1mb> default_keyeddata300kb_data_generator(
+        size_t max = 0);
+
+std::list<UnboundedHelloWorld> default_unbounded_helloworld_data_generator(
         size_t max = 0);
 
 /****** Auxiliary lambda functions  ******/
