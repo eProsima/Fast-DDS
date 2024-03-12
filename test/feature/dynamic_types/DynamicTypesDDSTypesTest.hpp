@@ -50,6 +50,8 @@ constexpr const char* struct_name = "InnerStructureHelper";
 constexpr const char* struct_long_member_name = "field1";
 constexpr const char* struct_float_member_name = "field2";
 
+constexpr const char* empty_struct_name = "InnerEmptyStructureHelper";
+
 constexpr const char* bitset_name = "InnerBitsetHelper";
 constexpr const char* bitfield_a = "a";
 constexpr const char* bitfield_b = "b";
@@ -61,6 +63,8 @@ constexpr const char* bounded_wstring_alias = "Inner_alias_bounded_wstring_helpe
 constexpr const char* array_alias = "Inner_alias_array_helper";
 constexpr const char* seq_alias = "Inner_alias_sequence_helper";
 constexpr const char* map_alias = "Inner_alias_map_helper";
+constexpr const char* inner_struct_helper_alias_struct_name = "inner_structure_helper_alias";
+constexpr const char* inner_bitset_helper_alias_struct_name = "inner_bitset_helper_alias";
 
 constexpr const char* var_short_name = "var_short";
 constexpr const char* var_ushort_name = "var_ushort";
@@ -131,6 +135,8 @@ public:
     static DynamicType::_ref_type create_inner_bitmask_helper();
     static DynamicType::_ref_type create_inner_alias_helper();
     static DynamicType::_ref_type create_inner_struct_helper();
+    static DynamicType::_ref_type create_inner_empty_struct_helper();
+    static DynamicType::_ref_type create_inner_struct_helper_alias();
     static DynamicType::_ref_type create_inner_union_helper();
     static DynamicType::_ref_type create_inner_bitset_helper();
     static DynamicType::_ref_type create_inner_alias_bounded_string_helper();
@@ -138,6 +144,7 @@ public:
     static DynamicType::_ref_type create_inner_alias_array_helper();
     static DynamicType::_ref_type create_inner_alias_sequence_helper();
     static DynamicType::_ref_type create_inner_alias_map_helper();
+    static DynamicType::_ref_type create_inner_bitset_helper_alias();
 
 };
 
