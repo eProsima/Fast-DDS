@@ -47,7 +47,7 @@ HelloWorldPublisher::HelloWorldPublisher()
 
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
-    participant_ = factory->create_participant_with_default_profile();
+    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -59,7 +59,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     // Create the publisher
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
     participant_->get_default_publisher_qos(pub_qos);
-    publisher_ = participant_->create_publisher(pub_qos);
+    publisher_ = participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
     if (publisher_ == nullptr)
     {
         throw std::runtime_error("Publisher initialization failed");
@@ -77,7 +77,7 @@ HelloWorldPublisher::HelloWorldPublisher()
     // Create the data writer
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
     publisher_->get_default_datawriter_qos(writer_qos);
-    writer_ = publisher_->create_datawriter(topic_, writer_qos, this);
+    writer_ = publisher_->create_datawriter(topic_, writer_qos, this, StatusMask::all());
     if (writer_ == nullptr)
     {
         throw std::runtime_error("DataWriter initialization failed");
