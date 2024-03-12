@@ -37,7 +37,7 @@ struct CacheChange_t;
  * Class WriterListener with virtual method so the user can implement callbacks to certain events.
  * @ingroup WRITER_MODULE
  */
-class RTPS_DllAPI WriterListener
+class FASTDDS_EXPORTED_API WriterListener
 {
 public:
 
