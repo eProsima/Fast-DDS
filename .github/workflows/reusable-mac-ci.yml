@@ -88,20 +88,12 @@ jobs:
           # Nightly job
           if [[ "${{ inputs.label }}" == *"nightly"* ]]
           then
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
-            if [ ! -f ${DEPENDS_REPOS_PATH} ]
-            then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_master.repos"
-            fi
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly.repos"
             META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
 
           # Either PR or manual
           else
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
-            if [ ! -f ${DEPENDS_REPOS_PATH} ]
-            then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_master.repos"
-            fi
+            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci.repos"
             META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
           fi
 
