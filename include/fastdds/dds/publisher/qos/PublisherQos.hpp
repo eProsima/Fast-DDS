@@ -42,14 +42,14 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI PublisherQos()
+    FASTDDS_EXPORTED_API PublisherQos()
     {
     }
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~PublisherQos() = default;
+    FASTDDS_EXPORTED_API virtual ~PublisherQos() = default;
 
     bool operator ==(
             const PublisherQos& b) const
@@ -200,7 +200,7 @@ private:
 
 };
 
-RTPS_DllAPI extern const PublisherQos PUBLISHER_QOS_DEFAULT;
+FASTDDS_EXPORTED_API extern const PublisherQos PUBLISHER_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

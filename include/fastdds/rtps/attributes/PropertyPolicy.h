@@ -20,7 +20,7 @@
 
 #include <fastdds/rtps/common/Property.h>
 #include <fastdds/rtps/common/BinaryProperty.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -30,25 +30,25 @@ class PropertyPolicy
 {
 public:
 
-    RTPS_DllAPI PropertyPolicy()
+    FASTDDS_EXPORTED_API PropertyPolicy()
     {
     }
 
-    RTPS_DllAPI PropertyPolicy(
+    FASTDDS_EXPORTED_API PropertyPolicy(
             const PropertyPolicy& property_policy)
         : properties_(property_policy.properties_)
         , binary_properties_(property_policy.binary_properties_)
     {
     }
 
-    RTPS_DllAPI PropertyPolicy(
+    FASTDDS_EXPORTED_API PropertyPolicy(
             PropertyPolicy&& property_policy)
         : properties_(std::move(property_policy.properties_))
         , binary_properties_(std::move(property_policy.binary_properties_))
     {
     }
 
-    RTPS_DllAPI PropertyPolicy& operator =(
+    FASTDDS_EXPORTED_API PropertyPolicy& operator =(
             const PropertyPolicy& property_policy)
     {
         properties_ = property_policy.properties_;
@@ -56,7 +56,7 @@ public:
         return *this;
     }
 
-    RTPS_DllAPI PropertyPolicy& operator =(
+    FASTDDS_EXPORTED_API PropertyPolicy& operator =(
             PropertyPolicy&& property_policy)
     {
         properties_ = std::move(property_policy.properties_);
@@ -64,7 +64,7 @@ public:
         return *this;
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const PropertyPolicy& b) const
     {
         return (this->properties_ == b.properties_) &&
@@ -72,25 +72,25 @@ public:
     }
 
     //!Get properties
-    RTPS_DllAPI const PropertySeq& properties() const
+    FASTDDS_EXPORTED_API const PropertySeq& properties() const
     {
         return properties_;
     }
 
     //!Set properties
-    RTPS_DllAPI PropertySeq& properties()
+    FASTDDS_EXPORTED_API PropertySeq& properties()
     {
         return properties_;
     }
 
     //!Get binary_properties
-    RTPS_DllAPI const BinaryPropertySeq& binary_properties() const
+    FASTDDS_EXPORTED_API const BinaryPropertySeq& binary_properties() const
     {
         return binary_properties_;
     }
 
     //!Set binary_properties
-    RTPS_DllAPI BinaryPropertySeq& binary_properties()
+    FASTDDS_EXPORTED_API BinaryPropertySeq& binary_properties()
     {
         return binary_properties_;
     }
@@ -113,21 +113,21 @@ public:
      * @param prefix Prefix used to search properties.
      * @return A copy of properties whose name starts with the prefix.
      */
-    RTPS_DllAPI static PropertyPolicy get_properties_with_prefix(
+    FASTDDS_EXPORTED_API static PropertyPolicy get_properties_with_prefix(
             const PropertyPolicy& property_policy,
             const std::string& prefix);
 
     //!Get the length of the property_policy
-    RTPS_DllAPI static size_t length(
+    FASTDDS_EXPORTED_API static size_t length(
             const PropertyPolicy& property_policy);
 
     //!Look for a property_policy by name
-    RTPS_DllAPI static std::string* find_property(
+    FASTDDS_EXPORTED_API static std::string* find_property(
             PropertyPolicy& property_policy,
             const std::string& name);
 
     //!Retrieves a property_policy by name
-    RTPS_DllAPI static const std::string* find_property(
+    FASTDDS_EXPORTED_API static const std::string* find_property(
             const PropertyPolicy& property_policy,
             const std::string& name);
 
@@ -137,7 +137,7 @@ public:
      * @param name Name of the property to be searched.
      * @return A pointer to the property if found, nullptr otherwise.
      */
-    RTPS_DllAPI static const Property* get_property(
+    FASTDDS_EXPORTED_API static const Property* get_property(
             const PropertyPolicy& property_policy,
             const std::string& name);
 };

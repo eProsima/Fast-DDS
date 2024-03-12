@@ -31,7 +31,7 @@ class Publisher;
 /**
  * Class PublisherListener, allows the end user to implement callbacks triggered by certain events.
  */
-class RTPS_DllAPI PublisherListener
+class FASTDDS_EXPORTED_API PublisherListener
 {
 public:
 

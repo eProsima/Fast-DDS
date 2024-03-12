@@ -460,13 +460,13 @@ public:
 
 // auxiliary conversion functions
 // TODO(jlbueno): private headers shall not export API
-RTPS_DllAPI detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
-RTPS_DllAPI fastrtps::rtps::Locator_t to_fastdds_type(
+FASTDDS_EXPORTED_API detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
+FASTDDS_EXPORTED_API fastrtps::rtps::Locator_t to_fastdds_type(
         detail::Locator_s);
-RTPS_DllAPI detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
-RTPS_DllAPI fastrtps::rtps::GUID_t to_fastdds_type(
+FASTDDS_EXPORTED_API detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
+FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t to_fastdds_type(
         detail::GUID_s);
-RTPS_DllAPI detail::SampleIdentity_s to_statistics_type(fastrtps::rtps::SampleIdentity);
+FASTDDS_EXPORTED_API detail::SampleIdentity_s to_statistics_type(fastrtps::rtps::SampleIdentity);
 
 #else // dummy implementation
 
