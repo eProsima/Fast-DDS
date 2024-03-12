@@ -80,20 +80,31 @@ jobs:
         id: colcon_ws_setup
         run: |
           REPOS_PATH="./src/fastrtps/.github/workflows/config/ci.repos"
-          META_PATH="./src/fastrtps/.github/workflows/config/ci_colcon.meta"
+          META_PATH="./src/fastrtps/.github/workflows/config/ci.meta"
 
           echo "CI repos file:"
           cat ${REPOS_PATH}
+          echo "REPOS_PATH=$REPOS_PATH" >> $GITHUB_ENV
 
           echo "CI metas file:"
           cp ${META_PATH} ci.meta
           cat ci.meta
 
-          # Create source dir and download the version sources
-          vcs import src --input ./src/fastrtps/fastrtps.repos --skip-existing
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ./src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
-          # Download the CI sources
-          vcs import src --input ${REPOS_PATH} --skip-existing
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ env.REPOS_PATH }}
+          destination_workspace: src
+          skip_existing: 'true'
+        env:
+          REPOS_PATH: ${{ env.REPOS_PATH }}
 
       - name: Colcon build
         continue-on-error: false

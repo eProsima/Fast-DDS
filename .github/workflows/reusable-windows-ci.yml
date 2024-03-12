@@ -123,10 +123,11 @@ jobs:
           Install-Module powershell-yaml -Force
 
           $repos_path = ".\src\fastrtps\.github\workflows\config\ci.repos"
-          $meta_path = ".\src\fastrtps\.github\workflows\config\ci_colcon.meta"
+          $meta_path = ".\src\fastrtps\.github\workflows\config\ci.meta"
 
           Write-Output "CI repos file: $repos_path"
           Write-Output "CI metas file: $meta_path"
+          echo "REPOS_PATH=$repos_path" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
           # Generate the meta file
           "::group::deployed colcon.meta file"
@@ -134,11 +135,21 @@ jobs:
           $meta | ConvertTo-Json -Depth 3 | Tee-Object -FilePath ci.meta -Encoding OEM
           "::endgroup::"
 
-          # Create source dir and download the version sources
-          vcs import src --input .\src\fastrtps\fastrtps.repos --skip-existing
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: .\src\fastrtps\fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
-          # Download the CI sources
-          vcs import src --input $repos_path --skip-existing
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ env.REPOS_PATH }}
+          destination_workspace: src
+          skip_existing: 'true'
+        env:
+          REPOS_PATH: ${{ env.REPOS_PATH }}
 
       - name: Build
         id: build
