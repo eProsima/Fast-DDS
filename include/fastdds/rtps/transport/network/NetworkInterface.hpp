@@ -22,7 +22,7 @@
 #include <string>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -37,36 +37,36 @@ namespace rtps {
 struct NetworkInterface
 {
     //! Constructor by name
-    RTPS_DllAPI NetworkInterface(
+    FASTDDS_EXPORTED_API NetworkInterface(
             const std::string& name);
 
     //! Constructor by device name, IP address string and locator with mask
-    RTPS_DllAPI NetworkInterface(
+    FASTDDS_EXPORTED_API NetworkInterface(
             const std::string& device,
             const std::string& ip,
             const LocatorWithMask& locator);
 
     //! Destructor
-    virtual RTPS_DllAPI ~NetworkInterface() = default;
+    virtual FASTDDS_EXPORTED_API ~NetworkInterface() = default;
 
     //! Copy constructor
-    RTPS_DllAPI NetworkInterface(
+    FASTDDS_EXPORTED_API NetworkInterface(
             const NetworkInterface& iface) = default;
 
     //! Copy assignment
-    RTPS_DllAPI NetworkInterface& operator =(
+    FASTDDS_EXPORTED_API NetworkInterface& operator =(
             const NetworkInterface& iface) = default;
 
     //! Move constructor
-    RTPS_DllAPI NetworkInterface(
+    FASTDDS_EXPORTED_API NetworkInterface(
             NetworkInterface&& iface) = default;
 
     //! Move assignment
-    RTPS_DllAPI NetworkInterface& operator =(
+    FASTDDS_EXPORTED_API NetworkInterface& operator =(
             NetworkInterface&& iface) = default;
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const NetworkInterface& iface) const;
 
     //! Interface device name or IP address in string format (to be filled by the user)

@@ -37,31 +37,31 @@ public:
     {
     }
 
-    RTPS_DllAPI explicit DynamicType_ptr(
+    FASTDDS_EXPORTED_API explicit DynamicType_ptr(
             DynamicType* pType);
 
-    RTPS_DllAPI DynamicType_ptr(
+    FASTDDS_EXPORTED_API DynamicType_ptr(
             const DynamicType_ptr& other) = default;
 
-    RTPS_DllAPI DynamicType_ptr(
+    FASTDDS_EXPORTED_API DynamicType_ptr(
             DynamicType_ptr&& other) = default;
 
-    RTPS_DllAPI DynamicType_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicType_ptr& operator =(
             const DynamicType_ptr&) = default;
 
-    RTPS_DllAPI DynamicType_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicType_ptr& operator =(
             DynamicType_ptr&&) = default;
 
-    RTPS_DllAPI DynamicType_ptr& operator =(
+    FASTDDS_EXPORTED_API DynamicType_ptr& operator =(
             DynamicType*);
 
-    RTPS_DllAPI bool operator !=(
+    FASTDDS_EXPORTED_API bool operator !=(
             std::nullptr_t) const
     {
         return bool(*this);
     }
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             std::nullptr_t) const
     {
         return !*this;

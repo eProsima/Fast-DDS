@@ -44,14 +44,14 @@ public:
      * std::cout.
      * @param kind The Log::Kind to which stderr_threshold is set.
      */
-    RTPS_DllAPI virtual void stderr_threshold(
+    FASTDDS_EXPORTED_API virtual void stderr_threshold(
             const Log::Kind& kind);
 
     /**
      * @brief Retrieve the stderr_threshold.
      * @return The Log::Kind to which stderr_threshold is set.
      */
-    RTPS_DllAPI virtual Log::Kind stderr_threshold() const;
+    FASTDDS_EXPORTED_API virtual Log::Kind stderr_threshold() const;
 
     /**
      * @brief Default value of stderr_threshold.
@@ -64,7 +64,7 @@ protected:
      * Called by Log consume to get the correct stream
      * @param Log::Entry to consume.
      */
-    RTPS_DllAPI virtual std::ostream& get_stream(
+    FASTDDS_EXPORTED_API virtual std::ostream& get_stream(
             const Log::Entry& entry) override;
 
 private:

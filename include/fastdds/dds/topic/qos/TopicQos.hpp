@@ -44,7 +44,7 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI TopicQos();
+    FASTDDS_EXPORTED_API TopicQos();
 
     bool operator ==(
             const TopicQos& b) const
@@ -543,7 +543,7 @@ private:
     DataRepresentationQosPolicy representation_;
 };
 
-RTPS_DllAPI extern const TopicQos TOPIC_QOS_DEFAULT;
+FASTDDS_EXPORTED_API extern const TopicQos TOPIC_QOS_DEFAULT;
 
 } // namespace dds
 } // namespace fastdds

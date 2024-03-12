@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 
@@ -74,7 +74,7 @@ class WLP;
  * @brief Class RTPSParticipant, contains the public API for a RTPSParticipant.
  * @ingroup RTPS_MODULE
  */
-class RTPS_DllAPI RTPSParticipant
+class FASTDDS_EXPORTED_API RTPSParticipant
 {
     friend class RTPSParticipantImpl;
     friend class RTPSDomain;

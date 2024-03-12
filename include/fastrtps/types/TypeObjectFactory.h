@@ -28,11 +28,13 @@ namespace types {
 class TypeObjectFactory
 {
 private:
+
     mutable std::recursive_mutex m_MutexIdentifiers;
     mutable std::recursive_mutex m_MutexObjects;
     mutable std::recursive_mutex m_MutexInformations;
 
 protected:
+
     TypeObjectFactory();
     mutable std::map<const std::string, const TypeIdentifier*> identifiers_; // Basic, builtin and EK_MINIMAL
     std::map<const std::string, const TypeIdentifier*> complete_identifiers_; // Only EK_COMPLETE
@@ -122,9 +124,10 @@ protected:
             const TypeIdentifier* identifier) const;
 
 public:
-    RTPS_DllAPI static TypeObjectFactory* get_instance();
 
-    RTPS_DllAPI static ReturnCode_t delete_instance();
+    FASTDDS_EXPORTED_API static TypeObjectFactory* get_instance();
+
+    FASTDDS_EXPORTED_API static ReturnCode_t delete_instance();
 
     ~TypeObjectFactory();
 
@@ -133,81 +136,81 @@ public:
      * @param type_name
      * @return
      */
-    RTPS_DllAPI const TypeInformation* get_type_information(
-            const std::string &type_name) const;
+    FASTDDS_EXPORTED_API const TypeInformation* get_type_information(
+            const std::string& type_name) const;
 
     /**
      * @brief get_type_information Retrieves the TypeInformation of the given TypeIdentifier.
      * @param identifier
      * @return
      */
-    RTPS_DllAPI TypeInformation* get_type_information(
+    FASTDDS_EXPORTED_API TypeInformation* get_type_information(
             const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI const TypeObject* get_type_object(
+    FASTDDS_EXPORTED_API const TypeObject* get_type_object(
             const std::string& type_name,
             bool complete = false) const;
 
-    RTPS_DllAPI const TypeObject* get_type_object(
+    FASTDDS_EXPORTED_API const TypeObject* get_type_object(
             const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI TypeKind get_type_kind(
+    FASTDDS_EXPORTED_API TypeKind get_type_kind(
             const std::string& type_name) const;
 
-    RTPS_DllAPI std::string get_type_name(
+    FASTDDS_EXPORTED_API std::string get_type_name(
             const TypeKind kind) const;
 
-    RTPS_DllAPI std::string get_type_name(
+    FASTDDS_EXPORTED_API std::string get_type_name(
             const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_primitive_type_identifier(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_primitive_type_identifier(
             TypeKind kind) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_type_identifier(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_type_identifier(
             const std::string& type_name,
             bool complete = false) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_type_identifier_trying_complete(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_type_identifier_trying_complete(
             const std::string& type_name) const;
 
-    RTPS_DllAPI const TypeIdentifier* get_string_identifier(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_string_identifier(
             uint32_t bound,
             bool wide = false);
 
-    RTPS_DllAPI const TypeIdentifier* get_sequence_identifier(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_sequence_identifier(
             const std::string& type_name,
             uint32_t bound,
             bool complete = false);
 
-    RTPS_DllAPI const TypeIdentifier* get_array_identifier(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_array_identifier(
             const std::string& type_name,
-            const std::vector<uint32_t> &bound,
+            const std::vector<uint32_t>& bound,
             bool complete = false);
 
-    RTPS_DllAPI const TypeIdentifier* get_map_identifier(
+    FASTDDS_EXPORTED_API const TypeIdentifier* get_map_identifier(
             const std::string& key_type_name,
             const std::string& value_type_name,
             uint32_t bound,
             bool complete = false);
 
-    RTPS_DllAPI DynamicType_ptr build_dynamic_type(
+    FASTDDS_EXPORTED_API DynamicType_ptr build_dynamic_type(
             const std::string& name,
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;
 
-    RTPS_DllAPI bool is_type_identifier_complete(
+    FASTDDS_EXPORTED_API bool is_type_identifier_complete(
             const TypeIdentifier* identifier) const;
 
-    RTPS_DllAPI void add_type_identifier(
+    FASTDDS_EXPORTED_API void add_type_identifier(
             const std::string& type_name,
             const TypeIdentifier* identifier);
 
-    RTPS_DllAPI void add_type_object(
+    FASTDDS_EXPORTED_API void add_type_object(
             const std::string& type_name,
             const TypeIdentifier* identifier,
             const TypeObject* object);
 
-    RTPS_DllAPI inline void add_alias(
+    FASTDDS_EXPORTED_API inline void add_alias(
             const std::string& alias_name,
             const std::string& target_type)
     {
@@ -225,7 +228,7 @@ public:
      * @param max_size
      * @return
      */
-    RTPS_DllAPI TypeIdentifierWithSizeSeq typelookup_get_type_dependencies(
+    FASTDDS_EXPORTED_API TypeIdentifierWithSizeSeq typelookup_get_type_dependencies(
             const TypeIdentifierSeq& identifiers,
             const OctetSeq& in_continuation_point,
             OctetSeq& out_continuation_point,
@@ -239,7 +242,7 @@ public:
      * @param object
      * @return
      */
-    RTPS_DllAPI const TypeIdentifier* typelookup_get_type(
+    FASTDDS_EXPORTED_API const TypeIdentifier* typelookup_get_type(
             const TypeIdentifier& identifier,
             TypeObject& object) const;
 
@@ -248,7 +251,7 @@ public:
      * @param identifier
      * @return
      */
-    RTPS_DllAPI bool typelookup_check_type_identifier(
+    FASTDDS_EXPORTED_API bool typelookup_check_type_identifier(
             const TypeIdentifier& identifier) const;
 
     /**
@@ -263,7 +266,7 @@ public:
      * @param information
      * @return
      */
-    RTPS_DllAPI const TypeObject* typelookup_get_type_object_from_information(
+    FASTDDS_EXPORTED_API const TypeObject* typelookup_get_type_object_from_information(
             const TypeInformation& information) const;
 };
 
