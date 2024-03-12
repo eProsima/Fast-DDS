@@ -187,13 +187,13 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
         listening_ports.push_back(port);
     }
 
-    RTPS_DllAPI TCPTransportDescriptor()
+    FASTDDS_EXPORTED_API TCPTransportDescriptor()
         : SocketTransportDescriptor(65550, 4)
     {
 
     }
 
-    RTPS_DllAPI TCPTransportDescriptor(
+    FASTDDS_EXPORTED_API TCPTransportDescriptor(
             const TCPTransportDescriptor& /*t*/)
         : SocketTransportDescriptor(65550, 4)
     {

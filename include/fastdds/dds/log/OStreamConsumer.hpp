@@ -38,7 +38,7 @@ public:
      * Called by Log to ask us to consume the Entry.
      * @param Log::Entry to consume.
      */
-    RTPS_DllAPI void Consume(
+    FASTDDS_EXPORTED_API void Consume(
             const Log::Entry& entry) override;
 
 protected:
@@ -47,7 +47,7 @@ protected:
      * Called by Log consume to get the correct stream
      * @param Log::Entry to consume.
      */
-    RTPS_DllAPI virtual std::ostream& get_stream(
+    FASTDDS_EXPORTED_API virtual std::ostream& get_stream(
             const Log::Entry& entry) = 0;
 };
 

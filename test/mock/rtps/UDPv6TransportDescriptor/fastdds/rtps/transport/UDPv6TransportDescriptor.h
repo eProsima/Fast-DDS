@@ -39,13 +39,13 @@ typedef struct UDPv6TransportDescriptor : public UDPTransportDescriptor
     {
     }
 
-    RTPS_DllAPI UDPv6TransportDescriptor()
+    FASTDDS_EXPORTED_API UDPv6TransportDescriptor()
         : UDPTransportDescriptor()
     {
 
     }
 
-    RTPS_DllAPI UDPv6TransportDescriptor(
+    FASTDDS_EXPORTED_API UDPv6TransportDescriptor(
             const UDPv6TransportDescriptor& /*t*/)
         : UDPTransportDescriptor()
     {

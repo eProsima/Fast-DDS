@@ -19,7 +19,7 @@
 #ifndef _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_
 #define _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/Locator.h>
 
@@ -30,7 +30,7 @@ namespace rtps {
 /**
  * A Locator with a mask that defines the number of significant bits of its address.
  */
-class RTPS_DllAPI LocatorWithMask : public Locator
+class FASTDDS_EXPORTED_API LocatorWithMask : public Locator
 {
 public:
 
