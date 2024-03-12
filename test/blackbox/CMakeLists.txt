@@ -56,28 +56,31 @@ endif()
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
+    types/Data1mb.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/Data1mbv1.cxx
+    types/Data64kb.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data64kbv1.cxx
+    types/FixedSized.cxx
+    types/FixedSizedPubSubTypes.cxx
+    types/FixedSizedv1.cxx
     types/HelloWorld.cxx
-    types/HelloWorldv1.cxx
     types/HelloWorldPubSubTypes.cxx
     types/HelloWorldTypeObject.cxx
-    types/KeyedHelloWorld.cxx
-    types/KeyedHelloWorldv1.cxx
-    types/KeyedHelloWorldPubSubTypes.cxx
-    types/StringTest.cxx
-    types/StringTestv1.cxx
-    types/StringTestPubSubTypes.cxx
-    types/Data64kb.cxx
-    types/Data64kbv1.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data1mb.cxx
-    types/Data1mbv1.cxx
-    types/Data1mbPubSubTypes.cxx
+    types/HelloWorldv1.cxx
     types/KeyedData1mb.cxx
-    types/KeyedData1mbv1.cxx
     types/KeyedData1mbPubSubTypes.cxx
-    types/FixedSized.cxx
-    types/FixedSizedv1.cxx
-    types/FixedSizedPubSubTypes.cxx
+    types/KeyedData1mbv1.cxx
+    types/KeyedHelloWorld.cxx
+    types/KeyedHelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorldv1.cxx
+    types/StringTest.cxx
+    types/StringTestPubSubTypes.cxx
+    types/StringTestv1.cxx
+    types/UnboundedHelloWorld.cxx
+    types/UnboundedHelloWorldPubSubTypes.cxx
+    types/UnboundedHelloWorldv1.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
@@ -103,35 +106,38 @@ gtest_discover_tests(BlackboxTests_RTPS
 
 file(GLOB BLACKBOXTESTS_TEST_SOURCE "common/BlackboxTests*.cpp")
 set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
+    types/Data1mb.cxx
+    types/Data1mbPubSubTypes.cxx
+    types/Data1mbv1.cxx
+    types/Data64kb.cxx
+    types/Data64kbPubSubTypes.cxx
+    types/Data64kbv1.cxx
+    types/FixedSized.cxx
+    types/FixedSizedPubSubTypes.cxx
+    types/FixedSizedv1.cxx
     types/HelloWorld.cxx
-    types/HelloWorldv1.cxx
     types/HelloWorldPubSubTypes.cxx
     types/HelloWorldTypeObject.cxx
-    types/KeyedHelloWorld.cxx
-    types/KeyedHelloWorldv1.cxx
-    types/KeyedHelloWorldPubSubTypes.cxx
-    types/StringTest.cxx
-    types/StringTestv1.cxx
-    types/StringTestPubSubTypes.cxx
-    types/Data64kb.cxx
-    types/Data64kbv1.cxx
-    types/Data64kbPubSubTypes.cxx
-    types/Data1mb.cxx
-    types/Data1mbv1.cxx
-    types/Data1mbPubSubTypes.cxx
+    types/HelloWorldv1.cxx
     types/KeyedData1mb.cxx
-    types/KeyedData1mbv1.cxx
     types/KeyedData1mbPubSubTypes.cxx
-    types/FixedSized.cxx
-    types/FixedSizedv1.cxx
-    types/FixedSizedPubSubTypes.cxx
+    types/KeyedData1mbv1.cxx
+    types/KeyedHelloWorld.cxx
+    types/KeyedHelloWorldPubSubTypes.cxx
+    types/KeyedHelloWorldv1.cxx
+    types/StringTest.cxx
+    types/StringTestPubSubTypes.cxx
+    types/StringTestv1.cxx
     types/TestIncludeRegression3361.cxx
-    types/TestIncludeRegression3361v1.cxx
     types/TestIncludeRegression3361TypeObject.cxx
+    types/TestIncludeRegression3361v1.cxx
     types/TestRegression3361.cxx
-    types/TestRegression3361v1.cxx
     types/TestRegression3361PubSubTypes.cxx
     types/TestRegression3361TypeObject.cxx
+    types/TestRegression3361v1.cxx
+    types/UnboundedHelloWorld.cxx
+    types/UnboundedHelloWorldPubSubTypes.cxx
+    types/UnboundedHelloWorldv1.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
