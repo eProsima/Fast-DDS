@@ -13,7 +13,8 @@
             "wait" : 0,
             "samples" : 4,
             "magic" : "str",
-            "xmlfile" : "path/file.xml"
+            "xmlfile" : "path/file.xml",
+            "interval" : 250
         },
         {
             "kind" : "subscriber",
@@ -24,7 +25,9 @@
             "samples" : 4,
             "magic" : "str",
             "xmlfile" : "path/file.xml",
-            "publishers" : 1
+            "publishers" : 1,
+            "timeout" : 20,
+            "succeed_on_timeout" : false
         },
         {
             "kind" : "pubsub",
@@ -38,7 +41,8 @@
             "magic" : "str",
             "xmlfile" : "path/file.xml",
             "publishers" : 1,
-            "publisher_loops" : 2
+            "publisher_loops" : 2,
+            "interval" : 250
         }
     ]
 }
