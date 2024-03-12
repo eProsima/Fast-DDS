@@ -169,7 +169,8 @@ UDPv6Transport::UDPv6Transport(
             else if (descriptor.interfaceWhiteList.empty() && descriptor.interface_allowlist.empty())
             {
                 interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
-                allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator, descriptor.netmask_filter);
+                allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
+                        descriptor.netmask_filter);
             }
             else if (!descriptor.interface_allowlist.empty())
             {
@@ -188,7 +189,8 @@ UDPv6Transport::UDPv6Transport(
                             descriptor.netmask_filter))
                     {
                         interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
-                        allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator, netmask_filter);
+                        allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
+                                netmask_filter);
                     }
                     else
                     {
@@ -208,7 +210,8 @@ UDPv6Transport::UDPv6Transport(
                         }) != white_end )
                 {
                     interface_whitelist_.emplace_back(ip::address_v6::from_string(infoIP.name));
-                    allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator, descriptor.netmask_filter);
+                    allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
+                            descriptor.netmask_filter);
                 }
             }
         }

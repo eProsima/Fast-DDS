@@ -342,7 +342,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
             }
         }
 
-        bool transport_registered = register_transport && m_network_Factory.RegisterTransport(transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag);
+        bool transport_registered = register_transport && m_network_Factory.RegisterTransport(
+            transportDescriptor.get(), &m_att.properties, m_att.max_msg_size_no_frag);
 
         if (socket_descriptor != nullptr)
         {
@@ -386,9 +387,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     // Check netmask filtering preconditions
-    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info = m_network_Factory.netmask_filter_info();
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info =
+            m_network_Factory.netmask_filter_info();
     std::string error_msg;
-    if (!fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info, m_att.ignore_non_matching_locators,
+    if (!fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
+            m_att.ignore_non_matching_locators,
             error_msg) ||
             !fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
             m_att.builtin.metatraffic_external_unicast_locators,

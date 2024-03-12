@@ -130,7 +130,7 @@ TCPTransportDescriptor::TCPTransportDescriptor(
 TCPTransportDescriptor& TCPTransportDescriptor::operator =(
         const TCPTransportDescriptor& t)
 {
-    SocketTransportDescriptor::operator=(t);
+    SocketTransportDescriptor::operator =(t);
     listening_ports = t.listening_ports;
     keep_alive_frequency_ms = t.keep_alive_frequency_ms;
     keep_alive_timeout_ms = t.keep_alive_timeout_ms;

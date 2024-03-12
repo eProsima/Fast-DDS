@@ -309,9 +309,9 @@ public:
      *   If there is an existing channel it registers the receiver resource.
      */
     virtual bool OpenInputChannel(
-        const Locator&,
-        TransportReceiverInterface*,
-        uint32_t) override;
+            const Locator&,
+            TransportReceiverInterface*,
+            uint32_t) override;
 
     //! Opens a socket on the given address and port (as long as they are white listed).
     bool OpenOutputChannel(

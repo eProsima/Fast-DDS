@@ -42,9 +42,9 @@ bool NetworkInterface::operator ==(
         const NetworkInterface& iface) const
 {
     return (this->name == iface.name &&
-        this->device == iface.device &&
-        this->ip == iface.ip &&
-        this->locator == iface.locator);
+           this->device == iface.device &&
+           this->ip == iface.ip &&
+           this->locator == iface.locator);
 }
 
 } // namsepace rtps

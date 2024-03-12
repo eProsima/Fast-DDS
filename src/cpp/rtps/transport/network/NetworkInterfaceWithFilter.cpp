@@ -58,7 +58,7 @@ bool NetworkInterfaceWithFilter::operator ==(
         const NetworkInterfaceWithFilter& iface) const
 {
     return (this->netmask_filter == iface.netmask_filter &&
-        NetworkInterface::operator ==(iface));
+           NetworkInterface::operator ==(iface));
 }
 
 } // namsepace rtps

@@ -53,8 +53,8 @@ struct TransportDescriptorInterface
     //! Copy constructor
     RTPS_DllAPI TransportDescriptorInterface(
             const TransportDescriptorInterface& t)
-    : maxMessageSize(t.maxMessageSize)
-    , maxInitialPeersRange(t.maxInitialPeersRange)
+        : maxMessageSize(t.maxMessageSize)
+        , maxInitialPeersRange(t.maxInitialPeersRange)
     {
     }
 

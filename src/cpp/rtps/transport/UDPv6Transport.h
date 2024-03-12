@@ -55,9 +55,9 @@ public:
      * multicast range, it joins the specified multicast group,
      */
     bool OpenInputChannel(
-        const Locator&,
-        TransportReceiverInterface*,
-        uint32_t) override;
+            const Locator&,
+            TransportReceiverInterface*,
+            uint32_t) override;
 
     LocatorList NormalizeLocator(
             const Locator& locator) override;
