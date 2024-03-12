@@ -22,7 +22,7 @@
 
 #include <fastdds/dds/core/condition/Condition.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -68,27 +68,27 @@ public:
      * @brief Retrieves the trigger_value of the Condition
      * @return true if trigger_value is set to 'true', 'false' otherwise
      */
-    RTPS_DllAPI bool get_trigger_value() const override;
+    FASTDDS_EXPORTED_API bool get_trigger_value() const override;
 
     /**
      * @brief Defines the list of communication statuses that are taken into account to determine the trigger_value
      * @param mask defines the mask for the status
      * @return RETCODE_OK with everything ok, error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t set_enabled_statuses(
+    FASTDDS_EXPORTED_API ReturnCode_t set_enabled_statuses(
             const StatusMask& mask);
 
     /**
      * @brief Retrieves the list of communication statuses that are taken into account to determine the trigger_value
      * @return Status set or default status if it has not been set
      */
-    RTPS_DllAPI const StatusMask& get_enabled_statuses() const;
+    FASTDDS_EXPORTED_API const StatusMask& get_enabled_statuses() const;
 
     /**
      * @brief Returns the Entity associated
      * @return Entity
      */
-    RTPS_DllAPI Entity* get_entity() const;
+    FASTDDS_EXPORTED_API Entity* get_entity() const;
 
     detail::StatusConditionImpl* get_impl() const
     {

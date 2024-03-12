@@ -29,7 +29,7 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -126,7 +126,7 @@ public:
      * @return RETCODE_OK is successfully enabled. RETCODE_PRECONDITION_NOT_MET if the Publisher creating this
      *         DataWriter is not enabled.
      */
-    RTPS_DllAPI ReturnCode_t enable() override;
+    FASTDDS_EXPORTED_API ReturnCode_t enable() override;
 
     /**
      * Write data to the topic.
@@ -134,7 +134,7 @@ public:
      * @param data Pointer to the data
      * @return True if correct, false otherwise
      */
-    RTPS_DllAPI bool write(
+    FASTDDS_EXPORTED_API bool write(
             void* data);
 
     /**
@@ -144,7 +144,7 @@ public:
      * @param params Extra write parameters.
      * @return True if correct, false otherwise
      */
-    RTPS_DllAPI bool write(
+    FASTDDS_EXPORTED_API bool write(
             void* data,
             fastrtps::rtps::WriteParams& params);
 
@@ -159,7 +159,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t write(
+    FASTDDS_EXPORTED_API ReturnCode_t write(
             void* data,
             const InstanceHandle_t& handle);
 
@@ -179,7 +179,7 @@ public:
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t write_w_timestamp(
+    FASTDDS_EXPORTED_API ReturnCode_t write_w_timestamp(
             void* data,
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
@@ -193,7 +193,7 @@ public:
      * This handle could be used in successive `write` or `dispose` operations.
      * In case of error, HANDLE_NIL will be returned.
      */
-    RTPS_DllAPI InstanceHandle_t register_instance(
+    FASTDDS_EXPORTED_API InstanceHandle_t register_instance(
             void* instance);
 
     /**
@@ -214,7 +214,7 @@ public:
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Handle containing the instance's key.
      */
-    RTPS_DllAPI InstanceHandle_t register_instance_w_timestamp(
+    FASTDDS_EXPORTED_API InstanceHandle_t register_instance_w_timestamp(
             void* instance,
             const fastrtps::Time_t& timestamp);
 
@@ -229,7 +229,7 @@ public:
      * @return Returns the operation's result.
      * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
      */
-    RTPS_DllAPI ReturnCode_t unregister_instance(
+    FASTDDS_EXPORTED_API ReturnCode_t unregister_instance(
             void* instance,
             const InstanceHandle_t& handle);
 
@@ -252,7 +252,7 @@ public:
      * @param timestamp Time_t used to set the source_timestamp.
      * @return Handle containing the instance's key.
      */
-    RTPS_DllAPI ReturnCode_t unregister_instance_w_timestamp(
+    FASTDDS_EXPORTED_API ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
@@ -271,7 +271,7 @@ public:
      *
      * @return Any of the standard return codes.
      */
-    RTPS_DllAPI ReturnCode_t get_key_value(
+    FASTDDS_EXPORTED_API ReturnCode_t get_key_value(
             void* key_holder,
             const InstanceHandle_t& handle);
 
@@ -286,7 +286,7 @@ public:
      *
      * @return handle of the given instance
      */
-    RTPS_DllAPI InstanceHandle_t lookup_instance(
+    FASTDDS_EXPORTED_API InstanceHandle_t lookup_instance(
             const void* instance) const;
 
     /**
@@ -294,21 +294,21 @@ public:
      *
      * @return Reference to the DataWriter GUID
      */
-    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
+    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid() const;
 
     /**
      * Returns the DataWriter's InstanceHandle
      *
      * @return Copy of the DataWriter InstanceHandle
      */
-    RTPS_DllAPI InstanceHandle_t get_instance_handle() const;
+    FASTDDS_EXPORTED_API InstanceHandle_t get_instance_handle() const;
 
     /**
      * Get data type associated to the DataWriter
      *
      * @return Copy of the TypeSupport
      */
-    RTPS_DllAPI TypeSupport get_type() const;
+    FASTDDS_EXPORTED_API TypeSupport get_type() const;
 
     /**
      * Waits the current thread until all writers have received their acknowledgments.
@@ -316,7 +316,7 @@ public:
      * @param max_wait Maximum blocking time for this operation
      * @return RETCODE_OK if the DataWriter receive the acknowledgments before the time expires and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
+    FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
             const fastrtps::Duration_t& max_wait);
 
     /**
@@ -325,7 +325,7 @@ public:
      * @param[out] status Deadline missed status struct
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_offered_deadline_missed_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_offered_deadline_missed_status(
             OfferedDeadlineMissedStatus& status);
 
     /**
@@ -334,7 +334,7 @@ public:
      * @param[out] status Offered incompatible qos status struct
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_offered_incompatible_qos_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_offered_incompatible_qos_status(
             OfferedIncompatibleQosStatus& status);
 
     /**
@@ -343,7 +343,7 @@ public:
      * @param[out] status publication matched status struct
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_publication_matched_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_publication_matched_status(
             PublicationMatchedStatus& status) const;
 
     /**
@@ -353,7 +353,7 @@ public:
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
      * self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_qos(
             const DataWriterQos& qos);
 
     /**
@@ -361,7 +361,7 @@ public:
      *
      * @return Reference to the current DataWriterQos
      */
-    RTPS_DllAPI const DataWriterQos& get_qos() const;
+    FASTDDS_EXPORTED_API const DataWriterQos& get_qos() const;
 
     /**
      * Fills the DataWriterQos with the values of this DataWriter.
@@ -369,7 +369,7 @@ public:
      * @param qos DataWriterQos object where the qos is returned.
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_qos(
             DataWriterQos& qos) const;
 
     /**
@@ -377,14 +377,14 @@ public:
      *
      * @return Pointer to the associated Topic
      */
-    RTPS_DllAPI Topic* get_topic() const;
+    FASTDDS_EXPORTED_API Topic* get_topic() const;
 
     /**
      * Retrieves the listener for this DataWriter.
      *
      * @return Pointer to the DataWriterListener
      */
-    RTPS_DllAPI const DataWriterListener* get_listener() const;
+    FASTDDS_EXPORTED_API const DataWriterListener* get_listener() const;
 
     /**
      * Modifies the DataWriterListener, sets the mask to StatusMask::all()
@@ -392,7 +392,7 @@ public:
      * @param listener new value for the DataWriterListener
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DataWriterListener* listener);
 
     /**
@@ -402,7 +402,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all).
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DataWriterListener* listener,
             const StatusMask& mask);
 
@@ -421,7 +421,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if the handle introduced does not match with the one associated to the data,
      * RETCODE_OK if the data is correctly sent and RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t dispose(
+    FASTDDS_EXPORTED_API ReturnCode_t dispose(
             void* data,
             const InstanceHandle_t& handle);
 
@@ -443,9 +443,9 @@ public:
      * @param instance  Sample used to deduce instance's key in case of `handle` parameter is HANDLE_NIL.
      * @param handle Instance's key to be disposed.
      * @param timestamp Time_t used to set the source_timestamp.
-     * @return RTPS_DllAPI
+     * @return FASTDDS_EXPORTED_API
      */
-    RTPS_DllAPI ReturnCode_t dispose_w_timestamp(
+    FASTDDS_EXPORTED_API ReturnCode_t dispose_w_timestamp(
             void* instance,
             const InstanceHandle_t& handle,
             const fastrtps::Time_t& timestamp);
@@ -455,7 +455,7 @@ public:
      * @param status Liveliness lost status struct
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_liveliness_lost_status(
+    FASTDDS_EXPORTED_API ReturnCode_t get_liveliness_lost_status(
             LivelinessLostStatus& status);
 
     /**
@@ -463,7 +463,7 @@ public:
      *
      * @return Pointer to the Publisher
      */
-    RTPS_DllAPI const Publisher* get_publisher() const;
+    FASTDDS_EXPORTED_API const Publisher* get_publisher() const;
 
     /**
      * @brief This operation manually asserts the liveliness of the DataWriter. This is used in combination with the
@@ -477,7 +477,7 @@ public:
      *
      * @return RETCODE_OK if asserted, RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI ReturnCode_t assert_liveliness();
+    FASTDDS_EXPORTED_API ReturnCode_t assert_liveliness();
 
     /**
      * @brief Retrieves in a subscription associated with the DataWriter
@@ -487,7 +487,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_matched_subscription_data(
+    FASTDDS_EXPORTED_API ReturnCode_t get_matched_subscription_data(
             builtin::SubscriptionBuiltinTopicData& subscription_data,
             const InstanceHandle_t& subscription_handle) const;
 
@@ -498,7 +498,7 @@ public:
      * @return RETCODE_OK
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_matched_subscriptions(
+    FASTDDS_EXPORTED_API ReturnCode_t get_matched_subscriptions(
             std::vector<InstanceHandle_t>& subscription_handles) const;
 
     /**
@@ -507,7 +507,7 @@ public:
      * @param removed size_t pointer to return the size of the data removed
      * @return RETCODE_OK if the samples are removed and RETCODE_ERROR otherwise
      */
-    RTPS_DllAPI ReturnCode_t clear_history(
+    FASTDDS_EXPORTED_API ReturnCode_t clear_history(
             size_t* removed);
 
     /**
@@ -535,7 +535,7 @@ public:
      * @return ReturnCode_t::RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
      * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
      */
-    RTPS_DllAPI ReturnCode_t loan_sample(
+    FASTDDS_EXPORTED_API ReturnCode_t loan_sample(
             void*& sample,
             LoanInitializationKind initialization = LoanInitializationKind::NO_LOAN_INITIALIZATION);
 
@@ -551,7 +551,7 @@ public:
      * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
      * @return ReturnCode_t::RETCODE_OK if the loan is successfully discarded.
      */
-    RTPS_DllAPI ReturnCode_t discard_loan(
+    FASTDDS_EXPORTED_API ReturnCode_t discard_loan(
             void*& sample);
 
     /**
@@ -562,7 +562,7 @@ public:
      * @return NOT_ENABLED if the reader has not been enabled.
      * @return OK if a list of locators is returned.
      */
-    RTPS_DllAPI ReturnCode_t get_sending_locators(
+    FASTDDS_EXPORTED_API ReturnCode_t get_sending_locators(
             rtps::LocatorList& locators) const;
 
     /**
@@ -581,7 +581,7 @@ public:
      * @return RETCODE_OK if the DataWriter received the acknowledgments before the time expired.
      * @return RETCODE_TIMEOUT otherwise.
      */
-    RTPS_DllAPI ReturnCode_t wait_for_acknowledgments(
+    FASTDDS_EXPORTED_API ReturnCode_t wait_for_acknowledgments(
             void* instance,
             const InstanceHandle_t& handle,
             const fastrtps::Duration_t& max_wait);

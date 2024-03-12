@@ -48,7 +48,7 @@ class RemoteServerAttributes
 {
 public:
 
-    RTPS_DllAPI inline bool operator ==(
+    FASTDDS_EXPORTED_API inline bool operator ==(
             const RemoteServerAttributes& r) const
     {
         return guidPrefix == r.guidPrefix
@@ -56,7 +56,7 @@ public:
                && metatrafficMulticastLocatorList == r.metatrafficMulticastLocatorList;
     }
 
-    RTPS_DllAPI void clear()
+    FASTDDS_EXPORTED_API void clear()
     {
         guidPrefix = fastrtps::rtps::GuidPrefix_t::unknown();
         metatrafficUnicastLocatorList.clear();
@@ -64,12 +64,12 @@ public:
         is_connected = false;
     }
 
-    RTPS_DllAPI fastrtps::rtps::GUID_t GetParticipant() const;
+    FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t GetParticipant() const;
 
-    RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPReader() const;
-    RTPS_DllAPI fastrtps::rtps::GUID_t GetPDPWriter() const;
+    FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t GetPDPReader() const;
+    FASTDDS_EXPORTED_API fastrtps::rtps::GUID_t GetPDPWriter() const;
 
-    RTPS_DllAPI inline bool ReadguidPrefix(
+    FASTDDS_EXPORTED_API inline bool ReadguidPrefix(
             const char* pfx)
     {
         return bool(std::istringstream(pfx) >> guidPrefix);
@@ -101,8 +101,8 @@ typedef std::list<RemoteServerAttributes> RemoteServerList_t;
 template<class charT>
 struct server_ostream_separators
 {
-    RTPS_DllAPI static const charT* list_separator;
-    RTPS_DllAPI static const charT* locator_separator;
+    FASTDDS_EXPORTED_API static const charT* list_separator;
+    FASTDDS_EXPORTED_API static const charT* locator_separator;
 };
 
 #ifndef _MSC_VER
@@ -179,7 +179,7 @@ const char* const ROS_SUPER_CLIENT = "ROS_SUPER_CLIENT";
  * @param[out] attributes reference to a RemoteServerList_t to populate.
  * @return true if parsing succeeds, false otherwise (or if the list is empty)
  */
-RTPS_DllAPI bool load_environment_server_info(
+FASTDDS_EXPORTED_API bool load_environment_server_info(
         const std::string& list,
         RemoteServerList_t& attributes);
 
@@ -196,20 +196,20 @@ RTPS_DllAPI bool load_environment_server_info(
  * @param[out] attributes reference to a RemoteServerList_t to populate.
  * @return true if parsing succeeds, false otherwise
  */
-RTPS_DllAPI bool load_environment_server_info(
+FASTDDS_EXPORTED_API bool load_environment_server_info(
         RemoteServerList_t& attributes);
 
 /**
  * Get the value of environment variable DEFAULT_ROS2_MASTER_URI
  * @return The value of environment variable DEFAULT_ROS2_MASTER_URI. Empty string if the variable is not defined.
  */
-RTPS_DllAPI const std::string& ros_discovery_server_env();
+FASTDDS_EXPORTED_API const std::string& ros_discovery_server_env();
 
 /**
  * Get the value of environment variable ROS_SUPER_CLIENT
  * @return The value of environment variable ROS_SUPER_CLIENT. False if the variable is not defined.
  */
-RTPS_DllAPI bool ros_super_client_env();
+FASTDDS_EXPORTED_API bool ros_super_client_env();
 
 /**
  * Returns the guidPrefix associated to the given server id
@@ -217,7 +217,7 @@ RTPS_DllAPI bool ros_super_client_env();
  * @param[out] guid reference to the guidPrefix to modify
  * @return true if the server guid can be delivered
  */
-RTPS_DllAPI bool get_server_client_default_guidPrefix(
+FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
         int id,
         fastrtps::rtps::GuidPrefix_t& guid);
 
