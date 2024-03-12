@@ -661,7 +661,7 @@ private:
      */
     template<TypeKind TK>
     ReturnCode_t set_primitive_value(
-            TypeKind element_kind,
+            const traits<DynamicTypeImpl>::ref_type& element_type,
             std::map<MemberId, std::shared_ptr<void>>::iterator value_iterator,
             const TypeForKind<TK>& value) noexcept;
 

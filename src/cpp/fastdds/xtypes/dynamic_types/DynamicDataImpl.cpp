@@ -3488,6 +3488,7 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
+            TK_MAP == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -3896,7 +3897,16 @@ ReturnCode_t DynamicDataImpl::get_value(
                 TypeKind element_kind =
                         get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                     enclosing_type_->get_descriptor().element_type()));
-                ret_value = get_primitive_value<TK>(element_kind, it, value, MEMBER_ID_INVALID);
+
+                if (TK_BITMASK == element_kind)
+                {
+                    ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->get_bitmask_bit<TK>(value,
+                                    MEMBER_ID_INVALID);
+                }
+                else
+                {
+                    ret_value = get_primitive_value<TK>(element_kind, it, value, MEMBER_ID_INVALID);
+                }
             }
         }
     }
@@ -3921,7 +3931,7 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         MemberId id,
         const TypeForKind<TK>& value) noexcept
 {
-    ReturnCode_t ret_value = RETCODE_UNSUPPORTED;
+    ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
     auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
     assert(sequence);
 
@@ -4130,11 +4140,12 @@ void DynamicDataImpl::set_discriminator_value(
 
 template<TypeKind TK>
 ReturnCode_t DynamicDataImpl::set_primitive_value(
-        TypeKind element_kind,
+        const traits<DynamicTypeImpl>::ref_type& element_type,
         std::map<MemberId, std::shared_ptr<void>>::iterator value_iterator,
         const TypeForKind<TK>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    TypeKind element_kind = element_type->get_kind();
 
     if (TK == element_kind)
     {
@@ -4275,15 +4286,16 @@ ReturnCode_t DynamicDataImpl::set_primitive_value(
 
 template<>
 ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING8>(
-        TypeKind element_kind,
+        const traits<DynamicTypeImpl>::ref_type& element_type,
         std::map<MemberId, std::shared_ptr<void>>::iterator value_iterator,
         const TypeForKind<TK_STRING8>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    TypeKind element_kind = element_type->get_kind();
 
     if (TK_STRING8 == element_kind && (
-                static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
-                value.size() <= enclosing_type_->get_descriptor().bound().at(0)))
+                static_cast<uint32_t>(LENGTH_UNLIMITED) == element_type->get_descriptor().bound().at(0) ||
+                value.size() <= element_type->get_descriptor().bound().at(0)))
     {
         *std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
@@ -4294,11 +4306,12 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING8>(
 
 template<>
 ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING16>(
-        TypeKind element_kind,
+        const traits<DynamicTypeImpl>::ref_type& element_type,
         std::map<MemberId, std::shared_ptr<void>>::iterator value_iterator,
         const TypeForKind<TK_STRING16>& value) noexcept
 {
     ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    TypeKind element_kind = element_type->get_kind();
 
     if (TK_STRING16 == element_kind && (
                 static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
@@ -4894,10 +4907,18 @@ ReturnCode_t DynamicDataImpl::set_value(
             auto it = value_.find(id);
             if (it != value_.end())
             {
-                TypeKind element_kind =
-                        get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                auto element_type =
+                        get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                     enclosing_type_->get_descriptor().element_type()));
-                ret_value = set_primitive_value<TK>(element_kind, it, value);
+                if (TK_BITMASK == element_type->get_kind())
+                {
+                    ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->set_bitmask_bit<TK>(
+                        MEMBER_ID_INVALID, value);
+                }
+                else
+                {
+                    ret_value = set_primitive_value<TK>(element_type, it, value);
+                }
             }
         }
     }
@@ -4910,7 +4931,7 @@ ReturnCode_t DynamicDataImpl::set_value(
         if (MEMBER_ID_INVALID == id)
         {
             assert(1 == value_.size() && MEMBER_ID_INVALID == value_.begin()->first);
-            ret_value = set_primitive_value<TK>(type_kind, value_.begin(), value);
+            ret_value = set_primitive_value<TK>(enclosing_type_, value_.begin(), value);
         }
     }
 
@@ -5173,9 +5194,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
                                             type->get_descriptor().key_element_type()))};
             TypeKind element_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                                 type->get_descriptor().element_type()))};
-            bool is_primitive {!is_complex_kind(element_kind) &&
+            bool is_primitive {TK_BITMASK == element_kind || (!is_complex_kind(element_kind) &&
                                TK_STRING8 != element_kind &&
-                               TK_STRING16 != element_kind};
+                               TK_STRING16 != element_kind)};
             size_t initial_alignment {current_alignment};
 
             if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
@@ -5278,14 +5299,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
                     break;
                     case TK_STRING8:
                     {
-                        TypeForKind<TK_STRING8> value;
-                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
-                    }
-                    break;
-                    case TK_STRING16:
-                    {
-                        TypeForKind<TK_STRING16> value;
-                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
+                        calculated_size += calculator.calculate_serialized_size(key_it->first, current_alignment);
                     }
                     break;
                     default:
@@ -5985,7 +5999,9 @@ bool DynamicDataImpl::deserialize(
                                             type->get_descriptor().key_element_type()))};
             TypeKind element_kind { get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                                 type->get_descriptor().element_type()))};
-            bool is_primitive {!is_complex_kind(element_kind)};
+            bool is_primitive {TK_BITMASK == element_kind || (!is_complex_kind(element_kind) &&
+                               TK_STRING8 != element_kind &&
+                               TK_STRING16 != element_kind)};
             uint32_t dheader {0};
 
             if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
@@ -6110,12 +6126,9 @@ bool DynamicDataImpl::deserialize(
                         break;
                         case TK_STRING8:
                         {
-                            TypeForKind<TK_STRING8> value;
-                            cdr >> value;
-                            key = value;
+                            cdr >> key;
                         }
                         break;
-                            break;
                         default:
                             assert(false);
                             break;
@@ -6832,7 +6845,9 @@ void DynamicDataImpl::serialize(
                                            type->get_descriptor().key_element_type()))};
             TypeKind element_kind {get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                                type->get_descriptor().element_type()))};
-            bool is_primitive {!is_complex_kind(element_kind)};
+            bool is_primitive {TK_BITMASK == element_kind || (!is_complex_kind(element_kind) &&
+                               TK_STRING8 != element_kind &&
+                               TK_STRING16 != element_kind)};
             eprosima::fastcdr::Cdr::state dheader_state{!is_primitive ? cdr.allocate_xcdrv2_dheader() :
                                                         eprosima::fastcdr::Cdr::state{cdr}};
 
@@ -6930,14 +6945,7 @@ void DynamicDataImpl::serialize(
                     break;
                     case TK_STRING8:
                     {
-                        TypeForKind<TK_STRING8> value = TypeValueConverter::sto(it->first);
-                        cdr << value;
-                    }
-                    break;
-                    case TK_STRING16:
-                    {
-                        TypeForKind<TK_STRING16> value = TypeValueConverter::sto(it->first);
-                        cdr << value;
+                        cdr << it->first;
                     }
                     break;
                     default:

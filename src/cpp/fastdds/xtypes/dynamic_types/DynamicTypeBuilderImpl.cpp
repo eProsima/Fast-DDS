@@ -32,7 +32,9 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
 {
     type_descriptor_.copy_from(type_descriptor);
 
-    if ((TK_STRUCTURE == type_descriptor_.kind() || TK_UNION == type_descriptor_.kind()) &&
+    if ((TK_STRUCTURE == type_descriptor_.kind() ||
+            TK_UNION == type_descriptor_.kind() ||
+            TK_BITSET == type_descriptor_.kind()) &&
             type_descriptor_.base_type())
     {
         // Get the members of the base type.
@@ -40,6 +42,11 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         member_ = base_type->member_;
         member_by_name_ = base_type->member_by_name_;
         members_ = base_type->members_;
+
+        // In case TK_BITSET, get the base type bounds.
+        type_descriptor_.bound().insert(type_descriptor_.bound().begin(),
+                base_type->get_descriptor().bound().begin(),
+                base_type->get_descriptor().bound().end());
 
         // Get last member_id from the base type.
         if (0 < members_.size())
