@@ -48,7 +48,7 @@ HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset()
 {
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
-    participant_ = factory->create_participant_with_default_profile();
+    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");
@@ -60,7 +60,7 @@ HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset()
     // Create the subscriber
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
     participant_->get_default_subscriber_qos(sub_qos);
-    subscriber_ = participant_->create_subscriber(sub_qos);
+    subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
     if (subscriber_ == nullptr)
     {
         throw std::runtime_error("Subscriber initialization failed");
@@ -78,7 +78,7 @@ HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset()
     // Create the reader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
     subscriber_->get_default_datareader_qos(reader_qos);
-    reader_ = subscriber_->create_datareader(topic_, reader_qos);
+    reader_ = subscriber_->create_datareader(topic_, reader_qos, nullptr, StatusMask::all());
     if (reader_ == nullptr)
     {
         throw std::runtime_error("DataReader initialization failed");
