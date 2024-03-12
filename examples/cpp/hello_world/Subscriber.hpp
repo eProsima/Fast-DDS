@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldSubscriber.h
+ * @file Subscriber.hpp
  *
  */
 
-#ifndef HELLO_WORLD_SUBSCRIBER_H_
-#define HELLO_WORLD_SUBSCRIBER_H_
+#ifndef _FASTDDS_HELLO_WORLD_SUBSCRIBER_HPP_
+#define _FASTDDS_HELLO_WORLD_SUBSCRIBER_HPP_
 
 #include <condition_variable>
 
@@ -50,13 +50,13 @@ public:
     //! Run subscriber
     void run();
 
-    //! Return the current state of execution
-    static bool is_stopped();
-
     //! Trigger the end of execution
     static void stop();
 
 private:
+
+    //! Return the current state of execution
+    static bool is_stopped();
 
     HelloWorld hello_;
 
@@ -72,9 +72,9 @@ private:
 
     static std::atomic<bool> stop_;
 
-    static std::mutex terminate_cv_mtx_;
+    mutable std::mutex terminate_cv_mtx_;
 
     static std::condition_variable terminate_cv_;
 };
 
-#endif /* HELLO_WORLD_SUBSCRIBER_H_ */
+#endif /* _FASTDDS_HELLO_WORLD_SUBSCRIBER_HPP_ */

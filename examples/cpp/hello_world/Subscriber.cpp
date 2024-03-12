@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldSubscriber.cpp
+ * @file Subscriber.cpp
  *
  */
 
-#include "HelloWorldSubscriber.h"
+#include "Subscriber.hpp"
 
 #include <condition_variable>
 #include <csignal>
@@ -35,7 +35,6 @@
 using namespace eprosima::fastdds::dds;
 
 std::atomic<bool> HelloWorldSubscriber::stop_(false);
-std::mutex HelloWorldSubscriber::terminate_cv_mtx_;
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
@@ -59,7 +58,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     // Create the subscriber
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
     participant_->get_default_subscriber_qos(sub_qos);
-    subscriber_ = participant_->create_subscriber(sub_qos, nullptr);
+    subscriber_ = participant_->create_subscriber(sub_qos);
     if (subscriber_ == nullptr)
     {
         throw std::runtime_error("Subscriber initialization failed");
@@ -68,7 +67,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     // Create the topic
     TopicQos topic_qos = TOPIC_QOS_DEFAULT;
     participant_->get_default_topic_qos(topic_qos);
-    topic_ = participant_->create_topic("Hello_world_topic", "HelloWorld", topic_qos);
+    topic_ = participant_->create_topic("hello_world_topic", type_.get_type_name(), topic_qos);
     if (topic_ == nullptr)
     {
         throw std::runtime_error("Topic initialization failed");
@@ -76,7 +75,6 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
     // Create the reader
     DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    reader_qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     subscriber_->get_default_datareader_qos(reader_qos);
     reader_ = subscriber_->create_datareader(topic_, reader_qos, this);
     if (reader_ == nullptr)
@@ -87,23 +85,15 @@ HelloWorldSubscriber::HelloWorldSubscriber()
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    if (reader_ != nullptr)
-    {
-        subscriber_->delete_datareader(reader_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    if (subscriber_ != nullptr)
-    {
-        participant_->delete_subscriber(subscriber_);
-    }
+    // Delete DDS entities contained within the DomainParticipant
+    participant_->delete_contained_entities();
+
+    // Delete DomainParticipant
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void HelloWorldSubscriber::on_subscription_matched(
-        DataReader*,
+        DataReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
     if (info.current_count_change == 1)
@@ -125,9 +115,9 @@ void HelloWorldSubscriber::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK && !is_stopped())
+    if ((!is_stopped()) && (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&hello_, &info)))
     {
-        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        if (info.instance_state == ALIVE_INSTANCE_STATE && info.valid_data)
         {
             // Print Hello world message data
             std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
@@ -139,11 +129,28 @@ void HelloWorldSubscriber::on_data_available(
 void HelloWorldSubscriber::run()
 {
     std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
-    signal(SIGINT, [](int signum)
+    signal(SIGINT, [](int /*signum*/)
             {
-                std::cout << "SIGINT received, stopping Subscriber execution." << std::endl;
-                static_cast<void>(signum); HelloWorldSubscriber::stop();
+                std::cout << "\nSIGINT received, stopping Subscriber execution." << std::endl;
+                HelloWorldSubscriber::stop();
             });
+    signal(SIGTERM, [](int /*signum*/)
+            {
+                std::cout << "\nSIGTERM received, stopping Subscriber execution." << std::endl;
+                HelloWorldSubscriber::stop();
+            });
+#ifndef _WIN32
+    signal(SIGQUIT, [](int /*signum*/)
+            {
+                std::cout << "\nSIGQUIT received, stopping Subscriber execution." << std::endl;
+                HelloWorldSubscriber::stop();
+            });
+    signal(SIGHUP, [](int /*signum*/)
+            {
+                std::cout << "\nSIGHUP received, stopping Subscriber execution." << std::endl;
+                HelloWorldSubscriber::stop();
+            });
+#endif // _WIN32
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, []
             {
@@ -153,11 +160,11 @@ void HelloWorldSubscriber::run()
 
 bool HelloWorldSubscriber::is_stopped()
 {
-    return stop_;
+    return stop_.load();
 }
 
 void HelloWorldSubscriber::stop()
 {
-    stop_ = true;
+    stop_.store(true);
     terminate_cv_.notify_all();
 }

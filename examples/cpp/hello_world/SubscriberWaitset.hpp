@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldSubscriberWaitset.h
+ * @file SubscriberWaitset.hpp
  *
  */
 
-#ifndef HELLO_WORLD_SUBSCRIBER_WAITSET_H_
-#define HELLO_WORLD_SUBSCRIBER_WAITSET_H_
+#ifndef _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_
+#define _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_
 
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -70,4 +70,4 @@ private:
     static GuardCondition terminate_condition_;
 };
 
-#endif /* HELLO_WORLD_SUBSCRIBER_WAITSET_H_ */
+#endif /* _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_ */

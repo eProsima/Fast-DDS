@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,12 +13,14 @@
 // limitations under the License.
 
 /**
- * @file HelloWorldPublisher.h
+ * @file Publisher.hpp
  *
  */
 
-#ifndef HELLO_WORLD_PUBLISHER_H_
-#define HELLO_WORLD_PUBLISHER_H_
+#ifndef _FASTDDS_HELLO_WORLD_PUBLISHER_HPP_
+#define _FASTDDS_HELLO_WORLD_PUBLISHER_HPP_
+
+#include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
@@ -47,13 +49,13 @@ public:
     //! Run publisher
     void run();
 
-    //! Return the current state of execution
-    static bool is_stopped();
-
     //! Trigger the end of execution
     static void stop();
 
 private:
+
+    //! Return the current state of execution
+    bool is_stopped();
 
     HelloWorld hello_;
 
@@ -70,8 +72,14 @@ private:
     static std::atomic<bool> stop_;
 
     int16_t matched_;
+
+    std::mutex mutex_;
+
+    std::condition_variable matched_cv_;
+
+    const uint8_t period_ = 100; // in ms
 };
 
 
 
-#endif /* HELLO_WORLD_PUBLISHER_H_ */
+#endif /* _FASTDDS_HELLO_WORLD_PUBLISHER_HPP_ */
