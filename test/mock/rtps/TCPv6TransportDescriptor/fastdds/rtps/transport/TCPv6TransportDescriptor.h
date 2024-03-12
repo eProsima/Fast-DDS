@@ -44,12 +44,12 @@ typedef struct TCPv6TransportDescriptor : public TCPTransportDescriptor
         return nullptr;
     }
 
-    RTPS_DllAPI TCPv6TransportDescriptor()
+    FASTDDS_EXPORTED_API TCPv6TransportDescriptor()
     {
 
     }
 
-    RTPS_DllAPI TCPv6TransportDescriptor(
+    FASTDDS_EXPORTED_API TCPv6TransportDescriptor(
             const TCPv6TransportDescriptor& /*t*/)
         : TCPv6TransportDescriptor()
     {

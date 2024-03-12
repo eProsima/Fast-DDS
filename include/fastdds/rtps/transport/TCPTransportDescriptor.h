@@ -22,7 +22,7 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -304,21 +304,21 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
     }
 
     //! Constructor
-    RTPS_DllAPI TCPTransportDescriptor();
+    FASTDDS_EXPORTED_API TCPTransportDescriptor();
 
     //! Copy constructor
-    RTPS_DllAPI TCPTransportDescriptor(
+    FASTDDS_EXPORTED_API TCPTransportDescriptor(
             const TCPTransportDescriptor& t);
 
     //! Copy assignment
-    RTPS_DllAPI TCPTransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API TCPTransportDescriptor& operator =(
             const TCPTransportDescriptor& t);
 
     //! Destructor
     virtual ~TCPTransportDescriptor() = default;
 
     //! Comparison operator
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const TCPTransportDescriptor& t) const;
 };
 

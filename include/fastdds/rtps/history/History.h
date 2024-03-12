@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_RTPS_HISTORY_H_
 #define _FASTDDS_RTPS_HISTORY_H_
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
@@ -68,7 +68,7 @@ public:
      * Check if the history is full
      * @return true if the History is full.
      */
-    RTPS_DllAPI bool isFull()
+    FASTDDS_EXPORTED_API bool isFull()
     {
         return m_isHistoryFull;
     }
@@ -77,7 +77,7 @@ public:
      * Get the History size.
      * @return Size of the history.
      */
-    RTPS_DllAPI size_t getHistorySize()
+    FASTDDS_EXPORTED_API size_t getHistorySize()
     {
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
         return m_changes.size();
@@ -89,7 +89,7 @@ public:
      * @param ch Pointer to the CacheChange_t to search for.
      * @return an iterator if a suitable change is found
      */
-    RTPS_DllAPI const_iterator find_change_nts(
+    FASTDDS_EXPORTED_API const_iterator find_change_nts(
             CacheChange_t* ch);
 
     /**
@@ -99,7 +99,7 @@ public:
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      * @return iterator to the next CacheChange_t or end iterator.
      */
-    RTPS_DllAPI virtual iterator remove_change_nts(
+    FASTDDS_EXPORTED_API virtual iterator remove_change_nts(
             const_iterator removal,
             bool release = true);
 
@@ -111,7 +111,7 @@ public:
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      * @return iterator to the next CacheChange_t or end iterator.
      */
-    RTPS_DllAPI virtual iterator remove_change_nts(
+    FASTDDS_EXPORTED_API virtual iterator remove_change_nts(
             const_iterator removal,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
             bool release = true);
@@ -120,14 +120,14 @@ public:
      * Remove all changes from the History
      * @return True if everything was correctly removed.
      */
-    RTPS_DllAPI bool remove_all_changes();
+    FASTDDS_EXPORTED_API bool remove_all_changes();
 
     /**
      * Remove a specific change from the history.
      * @param ch Pointer to the CacheChange_t.
      * @return True if removed.
      */
-    RTPS_DllAPI bool remove_change(
+    FASTDDS_EXPORTED_API bool remove_change(
             CacheChange_t* ch);
 
     /**
@@ -136,7 +136,7 @@ public:
      * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed.
      */
-    RTPS_DllAPI bool remove_change(
+    FASTDDS_EXPORTED_API bool remove_change(
             CacheChange_t* ch,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
@@ -145,7 +145,7 @@ public:
      * @param ch Pointer to the CacheChange_t to search for.
      * @return an iterator if a suitable change is found
      */
-    RTPS_DllAPI const_iterator find_change(
+    FASTDDS_EXPORTED_API const_iterator find_change(
             CacheChange_t* ch)
     {
         std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
@@ -159,7 +159,7 @@ public:
      * @param ch_outer Pointer to the CacheChange_t to identify.
      * @return true if the iterator identifies this change.
      */
-    RTPS_DllAPI virtual bool matches_change(
+    FASTDDS_EXPORTED_API virtual bool matches_change(
             const CacheChange_t* ch_inner,
             CacheChange_t* ch_outer);
 
@@ -169,7 +169,7 @@ public:
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      * @return iterator to the next CacheChange_t or end iterator.
      */
-    RTPS_DllAPI iterator remove_change(
+    FASTDDS_EXPORTED_API iterator remove_change(
             const_iterator removal,
             bool release = true)
     {
@@ -181,12 +181,12 @@ public:
      * Get the beginning of the changes history iterator.
      * @return Iterator to the beginning of the vector.
      */
-    RTPS_DllAPI iterator changesBegin()
+    FASTDDS_EXPORTED_API iterator changesBegin()
     {
         return m_changes.begin();
     }
 
-    RTPS_DllAPI reverse_iterator changesRbegin()
+    FASTDDS_EXPORTED_API reverse_iterator changesRbegin()
     {
         return m_changes.rbegin();
     }
@@ -195,12 +195,12 @@ public:
      * Get the end of the changes history iterator.
      * @return Iterator to the end of the vector.
      */
-    RTPS_DllAPI iterator changesEnd()
+    FASTDDS_EXPORTED_API iterator changesEnd()
     {
         return m_changes.end();
     }
 
-    RTPS_DllAPI reverse_iterator changesRend()
+    FASTDDS_EXPORTED_API reverse_iterator changesRend()
     {
         return m_changes.rend();
     }
@@ -210,7 +210,7 @@ public:
      * @param min_change Pointer to pointer to the minimum change.
      * @return True if correct.
      */
-    RTPS_DllAPI bool get_min_change(
+    FASTDDS_EXPORTED_API bool get_min_change(
             CacheChange_t** min_change);
 
     /**
@@ -218,14 +218,14 @@ public:
      * @param max_change Pointer to pointer to the maximum change.
      * @return True if correct.
      */
-    RTPS_DllAPI bool get_max_change(
+    FASTDDS_EXPORTED_API bool get_max_change(
             CacheChange_t** max_change);
 
     /**
      * Get the maximum serialized payload size
      * @return Maximum serialized payload size
      */
-    RTPS_DllAPI inline uint32_t getTypeMaxSerialized()
+    FASTDDS_EXPORTED_API inline uint32_t getTypeMaxSerialized()
     {
         return m_att.payloadMaxSize;
     }
@@ -234,13 +234,13 @@ public:
      * Get the mutex
      * @return Mutex
      */
-    RTPS_DllAPI inline RecursiveTimedMutex* getMutex() const
+    FASTDDS_EXPORTED_API inline RecursiveTimedMutex* getMutex() const
     {
         assert(mp_mutex != nullptr);
         return mp_mutex;
     }
 
-    RTPS_DllAPI bool get_change(
+    FASTDDS_EXPORTED_API bool get_change(
             const SequenceNumber_t& seq,
             const GUID_t& guid,
             CacheChange_t** change) const;
@@ -273,11 +273,11 @@ protected:
     //!Print the seqNum of the changes in the History (for debuggisi, mng purposes).
     void print_changes_seqNum2();
 
-    RTPS_DllAPI virtual bool do_reserve_cache(
+    FASTDDS_EXPORTED_API virtual bool do_reserve_cache(
             CacheChange_t** change,
             uint32_t size) = 0;
 
-    RTPS_DllAPI virtual void do_release_cache(
+    FASTDDS_EXPORTED_API virtual void do_release_cache(
             CacheChange_t* ch) = 0;
 
     /**

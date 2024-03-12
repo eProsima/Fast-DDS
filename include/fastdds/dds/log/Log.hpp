@@ -19,7 +19,7 @@
 #include <sstream>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 /**
  * eProsima log layer. Logging categories and verbosity can be specified dynamically at runtime.
@@ -98,51 +98,51 @@ public:
      * There is a default stdout consumer active as default.
      * @param consumer r-value to a consumer unique_ptr. It will be invalidated after the call.
      */
-    RTPS_DllAPI static void RegisterConsumer(
+    FASTDDS_EXPORTED_API static void RegisterConsumer(
             std::unique_ptr<LogConsumer>&& consumer);
 
     //! Removes all registered consumers, including the default stdout.
-    RTPS_DllAPI static void ClearConsumers();
+    FASTDDS_EXPORTED_API static void ClearConsumers();
 
     //! Enables the reporting of filenames in log entries. Disabled by default.
-    RTPS_DllAPI static void ReportFilenames(
+    FASTDDS_EXPORTED_API static void ReportFilenames(
             bool);
 
     //! Enables the reporting of function names in log entries. Enabled by default when supported.
-    RTPS_DllAPI static void ReportFunctions(
+    FASTDDS_EXPORTED_API static void ReportFunctions(
             bool);
 
     //! Sets the verbosity level, allowing for messages equal or under that priority to be logged.
-    RTPS_DllAPI static void SetVerbosity(
+    FASTDDS_EXPORTED_API static void SetVerbosity(
             Log::Kind);
 
     //! Returns the current verbosity level.
-    RTPS_DllAPI static Log::Kind GetVerbosity();
+    FASTDDS_EXPORTED_API static Log::Kind GetVerbosity();
 
     //! Sets a filter that will pattern-match against log categories, dropping any unmatched categories.
-    RTPS_DllAPI static void SetCategoryFilter(
+    FASTDDS_EXPORTED_API static void SetCategoryFilter(
             const std::regex&);
 
     //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
-    RTPS_DllAPI static void SetFilenameFilter(
+    FASTDDS_EXPORTED_API static void SetFilenameFilter(
             const std::regex&);
 
     //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
-    RTPS_DllAPI static void SetErrorStringFilter(
+    FASTDDS_EXPORTED_API static void SetErrorStringFilter(
             const std::regex&);
 
     //! Sets thread configuration for the logging thread.
-    RTPS_DllAPI static void SetThreadConfig(
+    FASTDDS_EXPORTED_API static void SetThreadConfig(
             const rtps::ThreadSettings&);
 
     //! Returns the logging engine to configuration defaults.
-    RTPS_DllAPI static void Reset();
+    FASTDDS_EXPORTED_API static void Reset();
 
     //! Waits until all info logged up to the call time is consumed
-    RTPS_DllAPI static void Flush();
+    FASTDDS_EXPORTED_API static void Flush();
 
     //! Stops the logging thread. It will re-launch on the next call to a successful log macro.
-    RTPS_DllAPI static void KillThread();
+    FASTDDS_EXPORTED_API static void KillThread();
 
     // Note: In VS2013, if you're linking this class statically, you will have to call KillThread before leaving
     // main, due to an unsolved MSVC bug.
@@ -172,7 +172,7 @@ public:
      * @todo this method takes 2 mutexes (same mutex) internally.
      * This is a very high sensible point of the code and it should be refactored to be as efficient as possible.
      */
-    RTPS_DllAPI static void QueueLog(
+    FASTDDS_EXPORTED_API static void QueueLog(
             const std::string& message,
             const Log::Context&,
             Log::Kind);
@@ -218,27 +218,27 @@ public:
 
 protected:
 
-    RTPS_DllAPI void print_timestamp(
+    FASTDDS_EXPORTED_API void print_timestamp(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    RTPS_DllAPI void print_header(
+    FASTDDS_EXPORTED_API void print_header(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    RTPS_DllAPI void print_context(
+    FASTDDS_EXPORTED_API void print_context(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    RTPS_DllAPI void print_message(
+    FASTDDS_EXPORTED_API void print_message(
             std::ostream& stream,
             const Log::Entry&,
             bool color) const;
 
-    RTPS_DllAPI void print_new_line(
+    FASTDDS_EXPORTED_API void print_new_line(
             std::ostream& stream,
             bool color) const;
 };

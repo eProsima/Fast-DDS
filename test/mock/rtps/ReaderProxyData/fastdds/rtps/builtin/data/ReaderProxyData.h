@@ -346,24 +346,24 @@ public:
         return m_userDefinedId;
     }
 
-    RTPS_DllAPI void content_filter(
+    FASTDDS_EXPORTED_API void content_filter(
             const fastdds::rtps::ContentFilterProperty& filter)
     {
         content_filter_ = filter;
     }
 
-    RTPS_DllAPI void content_filter(
+    FASTDDS_EXPORTED_API void content_filter(
             fastdds::rtps::ContentFilterProperty&& filter)
     {
         content_filter_ = std::move(filter);
     }
 
-    RTPS_DllAPI const fastdds::rtps::ContentFilterProperty& content_filter() const
+    FASTDDS_EXPORTED_API const fastdds::rtps::ContentFilterProperty& content_filter() const
     {
         return content_filter_;
     }
 
-    RTPS_DllAPI fastdds::rtps::ContentFilterProperty& content_filter()
+    FASTDDS_EXPORTED_API fastdds::rtps::ContentFilterProperty& content_filter()
     {
         return content_filter_;
     }

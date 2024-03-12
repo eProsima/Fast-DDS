@@ -45,57 +45,57 @@ protected:
 
 public:
 
-    RTPS_DllAPI DynamicPubSubType();
+    FASTDDS_EXPORTED_API DynamicPubSubType();
 
-    RTPS_DllAPI DynamicPubSubType(
+    FASTDDS_EXPORTED_API DynamicPubSubType(
             DynamicType_ptr pDynamicType);
 
-    RTPS_DllAPI virtual ~DynamicPubSubType();
+    FASTDDS_EXPORTED_API virtual ~DynamicPubSubType();
 
-    RTPS_DllAPI void* createData() override;
+    FASTDDS_EXPORTED_API void* createData() override;
 
-    RTPS_DllAPI void deleteData (
+    FASTDDS_EXPORTED_API void deleteData (
             void* data) override;
 
-    RTPS_DllAPI bool deserialize (
+    FASTDDS_EXPORTED_API bool deserialize (
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
             void* data) override;
 
-    RTPS_DllAPI bool getKey(
+    FASTDDS_EXPORTED_API bool getKey(
             void* data,
             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) override;
 
-    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
             void* data) override
     {
         return getSerializedSizeProvider(data, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
-    RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
             void* data,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    RTPS_DllAPI bool serialize(
+    FASTDDS_EXPORTED_API bool serialize(
             void* data,
             eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
     {
         return serialize(data, payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
-    RTPS_DllAPI bool serialize(
+    FASTDDS_EXPORTED_API bool serialize(
             void* data,
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
             fastdds::dds::DataRepresentationId_t data_representation) override;
 
-    RTPS_DllAPI void CleanDynamicType();
+    FASTDDS_EXPORTED_API void CleanDynamicType();
 
-    RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
+    FASTDDS_EXPORTED_API DynamicType_ptr GetDynamicType() const;
 
-    RTPS_DllAPI ReturnCode_t SetDynamicType(
+    FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
             DynamicData_ptr pData);
 
-    RTPS_DllAPI ReturnCode_t SetDynamicType(
+    FASTDDS_EXPORTED_API ReturnCode_t SetDynamicType(
             DynamicType_ptr pType);
 };
 

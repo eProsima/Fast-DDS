@@ -129,7 +129,7 @@ protected:
 
 public:
 
-    RTPS_DllAPI TCPv6Transport(
+    FASTDDS_EXPORTED_API TCPv6Transport(
             const TCPv6TransportDescriptor&);
 
     virtual ~TCPv6Transport() override;

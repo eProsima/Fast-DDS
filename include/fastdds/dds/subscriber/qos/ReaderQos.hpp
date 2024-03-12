@@ -37,11 +37,11 @@ class ReaderQos
 {
 public:
 
-    RTPS_DllAPI ReaderQos()
+    FASTDDS_EXPORTED_API ReaderQos()
     {
     }
 
-    RTPS_DllAPI virtual ~ReaderQos()
+    FASTDDS_EXPORTED_API virtual ~ReaderQos()
     {
     }
 
@@ -131,7 +131,7 @@ public:
      * @param readerqos Reference from a ReaderQos object.
      * @param first_time Boolean indicating whether is the first time (If not some parameters cannot be set).
      */
-    RTPS_DllAPI void setQos(
+    FASTDDS_EXPORTED_API void setQos(
             const ReaderQos& readerqos,
             bool first_time);
 
@@ -139,14 +139,14 @@ public:
      * Check if the Qos values are compatible between each other.
      * @return True if correct.
      */
-    RTPS_DllAPI bool checkQos() const;
+    FASTDDS_EXPORTED_API bool checkQos() const;
 
     /**
      * Check if the Qos can be update with the values provided. This method DOES NOT update anything.
      * @param qos Reference to the new qos.
      * @return True if they can be updated.
      */
-    RTPS_DllAPI bool canQosBeUpdated(
+    FASTDDS_EXPORTED_API bool canQosBeUpdated(
             const ReaderQos& qos) const;
 
     void clear();

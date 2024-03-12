@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_TRANSPORT_NETWORK_BLOCKEDNETWORKINTERFACE_HPP_
 
 #include <fastdds/rtps/transport/network/NetworkInterface.hpp>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -37,22 +37,22 @@ struct BlockedNetworkInterface : public NetworkInterface
     using NetworkInterface::NetworkInterface;
 
     //! Destructor
-    virtual RTPS_DllAPI ~BlockedNetworkInterface() = default;
+    virtual FASTDDS_EXPORTED_API ~BlockedNetworkInterface() = default;
 
     //! Copy constructor
-    RTPS_DllAPI BlockedNetworkInterface(
+    FASTDDS_EXPORTED_API BlockedNetworkInterface(
             const BlockedNetworkInterface& iface) = default;
 
     //! Copy assignment
-    RTPS_DllAPI BlockedNetworkInterface& operator =(
+    FASTDDS_EXPORTED_API BlockedNetworkInterface& operator =(
             const BlockedNetworkInterface& iface) = default;
 
     //! Move constructor
-    RTPS_DllAPI BlockedNetworkInterface(
+    FASTDDS_EXPORTED_API BlockedNetworkInterface(
             BlockedNetworkInterface&& iface) = default;
 
     //! Move assignment
-    RTPS_DllAPI BlockedNetworkInterface& operator =(
+    FASTDDS_EXPORTED_API BlockedNetworkInterface& operator =(
             BlockedNetworkInterface&& iface) = default;
 };
 

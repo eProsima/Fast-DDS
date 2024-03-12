@@ -49,9 +49,9 @@ public:
     /**
      * Constructor of the ReaderHistory. It needs a HistoryAttributes.
      */
-    RTPS_DllAPI ReaderHistory(
+    FASTDDS_EXPORTED_API ReaderHistory(
             const HistoryAttributes& att);
-    RTPS_DllAPI ~ReaderHistory() override;
+    FASTDDS_EXPORTED_API ~ReaderHistory() override;
 
     /**
      * Check if a new change can be added to this history.
@@ -67,7 +67,7 @@ public:
      *
      * @return Whether a call to received_change will succeed when called with the same arguments.
      */
-    RTPS_DllAPI virtual bool can_change_be_added_nts(
+    FASTDDS_EXPORTED_API virtual bool can_change_be_added_nts(
             const GUID_t& writer_guid,
             uint32_t total_payload_size,
             size_t unknown_missing_changes_up_to,
@@ -82,7 +82,7 @@ public:
      *                                      could potentially be received in the future.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(
+    FASTDDS_EXPORTED_API virtual bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to);
 
@@ -96,7 +96,7 @@ public:
      * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      * @return True if added.
      */
-    RTPS_DllAPI virtual bool received_change(
+    FASTDDS_EXPORTED_API virtual bool received_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
             fastdds::dds::SampleRejectedStatusKind& rejection_reason)
@@ -111,7 +111,7 @@ public:
      * @param[in] change The received change
      * @return
      */
-    RTPS_DllAPI bool virtual completed_change(
+    FASTDDS_EXPORTED_API bool virtual completed_change(
             rtps::CacheChange_t* change)
     {
         (void)change;
@@ -126,7 +126,7 @@ public:
      * @param[out] rejection_reason In case of been rejected the sample, it will contain the reason of the rejection.
      * @return
      */
-    RTPS_DllAPI virtual bool completed_change(
+    FASTDDS_EXPORTED_API virtual bool completed_change(
             CacheChange_t* change,
             size_t unknown_missing_changes_up_to,
             fastdds::dds::SampleRejectedStatusKind& rejection_reason)
@@ -142,7 +142,7 @@ public:
      * @param a_change Pointer to the CacheChange to add.
      * @return True if added.
      */
-    RTPS_DllAPI bool add_change(
+    FASTDDS_EXPORTED_API bool add_change(
             CacheChange_t* a_change);
 
     /**
@@ -152,7 +152,7 @@ public:
      * @param release specifies if the change must be returned to the pool
      * @return iterator to the next change if any
      */
-    RTPS_DllAPI iterator remove_change_nts(
+    FASTDDS_EXPORTED_API iterator remove_change_nts(
             const_iterator removal,
             bool release = true) override;
 
@@ -164,7 +164,7 @@ public:
      * @param release specifies if the change must be returned to the pool
      * @return iterator to the next change if any
      */
-    RTPS_DllAPI iterator remove_change_nts(
+    FASTDDS_EXPORTED_API iterator remove_change_nts(
             const_iterator removal,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
             bool release = true) override;
@@ -175,7 +175,7 @@ public:
      * @param outer change for comparison
      * @return true if inner matches outer criteria
      */
-    RTPS_DllAPI bool matches_change(
+    FASTDDS_EXPORTED_API bool matches_change(
             const CacheChange_t* inner,
             CacheChange_t* outer) override;
 
@@ -187,7 +187,7 @@ public:
      * @param a_guid Pointer to the target guid to search for.
      * @return True if successful, even if no changes have been removed.
      * */
-    RTPS_DllAPI bool remove_changes_with_guid(
+    FASTDDS_EXPORTED_API bool remove_changes_with_guid(
             const GUID_t& a_guid);
 
     /**
@@ -200,7 +200,7 @@ public:
             const SequenceNumber_t& seq_num,
             const GUID_t& writer_guid);
 
-    RTPS_DllAPI bool get_min_change_from(
+    FASTDDS_EXPORTED_API bool get_min_change_from(
             CacheChange_t** min_change,
             const GUID_t& writerGuid);
 
@@ -213,7 +213,7 @@ public:
      * @param writer_guid        GUID of the writer being unmatched.
      * @param last_notified_seq  Last sequence number from the specified writer that was notified to the user.
      */
-    RTPS_DllAPI virtual void writer_unmatched(
+    FASTDDS_EXPORTED_API virtual void writer_unmatched(
             const GUID_t& writer_guid,
             const SequenceNumber_t& last_notified_seq);
 
@@ -223,7 +223,7 @@ public:
      * @param[in] writer_guid Guid of the writer which changes its ownership strength.
      * @param[out] ownership_strength New value of the writer's Ownership strength.
      */
-    RTPS_DllAPI virtual void writer_update_its_ownership_strength_nts(
+    FASTDDS_EXPORTED_API virtual void writer_update_its_ownership_strength_nts(
             const GUID_t& writer_guid,
             const uint32_t ownership_strength)
     {
@@ -233,11 +233,11 @@ public:
 
 protected:
 
-    RTPS_DllAPI bool do_reserve_cache(
+    FASTDDS_EXPORTED_API bool do_reserve_cache(
             CacheChange_t** change,
             uint32_t size) override;
 
-    RTPS_DllAPI void do_release_cache(
+    FASTDDS_EXPORTED_API void do_release_cache(
             CacheChange_t* ch) override;
 
     template<typename Pred>

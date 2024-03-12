@@ -24,7 +24,7 @@
 #include <cstdint>
 #include <stdint.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
@@ -103,7 +103,7 @@ using Count_t = uint32_t;
 #define BIT(i) (1U << static_cast<unsigned>(i))
 
 //!@brief Structure ProtocolVersion_t, contains the protocol version.
-struct RTPS_DllAPI ProtocolVersion_t
+struct FASTDDS_EXPORTED_API ProtocolVersion_t
 {
     octet m_major;
     octet m_minor;
