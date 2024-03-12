@@ -16,6 +16,7 @@ jobs:
           - '2.12.x'
           - '2.10.x'
           - '2.6.x'
+          - '3.0.x-devel'
     uses: ./.github/workflows/reusable-mac-ci.yml
     with:
       label: 'nightly-sec-mac-ci-${{ matrix.fastdds-branch }}'
