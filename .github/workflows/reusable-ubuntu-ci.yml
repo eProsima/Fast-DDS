@@ -79,27 +79,21 @@ jobs:
       - name: Prepare colcon workspace
         id: colcon_ws_setup
         run: |
-          # Nightly job
-          if [[ "${{ inputs.label }}" == *"nightly"* ]]
-          then
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly.repos"
-            META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
+          REPOS_PATH="./src/fastrtps/.github/workflows/config/ci.repos"
+          META_PATH="./src/fastrtps/.github/workflows/config/ci_colcon.meta"
 
-          # Either PR or manual
-          else
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci.repos"
-            META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
-          fi
+          echo "CI repos file:"
+          cat ${REPOS_PATH}
 
-          echo "Selected repos files: ${DEPENDS_REPOS_PATH}"
-          cat ${DEPENDS_REPOS_PATH}
-
-          echo "Selected metas files: ${META_PATH}"
+          echo "CI metas file:"
           cp ${META_PATH} ci.meta
           cat ci.meta
 
-          # Create source dir and download the sources
-          vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
+          # Create source dir and download the version sources
+          vcs import src --input ./src/fastrtps/fastrtps.repos --skip-existing
+
+          # Download the CI sources
+          vcs import src --input ${REPOS_PATH} --skip-existing
 
       - name: Colcon build
         continue-on-error: false
