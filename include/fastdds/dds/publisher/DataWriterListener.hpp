@@ -35,7 +35,7 @@ class DataWriter;
  * Class DataWriterListener, allows the end user to implement callbacks triggered by certain events.
  * @ingroup FASTDDS_MODULE
  */
-class RTPS_DllAPI DataWriterListener
+class FASTDDS_EXPORTED_API DataWriterListener
 {
 public:
 

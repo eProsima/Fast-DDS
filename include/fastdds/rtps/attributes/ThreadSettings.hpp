@@ -19,7 +19,7 @@
 #include <cstdint>
 #include <limits>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 #ifndef _FASTDDS_THREADSETTINGS_HPP_
 #define _FASTDDS_THREADSETTINGS_HPP_
@@ -33,7 +33,7 @@ namespace rtps {
  * This class is used to define attributes across a wide set of Qos and APIs.
  * @ingroup RTPS_ATTRIBUTES_MODULE
  */
-struct RTPS_DllAPI ThreadSettings
+struct FASTDDS_EXPORTED_API ThreadSettings
 {
     /**
      * @brief The scheduling policy used for this thread.

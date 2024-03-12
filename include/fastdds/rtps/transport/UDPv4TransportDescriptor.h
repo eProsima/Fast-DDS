@@ -35,17 +35,17 @@ struct UDPv4TransportDescriptor : public UDPTransportDescriptor
     virtual TransportInterface* create_transport() const override;
 
     //! Constructor
-    RTPS_DllAPI UDPv4TransportDescriptor();
+    FASTDDS_EXPORTED_API UDPv4TransportDescriptor();
 
     //! Copy constructor
-    RTPS_DllAPI UDPv4TransportDescriptor(
+    FASTDDS_EXPORTED_API UDPv4TransportDescriptor(
             const UDPv4TransportDescriptor& t) = default;
 
     //! Copy assignment
-    RTPS_DllAPI UDPv4TransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API UDPv4TransportDescriptor& operator =(
             const UDPv4TransportDescriptor& t) = default;
 
-    RTPS_DllAPI bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const UDPv4TransportDescriptor& t) const;
 };
 

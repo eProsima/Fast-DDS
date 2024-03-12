@@ -186,7 +186,7 @@ const uint16_t MemberFlagMinimalMask = 0x003f;
  * @brief This class represents the enumeration ReturnCode_t.
  */
 
-class RTPS_DllAPI ReturnCode_t
+class FASTDDS_EXPORTED_API ReturnCode_t
 {
     uint32_t value_;
 
@@ -247,7 +247,7 @@ public:
 
 };
 
-RTPS_DllAPI inline bool operator ==(
+FASTDDS_EXPORTED_API inline bool operator ==(
         ReturnCode_t::ReturnCodeValue a,
         const ReturnCode_t& b)
 {
@@ -255,7 +255,7 @@ RTPS_DllAPI inline bool operator ==(
         a);
 }
 
-RTPS_DllAPI inline bool operator !=(
+FASTDDS_EXPORTED_API inline bool operator !=(
         ReturnCode_t::ReturnCodeValue a,
         const ReturnCode_t& b)
 {
@@ -263,7 +263,7 @@ RTPS_DllAPI inline bool operator !=(
         a);
 }
 
-RTPS_DllAPI inline bool operator ==(
+FASTDDS_EXPORTED_API inline bool operator ==(
         uint32_t a,
         const ReturnCode_t& b)
 {
@@ -271,7 +271,7 @@ RTPS_DllAPI inline bool operator ==(
         a);
 }
 
-RTPS_DllAPI inline bool operator !=(
+FASTDDS_EXPORTED_API inline bool operator !=(
         uint32_t a,
         const ReturnCode_t& b)
 {

@@ -78,7 +78,7 @@ public:
      * Get associated GUID
      * @return Associated GUID
      */
-    RTPS_DllAPI inline const GUID_t& getGuid() const
+    FASTDDS_EXPORTED_API inline const GUID_t& getGuid() const
     {
         return m_guid;
     }
@@ -87,7 +87,7 @@ public:
      * Get mutex
      * @return Associated Mutex
      */
-    RTPS_DllAPI inline RecursiveTimedMutex& getMutex()
+    FASTDDS_EXPORTED_API inline RecursiveTimedMutex& getMutex()
     {
         return mp_mutex;
     }
@@ -96,7 +96,7 @@ public:
      * Get associated attributes
      * @return Endpoint attributes
      */
-    RTPS_DllAPI inline EndpointAttributes& getAttributes()
+    FASTDDS_EXPORTED_API inline EndpointAttributes& getAttributes()
     {
         return m_att;
     }

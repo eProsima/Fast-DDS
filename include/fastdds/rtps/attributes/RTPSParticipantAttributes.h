@@ -39,7 +39,7 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -474,7 +474,7 @@ public:
      * @param transports Defines the transport configuration scenario to setup.
      * @param options Defines the options to be used in the transport configuration.
      */
-    RTPS_DllAPI void setup_transports(
+    FASTDDS_EXPORTED_API void setup_transports(
             fastdds::rtps::BuiltinTransports transports,
             const fastdds::rtps::BuiltinTransportsOptions& options = fastdds::rtps::BuiltinTransportsOptions());
 
@@ -517,7 +517,7 @@ public:
     //! Optionally allows user to define the GuidPrefix_t
     GuidPrefix_t prefix;
 
-    RTPS_DllAPI inline bool ReadguidPrefix(
+    FASTDDS_EXPORTED_API inline bool ReadguidPrefix(
             const char* pfx)
     {
         return bool(std::istringstream(pfx) >> prefix);

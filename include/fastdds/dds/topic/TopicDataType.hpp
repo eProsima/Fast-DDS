@@ -28,7 +28,7 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 
-#include <fastrtps/fastrtps_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastrtps/utils/md5.h>
 
 // This version of TypeSupport has `is_bounded()`
@@ -66,12 +66,12 @@ public:
     /**
      * @brief Constructor
      */
-    RTPS_DllAPI TopicDataType();
+    FASTDDS_EXPORTED_API TopicDataType();
 
     /**
      * @brief Destructor
      */
-    RTPS_DllAPI virtual ~TopicDataType();
+    FASTDDS_EXPORTED_API virtual ~TopicDataType();
 
     /**
      * Serialize method, it should be implemented by the user, since it is abstract.
@@ -83,7 +83,7 @@ public:
      */
     // TODO(jlbueno) Remove when Fast DDS-Gen is updated
     // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
-    RTPS_DllAPI virtual bool serialize(
+    FASTDDS_EXPORTED_API virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload) = 0;
 
@@ -97,7 +97,7 @@ public:
      * @param[in] data_representation Representation that should be used to encode the data into the payload.
      * @return True if correct.
      */
-    RTPS_DllAPI virtual bool serialize(
+    FASTDDS_EXPORTED_API virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
             DataRepresentationId_t data_representation);
@@ -109,7 +109,7 @@ public:
      * @param[out] data Pointer to the data
      * @return True if correct.
      */
-    RTPS_DllAPI virtual bool deserialize(
+    FASTDDS_EXPORTED_API virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data) = 0;
 
@@ -119,7 +119,7 @@ public:
      * @param[in] data Pointer to data.
      * @return Functor which calculates the serialized size of the data.
      */
-    RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data) = 0;
 
     /*!
@@ -129,7 +129,7 @@ public:
      * @param[in] data_representation Representation that should be used for calculating the serialized size.
      * @return Functor which calculates the serialized size of the data.
      */
-    RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
+    FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data,
             DataRepresentationId_t data_representation);
 
@@ -138,13 +138,13 @@ public:
      *
      * @return Void pointer to the created object.
      */
-    RTPS_DllAPI virtual void* createData() = 0;
+    FASTDDS_EXPORTED_API virtual void* createData() = 0;
     /**
      * Remove a previously created object.
      *
      * @param data Pointer to the created Data.
      */
-    RTPS_DllAPI virtual void deleteData(
+    FASTDDS_EXPORTED_API virtual void deleteData(
             void* data) = 0;
 
     /**
@@ -155,7 +155,7 @@ public:
      * @param[in] force_md5 Force MD5 checking.
      * @return True if correct.
      */
-    RTPS_DllAPI virtual bool getKey(
+    FASTDDS_EXPORTED_API virtual bool getKey(
             void* data,
             fastrtps::rtps::InstanceHandle_t* ihandle,
             bool force_md5 = false) = 0;
@@ -165,7 +165,7 @@ public:
      *
      * @param nam Topic data type name
      */
-    RTPS_DllAPI inline void setName(
+    FASTDDS_EXPORTED_API inline void setName(
             const char* nam)
     {
         m_topicDataTypeName = std::string(nam);
@@ -176,7 +176,7 @@ public:
      *
      * @return Topic data type name
      */
-    RTPS_DllAPI inline const char* getName() const
+    FASTDDS_EXPORTED_API inline const char* getName() const
     {
         return m_topicDataTypeName.c_str();
     }
@@ -186,7 +186,7 @@ public:
      *
      * @return true if the type object should be auto-filled
      */
-    RTPS_DllAPI inline bool auto_fill_type_object() const
+    FASTDDS_EXPORTED_API inline bool auto_fill_type_object() const
     {
         return auto_fill_type_object_;
     }
@@ -196,7 +196,7 @@ public:
      *
      * @param auto_fill_type_object new value to set
      */
-    RTPS_DllAPI inline void auto_fill_type_object(
+    FASTDDS_EXPORTED_API inline void auto_fill_type_object(
             bool auto_fill_type_object)
     {
         auto_fill_type_object_ = auto_fill_type_object;
@@ -207,7 +207,7 @@ public:
      *
      * @return true if the type information should be auto-filled
      */
-    RTPS_DllAPI inline bool auto_fill_type_information() const
+    FASTDDS_EXPORTED_API inline bool auto_fill_type_information() const
     {
         return auto_fill_type_information_;
     }
@@ -217,7 +217,7 @@ public:
      *
      * @param auto_fill_type_information new value to set
      */
-    RTPS_DllAPI inline void auto_fill_type_information(
+    FASTDDS_EXPORTED_API inline void auto_fill_type_information(
             bool auto_fill_type_information)
     {
         auto_fill_type_information_ = auto_fill_type_information;
@@ -228,7 +228,7 @@ public:
      *
      * @return TypeIdV1
      */
-    RTPS_DllAPI inline const std::shared_ptr<TypeIdV1> type_identifier() const
+    FASTDDS_EXPORTED_API inline const std::shared_ptr<TypeIdV1> type_identifier() const
     {
         return type_identifier_;
     }
@@ -238,7 +238,7 @@ public:
      *
      * @param id new value for TypeIdV1
      */
-    RTPS_DllAPI inline void type_identifier(
+    FASTDDS_EXPORTED_API inline void type_identifier(
             const TypeIdV1& id)
     {
         type_identifier_ = std::make_shared<TypeIdV1>(id);
@@ -249,7 +249,7 @@ public:
      *
      * @param id shared pointer to TypeIdV1
      */
-    RTPS_DllAPI inline void type_identifier(
+    FASTDDS_EXPORTED_API inline void type_identifier(
             const std::shared_ptr<TypeIdV1> id)
     {
         type_identifier_ = std::move(id);
@@ -260,7 +260,7 @@ public:
      *
      * @return TypeObjectV1
      */
-    RTPS_DllAPI inline const std::shared_ptr<TypeObjectV1> type_object() const
+    FASTDDS_EXPORTED_API inline const std::shared_ptr<TypeObjectV1> type_object() const
     {
         return type_object_;
     }
@@ -270,7 +270,7 @@ public:
      *
      * @param object new value for TypeObjectV1
      */
-    RTPS_DllAPI inline void type_object(
+    FASTDDS_EXPORTED_API inline void type_object(
             const TypeObjectV1& object)
     {
         type_object_ = std::make_shared<TypeObjectV1>(object);
@@ -281,7 +281,7 @@ public:
      *
      * @param object shared pointer to TypeObjectV1
      */
-    RTPS_DllAPI inline void type_object(
+    FASTDDS_EXPORTED_API inline void type_object(
             std::shared_ptr<TypeObjectV1> object)
     {
         type_object_ = std::move(object);
@@ -292,7 +292,7 @@ public:
      *
      * @return TypeInformation
      */
-    RTPS_DllAPI inline const std::shared_ptr<xtypes::TypeInformation> type_information() const
+    FASTDDS_EXPORTED_API inline const std::shared_ptr<xtypes::TypeInformation> type_information() const
     {
         return type_information_;
     }
@@ -302,7 +302,7 @@ public:
      *
      * @param info new value for TypeInformation
      */
-    RTPS_DllAPI inline void type_information(
+    FASTDDS_EXPORTED_API inline void type_information(
             const xtypes::TypeInformation& info)
     {
         type_information_ = std::make_shared<xtypes::TypeInformation>(info);
@@ -313,7 +313,7 @@ public:
      *
      * @param info shared pointer to TypeInformation
      */
-    RTPS_DllAPI inline void type_information(
+    FASTDDS_EXPORTED_API inline void type_information(
             std::shared_ptr<xtypes::TypeInformation> info)
     {
         type_information_ = std::move(info);
@@ -322,7 +322,7 @@ public:
     /**
      * Checks if the type is bounded.
      */
-    RTPS_DllAPI virtual inline bool is_bounded() const
+    FASTDDS_EXPORTED_API virtual inline bool is_bounded() const
     {
         return false;
     }
@@ -330,7 +330,7 @@ public:
     /**
      * Checks if the type is plain when using default encoding.
      */
-    RTPS_DllAPI virtual inline bool is_plain() const
+    FASTDDS_EXPORTED_API virtual inline bool is_plain() const
     {
         return false;
     }
@@ -338,7 +338,7 @@ public:
     /**
      * Checks if the type is plain when using a specific encoding.
      */
-    RTPS_DllAPI virtual inline bool is_plain(
+    FASTDDS_EXPORTED_API virtual inline bool is_plain(
             DataRepresentationId_t) const
     {
         return false;
@@ -351,7 +351,7 @@ public:
      *
      * @return whether this type supports in-place construction or not.
      */
-    RTPS_DllAPI virtual inline bool construct_sample(
+    FASTDDS_EXPORTED_API virtual inline bool construct_sample(
             void* memory) const
     {
         static_cast<void>(memory);
