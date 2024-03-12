@@ -25,7 +25,7 @@ namespace rtps {
  * Interface against which to implement a data receiver, decoupled from transport internals.
  * @ingroup TRANSPORT_MODULE
  * */
-class RTPS_DllAPI TransportReceiverInterface
+class FASTDDS_EXPORTED_API TransportReceiverInterface
 {
 public:
 

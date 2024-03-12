@@ -99,7 +99,7 @@ public:
      * @param wdata Attributes of the writer to add.
      * @return True if correctly added.
      */
-    RTPS_DllAPI virtual bool matched_writer_add(
+    FASTDDS_EXPORTED_API virtual bool matched_writer_add(
             const WriterProxyData& wdata) = 0;
 
     /**
@@ -108,7 +108,7 @@ public:
      * @param removed_by_lease Whether the writer is being unmatched due to a participant drop.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool matched_writer_remove(
+    FASTDDS_EXPORTED_API virtual bool matched_writer_remove(
             const GUID_t& writer_guid,
             bool removed_by_lease = false) = 0;
 
@@ -117,7 +117,7 @@ public:
      * @param writer_guid GUID of the writer to check.
      * @return True if it is matched.
      */
-    RTPS_DllAPI virtual bool matched_writer_is_matched(
+    FASTDDS_EXPORTED_API virtual bool matched_writer_is_matched(
             const GUID_t& writer_guid) = 0;
 
     /**
@@ -126,7 +126,7 @@ public:
      * @param change Pointer to the CacheChange_t.
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processDataMsg(
+    FASTDDS_EXPORTED_API virtual bool processDataMsg(
             CacheChange_t* change) = 0;
 
     /**
@@ -138,7 +138,7 @@ public:
      * @param fragmentsInSubmessage Number of fragments on this particular message.
      * @return true if the reader accepts message.
      */
-    RTPS_DllAPI virtual bool processDataFragMsg(
+    FASTDDS_EXPORTED_API virtual bool processDataFragMsg(
             CacheChange_t* change,
             uint32_t sampleSize,
             uint32_t fragmentStartingNum,
@@ -155,7 +155,7 @@ public:
      * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processHeartbeatMsg(
+    FASTDDS_EXPORTED_API virtual bool processHeartbeatMsg(
             const GUID_t& writerGUID,
             uint32_t hbCount,
             const SequenceNumber_t& firstSN,
@@ -172,7 +172,7 @@ public:
      * @param origin_vendor_id
      * @return true if the reader accepts messages from the.
      */
-    RTPS_DllAPI virtual bool processGapMsg(
+    FASTDDS_EXPORTED_API virtual bool processGapMsg(
             const GUID_t& writerGUID,
             const SequenceNumber_t& gapStart,
             const SequenceNumberSet_t& gapList,
@@ -184,7 +184,7 @@ public:
      * @param prox Pointer to the WriterProxy.
      * @return True if correctly removed.
      */
-    RTPS_DllAPI virtual bool change_removed_by_history(
+    FASTDDS_EXPORTED_API virtual bool change_removed_by_history(
             CacheChange_t* change,
             WriterProxy* prox = nullptr) = 0;
 
@@ -192,7 +192,7 @@ public:
      * Get the associated listener, secondary attached Listener in case it is of compound type
      * @return Pointer to the associated reader listener.
      */
-    RTPS_DllAPI ReaderListener* getListener() const;
+    FASTDDS_EXPORTED_API ReaderListener* getListener() const;
 
     /**
      * Switch the ReaderListener kind for the Reader.
@@ -202,7 +202,7 @@ public:
      * @param target Pointed to ReaderLister to attach
      * @return True is correctly set.
      */
-    RTPS_DllAPI bool setListener(
+    FASTDDS_EXPORTED_API bool setListener(
             ReaderListener* target);
 
     /**
@@ -211,14 +211,14 @@ public:
      * @param dataCdrSerializedSize Size of the Cache.
      * @return True if correctly reserved.
      */
-    RTPS_DllAPI bool reserveCache(
+    FASTDDS_EXPORTED_API bool reserveCache(
             CacheChange_t** change,
             uint32_t dataCdrSerializedSize);
 
     /**
      * Release a cacheChange.
      */
-    RTPS_DllAPI void releaseCache(
+    FASTDDS_EXPORTED_API void releaseCache(
             CacheChange_t* change);
 
     /**
@@ -227,7 +227,7 @@ public:
      * @param wp Pointer to pointer to the WriterProxy
      * @return True if read.
      */
-    RTPS_DllAPI virtual bool nextUnreadCache(
+    FASTDDS_EXPORTED_API virtual bool nextUnreadCache(
             CacheChange_t** change,
             WriterProxy** wp) = 0;
 
@@ -237,34 +237,34 @@ public:
      * @param wp Pointer to pointer to the WriterProxy.
      * @return True if read.
      */
-    RTPS_DllAPI virtual bool nextUntakenCache(
+    FASTDDS_EXPORTED_API virtual bool nextUntakenCache(
             CacheChange_t** change,
             WriterProxy** wp) = 0;
 
-    RTPS_DllAPI bool wait_for_unread_cache(
+    FASTDDS_EXPORTED_API bool wait_for_unread_cache(
             const eprosima::fastrtps::Duration_t& timeout);
 
-    RTPS_DllAPI uint64_t get_unread_count() const;
+    FASTDDS_EXPORTED_API uint64_t get_unread_count() const;
 
-    RTPS_DllAPI uint64_t get_unread_count(
+    FASTDDS_EXPORTED_API uint64_t get_unread_count(
             bool mark_as_read);
 
     /**
      * @return True if the reader expects Inline QOS.
      */
-    RTPS_DllAPI inline bool expectsInlineQos()
+    FASTDDS_EXPORTED_API inline bool expectsInlineQos()
     {
         return m_expectsInlineQos;
     }
 
     //! Returns a pointer to the associated History.
-    RTPS_DllAPI inline ReaderHistory* getHistory()
+    FASTDDS_EXPORTED_API inline ReaderHistory* getHistory()
     {
         return mp_history;
     }
 
     //! @return The content filter associated to this reader.
-    RTPS_DllAPI eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const
+    FASTDDS_EXPORTED_API eprosima::fastdds::rtps::IReaderDataFilter* get_content_filter() const
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
         return data_filter_;
@@ -272,7 +272,7 @@ public:
 
     //! Set the content filter associated to this reader.
     //! @param filter Pointer to the content filter to associate to this reader.
-    RTPS_DllAPI void set_content_filter(
+    FASTDDS_EXPORTED_API void set_content_filter(
             eprosima::fastdds::rtps::IReaderDataFilter* filter)
     {
         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
@@ -357,7 +357,7 @@ public:
      *
      * @return true if the sample is valid
      */
-    RTPS_DllAPI bool is_sample_valid(
+    FASTDDS_EXPORTED_API bool is_sample_valid(
             const void* data,
             const GUID_t& writer,
             const SequenceNumber_t& sn) const;
@@ -374,7 +374,7 @@ public:
      * @param listener
      * @return true if successfully added
      */
-    RTPS_DllAPI bool add_statistics_listener(
+    FASTDDS_EXPORTED_API bool add_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /**
@@ -382,7 +382,7 @@ public:
      * @param listener
      * @return true if successfully removed
      */
-    RTPS_DllAPI bool remove_statistics_listener(
+    FASTDDS_EXPORTED_API bool remove_statistics_listener(
             std::shared_ptr<fastdds::statistics::IListener> listener);
 
     /**
@@ -390,7 +390,7 @@ public:
      *
      * @param enabled_writers The new mask to set
      */
-    RTPS_DllAPI void set_enabled_statistics_writers_mask(
+    FASTDDS_EXPORTED_API void set_enabled_statistics_writers_mask(
             uint32_t enabled_writers);
 
     /**
@@ -399,7 +399,7 @@ public:
      * @param [out] connection_list of the reader
      * @return True if could be retrieved
      */
-    RTPS_DllAPI virtual bool get_connections(
+    FASTDDS_EXPORTED_API virtual bool get_connections(
             fastdds::statistics::rtps::ConnectionList& connection_list) = 0;
 
 #endif // FASTDDS_STATISTICS

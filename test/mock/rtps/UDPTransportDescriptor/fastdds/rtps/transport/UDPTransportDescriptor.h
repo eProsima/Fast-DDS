@@ -44,13 +44,13 @@ typedef struct UDPTransportDescriptor : public SocketTransportDescriptor
         return nullptr;
     }
 
-    RTPS_DllAPI UDPTransportDescriptor()
+    FASTDDS_EXPORTED_API UDPTransportDescriptor()
         : SocketTransportDescriptor(65550, 4)
     {
 
     }
 
-    RTPS_DllAPI UDPTransportDescriptor(
+    FASTDDS_EXPORTED_API UDPTransportDescriptor(
             const UDPTransportDescriptor& /*t*/)
         : SocketTransportDescriptor(65550, 4)
     {

@@ -47,7 +47,7 @@ constexpr uint8_t s_defaultTTL = 1;
 struct SocketTransportDescriptor : public PortBasedTransportDescriptor
 {
     //! Constructor
-    RTPS_DllAPI SocketTransportDescriptor(
+    FASTDDS_EXPORTED_API SocketTransportDescriptor(
             uint32_t maximumMessageSize,
             uint32_t maximumInitialPeersRange)
         : PortBasedTransportDescriptor(maximumMessageSize, maximumInitialPeersRange)
@@ -59,23 +59,23 @@ struct SocketTransportDescriptor : public PortBasedTransportDescriptor
     }
 
     //! Copy constructor
-    RTPS_DllAPI SocketTransportDescriptor(
+    FASTDDS_EXPORTED_API SocketTransportDescriptor(
             const SocketTransportDescriptor& t) = default;
 
     //! Copy assignment
-    RTPS_DllAPI SocketTransportDescriptor& operator =(
+    FASTDDS_EXPORTED_API SocketTransportDescriptor& operator =(
             const SocketTransportDescriptor& t) = default;
 
     //! Destructor
-    virtual RTPS_DllAPI ~SocketTransportDescriptor() = default;
+    virtual FASTDDS_EXPORTED_API ~SocketTransportDescriptor() = default;
 
-    virtual RTPS_DllAPI uint32_t min_send_buffer_size() const override
+    virtual FASTDDS_EXPORTED_API uint32_t min_send_buffer_size() const override
     {
         return sendBufferSize;
     }
 
     //! Comparison operator
-    bool RTPS_DllAPI operator ==(
+    bool FASTDDS_EXPORTED_API operator ==(
             const SocketTransportDescriptor& t) const
     {
         return (this->sendBufferSize == t.min_send_buffer_size() &&

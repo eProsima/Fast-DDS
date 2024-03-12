@@ -104,7 +104,7 @@ public:
      * @param qos DomainParticipantQos reference where the qos is going to be returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_qos(
             DomainParticipantQos& qos) const;
 
     /**
@@ -112,7 +112,7 @@ public:
      *
      * @return A reference to the DomainParticipantQos
      */
-    RTPS_DllAPI const DomainParticipantQos& get_qos() const;
+    FASTDDS_EXPORTED_API const DomainParticipantQos& get_qos() const;
 
     /**
      * This operation sets the value of the DomainParticipant QoS policies.
@@ -121,7 +121,7 @@ public:
      * @return RETCODE_IMMUTABLE_POLICY if any of the Qos cannot be changed, RETCODE_INCONSISTENT_POLICY if the Qos is not
      * self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_qos(
             const DomainParticipantQos& qos) const;
 
     /**
@@ -129,7 +129,7 @@ public:
      *
      * @return DomainParticipantListener pointer
      */
-    RTPS_DllAPI const DomainParticipantListener* get_listener() const;
+    FASTDDS_EXPORTED_API const DomainParticipantListener* get_listener() const;
 
     /**
      * Modifies the DomainParticipantListener, sets the mask to StatusMask::all()
@@ -138,7 +138,7 @@ public:
      * @return RETCODE_OK if successful, RETCODE_ERROR otherwise.
      * @warning Do not call this method from a \c DomainParticipantListener callback.
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DomainParticipantListener* listener);
 
     /**
@@ -149,7 +149,7 @@ public:
      * @return RETCODE_OK if successful, RETCODE_ERROR if failed (timeout expired).
      * @warning Do not call this method from a \c DomainParticipantListener callback.
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DomainParticipantListener* listener,
             const std::chrono::seconds timeout);
 
@@ -161,7 +161,7 @@ public:
      * @return RETCODE_OK if successful, RETCODE_ERROR otherwise.
      * @warning Do not call this method from a \c DomainParticipantListener callback.
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DomainParticipantListener* listener,
             const StatusMask& mask);
 
@@ -174,7 +174,7 @@ public:
      * @return RETCODE_OK if successful, RETCODE_ERROR if failed (timeout expired)
      * @warning Do not call this method from a \c DomainParticipantListener callback.
      */
-    RTPS_DllAPI ReturnCode_t set_listener(
+    FASTDDS_EXPORTED_API ReturnCode_t set_listener(
             DomainParticipantListener* listener,
             const StatusMask& mask,
             const std::chrono::seconds timeout);
@@ -184,7 +184,7 @@ public:
      *
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t enable() override;
+    FASTDDS_EXPORTED_API ReturnCode_t enable() override;
 
     // DomainParticipant specific methods from DDS API
 
@@ -196,7 +196,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
      */
-    RTPS_DllAPI Publisher* create_publisher(
+    FASTDDS_EXPORTED_API Publisher* create_publisher(
             const PublisherQos& qos,
             PublisherListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
@@ -209,7 +209,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Publisher.
      */
-    RTPS_DllAPI Publisher* create_publisher_with_profile(
+    FASTDDS_EXPORTED_API Publisher* create_publisher_with_profile(
             const std::string& profile_name,
             PublisherListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
@@ -221,7 +221,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if the publisher does not belong to this participant or if it has active DataWriters,
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t delete_publisher(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_publisher(
             const Publisher* publisher);
 
     /**
@@ -232,7 +232,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Subscriber.
      */
-    RTPS_DllAPI Subscriber* create_subscriber(
+    FASTDDS_EXPORTED_API Subscriber* create_subscriber(
             const SubscriberQos& qos,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
@@ -245,7 +245,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Subscriber.
      */
-    RTPS_DllAPI Subscriber* create_subscriber_with_profile(
+    FASTDDS_EXPORTED_API Subscriber* create_subscriber_with_profile(
             const std::string& profile_name,
             SubscriberListener* listener = nullptr,
             const StatusMask& mask = StatusMask::all());
@@ -257,7 +257,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if the subscriber does not belong to this participant or if it has active DataReaders,
      * RETCODE_OK if it is correctly deleted and RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t delete_subscriber(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_subscriber(
             const Subscriber* subscriber);
 
     /**
@@ -270,7 +270,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Topic.
      */
-    RTPS_DllAPI Topic* create_topic(
+    FASTDDS_EXPORTED_API Topic* create_topic(
             const std::string& topic_name,
             const std::string& type_name,
             const TopicQos& qos,
@@ -287,7 +287,7 @@ public:
      * @param mask StatusMask that holds statuses the listener responds to (default: all)
      * @return Pointer to the created Topic.
      */
-    RTPS_DllAPI Topic* create_topic_with_profile(
+    FASTDDS_EXPORTED_API Topic* create_topic_with_profile(
             const std::string& topic_name,
             const std::string& type_name,
             const std::string& profile_name,
@@ -301,7 +301,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and RETCODE_OK if the Topic was deleted.
      */
-    RTPS_DllAPI ReturnCode_t delete_topic(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_topic(
             const Topic* topic);
 
     /**
@@ -317,7 +317,7 @@ public:
      * @return nullptr if a filter cannot be created with the specified @c filter_expression and
      *                 @c expression_parameters.
      */
-    RTPS_DllAPI ContentFilteredTopic* create_contentfilteredtopic(
+    FASTDDS_EXPORTED_API ContentFilteredTopic* create_contentfilteredtopic(
             const std::string& name,
             Topic* related_topic,
             const std::string& filter_expression,
@@ -339,7 +339,7 @@ public:
      *                 @c expression_parameters.
      * @return nullptr if the specified @c filter_class_name has not been registered.
      */
-    RTPS_DllAPI ContentFilteredTopic* create_contentfilteredtopic(
+    FASTDDS_EXPORTED_API ContentFilteredTopic* create_contentfilteredtopic(
             const std::string& name,
             Topic* related_topic,
             const std::string& filter_expression,
@@ -353,7 +353,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the topic passed is a nullptr, RETCODE_PRECONDITION_NOT_MET if the topic does not belong to
      * this participant or if it is referenced by any entity and RETCODE_OK if the ContentFilteredTopic was deleted.
      */
-    RTPS_DllAPI ReturnCode_t delete_contentfilteredtopic(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_contentfilteredtopic(
             const ContentFilteredTopic* a_contentfilteredtopic);
 
     /**
@@ -365,7 +365,7 @@ public:
      * @param expression_parameters Parameters to subscription content
      * @return Pointer to the created ContentFilteredTopic, nullptr in error case
      */
-    RTPS_DllAPI MultiTopic* create_multitopic(
+    FASTDDS_EXPORTED_API MultiTopic* create_multitopic(
             const std::string& name,
             const std::string& type_name,
             const std::string& subscription_expression,
@@ -381,7 +381,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      *
      */
-    RTPS_DllAPI ReturnCode_t delete_multitopic(
+    FASTDDS_EXPORTED_API ReturnCode_t delete_multitopic(
             const MultiTopic* a_multitopic);
 
     /**
@@ -397,7 +397,7 @@ public:
      * @param timeout Maximum time to wait for the Topic
      * @return Pointer to the existing Topic, nullptr in case of error or timeout
      */
-    RTPS_DllAPI Topic* find_topic(
+    FASTDDS_EXPORTED_API Topic* find_topic(
             const std::string& topic_name,
             const fastrtps::Duration_t& timeout);
 
@@ -410,7 +410,7 @@ public:
      *
      * @remark UNSAFE. It is unsafe to lookup a topic description while another thread is creating a topic.
      */
-    RTPS_DllAPI TopicDescription* lookup_topicdescription(
+    FASTDDS_EXPORTED_API TopicDescription* lookup_topicdescription(
             const std::string& topic_name) const;
 
     /**
@@ -418,7 +418,7 @@ public:
      *
      * @return Pointer to the builtin Subscriber, nullptr in error case
      */
-    RTPS_DllAPI const Subscriber* get_builtin_subscriber() const;
+    FASTDDS_EXPORTED_API const Subscriber* get_builtin_subscriber() const;
 
     /**
      * Locally ignore a remote domain participant.
@@ -429,7 +429,7 @@ public:
      * @return RETURN_OK code if everything correct, RETCODE_BAD_PARAMENTER otherwise
      *
      */
-    RTPS_DllAPI ReturnCode_t ignore_participant(
+    FASTDDS_EXPORTED_API ReturnCode_t ignore_participant(
             const InstanceHandle_t& handle);
 
     /**
@@ -443,7 +443,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      *
      */
-    RTPS_DllAPI ReturnCode_t ignore_topic(
+    FASTDDS_EXPORTED_API ReturnCode_t ignore_topic(
             const InstanceHandle_t& handle);
 
     /**
@@ -457,7 +457,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      *
      */
-    RTPS_DllAPI ReturnCode_t ignore_publication(
+    FASTDDS_EXPORTED_API ReturnCode_t ignore_publication(
             const InstanceHandle_t& handle);
 
     /**
@@ -471,7 +471,7 @@ public:
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      *
      */
-    RTPS_DllAPI ReturnCode_t ignore_subscription(
+    FASTDDS_EXPORTED_API ReturnCode_t ignore_subscription(
             const InstanceHandle_t& handle);
 
     /**
@@ -480,14 +480,14 @@ public:
      *
      * @return The Participant's domain_id
      */
-    RTPS_DllAPI DomainId_t get_domain_id() const;
+    FASTDDS_EXPORTED_API DomainId_t get_domain_id() const;
 
     /**
      * Deletes all the entities that were created by means of the “create” methods
      *
      * @return RETURN_OK code if everything correct, error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t delete_contained_entities();
+    FASTDDS_EXPORTED_API ReturnCode_t delete_contained_entities();
 
     /**
      * This operation manually asserts the liveliness of the DomainParticipant.
@@ -504,7 +504,7 @@ public:
      *
      * @return RETCODE_OK if the liveliness was asserted, RETCODE_ERROR otherwise.
      */
-    RTPS_DllAPI ReturnCode_t assert_liveliness();
+    FASTDDS_EXPORTED_API ReturnCode_t assert_liveliness();
 
     /**
      * This operation sets a default value of the Publisher QoS policies which will be used for newly created
@@ -520,7 +520,7 @@ public:
      * @param qos PublisherQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_default_publisher_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_default_publisher_qos(
             const PublisherQos& qos);
 
     /**
@@ -533,7 +533,7 @@ public:
      *
      * @return Current default publisher qos.
      */
-    RTPS_DllAPI const PublisherQos& get_default_publisher_qos() const;
+    FASTDDS_EXPORTED_API const PublisherQos& get_default_publisher_qos() const;
 
     /**
      * This operation retrieves the default value of the Publisher QoS, that is, the QoS policies which will be used
@@ -546,7 +546,7 @@ public:
      * @param qos PublisherQos reference where the default_publisher_qos is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_default_publisher_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_publisher_qos(
             PublisherQos& qos) const;
 
     /**
@@ -556,7 +556,7 @@ public:
      * @param qos PublisherQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
-    RTPS_DllAPI ReturnCode_t get_publisher_qos_from_profile(
+    FASTDDS_EXPORTED_API ReturnCode_t get_publisher_qos_from_profile(
             const std::string& profile_name,
             PublisherQos& qos) const;
 
@@ -574,7 +574,7 @@ public:
      * @param qos SubscriberQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_default_subscriber_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_default_subscriber_qos(
             const SubscriberQos& qos);
 
     /**
@@ -587,7 +587,7 @@ public:
      *
      * @return Current default subscriber qos.
      */
-    RTPS_DllAPI const SubscriberQos& get_default_subscriber_qos() const;
+    FASTDDS_EXPORTED_API const SubscriberQos& get_default_subscriber_qos() const;
 
     /**
      * This operation retrieves the default value of the Subscriber QoS, that is, the QoS policies which will be used
@@ -600,7 +600,7 @@ public:
      * @param qos SubscriberQos reference where the default_subscriber_qos is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_default_subscriber_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_subscriber_qos(
             SubscriberQos& qos) const;
 
     /**
@@ -610,7 +610,7 @@ public:
      * @param qos SubscriberQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
-    RTPS_DllAPI ReturnCode_t get_subscriber_qos_from_profile(
+    FASTDDS_EXPORTED_API ReturnCode_t get_subscriber_qos_from_profile(
             const std::string& profile_name,
             SubscriberQos& qos) const;
 
@@ -628,7 +628,7 @@ public:
      * @param qos TopicQos to be set
      * @return RETCODE_INCONSISTENT_POLICY if the Qos is not self consistent and RETCODE_OK if the qos is changed correctly.
      */
-    RTPS_DllAPI ReturnCode_t set_default_topic_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t set_default_topic_qos(
             const TopicQos& qos);
 
     /**
@@ -641,7 +641,7 @@ public:
      *
      * @return Current default topic qos.
      */
-    RTPS_DllAPI const TopicQos& get_default_topic_qos() const;
+    FASTDDS_EXPORTED_API const TopicQos& get_default_topic_qos() const;
 
     /**
      * This operation retrieves the default value of the Topic QoS, that is, the QoS policies that will be used
@@ -654,7 +654,7 @@ public:
      * @param qos TopicQos reference where the default_topic_qos is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_default_topic_qos(
+    FASTDDS_EXPORTED_API ReturnCode_t get_default_topic_qos(
             TopicQos& qos) const;
 
     /**
@@ -664,7 +664,7 @@ public:
      * @param qos TopicQos object where the qos is returned.
      * @return RETCODE_OK if the profile exists. RETCODE_BAD_PARAMETER otherwise.
      */
-    RTPS_DllAPI ReturnCode_t get_topic_qos_from_profile(
+    FASTDDS_EXPORTED_API ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
             TopicQos& qos) const;
 
@@ -675,7 +675,7 @@ public:
      * @return RETCODE_OK if everything correct, error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_discovered_participants(
+    FASTDDS_EXPORTED_API ReturnCode_t get_discovered_participants(
             std::vector<InstanceHandle_t>& participant_handles) const;
 
     /**
@@ -686,7 +686,7 @@ public:
      * @return RETCODE_OK if everything correct, PRECONDITION_NOT_MET if participant does not exist
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_discovered_participant_data(
+    FASTDDS_EXPORTED_API ReturnCode_t get_discovered_participant_data(
             builtin::ParticipantBuiltinTopicData& participant_data,
             const InstanceHandle_t& participant_handle) const;
 
@@ -697,7 +697,7 @@ public:
      * @return RETCODE_OK if everything correct, error code otherwise
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_discovered_topics(
+    FASTDDS_EXPORTED_API ReturnCode_t get_discovered_topics(
             std::vector<InstanceHandle_t>& topic_handles) const;
 
     /**
@@ -709,7 +709,7 @@ public:
      *
      * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t get_discovered_topic_data(
+    FASTDDS_EXPORTED_API ReturnCode_t get_discovered_topic_data(
             builtin::TopicBuiltinTopicData& topic_data,
             const InstanceHandle_t& topic_handle) const;
 
@@ -723,7 +723,7 @@ public:
      * entities created using a contained Publisher, or Subscriber as the factory, and so forth. (default: true)
      * @return True if entity is contained. False otherwise.
      */
-    RTPS_DllAPI bool contains_entity(
+    FASTDDS_EXPORTED_API bool contains_entity(
             const InstanceHandle_t& a_handle,
             bool recursive = true) const;
 
@@ -734,7 +734,7 @@ public:
      * @param current_time Time_t reference where the current time is returned
      * @return RETCODE_OK
      */
-    RTPS_DllAPI ReturnCode_t get_current_time(
+    FASTDDS_EXPORTED_API ReturnCode_t get_current_time(
             fastrtps::Time_t& current_time) const;
 
     // DomainParticipant methods specific from Fast DDS
@@ -747,7 +747,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
      * with the same name and RETCODE_OK if it is correctly registered.
      */
-    RTPS_DllAPI ReturnCode_t register_type(
+    FASTDDS_EXPORTED_API ReturnCode_t register_type(
             TypeSupport type,
             const std::string& type_name);
 
@@ -758,7 +758,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there is another TypeSupport
      * with the same name and RETCODE_OK if it is correctly registered.
      */
-    RTPS_DllAPI ReturnCode_t register_type(
+    FASTDDS_EXPORTED_API ReturnCode_t register_type(
             TypeSupport type);
 
     /**
@@ -768,7 +768,7 @@ public:
      * @return RETCODE_BAD_PARAMETER if the size of the name is 0, RERCODE_PRECONDITION_NOT_MET if there are entities using that
      * TypeSupport and RETCODE_OK if it is correctly unregistered.
      */
-    RTPS_DllAPI ReturnCode_t unregister_type(
+    FASTDDS_EXPORTED_API ReturnCode_t unregister_type(
             const std::string& typeName);
 
     /**
@@ -777,7 +777,7 @@ public:
      * @param type_name Name of the type
      * @return TypeSupport corresponding to the type_name
      */
-    RTPS_DllAPI TypeSupport find_type(
+    FASTDDS_EXPORTED_API TypeSupport find_type(
             const std::string& type_name) const;
 
     /**
@@ -785,7 +785,7 @@ public:
      *
      * @return InstanceHandle of this DomainParticipant.
      */
-    RTPS_DllAPI const InstanceHandle_t& get_instance_handle() const;
+    FASTDDS_EXPORTED_API const InstanceHandle_t& get_instance_handle() const;
 
     // From here legacy RTPS methods.
 
@@ -794,14 +794,14 @@ public:
      *
      * @return A reference to the GUID
      */
-    RTPS_DllAPI const fastrtps::rtps::GUID_t& guid() const;
+    FASTDDS_EXPORTED_API const fastrtps::rtps::GUID_t& guid() const;
 
     /**
      * @brief Getter for the participant names
      *
      * @return Vector with the names
      */
-    RTPS_DllAPI std::vector<std::string> get_participant_names() const;
+    FASTDDS_EXPORTED_API std::vector<std::string> get_participant_names() const;
 
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
@@ -814,7 +814,7 @@ public:
      * @param kind EndpointKind (WRITER or READER)
      * @return True if correctly found and activated.
      */
-    RTPS_DllAPI bool new_remote_endpoint_discovered(
+    FASTDDS_EXPORTED_API bool new_remote_endpoint_discovered(
             const fastrtps::rtps::GUID_t& partguid,
             uint16_t userId,
             fastrtps::rtps::EndpointKind_t kind);
@@ -826,7 +826,7 @@ public:
      *
      * @return A reference to the resource event
      */
-    RTPS_DllAPI fastrtps::rtps::ResourceEvent& get_resource_event() const;
+    FASTDDS_EXPORTED_API fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
     /**
      * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
@@ -836,7 +836,7 @@ public:
      * @param in TypeIdentifier sequence
      * @return SampleIdentity
      */
-    RTPS_DllAPI fastrtps::rtps::SampleIdentity get_type_dependencies(
+    FASTDDS_EXPORTED_API fastrtps::rtps::SampleIdentity get_type_dependencies(
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
@@ -846,7 +846,7 @@ public:
      * @param in TypeIdentifier sequence
      * @return SampleIdentity
      */
-    RTPS_DllAPI fastrtps::rtps::SampleIdentity get_types(
+    FASTDDS_EXPORTED_API fastrtps::rtps::SampleIdentity get_types(
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
@@ -866,7 +866,7 @@ public:
      * @return RETCODE_NOT_ENABLED if the DomainParticipant is not enabled.
      * @return RETCODE_PRECONDITION_NOT_MET if the DomainParticipant type lookup service is disabled.
      */
-    RTPS_DllAPI ReturnCode_t register_remote_type(
+    FASTDDS_EXPORTED_API ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
@@ -901,7 +901,7 @@ public:
      * @return RETCODE_PRECONDITION_NOT_MET if filter_class_name is FASTDDS_SQLFILTER_NAME.
      * @return RETCODE_OK if the filter is correctly registered.
      */
-    RTPS_DllAPI ReturnCode_t register_content_filter_factory(
+    FASTDDS_EXPORTED_API ReturnCode_t register_content_filter_factory(
             const char* filter_class_name,
             IContentFilterFactory* const filter_factory);
 
@@ -913,7 +913,7 @@ public:
      * @return nullptr if the given filter_class_name has not been previously registered on this DomainParticipant.
      *         Otherwise, the content filter factory previously registered with the given filter_class_name.
      */
-    RTPS_DllAPI IContentFilterFactory* lookup_content_filter_factory(
+    FASTDDS_EXPORTED_API IContentFilterFactory* lookup_content_filter_factory(
             const char* filter_class_name);
 
     /**
@@ -935,7 +935,7 @@ public:
      * @return RERCODE_PRECONDITION_NOT_MET if there is any ContentFilteredTopic referencing the filter.
      * @return RETCODE_OK if the filter is correctly unregistered.
      */
-    RTPS_DllAPI ReturnCode_t unregister_content_filter_factory(
+    FASTDDS_EXPORTED_API ReturnCode_t unregister_content_filter_factory(
             const char* filter_class_name);
 
     /**

@@ -84,39 +84,39 @@ public:
     /*!
      * @brief Default constructor.
      */
-    RTPS_DllAPI TypeIdentifier();
+    FASTDDS_EXPORTED_API TypeIdentifier();
 
     /*!
      * @brief Default destructor.
      */
-    RTPS_DllAPI ~TypeIdentifier();
+    FASTDDS_EXPORTED_API ~TypeIdentifier();
 
     /*!
      * @brief Copy constructor.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier(
+    FASTDDS_EXPORTED_API TypeIdentifier(
             const TypeIdentifier& x);
 
     /*!
      * @brief Move constructor.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier(
+    FASTDDS_EXPORTED_API TypeIdentifier(
             TypeIdentifier&& x);
 
     /*!
      * @brief Copy assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifier& operator =(
             const TypeIdentifier& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator =(
+    FASTDDS_EXPORTED_API TypeIdentifier& operator =(
             TypeIdentifier&& x);
 
     /*!
@@ -124,26 +124,26 @@ public:
      * @param __d New value for the discriminator.
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
-    RTPS_DllAPI void _d(
+    FASTDDS_EXPORTED_API void _d(
             octet __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    RTPS_DllAPI octet _d() const;
+    FASTDDS_EXPORTED_API octet _d() const;
 
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    RTPS_DllAPI octet& _d();
+    FASTDDS_EXPORTED_API octet& _d();
 
     /*!
      * @brief This function sets a value in member string_sdefn
      * @param _string_sdefn New value for member string_sdefn
      */
-    RTPS_DllAPI void string_sdefn(
+    FASTDDS_EXPORTED_API void string_sdefn(
             StringSTypeDefn _string_sdefn);
 
     /*!
@@ -151,19 +151,19 @@ public:
      * @return Value of member string_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const StringSTypeDefn& string_sdefn() const;
+    FASTDDS_EXPORTED_API const StringSTypeDefn& string_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member string_sdefn
      * @return Reference to member string_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI StringSTypeDefn& string_sdefn();
+    FASTDDS_EXPORTED_API StringSTypeDefn& string_sdefn();
     /*!
      * @brief This function sets a value in member string_ldefn
      * @param _string_ldefn New value for member string_ldefn
      */
-    RTPS_DllAPI void string_ldefn(
+    FASTDDS_EXPORTED_API void string_ldefn(
             StringLTypeDefn _string_ldefn);
 
     /*!
@@ -171,19 +171,19 @@ public:
      * @return Value of member string_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const StringLTypeDefn& string_ldefn() const;
+    FASTDDS_EXPORTED_API const StringLTypeDefn& string_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member string_ldefn
      * @return Reference to member string_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI StringLTypeDefn& string_ldefn();
+    FASTDDS_EXPORTED_API StringLTypeDefn& string_ldefn();
     /*!
      * @brief This function sets a value in member seq_sdefn
      * @param _seq_sdefn New value for member seq_sdefn
      */
-    RTPS_DllAPI void seq_sdefn(
+    FASTDDS_EXPORTED_API void seq_sdefn(
             PlainSequenceSElemDefn _seq_sdefn);
 
     /*!
@@ -191,19 +191,19 @@ public:
      * @return Value of member seq_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const PlainSequenceSElemDefn& seq_sdefn() const;
+    FASTDDS_EXPORTED_API const PlainSequenceSElemDefn& seq_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member seq_sdefn
      * @return Reference to member seq_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn& seq_sdefn();
+    FASTDDS_EXPORTED_API PlainSequenceSElemDefn& seq_sdefn();
     /*!
      * @brief This function sets a value in member seq_ldefn
      * @param _seq_ldefn New value for member seq_ldefn
      */
-    RTPS_DllAPI void seq_ldefn(
+    FASTDDS_EXPORTED_API void seq_ldefn(
             PlainSequenceLElemDefn _seq_ldefn);
 
     /*!
@@ -211,19 +211,19 @@ public:
      * @return Value of member seq_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const PlainSequenceLElemDefn& seq_ldefn() const;
+    FASTDDS_EXPORTED_API const PlainSequenceLElemDefn& seq_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member seq_ldefn
      * @return Reference to member seq_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn& seq_ldefn();
+    FASTDDS_EXPORTED_API PlainSequenceLElemDefn& seq_ldefn();
     /*!
      * @brief This function sets a value in member array_sdefn
      * @param _array_sdefn New value for member array_sdefn
      */
-    RTPS_DllAPI void array_sdefn(
+    FASTDDS_EXPORTED_API void array_sdefn(
             PlainArraySElemDefn _array_sdefn);
 
     /*!
@@ -231,19 +231,19 @@ public:
      * @return Value of member array_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const PlainArraySElemDefn& array_sdefn() const;
+    FASTDDS_EXPORTED_API const PlainArraySElemDefn& array_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member array_sdefn
      * @return Reference to member array_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainArraySElemDefn& array_sdefn();
+    FASTDDS_EXPORTED_API PlainArraySElemDefn& array_sdefn();
     /*!
      * @brief This function sets a value in member array_ldefn
      * @param _array_ldefn New value for member array_ldefn
      */
-    RTPS_DllAPI void array_ldefn(
+    FASTDDS_EXPORTED_API void array_ldefn(
             PlainArrayLElemDefn _array_ldefn);
 
     /*!
@@ -251,19 +251,19 @@ public:
      * @return Value of member array_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const PlainArrayLElemDefn& array_ldefn() const;
+    FASTDDS_EXPORTED_API const PlainArrayLElemDefn& array_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member array_ldefn
      * @return Reference to member array_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainArrayLElemDefn& array_ldefn();
+    FASTDDS_EXPORTED_API PlainArrayLElemDefn& array_ldefn();
     /*!
      * @brief This function sets a value in member map_sdefn
      * @param _map_sdefn New value for member map_sdefn
      */
-    RTPS_DllAPI void map_sdefn(
+    FASTDDS_EXPORTED_API void map_sdefn(
             PlainMapSTypeDefn _map_sdefn);
 
     /*!
@@ -271,19 +271,19 @@ public:
      * @return Value of member map_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const PlainMapSTypeDefn& map_sdefn() const;
+    FASTDDS_EXPORTED_API const PlainMapSTypeDefn& map_sdefn() const;
 
     /*!
      * @brief This function returns a reference to member map_sdefn
      * @return Reference to member map_sdefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainMapSTypeDefn& map_sdefn();
+    FASTDDS_EXPORTED_API PlainMapSTypeDefn& map_sdefn();
     /*!
      * @brief This function sets a value in member map_ldefn
      * @param _map_ldefn New value for member map_ldefn
      */
-    RTPS_DllAPI void map_ldefn(
+    FASTDDS_EXPORTED_API void map_ldefn(
             PlainMapLTypeDefn _map_ldefn);
 
     /*!
@@ -291,19 +291,19 @@ public:
      * @return Value of member map_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const PlainMapLTypeDefn& map_ldefn() const;
+    FASTDDS_EXPORTED_API const PlainMapLTypeDefn& map_ldefn() const;
 
     /*!
      * @brief This function returns a reference to member map_ldefn
      * @return Reference to member map_ldefn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI PlainMapLTypeDefn& map_ldefn();
+    FASTDDS_EXPORTED_API PlainMapLTypeDefn& map_ldefn();
     /*!
      * @brief This function sets a value in member sc_component_id
      * @param _sc_component_id New value for member sc_component_id
      */
-    RTPS_DllAPI void sc_component_id(
+    FASTDDS_EXPORTED_API void sc_component_id(
             StronglyConnectedComponentId _sc_component_id);
 
     /*!
@@ -311,19 +311,19 @@ public:
      * @return Value of member sc_component_id
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI StronglyConnectedComponentId sc_component_id() const;
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId sc_component_id() const;
 
     /*!
      * @brief This function returns a reference to member sc_component_id
      * @return Reference to member sc_component_id
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI StronglyConnectedComponentId& sc_component_id();
+    FASTDDS_EXPORTED_API StronglyConnectedComponentId& sc_component_id();
     /*!
      * @brief This function sets a value in member equivalence_hash
      * @param _equivalence_hash New value for member equivalence_hash
      */
-    RTPS_DllAPI void equivalence_hash(
+    FASTDDS_EXPORTED_API void equivalence_hash(
             EquivalenceHash _equivalence_hash);
 
     /*!
@@ -331,19 +331,19 @@ public:
      * @return Value of member equivalence_hash
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const octet* equivalence_hash() const;
+    FASTDDS_EXPORTED_API const octet* equivalence_hash() const;
 
     /*!
      * @brief This function returns a reference to member equivalence_hash
      * @return Reference to member equivalence_hash
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI octet* equivalence_hash();
+    FASTDDS_EXPORTED_API octet* equivalence_hash();
     /*!
      * @brief This function sets a value in member extended_defn
      * @param _extended_defn New value for member extended_defn
      */
-    RTPS_DllAPI void extended_defn(
+    FASTDDS_EXPORTED_API void extended_defn(
             ExtendedTypeDefn _extended_defn);
 
     /*!
@@ -351,14 +351,14 @@ public:
      * @return Value of member extended_defn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI const ExtendedTypeDefn& extended_defn() const;
+    FASTDDS_EXPORTED_API const ExtendedTypeDefn& extended_defn() const;
 
     /*!
      * @brief This function returns a reference to member extended_defn
      * @return Reference to member extended_defn
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    RTPS_DllAPI ExtendedTypeDefn& extended_defn();
+    FASTDDS_EXPORTED_API ExtendedTypeDefn& extended_defn();
 
     /**
      * Equals
@@ -366,7 +366,7 @@ public:
     bool operator ==(
             const TypeIdentifier& other) const;
 
-    RTPS_DllAPI bool consistent(
+    FASTDDS_EXPORTED_API bool consistent(
             const TypeIdentifier& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
 
@@ -374,7 +374,7 @@ public:
      * @brief equivalence_hash_to_string
      * @return string representation of the equivalence hash
      */
-    RTPS_DllAPI std::string equivalence_hash_to_string() const;
+    FASTDDS_EXPORTED_API std::string equivalence_hash_to_string() const;
 
 private:
 
