@@ -331,7 +331,8 @@ public:
 
             if (subscriber_ != nullptr)
             {
-                std::cout << "Created subscriber " << subscriber_->getGuid() << " for topic " <<
+                subscriber_guid_ = subscriber_->getGuid();
+                std::cout << "Created subscriber " << subscriber_guid_ << " for topic " <<
                     subscriber_attr_.topic.topicName << std::endl;
 
                 initialized_ = true;
@@ -1342,6 +1343,11 @@ public:
         return participant_guid_;
     }
 
+    const eprosima::fastrtps::rtps::GUID_t& datareader_guid() const
+    {
+        return subscriber_guid_;
+    }
+
 private:
 
     void receive_one(
@@ -1433,6 +1439,7 @@ private:
     eprosima::fastrtps::SubscriberAttributes subscriber_attr_;
     std::string topic_name_;
     eprosima::fastrtps::rtps::GUID_t participant_guid_;
+    eprosima::fastrtps::rtps::GUID_t subscriber_guid_;
     bool initialized_;
     std::list<type> total_msgs_;
     std::mutex mutex_;
