@@ -39,3 +39,11 @@ jobs:
       cmake-args: "-DSECURITY=OFF"
       ctest-args: "-LE xfail"
       fastdds-branch: '${{ matrix.fastdds-branch }}'
+
+  nightly-3_0_x-mac-ci:
+    uses: ./.github/workflows/reusable-mac-ci.yml
+    with:
+      label: 'nightly-3.0.x-mac-ci'
+      cmake-args: "-DSECURITY=ON"
+      ctest-args: "-LE xfail"
+      fastdds-branch: '3.0.x-devel'
