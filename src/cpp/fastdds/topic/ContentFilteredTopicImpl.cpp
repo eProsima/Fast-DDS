@@ -28,9 +28,9 @@
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/ContentFilterUtils.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
-
-#include <fastrtps/types/TypesBase.h>
 #include <fastdds/utils/md5.h>
+#include <fastrtps/types/TypesBase.h>
+
 
 namespace eprosima {
 namespace fastdds {

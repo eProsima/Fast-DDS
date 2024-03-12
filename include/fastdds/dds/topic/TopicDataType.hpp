@@ -24,11 +24,10 @@
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-
-#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/utils/md5.h>
 
 // This version of TypeSupport has `is_bounded()`

@@ -29,9 +29,10 @@ namespace { char dummy; }
 #include <mutex>
 #include <utility>
 #include <sstream>
+
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastdds/utils/md5.h>
+#include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/AnnotationParameterValue.h>

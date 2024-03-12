@@ -30,16 +30,16 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastrtps/rtps/rtps_fwd.h>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
 #include <fastdds/utils/TimedMutex.hpp>
+#include <fastrtps/rtps/rtps_fwd.h>
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;

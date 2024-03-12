@@ -44,9 +44,9 @@
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastrtps/rtps/rtps_fwd.h>
 #include <fastdds/utils/IPLocator.h>
 #include <fastdds/utils/TimedMutex.hpp>
+#include <fastrtps/rtps/rtps_fwd.h>
 #include <gtest/gtest.h>
 
 using eprosima::fastrtps::rtps::IPLocator;
