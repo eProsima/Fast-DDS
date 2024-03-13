@@ -49,17 +49,17 @@ public:
     static void print_help(
             uint8_t return_code)
     {
-        std::cout << "Usage: hello_world <entity> [options]"                    << std::endl;
-        std::cout << ""                                                         << std::endl;
-        std::cout << "Entities:"                                                << std::endl;
-        std::cout << "  publisher           Run a publisher entity"             << std::endl;
-        std::cout << "  subscriber          Run a subscriber entity"            << std::endl;
-        std::cout << "Common options:"                                          << std::endl;
-        std::cout << "  -h, --help          Print this help message"            << std::endl;
-        std::cout << "  -s, --samples       Amount of samples to be sent or"    << std::endl;
-        std::cout << "                      received (default: 0 [unlimited])"  << std::endl;
-        std::cout << "Subscriber options:"                                      << std::endl;
-        std::cout << "  -w, --waitset       Use waitset read condition"         << std::endl;
+        std::cout << "Usage: hello_world <entity> [options]"                                    << std::endl;
+        std::cout << ""                                                                         << std::endl;
+        std::cout << "Entities:"                                                                << std::endl;
+        std::cout << "  publisher                       Run a publisher entity"                 << std::endl;
+        std::cout << "  subscriber                      Run a subscriber entity"                << std::endl;
+        std::cout << "Common options:"                                                          << std::endl;
+        std::cout << "  -h, --help                      Print this help message"                << std::endl;
+        std::cout << "  -s <num>,   --samples <num>     Number of samples to send or receive"   << std::endl;
+        std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
+        std::cout << "Subscriber options:"                                                      << std::endl;
+        std::cout << "  -w, --waitset                   Use waitset read condition"             << std::endl;
         std::exit(return_code);
     }
 
