@@ -1973,13 +1973,15 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
 
     // Create writers
     writer_1.disable_builtin_transport()
+            .lease_duration(c_TimeInfinite, 1)
             .add_user_transport_to_pparams(testTransport)
             .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
             .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 900000000))
             .init();
 
-    writer_2.liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
+    writer_2.lease_duration(c_TimeInfinite, 1)
+            .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
             .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 900000000))
             .init();

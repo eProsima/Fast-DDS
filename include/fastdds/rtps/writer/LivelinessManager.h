@@ -105,8 +105,9 @@ public:
             Duration_t lease_duration);
 
     /**
-     * @brief Asserts liveliness of writers with given liveliness kind
+     * @brief Asserts liveliness of writers with given liveliness kind and GuidPrefix
      * @param kind Liveliness kind
+     * @param guid_prefix The guid prefix of the writers to assert liveliness of
      * @return True if liveliness was successfully asserted
      */
     bool assert_liveliness(
