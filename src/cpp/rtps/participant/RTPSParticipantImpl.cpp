@@ -50,6 +50,8 @@
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulPersistentWriter.h>
 
+#include <fastdds/rtps/common/LocatorList.hpp>
+
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -2560,6 +2562,19 @@ bool RTPSParticipantImpl::unregister_in_reader(
 }
 
 #endif // FASTDDS_STATISTICS
+
+void RTPSParticipantImpl::update_removed_participant(
+        const LocatorList_t& remote_participant_locators)
+{
+    if (!remote_participant_locators.empty())
+    {
+        std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
+        m_network_Factory.remove_participant_associated_send_resources(
+            send_resource_list_,
+            remote_participant_locators,
+            m_att.builtin.initialPeersList);
+    }
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */

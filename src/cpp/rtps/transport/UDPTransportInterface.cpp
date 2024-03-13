@@ -102,7 +102,7 @@ bool UDPTransportInterface::CloseInputChannel(
     return true;
 }
 
-void UDPTransportInterface::CloseOutputChannel(
+void UDPTransportInterface::SenderResourceHasBeenClosed(
         eProsimaUDPSocket& socket)
 {
     socket.cancel();

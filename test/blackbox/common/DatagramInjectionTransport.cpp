@@ -42,6 +42,24 @@ std::set<TransportReceiverInterface*> DatagramInjectionTransportDescriptor::get_
     return receivers_;
 }
 
+void DatagramInjectionTransportDescriptor::update_send_resource_list(
+        const SendResourceList& send_resource_list)
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+
+    send_resource_list_.clear();
+    for (const auto& resource : send_resource_list)
+    {
+        send_resource_list_.insert(resource.get());
+    }
+}
+
+std::set<SenderResource*> DatagramInjectionTransportDescriptor::get_send_resource_list()
+{
+    std::lock_guard<std::mutex> guard(mtx_);
+    return send_resource_list_;
+}
+
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
