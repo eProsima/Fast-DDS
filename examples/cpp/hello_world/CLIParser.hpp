@@ -15,8 +15,12 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <fastdds/dds/log/Log.hpp>
+
 #ifndef _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
 #define _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+
+using eprosima::fastdds::dds::Log;
 
 class CLIParser
 {
@@ -97,20 +101,20 @@ public:
                         }
                         else
                         {
-                            EPROSIMA_LOG_ERROR(CLI_PARSE, "entity not specified for --sample argument");
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --sample argument");
                             print_help(EXIT_FAILURE);
 
                         }
                     }
                     catch (const std::invalid_argument& e)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSE, "invalid sample argument for " + arg);
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg);
                         print_help(EXIT_FAILURE);
                     }
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSE, "missing argument for " + arg);
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "missing argument for " + arg);
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -122,20 +126,20 @@ public:
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSE, "waitset can only be used with the subscriber entity");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "waitset can only be used with the subscriber entity");
                     print_help(EXIT_FAILURE);
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(CLI_PARSE, "unknown option " + arg);
+                EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown option " + arg);
                 print_help(EXIT_FAILURE);
             }
         }
 
         if (config.entity == "")
         {
-            EPROSIMA_LOG_ERROR(CLI_PARSE, "entity not specified");
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified");
             print_help(EXIT_FAILURE);
         }
 

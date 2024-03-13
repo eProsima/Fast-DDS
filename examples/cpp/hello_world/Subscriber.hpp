@@ -26,7 +26,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include "cli_options.hpp"
+#include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;

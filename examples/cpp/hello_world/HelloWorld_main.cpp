@@ -22,7 +22,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
-#include "cli_options.hpp"
+#include "CLIParser.hpp"
 #include "Publisher.hpp"
 #include "Subscriber.hpp"
 #include "SubscriberWaitset.hpp"
@@ -81,7 +81,7 @@ int main(
     // example should never reach this point
     else
     {
-        EPROSIMA_LOG_ERROR(CLI_PARSE, "unknown entity " + config.entity);
+        EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown entity " + config.entity);
         CLIParser::print_help(EXIT_FAILURE);
     }
 
