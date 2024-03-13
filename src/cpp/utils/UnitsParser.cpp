@@ -77,7 +77,7 @@ uint32_t parse_value_and_units(
 
     to_uppercase(units);
 
-    std::regex pattern(R"(([kibmgKIBMG]{1,3})|(\d+))");
+    std::regex pattern(R"(([bB]{1})|([kibmgKIBMG]{2,3})|(\d+))");
     if (!std::regex_match(units, pattern))
     {
         throw std::invalid_argument(
