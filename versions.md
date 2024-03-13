@@ -1,12 +1,21 @@
 Forthcoming
 -----------
 
-* Define "super-client" by environment variable.
+* Added authentication handshake properties.
+
+Version 2.13.0
+--------------
+
+* Enable configuration of thread setting for all threads.
+* Added monitor service feature.
+* Added the possibility to define interfaces in the whitelist by interface name.
+* Enable support for DataRepresentationQos to select the CDR encoding.
 * Added the possibility to define a listening port equal to 0 in TCP Transport
 * Added support for TCP to Fast DDS CLI and environment variable
 * Added configuration of builtin transports through DomainParticipantQos, environment
   variable and XML.
 * Added `non_blocking_send` to TCP Transport.
+* Define "super-client" by environment variable.
 
 Version 2.12.0
 --------------
