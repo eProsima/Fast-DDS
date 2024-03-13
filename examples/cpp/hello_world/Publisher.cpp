@@ -171,6 +171,7 @@ void HelloWorldPublisher::run()
 
 bool HelloWorldPublisher::publish()
 {
+    bool ret = false;
     // Wait for the data endpoints discovery
     std::unique_lock<std::mutex> matched_lock(mutex_);
     matched_cv_.wait(matched_lock, [&]()
@@ -181,9 +182,9 @@ bool HelloWorldPublisher::publish()
     if (!is_stopped())
     {
         hello_.index(hello_.index() + 1);
-        return writer_->write(&hello_);
+        ret = writer_->write(&hello_);
     }
-    return false;
+    return ret;
 }
 
 bool HelloWorldPublisher::is_stopped()
