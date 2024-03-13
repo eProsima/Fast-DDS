@@ -115,44 +115,19 @@ jobs:
           # Show the result
           gc $hostfile
 
-      - name: Prepare colcon workspace
-        run: |
-          # Get some convenient tools
-          Install-Module -Name ConvertBase64Strings -Force -AllowClobber
-          Import-Module -name ConvertBase64Strings -Prefix CI
-          Install-Module powershell-yaml -Force
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}\src\fastrtps\fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
-          # Nightly job
-          if ("${{ inputs.label }}".Contains("nightly"))
-          {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_${{ inputs.fastdds_branch }}.repos"
-              if (!(Test-Path -Path $depends_repos_path))
-              {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly_2.6.x.repos"
-              }
-              $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
-          }
-          # Either PR or manual
-          else
-          {
-              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_${{ inputs.fastdds_branch }}.repos"
-              if (!(Test-Path -Path $depends_repos_path))
-              {
-                $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci_2.6.x.repos"
-              }
-              $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
-          }
-          Write-Output "Selected repos files: $depends_repos_path"
-          Write-Output "Selected metas files: $meta_path"
-
-          # Generate the meta file
-          "::group::deployed colcon.meta file"
-          $meta = Get-Content $meta_path | ConvertFrom-Yaml
-          $meta | ConvertTo-Json -Depth 3 | Tee-Object -FilePath ci.meta -Encoding OEM
-          "::endgroup::"
-
-          # create source dir and download the sources
-          vcs import src --input $depends_repos_path --skip-existing
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}\src\fastrtps\.github\workflows\config\ci.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
       - name: Build
         id: build

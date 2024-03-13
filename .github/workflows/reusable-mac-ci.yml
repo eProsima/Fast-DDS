@@ -82,38 +82,19 @@ jobs:
       # TODO(eduponz): Set up libp11 and SoftHSM. NOTE: using SoftHSM requires adding the runner to a group,
       #                which entails logout/login or rebooting the machine. This is not feasible in a CI environment.
 
-      - name: Prepare colcon workspace
-        id: colcon_ws_setup
-        run: |
-          # Nightly job
-          if [[ "${{ inputs.label }}" == *"nightly"* ]]
-          then
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_${{ inputs.fastdds-branch }}.repos"
-            if [ ! -f ${DEPENDS_REPOS_PATH} ]
-            then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/nightly_2.6.x.repos"
-            fi
-            META_PATH="./src/fastrtps/.github/workflows/config/nightly.meta"
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
-          # Either PR or manual
-          else
-            DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_${{ inputs.fastdds-branch }}.repos"
-            if [ ! -f ${DEPENDS_REPOS_PATH} ]
-            then
-              DEPENDS_REPOS_PATH="./src/fastrtps/.github/workflows/config/default_ci_2.6.x.repos"
-            fi
-            META_PATH="./src/fastrtps/.github/workflows/config/default_ci.meta"
-          fi
-
-          echo "Selected repos files: ${DEPENDS_REPOS_PATH}"
-          cat ${DEPENDS_REPOS_PATH}
-
-          echo "Selected metas files: ${META_PATH}"
-          cp ${META_PATH} ci.meta
-          cat ci.meta
-
-          # Create source dir and download the sources
-          vcs import src --input ${DEPENDS_REPOS_PATH} --skip-existing
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
       # TODO(eduponz): There is a warning in clang >= 16 regarding enum-constexpr-conversion:
       #   - Issue: https://github.com/boostorg/mpl/issues/69.
