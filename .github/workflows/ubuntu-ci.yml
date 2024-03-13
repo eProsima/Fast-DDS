@@ -1,0 +1,47 @@
+name: Fast-DDS Ubuntu CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+      cmake-args:
+        description: 'Extra arguments for cmake cli'
+        required: false
+        type: string
+      ctest-args:
+        description: 'Extra arguments for ctest cli'
+        required: false
+        type: string
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        type: string
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  ubuntu-ci:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os-image:
+          - 'ubuntu-20.04'
+
+    uses: ./.github/workflows/reusable-ubuntu-ci.yml
+    with:
+      os-image: ${{ matrix.os-image }}
+      label: ${{ inputs.label || 'ubuntu-ci' }}
+      colcon-args: ${{ inputs.colcon-args }}
+      cmake-args: ${{ inputs.cmake-args || "-DSECURITY=ON" }}
+      ctest-args: ${{ inputs.ctest-args || "-LE xfail" }}
+      fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '2.6.x' }}
