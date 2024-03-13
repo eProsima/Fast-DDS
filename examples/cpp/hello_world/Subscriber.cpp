@@ -38,7 +38,7 @@ std::atomic<bool> HelloWorldSubscriber::stop_(false);
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber(
-        const CLIParser::hello_world_config& config)
+        const CLIParser::subscriber_config& config)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)

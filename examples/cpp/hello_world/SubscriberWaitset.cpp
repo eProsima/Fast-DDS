@@ -40,7 +40,7 @@ std::atomic<bool> HelloWorldSubscriberWaitset::stop_(false);
 GuardCondition HelloWorldSubscriberWaitset::terminate_condition_;
 
 HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset(
-        const CLIParser::hello_world_config& config)
+        const CLIParser::subscriber_config& config)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)

@@ -36,7 +36,7 @@ std::atomic<bool> HelloWorldPublisher::stop_(false);
 std::condition_variable HelloWorldPublisher::matched_cv_;
 
 HelloWorldPublisher::HelloWorldPublisher(
-        const CLIParser::hello_world_config& config)
+        const CLIParser::publisher_config& config)
     : participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
