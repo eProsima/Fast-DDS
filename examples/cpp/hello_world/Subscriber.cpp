@@ -37,13 +37,18 @@ using namespace eprosima::fastdds::dds;
 std::atomic<bool> HelloWorldSubscriber::stop_(false);
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
-HelloWorldSubscriber::HelloWorldSubscriber()
+HelloWorldSubscriber::HelloWorldSubscriber(
+        const CLIParser::hello_world_config& config)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
+    // Get CLI options
+    samples_ = config.samples;
+    received_samples_ = 0;
+
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
@@ -119,16 +124,30 @@ void HelloWorldSubscriber::on_data_available(
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE && info.valid_data)
         {
+            received_samples_++;
             // Print Hello world message data
             std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                       << "' RECEIVED" << std::endl;
+            if (samples_ > 0 && (received_samples_ >= samples_))
+            {
+                stop();
+            }
         }
     }
 }
 
 void HelloWorldSubscriber::run()
 {
-    std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
+    if (samples_ == 0)
+    {
+        std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
+    }
+    else
+    {
+        std::cout << "Subscriber running until " << samples_ <<
+            " samples have been received. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
+    }
+
     signal(SIGINT, [](int /*signum*/)
             {
                 std::cout << "\nSIGINT received, stopping Subscriber execution." << std::endl;

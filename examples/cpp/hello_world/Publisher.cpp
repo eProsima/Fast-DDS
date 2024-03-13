@@ -33,8 +33,10 @@
 using namespace eprosima::fastdds::dds;
 
 std::atomic<bool> HelloWorldPublisher::stop_(false);
+std::condition_variable HelloWorldPublisher::matched_cv_;
 
-HelloWorldPublisher::HelloWorldPublisher()
+HelloWorldPublisher::HelloWorldPublisher(
+        const CLIParser::hello_world_config& config)
     : participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
@@ -44,6 +46,10 @@ HelloWorldPublisher::HelloWorldPublisher()
     // Set up the data type with initial values
     hello_.index(0);
     hello_.message("Hello world");
+    matched_ = 0;
+
+    // Get CLI options
+    samples_ = config.samples;
 
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
@@ -119,7 +125,7 @@ void HelloWorldPublisher::run()
 {
     std::thread pub_thread([&]
             {
-                while (!is_stopped())
+                while (!is_stopped() && (samples_ == 0 || hello_.index() < samples_))
                 {
                     if (publish())
                     {
@@ -129,7 +135,15 @@ void HelloWorldPublisher::run()
                     std::this_thread::sleep_for(std::chrono::milliseconds(period_));
                 }
             });
-    std::cout << "Publisher running. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
+    if (samples_ == 0)
+    {
+        std::cout << "Publisher running. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
+    }
+    else
+    {
+        std::cout << "Publisher running " << samples_ <<
+            " samples. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
+    }
     signal(SIGINT, [](int /*signum*/)
             {
                 std::cout << "\nSIGINT received, stopping Publisher execution." << std::endl;
@@ -162,10 +176,14 @@ bool HelloWorldPublisher::publish()
     matched_cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
-                return matched_ > 0;
+                return matched_ > 0 || is_stopped();
             });
-    hello_.index(hello_.index() + 1);
-    return writer_->write(&hello_);
+    if (!is_stopped())
+    {
+        hello_.index(hello_.index() + 1);
+        return writer_->write(&hello_);
+    }
+    return false;
 }
 
 bool HelloWorldPublisher::is_stopped()
@@ -176,4 +194,5 @@ bool HelloWorldPublisher::is_stopped()
 void HelloWorldPublisher::stop()
 {
     stop_.store(true);
+    matched_cv_.notify_one();
 }

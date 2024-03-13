@@ -39,13 +39,18 @@ using namespace eprosima::fastdds::dds;
 std::atomic<bool> HelloWorldSubscriberWaitset::stop_(false);
 GuardCondition HelloWorldSubscriberWaitset::terminate_condition_;
 
-HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset()
+HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset(
+        const CLIParser::hello_world_config& config)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
 {
+    // Get CLI options
+    samples_ = config.samples;
+    received_samples_ = 0;
+
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
@@ -145,9 +150,14 @@ void HelloWorldSubscriberWaitset::run()
                                 {
                                     if (info.instance_state == ALIVE_INSTANCE_STATE && info.valid_data)
                                     {
+                                        received_samples_++;
                                         // Print Hello world message data
                                         std::cout << "Message: '" << hello_.message() << "' with index: '"
                                                   << hello_.index() << "' RECEIVED" << std::endl;
+                                        if (samples_ > 0 && (received_samples_ >= samples_))
+                                        {
+                                            stop();
+                                        }
                                     }
                                 }
                             }
@@ -156,8 +166,16 @@ void HelloWorldSubscriberWaitset::run()
                 }
             });
 
-    std::cout << "Waitset Subscriber running. Please press Ctrl+C to stop the Waitset Subscriber at any time."
-              << std::endl;
+    if (samples_ == 0)
+    {
+        std::cout << "Waitset Subscriber running. Please press Ctrl+C to stop the Waitset Subscriber at any time."
+                  << std::endl;
+    }
+    else
+    {
+        std::cout << "Waitset Subscriber running until " << samples_ <<
+            " samples have been received. Please press Ctrl+C to stop the Waitset Subscriber at any time." << std::endl;
+    }
     signal(SIGINT, [](int /*signum*/)
             {
                 std::cout << "\nSIGINT received, stopping Waitset Subscriber execution." << std::endl;

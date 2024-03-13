@@ -26,6 +26,7 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include "cli_options.hpp"
 #include "HelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
@@ -34,7 +35,8 @@ class HelloWorldPublisher : public DataWriterListener
 {
 public:
 
-    HelloWorldPublisher();
+    HelloWorldPublisher(
+            const CLIParser::hello_world_config& config);
 
     ~HelloWorldPublisher() override;
 
@@ -73,9 +75,11 @@ private:
 
     int16_t matched_;
 
+    uint16_t samples_;
+
     std::mutex mutex_;
 
-    std::condition_variable matched_cv_;
+    static std::condition_variable matched_cv_;
 
     const uint8_t period_ = 100; // in ms
 };
