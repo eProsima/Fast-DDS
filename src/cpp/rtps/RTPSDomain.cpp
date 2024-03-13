@@ -247,6 +247,7 @@ bool RTPSDomain::removeRTPSParticipant(
                 RTPSDomainImpl::m_RTPSParticipantIDs[participant_id].reserved = false;
                 lock.unlock();
                 removeRTPSParticipant_nts(participant);
+                return true;
             }
         }
     }
