@@ -44,6 +44,6 @@ jobs:
     with:
       label: ${{ inputs.label || 'windows-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
-      cmake-args: ${{ inputs.cmake-args }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
       ctest-args: ${{ inputs.ctest-args }}
       fastdds_branch: ${{ inputs.fastdds_branch || github.ref || '2.12.x' }}

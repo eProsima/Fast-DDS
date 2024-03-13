@@ -16,7 +16,6 @@ names:
             - "-DNO_TLS=OFF"
             - "-DPERFORMANCE_TESTS=ON"
             - "-DPROFILING_TESTS=OFF"
-            - "-DSECURITY=ON"
             - "-DSHM_TRANSPORT_DEFAULT=ON"
             - "-DSTRICT_REALTIME=OFF"
             - "-DSYSTEM_TESTS=ON"
