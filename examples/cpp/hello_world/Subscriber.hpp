@@ -26,6 +26,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
+#include "cli_options.hpp"
 #include "HelloWorldPubSubTypes.h"
 
 using namespace eprosima::fastdds::dds;
@@ -34,7 +35,8 @@ class HelloWorldSubscriber : public DataReaderListener
 {
 public:
 
-    HelloWorldSubscriber();
+    HelloWorldSubscriber(
+            const CLIParser::hello_world_config& config);
 
     virtual ~HelloWorldSubscriber();
 
@@ -69,6 +71,10 @@ private:
     DataReader* reader_;
 
     TypeSupport type_;
+
+    uint16_t samples_;
+
+    uint16_t received_samples_;
 
     static std::atomic<bool> stop_;
 

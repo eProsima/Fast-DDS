@@ -12,7 +12,7 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world@FILE_EXTENSION@
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --waitset"
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --waitset --samples 10"
 
   subscriber-publisher:
     image: @DOCKER_IMAGE_NAME@
@@ -24,6 +24,6 @@ services:
       LD_LIBRARY_PATH: @PROJECT_BINARY_DIR@/src/cpp:@fastcdr_LIB_DIR@
       EXAMPLE_DIR: @PROJECT_BINARY_DIR@/examples/cpp/hello_world
       FASTDDS_DEFAULT_PROFILES_FILE: @PROJECT_BINARY_DIR@/examples/cpp/hello_world/hello_world_profile.xml
-    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber & $${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher"
+    command: @SHELL_EXECUTABLE@ -c "$${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ subscriber --samples 10 & $${EXAMPLE_DIR}/hello_world@FILE_EXTENSION@ publisher --samples 10"
     depends_on:
       - waitset-subscriber

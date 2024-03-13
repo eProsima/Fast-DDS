@@ -15,76 +15,111 @@
 #include <cstdlib>
 #include <iostream>
 
-struct subscriber_config
+#ifndef _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+#define _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
+
+class CLIParser
 {
-    bool use_waitset;
-};
+public:
 
-struct hello_world_config
-{
-    std::string entity;
-    subscriber_config sub_config;
-};
+    CLIParser() = delete;
 
-
-void print_help(
-        uint8_t return_code)
-{
-    std::cout << "Usage: hello_world <entity> [options]"            << std::endl;
-    std::cout << ""                                                 << std::endl;
-    std::cout << "Entities:"                                        << std::endl;
-    std::cout << "  publisher           Run a publisher entity"     << std::endl;
-    std::cout << "  subscriber          Run a subscriber entity"    << std::endl;
-    std::cout << "Common options:"                                  << std::endl;
-    std::cout << "  -h, --help          Print this help message"    << std::endl;
-    std::cout << "Subscriber options:"                              << std::endl;
-    std::cout << "  -w, --waitset       Use waitset read condition" << std::endl;
-    std::exit(return_code);
-}
-
-hello_world_config parse_cli_options (
-        int argc,
-        char* argv[])
-{
-    hello_world_config config;
-    config.entity = "";
-    config.sub_config.use_waitset = false;
-
-    for (int i = 1; i < argc; ++i)
+    struct subscriber_config
     {
-        std::string arg = argv[i];
-        if (arg == "-h" || arg == "--help")
+        bool use_waitset;
+    };
+
+    struct hello_world_config
+    {
+        std::string entity;
+        uint16_t samples;
+        subscriber_config sub_config;
+    };
+
+    static void print_help(
+            uint8_t return_code)
+    {
+        std::cout << "Usage: hello_world <entity> [options]"                    << std::endl;
+        std::cout << ""                                                         << std::endl;
+        std::cout << "Entities:"                                                << std::endl;
+        std::cout << "  publisher           Run a publisher entity"             << std::endl;
+        std::cout << "  subscriber          Run a subscriber entity"            << std::endl;
+        std::cout << "Common options:"                                          << std::endl;
+        std::cout << "  -h, --help          Print this help message"            << std::endl;
+        std::cout << "  -s, --samples       Amount of samples to be sent or"    << std::endl;
+        std::cout << "                      received (default: 0 [unlimited])"  << std::endl;
+        std::cout << "Subscriber options:"                                      << std::endl;
+        std::cout << "  -w, --waitset       Use waitset read condition"         << std::endl;
+        std::exit(return_code);
+    }
+
+    static hello_world_config parse_cli_options(
+            int argc,
+            char* argv[])
+    {
+        hello_world_config config;
+        config.entity = "";
+        config.samples = 0;
+        config.sub_config.use_waitset = false;
+
+        for (int i = 1; i < argc; ++i)
         {
-            print_help(EXIT_SUCCESS);
-        }
-        else if (arg == "publisher" || arg == "subscriber")
-        {
-            config.entity = arg;
-        }
-        else if (arg == "-w" || arg == "--waitset")
-        {
-            if (config.entity == "subscriber")
+            std::string arg = argv[i];
+            if (arg == "-h" || arg == "--help")
             {
-                config.sub_config.use_waitset = true;
+                print_help(EXIT_SUCCESS);
+            }
+            else if (arg == "publisher" || arg == "subscriber")
+            {
+                config.entity = arg;
+            }
+            else if (arg == "-s" || arg == "--samples")
+            {
+                if (i + 1 < argc)
+                {
+                    try
+                    {
+                        config.samples = std::stoi(argv[++i]);
+                    }
+                    catch (const std::invalid_argument& e)
+                    {
+                        EPROSIMA_LOG_ERROR(CLI_PARSE, "invalid sample argument for " + arg);
+                        print_help(EXIT_FAILURE);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSE, "missing argument for " + arg);
+                    print_help(EXIT_FAILURE);
+                }
+            }
+            else if (arg == "-w" || arg == "--waitset")
+            {
+                if (config.entity == "subscriber")
+                {
+                    config.sub_config.use_waitset = true;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(CLI_PARSE, "waitset can only be used with the subscriber entity");
+                    print_help(EXIT_FAILURE);
+                }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(CLI_PARSE, "waitset can only be used with the subscriber entity");
+                EPROSIMA_LOG_ERROR(CLI_PARSE, "unknown option " + arg);
                 print_help(EXIT_FAILURE);
             }
         }
-        else
+
+        if (config.entity == "")
         {
-            EPROSIMA_LOG_ERROR(CLI_PARSE, "unknown option " + arg);
+            EPROSIMA_LOG_ERROR(CLI_PARSE, "entity not specified");
             print_help(EXIT_FAILURE);
         }
-    }
 
-    if (config.entity == "")
-    {
-        EPROSIMA_LOG_ERROR(CLI_PARSE, "entity not specified");
-        print_help(EXIT_FAILURE);
+        return config;
     }
+};
 
-    return config;
-}
+#endif // _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
