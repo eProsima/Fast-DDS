@@ -42,6 +42,6 @@ jobs:
       os-image: ${{ matrix.os-image }}
       label: ${{ inputs.label || 'ubuntu-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
-      cmake-args: ${{ inputs.cmake-args || "-DSECURITY=ON" }}
-      ctest-args: ${{ inputs.ctest-args || "-LE xfail" }}
+      cmake-args: '-DSECURITY=ON ${{ inputs.cmake-args }}'
+      ctest-args: ${{ inputs.ctest-args || '-LE xfail' }}
       fastdds-branch: ${{ inputs.fastdds_branch || github.ref || '2.13.x' }}
