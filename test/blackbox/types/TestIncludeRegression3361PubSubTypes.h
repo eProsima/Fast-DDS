@@ -37,9 +37,10 @@
     Generated TestIncludeRegression3361 is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-namespace TestModule {
-typedef std::string MACHINEID;
-} // namespace TestModule
+namespace TestModule
+{
+    typedef std::string MACHINEID;
+}
 
 #endif // _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_PUBSUBTYPES_H_
 
