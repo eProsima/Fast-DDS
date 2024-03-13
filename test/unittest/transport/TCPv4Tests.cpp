@@ -463,6 +463,64 @@ TEST_F(TCPv4Tests, send_and_receive_between_allowed_interfaces_ports)
     }
 }
 
+static void GetIP4s(
+        std::vector<IPFinder::info_IP>& interfaces)
+{
+    IPFinder::getIPs(&interfaces, false);
+    auto new_end = remove_if(interfaces.begin(),
+                    interfaces.end(),
+                    [](IPFinder::info_IP ip)
+                    {
+                        return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;
+                    });
+    interfaces.erase(new_end, interfaces.end());
+    std::for_each(interfaces.begin(), interfaces.end(), [](IPFinder::info_IP& loc)
+            {
+                loc.locator.kind = LOCATOR_KIND_TCPv4;
+            });
+}
+
+TEST_F(TCPv4Tests, check_TCPv4_interface_whitelist_initialization)
+{
+    std::vector<IPFinder::info_IP> interfaces;
+
+    GetIP4s(interfaces);
+
+    std::vector<std::string> mock_interfaces;
+    for (auto& ip : interfaces)
+    {
+        mock_interfaces.push_back(ip.name);
+    }
+    // Add manually localhost to test adding multiple interfaces
+    mock_interfaces.push_back("127.0.0.1");
+
+    for (auto& ip : mock_interfaces)
+    {
+        descriptor.interfaceWhiteList.emplace_back(ip);
+    }
+    MockTCPv4Transport transportUnderTest(descriptor);
+    transportUnderTest.init();
+
+    // Check that the transport whitelist and the acceptors map is the same size as the mock_interfaces
+    ASSERT_EQ(transportUnderTest.get_interface_whitelist().size(), descriptor.interfaceWhiteList.size());
+    ASSERT_EQ(transportUnderTest.get_acceptors_map().size(), descriptor.interfaceWhiteList.size());
+
+    // Check that every interface is in the whitelist
+    auto check_whitelist = transportUnderTest.get_interface_whitelist();
+    for (auto& ip : mock_interfaces)
+    {
+        ASSERT_NE(std::find(check_whitelist.begin(), check_whitelist.end(), asio::ip::address_v4::from_string(
+                    ip)), check_whitelist.end());
+    }
+
+    // Check that every interface is in the acceptors map
+    for (const auto& test : transportUnderTest.get_acceptors_map())
+    {
+        ASSERT_NE(std::find(mock_interfaces.begin(), mock_interfaces.end(), IPLocator::toIPv4string(
+                    test.first)), mock_interfaces.end());
+    }
+}
+
 #if TLS_FOUND
 TEST_F(TCPv4Tests, send_and_receive_between_secure_ports_client_verifies)
 {
