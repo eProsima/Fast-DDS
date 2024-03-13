@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(AdvancedConfigurationExample)
 add_subdirectory(BasicConfigurationExample)
 add_subdirectory(Configurability)
 add_subdirectory(ContentFilteredTopicExample)

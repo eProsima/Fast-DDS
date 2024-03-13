@@ -15,3 +15,4 @@
 set(fastdds_FOUND TRUE)
 add_subdirectory(cpp/dds)
 add_subdirectory(cpp/rtps)
+add_subdirectory(cpp/configuration)
