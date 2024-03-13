@@ -36,7 +36,7 @@ class HelloWorldPublisher : public DataWriterListener
 public:
 
     HelloWorldPublisher(
-            const CLIParser::hello_world_config& config);
+            const CLIParser::publisher_config& config);
 
     ~HelloWorldPublisher() override;
 

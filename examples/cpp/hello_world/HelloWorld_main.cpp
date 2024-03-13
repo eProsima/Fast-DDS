@@ -40,7 +40,7 @@ int main(
     {
         try
         {
-            HelloWorldPublisher hello_world_publisher(config);
+            HelloWorldPublisher hello_world_publisher(config.pub_config);
             hello_world_publisher.run();
         }
         catch (const std::runtime_error& e)
@@ -55,7 +55,7 @@ int main(
         {
             try
             {
-                HelloWorldSubscriberWaitset hello_world_subscriber_waitset(config);
+                HelloWorldSubscriberWaitset hello_world_subscriber_waitset(config.sub_config);
                 hello_world_subscriber_waitset.run();
             }
             catch (const std::runtime_error& e)
@@ -68,7 +68,7 @@ int main(
         {
             try
             {
-                HelloWorldSubscriber hello_world_subscriber(config);
+                HelloWorldSubscriber hello_world_subscriber(config.sub_config);
                 hello_world_subscriber.run();
             }
             catch (const std::runtime_error& e)

@@ -24,15 +24,21 @@ public:
 
     CLIParser() = delete;
 
+    struct publisher_config
+    {
+        uint16_t samples;
+    };
+
     struct subscriber_config
     {
         bool use_waitset;
+        uint16_t samples;
     };
 
     struct hello_world_config
     {
         std::string entity;
-        uint16_t samples;
+        publisher_config pub_config;
         subscriber_config sub_config;
     };
 
@@ -59,7 +65,8 @@ public:
     {
         hello_world_config config;
         config.entity = "";
-        config.samples = 0;
+        config.pub_config.samples = 0;
+        config.sub_config.samples = 0;
         config.sub_config.use_waitset = false;
 
         for (int i = 1; i < argc; ++i)
@@ -79,7 +86,21 @@ public:
                 {
                     try
                     {
-                        config.samples = std::stoi(argv[++i]);
+                        uint16_t samples = std::stoi(argv[++i]);
+                        if (config.entity == "publisher")
+                        {
+                            config.pub_config.samples = samples;
+                        }
+                        else if (config.entity == "subscriber")
+                        {
+                            config.sub_config.samples = samples;
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(CLI_PARSE, "entity not specified for --sample argument");
+                            print_help(EXIT_FAILURE);
+
+                        }
                     }
                     catch (const std::invalid_argument& e)
                     {
