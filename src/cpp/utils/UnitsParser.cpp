@@ -64,7 +64,17 @@ uint32_t parse_value_and_units(
         {"GIB", 1024 * 1024 * 1024},
     };
 
-    uint64_t num = std::stoull(value);
+    uint64_t num = 0;
+    try
+    {
+        num = std::stoull(value);
+    }
+    catch (std::out_of_range&)
+    {
+        throw std::invalid_argument("Failed to parse value from string." \
+                      " The number is too large to be converted to bytes (Max: (2^32)-1 Bytes).");
+    }
+
     to_uppercase(units);
 
     std::regex pattern(R"(([kibmgKIBMG]{1,3})|(\d+))");
