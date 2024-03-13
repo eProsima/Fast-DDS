@@ -42,11 +42,9 @@ add_executable(hello_world ${HELLO_WORLD_SOURCES_CXX} ${HELLO_WORLD_SOURCES_CPP}
 target_compile_definitions(hello_world PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
 )
 target_link_libraries(hello_world fastdds fastcdr)
-install(TARGETS hello_world
-    RUNTIME DESTINATION examples/cpp/hello_world/${BIN_INSTALL_DIR})
-
 install(TARGETS hello_world
     RUNTIME DESTINATION examples/cpp/hello_world/${BIN_INSTALL_DIR})
 
