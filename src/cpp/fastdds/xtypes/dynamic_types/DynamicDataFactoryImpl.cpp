@@ -45,8 +45,7 @@ ReturnCode_t DynamicDataFactoryImpl::delete_instance() noexcept
 traits<DynamicData>::ref_type DynamicDataFactoryImpl::create_data(
         traits<DynamicType>::ref_type type) noexcept
 {
-    traits<DynamicDataImpl>::ref_type ret_value = std::make_shared<DynamicDataImpl>(type);
-    return ret_value;
+    return std::make_shared<DynamicDataImpl>(type);
 }
 
 ReturnCode_t DynamicDataFactoryImpl::delete_data(

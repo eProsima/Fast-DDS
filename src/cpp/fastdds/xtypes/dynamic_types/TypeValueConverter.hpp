@@ -15,6 +15,8 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_TYPEVALUECONVERTER_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_TYPEVALUECONVERTER_HPP
 
+#include <string>
+
 #include "DynamicTypeMemberImpl.hpp"
 #include "TypeForKind.hpp"
 
@@ -45,7 +47,7 @@ template <> inline converter::operator TypeForKind<TK_UINT8>()
 
 template <> inline converter::operator TypeForKind<TK_INT16>()
 {
-    return static_cast<int16_t>(std::stoi(x));
+    return static_cast<int16_t>(std::stol(x));
 }
 
 template <> inline converter::operator TypeForKind<TK_UINT16>()
@@ -55,7 +57,7 @@ template <> inline converter::operator TypeForKind<TK_UINT16>()
 
 template <> inline converter::operator TypeForKind<TK_INT32>()
 {
-    return std::stoi(x);
+    return std::stol(x);
 }
 
 template <> inline converter::operator TypeForKind<TK_UINT32>()
@@ -196,6 +198,11 @@ public:
                 }
                 break;
                 case TK_BYTE:
+                {
+                    TypeForKind<TK_BYTE> value = sto(str);
+                    static_cast<void>(value);
+                }
+                break;
                 case TK_UINT8:
                 {
                     TypeForKind<TK_UINT8> value = sto(str);

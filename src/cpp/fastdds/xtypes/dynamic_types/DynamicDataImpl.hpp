@@ -452,6 +452,12 @@ private:
             MemberId id) noexcept;
 
     /*!
+     * Auxiliary function for getting the initial number of elements for TK_ARRAY.
+     */
+    uint32_t calculate_array_max_elements(
+            TypeKind type_kind) noexcept;
+
+    /*!
      * Auxiliary function for checking the new discriminator value set by the user is correct.
      */
     template<typename T, typename std::enable_if<std::is_integral<T>::value, bool>::type = true>

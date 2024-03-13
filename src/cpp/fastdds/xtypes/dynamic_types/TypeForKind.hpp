@@ -15,7 +15,10 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_TYPEFORKIND_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_TYPEFORKIND_HPP
 
+#include <type_traits>
+
 #include <fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp>
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -120,7 +123,7 @@ struct TypeForKind_<TK_CHAR16>
 template <>
 struct TypeForKind_<TK_BYTE>
 {
-    using type = uint8_t;
+    using type = eprosima::fastrtps::rtps::octet;
     using sequence_type = ByteSeq;
 };
 

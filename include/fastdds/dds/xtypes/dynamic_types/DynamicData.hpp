@@ -45,7 +45,7 @@ public:
      * @param[inout] value Non-nil @ref MemberDescriptor reference where the information is copied.
      * @param[in] id Identifier of the member to be retrieved.
      * @retval RETCODE_OK when the copy was successful.
-     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
+     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or member identifier is not found.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t get_descriptor(
             traits<MemberDescriptor>::ref_type& value,
@@ -55,10 +55,6 @@ public:
      * Compares two @ref DynamicData, equality requires:
      *     - Their respective type definitions are equal
      *     - All contained values are equal and occur in the same order
-     *     - If the samples' type is an aggregated type, previous rule shall be amended as follows:
-     *          -# Members shall be compared without regard to their order.
-     *          -# One of the samples may omit a non-optional member that is present in the other if that
-     *             member takes its default value in the latter sample.
      * @param [in] other @ref DynamicData reference to compare to
      * @return `true` on equality
      */

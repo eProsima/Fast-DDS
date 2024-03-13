@@ -2483,6 +2483,10 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(eprosima::fastdds::dds::TK_ENUM);
     DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+    DynamicType::_ref_type created_type {builder->build()};
+    // Enumerator without literals are invalid.
+    ASSERT_FALSE(created_type);
+
     // Add three members to the enum.
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_UINT32));
@@ -2506,7 +2510,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
         EXPECT_NE(builder->add_member(member_descriptor), RETCODE_OK);
     }
 
-    DynamicType::_ref_type created_type {builder->build()};
+    created_type = builder->build();
     ASSERT_TRUE(created_type);
 
     ASSERT_EQ(3, created_type->get_member_count());
@@ -2520,12 +2524,22 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_index(member, 2));
     ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
     ASSERT_STREQ("SECOND", member->get_name());
+    ASSERT_EQ(RETCODE_OK, created_type->get_member_by_name(member, "DEFAULT"));
+    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
+    ASSERT_STREQ("DEFAULT", member->get_name());
+    ASSERT_EQ(RETCODE_OK, created_type->get_member_by_name(member, "FIRST"));
+    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
+    ASSERT_STREQ("FIRST", member->get_name());
+    ASSERT_EQ(RETCODE_OK, created_type->get_member_by_name(member, "SECOND"));
+    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
+    ASSERT_STREQ("SECOND", member->get_name());
 
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("DEFAULT"));
     ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     // Test getters and setters.
@@ -3519,8 +3533,10 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(3, data->get_member_id_at_index(3));
     ASSERT_EQ(5, data->get_member_id_at_index(4));
 
-    // Testing getters and setters.
+    // Testing get_item_count.
+    ASSERT_EQ(0, data->get_item_count());
 
+    // Testing getters and setters.
     const uint8_t bitmask_value_set = 0x1;
     ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, bitmask_value_set), RETCODE_OK);
 
@@ -3565,7 +3581,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_FALSE(data->loan_value(0));
 
     // Testing get_item_count.
-    ASSERT_EQ(limit, data->get_item_count());
+    ASSERT_EQ(3, data->get_item_count());
 
     // XCDRv1
     {

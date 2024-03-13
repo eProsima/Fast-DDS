@@ -600,9 +600,23 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
 
     if (type_descriptor_.is_consistent())
     {
+        bool preconditions {true};
+
         // In case of BITSET, verify the TypeDescriptor's bounds size is same as number of members.
-        if (TK_BITSET != type_descriptor_.kind() ||
-                type_descriptor_.bound().size() == members_.size())
+        preconditions &= TK_BITSET != type_descriptor_.kind() || type_descriptor_.bound().size() == members_.size();
+        if (!preconditions)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected more members in BITSET according to the size of bounds.");
+        }
+
+        // In case of ENUM, it must have at least one literal
+        preconditions &= TK_ENUM != type_descriptor_.kind() || 0 < members_.size();
+        if (!preconditions)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected at least one member in ENUM.");
+        }
+
+        if (preconditions)
         {
             ret_val = std::make_shared<DynamicTypeImpl>(type_descriptor_);
             for (auto& annotation : annotation_)
@@ -615,10 +629,6 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
             ret_val->members_ = members_;
             ret_val->default_discriminator_value_ = default_discriminator_value_;
             ret_val->default_union_member_ = default_union_member_;
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected more members in BITSET according to the size of bounds.");
         }
     }
 
