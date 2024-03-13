@@ -120,6 +120,7 @@ public:
 
         return config;
     }
+
 };
 
 #endif // _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
