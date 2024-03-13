@@ -76,7 +76,8 @@ void RTPSDomain::stopAll()
     while (m_RTPSParticipants.size() > 0)
     {
         RTPSDomain::t_p_RTPSParticipant participant = m_RTPSParticipants.back();
-        RTPSDomainImpl::m_RTPSParticipantIDs.erase(RTPSDomainImpl::m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+        RTPSDomainImpl::m_RTPSParticipantIDs.erase(RTPSDomainImpl::m_RTPSParticipantIDs.find(participant.second->
+                        getRTPSParticipantID()));
         m_RTPSParticipants.pop_back();
 
         lock.unlock();
