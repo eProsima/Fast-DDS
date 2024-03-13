@@ -55,6 +55,7 @@ uint32_t parse_value_and_units(
         std::string units)
 {
     static const std::map<std::string, std::uint32_t> magnitudes = {
+        {"", 1},
         {"B", 1},
         {"KB", 1000},
         {"MB", 1000 * 1000},
@@ -77,13 +78,16 @@ uint32_t parse_value_and_units(
 
     to_uppercase(units);
 
-    std::regex pattern(R"(([bB]{1})|([kibmgKIBMG]{2,3})|(\d+))");
-    if (!std::regex_match(units, pattern))
+    unsigned int magnitude = 0;
+    try
+    {
+        magnitude = magnitudes.at(units);
+    }
+    catch (std::out_of_range&)
     {
         throw std::invalid_argument(
                   "The units are not in the expected format. Use: {B, KB, MG, GB, KIB, MIB, GIB}.");
     }
-    const auto magnitude = magnitudes.at(units);
 
     // Check whether the product of number * magnitude overflows
     if (num > std::numeric_limits<std::uint32_t>::max() / magnitude)

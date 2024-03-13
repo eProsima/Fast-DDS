@@ -150,14 +150,14 @@ static void set_builtin_transports_from_env_var(
                 if (std::regex_search(env_value, mr, msg_size_regex, std::regex_constants::match_not_null))
                 {
                     std::string value = mr[2];
-                    std::string unit = (mr[3] == "") ? "B" : mr[3].str();
+                    std::string unit = mr[3].str();
                     options.maxMessageSize = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
                 }
                 // Sockets_size parser
                 if (std::regex_search(env_value, mr, sockets_size_regex, std::regex_constants::match_not_null))
                 {
                     std::string value = mr[2];
-                    std::string unit = (mr[3] == "") ? "B" : mr[3].str();
+                    std::string unit = mr[3].str();
                     options.sockets_buffer_size = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
                 }
                 // Non-blocking-send parser
