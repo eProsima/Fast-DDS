@@ -24,6 +24,7 @@
 #include <regex>
 #include <string>
 #include <thread>
+#include <unordered_map>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -61,7 +62,7 @@ static void guid_prefix_create(
 std::mutex RTPSDomain::m_mutex;
 std::atomic<uint32_t> RTPSDomain::m_maxRTPSParticipantID(1);
 std::vector<RTPSDomain::t_p_RTPSParticipant> RTPSDomain::m_RTPSParticipants;
-std::set<uint32_t> RTPSDomain::m_RTPSParticipantIDs;
+std::unordered_map<uint32_t, RTPSDomainImpl::ParticipantIDState> RTPSDomainImpl::m_RTPSParticipantIDs;
 FileWatchHandle RTPSDomainImpl::file_watch_handle_;
 
 void RTPSDomain::stopAll()
@@ -75,7 +76,7 @@ void RTPSDomain::stopAll()
     while (m_RTPSParticipants.size() > 0)
     {
         RTPSDomain::t_p_RTPSParticipant participant = m_RTPSParticipants.back();
-        m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+        RTPSDomainImpl::m_RTPSParticipantIDs.erase(RTPSDomainImpl::m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
         m_RTPSParticipants.pop_back();
 
         lock.unlock();
@@ -129,31 +130,9 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     uint32_t ID;
-    if (!instance->prepare_participant_id(PParam.participantID, ID))
+    if (!RTPSDomainImpl::prepare_participant_id(PParam.participantID, ID))
     {
-<<<<<<< HEAD
-        std::lock_guard<std::mutex> guard(m_mutex);
-
-        if (PParam.participantID < 0)
-        {
-            ID = getNewId();
-            while (m_RTPSParticipantIDs.insert(ID).second == false)
-            {
-                ID = getNewId();
-            }
-        }
-        else
-        {
-            ID = PParam.participantID;
-            if (m_RTPSParticipantIDs.insert(ID).second == false)
-            {
-                logError(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
-                return nullptr;
-            }
-        }
-=======
         return nullptr;
->>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
     }
 
     if (!PParam.defaultUnicastLocatorList.isValid())
@@ -171,21 +150,7 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
-<<<<<<< HEAD
-    guid_prefix_create(ID, guidP);
-=======
-    guid_prefix_create(instance->get_id_for_prefix(ID), guidP);
-    if (!PParam.builtin.metatraffic_external_unicast_locators.empty())
-    {
-        fastdds::rtps::LocatorList locators;
-        fastrtps::rtps::IPFinder::getIP4Address(&locators);
-        fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(locators,
-                PParam.builtin.metatraffic_external_unicast_locators);
-        uint16_t host_id = Host::compute_id(locators);
-        guidP.value[2] = static_cast<octet>(host_id & 0xFF);
-        guidP.value[3] = static_cast<octet>((host_id >> 8) & 0xFF);
-    }
->>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
+    guid_prefix_create(RTPSDomainImpl::get_id_for_prefix(ID), guidP);
 
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = nullptr;
@@ -241,15 +206,10 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     {
-<<<<<<< HEAD
         std::lock_guard<std::mutex> guard(m_mutex);
         m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
-=======
-        std::lock_guard<std::mutex> guard(instance->m_mutex);
-        instance->m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
-        instance->m_RTPSParticipantIDs[ID].used = true;
-        instance->m_RTPSParticipantIDs[ID].reserved = true;
->>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
+        RTPSDomainImpl::m_RTPSParticipantIDs[ID].used = true;
+        RTPSDomainImpl::m_RTPSParticipantIDs[ID].reserved = true;
     }
 
     // Check the environment file in case it was modified during participant creation leading to a missed callback.
@@ -280,20 +240,13 @@ bool RTPSDomain::removeRTPSParticipant(
         {
             if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
             {
-<<<<<<< HEAD
                 RTPSDomain::t_p_RTPSParticipant participant = *it;
                 m_RTPSParticipants.erase(it);
-                m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
-=======
-                RTPSDomainImpl::t_p_RTPSParticipant participant = *it;
-                instance->m_RTPSParticipants.erase(it);
                 uint32_t participant_id = participant.second->getRTPSParticipantID();
-                instance->m_RTPSParticipantIDs[participant_id].used = false;
-                instance->m_RTPSParticipantIDs[participant_id].reserved = false;
->>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
+                RTPSDomainImpl::m_RTPSParticipantIDs[participant_id].used = false;
+                RTPSDomainImpl::m_RTPSParticipantIDs[participant_id].reserved = false;
                 lock.unlock();
                 removeRTPSParticipant_nts(participant);
-                return true;
             }
         }
     }
@@ -581,8 +534,6 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     return nullptr;
 }
 
-<<<<<<< HEAD
-=======
 uint32_t RTPSDomainImpl::getNewId()
 {
     // Get the smallest available participant ID.
@@ -604,7 +555,7 @@ bool RTPSDomainImpl::prepare_participant_id(
         int32_t input_id,
         uint32_t& participant_id)
 {
-    std::lock_guard<std::mutex> guard(m_mutex);
+    std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
     if (input_id < 0)
     {
         participant_id = getNewId();
@@ -614,7 +565,7 @@ bool RTPSDomainImpl::prepare_participant_id(
         participant_id = input_id;
         if (m_RTPSParticipantIDs[participant_id].used == true)
         {
-            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+            logError(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
             return false;
         }
     }
@@ -627,7 +578,7 @@ uint32_t RTPSDomainImpl::get_id_for_prefix(
     uint32_t ret = participant_id;
     if (ret < 0x10000)
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
+        std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
         ret |= m_RTPSParticipantIDs[participant_id].counter;
         m_RTPSParticipantIDs[participant_id].counter += 0x10000;
     }
@@ -635,24 +586,14 @@ uint32_t RTPSDomainImpl::get_id_for_prefix(
     return ret;
 }
 
->>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
 void RTPSDomainImpl::create_participant_guid(
         int32_t& participant_id,
         GUID_t& guid)
 {
     if (participant_id < 0)
     {
-<<<<<<< HEAD
         std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
-        do
-        {
-            participant_id = RTPSDomain::getNewId();
-        } while (RTPSDomain::m_RTPSParticipantIDs.find(participant_id) != RTPSDomain::m_RTPSParticipantIDs.end());
-=======
-        auto instance = get_instance();
-        std::lock_guard<std::mutex> guard(instance->m_mutex);
-        participant_id = instance->getNewId();
->>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
+        participant_id = getNewId();
     }
 
     guid_prefix_create(participant_id, guid.guidPrefix);
