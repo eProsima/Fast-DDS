@@ -26,9 +26,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-const char* const CONST_TRUE = "true";
-const char* const CONST_FALSE = "false";
-
 constexpr MemberId MEMBER_ID_INVALID {0x0FFFFFFF};
 
 class DynamicData;

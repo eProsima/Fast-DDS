@@ -15,6 +15,8 @@
 /**
  * @file DDSFilterExpression.cpp
  */
+#include "DDSFilterExpression.hpp"
+
 #include <map>
 #include <memory>
 #include <string>
@@ -24,11 +26,11 @@
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/exceptions/Exception.h>
 
+#include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 
-#include "DDSFilterCondition.hpp"
-#include "DDSFilterExpression.hpp"
+#include "DDSFilterConditionState.hpp"
 #include "DDSFilterField.hpp"
 #include "DDSFilterParameter.hpp"
 

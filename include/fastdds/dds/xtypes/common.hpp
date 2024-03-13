@@ -20,7 +20,7 @@
 #ifndef _FASTDDS_DDS_XTYPES_COMMON_HPP_
 #define _FASTDDS_DDS_XTYPES_COMMON_HPP_
 
-#include <cinttypes>
+#include <cstdint>
 
 namespace eprosima {
 namespace fastdds {
@@ -72,12 +72,6 @@ constexpr const char* int8_type_name = "_int8_t";
 constexpr const char* uint8_type_name = "_uint8_t";
 constexpr const char* char8_type_name = "_char";
 constexpr const char* char16_type_name = "_wchar_t";
-constexpr const char* string8_type_name = "_string";
-constexpr const char* string16_type_name = "_wstring";
-constexpr const char* sequence_type_name = "_sequence";
-constexpr const char* array_type_name = "_array";
-constexpr const char* map_type_name = "_map";
-constexpr const char* bitmask_type_name = "_bitmask";
 
 // Builtin annotation names
 constexpr const char* id_annotation_name = "id";

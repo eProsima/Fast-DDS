@@ -104,223 +104,31 @@ bool AnnotationDescriptorImpl::is_consistent() noexcept
 
     for (const auto& param : value_)
     {
-        //{{{ Check the annotation name is valid because it exits in the type.
-        const ObjectName* ann_value {nullptr};
-        DynamicTypeImpl::_ref_type ann_type;
+        //{{{ Check the annotation parameter name is valid because it exits in the annotation type descriptor.
+        const ObjectName* ann_param_value {nullptr};
+        traits<DynamicTypeImpl>::ref_type ann_param_type;
         for (auto member{type_impl->get_all_members_by_index().cbegin()};
-                !ann_value && member != type_impl->get_all_members_by_index().cend();
+                !ann_param_value && member != type_impl->get_all_members_by_index().cend();
                 ++member)
         {
             if (0 == member->get()->get_name().compare(param.first))
             {
-                ann_value = &param.second;
-                ann_type = traits<DynamicType>::narrow<DynamicTypeImpl>(member->get()->get_descriptor().type());
+                ann_param_value = &param.second;
+                ann_param_type = traits<DynamicType>::narrow<DynamicTypeImpl>(member->get()->get_descriptor().type());
             }
         }
 
-        if (!ann_value)
+        if (!ann_param_value)
         {
             return false;
         }
         //}}}
 
         //{{{ Check the parameter value is convertible to its type.
-        switch (ann_type->get_kind())
+        if (!TypeValueConverter::is_string_consistent(ann_param_type->get_kind(),
+                ann_param_type->get_all_members_by_index(), ann_param_value->to_string()))
         {
-            case TK_INT32:
-            {
-                TypeForKind<TK_INT32> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_UINT32:
-            {
-                TypeForKind<TK_UINT32> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_INT8:
-            {
-                TypeForKind<TK_INT8> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_INT16:
-            {
-                TypeForKind<TK_INT16> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_UINT16:
-            {
-                TypeForKind<TK_UINT16> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_INT64:
-            {
-                TypeForKind<TK_INT64> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_UINT64:
-            {
-                TypeForKind<TK_UINT64> value(0);
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_FLOAT32:
-            {
-                TypeForKind<TK_FLOAT32> value {0.0f};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_FLOAT64:
-            {
-                TypeForKind<TK_FLOAT64> value {0.0f};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_FLOAT128:
-            {
-                TypeForKind<TK_FLOAT128> value {0.0f};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_CHAR8:
-            {
-                if (0 == ann_value->size())
-                {
-                    return false;
-                }
-
-            }
-            break;
-            case TK_CHAR16:
-            {
-                try
-                {
-                    std::string str = ann_value->to_string();
-                    std::wstring temp = std::wstring(str.begin(), str.end());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-
-            }
-            break;
-            case TK_BOOLEAN:
-            {
-                int value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = stoi(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            case TK_BYTE:
-            case TK_UINT8:
-            {
-                TypeForKind<TK_BYTE> value {0};
-                static_cast<void>(value);
-                try
-                {
-                    value = TypeValueConverter::sto(ann_value->to_string());
-                }
-                catch (...)
-                {
-                    return false;
-                }
-            }
-            break;
-            default:
-                break;
+            return false;
         }
         //}}}
     }

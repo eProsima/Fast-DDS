@@ -15,11 +15,15 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_TYPEVALUECONVERTER_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_TYPEVALUECONVERTER_HPP
 
+#include "DynamicTypeMemberImpl.hpp"
 #include "TypeForKind.hpp"
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+const char* const CONST_TRUE = "true";
+const char* const CONST_FALSE = "false";
 
 namespace detail {
 
@@ -98,6 +102,7 @@ public:
 
     static bool is_string_consistent(
             TypeKind kind,
+            const std::vector<traits<DynamicTypeMemberImpl>::ref_type>& members,
             const std::string& str)
     {
 
@@ -148,7 +153,6 @@ public:
                 }
                 break;
                 case TK_UINT64:
-                case TK_BITMASK:
                 {
                     TypeForKind<TK_UINT64> value = sto(str);
                     static_cast<void>(value);
@@ -183,8 +187,12 @@ public:
                 break;
                 case TK_BOOLEAN:
                 {
-                    int32_t value = sto(str);
-                    static_cast<void>(value);
+                    if (0 != str.compare(CONST_TRUE) &&
+                            0 != str.compare(CONST_FALSE))
+                    {
+                        int32_t value = sto(str);
+                        static_cast<void>(value);
+                    }
                 }
                 break;
                 case TK_BYTE:
@@ -196,6 +204,17 @@ public:
                 break;
                 case TK_STRING8:
                 case TK_STRING16:
+                    break;
+                case TK_ENUM:
+                    ret_value = false;
+                    for (auto& member : members)
+                    {
+                        if (0 == str.compare(member->get_name().to_string()))
+                        {
+                            ret_value = true;
+                            break;
+                        }
+                    }
                     break;
                 default:
                     ret_value = false;

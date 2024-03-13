@@ -122,6 +122,7 @@ void HelloWorldSubscriber::SubListener::on_data_available(
             {
                 const DynamicType::_ref_type type {subscriber_->readers_[reader]};
                 this->n_samples++;
+                std::cout << "Received data of type " << type->get_name() << std::endl;
             }
         }
     }

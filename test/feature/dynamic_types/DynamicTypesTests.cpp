@@ -243,7 +243,6 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     MemberDescriptor::_ref_type md = traits<MemberDescriptor>::make_shared();
     MemberDescriptor::_ref_type md1 = traits<MemberDescriptor>::make_shared();
     md1->id(3);
-    md1->index(0);
     md1->name("int32");
     md1->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
 
@@ -254,43 +253,52 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     EXPECT_EQ(md->index(), 0u);
     EXPECT_EQ(md->name(), md1->name());
     EXPECT_EQ(md->type(), md1->type());
-    EXPECT_TRUE(md->equals(md1));
 
     // • checking MemberDescriptor comparison and construction
     MemberDescriptor::_ref_type md2 = traits<MemberDescriptor>::make_shared();
     md2->id(1);
-    md2->index(1);
     md2->name("int64");
     md2->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64));
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member(member, 1));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
     EXPECT_TRUE(md->is_consistent());
     EXPECT_EQ(md->index(), 1u);
-    EXPECT_TRUE(md->equals(md2));
+    EXPECT_EQ(md->name(), md2->name());
+    EXPECT_EQ(md->type(), md2->type());
 
     EXPECT_FALSE(md1->equals(md2));
 
     //    + checking copy_from
     EXPECT_EQ(RETCODE_OK, md->copy_from(md1));
-    EXPECT_TRUE(md->equals(md1));
+    EXPECT_EQ(md->index(), md1->index());
+    EXPECT_EQ(md->name(), md1->name());
+    EXPECT_EQ(md->type(), md1->type());
 
     // • checking by index retrieval
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member_by_index(member, 0));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md1));
+    EXPECT_EQ(md->index(), 0u);
+    EXPECT_EQ(md->name(), md1->name());
+    EXPECT_EQ(md->type(), md1->type());
 
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member_by_index(member, 1));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md2));
+    EXPECT_EQ(md->index(), 1u);
+    EXPECT_EQ(md->name(), md2->name());
+    EXPECT_EQ(md->type(), md2->type());
 
     // • checking by name retrieval
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member_by_name(member, "int32"));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md1));
+    EXPECT_EQ(md->index(), 0u);
+    EXPECT_EQ(md->name(), md1->name());
+    EXPECT_EQ(md->type(), md1->type());
 
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member_by_name(member, "int64"));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md2));
+    EXPECT_EQ(md->index(), 1u);
+    EXPECT_EQ(md->name(), md2->name());
+    EXPECT_EQ(md->type(), md2->type());
 
     // • checking map indexes retrieval
     //    + indexing by id
@@ -301,12 +309,16 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     auto dm3 = members_by_id[3];
     ASSERT_TRUE(dm3);
     ASSERT_EQ(RETCODE_OK, dm3->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md1));
+    EXPECT_EQ(md->index(), 0u);
+    EXPECT_EQ(md->name(), md1->name());
+    EXPECT_EQ(md->type(), md1->type());
 
     auto dm1 = members_by_id[1];
     ASSERT_TRUE(dm1);
     ASSERT_EQ(RETCODE_OK, dm1->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md2));
+    EXPECT_EQ(md->index(), 1u);
+    EXPECT_EQ(md->name(), md2->name());
+    EXPECT_EQ(md->type(), md2->type());
 
     //    + indexing by name
     DynamicTypeMembersByName members_by_name;
@@ -315,36 +327,43 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
 
     dm3 = members_by_name["int32"];
     ASSERT_EQ(RETCODE_OK, dm3->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md1));
+    EXPECT_EQ(md->index(), 0u);
+    EXPECT_EQ(md->name(), md1->name());
+    EXPECT_EQ(md->type(), md1->type());
 
     dm1 = members_by_name["int64"];
     ASSERT_EQ(RETCODE_OK, dm1->get_descriptor(md));
-    EXPECT_TRUE(md->equals(md2));
+    EXPECT_EQ(md->index(), 1u);
+    EXPECT_EQ(md->name(), md2->name());
+    EXPECT_EQ(md->type(), md2->type());
 
     // • checking indexes work according with OMG standard 1.3 section 7.5.2.7.6
     md = traits<MemberDescriptor>::make_shared();
     md->id(7);
-    md->index(1);
     md->name("bool");
     md->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_BOOLEAN));
     ASSERT_EQ(RETCODE_OK, struct_type_builder->add_member(md));
 
     struct_type_builder->get_all_members(members_by_id);
     ASSERT_EQ(3, members_by_id.size());
-    md2->index(2);    // new expected position of the last element
 
     MemberDescriptor::_ref_type tmp = traits<MemberDescriptor>::make_shared();
     auto dm = members_by_id[3];
     ASSERT_EQ(RETCODE_OK, dm->get_descriptor(tmp));
-    EXPECT_TRUE(tmp->equals(md1));
+    EXPECT_EQ(tmp->index(), 0u);
+    EXPECT_EQ(tmp->name(), md1->name());
+    EXPECT_EQ(tmp->type(), md1->type());
 
     dm = members_by_id[7];
     ASSERT_EQ(RETCODE_OK, dm->get_descriptor(tmp));
-    EXPECT_TRUE(tmp->equals(md));
+    EXPECT_EQ(tmp->name(), md->name());
+    EXPECT_EQ(tmp->type(), md->type());
 
     dm = members_by_id[1];
     ASSERT_EQ(RETCODE_OK, dm->get_descriptor(tmp));
-    EXPECT_TRUE(tmp->equals(md2));
+    EXPECT_EQ(tmp->index(), 1u);
+    EXPECT_EQ(tmp->name(), md2->name());
+    EXPECT_EQ(tmp->type(), md2->type());
 
 
     // • checking adding duplicates

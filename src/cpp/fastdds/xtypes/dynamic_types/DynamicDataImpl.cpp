@@ -528,9 +528,18 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     else if (TK_MAP == type_kind)
     {
         assert(enclosing_type_->get_descriptor().key_element_type());
-        TypeKind key_kind = get_enclosing_typekind(
-            traits<DynamicType>::narrow<DynamicTypeImpl>(enclosing_type_->get_descriptor().key_element_type()));
-        if (TypeValueConverter::is_string_consistent(key_kind, name.to_string()))
+        auto key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
+            enclosing_type_->get_descriptor().key_element_type());
+        //{{{ If aliases, get enclosed type.
+        if (TK_ALIAS == key_type->get_kind()) // If alias, get enclosing type.
+        {
+            do {
+                key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(key_type->get_descriptor().base_type());
+            } while (TK_ALIAS == key_type->get_kind());
+        }
+        //}}}
+        if (TypeValueConverter::is_string_consistent(key_type->get_kind(), key_type->get_all_members_by_index(),
+                name.to_string()))
         {
             auto it = key_to_id_.find(name.to_string());
 

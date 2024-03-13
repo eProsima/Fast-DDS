@@ -100,6 +100,8 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
+    auto type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
+
     // Only aggregated types must use the ID value.
     if ((MEMBER_ID_INVALID == id_ && (TK_ANNOTATION == parent_kind_ ||
             TK_BITMASK == parent_kind_ ||
@@ -139,7 +141,9 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
-    if (!default_value_.empty() && !TypeValueConverter::is_string_consistent(type_->get_kind(), default_value_))
+    if (!default_value_.empty() &&
+            !TypeValueConverter::is_string_consistent(type->get_kind(), type->get_all_members_by_index(),
+            default_value_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Default value is not consistent");
         return false;
@@ -150,8 +154,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
             TK_ENUM == parent_kind_)
     {
 
-        TypeKind kind = type_->get_kind();
-        auto type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_);
+        TypeKind kind = type->get_kind();
 
         if (TK_ALIAS == kind)         // If alias, get enclosing type.
         {
@@ -189,7 +192,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
 
 
     // Check bitmask enclosing type.
-    if (TK_BITMASK ==  parent_kind_ && TK_BOOLEAN != type_->get_kind())
+    if (TK_BITMASK ==  parent_kind_ && TK_BOOLEAN != type->get_kind())
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an BITMASK and the enclosing type is not BOOLEAN");
         return false;

@@ -24,14 +24,14 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/log/LogResources.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/utils/QosConverters.hpp>
 
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/log/LogResources.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>

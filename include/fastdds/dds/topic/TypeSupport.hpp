@@ -19,15 +19,15 @@
 #ifndef _FASTDDS_TYPE_SUPPORT_HPP_
 #define _FASTDDS_TYPE_SUPPORT_HPP_
 
+#include <string>
+#include <functional>
+#include <memory>
+
 #include <fastdds/dds/common/InstanceHandle.hpp>
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 #include <fastdds/fastdds_dll.hpp>
-
-#include <string>
-#include <functional>
-#include <memory>
 
 namespace eprosima {
 namespace fastdds {
@@ -99,6 +99,12 @@ public:
     {
     }
 
+    /*!
+     * @brief TypeSupport constructor that receives a DynamicPubSubType.
+     * It will copy the instance so the user will keep the ownership of his object.
+     *
+     * @param ptr
+     */
     FASTDDS_EXPORTED_API TypeSupport(
             DynamicPubSubType ptr)
         : std::shared_ptr<TopicDataType>(std::make_shared<DynamicPubSubType>(std::move(ptr)))
