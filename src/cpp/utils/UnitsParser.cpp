@@ -78,7 +78,7 @@ uint32_t parse_value_and_units(
 
     to_uppercase(units);
 
-    unsigned int magnitude = 0;
+    uint32_t magnitude = 0;
     try
     {
         magnitude = magnitudes.at(units);
