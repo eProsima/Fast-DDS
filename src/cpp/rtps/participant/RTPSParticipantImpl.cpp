@@ -2760,7 +2760,7 @@ bool RTPSParticipantImpl::ignore_reader(
     return false;
 }
 
-std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipantImpl::netmask_filter_info() const
+std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipantImpl::get_netmask_filter_info() const
 {
     return m_network_Factory.netmask_filter_info();
 }

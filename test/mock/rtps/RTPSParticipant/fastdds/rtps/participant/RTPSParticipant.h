@@ -219,7 +219,7 @@ public:
                 const ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
-    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info() const
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const
     {
         return {};
     }

@@ -212,10 +212,10 @@ DataReader* SubscriberImpl::create_datareader(
     }
 
     // Check netmask filtering preconditions
-    if (nullptr != rtps_participant())
+    if (nullptr != rtps_participant_)
     {
         std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info =
-                rtps_participant()->netmask_filter_info();
+                rtps_participant_->get_netmask_filter_info();
         std::string error_msg;
         if (!fastdds::rtps::network::netmask_filter::check_preconditions(netmask_filter_info,
                 qos.endpoint().ignore_non_matching_locators,

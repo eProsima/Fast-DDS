@@ -196,9 +196,9 @@ bool RTPSParticipant::ignore_reader(
     return false;
 }
 
-std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipant::netmask_filter_info() const
+std::vector<fastdds::rtps::TransportNetmaskFilterInfo> RTPSParticipant::get_netmask_filter_info() const
 {
-    return mp_impl->netmask_filter_info();
+    return mp_impl->get_netmask_filter_info();
 }
 
 #if HAVE_SECURITY
