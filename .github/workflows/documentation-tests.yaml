@@ -8,14 +8,6 @@ on:
         type: string
         default: '2.6.x'
 
-  push:
-    branches:
-      - '2.6.x'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
-
   pull_request:
     branches:
       - '2.6.x'
