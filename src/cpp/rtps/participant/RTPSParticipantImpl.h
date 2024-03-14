@@ -1102,7 +1102,9 @@ public:
             const GUID_t& reader_guid);
 
     /**
-     * Returns registered transports' netmask filter information (transport's netmask filter kind and allowlist).
+     * @brief Returns registered transports' netmask filter information (transport's netmask filter kind and allowlist).
+     *
+     * @return A vector with all registered transports' netmask filter information.
      */
     std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const;
 
