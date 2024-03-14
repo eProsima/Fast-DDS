@@ -703,7 +703,7 @@ XMLP_ret XMLParser::parseXMLAllowlist(
                 <xs:element name="interface" minOccurs="0" maxOccurs="unbounded">
                     <xs:complexType>
                         <xs:attribute name="name" type="string" use="required"/>
-                        <xs:attribute name="netmask_filter" type="netmaskFilterType" use="required"/>
+                        <xs:attribute name="netmask_filter" type="netmaskFilterType" use="optional"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
@@ -720,10 +720,8 @@ XMLP_ret XMLParser::parseXMLAllowlist(
         name = p_aux0->Name();
         if (strcmp(name, INTERFACE_NAME) == 0)
         {
-            std::string iface_name;
-            fastdds::rtps::NetmaskFilterKind netmask_filter;
-
             // Parse interface name (device/ip)
+            std::string iface_name;
             auto iface_name_attr = p_aux0->FindAttribute(NAME_ATTR_NAME);
             if (nullptr != iface_name_attr)
             {
@@ -743,6 +741,7 @@ XMLP_ret XMLParser::parseXMLAllowlist(
             }
 
             // Parse netmask filter
+            fastdds::rtps::NetmaskFilterKind netmask_filter{fastdds::rtps::NetmaskFilterKind::AUTO};
             auto netmask_filter_attr = p_aux0->FindAttribute(NETMASK_FILTER_ATTR_NAME);
             if (nullptr != netmask_filter_attr)
             {
@@ -758,12 +757,6 @@ XMLP_ret XMLParser::parseXMLAllowlist(
                             e.what());
                     return XMLP_ret::XML_ERROR;
                 }
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(XMLPARSER,
-                        "Failed to parse 'allowlist' element. Required attribute 'netmask_filter' not found.");
-                return XMLP_ret::XML_ERROR;
             }
             // Add valid item to allowlist
             p_transport->interface_allowlist.emplace_back(iface_name, netmask_filter);

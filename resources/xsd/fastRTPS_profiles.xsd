@@ -984,13 +984,13 @@
     <!--allowlist:
         ├ interface                 [0~*]
         | ╠ att. name               [string] REQ,
-        | ╠ att. netmask_filter     [string] REQ ("OFF", "AUTO", "ON") -->
+        | ╠ att. netmask_filter     [string] ("OFF", "AUTO", "ON") -->
     <xs:complexType name="allowlistType">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="interface" minOccurs="0" maxOccurs="unbounded">
                 <xs:complexType>
                     <xs:attribute name="name" type="string" use="required"/>
-                    <xs:attribute name="netmask_filter" use="required">
+                    <xs:attribute name="netmask_filter" use="optional">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="OFF"/>
