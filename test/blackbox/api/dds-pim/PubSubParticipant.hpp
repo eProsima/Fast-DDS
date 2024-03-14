@@ -623,7 +623,7 @@ public:
         std::unique_lock<std::mutex> lock(sub_liveliness_mutex_);
         sub_liveliness_cv_.wait_for(lock, max_wait, [this, &expected_num_lost]() -> bool
                 {
-                    return expected_num_lost >= sub_times_liveliness_lost_;
+                    return sub_times_liveliness_lost_ >= expected_num_lost;
                 });
 
         return sub_times_liveliness_lost_;

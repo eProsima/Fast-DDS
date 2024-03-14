@@ -1977,13 +1977,13 @@ TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_W
             .add_user_transport_to_pparams(testTransport)
             .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 900000000))
+            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 500000000))
             .init();
 
     writer_2.lease_duration(c_TimeInfinite, 1)
             .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
             .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
-            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 900000000))
+            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 500000000))
             .init();
 
     // Wait for discovery to occur. Liveliness should be recovered twice,
