@@ -36,7 +36,8 @@ class HelloWorldSubscriber : public DataReaderListener
 public:
 
     HelloWorldSubscriber(
-            const CLIParser::subscriber_config& config);
+            const CLIParser::subscriber_config& config,
+            const std::string& topic_name);
 
     virtual ~HelloWorldSubscriber();
 
