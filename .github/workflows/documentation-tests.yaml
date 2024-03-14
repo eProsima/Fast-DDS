@@ -6,19 +6,11 @@ on:
         description: 'Documentation branch name'
         required: true
         type: string
-        default: 'master'
-
-  push:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
+        default: '2.13.x'
 
   pull_request:
     branches:
-      - 'master'
+      - '2.13.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -40,24 +32,47 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Sync eProsima/Fast-DDS repository
-        uses: actions/checkout@v3
+        uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           path: src/fastrtps
           submodules: true
 
-      - name: Install Fast DDS packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages
-
-      - name: Install documentation packages
-        uses: ./src/fastrtps/.github/actions/install-apt-packages-documentation
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.20.6'
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
 
-      - name: Download FastDDS dependencies
-        run: |
-          pip3 install vcstool
-          vcs import --skip-existing src < ./src/fastrtps/fastrtps.repos
+      - name: Install apt dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep wget libssl-dev doxygen imagemagick plantuml
+          update: false
+          upgrade: false
+
+      - name: Install GTest
+        uses: eProsima/eProsima-CI/multiplatform/install_gtest@v0
+        with:
+          cmake_build_type: Release
+          version: release-1.11.0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
+        with:
+          packages: vcstool
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Download Fast DDS .repos
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: ./src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
       - name: Determine the Fast DDS Documentation branch to be used
         run: |
@@ -93,7 +108,7 @@ jobs:
 
                 # Attempt to use version's branch, which will most likely be the base anyways.
                 # This is just in case the PR was to an intermediate branch
-                TEMP_BRANCH=master
+                TEMP_BRANCH=2.13.x
                 RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
 
                 if [[ ${RESPONSE_CODE} == "0" ]]
@@ -110,25 +125,51 @@ jobs:
           fi
 
       - name: Download FastDDS documentation repo
-        uses: actions/checkout@v4
+        uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           repository: eProsima/Fast-DDS-docs
           path: src/fastdds-docs
           ref: ${{ env.ACTION_BRANCH_NAME }}
 
-      - name: Install colcon
-        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
-
-      - name: Install required python packages
+      - name: Install Fast DDS Docs required python packages
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
         with:
           upgrade: false
           requirements_file_name: src/fastdds-docs/docs/requirements.txt
 
-      - name: Build documentation
-        run: |
-          colcon build --event-handlers=console_direct+ --metas
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: './src/fastrtps/.github/workflows/config/documentation.meta'
+          colcon_build_args: ''
+          colcon_build_args_default: ''
+          cmake_args: ''
+          cmake_args_default: ''
+          cmake_build_type: Release
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
 
-      - name: Run documentation tests
-        run: |
-          colcon test --event-handlers=console_direct+ --packages-select fastdds-docs --return-code-on-test-failure
+      - name: Colcon test
+        id: test
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ''
+          colcon_test_args_default: --event-handlers=console_direct+
+          ctest_args: ''
+          ctest_args_default: ''
+          packages_names: fastdds-docs
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}', github.job, join(matrix.*, '_')) }}
+
+      - name: Test summary
+        uses: eProsima/eProsima-CI/multiplatform/junit_summary@v0
+        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        with:
+          junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
+          print_summary: 'True'
+          show_failed: 'True'
+          show_disabled: 'False'
+          show_skipped: 'False'

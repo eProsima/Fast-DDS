@@ -1,0 +1,17 @@
+names:
+    fastrtps:
+        cmake-args:
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DSECURITY=ON"
+            - "-DTHIRDPARTY_Asio=FORCE"
+            - "-DTHIRDPARTY_TinyXML2=FORCE"
+            - "-DTHIRDPARTY_UPDATE=OFF"
+    fastdds-docs:
+        cmake-args:
+            - "-DBUILD_DOCUMENTATION=ON"
+            - "-DCOMPILE_TESTS=ON"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"
