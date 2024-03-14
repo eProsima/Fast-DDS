@@ -46,7 +46,7 @@ target_compile_definitions(hello_world PRIVATE
 )
 target_link_libraries(hello_world fastdds fastcdr)
 install(TARGETS hello_world
-    RUNTIME DESTINATION examples/cpp/hello_world/${BIN_INSTALL_DIR})
+    RUNTIME DESTINATION fastdds/examples/cpp/hello_world/${BIN_INSTALL_DIR})
 
 # Copy the XML files over to the build directory
 file(GLOB_RECURSE XML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.xml)

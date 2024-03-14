@@ -28,6 +28,13 @@ public:
 
     CLIParser() = delete;
 
+    enum entity_kind
+    {
+        PUBLISHER,
+        SUBSCRIBER,
+        UNDEFINED
+    };
+
     struct publisher_config
     {
         uint16_t samples = 0;
@@ -40,7 +47,7 @@ public:
 
     struct hello_world_config
     {
-        std::string entity = "";
+        entity_kind entity = entity_kind::UNDEFINED;
         publisher_config pub_config;
         subscriber_config sub_config;
     };
@@ -71,9 +78,13 @@ public:
 
         std::string first_argument = argv[1];
 
-        if (first_argument == "publisher" || first_argument == "subscriber")
+        if (first_argument == "publisher" )
         {
-            config.entity = first_argument;
+            config.entity = entity_kind::PUBLISHER;
+        }
+        else if ( first_argument == "subscriber")
+        {
+            config.entity = entity_kind::SUBSCRIBER;
         }
         else
         {
@@ -102,11 +113,11 @@ public:
                     try
                     {
                         uint16_t samples = static_cast<uint16_t>(std::stoi(argv[++i]));
-                        if (config.entity == "publisher")
+                        if (config.entity == entity_kind::PUBLISHER)
                         {
                             config.pub_config.samples = samples;
                         }
-                        else if (config.entity == "subscriber")
+                        else if (config.entity == entity_kind::SUBSCRIBER)
                         {
                             config.sub_config.samples = samples;
                         }
@@ -136,7 +147,7 @@ public:
             }
             else if (arg == "-w" || arg == "--waitset")
             {
-                if (config.entity == "subscriber")
+                if (config.entity == entity_kind::SUBSCRIBER)
                 {
                     config.sub_config.use_waitset = true;
                 }
@@ -155,6 +166,7 @@ public:
 
         return config;
     }
+
 };
 
 #endif // _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_

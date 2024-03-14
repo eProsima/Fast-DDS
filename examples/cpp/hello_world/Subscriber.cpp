@@ -22,7 +22,6 @@
 #include <condition_variable>
 #include <csignal>
 #include <stdexcept>
-#include <thread>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -34,9 +33,6 @@
 
 using namespace eprosima::fastdds::dds;
 
-std::atomic<bool> HelloWorldSubscriber::stop_(false);
-std::condition_variable HelloWorldSubscriber::terminate_cv_;
-
 HelloWorldSubscriber::HelloWorldSubscriber(
         const CLIParser::subscriber_config& config,
         const std::string& topic_name)
@@ -47,6 +43,7 @@ HelloWorldSubscriber::HelloWorldSubscriber(
     , type_(new HelloWorldPubSubType())
     , samples_ (config.samples)
     , received_samples_(0)
+    , stop_(false)
 {
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
@@ -140,40 +137,8 @@ void HelloWorldSubscriber::on_data_available(
 
 void HelloWorldSubscriber::run()
 {
-    if (samples_ == 0)
-    {
-        std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
-    }
-    else
-    {
-        std::cout << "Subscriber running until " << samples_ <<
-            " samples have been received. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
-    }
-
-    signal(SIGINT, [](int /*signum*/)
-            {
-                std::cout << "\nSIGINT received, stopping Subscriber execution." << std::endl;
-                HelloWorldSubscriber::stop();
-            });
-    signal(SIGTERM, [](int /*signum*/)
-            {
-                std::cout << "\nSIGTERM received, stopping Subscriber execution." << std::endl;
-                HelloWorldSubscriber::stop();
-            });
-#ifndef _WIN32
-    signal(SIGQUIT, [](int /*signum*/)
-            {
-                std::cout << "\nSIGQUIT received, stopping Subscriber execution." << std::endl;
-                HelloWorldSubscriber::stop();
-            });
-    signal(SIGHUP, [](int /*signum*/)
-            {
-                std::cout << "\nSIGHUP received, stopping Subscriber execution." << std::endl;
-                HelloWorldSubscriber::stop();
-            });
-#endif // _WIN32
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
-    terminate_cv_.wait(lck, []
+    terminate_cv_.wait(lck, [&]
             {
                 return is_stopped();
             });

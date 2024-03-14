@@ -47,12 +47,12 @@ public:
     void run();
 
     //! Trigger the end of execution
-    static void stop();
+    void stop();
 
 private:
 
     //! Return the current state of execution
-    static bool is_stopped();
+    bool is_stopped();
 
     HelloWorld hello_;
 
@@ -72,9 +72,9 @@ private:
 
     uint16_t received_samples_;
 
-    static std::atomic<bool> stop_;
+    std::atomic<bool> stop_;
 
-    static GuardCondition terminate_condition_;
+    GuardCondition terminate_condition_;
 };
 
 #endif /* _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_ */

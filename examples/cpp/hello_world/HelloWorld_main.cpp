@@ -17,7 +17,9 @@
  *
  */
 
+#include <csignal>
 #include <stdexcept>
+#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -29,61 +31,172 @@
 
 using eprosima::fastdds::dds::Log;
 
+std::function<void(std::string)> signal_handler;
+
 int main(
         int argc,
         char** argv)
 {
     auto ret = EXIT_SUCCESS;
+    HelloWorldPublisher* publisher = nullptr;
+    HelloWorldSubscriber* subscriber = nullptr;
+    HelloWorldSubscriberWaitset* subscriber_waitset = nullptr;
+    std::thread* thread = nullptr;
     const std::string topic_name = "hello_world_topic";
+    std::string entity_name = "undefined";
+    uint16_t samples = 0;
     CLIParser::hello_world_config config = CLIParser::parse_cli_options(argc, argv);
 
-    if (config.entity == "publisher")
+    switch (config.entity)
     {
-        try
-        {
-            HelloWorldPublisher hello_world_publisher(config.pub_config, topic_name);
-            hello_world_publisher.run();
-        }
-        catch (const std::runtime_error& e)
-        {
-            EPROSIMA_LOG_ERROR(PUBLISHER, e.what());
-            ret = EXIT_FAILURE;
-        }
-    }
-    else if (config.entity == "subscriber")
-    {
-        if (config.sub_config.use_waitset)
-        {
+        case CLIParser::entity_kind::PUBLISHER:
+            entity_name = "Publisher";
+            samples = config.pub_config.samples;
             try
             {
-                HelloWorldSubscriberWaitset hello_world_subscriber_waitset(config.sub_config, topic_name);
-                hello_world_subscriber_waitset.run();
+                publisher = new HelloWorldPublisher(config.pub_config, topic_name);
+                thread = new std::thread(&HelloWorldPublisher::run, publisher);
             }
             catch (const std::runtime_error& e)
             {
-                EPROSIMA_LOG_ERROR(SUBSCRIBER, e.what());
+                EPROSIMA_LOG_ERROR(PUBLISHER, e.what());
                 ret = EXIT_FAILURE;
             }
-        }
-        else
-        {
-            try
+            break;
+        case CLIParser::entity_kind::SUBSCRIBER:
+            samples = config.sub_config.samples;
+            if (config.sub_config.use_waitset)
             {
-                HelloWorldSubscriber hello_world_subscriber(config.sub_config, topic_name);
-                hello_world_subscriber.run();
+                entity_name = "Waitset Subscriber";
+                try
+                {
+                    subscriber_waitset = new HelloWorldSubscriberWaitset(config.sub_config, topic_name);
+                    thread = new std::thread(&HelloWorldSubscriberWaitset::run, subscriber_waitset);
+                }
+                catch (const std::runtime_error& e)
+                {
+                    EPROSIMA_LOG_ERROR(SUBSCRIBER, e.what());
+                    ret = EXIT_FAILURE;
+                }
             }
-            catch (const std::runtime_error& e)
+            else
             {
-                EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, e.what());
-                ret = EXIT_FAILURE;
+                entity_name = "Subscriber";
+                try
+                {
+                    subscriber = new HelloWorldSubscriber(config.sub_config, topic_name);
+                    thread = new std::thread(&HelloWorldSubscriber::run, subscriber);
+                }
+                catch (const std::runtime_error& e)
+                {
+                    EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, e.what());
+                    ret = EXIT_FAILURE;
+                }
             }
-        }
+            break;
+        default:
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown entity");
+            CLIParser::print_help(EXIT_FAILURE);
+            break;
     }
-    // example should never reach this point
+
+    if (samples == 0)
+    {
+        std::cout << entity_name << " running. Please press Ctrl+C to stop the "
+                  << entity_name << " at any time." << std::endl;
+    }
     else
     {
-        EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown entity " + config.entity);
-        CLIParser::print_help(EXIT_FAILURE);
+        switch (config.entity)
+        {
+            case CLIParser::entity_kind::PUBLISHER:
+                std::cout << entity_name << " running " << samples << " samples. Please press Ctrl+C to stop the "
+                          << entity_name << " at any time." << std::endl;
+                break;
+            case CLIParser::entity_kind::SUBSCRIBER:
+            default:
+                std::cout << entity_name << " running until " << samples << " samples have been received. Please press "
+                          << "Ctrl+C to stop the " << entity_name << " at any time." << std::endl;
+                break;
+        }
+    }
+
+    signal_handler = [&](std::string signal)
+            {
+                std::cout << "\n" << signal << " received, stopping " << entity_name << " execution." << std::endl;
+                switch (config.entity)
+                {
+                    case CLIParser::entity_kind::PUBLISHER:
+                        if (nullptr != publisher)
+                        {
+                            publisher->stop();
+                        }
+                        break;
+                    case CLIParser::entity_kind::SUBSCRIBER:
+                    default:
+                        if (config.sub_config.use_waitset)
+                        {
+                            if (nullptr != subscriber_waitset)
+                            {
+                                subscriber_waitset->stop();
+                            }
+                        }
+                        else
+                        {
+                            if (nullptr != subscriber)
+                            {
+                                subscriber->stop();
+                            }
+                        }
+                        break;
+                }
+            };
+    signal(SIGINT, [](int /*signum*/)
+            {
+                signal_handler("SIGINT");
+            });
+    signal(SIGTERM, [](int /*signum*/)
+            {
+                signal_handler("SIGTERM");
+            });
+#ifndef _WIN32
+    signal(SIGQUIT, [](int /*signum*/)
+            {
+                signal_handler("SIGQUIT");
+            });
+    signal(SIGHUP, [](int /*signum*/)
+            {
+                signal_handler("SIGHUP");
+            });
+#endif // _WIN32
+
+    thread->join();
+    delete thread;
+    switch (config.entity)
+    {
+        case CLIParser::entity_kind::PUBLISHER:
+            if (nullptr != publisher)
+            {
+                delete publisher;
+            }
+            break;
+        case CLIParser::entity_kind::SUBSCRIBER:
+        default:
+            if (config.sub_config.use_waitset)
+            {
+                if (nullptr != subscriber_waitset)
+                {
+                    delete subscriber_waitset;
+                }
+            }
+            else
+            {
+                if (nullptr != subscriber)
+                {
+                    delete subscriber;
+                }
+            }
+            break;
     }
 
     Log::Reset();
