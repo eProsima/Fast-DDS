@@ -50,7 +50,7 @@ public:
     void run();
 
     //! Trigger the end of execution
-    static void stop();
+    void stop();
 
 private:
 
@@ -72,7 +72,7 @@ private:
 
     TypeSupport type_;
 
-    static std::atomic<bool> stop_;
+    std::atomic<bool> stop_;
 
     int16_t matched_;
 
@@ -80,7 +80,7 @@ private:
 
     std::mutex mutex_;
 
-    static std::condition_variable matched_cv_;
+    std::condition_variable matched_cv_;
 
     const uint32_t period_ms_ = 100; // in ms
 };

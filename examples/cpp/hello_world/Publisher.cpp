@@ -32,9 +32,6 @@
 
 using namespace eprosima::fastdds::dds;
 
-std::atomic<bool> HelloWorldPublisher::stop_(false);
-std::condition_variable HelloWorldPublisher::matched_cv_;
-
 HelloWorldPublisher::HelloWorldPublisher(
         const CLIParser::publisher_config& config,
         const std::string& topic_name)
@@ -43,13 +40,14 @@ HelloWorldPublisher::HelloWorldPublisher(
     , topic_(nullptr)
     , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , stop_(false)
     , matched_(0)
     , samples_ (config.samples)
 {
     // Set up the data type with initial values
     hello_.index(0);
     hello_.message("Hello world");
-    
+
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
@@ -125,50 +123,15 @@ void HelloWorldPublisher::on_publication_matched(
 
 void HelloWorldPublisher::run()
 {
-    std::thread pub_thread([&]
-            {
-                while (!is_stopped() && (samples_ == 0 || hello_.index() < samples_))
-                {
-                    if (publish())
-                    {
-                        std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
-                                  << "' SENT" << std::endl;
-                    }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(period_ms_));
-                }
-            });
-    if (samples_ == 0)
+    while (!is_stopped() && (samples_ == 0 || hello_.index() < samples_))
     {
-        std::cout << "Publisher running. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
+        if (publish())
+        {
+            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
+                      << "' SENT" << std::endl;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(period_ms_));
     }
-    else
-    {
-        std::cout << "Publisher running " << samples_ <<
-            " samples. Please press Ctrl+C to stop the Publisher at any time." << std::endl;
-    }
-    signal(SIGINT, [](int /*signum*/)
-            {
-                std::cout << "\nSIGINT received, stopping Publisher execution." << std::endl;
-                HelloWorldPublisher::stop();
-            });
-    signal(SIGTERM, [](int /*signum*/)
-            {
-                std::cout << "\nSIGTERM received, stopping Publisher execution." << std::endl;
-                HelloWorldPublisher::stop();
-            });
-#ifndef _WIN32
-    signal(SIGQUIT, [](int /*signum*/)
-            {
-                std::cout << "\nSIGQUIT received, stopping Publisher execution." << std::endl;
-                HelloWorldPublisher::stop();
-            });
-    signal(SIGHUP, [](int /*signum*/)
-            {
-                std::cout << "\nSIGHUP received, stopping Publisher execution." << std::endl;
-                HelloWorldPublisher::stop();
-            });
-#endif // _WIN32
-    pub_thread.join();
 }
 
 bool HelloWorldPublisher::publish()

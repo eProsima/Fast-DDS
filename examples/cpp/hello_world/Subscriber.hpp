@@ -54,12 +54,12 @@ public:
     void run();
 
     //! Trigger the end of execution
-    static void stop();
+    void stop();
 
 private:
 
     //! Return the current state of execution
-    static bool is_stopped();
+    bool is_stopped();
 
     HelloWorld hello_;
 
@@ -77,11 +77,11 @@ private:
 
     uint16_t received_samples_;
 
-    static std::atomic<bool> stop_;
+    std::atomic<bool> stop_;
 
     mutable std::mutex terminate_cv_mtx_;
 
-    static std::condition_variable terminate_cv_;
+    std::condition_variable terminate_cv_;
 };
 
 #endif /* _FASTDDS_HELLO_WORLD_SUBSCRIBER_HPP_ */

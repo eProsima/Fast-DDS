@@ -36,9 +36,6 @@
 
 using namespace eprosima::fastdds::dds;
 
-std::atomic<bool> HelloWorldSubscriberWaitset::stop_(false);
-GuardCondition HelloWorldSubscriberWaitset::terminate_condition_;
-
 HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset(
         const CLIParser::subscriber_config& config,
         const std::string& topic_name)
@@ -49,6 +46,7 @@ HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset(
     , type_(new HelloWorldPubSubType())
     , samples_ (config.samples)
     , received_samples_(0)
+    , stop_(false)
 {
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
@@ -107,100 +105,63 @@ HelloWorldSubscriberWaitset::~HelloWorldSubscriberWaitset()
 
 void HelloWorldSubscriberWaitset::run()
 {
-    std::thread sub_thread([&]
+    while (!is_stopped())
+    {
+        ConditionSeq triggered_conditions;
+        ReturnCode_t ret_code = wait_set_.wait(triggered_conditions, eprosima::fastrtps::c_TimeInfinite);
+        if (ReturnCode_t::RETCODE_OK != ret_code)
+        {
+            EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, "Error waiting for conditions");
+            continue;
+        }
+        for (Condition* cond : triggered_conditions)
+        {
+            StatusCondition* status_cond = dynamic_cast<StatusCondition*>(cond);
+            if (nullptr != status_cond)
             {
-                while (!is_stopped())
+                Entity* entity = status_cond->get_entity();
+                StatusMask changed_statuses = entity->get_status_changes();
+                if (changed_statuses.is_active(StatusMask::subscription_matched()))
                 {
-                    ConditionSeq triggered_conditions;
-                    ReturnCode_t ret_code = wait_set_.wait(triggered_conditions, eprosima::fastrtps::c_TimeInfinite);
-                    if (ReturnCode_t::RETCODE_OK != ret_code)
+                    SubscriptionMatchedStatus status_;
+                    reader_->get_subscription_matched_status(status_);
+                    if (status_.current_count_change == 1)
                     {
-                        EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, "Error waiting for conditions");
-                        continue;
+                        std::cout << "Waitset Subscriber matched." << std::endl;
                     }
-                    for (Condition* cond : triggered_conditions)
+                    else if (status_.current_count_change == -1)
                     {
-                        StatusCondition* status_cond = dynamic_cast<StatusCondition*>(cond);
-                        if (nullptr != status_cond)
+                        std::cout << "Waitset Subscriber unmatched." << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << status_.current_count_change <<
+                            " is not a valid value for SubscriptionMatchedStatus current count change" <<
+                            std::endl;
+                    }
+                }
+                if (changed_statuses.is_active(StatusMask::data_available()))
+                {
+                    SampleInfo info;
+                    while ((!is_stopped()) &&
+                            (ReturnCode_t::RETCODE_OK == reader_->take_next_sample(&hello_, &info)))
+                    {
+                        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                         {
-                            Entity* entity = status_cond->get_entity();
-                            StatusMask changed_statuses = entity->get_status_changes();
-                            if (changed_statuses.is_active(StatusMask::subscription_matched()))
+                            received_samples_++;
+                            // Print Hello world message data
+                            std::cout << "Message: '" << hello_.message() << "' with index: '"
+                                      << hello_.index() << "' RECEIVED" << std::endl;
+                            if (samples_ > 0 && (received_samples_ >= samples_))
                             {
-                                SubscriptionMatchedStatus status_;
-                                reader_->get_subscription_matched_status(status_);
-                                if (status_.current_count_change == 1)
-                                {
-                                    std::cout << "Waitset Subscriber matched." << std::endl;
-                                }
-                                else if (status_.current_count_change == -1)
-                                {
-                                    std::cout << "Waitset Subscriber unmatched." << std::endl;
-                                }
-                                else
-                                {
-                                    std::cout << status_.current_count_change <<
-                                        " is not a valid value for SubscriptionMatchedStatus current count change" <<
-                                        std::endl;
-                                }
-                            }
-                            if (changed_statuses.is_active(StatusMask::data_available()))
-                            {
-                                SampleInfo info;
-                                while ((!is_stopped()) &&
-                                (ReturnCode_t::RETCODE_OK == reader_->take_next_sample(&hello_, &info)))
-                                {
-                                    if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
-                                    {
-                                        received_samples_++;
-                                        // Print Hello world message data
-                                        std::cout << "Message: '" << hello_.message() << "' with index: '"
-                                                  << hello_.index() << "' RECEIVED" << std::endl;
-                                        if (samples_ > 0 && (received_samples_ >= samples_))
-                                        {
-                                            stop();
-                                        }
-                                    }
-                                }
+                                stop();
                             }
                         }
                     }
                 }
-            });
-
-    if (samples_ == 0)
-    {
-        std::cout << "Waitset Subscriber running. Please press Ctrl+C to stop the Waitset Subscriber at any time."
-                  << std::endl;
+            }
+        }
     }
-    else
-    {
-        std::cout << "Waitset Subscriber running until " << samples_ <<
-            " samples have been received. Please press Ctrl+C to stop the Waitset Subscriber at any time." << std::endl;
-    }
-    signal(SIGINT, [](int /*signum*/)
-            {
-                std::cout << "\nSIGINT received, stopping Waitset Subscriber execution." << std::endl;
-                HelloWorldSubscriberWaitset::stop();
-            });
-    signal(SIGTERM, [](int /*signum*/)
-            {
-                std::cout << "\nSIGTERM received, stopping Waitset Subscriber execution." << std::endl;
-                HelloWorldSubscriberWaitset::stop();
-            });
-#ifndef _WIN32
-    signal(SIGQUIT, [](int /*signum*/)
-            {
-                std::cout << "\nSIGQUIT received, stopping Waitset Subscriber execution." << std::endl;
-                HelloWorldSubscriberWaitset::stop();
-            });
-    signal(SIGHUP, [](int /*signum*/)
-            {
-                std::cout << "\nSIGHUP received, stopping Waitset Subscriber execution." << std::endl;
-                HelloWorldSubscriberWaitset::stop();
-            });
-#endif // _WIN32
-    sub_thread.join();
 }
 
 bool HelloWorldSubscriberWaitset::is_stopped()
