@@ -1523,7 +1523,7 @@ void register_MutableUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_longValue;
                         TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
                         CommonUnionMember common_longValue;
-                        MemberId member_id_longValue = 0x00000000;
+                        MemberId member_id_longValue = 0x00000001;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1591,7 +1591,7 @@ void register_MutableUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_floatValue;
                         TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
                         CommonUnionMember common_floatValue;
-                        MemberId member_id_floatValue = 0x00000001;
+                        MemberId member_id_floatValue = 0x00000002;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1658,7 +1658,7 @@ void register_MutableUnionStruct_type_identifier()
                                 true, false);
                         UnionCaseLabelSeq label_seq_shortValue;
                         CommonUnionMember common_shortValue;
-                        MemberId member_id_shortValue = 0x00000002;
+                        MemberId member_id_shortValue = 0x00000003;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1901,7 +1901,7 @@ void register_MutableEmptyInheritanceStruct_type_identifier()
 
         CompleteTypeDetail detail_MutableEmptyInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MutableEmptyInheritanceStruct, ann_custom_MutableEmptyInheritanceStruct, type_name_MutableEmptyInheritanceStruct.to_string());
         CompleteStructHeader header_MutableEmptyInheritanceStruct;
-        if (EK_COMPLETE == type_ids_MutableEmptyInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_MutableEmptyInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_MutableEmptyInheritanceStruct.type_identifier1()._d())
         {
             header_MutableEmptyInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_MutableEmptyInheritanceStruct.type_identifier1(), detail_MutableEmptyInheritanceStruct);
         }
@@ -2161,7 +2161,7 @@ void register_MutableInheritanceStruct_type_identifier()
 
         CompleteTypeDetail detail_MutableInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MutableInheritanceStruct, ann_custom_MutableInheritanceStruct, type_name_MutableInheritanceStruct.to_string());
         CompleteStructHeader header_MutableInheritanceStruct;
-        if (EK_COMPLETE == type_ids_MutableInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_MutableInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_MutableInheritanceStruct.type_identifier1()._d())
         {
             header_MutableInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_MutableInheritanceStruct.type_identifier1(), detail_MutableInheritanceStruct);
         }
@@ -2421,7 +2421,7 @@ void register_MutableInheritanceEmptyStruct_type_identifier()
 
         CompleteTypeDetail detail_MutableInheritanceEmptyStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MutableInheritanceEmptyStruct, ann_custom_MutableInheritanceEmptyStruct, type_name_MutableInheritanceEmptyStruct.to_string());
         CompleteStructHeader header_MutableInheritanceEmptyStruct;
-        if (EK_COMPLETE == type_ids_MutableInheritanceEmptyStruct.type_identifier1()._d() || TK_NONE == type_ids_MutableInheritanceEmptyStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_MutableInheritanceEmptyStruct.type_identifier1()._d())
         {
             header_MutableInheritanceEmptyStruct = TypeObjectUtils::build_complete_struct_header(type_ids_MutableInheritanceEmptyStruct.type_identifier1(), detail_MutableInheritanceEmptyStruct);
         }
@@ -2573,7 +2573,7 @@ void register_MutableExtensibilityInheritance_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_MutableExtensibilityInheritance;
         CompleteTypeDetail detail_MutableExtensibilityInheritance = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_MutableExtensibilityInheritance, ann_custom_MutableExtensibilityInheritance, type_name_MutableExtensibilityInheritance.to_string());
         CompleteStructHeader header_MutableExtensibilityInheritance;
-        if (EK_COMPLETE == type_ids_MutableExtensibilityInheritance.type_identifier1()._d() || TK_NONE == type_ids_MutableExtensibilityInheritance.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_MutableExtensibilityInheritance.type_identifier1()._d())
         {
             header_MutableExtensibilityInheritance = TypeObjectUtils::build_complete_struct_header(type_ids_MutableExtensibilityInheritance.type_identifier1(), detail_MutableExtensibilityInheritance);
         }

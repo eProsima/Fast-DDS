@@ -45,13 +45,13 @@ constexpr uint32_t InnerStructureHelperEmptyChildChild_max_key_cdr_typesize {0UL
 
 
 
-constexpr uint32_t StructuresInheritanceStruct_max_cdr_typesize {134UL};
+constexpr uint32_t StructuresInheritanceStruct_max_cdr_typesize {142UL};
 constexpr uint32_t StructuresInheritanceStruct_max_key_cdr_typesize {0UL};
 
 
 
 
-constexpr uint32_t BitsetsChildInheritanceStruct_max_cdr_typesize {26UL};
+constexpr uint32_t BitsetsChildInheritanceStruct_max_cdr_typesize {32UL};
 constexpr uint32_t BitsetsChildInheritanceStruct_max_key_cdr_typesize {0UL};
 
 
@@ -62,7 +62,7 @@ constexpr uint32_t BitsetsChildInheritanceStruct_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t StructAliasInheritanceStruct_max_cdr_typesize {6UL};
+constexpr uint32_t StructAliasInheritanceStruct_max_cdr_typesize {14UL};
 constexpr uint32_t StructAliasInheritanceStruct_max_key_cdr_typesize {0UL};
 
 

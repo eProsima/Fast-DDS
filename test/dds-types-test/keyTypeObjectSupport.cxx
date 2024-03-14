@@ -2563,7 +2563,7 @@ void register_KeyedEmptyInheritanceStruct_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_KeyedEmptyInheritanceStruct;
         CompleteTypeDetail detail_KeyedEmptyInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_KeyedEmptyInheritanceStruct, ann_custom_KeyedEmptyInheritanceStruct, type_name_KeyedEmptyInheritanceStruct.to_string());
         CompleteStructHeader header_KeyedEmptyInheritanceStruct;
-        if (EK_COMPLETE == type_ids_KeyedEmptyInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_KeyedEmptyInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_KeyedEmptyInheritanceStruct.type_identifier1()._d())
         {
             header_KeyedEmptyInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_KeyedEmptyInheritanceStruct.type_identifier1(), detail_KeyedEmptyInheritanceStruct);
         }
@@ -2987,7 +2987,7 @@ void register_KeyedInheritanceStruct_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_KeyedInheritanceStruct;
         CompleteTypeDetail detail_KeyedInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_KeyedInheritanceStruct, ann_custom_KeyedInheritanceStruct, type_name_KeyedInheritanceStruct.to_string());
         CompleteStructHeader header_KeyedInheritanceStruct;
-        if (EK_COMPLETE == type_ids_KeyedInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_KeyedInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_KeyedInheritanceStruct.type_identifier1()._d())
         {
             header_KeyedInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_KeyedInheritanceStruct.type_identifier1(), detail_KeyedInheritanceStruct);
         }
@@ -3411,7 +3411,7 @@ void register_InheritanceKeyedEmptyStruct_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InheritanceKeyedEmptyStruct;
         CompleteTypeDetail detail_InheritanceKeyedEmptyStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InheritanceKeyedEmptyStruct, ann_custom_InheritanceKeyedEmptyStruct, type_name_InheritanceKeyedEmptyStruct.to_string());
         CompleteStructHeader header_InheritanceKeyedEmptyStruct;
-        if (EK_COMPLETE == type_ids_InheritanceKeyedEmptyStruct.type_identifier1()._d() || TK_NONE == type_ids_InheritanceKeyedEmptyStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InheritanceKeyedEmptyStruct.type_identifier1()._d())
         {
             header_InheritanceKeyedEmptyStruct = TypeObjectUtils::build_complete_struct_header(type_ids_InheritanceKeyedEmptyStruct.type_identifier1(), detail_InheritanceKeyedEmptyStruct);
         }

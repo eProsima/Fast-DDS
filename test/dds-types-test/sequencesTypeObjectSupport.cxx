@@ -5223,13 +5223,13 @@ void register_SequenceMap_type_identifier()
                             return;
                         }
                         EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_unbounded = EK_BOTH;
-                        if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() ||
+                        if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d()) ||
                                 (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->seq_sdefn().header().equiv_kind()) ||
                                 (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->seq_ldefn().header().equiv_kind()) ||
                                 (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->array_sdefn().header().equiv_kind()) ||
                                 (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->map_sdefn().header().equiv_kind()) ||
-                                (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->map_ldefn().header().equiv_kind()))
+                                (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->map_sdefn().header().equiv_kind())) ||
+                                (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int32_t_unbounded->map_ldefn().header().equiv_kind())))
                         {
                             equiv_kind_anonymous_map_int32_t_int32_t_unbounded = EK_COMPLETE;
                         }
@@ -5584,7 +5584,7 @@ void register_SequenceUnion_type_identifier()
                             UnionCaseLabelSeq label_seq_longValue;
                             TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
                             CommonUnionMember common_longValue;
-                            MemberId member_id_longValue = 0x00000000;
+                            MemberId member_id_longValue = 0x00000001;
                             if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5652,7 +5652,7 @@ void register_SequenceUnion_type_identifier()
                             UnionCaseLabelSeq label_seq_floatValue;
                             TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
                             CommonUnionMember common_floatValue;
-                            MemberId member_id_floatValue = 0x00000001;
+                            MemberId member_id_floatValue = 0x00000002;
                             if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -5719,7 +5719,7 @@ void register_SequenceUnion_type_identifier()
                                     true, false);
                             UnionCaseLabelSeq label_seq_shortValue;
                             CommonUnionMember common_shortValue;
-                            MemberId member_id_shortValue = 0x00000002;
+                            MemberId member_id_shortValue = 0x00000003;
                             if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                     EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||

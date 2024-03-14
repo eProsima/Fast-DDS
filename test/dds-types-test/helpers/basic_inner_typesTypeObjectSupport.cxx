@@ -326,7 +326,7 @@ void register_InnerUnionHelper_type_identifier()
             UnionCaseLabelSeq label_seq_longValue;
             TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
             CommonUnionMember common_longValue;
-            MemberId member_id_longValue = 0x00000000;
+            MemberId member_id_longValue = 0x00000001;
             if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -394,7 +394,7 @@ void register_InnerUnionHelper_type_identifier()
             UnionCaseLabelSeq label_seq_floatValue;
             TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
             CommonUnionMember common_floatValue;
-            MemberId member_id_floatValue = 0x00000001;
+            MemberId member_id_floatValue = 0x00000002;
             if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -461,7 +461,7 @@ void register_InnerUnionHelper_type_identifier()
                     true, false);
             UnionCaseLabelSeq label_seq_shortValue;
             CommonUnionMember common_shortValue;
-            MemberId member_id_shortValue = 0x00000002;
+            MemberId member_id_shortValue = 0x00000003;
             if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||

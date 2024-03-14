@@ -275,7 +275,7 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitset_helper_alia
     TypeDescriptor::_ref_type alias_descriptor {traits<TypeDescriptor>::make_shared()};
     alias_descriptor->kind(TK_ALIAS);
     alias_descriptor->name(inner_bitset_helper_alias_struct_name);
-    alias_descriptor->base_type(create_inner_struct_helper_alias());
+    alias_descriptor->base_type(create_inner_bitset_helper());
 
     DynamicTypeBuilder::_ref_type alias_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
                                                      alias_descriptor)};

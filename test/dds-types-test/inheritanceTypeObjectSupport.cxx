@@ -252,7 +252,7 @@ void register_InnerStructureHelperChild_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperChild;
         CompleteTypeDetail detail_InnerStructureHelperChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperChild, ann_custom_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string());
         CompleteStructHeader header_InnerStructureHelperChild;
-        if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
         {
             header_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperChild.type_identifier1(), detail_InnerStructureHelperChild);
         }
@@ -607,7 +607,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
                 eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperChild;
                 CompleteTypeDetail detail_InnerStructureHelperChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperChild, ann_custom_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string());
                 CompleteStructHeader header_InnerStructureHelperChild;
-                if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
+                if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
                 {
                     header_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperChild.type_identifier1(), detail_InnerStructureHelperChild);
                 }
@@ -773,7 +773,7 @@ void register_InnerStructureHelperChildChild_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperChildChild;
         CompleteTypeDetail detail_InnerStructureHelperChildChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperChildChild, ann_custom_InnerStructureHelperChildChild, type_name_InnerStructureHelperChildChild.to_string());
         CompleteStructHeader header_InnerStructureHelperChildChild;
-        if (EK_COMPLETE == type_ids_InnerStructureHelperChildChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperChildChild.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InnerStructureHelperChildChild.type_identifier1()._d())
         {
             header_InnerStructureHelperChildChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperChildChild.type_identifier1(), detail_InnerStructureHelperChildChild);
         }
@@ -1117,7 +1117,7 @@ void register_InnerStructureHelperEmptyChild_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperEmptyChild;
         CompleteTypeDetail detail_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperEmptyChild, ann_custom_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string());
         CompleteStructHeader header_InnerStructureHelperEmptyChild;
-        if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
         {
             header_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperEmptyChild.type_identifier1(), detail_InnerStructureHelperEmptyChild);
         }
@@ -1344,7 +1344,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
                 eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperEmptyChild;
                 CompleteTypeDetail detail_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperEmptyChild, ann_custom_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string());
                 CompleteStructHeader header_InnerStructureHelperEmptyChild;
-                if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
+                if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
                 {
                     header_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperEmptyChild.type_identifier1(), detail_InnerStructureHelperEmptyChild);
                 }
@@ -1382,7 +1382,7 @@ void register_InnerStructureHelperEmptyChildChild_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperEmptyChildChild;
         CompleteTypeDetail detail_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperEmptyChildChild, ann_custom_InnerStructureHelperEmptyChildChild, type_name_InnerStructureHelperEmptyChildChild.to_string());
         CompleteStructHeader header_InnerStructureHelperEmptyChildChild;
-        if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChildChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperEmptyChildChild.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChildChild.type_identifier1()._d())
         {
             header_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperEmptyChildChild.type_identifier1(), detail_InnerStructureHelperEmptyChildChild);
         }
@@ -1534,7 +1534,7 @@ void register_InnerEmptyStructureHelperChild_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEmptyStructureHelperChild;
         CompleteTypeDetail detail_InnerEmptyStructureHelperChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEmptyStructureHelperChild, ann_custom_InnerEmptyStructureHelperChild, type_name_InnerEmptyStructureHelperChild.to_string());
         CompleteStructHeader header_InnerEmptyStructureHelperChild;
-        if (EK_COMPLETE == type_ids_InnerEmptyStructureHelperChild.type_identifier1()._d() || TK_NONE == type_ids_InnerEmptyStructureHelperChild.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InnerEmptyStructureHelperChild.type_identifier1()._d())
         {
             header_InnerEmptyStructureHelperChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerEmptyStructureHelperChild.type_identifier1(), detail_InnerEmptyStructureHelperChild);
         }
@@ -1702,12 +1702,272 @@ void register_StructAliasInheritanceStruct_type_identifier()
                 false, false);
         ReturnCode_t return_code_StructAliasInheritanceStruct;
         TypeIdentifierPair type_ids_StructAliasInheritanceStruct;
+        return_code_StructAliasInheritanceStruct =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+            "inner_structure_helper_alias", type_ids_StructAliasInheritanceStruct);
+
+        if (return_code_StructAliasInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+        {
+            AliasTypeFlag alias_flags_inner_structure_helper_alias = 0;
+            QualifiedTypeName type_name_inner_structure_helper_alias = "inner_structure_helper_alias";
+            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_inner_structure_helper_alias;
+            eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_inner_structure_helper_alias;
+            CompleteTypeDetail detail_inner_structure_helper_alias = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_inner_structure_helper_alias, ann_custom_inner_structure_helper_alias, type_name_inner_structure_helper_alias.to_string());
+            CompleteAliasHeader header_inner_structure_helper_alias = TypeObjectUtils::build_complete_alias_header(detail_inner_structure_helper_alias);
+            AliasMemberFlag related_flags_inner_structure_helper_alias = 0;
+            return_code_StructAliasInheritanceStruct =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "InnerStructureHelper", type_ids_StructAliasInheritanceStruct);
+
+            if (return_code_StructAliasInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                {
+                    StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                            true, false);
+                    ReturnCode_t return_code_InnerStructureHelper;
+                    TypeIdentifierPair type_ids_InnerStructureHelper;
+                    QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
+                    eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerStructureHelper;
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelper;
+                    AppliedAnnotationSeq tmp_ann_custom_InnerStructureHelper;
+                    eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerStructureHelper;
+                    if (!tmp_ann_custom_InnerStructureHelper.empty())
+                    {
+                        ann_custom_InnerStructureHelper = tmp_ann_custom_InnerStructureHelper;
+                    }
+
+                    CompleteTypeDetail detail_InnerStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelper, ann_custom_InnerStructureHelper, type_name_InnerStructureHelper.to_string());
+                    CompleteStructHeader header_InnerStructureHelper;
+                    header_InnerStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerStructureHelper);
+                    CompleteStructMemberSeq member_seq_InnerStructureHelper;
+                    {
+                        return_code_InnerStructureHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_int32_t", type_ids_InnerStructureHelper);
+
+                        if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_field1;
+                        MemberId member_id_field1 = 0x00000000;
+                        if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure field1 member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_field1 = "field1";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+                        ann_custom_InnerStructureHelper.reset();
+                        CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerStructureHelper);
+                        CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field1);
+                    }
+                    {
+                        return_code_InnerStructureHelper =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "_float", type_ids_InnerStructureHelper);
+
+                        if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                        StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                false, false, false, false);
+                        CommonStructMember common_field2;
+                        MemberId member_id_field2 = 0x00000001;
+                        if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "Structure field2 member TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        MemberName name_field2 = "field2";
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+                        ann_custom_InnerStructureHelper.reset();
+                        CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerStructureHelper);
+                        CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+                        TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field2);
+                    }
+                    CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
+                    if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                            TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
+                    }
+                    return_code_InnerStructureHelper =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "InnerStructureHelper", type_ids_InnerStructureHelper);
+                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                        return;
+                    }
+                }
+            }
+            CommonAliasBody common_inner_structure_helper_alias;
+            if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                    (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+            {
+                common_inner_structure_helper_alias = TypeObjectUtils::build_common_alias_body(related_flags_inner_structure_helper_alias, type_ids_StructAliasInheritanceStruct.type_identifier1());
+            }
+            else if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() ||
+                    (TI_PLAIN_SEQUENCE_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_SEQUENCE_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                    (TI_PLAIN_ARRAY_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                    (TI_PLAIN_MAP_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                    (TI_PLAIN_MAP_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                    (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
+                    EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
+            {
+                common_inner_structure_helper_alias = TypeObjectUtils::build_common_alias_body(related_flags_inner_structure_helper_alias, type_ids_StructAliasInheritanceStruct.type_identifier2());
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "inner_structure_helper_alias related TypeIdentifier inconsistent.");
+                return;
+            }
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_inner_structure_helper_alias;
+            ann_custom_inner_structure_helper_alias.reset();
+            CompleteAliasBody body_inner_structure_helper_alias = TypeObjectUtils::build_complete_alias_body(common_inner_structure_helper_alias, member_ann_builtin_inner_structure_helper_alias, ann_custom_inner_structure_helper_alias);
+            CompleteAliasType alias_type_inner_structure_helper_alias = TypeObjectUtils::build_complete_alias_type(alias_flags_inner_structure_helper_alias, header_inner_structure_helper_alias, body_inner_structure_helper_alias);
+            if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                    TypeObjectUtils::build_and_register_alias_type_object(alias_type_inner_structure_helper_alias, type_name_inner_structure_helper_alias.to_string()))
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "inner_structure_helper_alias already registered in TypeObjectRegistry for a different type.");
+            }
+            return_code_StructAliasInheritanceStruct =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "inner_structure_helper_alias", type_ids_StructAliasInheritanceStruct);
+            if (return_code_StructAliasInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                            "inner_structure_helper_alias: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+        }
         QualifiedTypeName type_name_StructAliasInheritanceStruct = "StructAliasInheritanceStruct";
         eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_StructAliasInheritanceStruct;
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StructAliasInheritanceStruct;
         CompleteTypeDetail detail_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_StructAliasInheritanceStruct, ann_custom_StructAliasInheritanceStruct, type_name_StructAliasInheritanceStruct.to_string());
         CompleteStructHeader header_StructAliasInheritanceStruct;
-        header_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_StructAliasInheritanceStruct);
+        if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d())
+        {
+            header_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_StructAliasInheritanceStruct.type_identifier1(), detail_StructAliasInheritanceStruct);
+        }
+        else if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d())
+        {
+            header_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_StructAliasInheritanceStruct.type_identifier2(), detail_StructAliasInheritanceStruct);
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                    "StructAliasInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            return;
+        }
         CompleteStructMemberSeq member_seq_StructAliasInheritanceStruct;
         {
             return_code_StructAliasInheritanceStruct =
@@ -1723,7 +1983,7 @@ void register_StructAliasInheritanceStruct_type_identifier()
             StructMemberFlag member_flags_new_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                     false, false, false, false);
             CommonStructMember common_new_member;
-            MemberId member_id_new_member = 0x00000000;
+            MemberId member_id_new_member = 0x00000002;
             if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() ||
                     (TI_PLAIN_SEQUENCE_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
                     EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1993,7 +2253,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperChild;
                     CompleteTypeDetail detail_InnerStructureHelperChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperChild, ann_custom_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string());
                     CompleteStructHeader header_InnerStructureHelperChild;
-                    if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
+                    if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
                     {
                         header_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperChild.type_identifier1(), detail_InnerStructureHelperChild);
                     }
@@ -2406,7 +2666,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperChild;
                             CompleteTypeDetail detail_InnerStructureHelperChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperChild, ann_custom_InnerStructureHelperChild, type_name_InnerStructureHelperChild.to_string());
                             CompleteStructHeader header_InnerStructureHelperChild;
-                            if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
+                            if (EK_COMPLETE == type_ids_InnerStructureHelperChild.type_identifier1()._d())
                             {
                                 header_InnerStructureHelperChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperChild.type_identifier1(), detail_InnerStructureHelperChild);
                             }
@@ -2572,7 +2832,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperChildChild;
                     CompleteTypeDetail detail_InnerStructureHelperChildChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperChildChild, ann_custom_InnerStructureHelperChildChild, type_name_InnerStructureHelperChildChild.to_string());
                     CompleteStructHeader header_InnerStructureHelperChildChild;
-                    if (EK_COMPLETE == type_ids_InnerStructureHelperChildChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperChildChild.type_identifier1()._d())
+                    if (EK_COMPLETE == type_ids_InnerStructureHelperChildChild.type_identifier1()._d())
                     {
                         header_InnerStructureHelperChildChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperChildChild.type_identifier1(), detail_InnerStructureHelperChildChild);
                     }
@@ -2974,7 +3234,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperEmptyChild;
                     CompleteTypeDetail detail_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperEmptyChild, ann_custom_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string());
                     CompleteStructHeader header_InnerStructureHelperEmptyChild;
-                    if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
+                    if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
                     {
                         header_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperEmptyChild.type_identifier1(), detail_InnerStructureHelperEmptyChild);
                     }
@@ -3259,7 +3519,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                             eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperEmptyChild;
                             CompleteTypeDetail detail_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperEmptyChild, ann_custom_InnerStructureHelperEmptyChild, type_name_InnerStructureHelperEmptyChild.to_string());
                             CompleteStructHeader header_InnerStructureHelperEmptyChild;
-                            if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
+                            if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChild.type_identifier1()._d())
                             {
                                 header_InnerStructureHelperEmptyChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperEmptyChild.type_identifier1(), detail_InnerStructureHelperEmptyChild);
                             }
@@ -3297,7 +3557,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelperEmptyChildChild;
                     CompleteTypeDetail detail_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelperEmptyChildChild, ann_custom_InnerStructureHelperEmptyChildChild, type_name_InnerStructureHelperEmptyChildChild.to_string());
                     CompleteStructHeader header_InnerStructureHelperEmptyChildChild;
-                    if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChildChild.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelperEmptyChildChild.type_identifier1()._d())
+                    if (EK_COMPLETE == type_ids_InnerStructureHelperEmptyChildChild.type_identifier1()._d())
                     {
                         header_InnerStructureHelperEmptyChildChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerStructureHelperEmptyChildChild.type_identifier1(), detail_InnerStructureHelperEmptyChildChild);
                     }
@@ -3507,7 +3767,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerEmptyStructureHelperChild;
                     CompleteTypeDetail detail_InnerEmptyStructureHelperChild = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerEmptyStructureHelperChild, ann_custom_InnerEmptyStructureHelperChild, type_name_InnerEmptyStructureHelperChild.to_string());
                     CompleteStructHeader header_InnerEmptyStructureHelperChild;
-                    if (EK_COMPLETE == type_ids_InnerEmptyStructureHelperChild.type_identifier1()._d() || TK_NONE == type_ids_InnerEmptyStructureHelperChild.type_identifier1()._d())
+                    if (EK_COMPLETE == type_ids_InnerEmptyStructureHelperChild.type_identifier1()._d())
                     {
                         header_InnerEmptyStructureHelperChild = TypeObjectUtils::build_complete_struct_header(type_ids_InnerEmptyStructureHelperChild.type_identifier1(), detail_InnerEmptyStructureHelperChild);
                     }
@@ -3733,12 +3993,272 @@ void register_StructuresInheritanceStruct_type_identifier()
                             false, false);
                     ReturnCode_t return_code_StructAliasInheritanceStruct;
                     TypeIdentifierPair type_ids_StructAliasInheritanceStruct;
+                    return_code_StructAliasInheritanceStruct =
+                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                        "inner_structure_helper_alias", type_ids_StructAliasInheritanceStruct);
+
+                    if (return_code_StructAliasInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        AliasTypeFlag alias_flags_inner_structure_helper_alias = 0;
+                        QualifiedTypeName type_name_inner_structure_helper_alias = "inner_structure_helper_alias";
+                        eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_inner_structure_helper_alias;
+                        eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_inner_structure_helper_alias;
+                        CompleteTypeDetail detail_inner_structure_helper_alias = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_inner_structure_helper_alias, ann_custom_inner_structure_helper_alias, type_name_inner_structure_helper_alias.to_string());
+                        CompleteAliasHeader header_inner_structure_helper_alias = TypeObjectUtils::build_complete_alias_header(detail_inner_structure_helper_alias);
+                        AliasMemberFlag related_flags_inner_structure_helper_alias = 0;
+                        return_code_StructAliasInheritanceStruct =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "InnerStructureHelper", type_ids_StructAliasInheritanceStruct);
+
+                        if (return_code_StructAliasInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            {
+                                StructTypeFlag struct_flags_InnerStructureHelper = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
+                                        true, false);
+                                ReturnCode_t return_code_InnerStructureHelper;
+                                TypeIdentifierPair type_ids_InnerStructureHelper;
+                                QualifiedTypeName type_name_InnerStructureHelper = "InnerStructureHelper";
+                                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_InnerStructureHelper;
+                                eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_InnerStructureHelper;
+                                AppliedAnnotationSeq tmp_ann_custom_InnerStructureHelper;
+                                eprosima::fastcdr::optional<AppliedVerbatimAnnotation> verbatim_InnerStructureHelper;
+                                if (!tmp_ann_custom_InnerStructureHelper.empty())
+                                {
+                                    ann_custom_InnerStructureHelper = tmp_ann_custom_InnerStructureHelper;
+                                }
+
+                                CompleteTypeDetail detail_InnerStructureHelper = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InnerStructureHelper, ann_custom_InnerStructureHelper, type_name_InnerStructureHelper.to_string());
+                                CompleteStructHeader header_InnerStructureHelper;
+                                header_InnerStructureHelper = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_InnerStructureHelper);
+                                CompleteStructMemberSeq member_seq_InnerStructureHelper;
+                                {
+                                    return_code_InnerStructureHelper =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_int32_t", type_ids_InnerStructureHelper);
+
+                                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_field1;
+                                    MemberId member_id_field1 = 0x00000000;
+                                    if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field1 = TypeObjectUtils::build_common_struct_member(member_id_field1, member_flags_field1, type_ids_InnerStructureHelper.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure field1 member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_field1 = "field1";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field1;
+                                    ann_custom_InnerStructureHelper.reset();
+                                    CompleteMemberDetail detail_field1 = TypeObjectUtils::build_complete_member_detail(name_field1, member_ann_builtin_field1, ann_custom_InnerStructureHelper);
+                                    CompleteStructMember member_field1 = TypeObjectUtils::build_complete_struct_member(common_field1, detail_field1);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field1);
+                                }
+                                {
+                                    return_code_InnerStructureHelper =
+                                        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                        "_float", type_ids_InnerStructureHelper);
+
+                                    if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                        return;
+                                    }
+                                    StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
+                                            false, false, false, false);
+                                    CommonStructMember common_field2;
+                                    MemberId member_id_field2 = 0x00000001;
+                                    if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier1()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier1().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier1());
+                                    }
+                                    else if (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2()._d() ||
+                                            (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_SEQUENCE_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_ARRAY_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                            (TI_PLAIN_MAP_SMALL == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                            (TI_PLAIN_MAP_LARGE == type_ids_InnerStructureHelper.type_identifier2()._d() &&
+                                            (EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                            EK_COMPLETE == type_ids_InnerStructureHelper.type_identifier2().map_ldefn().key_identifier()->_d())))
+                                    {
+                                        common_field2 = TypeObjectUtils::build_common_struct_member(member_id_field2, member_flags_field2, type_ids_InnerStructureHelper.type_identifier2());
+                                    }
+                                    else
+                                    {
+                                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "Structure field2 member TypeIdentifier inconsistent.");
+                                        return;
+                                    }
+                                    MemberName name_field2 = "field2";
+                                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_field2;
+                                    ann_custom_InnerStructureHelper.reset();
+                                    CompleteMemberDetail detail_field2 = TypeObjectUtils::build_complete_member_detail(name_field2, member_ann_builtin_field2, ann_custom_InnerStructureHelper);
+                                    CompleteStructMember member_field2 = TypeObjectUtils::build_complete_struct_member(common_field2, detail_field2);
+                                    TypeObjectUtils::add_complete_struct_member(member_seq_InnerStructureHelper, member_field2);
+                                }
+                                CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
+                                if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                            "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
+                                }
+                                return_code_InnerStructureHelper =
+                                    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                                    "InnerStructureHelper", type_ids_InnerStructureHelper);
+                                if (return_code_InnerStructureHelper != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                                "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                                    return;
+                                }
+                            }
+                        }
+                        CommonAliasBody common_inner_structure_helper_alias;
+                        if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
+                                (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_inner_structure_helper_alias = TypeObjectUtils::build_common_alias_body(related_flags_inner_structure_helper_alias, type_ids_StructAliasInheritanceStruct.type_identifier1());
+                        }
+                        else if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() ||
+                                (TI_PLAIN_SEQUENCE_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().seq_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_SEQUENCE_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().seq_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().array_sdefn().header().equiv_kind()) ||
+                                (TI_PLAIN_ARRAY_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().array_ldefn().header().equiv_kind()) ||
+                                (TI_PLAIN_MAP_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_sdefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_sdefn().key_identifier()->_d())) ||
+                                (TI_PLAIN_MAP_LARGE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() &&
+                                (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_ldefn().header().equiv_kind() ||
+                                EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2().map_ldefn().key_identifier()->_d())))
+                        {
+                            common_inner_structure_helper_alias = TypeObjectUtils::build_common_alias_body(related_flags_inner_structure_helper_alias, type_ids_StructAliasInheritanceStruct.type_identifier2());
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                    "inner_structure_helper_alias related TypeIdentifier inconsistent.");
+                            return;
+                        }
+                        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_inner_structure_helper_alias;
+                        ann_custom_inner_structure_helper_alias.reset();
+                        CompleteAliasBody body_inner_structure_helper_alias = TypeObjectUtils::build_complete_alias_body(common_inner_structure_helper_alias, member_ann_builtin_inner_structure_helper_alias, ann_custom_inner_structure_helper_alias);
+                        CompleteAliasType alias_type_inner_structure_helper_alias = TypeObjectUtils::build_complete_alias_type(alias_flags_inner_structure_helper_alias, header_inner_structure_helper_alias, body_inner_structure_helper_alias);
+                        if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
+                                TypeObjectUtils::build_and_register_alias_type_object(alias_type_inner_structure_helper_alias, type_name_inner_structure_helper_alias.to_string()))
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "inner_structure_helper_alias already registered in TypeObjectRegistry for a different type.");
+                        }
+                        return_code_StructAliasInheritanceStruct =
+                            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                            "inner_structure_helper_alias", type_ids_StructAliasInheritanceStruct);
+                        if (return_code_StructAliasInheritanceStruct != eprosima::fastdds::dds::RETCODE_OK)
+                        {
+                            EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                        "inner_structure_helper_alias: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                            return;
+                        }
+                    }
                     QualifiedTypeName type_name_StructAliasInheritanceStruct = "StructAliasInheritanceStruct";
                     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin_StructAliasInheritanceStruct;
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StructAliasInheritanceStruct;
                     CompleteTypeDetail detail_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_StructAliasInheritanceStruct, ann_custom_StructAliasInheritanceStruct, type_name_StructAliasInheritanceStruct.to_string());
                     CompleteStructHeader header_StructAliasInheritanceStruct;
-                    header_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_StructAliasInheritanceStruct);
+                    if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d())
+                    {
+                        header_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_StructAliasInheritanceStruct.type_identifier1(), detail_StructAliasInheritanceStruct);
+                    }
+                    else if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d())
+                    {
+                        header_StructAliasInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_StructAliasInheritanceStruct.type_identifier2(), detail_StructAliasInheritanceStruct);
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                                "StructAliasInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                        return;
+                    }
                     CompleteStructMemberSeq member_seq_StructAliasInheritanceStruct;
                     {
                         return_code_StructAliasInheritanceStruct =
@@ -3754,7 +4274,7 @@ void register_StructuresInheritanceStruct_type_identifier()
                         StructMemberFlag member_flags_new_member = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
                                 false, false, false, false);
                         CommonStructMember common_new_member;
-                        MemberId member_id_new_member = 0x00000000;
+                        MemberId member_id_new_member = 0x00000002;
                         if (EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_StructAliasInheritanceStruct.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_StructAliasInheritanceStruct.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_StructAliasInheritanceStruct.type_identifier1().seq_sdefn().header().equiv_kind()) ||

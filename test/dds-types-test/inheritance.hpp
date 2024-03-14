@@ -803,7 +803,7 @@ private:
  * @brief This class represents the structure StructAliasInheritanceStruct defined by the user in the IDL file.
  * @ingroup inheritance
  */
-class StructAliasInheritanceStruct
+class StructAliasInheritanceStruct : public inner_structure_helper_alias
 {
 public:
 
@@ -811,6 +811,7 @@ public:
      * @brief Default constructor.
      */
     eProsima_user_DllExport StructAliasInheritanceStruct()
+        : inner_structure_helper_alias()
     {
     }
 
@@ -827,6 +828,7 @@ public:
      */
     eProsima_user_DllExport StructAliasInheritanceStruct(
             const StructAliasInheritanceStruct& x)
+        : inner_structure_helper_alias(x)
     {
                     m_new_member = x.m_new_member;
 
@@ -838,6 +840,8 @@ public:
      */
     eProsima_user_DllExport StructAliasInheritanceStruct(
             StructAliasInheritanceStruct&& x) noexcept
+        : inner_structure_helper_alias(std::move(x))
+
     {
         m_new_member = x.m_new_member;
     }
@@ -849,6 +853,7 @@ public:
     eProsima_user_DllExport StructAliasInheritanceStruct& operator =(
             const StructAliasInheritanceStruct& x)
     {
+        inner_structure_helper_alias::operator =(x);
 
                     m_new_member = x.m_new_member;
 
@@ -862,6 +867,7 @@ public:
     eProsima_user_DllExport StructAliasInheritanceStruct& operator =(
             StructAliasInheritanceStruct&& x) noexcept
     {
+        inner_structure_helper_alias::operator =(std::move(x));
 
         m_new_member = x.m_new_member;
         return *this;
@@ -874,6 +880,10 @@ public:
     eProsima_user_DllExport bool operator ==(
             const StructAliasInheritanceStruct& x) const
     {
+        if (inner_structure_helper_alias::operator !=(x))
+                {
+                    return false;
+                }
         return (m_new_member == x.m_new_member);
     }
 
@@ -1622,7 +1632,7 @@ private:
  * @brief This class represents the structure BitsetAliasInheritanceBitset defined by the user in the IDL file.
  * @ingroup inheritance
  */
-class BitsetAliasInheritanceBitset
+class BitsetAliasInheritanceBitset : public inner_bitset_helper_alias
 {
 public:
 
@@ -1630,6 +1640,7 @@ public:
      * @brief Default constructor.
      */
     eProsima_user_DllExport BitsetAliasInheritanceBitset()
+    : inner_bitset_helper_alias()
     {
     }
 
@@ -1646,6 +1657,7 @@ public:
      */
     eProsima_user_DllExport BitsetAliasInheritanceBitset(
             const BitsetAliasInheritanceBitset& x)
+    : inner_bitset_helper_alias(x)
     {
         m_bitset = x.m_bitset;
     }
@@ -1656,6 +1668,7 @@ public:
      */
     eProsima_user_DllExport BitsetAliasInheritanceBitset(
             BitsetAliasInheritanceBitset&& x) noexcept
+    : inner_bitset_helper_alias(std::move(x))
     {
         m_bitset = x.m_bitset;
     }
@@ -1667,6 +1680,7 @@ public:
     eProsima_user_DllExport BitsetAliasInheritanceBitset& operator =(
             const BitsetAliasInheritanceBitset& x)
     {
+            inner_bitset_helper_alias::operator =(x);
 
         m_bitset = x.m_bitset;
 
@@ -1680,6 +1694,7 @@ public:
     eProsima_user_DllExport BitsetAliasInheritanceBitset& operator =(
             BitsetAliasInheritanceBitset&& x) noexcept
     {
+            inner_bitset_helper_alias::operator =(std::move(x));
 
         m_bitset = x.m_bitset;
 
@@ -1693,6 +1708,7 @@ public:
     eProsima_user_DllExport bool operator ==(
             const BitsetAliasInheritanceBitset& x) const
     {
+            if (inner_bitset_helper_alias::operator !=(x)) return false;
 
         return m_bitset == x.m_bitset;
     }
@@ -1742,21 +1758,30 @@ public:
     }
 
 
-    eProsima_user_DllExport std::bitset<10> bitset() const
+    eProsima_user_DllExport std::bitset<43> bitset() const
     {
         std::string str_value;
 
+        str_value = static_cast<const inner_bitset_helper_alias*>(this)->bitset().to_string() + str_value;
+
         str_value = m_bitset.to_string() + str_value;
 
-        return std::bitset<10>(str_value);
+        return std::bitset<43>(str_value);
     }
 
     eProsima_user_DllExport void bitset(
-            const std::bitset<10>& bitset)
+            const std::bitset<43>& bitset)
     {
         std::string str_value {bitset.to_string()};
         size_t base_diff {0};
         size_t last_post {std::string::npos};
+
+        {
+            base_diff += 33;
+            std::bitset<33> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
+            static_cast<inner_bitset_helper_alias*>(this)->bitset(internal_bitset);
+            last_post = base_diff;
+        }
 
         base_diff += 10;
         m_bitset = std::bitset<10>(str_value.substr(str_value.length() - base_diff, last_post));

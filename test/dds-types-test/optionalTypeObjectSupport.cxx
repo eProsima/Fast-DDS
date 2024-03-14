@@ -11051,13 +11051,13 @@ void register_map_short_optional_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_COMPLETE;
                 }
@@ -11377,13 +11377,13 @@ void register_map_short_align_1_optional_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_COMPLETE;
                 }
@@ -11703,13 +11703,13 @@ void register_map_short_align_2_optional_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_COMPLETE;
                 }
@@ -12029,13 +12029,13 @@ void register_map_short_align_4_optional_type_identifier()
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_BOTH;
-                if (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() ||
+                if ((EK_COMPLETE == key_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d()) ||
                         (TI_PLAIN_SEQUENCE_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_SEQUENCE_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->seq_ldefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_sdefn().header().equiv_kind()) ||
                         (TI_PLAIN_ARRAY_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->array_ldefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind()) ||
-                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind()))
+                        (TI_PLAIN_MAP_SMALL == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_sdefn().header().equiv_kind())) ||
+                        (TI_PLAIN_MAP_LARGE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->_d() && (EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().key_identifier()->_d() || EK_COMPLETE == element_identifier_anonymous_map_int32_t_int16_t_unbounded->map_ldefn().header().equiv_kind())))
                 {
                     equiv_kind_anonymous_map_int32_t_int16_t_unbounded = EK_COMPLETE;
                 }
