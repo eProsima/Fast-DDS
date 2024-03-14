@@ -36,21 +36,20 @@ std::atomic<bool> HelloWorldPublisher::stop_(false);
 std::condition_variable HelloWorldPublisher::matched_cv_;
 
 HelloWorldPublisher::HelloWorldPublisher(
-        const CLIParser::publisher_config& config)
+        const CLIParser::publisher_config& config,
+        const std::string& topic_name)
     : participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , matched_(0)
+    , samples_ (config.samples)
 {
     // Set up the data type with initial values
     hello_.index(0);
     hello_.message("Hello world");
-    matched_ = 0;
-
-    // Get CLI options
-    samples_ = config.samples;
-
+    
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
@@ -74,7 +73,7 @@ HelloWorldPublisher::HelloWorldPublisher(
     // Create the topic
     TopicQos topic_qos = TOPIC_QOS_DEFAULT;
     participant_->get_default_topic_qos(topic_qos);
-    topic_ = participant_->create_topic("hello_world_topic", type_.get_type_name(), topic_qos);
+    topic_ = participant_->create_topic(topic_name, type_.get_type_name(), topic_qos);
     if (topic_ == nullptr)
     {
         throw std::runtime_error("Topic initialization failed");
@@ -92,11 +91,14 @@ HelloWorldPublisher::HelloWorldPublisher(
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    // Delete DDS entities contained within the DomainParticipant
-    participant_->delete_contained_entities();
+    if (nullptr != participant_)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
 
-    // Delete DomainParticipant
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 }
 
 void HelloWorldPublisher::on_publication_matched(
@@ -132,7 +134,7 @@ void HelloWorldPublisher::run()
                         std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                                   << "' SENT" << std::endl;
                     }
-                    std::this_thread::sleep_for(std::chrono::milliseconds(period_));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(period_ms_));
                 }
             });
     if (samples_ == 0)
@@ -177,7 +179,7 @@ bool HelloWorldPublisher::publish()
     matched_cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
-                return matched_ > 0 || is_stopped();
+                return ((matched_ > 0) || is_stopped());
             });
     if (!is_stopped())
     {

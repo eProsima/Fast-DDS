@@ -34,13 +34,14 @@ int main(
         char** argv)
 {
     auto ret = EXIT_SUCCESS;
+    const std::string topic_name = "hello_world_topic";
     CLIParser::hello_world_config config = CLIParser::parse_cli_options(argc, argv);
 
     if (config.entity == "publisher")
     {
         try
         {
-            HelloWorldPublisher hello_world_publisher(config.pub_config);
+            HelloWorldPublisher hello_world_publisher(config.pub_config, topic_name);
             hello_world_publisher.run();
         }
         catch (const std::runtime_error& e)
@@ -55,7 +56,7 @@ int main(
         {
             try
             {
-                HelloWorldSubscriberWaitset hello_world_subscriber_waitset(config.sub_config);
+                HelloWorldSubscriberWaitset hello_world_subscriber_waitset(config.sub_config, topic_name);
                 hello_world_subscriber_waitset.run();
             }
             catch (const std::runtime_error& e)
@@ -68,7 +69,7 @@ int main(
         {
             try
             {
-                HelloWorldSubscriber hello_world_subscriber(config.sub_config);
+                HelloWorldSubscriber hello_world_subscriber(config.sub_config, topic_name);
                 hello_world_subscriber.run();
             }
             catch (const std::runtime_error& e)

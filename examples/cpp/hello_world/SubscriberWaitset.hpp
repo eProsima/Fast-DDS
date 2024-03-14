@@ -38,20 +38,21 @@ class HelloWorldSubscriberWaitset
 public:
 
     HelloWorldSubscriberWaitset(
-            const CLIParser::subscriber_config& config);
+            const CLIParser::subscriber_config& config,
+            const std::string& topic_name);
 
     virtual ~HelloWorldSubscriberWaitset();
 
     //! Run subscriber
     void run();
 
-    //! Return the current state of execution
-    static bool is_stopped();
-
     //! Trigger the end of execution
     static void stop();
 
 private:
+
+    //! Return the current state of execution
+    static bool is_stopped();
 
     HelloWorld hello_;
 

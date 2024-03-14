@@ -38,17 +38,16 @@ std::atomic<bool> HelloWorldSubscriber::stop_(false);
 std::condition_variable HelloWorldSubscriber::terminate_cv_;
 
 HelloWorldSubscriber::HelloWorldSubscriber(
-        const CLIParser::subscriber_config& config)
+        const CLIParser::subscriber_config& config,
+        const std::string& topic_name)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , samples_ (config.samples)
+    , received_samples_(0)
 {
-    // Get CLI options
-    samples_ = config.samples;
-    received_samples_ = 0;
-
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
     participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
@@ -72,7 +71,7 @@ HelloWorldSubscriber::HelloWorldSubscriber(
     // Create the topic
     TopicQos topic_qos = TOPIC_QOS_DEFAULT;
     participant_->get_default_topic_qos(topic_qos);
-    topic_ = participant_->create_topic("hello_world_topic", type_.get_type_name(), topic_qos);
+    topic_ = participant_->create_topic(topic_name, type_.get_type_name(), topic_qos);
     if (topic_ == nullptr)
     {
         throw std::runtime_error("Topic initialization failed");
@@ -90,11 +89,14 @@ HelloWorldSubscriber::HelloWorldSubscriber(
 
 HelloWorldSubscriber::~HelloWorldSubscriber()
 {
-    // Delete DDS entities contained within the DomainParticipant
-    participant_->delete_contained_entities();
+    if (nullptr != participant_)
+    {
+        // Delete DDS entities contained within the DomainParticipant
+        participant_->delete_contained_entities();
 
-    // Delete DomainParticipant
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        // Delete DomainParticipant
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+    }
 }
 
 void HelloWorldSubscriber::on_subscription_matched(
@@ -122,7 +124,7 @@ void HelloWorldSubscriber::on_data_available(
     SampleInfo info;
     if ((!is_stopped()) && (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&hello_, &info)))
     {
-        if (info.instance_state == ALIVE_INSTANCE_STATE && info.valid_data)
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
             received_samples_++;
             // Print Hello world message data

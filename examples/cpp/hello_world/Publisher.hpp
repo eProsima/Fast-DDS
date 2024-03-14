@@ -36,7 +36,8 @@ class HelloWorldPublisher : public DataWriterListener
 public:
 
     HelloWorldPublisher(
-            const CLIParser::publisher_config& config);
+            const CLIParser::publisher_config& config,
+            const std::string& topic_name);
 
     ~HelloWorldPublisher() override;
 
@@ -45,9 +46,6 @@ public:
             DataWriter* writer,
             const PublicationMatchedStatus& info) override;
 
-    //! Publish a sample
-    bool publish();
-
     //! Run publisher
     void run();
 
@@ -55,6 +53,9 @@ public:
     static void stop();
 
 private:
+
+    //! Publish a sample
+    bool publish();
 
     //! Return the current state of execution
     bool is_stopped();
@@ -81,7 +82,7 @@ private:
 
     static std::condition_variable matched_cv_;
 
-    const uint8_t period_ = 100; // in ms
+    const uint32_t period_ms_ = 100; // in ms
 };
 
 

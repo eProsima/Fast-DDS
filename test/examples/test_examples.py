@@ -27,6 +27,7 @@ def test_basic_configuration():
         if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
+            print ('sent: ' + str(sent) + ' received: ' + str(received))
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:
@@ -34,6 +35,7 @@ def test_basic_configuration():
             print(l)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
+        print(out)
 
     assert(ret)
 
@@ -63,6 +65,7 @@ def test_hello_world():
         if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
+            print ('sent: ' + str(sent) + ' received: ' + str(received))
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:
@@ -70,5 +73,6 @@ def test_hello_world():
             print(l)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
+        print(out)
 
     assert(ret)
