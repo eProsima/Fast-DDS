@@ -1,4 +1,4 @@
-name: Sanitizer analysis
+name: Address Sanitizer analysis
 
 on:
   workflow_dispatch:
@@ -6,17 +6,19 @@ on:
       discovery_server_branch:
         description: 'Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)'
         required: true
-        default: 'master'
+        default: 'v1.2.2'
       fastdds_branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-        default: 'master'
+        default: '2.12.x'
+
   pull_request:
-  push:
     branches:
-      - master
-  schedule:
-    - cron: '0 1 * * *'
+      - '2.12.x'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -32,7 +34,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.12.x' }}
 
     steps:
       - name: Install wget
@@ -120,8 +122,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
-      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'master' }}
+      FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.12.x' }}
+      DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'v1.2.2' }}
 
     steps:
       - name: Install wget

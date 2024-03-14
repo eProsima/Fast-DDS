@@ -7,15 +7,7 @@ on:
         required: true
         type: string
         default: '2.12.x'
-
-  push:
-    branches:
-      - '2.12.x'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
-
+        
   pull_request:
     branches:
       - '2.12.x'

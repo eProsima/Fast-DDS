@@ -5,7 +5,7 @@ on:
       fastdds_branch:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
-        default: 'master'
+        default: '2.12.x'
       optional_cmake_args:
         description: 'Optional CMake Compilation Flags'
         required: false
@@ -15,17 +15,9 @@ on:
         required: false
         type: string
 
-  push:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '!**/CMakeLists.txt'
-
   pull_request:
     branches:
-      - 'master'
+      - '2.12.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -47,7 +39,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
+        FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.12.x' }}
         TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
         # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
         # These issues were fixed in GCC 12 so we upgrade to that version.
