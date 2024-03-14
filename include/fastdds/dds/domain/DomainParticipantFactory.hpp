@@ -101,7 +101,7 @@ public:
      *
      * @return DomainParticipant pointer. (nullptr if not created.)
      */
-    RTPS_DllAPI DomainParticipant* create_participant_with_default_profile();
+    FASTDDS_EXPORTED_API DomainParticipant* create_participant_with_default_profile();
 
 
     /**
@@ -111,7 +111,7 @@ public:
      * @param listener DomainParticipantListener Pointer
      * @param mask StatusMask Reference
      */
-    RTPS_DllAPI DomainParticipant* create_participant_with_default_profile(
+    FASTDDS_EXPORTED_API DomainParticipant* create_participant_with_default_profile(
             DomainParticipantListener* listener,
             const StatusMask& mask);
 
