@@ -38,7 +38,8 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
             type_descriptor_.base_type())
     {
         // Get the members of the base type.
-        auto base_type = traits<DynamicType>::narrow<DynamicTypeImpl>(type_descriptor_.base_type());
+        auto base_type =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(type_descriptor_.base_type())->resolve_alias_enclosed_type();
         member_ = base_type->member_;
         member_by_name_ = base_type->member_by_name_;
         members_ = base_type->members_;

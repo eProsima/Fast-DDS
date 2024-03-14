@@ -524,15 +524,7 @@ MemberId DynamicDataImpl::get_member_id_by_name(
     {
         assert(enclosing_type_->get_descriptor().key_element_type());
         auto key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
-            enclosing_type_->get_descriptor().key_element_type());
-        //{{{ If aliases, get enclosed type.
-        if (TK_ALIAS == key_type->get_kind()) // If alias, get enclosing type.
-        {
-            do {
-                key_type = traits<DynamicType>::narrow<DynamicTypeImpl>(key_type->get_descriptor().base_type());
-            } while (TK_ALIAS == key_type->get_kind());
-        }
-        //}}}
+            enclosing_type_->get_descriptor().key_element_type())->resolve_alias_enclosed_type();
         if (TypeValueConverter::is_string_consistent(key_type->get_kind(), key_type->get_all_members_by_index(),
                 name.to_string()))
         {
@@ -3003,14 +2995,7 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_STRING16>(
 traits<DynamicTypeImpl>::ref_type DynamicDataImpl::get_enclosing_type(
         traits<DynamicTypeImpl>::ref_type type) noexcept
 {
-    traits<DynamicTypeImpl>::ref_type ret_value = type;
-
-    if (TK_ALIAS == ret_value->get_kind())     // If alias, get enclosing type.
-    {
-        do {
-            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_descriptor().base_type());
-        } while (TK_ALIAS == ret_value->get_kind());
-    }
+    traits<DynamicTypeImpl>::ref_type ret_value = type->resolve_alias_enclosed_type();
 
     if (TK_ENUM == ret_value->get_kind())     // If enum, get enclosing type.
     {

@@ -154,15 +154,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
             TK_ENUM == parent_kind_)
     {
 
-        TypeKind kind = type->get_kind();
-
-        if (TK_ALIAS == kind)         // If alias, get enclosing type.
-        {
-            do {
-                type = traits<DynamicType>::narrow<DynamicTypeImpl>(type->get_descriptor().base_type());
-                kind = type->get_kind();
-            } while (TK_ALIAS == kind);
-        }
+        TypeKind kind = type->resolve_alias_enclosed_type()->get_kind();
 
         switch (kind)
         {
@@ -189,7 +181,6 @@ bool MemberDescriptorImpl::is_consistent() noexcept
                 break;
         }
     }
-
 
     // Check bitmask enclosing type.
     if (TK_BITMASK ==  parent_kind_ && TK_BOOLEAN != type->get_kind())

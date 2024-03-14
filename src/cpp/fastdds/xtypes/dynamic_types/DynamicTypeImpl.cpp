@@ -207,6 +207,20 @@ bool DynamicTypeImpl::equals(
     return ret_value;
 }
 
+traits<DynamicTypeImpl>::ref_type DynamicTypeImpl::resolve_alias_enclosed_type() noexcept
+{
+    traits<DynamicTypeImpl>::ref_type ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(_this());
+
+    if (TK_ALIAS == ret_value->get_kind())
+    {
+        do {
+            ret_value = traits<DynamicType>::narrow<DynamicTypeImpl>(ret_value->get_descriptor().base_type());
+        } while (TK_ALIAS == ret_value->get_kind());
+    }
+
+    return ret_value;
+}
+
 traits<DynamicType>::ref_type DynamicTypeImpl::_this ()
 {
     return shared_from_this();

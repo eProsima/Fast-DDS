@@ -167,11 +167,26 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     if (base_type_ &&
             TK_ALIAS != kind_ &&
             TK_BITSET != kind_ &&
-            TK_STRUCTURE != kind_)
+            TK_STRUCTURE != kind_ &&
+            TK_UNION != kind_)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                "Descriptor doesn't describe an ALIAS|STRUCTURE|BITSET but the base_type was set");
+                "Descriptor doesn't describe an ALIAS|BITSET|STRUCTURE|UNIONbut the base_type was set");
         return false;
+    }
+
+    // Check the parent in of same kind.
+    if (base_type_ && TK_ALIAS != kind_)
+    {
+        auto base_type =
+                traits<DynamicType>::narrow<DynamicTypeImpl>(base_type_)->resolve_alias_enclosed_type();
+
+        if (kind_ != base_type->get_kind())
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "Descriptor doesn't describe an ALIAS|BITSET|STRUCTURE|UNIONbut the base_type was set");
+            return false;
+        }
     }
 
     // Arrays need one or more bound fields with the lenghts of each dimension.
@@ -214,17 +229,9 @@ bool TypeDescriptorImpl::is_consistent() noexcept
         {
             // Check discriminator kind and the type is a integer (labels are int32_t).
             // boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enumera, alias
-            TypeKind discriminator_kind = discriminator_type_->get_kind();
-            auto discriminator_type = traits<DynamicType>::narrow<DynamicTypeImpl>(discriminator_type_);
-
-            if (TK_ALIAS == discriminator_kind)     // If alias, get enclosing type.
-            {
-                do {
-                    discriminator_type = traits<DynamicType>::narrow<DynamicTypeImpl>(
-                        discriminator_type->get_descriptor().base_type());
-                    discriminator_kind = discriminator_type->get_kind();
-                } while (TK_ALIAS == discriminator_kind);
-            }
+            auto discriminator_type =
+                    traits<DynamicType>::narrow<DynamicTypeImpl>(discriminator_type_)->resolve_alias_enclosed_type();
+            TypeKind discriminator_kind = discriminator_type->get_kind();
 
             switch (discriminator_kind)
             {

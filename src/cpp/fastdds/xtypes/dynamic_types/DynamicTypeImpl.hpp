@@ -104,6 +104,8 @@ public:
         return default_union_member_;
     }
 
+    traits<DynamicTypeImpl>::ref_type resolve_alias_enclosed_type() noexcept;
+
 protected:
 
     traits<DynamicType>::ref_type _this();
