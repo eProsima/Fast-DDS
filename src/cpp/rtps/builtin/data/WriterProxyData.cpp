@@ -340,6 +340,14 @@ bool WriterProxyData::writeToCDRMessage(
     }
 
     {
+        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, 16, m_guid);
+        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
+        {
+            return false;
+        }
+    }
+
+    {
         ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
         p.netconfigSet = m_networkConfiguration;
         if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
@@ -388,13 +396,6 @@ bool WriterProxyData::writeToCDRMessage(
     {
         ParameterKey_t p(fastdds::dds::PID_KEY_HASH, 16, m_key);
         if (!fastdds::dds::ParameterSerializer<ParameterKey_t>::add_to_cdr_message(p, msg))
-        {
-            return false;
-        }
-    }
-    {
-        ParameterGuid_t p(fastdds::dds::PID_ENDPOINT_GUID, 16, m_guid);
-        if (!fastdds::dds::ParameterSerializer<ParameterGuid_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
