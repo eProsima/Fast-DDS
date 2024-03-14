@@ -3464,7 +3464,7 @@ void register_DerivedAutoidDefault_type_identifier()
 
         CompleteTypeDetail detail_DerivedAutoidDefault = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_DerivedAutoidDefault, ann_custom_DerivedAutoidDefault, type_name_DerivedAutoidDefault.to_string());
         CompleteStructHeader header_DerivedAutoidDefault;
-        if (EK_COMPLETE == type_ids_DerivedAutoidDefault.type_identifier1()._d() || TK_NONE == type_ids_DerivedAutoidDefault.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_DerivedAutoidDefault.type_identifier1()._d())
         {
             header_DerivedAutoidDefault = TypeObjectUtils::build_complete_struct_header(type_ids_DerivedAutoidDefault.type_identifier1(), detail_DerivedAutoidDefault);
         }
@@ -4285,7 +4285,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
 
         CompleteTypeDetail detail_DerivedEmptyAutoidSequential = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_DerivedEmptyAutoidSequential, ann_custom_DerivedEmptyAutoidSequential, type_name_DerivedEmptyAutoidSequential.to_string());
         CompleteStructHeader header_DerivedEmptyAutoidSequential;
-        if (EK_COMPLETE == type_ids_DerivedEmptyAutoidSequential.type_identifier1()._d() || TK_NONE == type_ids_DerivedEmptyAutoidSequential.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_DerivedEmptyAutoidSequential.type_identifier1()._d())
         {
             header_DerivedEmptyAutoidSequential = TypeObjectUtils::build_complete_struct_header(type_ids_DerivedEmptyAutoidSequential.type_identifier1(), detail_DerivedEmptyAutoidSequential);
         }
@@ -4754,7 +4754,7 @@ void register_DerivedAutoidSequential_type_identifier()
 
                 CompleteTypeDetail detail_DerivedEmptyAutoidSequential = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_DerivedEmptyAutoidSequential, ann_custom_DerivedEmptyAutoidSequential, type_name_DerivedEmptyAutoidSequential.to_string());
                 CompleteStructHeader header_DerivedEmptyAutoidSequential;
-                if (EK_COMPLETE == type_ids_DerivedEmptyAutoidSequential.type_identifier1()._d() || TK_NONE == type_ids_DerivedEmptyAutoidSequential.type_identifier1()._d())
+                if (EK_COMPLETE == type_ids_DerivedEmptyAutoidSequential.type_identifier1()._d())
                 {
                     header_DerivedEmptyAutoidSequential = TypeObjectUtils::build_complete_struct_header(type_ids_DerivedEmptyAutoidSequential.type_identifier1(), detail_DerivedEmptyAutoidSequential);
                 }
@@ -4799,7 +4799,7 @@ void register_DerivedAutoidSequential_type_identifier()
 
         CompleteTypeDetail detail_DerivedAutoidSequential = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_DerivedAutoidSequential, ann_custom_DerivedAutoidSequential, type_name_DerivedAutoidSequential.to_string());
         CompleteStructHeader header_DerivedAutoidSequential;
-        if (EK_COMPLETE == type_ids_DerivedAutoidSequential.type_identifier1()._d() || TK_NONE == type_ids_DerivedAutoidSequential.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_DerivedAutoidSequential.type_identifier1()._d())
         {
             header_DerivedAutoidSequential = TypeObjectUtils::build_complete_struct_header(type_ids_DerivedAutoidSequential.type_identifier1(), detail_DerivedAutoidSequential);
         }
@@ -5620,7 +5620,7 @@ void register_DerivedAutoidHash_type_identifier()
 
         CompleteTypeDetail detail_DerivedAutoidHash = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_DerivedAutoidHash, ann_custom_DerivedAutoidHash, type_name_DerivedAutoidHash.to_string());
         CompleteStructHeader header_DerivedAutoidHash;
-        if (EK_COMPLETE == type_ids_DerivedAutoidHash.type_identifier1()._d() || TK_NONE == type_ids_DerivedAutoidHash.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_DerivedAutoidHash.type_identifier1()._d())
         {
             header_DerivedAutoidHash = TypeObjectUtils::build_complete_struct_header(type_ids_DerivedAutoidHash.type_identifier1(), detail_DerivedAutoidHash);
         }

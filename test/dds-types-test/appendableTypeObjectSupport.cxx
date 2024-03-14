@@ -1523,7 +1523,7 @@ void register_AppendableUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_longValue;
                         TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
                         CommonUnionMember common_longValue;
-                        MemberId member_id_longValue = 0x00000000;
+                        MemberId member_id_longValue = 0x00000001;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1591,7 +1591,7 @@ void register_AppendableUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_floatValue;
                         TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
                         CommonUnionMember common_floatValue;
-                        MemberId member_id_floatValue = 0x00000001;
+                        MemberId member_id_floatValue = 0x00000002;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1658,7 +1658,7 @@ void register_AppendableUnionStruct_type_identifier()
                                 true, false);
                         UnionCaseLabelSeq label_seq_shortValue;
                         CommonUnionMember common_shortValue;
-                        MemberId member_id_shortValue = 0x00000002;
+                        MemberId member_id_shortValue = 0x00000003;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1901,7 +1901,7 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
 
         CompleteTypeDetail detail_AppendableEmptyInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_AppendableEmptyInheritanceStruct, ann_custom_AppendableEmptyInheritanceStruct, type_name_AppendableEmptyInheritanceStruct.to_string());
         CompleteStructHeader header_AppendableEmptyInheritanceStruct;
-        if (EK_COMPLETE == type_ids_AppendableEmptyInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_AppendableEmptyInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_AppendableEmptyInheritanceStruct.type_identifier1()._d())
         {
             header_AppendableEmptyInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_AppendableEmptyInheritanceStruct.type_identifier1(), detail_AppendableEmptyInheritanceStruct);
         }
@@ -2161,7 +2161,7 @@ void register_AppendableInheritanceStruct_type_identifier()
 
         CompleteTypeDetail detail_AppendableInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_AppendableInheritanceStruct, ann_custom_AppendableInheritanceStruct, type_name_AppendableInheritanceStruct.to_string());
         CompleteStructHeader header_AppendableInheritanceStruct;
-        if (EK_COMPLETE == type_ids_AppendableInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_AppendableInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_AppendableInheritanceStruct.type_identifier1()._d())
         {
             header_AppendableInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_AppendableInheritanceStruct.type_identifier1(), detail_AppendableInheritanceStruct);
         }
@@ -2421,7 +2421,7 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
 
         CompleteTypeDetail detail_AppendableInheritanceEmptyStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_AppendableInheritanceEmptyStruct, ann_custom_AppendableInheritanceEmptyStruct, type_name_AppendableInheritanceEmptyStruct.to_string());
         CompleteStructHeader header_AppendableInheritanceEmptyStruct;
-        if (EK_COMPLETE == type_ids_AppendableInheritanceEmptyStruct.type_identifier1()._d() || TK_NONE == type_ids_AppendableInheritanceEmptyStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_AppendableInheritanceEmptyStruct.type_identifier1()._d())
         {
             header_AppendableInheritanceEmptyStruct = TypeObjectUtils::build_complete_struct_header(type_ids_AppendableInheritanceEmptyStruct.type_identifier1(), detail_AppendableInheritanceEmptyStruct);
         }
@@ -2573,7 +2573,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_AppendableExtensibilityInheritance;
         CompleteTypeDetail detail_AppendableExtensibilityInheritance = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_AppendableExtensibilityInheritance, ann_custom_AppendableExtensibilityInheritance, type_name_AppendableExtensibilityInheritance.to_string());
         CompleteStructHeader header_AppendableExtensibilityInheritance;
-        if (EK_COMPLETE == type_ids_AppendableExtensibilityInheritance.type_identifier1()._d() || TK_NONE == type_ids_AppendableExtensibilityInheritance.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_AppendableExtensibilityInheritance.type_identifier1()._d())
         {
             header_AppendableExtensibilityInheritance = TypeObjectUtils::build_complete_struct_header(type_ids_AppendableExtensibilityInheritance.type_identifier1(), detail_AppendableExtensibilityInheritance);
         }

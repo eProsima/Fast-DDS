@@ -527,6 +527,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
+                data.field1(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
+                data.field2(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                 data.new_member(), current_alignment);
 
 
@@ -547,7 +553,9 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.new_member()
+        << eprosima::fastcdr::MemberId(0) << data.field1()
+        << eprosima::fastcdr::MemberId(1) << data.field2()
+        << eprosima::fastcdr::MemberId(2) << data.new_member()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -566,6 +574,14 @@ eProsima_user_DllExport void deserialize(
                 switch (mid.id)
                 {
                                         case 0:
+                                                dcdr >> data.field1();
+                                            break;
+
+                                        case 1:
+                                                dcdr >> data.field2();
+                                            break;
+
+                                        case 2:
                                                 dcdr >> data.new_member();
                                             break;
 
@@ -778,7 +794,7 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         BitsetAliasInheritanceBitset& data)
 {
-    std::bitset<10> bitset;
+    std::bitset<43> bitset;
     dcdr >> bitset;
     data.bitset(bitset);
 }

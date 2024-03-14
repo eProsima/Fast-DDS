@@ -1523,7 +1523,7 @@ void register_FinalUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_longValue;
                         TypeObjectUtils::add_union_case_label(label_seq_longValue, static_cast<int32_t>(0));
                         CommonUnionMember common_longValue;
-                        MemberId member_id_longValue = 0x00000000;
+                        MemberId member_id_longValue = 0x00000001;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1591,7 +1591,7 @@ void register_FinalUnionStruct_type_identifier()
                         UnionCaseLabelSeq label_seq_floatValue;
                         TypeObjectUtils::add_union_case_label(label_seq_floatValue, static_cast<int32_t>(1));
                         CommonUnionMember common_floatValue;
-                        MemberId member_id_floatValue = 0x00000001;
+                        MemberId member_id_floatValue = 0x00000002;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1658,7 +1658,7 @@ void register_FinalUnionStruct_type_identifier()
                                 true, false);
                         UnionCaseLabelSeq label_seq_shortValue;
                         CommonUnionMember common_shortValue;
-                        MemberId member_id_shortValue = 0x00000002;
+                        MemberId member_id_shortValue = 0x00000003;
                         if (EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1()._d() || TK_NONE == type_ids_InnerUnionHelper.type_identifier2()._d() ||
                                 (TI_PLAIN_SEQUENCE_SMALL == type_ids_InnerUnionHelper.type_identifier1()._d() &&
                                 EK_COMPLETE == type_ids_InnerUnionHelper.type_identifier1().seq_sdefn().header().equiv_kind()) ||
@@ -1901,7 +1901,7 @@ void register_FinalEmptyInheritanceStruct_type_identifier()
 
         CompleteTypeDetail detail_FinalEmptyInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalEmptyInheritanceStruct, ann_custom_FinalEmptyInheritanceStruct, type_name_FinalEmptyInheritanceStruct.to_string());
         CompleteStructHeader header_FinalEmptyInheritanceStruct;
-        if (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_FinalEmptyInheritanceStruct.type_identifier1()._d())
         {
             header_FinalEmptyInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_FinalEmptyInheritanceStruct.type_identifier1(), detail_FinalEmptyInheritanceStruct);
         }
@@ -2161,7 +2161,7 @@ void register_FinalInheritanceStruct_type_identifier()
 
         CompleteTypeDetail detail_FinalInheritanceStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalInheritanceStruct, ann_custom_FinalInheritanceStruct, type_name_FinalInheritanceStruct.to_string());
         CompleteStructHeader header_FinalInheritanceStruct;
-        if (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1()._d() || TK_NONE == type_ids_FinalInheritanceStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_FinalInheritanceStruct.type_identifier1()._d())
         {
             header_FinalInheritanceStruct = TypeObjectUtils::build_complete_struct_header(type_ids_FinalInheritanceStruct.type_identifier1(), detail_FinalInheritanceStruct);
         }
@@ -2421,7 +2421,7 @@ void register_InheritanceEmptyStruct_type_identifier()
 
         CompleteTypeDetail detail_InheritanceEmptyStruct = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_InheritanceEmptyStruct, ann_custom_InheritanceEmptyStruct, type_name_InheritanceEmptyStruct.to_string());
         CompleteStructHeader header_InheritanceEmptyStruct;
-        if (EK_COMPLETE == type_ids_InheritanceEmptyStruct.type_identifier1()._d() || TK_NONE == type_ids_InheritanceEmptyStruct.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_InheritanceEmptyStruct.type_identifier1()._d())
         {
             header_InheritanceEmptyStruct = TypeObjectUtils::build_complete_struct_header(type_ids_InheritanceEmptyStruct.type_identifier1(), detail_InheritanceEmptyStruct);
         }
@@ -2573,7 +2573,7 @@ void register_FinalExtensibilityInheritance_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_FinalExtensibilityInheritance;
         CompleteTypeDetail detail_FinalExtensibilityInheritance = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_FinalExtensibilityInheritance, ann_custom_FinalExtensibilityInheritance, type_name_FinalExtensibilityInheritance.to_string());
         CompleteStructHeader header_FinalExtensibilityInheritance;
-        if (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d() || TK_NONE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_FinalExtensibilityInheritance.type_identifier1()._d())
         {
             header_FinalExtensibilityInheritance = TypeObjectUtils::build_complete_struct_header(type_ids_FinalExtensibilityInheritance.type_identifier1(), detail_FinalExtensibilityInheritance);
         }
