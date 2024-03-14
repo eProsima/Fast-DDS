@@ -845,6 +845,15 @@ TEST_P(TransportTCP, large_data_topology)
 // from the send resource list.
 TEST_P(TransportTCP, send_resource_cleanup)
 {
+
+#if defined(__APPLE__)
+    if (use_ipv6)
+    {
+        GTEST_SKIP() << "macOS TCPv6 transport skipped";
+        return;
+    }
+#endif // if defined(__APPLE__)
+
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
     using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
@@ -983,6 +992,15 @@ TEST_P(TransportTCP, send_resource_cleanup)
 // the send resource should not be removed.
 TEST_P(TransportTCP, send_resource_cleanup_initial_peer)
 {
+
+#if defined(__APPLE__)
+    if (use_ipv6)
+    {
+        GTEST_SKIP() << "macOS TCPv6 transport skipped";
+        return;
+    }
+#endif // if defined(__APPLE__)
+
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
 
     using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
