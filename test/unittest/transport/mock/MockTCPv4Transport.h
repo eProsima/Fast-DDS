@@ -59,6 +59,7 @@ public:
         return true;
     }
 
+<<<<<<< HEAD
     /*
        virtual bool CloseOutputChannel(const Locator_t& locator) override
        {
@@ -72,6 +73,13 @@ public:
        return true;
        }
      */
+=======
+    const std::map<Locator_t, std::set<uint16_t>>& get_channel_pending_logical_ports() const
+    {
+        return channel_pending_logical_ports_;
+    }
+
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
 };
 
 } // namespace rtps

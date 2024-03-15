@@ -830,7 +830,138 @@
         </xs:all>
     </xs:complexType>
 
+<<<<<<< HEAD
     <xs:complexType name="rtpsTransportDescriptorType">
+=======
+    <!--port:
+        ├ portBase          [uint16],
+        ├ domainIDGain      [uint16],
+        ├ participantIDGain [uint16],
+        ├ offsetd0          [uint16],
+        ├ offsetd1          [uint16],
+        ├ offsetd2          [uint16],
+        └ offsetd3          [uint16] -->
+    <xs:complexType name="portType">
+        <xs:all>
+            <xs:element name="portBase" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="domainIDGain" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="participantIDGain" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd0" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd1" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd2" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="offsetd3" type="uint16" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--participant allocation type:
+        ├ remote_locators    [0~1],
+        |   ├ max_unicast_locators   [uint32],
+        |   └ max_multicast_locators [uint32],
+        ├ total_participants [0~1],
+        ├ total_readers      [0~1],
+        ├ total_writers      [0~1],
+        ├ send_buffers       [0~1],
+        ├ max_properties     [uint32],
+        ├ max_user_data      [uint32],
+        └ max_partitions     [uint32] -->
+    <xs:complexType name="rtpsParticipantAllocationAttributesType">
+        <xs:all>
+            <xs:element name="remote_locators" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_unicast_locators" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_multicast_locators" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="total_participants" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="total_readers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="total_writers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="send_buffers" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="preallocated_number" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="dynamic" type="boolean" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="max_properties" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_user_data" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="max_partitions" type="uint32" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+
+
+    <!--| Data Writer / Publisher  Definition |-->
+    <!--Data Writer Times:
+        ├ initialHeartbeatDelay  [durationType],
+        ├ heartbeatPeriod        [durationType],
+        ├ nackResponseDelay      [durationType],
+        └ nackSupressionDuration [durationType] -->
+    <xs:complexType name="writerTimesType">
+        <xs:all>
+            <xs:element name="initialHeartbeatDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="heartbeatPeriod" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="nackResponseDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="nackSupressionDuration" type="durationType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+    <!--| Data Reader / Subscriber Definition |-->
+    <!--Data Reader Times:
+        ├ initialAcknackDelay    [durationType],
+        └ heartbeatResponseDelay [durationType] -->
+    <xs:complexType name="readerTimesType">
+        <xs:all>
+            <xs:element name="initialAcknackDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="heartbeatResponseDelay" type="durationType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+
+
+
+    <!--| Transport Descriptor Definition |-->
+    <!--Transport Descriptor:
+        ├ transport_id                          [string],
+        ├ type                                  [string] ("UDPv4", "UDPv6", "TCPv4", "TCPv6", "SHM"),
+        ├ sendBufferSize                        [uint32],
+        ├ receiveBufferSize                     [uint32],
+        ├ maxMessageSize                        [uint32],
+        ├ maxInitialPeersRange                  [uint32],
+        ├ interfaceWhiteList                    [0~*],                     (NOT  available for   SHM type)
+        |   └ address                           [ipv4Address|ipv6Address]
+        ├ TTL                                   [uint8],                   (ONLY available for  UDP  type)
+        ├ non_blocking_send                     [boolean],                 (NOT  available for   SHM type)
+        ├ output_port                           [uint16],                  (ONLY available for  UDP  type)
+        ├ wan_addr                              [ipv4AddressFormat],       (ONLY available for TCPv4 type)
+        ├ keep_alive_frequency_ms               [uint32],                  (ONLY available for TCP   type)
+        ├ keep_alive_timeout_ms                 [uint32],                  (ONLY available for TCP   type)
+        ├ max_logical_port                      [uint16],                  (ONLY available for TCP   type)
+        ├ logical_port_range                    [uint16],                  (ONLY available for TCP   type)
+        ├ logical_port_increment                [uint16],                  (ONLY available for TCP   type)
+        ├ listening_ports                       [0~*],                     (ONLY available for TCP   type)
+        |   └ port                              [uint16]                   (ONLY available for TCP   type)
+        ├ tls                                   [0~1],                     (ONLY available for TCP   type)
+        ├ calculate_crc                         [bool],                    (ONLY available for TCP   type)
+        ├ check_crc                             [bool],                    (ONLY available for TCP   type)
+        ├ enable_tcp_nodelay                    [bool],                    (ONLY available for TCP   type)
+        ├ keep_alive_thread                     [threadSettingsType],      (ONLY available for TCP   type)
+        ├ accept_thread                         [threadSettingsType],      (ONLY available for TCP   type)
+        ├ tcp_negotiation_timeout               [uint32],                  (ONLY available for TCP   type)
+        ├ segment_size                          [uint32],                  (ONLY available for   SHM type)
+        ├ port_queue_capacity                   [uint32],                  (ONLY available for   SHM type)
+        ├ healthy_check_timeout_ms              [uint32],                  (ONLY available for   SHM type)
+        ├ rtps_dump_file                        [string]                   (ONLY available for   SHM type)
+        ├ default_reception_threads             [threadSettingsType]
+        ├ reception_threads                     [receptionThreadsListType] (ONLY available for   SHM type)
+        └ dump_thread                           [threadSettingsType]       (ONLY available for   SHM type) -->
+    <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
+    <xs:complexType name="transportDescriptorType">
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
         <xs:all minOccurs="0">
             <xs:element name="transport_id" type="stringType"/>
             <xs:element name="type" type="stringType"/>
@@ -854,10 +985,23 @@
             <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
+<<<<<<< HEAD
             <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="rtps_dump_file" type="stringType" minOccurs="0" maxOccurs="1"/>
+=======
+            <xs:element name="keep_alive_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="accept_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tcp_negotiation_timeout" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="segment_size" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port_queue_capacity" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="healthy_check_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="rtps_dump_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="default_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
         </xs:all>
     </xs:complexType>
 
