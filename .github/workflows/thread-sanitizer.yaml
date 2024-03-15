@@ -90,10 +90,12 @@ jobs:
           cd ./src/fastrtps
           git checkout ${{ env.FASTDDS_BRANCH }}
 
-      - name: Install GTest
-        uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          version: release-1.11.0
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
       - name: Build workspace
         run: |
