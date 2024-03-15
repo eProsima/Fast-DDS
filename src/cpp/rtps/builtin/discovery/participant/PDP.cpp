@@ -44,6 +44,8 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 
+#include <fastdds/rtps/common/LocatorList.hpp>
+
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 #include "fastrtps/utils/shared_mutex.hpp"
@@ -1096,6 +1098,21 @@ bool PDP::remove_remote_participant(
 
         this->mp_mutex->lock();
 
+        // Delete from sender resource list (TCP only)
+        LocatorList_t remote_participant_locators;
+        for (auto& remote_participant_default_locator : pdata->default_locators.unicast)
+        {
+            remote_participant_locators.push_back(remote_participant_default_locator);
+        }
+        for (auto& remote_participant_metatraffic_locator : pdata->metatraffic_locators.unicast)
+        {
+            remote_participant_locators.push_back(remote_participant_metatraffic_locator);
+        }
+        if (!remote_participant_locators.empty())
+        {
+            mp_RTPSParticipant->update_removed_participant(remote_participant_locators);
+        }
+
         // Return reader proxy objects to pool
         for (auto pit : *pdata->m_readers)
         {
@@ -1123,6 +1140,7 @@ bool PDP::remove_remote_participant(
         participant_proxies_pool_.push_back(pdata);
 
         this->mp_mutex->unlock();
+
         return true;
     }
 
