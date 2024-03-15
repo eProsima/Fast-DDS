@@ -545,7 +545,8 @@ public:
      * @param[in] value \b string to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string
+     * or the string length is greater than the string bound.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t set_string_value(
             MemberId id,
@@ -569,7 +570,8 @@ public:
      * @param[in] value \b wstring to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring
+     * or the string length is greater than the string bound.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t set_wstring_value(
             MemberId id,
@@ -593,7 +595,8 @@ public:
      * @param[in] value @ref DynamicData reference to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
+     * @retval RETCODE_BAD_PARAMETER when the value reference is nil or @ref MemberId is invalid or the member type is
+     * not promotable to \b complex.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t set_complex_value(
             MemberId id,

@@ -3322,6 +3322,9 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
     ASSERT_TRUE(builder);
 
+    DynamicType::_ref_type created_type {builder->build()};
+    ASSERT_FALSE(created_type);
+
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->id(0);
     member_descriptor->name("int2");
@@ -3342,7 +3345,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     member_descriptor->id(3);
     ASSERT_EQ(RETCODE_OK, builder->add_member(member_descriptor));
 
-    DynamicType::_ref_type created_type {builder->build()};
+    created_type = builder->build();
     ASSERT_TRUE(created_type);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
@@ -3391,11 +3394,12 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    ASSERT_EQ(complex_data->get_uint8_value(get_test_field_1, MEMBER_ID_INVALID), RETCODE_OK);
 
     // Test set_complex_value
     ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
     // Testing loan_value.
     ASSERT_FALSE(data->loan_value(0));

@@ -611,10 +611,11 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
         }
 
         // In case of ENUM, it must have at least one literal
-        preconditions &= TK_ENUM != type_descriptor_.kind() || 0 < members_.size();
+        preconditions &= (TK_ENUM != type_descriptor_.kind() && TK_BITSET != type_descriptor_.kind())
+                || 0 < members_.size();
         if (!preconditions)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected at least one member in ENUM.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected at least one member.");
         }
 
         if (preconditions)

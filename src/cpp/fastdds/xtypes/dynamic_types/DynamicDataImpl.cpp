@@ -125,6 +125,38 @@ ReturnCode_t clear_sequence_typed_element(
     return ret_value;
 }
 
+eprosima::fastcdr::EncodingAlgorithmFlag get_fastcdr_encoding_flag(
+        ExtensibilityKind ext_kind,
+        eprosima::fastcdr::CdrVersion cdr_version)
+{
+    eprosima::fastcdr::EncodingAlgorithmFlag ret_value {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
+
+    if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr_version)
+    {
+        switch (ext_kind)
+        {
+            case ExtensibilityKind::MUTABLE:
+                ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
+                break;
+            case ExtensibilityKind::APPENDABLE:
+                ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
+                break;
+            case ExtensibilityKind::FINAL:
+                ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
+                break;
+        }
+    }
+    else
+    {
+        if (ExtensibilityKind::MUTABLE == ext_kind)
+        {
+            ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
+        }
+    }
+
+    return ret_value;
+}
+
 //{{{ Public functions
 
 DynamicDataImpl::DynamicDataImpl(
@@ -695,9 +727,10 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
 {
     TypeKind type_kind = enclosing_type_->get_kind();
 
-    if (id != MEMBER_ID_INVALID)
+    if (MEMBER_ID_INVALID != id)
     {
         if (TK_ANNOTATION == type_kind ||
+                TK_BITSET == type_kind ||
                 TK_STRUCTURE == type_kind ||
                 TK_UNION == type_kind)
         {
@@ -708,6 +741,10 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                 {
                     value = std::static_pointer_cast<DynamicData>(it->second)->clone();
                     return RETCODE_OK;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting complex value. MemberId not found.");
                 }
             }
         }
@@ -725,7 +762,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                 auto sequence =
                         std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
                 assert(sequence);
-                if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                if ((TK_ARRAY == type_kind && sequence->size() > id) ||
                         (TK_SEQUENCE == type_kind &&
                         (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
                         enclosing_type_->get_descriptor().bound().at(0) ||
@@ -765,6 +802,10 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                 {
                     value = std::static_pointer_cast<DynamicDataImpl>(it->second)->clone();
                     return RETCODE_OK;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. MemberId not found.");
                 }
             }
         }
@@ -905,7 +946,7 @@ ReturnCode_t DynamicDataImpl::get_wstring_values(
 traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
         MemberId id) noexcept
 {
-    if (id != MEMBER_ID_INVALID)
+    if (MEMBER_ID_INVALID != id)
     {
         TypeKind type_kind = enclosing_type_->get_kind();
 
@@ -927,6 +968,10 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
 
                     loaned_values_.push_back(id);
                     return sp;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning value. MemberId not found.");
                 }
             }
             else if (TK_ARRAY == type_kind ||
@@ -985,17 +1030,21 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
                         loaned_values_.push_back(id);
                         return sp;
                     }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning value. MemberId not found.");
+                    }
                 }
             }
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. The value has been loaned previously.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning value. The value has been loaned previously.");
         }
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning value. Invalid MemberId.");
     }
 
     return {};
@@ -1162,7 +1211,7 @@ ReturnCode_t DynamicDataImpl::set_string_value(
     if (TK_STRING8 == enclosing_type_->get_kind())
     {
         auto bound = enclosing_type_->get_descriptor().bound().at(0);
-        if (0 != bound && value.length() > bound)
+        if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound && value.length() > bound)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
                     "Error setting string value. The given string is greater than the length limit.");
@@ -1180,7 +1229,7 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
     if (TK_STRING16 == enclosing_type_->get_kind())
     {
         auto bound = enclosing_type_->get_descriptor().bound().at(0);
-        if (0 != bound && value.length() > bound)
+        if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound && value.length() > bound)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
                     "Error setting string value. The given string is greater than the length limit.");
@@ -1219,11 +1268,19 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
                     {
                         value_.erase(it);
                         value_.emplace(id, value->clone());
-                        return RETCODE_OK;
+                        ret_value =  RETCODE_OK;
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the types are different.");
                     }
                 }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. MemberId not found.");
+                }
 
-                if (RETCODE_OK == ret_value && TK_UNION == type_kind && 0 != id) // Set new discriminator.
+                if (RETCODE_OK == ret_value && TK_UNION == type_kind) // Set new discriminator.
                 {
                     set_discriminator_value(id);
                 }
@@ -1235,32 +1292,36 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                 enclosing_type_->get_descriptor().element_type()));
-            if (is_complex_kind(element_kind))
+            if (enclosing_type_->get_descriptor().element_type()->equals(value->type()))
             {
-                auto it = value_.cbegin();
-                assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
-                auto sequence =
-                        std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
-                assert(sequence);
-                if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
-                        (TK_SEQUENCE == type_kind &&
-                        (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
-                        enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
+                if (is_complex_kind(element_kind))
                 {
-                    if (sequence->size() < id + 1)
+                    auto it = value_.cbegin();
+                    assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+                    auto sequence =
+                            std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
+                    assert(sequence);
+                    if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                            (TK_SEQUENCE == type_kind &&
+                            (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
+                            enclosing_type_->get_descriptor().bound().at(0) ||
+                            enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
                     {
-                        sequence->resize(id + 1);
-                    }
+                        if (sequence->size() < id + 1)
+                        {
+                            sequence->resize(id + 1);
+                        }
 
-                    auto pos = sequence->begin() + id;
-                    auto data = std::static_pointer_cast<DynamicDataImpl>(*pos);
-                    if (data->type_->equals(value->type()))
-                    {
+                        auto pos = sequence->begin() + id;
                         pos = sequence->erase(pos);
                         sequence->emplace(pos, value->clone());
                         ret_value =  RETCODE_OK;
                     }
                 }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the types are different.");
             }
         }
         else if (TK_MAP == type_kind)
@@ -1268,26 +1329,32 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                 enclosing_type_->get_descriptor().element_type()));
-            if (is_complex_kind(element_kind))
+            if (enclosing_type_->get_descriptor().element_type()->equals(value->type()))
             {
-                auto it = value_.find(id);
-                if (it != value_.end())
+                if (is_complex_kind(element_kind))
                 {
-                    auto data = std::static_pointer_cast<DynamicDataImpl>(it->second);
-
-                    if (data->type_->equals(value->type()))
+                    auto it = value_.find(id);
+                    if (it != value_.end())
                     {
                         value_.erase(it);
                         value_.emplace(id, value->clone());
                         ret_value =  RETCODE_OK;
                     }
+                    else
+                    {
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. MemberId not found.");
+                    }
                 }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the types are different.");
             }
         }
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting complex value. Invalid MemberId.");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. Invalid MemberId.");
     }
 
     return ret_value;
@@ -1429,7 +1496,7 @@ ReturnCode_t DynamicDataImpl::set_string_values(
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
-                    "Error setting an array with a string value when element_type is not STRING8. The string is greater than the length limit.");
+                    "Error setting an array with a string value when element_type is not STRING8.");
             return RETCODE_BAD_PARAMETER;
         }
     }
@@ -1466,7 +1533,7 @@ ReturnCode_t DynamicDataImpl::set_wstring_values(
         else
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
-                    "Error setting an array with a string value when element_type is not STRING16. The string is greater than the length limit.");
+                    "Error setting an array with a string value when element_type is not STRING16.");
             return RETCODE_BAD_PARAMETER;
         }
     }
@@ -1519,7 +1586,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
                     else
                     {
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Error calculating size structure member because not found on DynamicData");
+                                "Error calculating structure member size because it is not found on DynamicData");
                     }
                 }
             }
@@ -1554,13 +1621,6 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
             auto discriminator_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(0))};
             calculated_size += calculator.calculate_member_serialized_size(
                 0, discriminator_data, current_alignment);
-
-            if (MEMBER_ID_INVALID != selected_union_member_)
-            {
-                auto member_data = std::static_pointer_cast<DynamicDataImpl>(value_.at(selected_union_member_));
-                calculated_size += calculator.calculate_member_serialized_size(
-                    selected_union_member_, member_data, current_alignment);
-            }
             break;
         }
     }
@@ -1651,7 +1711,7 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
                     // << { slength=8 : UInt16 }
                     // << { M.id : <<: UInt32 }
                     // << { M.value.ssize : UInt32 }
-                    reset_alignment += 4 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
+                    reset_alignment += 2 + 2 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
                 }
 
                 reset_alignment += calculate_max_serialized_size(
@@ -1665,7 +1725,7 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
 
             current_alignment = union_max_size_serialized;
 
-            if (ExtensibilityKind::MUTABLE != type_impl->get_descriptor().extensibility_kind())
+            if (ExtensibilityKind::MUTABLE == type_impl->get_descriptor().extensibility_kind())
             {
                 // For MUTABLE, extra alignment for the PID_SENTINAL.
                 current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -1674,12 +1734,9 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
         }
         case TK_BITSET:
         {
-            auto sum {0};
-            if (0 < type_impl->get_all_members_by_index().size())
-            {
-                sum = type_impl->get_all_members_by_index().rbegin()->get()->get_id() +
-                        *type_impl->get_descriptor().bound().rbegin();
-            }
+            assert(0 < type_impl->get_all_members_by_index().size());
+            auto sum {type_impl->get_all_members_by_index().rbegin()->get()->get_id() +
+                      *type_impl->get_descriptor().bound().rbegin()};
 
             if (9 > sum)
             {
@@ -1720,14 +1777,14 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
                     // << { slength=8 : UInt16 }
                     // << { M.id : <<: UInt32 }
                     // << { M.value.ssize : UInt32 }
-                    current_alignment += 4 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+                    current_alignment += 2 + 2 + 4 + 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
                 }
 
                 current_alignment += calculate_max_serialized_size(
                     member_impl->get_descriptor().type(), current_alignment);
             }
 
-            if (ExtensibilityKind::MUTABLE != type_impl->get_descriptor().extensibility_kind())
+            if (ExtensibilityKind::MUTABLE == type_impl->get_descriptor().extensibility_kind())
             {
                 // For MUTABLE, extra alignment for the PID_SENTINAL.
                 current_alignment += eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -1949,12 +2006,6 @@ void DynamicDataImpl::serialize_key(
             // The union_id_ must be serialized as a discriminator_type_
             auto discriminator_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(0))};
             discriminator_data->serialize_key(cdr);
-
-            if (MEMBER_ID_INVALID != selected_union_member_)
-            {
-                auto member_data = std::static_pointer_cast<DynamicDataImpl>(value_.at(selected_union_member_));
-                member_data->serialize_key(cdr);
-            }
             break;
         }
     }
@@ -2001,6 +2052,14 @@ template<>
 void DynamicDataImpl::apply_bitset_mask<TK_FLOAT128>(
         MemberId,
         TypeForKind<TK_FLOAT128>&) const noexcept
+{
+    assert(false);
+}
+
+template<>
+void DynamicDataImpl::apply_bitset_mask<TK_CHAR8>(
+        MemberId,
+        TypeForKind<TK_CHAR8>&) const noexcept
 {
     assert(false);
 }
@@ -2901,12 +2960,12 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
 
     if (MEMBER_ID_INVALID != id)
     {
-        // Check MemberId was defined as a BITMASK member.
+        // Check MemberId was defined as a BITMASK member and retrieve the value.
         if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
         {
-            if (sequence->size() >= id + 1 && (TK_BOOLEAN == TK || TypePromotion<TK_BOOLEAN, TK>::value))
+            if (sequence->size() > id && (TK_BOOLEAN == TK || TypePromotion<TK_BOOLEAN, TK>::value))
             {
-                value = static_cast<TypeForKind<TK_BOOLEAN>>(sequence->at(id));
+                value = static_cast<TypeForKind<TK>>(sequence->at(id));
                 ret_value =  RETCODE_OK;
             }
         }
@@ -2916,19 +2975,19 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
         auto bound {enclosing_type_->get_descriptor().bound().at(0)};
         bool valid_promotion {false};
 
-        if (9 > bound && TypePromotion<TK_INT8, TK>::value)
+        if (9 > bound && TypePromotion<TK_UINT8, TK>::value)
         {
             valid_promotion = true;
         }
-        else if (17 > bound && TypePromotion<TK_INT16, TK>::value)
+        else if (17 > bound && TypePromotion<TK_UINT16, TK>::value)
         {
             valid_promotion = true;
         }
-        else if (33 > bound && TypePromotion<TK_INT32, TK>::value)
+        else if (33 > bound && TypePromotion<TK_UINT32, TK>::value)
         {
             valid_promotion = true;
         }
-        else if (TypePromotion<TK, TK_INT64>::value)
+        else if (TypePromotion<TK, TK_UINT64>::value)
         {
             valid_promotion = true;
         }
@@ -2950,30 +3009,6 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
     }
 
     return ret_value;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_FLOAT32>(
-        TypeForKind<TK_FLOAT32>&,
-        MemberId) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_FLOAT64>(
-        TypeForKind<TK_FLOAT64>&,
-        MemberId) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::get_bitmask_bit<TK_FLOAT128>(
-        TypeForKind<TK_FLOAT128>&,
-        MemberId) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
 }
 
 template<>
@@ -3408,6 +3443,10 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
                 EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find MemberId " << id);
             }
         }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. Invalid MemberId.");
+        }
 
     }
     else if (TK_ARRAY == type_kind ||
@@ -3430,8 +3469,12 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
 
                 if (sequence->size() > id)
                 {
-                    ret_value = sequence->at(id)->get_sequence_values<TK>(value, MEMBER_ID_INVALID);
+                    ret_value = sequence->at(id)->get_sequence_values<TK>(value, 0);
                 }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. Invalid MemberId.");
             }
         }
         else if (TK_BITMASK == element_kind)
@@ -3462,23 +3505,17 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_bitmask(
             std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(value_iterator->second);
     assert(sequence);
 
-    if (MEMBER_ID_INVALID == id)
+    if (0 == number_of_elements && 0 == sequence->size())
     {
-        if (0 == sequence->size())
-        {
-            value.clear();
-            return RETCODE_OK;
-        }
-
-        id = 0;
+        value.clear();
+        return RETCODE_OK;
     }
-
     if (sequence->size() > id)
     {
         auto initial_pos = sequence->begin() + id;
         auto final_pos = sequence->end();
         if (0 != number_of_elements &&
-                static_cast<SequenceTypeForKind<TK_STRING8>::difference_type>(number_of_elements) <
+                static_cast<typename SequenceTypeForKind<TK>::difference_type>(number_of_elements) <
                 std::distance(initial_pos, final_pos))
         {
             final_pos = std::next(initial_pos, number_of_elements);
@@ -3493,36 +3530,6 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_bitmask(
         return RETCODE_OK;
     }
 
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::get_sequence_values_bitmask<TK_FLOAT32>(
-        MemberId,
-        std::map<MemberId, std::shared_ptr<void>>::const_iterator,
-        SequenceTypeForKind<TK_FLOAT32>&,
-        size_t) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::get_sequence_values_bitmask<TK_FLOAT64>(
-        MemberId,
-        std::map<MemberId, std::shared_ptr<void>>::const_iterator,
-        SequenceTypeForKind<TK_FLOAT64>&,
-        size_t) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::get_sequence_values_bitmask<TK_FLOAT128>(
-        MemberId,
-        std::map<MemberId, std::shared_ptr<void>>::const_iterator,
-        SequenceTypeForKind<TK_FLOAT128>&,
-        size_t) noexcept
-{
     return RETCODE_BAD_PARAMETER;
 }
 
@@ -3621,17 +3628,11 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_primitive<TK_STRING8>(
         auto sequence = std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_iterator->second);
         assert(sequence);
 
-        if (MEMBER_ID_INVALID == id)
+        if (0 == number_of_elements && 0 == sequence->size())
         {
-            if (0 == sequence->size())
-            {
-                value.clear();
-                return RETCODE_OK;
-            }
-
-            id = 0;
+            value.clear();
+            return RETCODE_OK;
         }
-
         if (sequence->size() > id)
         {
             auto initial_pos = sequence->begin() + id;
@@ -3664,17 +3665,11 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_primitive<TK_STRING16>(
         auto sequence = std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_iterator->second);
         assert(sequence);
 
-        if (MEMBER_ID_INVALID == id)
+        if (0 == number_of_elements && 0 == sequence->size())
         {
-            if (0 == sequence->size())
-            {
-                value.clear();
-                return RETCODE_OK;
-            }
-
-            id = 0;
+            value.clear();
+            return RETCODE_OK;
         }
-
         if (sequence->size() > id)
         {
             auto initial_pos = sequence->begin() + id;
@@ -3704,17 +3699,11 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_promoting(
     auto sequence = std::static_pointer_cast<SequenceTypeForKind<ToTK>>(value_iterator->second);
     assert(sequence);
 
-    if (MEMBER_ID_INVALID == id)
+    if (0 == number_of_elements && 0 == sequence->size())
     {
-        if (0 == sequence->size())
-        {
-            value.clear();
-            return RETCODE_OK;
-        }
-
-        id = 0;
+        value.clear();
+        return RETCODE_OK;
     }
-
     if (sequence->size() > id && (TK == ToTK || TypePromotion<ToTK, TK>::value))
     {
         auto initial_pos = sequence->begin() + id;
@@ -3759,6 +3748,10 @@ ReturnCode_t DynamicDataImpl::get_value(
                     MEMBER_ID_INVALID);
             }
         }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. Invalid MemberId.");
+        }
     }
     else if (TK_ARRAY == type_kind ||
             TK_SEQUENCE == type_kind)
@@ -3787,6 +3780,10 @@ ReturnCode_t DynamicDataImpl::get_value(
                 value = tmp.at(0);
             }
         }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. Invalid MemberId.");
+        }
     }
     else if (TK_MAP == type_kind)
     {
@@ -3809,6 +3806,10 @@ ReturnCode_t DynamicDataImpl::get_value(
                     ret_value = get_primitive_value<TK>(element_kind, it, value, MEMBER_ID_INVALID);
                 }
             }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. Invalid MemberId.");
         }
     }
     else if (TK_BITMASK == type_kind)
@@ -3841,7 +3842,7 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         // Check MemberId was defined as a BITMASK member.
         if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
         {
-            if (sequence->size() >= id + 1 && (TK_BOOLEAN == TK || TypePromotion<TK, TK_BOOLEAN>::value))
+            if (sequence->size() > id && (TK_BOOLEAN == TK || TypePromotion<TK, TK_BOOLEAN>::value))
             {
                 sequence->at(id) = static_cast<TypeForKind<TK_BOOLEAN>>(value);
                 ret_value =  RETCODE_OK;
@@ -3853,19 +3854,19 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         auto bound {enclosing_type_->get_descriptor().bound().at(0)};
         bool valid_promotion {false};
 
-        if (9 > bound && TypePromotion<TK, TK_INT8>::value)
+        if (9 > bound && TypePromotion<TK, TK_UINT8>::value)
         {
             valid_promotion = true;
         }
-        else if (17 > bound && TypePromotion<TK, TK_INT16>::value)
+        else if (17 > bound && TypePromotion<TK, TK_UINT16>::value)
         {
             valid_promotion = true;
         }
-        else if (33 > bound && TypePromotion<TK, TK_INT32>::value)
+        else if (33 > bound && TypePromotion<TK, TK_UINT32>::value)
         {
             valid_promotion = true;
         }
-        else if (TypePromotion<TK, TK_INT64>::value)
+        else if (TypePromotion<TK, TK_UINT64>::value)
         {
             valid_promotion = true;
         }
@@ -3889,30 +3890,6 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
     }
 
     return ret_value;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_FLOAT32>(
-        MemberId,
-        const TypeForKind<TK_FLOAT32>&) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_FLOAT64>(
-        MemberId,
-        const TypeForKind<TK_FLOAT64>&) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
-}
-
-template<>
-ReturnCode_t DynamicDataImpl::set_bitmask_bit<TK_FLOAT128>(
-        MemberId,
-        const TypeForKind<TK_FLOAT128>&) noexcept
-{
-    return RETCODE_BAD_PARAMETER;
 }
 
 template<>
@@ -4206,6 +4183,10 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING8>(
         *std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
     }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Element kind is not TK_STRING8 or the string length exceeds the string bound");
+    }
 
     return ret_value;
 }
@@ -4225,6 +4206,10 @@ ReturnCode_t DynamicDataImpl::set_primitive_value<TK_STRING16>(
     {
         *std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_iterator->second) = value;
         ret_value =  RETCODE_OK;
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Element kind is not TK_STRING16 or the string length exceeds the string bound");
     }
 
     return ret_value;
@@ -4271,6 +4256,10 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
                 set_discriminator_value(id);
             }
         }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. Invalid MemberId.");
+        }
 
     }
     else if (TK_ARRAY == type_kind ||
@@ -4308,8 +4297,12 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
                         }
                     }
 
-                    ret_value = sequence->at(id)->set_sequence_values<TK>(MEMBER_ID_INVALID, value);
+                    ret_value = sequence->at(id)->set_sequence_values<TK>(0, value);
                 }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. Invalid MemberId.");
             }
         }
         else if (TK_BITMASK == element_kind)
@@ -4534,7 +4527,8 @@ ReturnCode_t DynamicDataImpl::set_sequence_values_promoting(
 void DynamicDataImpl::set_value(
         const ObjectName& sValue) noexcept
 {
-    TypeKind type_kind = enclosing_type_->get_kind();
+    auto enclosed_type = type_->resolve_alias_enclosed_type();
+    TypeKind type_kind = enclosed_type->get_kind();
 
     switch (type_kind)
     {
@@ -4549,8 +4543,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_int32_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_UINT32:
         {
             TypeForKind<TK_UINT32> value {0};
@@ -4562,8 +4556,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_uint32_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_INT8:
         {
             TypeForKind<TK_INT8> value {0};
@@ -4575,8 +4569,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_int8_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_INT16:
         {
             TypeForKind<TK_INT16> value {0};
@@ -4588,8 +4582,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_int16_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_UINT16:
         {
             TypeForKind<TK_UINT16> value {0};
@@ -4601,8 +4595,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_uint16_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_INT64:
         {
             TypeForKind<TK_INT64> value {0};
@@ -4614,8 +4608,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_int64_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_UINT64:
         {
             TypeForKind<TK_UINT64> value(0);
@@ -4627,8 +4621,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_uint64_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_FLOAT32:
         {
             TypeForKind<TK_FLOAT32> value {0.0f};
@@ -4640,8 +4634,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_float32_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_FLOAT64:
         {
             TypeForKind<TK_FLOAT64> value {0.0f};
@@ -4653,8 +4647,8 @@ void DynamicDataImpl::set_value(
             {
             }
             set_float64_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_FLOAT128:
         {
             TypeForKind<TK_FLOAT128> value {0.0f};
@@ -4666,48 +4660,51 @@ void DynamicDataImpl::set_value(
             {
             }
             set_float128_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_CHAR8:
         {
             TypeForKind<TK_CHAR8> value {0};
-            if (sValue.size() >= 1)
+            if (1 == sValue.size())
             {
                 value = sValue[0];
             }
 
             set_char8_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_CHAR16:
         {
             TypeForKind<TK_CHAR16> value {0};
             try
             {
-                std::string str = sValue.to_string();
-                std::wstring temp = std::wstring(str.begin(), str.end());
-                value = temp[0];
+                if (1 == sValue.size())
+                {
+                    std::string str = sValue.to_string();
+                    std::wstring temp = std::wstring(str.begin(), str.end());
+                    value = temp[0];
+                }
             }
             catch (...)
             {
             }
 
             set_char16_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_BOOLEAN:
         {
-            int value {0};
+            TypeForKind<TK_BOOLEAN> value {false};
             try
             {
-                value = stoi(sValue.to_string());
+                value = TypeValueConverter::sto(sValue.to_string());
             }
             catch (...)
             {
             }
-            set_boolean_value(MEMBER_ID_INVALID, value == 0 ? false : true);
+            set_boolean_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_BYTE:
         {
             TypeForKind<TK_BYTE> value {0};
@@ -4722,8 +4719,8 @@ void DynamicDataImpl::set_value(
                 }
             }
             set_byte_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_UINT8:
         {
             TypeForKind<TK_UINT8> value {0};
@@ -4738,19 +4735,62 @@ void DynamicDataImpl::set_value(
                 }
             }
             set_byte_value(MEMBER_ID_INVALID, value);
+            break;
         }
-        break;
         case TK_STRING8:
         {
             set_string_value(MEMBER_ID_INVALID, sValue.to_string());
+            break;
         }
-        break;
         case TK_STRING16:
         {
             std::string str = sValue.to_string();
             set_wstring_value(MEMBER_ID_INVALID, std::wstring(str.begin(), str.end()));
+            break;
         }
-        break;
+        case TK_ENUM:
+        {
+            auto& members = enclosed_type->get_all_members_by_index();
+            assert(0 < members.size());
+            TypeForKind<TK_UINT64> value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
+            bool found = false;
+            for (auto member_it {members.begin()}; member_it != members.end(); ++member_it)
+            {
+                if (0 == sValue.to_string().compare((*member_it)->get_name().to_string()))
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
+            }
+
+            switch (enclosing_type_->get_kind())
+            {
+                case TK_INT8:
+                    set_int8_value(MEMBER_ID_INVALID, static_cast<int8_t>(value));
+                    break;
+                case TK_UINT8:
+                    set_uint8_value(MEMBER_ID_INVALID, static_cast<uint8_t>(value));
+                    break;
+                case TK_INT16:
+                    set_int16_value(MEMBER_ID_INVALID, static_cast<int16_t>(value));
+                    break;
+                case TK_UINT16:
+                    set_uint16_value(MEMBER_ID_INVALID, static_cast<uint16_t>(value));
+                    break;
+                case TK_INT32:
+                    set_int32_value(MEMBER_ID_INVALID, static_cast<int32_t>(value));
+                    break;
+                case TK_UINT32:
+                    set_uint32_value(MEMBER_ID_INVALID, static_cast<uint32_t>(value));
+                    break;
+            }
+            break;
+        }
         default:
             break;
     }
@@ -4799,6 +4839,10 @@ ReturnCode_t DynamicDataImpl::set_value(
                 set_discriminator_value(id);
             }
         }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. Invalid MemberId.");
+        }
     }
     else if (TK_ARRAY == type_kind ||
             TK_SEQUENCE == type_kind)
@@ -4819,6 +4863,10 @@ ReturnCode_t DynamicDataImpl::set_value(
             {
                 ret_value = set_sequence_values_primitive<TK>(id, element_kind, it, {value});
             }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. Invalid MemberId.");
         }
     }
     else if (TK_MAP == type_kind)
@@ -4841,6 +4889,10 @@ ReturnCode_t DynamicDataImpl::set_value(
                     ret_value = set_primitive_value<TK>(element_type, it, value);
                 }
             }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. Invalid MemberId.");
         }
     }
     else if (TK_BITMASK == type_kind)
@@ -4888,7 +4940,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
             calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(
                                 it->second), current_alignment);
             break;
-        case TK_CHAR16:     // WCHARS NEED 32 Bits on Linux & MacOS
+        case TK_CHAR16:
             calculated_size = calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR16>>(
                                 it->second), current_alignment);
             break;
@@ -4957,92 +5009,92 @@ size_t DynamicDataImpl::calculate_serialized_size(
                 case TK_INT32:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_UINT32:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_INT8:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_INT16:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_UINT16:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_INT64:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_UINT64:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_FLOAT32:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_FLOAT64:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_FLOAT128:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_CHAR8:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_CHAR16:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_BOOLEAN:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_BYTE:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_UINT8:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_STRING8:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_STRING16:
                     calculated_size =
                             calculator.calculate_array_serialized_size(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(
-                                        value_.begin()->second), current_alignment);
+                                        it->second), current_alignment);
                     break;
                 case TK_BITMASK:
                 {
                     auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                       value_.begin()->second)};
+                                       it->second)};
                     calculated_size +=
                             calculator.calculate_array_serialized_size(vector_t->data(),
                                     vector_t->size(), current_alignment);
@@ -5052,7 +5104,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
                     calculated_size =
                             calculator.calculate_array_serialized_size(
                         *std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                            value_.begin()->second), current_alignment);
+                            it->second), current_alignment);
                     break;
 
             }
@@ -5133,6 +5185,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
                 current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             }
 
+            // Serializing map's length. Standard rule 15 doesn't specify this but we think it is a typo.
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
             calculated_size = current_alignment - initial_alignment;
@@ -5235,6 +5288,10 @@ size_t DynamicDataImpl::calculate_serialized_size(
                         calculated_size += calculator.calculate_serialized_size(key_it->first, current_alignment);
                     }
                     break;
+                    case TK_STRING16:
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Map's key type cannot be WString. Not supported");
+                        assert(false);
+                        break;
                     default:
                         assert(false);
                         break;
@@ -5244,95 +5301,95 @@ size_t DynamicDataImpl::calculate_serialized_size(
                 switch (element_kind)
                 {
                     case TK_INT32:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT32>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_INT32> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_UINT32:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT32>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_UINT32> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_INT8:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT8>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_INT8> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_INT16:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT16>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_INT16> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_UINT16:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT16>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_UINT16> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_INT64:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_INT64>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_INT64> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_UINT64:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT64>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_UINT64> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_FLOAT32:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_FLOAT32> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_FLOAT64:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_FLOAT64> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_FLOAT128:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_FLOAT128> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_CHAR8:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR8>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_CHAR8> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_CHAR16:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_CHAR16>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_CHAR16> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_BOOLEAN:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_BOOLEAN> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_BYTE:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_BYTE>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_BYTE> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_UINT8:
-                        calculated_size +=
-                                calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_UINT8>>(
-                                            value_.find(
-                                                key_it->second)->second), current_alignment);
+                    {
+                        TypeForKind<TK_UINT8> value {0};
+                        calculated_size += calculator.calculate_serialized_size(value, current_alignment);
                         break;
+                    }
                     case TK_STRING8:
                         calculated_size +=
                                 calculator.calculate_serialized_size(*std::static_pointer_cast<TypeForKind<TK_STRING8>>(
@@ -5352,12 +5409,6 @@ size_t DynamicDataImpl::calculate_serialized_size(
                         break;
 
                 }
-            }
-
-            if (!is_primitive && eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
-            {
-                // Inform DHEADER can be joined with NEXTINT
-                // serialized_member_size_ = SERIALIZED_MEMBER_SIZE;
             }
 
             break;
@@ -5478,31 +5529,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_STRUCTURE:
         {
-            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-            if (eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
-            {
-                switch (type->get_descriptor().extensibility_kind())
-                {
-                    case ExtensibilityKind::MUTABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                        break;
-                    case ExtensibilityKind::APPENDABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                        break;
-                    case ExtensibilityKind::FINAL:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                        break;
-                }
-            }
-            else
-            {
-                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
-                {
-                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-                }
-            }
-
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {get_fastcdr_encoding_flag(
+                                                                   type->get_descriptor().extensibility_kind(),
+                                                                   calculator.get_cdr_version())};
             eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
             calculated_size = calculator.begin_calculate_type_serialized_size(encoding, current_alignment);
 
@@ -5523,31 +5552,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_UNION:
         {
-            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-            if (eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version())
-            {
-                switch (type->get_descriptor().extensibility_kind())
-                {
-                    case ExtensibilityKind::MUTABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                        break;
-                    case ExtensibilityKind::APPENDABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                        break;
-                    case ExtensibilityKind::FINAL:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                        break;
-                }
-            }
-            else
-            {
-                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
-                {
-                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-                }
-            }
-
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {get_fastcdr_encoding_flag(
+                                                                   type->get_descriptor().extensibility_kind(),
+                                                                   calculator.get_cdr_version())};
             eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
             calculated_size = calculator.begin_calculate_type_serialized_size(encoding, current_alignment);
 
@@ -5580,114 +5587,98 @@ bool DynamicDataImpl::deserialize(
     bool res = true;
 
     TypeKind type_kind = type->get_kind();
+    auto it = value_.begin();
 
     switch (type_kind)
     {
         //{{{ Primitive types
         case TK_INT32:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_INT32>>(it->second);
             break;
         }
         case TK_UINT32:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT32>>(it->second);
             break;
         }
         case TK_INT8:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_INT8>>(it->second);
             break;
         }
         case TK_INT16:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_INT16>>(it->second);
             break;
         }
         case TK_UINT16:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT16>>(it->second);
             break;
         }
         case TK_INT64:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_INT64>>(it->second);
             break;
         }
         case TK_UINT64:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT64>>(it->second);
             break;
         }
         case TK_FLOAT32:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(it->second);
             break;
         }
         case TK_FLOAT64:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(it->second);
             break;
         }
         case TK_FLOAT128:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(it->second);
             break;
         }
         case TK_CHAR8:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_CHAR8>>(it->second);
             break;
         }
         case TK_CHAR16:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_CHAR16>>(it->second);
             break;
         }
         case TK_BOOLEAN:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(it->second);
             break;
         }
         case TK_BYTE:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_BYTE>>(it->second);
             break;
         }
         case TK_UINT8:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT8>>(it->second);
             break;
         }
         case TK_STRING8:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING8>>(it->second);
             break;
         }
         case TK_STRING16:
         {
-            auto it = value_.begin();
             cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING16>>(it->second);
             break;
         }
         //}}}
-        case TK_ARRAY:     // Sequence is like structure, but with size
+        case TK_ARRAY:
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
@@ -5695,87 +5686,66 @@ bool DynamicDataImpl::deserialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second));
                     break;
                 case TK_UINT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second));
                     break;
                 case TK_INT8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(
-                                value_.begin()->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second));
                     break;
                 case TK_INT16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second));
                     break;
                 case TK_UINT16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second));
                     break;
                 case TK_INT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second));
                     break;
                 case TK_UINT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second));
                     break;
                 case TK_FLOAT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()
-                                    ->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second));
                     break;
                 case TK_FLOAT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()
-                                    ->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second));
                     break;
                 case TK_FLOAT128:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(
-                                value_.begin()->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second));
                     break;
                 case TK_CHAR8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second));
                     break;
                 case TK_CHAR16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second));
                     break;
                 case TK_BOOLEAN:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()
-                                    ->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second));
                     break;
                 case TK_BYTE:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second));
                     break;
                 case TK_UINT8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second));
                     break;
                 case TK_STRING8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(
-                                value_.begin()->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second));
                     break;
                 case TK_STRING16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()
-                                    ->
-                                    second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second));
                     break;
                 case TK_BITMASK:
                 {
                     auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                       value_.begin()->second)};
+                                       it->second)};
                     cdr.deserialize_array(vector_t->data(), vector_t->size());
                     break;
                 }
                 default:
                     cdr.deserialize_array(*std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                value_.begin()->second));
+                                it->second));
                     break;
             }
             break;
@@ -5783,7 +5753,7 @@ bool DynamicDataImpl::deserialize(
         case TK_BITMASK:
         {
             uint64_t value {0};
-            auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
+            auto sequence = std::static_pointer_cast<std::vector<bool>>(it->second);
             auto bound = type->get_descriptor().bound().at(0);
 
             if (9 > bound)
@@ -5825,12 +5795,9 @@ bool DynamicDataImpl::deserialize(
         case TK_BITSET:
         {
             std::bitset<64> bitset;
-            auto sum {0};
-            if (0 < type->get_all_members_by_index().size())
-            {
-                sum = type->get_all_members_by_index().rbegin()->get()->get_id() +
-                        *type->get_descriptor().bound().rbegin();
-            }
+            assert(0 < type->get_all_members_by_index().size());
+            auto sum {type->get_all_members_by_index().rbegin()->get()->get_id() +
+                      *type->get_descriptor().bound().rbegin()};
 
             if (9 > sum)
             {
@@ -5936,7 +5903,7 @@ bool DynamicDataImpl::deserialize(
                 else
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
-                            "Error serializing bitset bitfield because not found on DynamicData");
+                            "Error deserializing bitset bitfield because not found on DynamicData");
                 }
 
                 ++index;
@@ -6085,6 +6052,10 @@ bool DynamicDataImpl::deserialize(
                             cdr >> key;
                         }
                         break;
+                        case TK_STRING16:
+                            EPROSIMA_LOG_ERROR(DYN_TYPES, "Map's key type cannot be WString. Not supported");
+                            assert(false);
+                            break;
                         default:
                             assert(false);
                             break;
@@ -6179,7 +6150,7 @@ bool DynamicDataImpl::deserialize(
 
             break;
         }
-        case TK_SEQUENCE:     // Sequence is like structure, but with size
+        case TK_SEQUENCE:
         {
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
@@ -6187,60 +6158,60 @@ bool DynamicDataImpl::deserialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second);
                     break;
                 case TK_UINT32:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second);
                     break;
                 case TK_INT8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second);
                     break;
                 case TK_INT16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second);
                     break;
                 case TK_UINT16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second);
                     break;
                 case TK_INT64:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second);
                     break;
                 case TK_UINT64:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second);
                     break;
                 case TK_FLOAT32:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second);
                     break;
                 case TK_FLOAT64:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second);
                     break;
                 case TK_FLOAT128:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second);
                     break;
                 case TK_CHAR8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second);
                     break;
                 case TK_CHAR16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second);
                     break;
                 case TK_BOOLEAN:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second);
                     break;
                 case TK_BYTE:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second);
                     break;
                 case TK_UINT8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second);
                     break;
                 case TK_STRING8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second);
                     break;
                 case TK_STRING16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second);
                     break;
                 default:
                 {
                     auto vector_t = std::static_pointer_cast <std::vector<traits<DynamicDataImpl>::ref_type >> (
-                        value_.begin()->second);
+                        it->second);
                     uint32_t sequence_length {0};
 
                     if (TK_BITMASK != element_kind &&
@@ -6331,30 +6302,9 @@ bool DynamicDataImpl::deserialize(
         }
         case TK_STRUCTURE:
         {
-            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
-            {
-                switch (type->get_descriptor().extensibility_kind())
-                {
-                    case ExtensibilityKind::MUTABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                        break;
-                    case ExtensibilityKind::APPENDABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                        break;
-                    case ExtensibilityKind::FINAL:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                        break;
-                }
-            }
-            else
-            {
-                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
-                {
-                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-                }
-            }
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {get_fastcdr_encoding_flag(
+                                                                   type->get_descriptor().extensibility_kind(),
+                                                                   cdr.get_cdr_version())};
             cdr.deserialize_type(encoding,
                     [&](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
                     {
@@ -6399,30 +6349,9 @@ bool DynamicDataImpl::deserialize(
         }
         case TK_UNION:
         {
-            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
-            {
-                switch (type->get_descriptor().extensibility_kind())
-                {
-                    case ExtensibilityKind::MUTABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                        break;
-                    case ExtensibilityKind::APPENDABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                        break;
-                    case ExtensibilityKind::FINAL:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                        break;
-                }
-            }
-            else
-            {
-                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
-                {
-                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-                }
-            }
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {get_fastcdr_encoding_flag(
+                                                                   type->get_descriptor().extensibility_kind(),
+                                                                   cdr.get_cdr_version())};
             cdr.deserialize_type(encoding,
                     [&](eprosima::fastcdr::Cdr& dcdr,
                     const eprosima::fastcdr::MemberId& mid) -> bool
@@ -6485,6 +6414,7 @@ bool DynamicDataImpl::deserialize(
                                         auto member_data {std::static_pointer_cast<DynamicDataImpl>(value_.at(
                                                               selected_union_member_))};
                                         dcdr >> member_data;
+                                        // In case it is not MUTABLE, we have to inform fastcdr to stop returning `false`.
                                         if (ExtensibilityKind::MUTABLE != type->get_descriptor().extensibility_kind())
                                         {
                                             ret_value = false;
@@ -6516,109 +6446,93 @@ void DynamicDataImpl::serialize(
         const traits<DynamicTypeImpl>::ref_type type) const
 {
     TypeKind type_kind = type->get_kind();
+    auto it = value_.begin();
 
     switch (type_kind)
     {
         //{{{ Primitive types
         case TK_INT32:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_INT32>>(it->second);
             break;
         }
         case TK_UINT32:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_UINT32>>(it->second);
             break;
         }
         case TK_INT8:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_INT8>>(it->second);
             break;
         }
         case TK_INT16:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_INT16>>(it->second);
             break;
         }
         case TK_UINT16:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_UINT16>>(it->second);
             break;
         }
         case TK_INT64:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_INT64>>(it->second);
             break;
         }
         case TK_UINT64:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_UINT64>>(it->second);
             break;
         }
         case TK_FLOAT32:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(it->second);
             break;
         }
         case TK_FLOAT64:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(it->second);
             break;
         }
         case TK_FLOAT128:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(it->second);
             break;
         }
         case TK_CHAR8:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_CHAR8>>(it->second);
             break;
         }
         case TK_CHAR16:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_CHAR16>>(it->second);
             break;
         }
         case TK_BOOLEAN:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(it->second);
             break;
         }
         case TK_BYTE:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_BYTE>>(it->second);
             break;
         }
         case TK_UINT8:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_UINT8>>(it->second);
             break;
         }
         case TK_STRING8:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_STRING8>>(it->second);
             break;
         }
         case TK_STRING16:
         {
-            auto it = value_.begin();
             cdr << *std::static_pointer_cast<TypeForKind<TK_STRING16>>(it->second);
             break;
         }
@@ -6630,83 +6544,66 @@ void DynamicDataImpl::serialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second));
                     break;
                 case TK_UINT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(
-                                value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second));
                     break;
                 case TK_INT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second));
                     break;
                 case TK_INT16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second));
                     break;
                 case TK_UINT16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(
-                                value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second));
                     break;
                 case TK_INT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second));
                     break;
                 case TK_UINT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(
-                                value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second));
                     break;
                 case TK_FLOAT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second));
                     break;
                 case TK_FLOAT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second));
                     break;
                 case TK_FLOAT128:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second));
                     break;
                 case TK_CHAR8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second));
                     break;
                 case TK_CHAR16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(
-                                value_.begin()->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second));
                     break;
                 case TK_BOOLEAN:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second));
                     break;
                 case TK_BYTE:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second));
                     break;
                 case TK_UINT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second));
                     break;
                 case TK_STRING8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second));
                     break;
                 case TK_STRING16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->
-                                    second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second));
                     break;
                 case TK_BITMASK:
                 {
                     auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                       value_.begin()->second)};
+                                       it->second)};
                     cdr.serialize_array(vector_t->data(), vector_t->size());
                     break;
                 }
                 default:
                     cdr.serialize_array(*std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                value_.begin()->second));
+                                it->second));
                     break;
             }
 
@@ -6715,7 +6612,7 @@ void DynamicDataImpl::serialize(
         case TK_BITMASK:
         {
             uint64_t value {0};
-            auto sequence = std::static_pointer_cast<std::vector<bool>>(value_.begin()->second);
+            auto sequence = std::static_pointer_cast<std::vector<bool>>(it->second);
             auto bound = type->get_descriptor().bound().at(0);
 
             for (size_t pos {0}; pos < sequence->size(); ++pos)
@@ -6921,6 +6818,10 @@ void DynamicDataImpl::serialize(
                         cdr << it->first;
                     }
                     break;
+                    case TK_STRING16:
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Map's key type cannot be WString. Not supported");
+                        assert(false);
+                        break;
                     default:
                         assert(false);
                         break;
@@ -7001,60 +6902,60 @@ void DynamicDataImpl::serialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second);
                     break;
                 case TK_UINT32:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second);
                     break;
                 case TK_INT8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second);
                     break;
                 case TK_INT16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second);
                     break;
                 case TK_UINT16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second);
                     break;
                 case TK_INT64:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second);
                     break;
                 case TK_UINT64:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second);
                     break;
                 case TK_FLOAT32:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second);
                     break;
                 case TK_FLOAT64:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second);
                     break;
                 case TK_FLOAT128:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second);
                     break;
                 case TK_CHAR8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second);
                     break;
                 case TK_CHAR16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second);
                     break;
                 case TK_BOOLEAN:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second);
                     break;
                 case TK_BYTE:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second);
                     break;
                 case TK_UINT8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second);
                     break;
                 case TK_STRING8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second);
                     break;
                 case TK_STRING16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(value_.begin()->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second);
                     break;
                 default:
                 {
                     auto vector_t = std::static_pointer_cast <std::vector<traits<DynamicDataImpl>::ref_type >> (
-                        value_.begin()->second);
+                        it->second);
 
                     if (TK_BITMASK != element_kind &&
                             fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
@@ -7099,31 +7000,9 @@ void DynamicDataImpl::serialize(
         }
         case TK_STRUCTURE:
         {
-            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
-            {
-                switch (type->get_descriptor().extensibility_kind())
-                {
-                    case ExtensibilityKind::MUTABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                        break;
-                    case ExtensibilityKind::APPENDABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                        break;
-                    case ExtensibilityKind::FINAL:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                        break;
-                }
-            }
-            else
-            {
-                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
-                {
-                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-                }
-            }
-
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {get_fastcdr_encoding_flag(
+                                                                   type->get_descriptor().extensibility_kind(),
+                                                                   cdr.get_cdr_version())};
             eprosima::fastcdr::Cdr::state current_state(cdr);
             cdr.begin_serialize_type(current_state, encoding);
 
@@ -7149,31 +7028,9 @@ void DynamicDataImpl::serialize(
         }
         case TK_UNION:
         {
-            eprosima::fastcdr::EncodingAlgorithmFlag encoding {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-            if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())
-            {
-                switch (type->get_descriptor().extensibility_kind())
-                {
-                    case ExtensibilityKind::MUTABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                        break;
-                    case ExtensibilityKind::APPENDABLE:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                        break;
-                    case ExtensibilityKind::FINAL:
-                        encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                        break;
-                }
-            }
-            else
-            {
-                if (ExtensibilityKind::MUTABLE == type->get_descriptor().extensibility_kind())
-                {
-                    encoding = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-                }
-            }
-
+            eprosima::fastcdr::EncodingAlgorithmFlag encoding {get_fastcdr_encoding_flag(
+                                                                   type->get_descriptor().extensibility_kind(),
+                                                                   cdr.get_cdr_version())};
             eprosima::fastcdr::Cdr::state current_state(cdr);
             cdr.begin_serialize_type(current_state, encoding);
 

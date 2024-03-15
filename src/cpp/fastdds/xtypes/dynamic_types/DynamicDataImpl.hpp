@@ -469,7 +469,7 @@ private:
         if (MEMBER_ID_INVALID != selected_union_member_) // There is a member selected by current discriminator.
         {
             traits<DynamicTypeMember>::ref_type selected_member;
-            type_->get_member(selected_member, selected_union_member_);
+            enclosing_type_->get_member(selected_member, selected_union_member_);
             auto sm_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(selected_member);
 
             for (auto label : sm_impl->get_descriptor().label())
@@ -481,13 +481,15 @@ private:
                 }
             }
         }
-        else // It is selected the implicit default member.
+
+        if (MEMBER_ID_INVALID == selected_union_member_ ||
+                (MEMBER_ID_INVALID ==  enclosing_type_->default_union_member() && !ret_value)) // It is selected the implicit default member.
         {
             ret_value = true;
 
-            if (type_->default_discriminator_value() != static_cast<int32_t>(value))
+            if (enclosing_type_->default_discriminator_value() != static_cast<int32_t>(value))
             {
-                for (auto member : type_->get_all_members_by_index())
+                for (auto member : enclosing_type_->get_all_members_by_index())
                 {
                     auto m_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member);
 
@@ -500,6 +502,11 @@ private:
                         }
                     }
                 }
+            }
+
+            if (ret_value)
+            {
+                selected_union_member_ = MEMBER_ID_INVALID;
             }
         }
 
@@ -592,7 +599,7 @@ private:
     uint32_t get_sequence_length();
 
     /*!
-     * Auxiliary template with the common code for getting the values of a sequence from a TK_ARRAY or TK_SEQUENCE.
+     * Auxiliary template with the common code for getting the values of a sequence.
      */
     template<TypeKind TK>
     ReturnCode_t get_sequence_values(
@@ -601,6 +608,7 @@ private:
 
     /*!
      * Auxiliary template with the common code for getting the values of a bitmask sequence from a TK_ARRAY or TK_SEQUENCE.
+     * @param[in] number_of_elements Number of elements. 0 value means all elements.
      */
     template<TypeKind TK>
     ReturnCode_t get_sequence_values_bitmask(
@@ -672,7 +680,7 @@ private:
             const TypeForKind<TK>& value) noexcept;
 
     /*!
-     * Auxiliary template with the common code for setting the values of a sequence into a TK_ARRAY or TK_SEQUENCE.
+     * Auxiliary template with the common code for setting the values of a sequence.
      */
     template<TypeKind TK>
     ReturnCode_t set_sequence_values(

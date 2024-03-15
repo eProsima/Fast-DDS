@@ -90,6 +90,20 @@ template <> inline converter::operator TypeForKind<TK_FLOAT128>()
     return std::stold(x);
 }
 
+template <> inline converter::operator TypeForKind<TK_BOOLEAN>()
+{
+    if (0 == x.compare(CONST_TRUE))
+    {
+        return true;
+    }
+    if (0 == x.compare(CONST_FALSE))
+    {
+        return false;
+    }
+
+    return 0 < stoul(x) ? true : false;
+}
+
 } // namespace detail
 
 class TypeValueConverter final
@@ -189,12 +203,8 @@ public:
                 break;
                 case TK_BOOLEAN:
                 {
-                    if (0 != str.compare(CONST_TRUE) &&
-                            0 != str.compare(CONST_FALSE))
-                    {
-                        int32_t value = sto(str);
-                        static_cast<void>(value);
-                    }
+                    TypeForKind<TK_BOOLEAN> value = sto(str);
+                    static_cast<void>(value);
                 }
                 break;
                 case TK_BYTE:
