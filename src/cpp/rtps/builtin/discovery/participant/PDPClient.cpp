@@ -45,6 +45,7 @@
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DSClientEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <utils/SystemInfo.hpp>
 #include <vector>
 
@@ -443,8 +444,34 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
+        // TCP Clients need to handle logical ports
+        bool set_logicals = false;
+        for (auto& transportDescriptor : pattr.userTransports)
+        {
+            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+            if (pT)
+            {
+                set_logicals = true;
+                break;
+            }
+        }
+        if (set_logicals)
+        {
+            for (eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
+            {
+                // Set logical port to 0 and call createSenderResources to allow opening a TCP CONNECT channel in the transport
+                for (const Locator_t& loc : it.metatrafficUnicastLocatorList)
+                {
+                    Locator_t loc_with_logical_zero = loc;
+                    IPLocator::setLogicalPort(loc_with_logical_zero, 0);
+                    mp_RTPSParticipant->createSenderResources(loc_with_logical_zero);
+                }
+            }
+        }
+
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
+            // TODO (Carlos): is this multicast locator list needed?
             mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
             mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
 
@@ -841,8 +868,35 @@ void PDPClient::update_remote_servers_list()
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
+        // TCP Clients need to handle logical ports
+        bool set_logicals = false;
+        const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+        for (auto& transportDescriptor : pattr.userTransports)
+        {
+            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+            if (pT)
+            {
+                set_logicals = true;
+            }
+        }
+
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
+            if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
+                !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
+            {
+                if (set_logicals)
+                {
+                    // Set logical port to 0 and call createSenderResources to allow opening a TCP CONNECT channel in the transport
+                    for (const Locator_t& loc : it.metatrafficUnicastLocatorList)
+                    {
+                        Locator_t loc_with_logical_zero = loc;
+                        IPLocator::setLogicalPort(loc_with_logical_zero, 0);
+                        mp_RTPSParticipant->createSenderResources(loc_with_logical_zero);
+                    }
+                }
+            }
+
             if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
             {
                 match_pdp_writer_nts_(it);
