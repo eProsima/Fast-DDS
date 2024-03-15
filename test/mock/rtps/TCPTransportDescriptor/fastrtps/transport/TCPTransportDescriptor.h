@@ -175,6 +175,14 @@ typedef struct TCPTransportDescriptor : public SocketTransportDescriptor
 
     TLSConfig tls_config;
 
+<<<<<<< HEAD
+=======
+    fastdds::rtps::ThreadSettings keep_alive_thread;
+    fastdds::rtps::ThreadSettings accept_thread;
+
+    uint32_t tcp_negotiation_timeout;
+
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
     void add_listener_port(
             uint16_t port)
     {

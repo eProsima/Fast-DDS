@@ -48,6 +48,15 @@ namespace rtps {
  *
  * - \c tls_config: Configuration for TLS.
  *
+<<<<<<< HEAD
+=======
+ * - \c non_blocking_send: do not block on send operations. When it is set to true, send operations will return
+ *      immediately if the buffer might get full, but no error will be returned to the upper layer. This means
+ *      that the application will behave as if the datagram is sent and lost.
+ *
+ * - \c tcp_negotiation_timeout: time to wait for logical port negotiation (in ms).
+ *
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
  * @ingroup TRANSPORT_MODULE
  */
 struct TCPTransportDescriptor : public SocketTransportDescriptor
@@ -246,7 +255,15 @@ struct TCPTransportDescriptor : public SocketTransportDescriptor
     //! Increment between logical ports to try during RTCP negotiation
     uint16_t logical_port_increment;
 
+<<<<<<< HEAD
     FASTDDS_TODO_BEFORE(3, 0, "Eliminate tcp_negotiation_timeout, variable not in use.")
+=======
+    /**
+     * Time to wait for logical port negotiation (ms). If a logical port is under negotiation, it waits for the
+     * negotiation to finish up to this timeout before trying to send a message to that port.
+     * Zero value means no waiting (default).
+     */
+>>>>>>> 8103cf042 (TCP first message loss (#4454))
     uint32_t tcp_negotiation_timeout;
 
     //! Enables the TCP_NODELAY socket option
