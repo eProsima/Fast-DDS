@@ -12,8 +12,13 @@ names:
             - "-DFASTDDS_STATISTICS=ON"
             - "-DSANITIZER=Address"
             - "-DCMAKE_CXX_FLAGS='-Werror'"
-
     discovery-server:
         cmake-args:
-            -"-DCMAKE_BUILD_TYPE=Debug"
-            -"-DSANITIZER=Address"
+            - "-DCMAKE_BUILD_TYPE=Debug"
+            - "-DSANITIZER=Address"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"
+

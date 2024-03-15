@@ -49,7 +49,7 @@ jobs:
           ref: ${{ inputs.fastdds-branch }}
 
       - name: Get minimum supported version of CMake
-        uses: lukka/get-cmake@latest
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
           cmakeVersion: '3.22.6'
 
