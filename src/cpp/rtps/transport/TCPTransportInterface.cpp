@@ -87,13 +87,6 @@ static const int s_default_keep_alive_frequency = 5000; // 5 SECONDS
 static const int s_default_keep_alive_timeout = 15000; // 15 SECONDS
 //static const int s_clean_deleted_sockets_pool_timeout = 100; // 100 MILLISECONDS
 
-<<<<<<< HEAD
-FASTDDS_TODO_BEFORE(3, 0,
-        "Eliminate s_default_tcp_negotitation_timeout, variable used to initialize deprecate attribute.")
-static const int s_default_tcp_negotitation_timeout = 5000; // 5 Seconds
-
-=======
->>>>>>> 8103cf042 (TCP first message loss (#4454))
 TCPTransportDescriptor::TCPTransportDescriptor()
     : SocketTransportDescriptor(s_maximumMessageSize, s_maximumInitialPeersRange)
     , keep_alive_frequency_ms(s_default_keep_alive_frequency)
@@ -1878,62 +1871,6 @@ void TCPTransportInterface::fill_local_physical_port(
     }
 }
 
-<<<<<<< HEAD
-=======
-void TCPTransportInterface::CloseOutputChannel(
-        SendResourceList& send_resource_list,
-        const LocatorList& remote_participant_locators,
-        const LocatorList& participant_initial_peers) const
-{
-    // Since send resources handle physical locators, we need to convert the remote participant locators to physical
-    std::set<Locator> remote_participant_physical_locators;
-    for (const Locator& remote_participant_locator : remote_participant_locators)
-    {
-        remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(remote_participant_locator));
-
-        // Also add the WANtoLANLocator ([0][WAN] address) if the remote locator is a WAN locator. In WAN scenario,
-        //initial peer can also work with the WANtoLANLocator of the remote participant.
-        if (IPLocator::hasWan(remote_participant_locator))
-        {
-            remote_participant_physical_locators.insert(IPLocator::toPhysicalLocator(IPLocator::WanToLanLocator(
-                        remote_participant_locator)));
-        }
-    }
-
-    // Exlude initial peers.
-    for (const auto& initial_peer : participant_initial_peers)
-    {
-        if (std::find(remote_participant_physical_locators.begin(), remote_participant_physical_locators.end(),
-                IPLocator::toPhysicalLocator(initial_peer)) != remote_participant_physical_locators.end())
-        {
-            remote_participant_physical_locators.erase(IPLocator::toPhysicalLocator(initial_peer));
-        }
-    }
-
-    for (const auto& remote_participant_physical_locator : remote_participant_physical_locators)
-    {
-        if (!IsLocatorSupported(remote_participant_physical_locator))
-        {
-            continue;
-        }
-        // Remove send resources for the associated remote participant locator
-        for (auto it = send_resource_list.begin(); it != send_resource_list.end();)
-        {
-            TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, it->get());
-
-            if (tcp_sender_resource)
-            {
-                if (tcp_sender_resource->locator() == remote_participant_physical_locator)
-                {
-                    it = send_resource_list.erase(it);
-                    continue;
-                }
-            }
-            ++it;
-        }
-    }
-}
-
 void TCPTransportInterface::send_channel_pending_logical_ports(
         std::shared_ptr<TCPChannelResource>& channel)
 {
@@ -1949,7 +1886,6 @@ void TCPTransportInterface::send_channel_pending_logical_ports(
     }
 }
 
->>>>>>> 8103cf042 (TCP first message loss (#4454))
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
