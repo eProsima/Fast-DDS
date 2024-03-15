@@ -50,6 +50,10 @@ jobs:
         CXX: g++-12
 
     steps:
+      # https://github.com/actions/runner-images/issues/9491
+      - name: Fix kernel mmap rnd bits
+        run: sudo sysctl vm.mmap_rnd_bits=28
+
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
