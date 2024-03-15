@@ -25,6 +25,14 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
+#if defined(__GLIBC__) && ((__GLIBC__ > 2) || ((__GLIBC__ == 2) && (__GLIBC_MINOR__ <= 30)))
+    #include <sys/syscall.h>
+    #ifndef SYS_gettid
+        #error "SYS_gettid unavailable on this system"
+    #endif
+    #define gettid() ((pid_t)syscall(SYS_gettid))
+#endif
+
 namespace eprosima {
 
 template<typename... Args>
