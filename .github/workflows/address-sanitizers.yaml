@@ -188,10 +188,12 @@ jobs:
           repository: eProsima/Discovery-Server
           ref: ${{ env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
 
-      - name: Install GTest
-        uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
+      - name: Fetch Fast DDS ASan dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          version: v1.12.1
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan.repos
+          destination_workspace: src
+          skip_existing: 'true'
 
       - name: Build workspace
         run: |
