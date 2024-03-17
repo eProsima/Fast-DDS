@@ -21,6 +21,7 @@
 #define _FASTDDS_DDS_XTYPES_TYPE_REPRESENTATION_TYPEOBJECTREGISTRY_HPP_
 
 #include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 namespace eprosima {
@@ -39,6 +40,12 @@ public:
     ReturnCode_t get_type_object(
             const TypeIdentifier&,
             TypeObject&)
+    {
+        return fastdds::dds::RETCODE_OK;
+    }
+
+    ReturnCode_t register_typeobject_w_dynamic_type(
+            const DynamicType::_ref_type&)
     {
         return fastdds::dds::RETCODE_OK;
     }

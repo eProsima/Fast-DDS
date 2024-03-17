@@ -1159,7 +1159,318 @@ const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
     return type_id;
 }
 
+ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
+        const DynamicType::_ref_type& dynamic_type)
+{
+    static_cast<void>(dynamic_type);
+    return RETCODE_UNSUPPORTED;
+    // ReturnCode_t return_code;
+
+    // traits<TypeDescriptor>::ref_type type_descriptor;
+    // dynamic_type->get_descriptor(type_descriptor);
+    // if (nullptr != type_descriptor->base_type())
+    // {
+    //     if (RETCODE_OK != register_typeobject_w_dynamic_type(type_descriptor->base_type()))
+    //     {
+    //         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+    //                 "Error trying to register base type of DynamicType: " + dynamic_type->get_name().to_string());
+    //     }
+    // }
+
+    // switch (dynamic_type->get_kind())
+    // {
+    //     case TK_ALIAS:
+    //     case TK_ANNOTATION:
+    //     case TK_STRUCTURE:
+    //     case TK_UNION:
+    //     case TK_BITSET:
+    //     case TK_SEQUENCE:
+    //     case TK_ARRAY:
+    //     case TK_MAP:
+    //     case TK_ENUM:
+    //     case TK_BITMASK:
+
+
+    //     case TK_NONE:
+    //     case TK_BOOLEAN:
+    //     case TK_BYTE:
+    //     case TK_INT16:
+    //     case TK_INT32:
+    //     case TK_INT64:
+    //     case TK_UINT16:
+    //     case TK_UINT32:
+    //     case TK_UINT64:
+    //     case TK_FLOAT32:
+    //     case TK_FLOAT64:
+    //     case TK_FLOAT128:
+    //     case TK_INT8:
+    //     case TK_UINT8:
+    //     case TK_CHAR8:
+    //     case TK_CHAR16:
+    //     case TK_STRING8:
+    //     case TK_STRING16:
+    //     default:
+    //         throw InvalidArgumentError("Inconsistent DynamicType");
+    // }
+    // return return_code;
+}
+
+// ReturnCode_t TypeObjectUtils::create_alias_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_annotation_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+
+// TryConstructKind dds_to_xtypes_tryconstructkind(
+//         eprosima::fastdds::dds::TryConstructKind try_construct_kind)
+// {
+//     switch (try_construct_kind)
+//     {
+//         case eprosima::fastdds::dds::TryConstructKind::USE_DEFAULT:
+//             return TryConstructKind::USE_DEFAULT;
+//         case eprosima::fastdds::dds::TryConstructKind::DISCARD:
+//             return TryConstructKind::DISCARD;
+//         case eprosima::fastdds::dds::TryConstructKind::TRIM:
+//             return TryConstructKind::TRIM;
+//     }
+//     return TryConstructKind::NOT_APPLIED;
+// }
+
+// ExtensibilityKind dds_to_xtypes_extensibilitykind(
+//         eprosima::fastdds::dds::ExtensibilityKind extensibility_kind)
+// {
+//     switch (extensibility_kind)
+//     {
+//         case eprosima::fastdds::dds::ExtensibilityKind::FINAL:
+//             return ExtensibilityKind::FINAL;
+//         case eprosima::fastdds::dds::ExtensibilityKind::APPENDABLE:
+//             return ExtensibilityKind::APPENDABLE;
+//         case eprosima::fastdds::dds::ExtensibilityKind::MUTABLE:
+//             return ExtensibilityKind::MUTABLE;
+//     }
+//     return ExtensibilityKind::NOT_APPLIED;
+// }
+
+// eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> get_type_builtin_annotations(
+//         const DynamicType::_ref_type dynamic_type)
+// {
+// }
+
+// eprosima::fastcdr::optional<AppliedAnnotationSeq> get_type_custom_annotations(
+//         const DynamicType::_ref_type dynamic_type)
+// {
+//     AppliedAnnotationSeq custom_annotations;
+//     traits<AnnotationDescriptor>::ref_type annotation_descriptor;
+//     for (int i = 0; i < dynamic_type->get_annotation_count(); i++)
+//     {
+//         dynamic_type->get_annotation(i, annotation_descriptor);
+
+//         AppliedAnnotationParameterSeq custom_annotations_parameter_seq;
+//         NameHash paramname_hash = TypeObjectUtils::name_hash("?????");
+//         AnnotationParameterValue param_value = TypeObjectUtils::build_annotation_parameter_value(
+//             static_cast<int16_t>(1));
+
+//         AppliedAnnotationParameter applied_param = TypeObjectUtils::build_applied_annotation_parameter(
+//             paramname_hash_, param_value);
+//         TypeObjectUtils::add_applied_annotation_parameter(custom_annotations_parameter_seq, applied_param);
+
+//         TypeIdentifierPair type_ids;
+//         if (RETCODE_OK != get_type_identifiers(annotation_descriptor.type()->get_name().to_string(), type_ids))
+//         {
+//             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+//                     "AnnotatedStruct Structure: Given Annotation TypeIdentifier unknown to TypeObjectRegistry.");
+//             return;
+//         }
+
+//         AppliedAnnotation custom_annotation;
+//         if (EK_COMPLETE == type_ids.type_identifier1()._d())
+//         {
+//             custom_annotation = TypeObjectUtils::build_applied_annotation(
+//                 type_ids.type_identifier1(), custom_annotations_parameter_seq);
+//         }
+//         else if (EK_COMPLETE == type_ids.type_identifier2()._d())
+//         {
+//             custom_annotation = TypeObjectUtils::build_applied_annotation(
+//                 type_ids.type_identifier2(), custom_annotations_parameter_seq);
+//         }
+//         else
+//         {
+//             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+//                     "AnnotatedStruct Structure: Given Annotation TypeIdentifier is inconsistent.");
+//             return;
+//         }
+//         TypeObjectUtils::add_applied_annotation(custom_annotations, custom_annotation);
+
+//     }
+// }
+
+// ReturnCode_t TypeObjectRegistry::create_structure_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+
+// {
+//     ReturnCode_t return_code;
+
+//     traits<TypeDescriptor>::ref_type type_descriptor;
+//     dynamic_type->get_descriptor(type_descriptor);
+
+//     StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(dds_to_xtypes_extensibilitykind(
+//                         type_descriptor->extensibility_kind()), type_descriptor->is_nested(), false);
+
+//     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> type_ann_builtin;
+//     eprosima::fastcdr::optional<AppliedAnnotationSeq> type_ann_custom;
+
+
+//     CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(type_ann_builtin,
+//                     type_ann_custom, dynamic_type->get_name());
+
+//     CompleteStructHeader header;
+//     if (nullptr != type_descriptor->base_type())
+//     {
+//         TypeIdentifierPair type_ids;
+//         if (RETCODE_OK == get_type_identifiers(type_descriptor->base_type()->get_name().to_string(), type_ids))
+//         {
+//             TypeIdentifier base_typeid;
+//             if (EK_COMPLETE == type_ids.type_identifier1()._d())
+//             {
+//                 base_typeid = type_ids.type_identifier1();
+//             }
+//             else if (EK_COMPLETE == type_ids.type_identifier2()._d())
+//             {
+//                 base_typeid = type_ids.type_identifier2();
+//             }
+//             header = TypeObjectUtils::build_complete_struct_header(base_typeid, detail);
+//         }
+//         else
+//         {
+//             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+//                     "Error trying to register TypeObject with DynamicType: "
+//                     + dynamic_type->get_name().to_string() + " ,base type not found");
+//         }
+//     }
+//     else
+//     {
+//         header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
+//     }
+
+//     CompleteStructMemberSeq member_seq;
+//     {
+//         DynamicTypeMembersById members;
+//         dynamic_type->get_all_members(members);
+//         for (auto dyn_member : members)
+//         {
+//             traits<MemberDescriptor>::ref_type member_descriptor;
+//             dyn_member.second->get_descriptor(member_descriptor);
+
+//             TypeIdentifierPair type_ids;
+//             return_code = get_type_identifiers(member_descriptor->type()->get_name().to_string(), type_ids);
+
+//             if (return_code != RETCODE_OK)
+//             {
+//                 if (RETCODE_OK != register_typeobject_w_dynamic_type(member_descriptor->type()))
+//                 {
+//                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+//                             "Error trying to register Member of " + dynamic_type->get_name().to_string());
+//                 }
+//                 else
+//                 {
+//                     get_type_identifiers(member_descriptor->type()->get_name().to_string(), type_ids);
+//                 }
+//             }
+//             TypeIdentifier member_typeid;
+//             if (EK_COMPLETE == type_ids.type_identifier1()._d())
+//             {
+//                 member_typeid = type_ids.type_identifier1();
+//             }
+//             else if (EK_COMPLETE == type_ids.type_identifier2()._d())
+//             {
+//                 member_typeid = type_ids.type_identifier2();
+//             }
+
+//             StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(
+//                 dds_to_xtypes_tryconstructkind(member_descriptor->try_construct_kind()),
+//                 member_descriptor->is_optional(),
+//                 member_descriptor->is_must_understand(),
+//                 member_descriptor->is_key(),
+//                 member_descriptor->is_shared());
+
+//             CommonStructMember common;
+//             common = TypeObjectUtils::build_common_struct_member(dyn_member.first, member_flags, member_typeid);
+
+//             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin;
+//             eprosima::fastcdr::optional<AppliedAnnotationSeq> member_ann_custom;
+
+//             CompleteMemberDetail detail = TypeObjectUtils::build_complete_member_detail(
+//                 dyn_member.second->get_name(), member_ann_builtin, member_ann_custom);
+
+//             CompleteStructMember member = TypeObjectUtils::build_complete_struct_member(common, detail);
+
+//             TypeObjectUtils::add_complete_struct_member(member_seq, member);
+//         }
+//     }
+
+//     CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(struct_flags, header, member_seq);
+//     if (RETCODE_OK !=
+//             TypeObjectUtils::build_and_register_struct_type_object(struct_type, dynamic_type->get_name().to_string()))
+//     {
+//         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+//                 "Error trying to register TypeObject with DynamicType " + dynamic_type->get_name().to_string());
+//     }
+
+//     return return_code;
+// }
+
+// ReturnCode_t TypeObjectUtils::create_union_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_bitset_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_sequence_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_array_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_map_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_enum_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
+// ReturnCode_t TypeObjectUtils::create_bitmask_typeobject_w_dynamic_type(
+//         const DynamicType::_ref_type dynamic_type,
+//         TypeObject& type_object)
+// {
+// }
+
 } // xtypes
+
 } // dds
 } // fastdds
 } // eprosima

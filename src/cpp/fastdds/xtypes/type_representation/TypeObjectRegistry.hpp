@@ -26,6 +26,7 @@
 #include <unordered_set>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
@@ -229,7 +230,7 @@ public:
      *        TypeObjects constructing the minimal from the complete TypeObject information.
      *        TypeObject consistency is not checked in this method as the order of the dependencies received by the
      *        TypeLookupService is not guaranteed.
-     *        The consistency is checked by the TypeLookupService after all denpendencies are registered
+     *        The consistency is checked by the TypeLookupService after all dependencies are registered.
      *
      * @pre TypeIdentifier discriminator must match TypeObject discriminator.
      *      TypeIdentifier consistency is only checked in Debug build mode.
@@ -244,6 +245,16 @@ public:
     ReturnCode_t register_type_object(
             const TypeIdentifier& type_identifier,
             const TypeObject& type_object);
+
+    /**
+     * @brief Register DynamicType TypeObject representation in TypeObjectRegistry.
+     * 
+     * @param dynamic_type DynamicType to be registered.
+     * @return ReturnCode_t RETCODE_OK if successfully registered.
+     *         TODO: COMPLETE documentation
+     */
+    ReturnCode_t register_typeobject_w_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type);
 
     /**
      * @brief Check if two given types are compatible according to the given TypeConsistencyEnforcement QoS.
@@ -748,6 +759,10 @@ protected:
      */
     const TypeIdentifier minimal_from_complete_type_identifier(
             const TypeIdentifier& complete_type_id);
+
+    // ReturnCode_t create_structure_typeobject_w_dynamic_type(
+    //         const DynamicType::_ref_type dynamic_type,
+    //         TypeObject& type_object);
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.
