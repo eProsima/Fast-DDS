@@ -16,3 +16,8 @@ names:
         cmake-args:
             - "-DCMAKE_BUILD_TYPE=Debug"
             - "-DSANITIZER=Address"
+    googletest-distribution:
+        cmake-args:
+            - "-Dgtest_force_shared_crt=ON"
+            - "-DBUILD_SHARED_LIBS=ON"
+            - "-DBUILD_GMOCK=ON"
