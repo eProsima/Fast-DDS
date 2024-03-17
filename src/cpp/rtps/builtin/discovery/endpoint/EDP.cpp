@@ -44,7 +44,7 @@
 #include <foonathan/memory/memory_pool.hpp>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <utils/collections/node_size_helpers.hpp>
@@ -129,7 +129,7 @@ bool EDP::newLocalReaderProxyData(
                 {
                     rpd->set_multicast_locators(ratt.multicastLocatorList, network);
                     rpd->set_announced_unicast_locators(ratt.unicastLocatorList);
-                    fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*rpd,
+                    fastdds::rtps::network::external_locators::add_external_locators(*rpd,
                             ratt.external_unicast_locators);
                 }
                 rpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();
@@ -284,7 +284,7 @@ bool EDP::newLocalWriterProxyData(
                 {
                     wpd->set_multicast_locators(watt.multicastLocatorList, network);
                     wpd->set_announced_unicast_locators(watt.unicastLocatorList);
-                    fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*wpd,
+                    fastdds::rtps::network::external_locators::add_external_locators(*wpd,
                             watt.external_unicast_locators);
                 }
                 wpd->RTPSParticipantKey() = mp_RTPSParticipant->getGuid();

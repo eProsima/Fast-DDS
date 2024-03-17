@@ -172,6 +172,15 @@ public:
     }
 
     /*!
+     * Call the low-level transport `netmask_filter_info()`.
+     * Returns netmask filter information (transport's netmask filter kind and allowlist)
+     */
+    RTPS_DllAPI NetmaskFilterInfo netmask_filter_info() const override
+    {
+        return low_level_transport_->netmask_filter_info();
+    }
+
+    /*!
      * Call the low-level transport `DoInputLocatorsMatch()`.
      * Must report whether two locators map to the same internal channel.
      */

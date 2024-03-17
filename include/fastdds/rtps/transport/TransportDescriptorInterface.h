@@ -16,6 +16,7 @@
 #define _FASTDDS_TRANSPORT_DESCRIPTOR_INTERFACE_H_
 
 #include <cstdint>
+#include <mutex>
 #include <vector>
 
 #include <fastrtps/fastrtps_dll.h>
@@ -51,11 +52,20 @@ struct TransportDescriptorInterface
 
     //! Copy constructor
     RTPS_DllAPI TransportDescriptorInterface(
-            const TransportDescriptorInterface& t) = default;
+            const TransportDescriptorInterface& t)
+        : maxMessageSize(t.maxMessageSize)
+        , maxInitialPeersRange(t.maxInitialPeersRange)
+    {
+    }
 
     //! Copy assignment
     RTPS_DllAPI TransportDescriptorInterface& operator =(
-            const TransportDescriptorInterface& t) = default;
+            const TransportDescriptorInterface& t)
+    {
+        maxMessageSize = t.maxMessageSize;
+        maxInitialPeersRange = t.maxInitialPeersRange;
+        return *this;
+    }
 
     //! Destructor
     virtual RTPS_DllAPI ~TransportDescriptorInterface() = default;
@@ -92,11 +102,27 @@ struct TransportDescriptorInterface
                this->maxInitialPeersRange == t.max_initial_peers_range());
     }
 
+    //! Lock internal mutex (for Fast-DDS internal use)
+    RTPS_DllAPI void lock()
+    {
+        mtx_.lock();
+    }
+
+    //! Unlock internal mutex (for Fast-DDS internal use)
+    RTPS_DllAPI void unlock()
+    {
+        mtx_.unlock();
+    }
+
     //! Maximum size of a single message in the transport
     uint32_t maxMessageSize;
 
     //! Number of channels opened with each initial remote peer.
     uint32_t maxInitialPeersRange;
+
+private:
+
+    mutable std::mutex mtx_;
 };
 
 } // namespace rtps

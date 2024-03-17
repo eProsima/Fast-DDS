@@ -106,7 +106,7 @@ public:
      * to the corresponding local address if allowed by both local and remote transports.
      *
      * @param [in]  remote_locator Locator to be converted.
-     * @param [out] result_locator Converted locator.
+     * @param [in, out] result_locator Converted locator.
      * @param [in]  remote_network_config Remote network configuration.
      *
      * @return false if the input locator is not supported/allowed by any of the registered transports,
@@ -116,6 +116,38 @@ public:
             const Locator_t& remote_locator,
             Locator_t& result_locator,
             const NetworkConfigSet_t& remote_network_config) const;
+
+    /**
+     * Transform a remote locator into a locator optimized for local communications.
+     *
+     * Conversion is only performed if the remote locator originates from a Fast-DDS entity,
+     * and if allowed by both local and remote transports.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [in, out] result_locator Converted locator.
+     * @param [in]  remote_network_config Remote network configuration.
+     * @param [in]  is_fastdds_local Whether the remote locator is from a Fast-DDS entity
+     *                               created in this host (from where this method is called).
+     *
+     * @return false if the input locator is not supported/allowed by any of the registered transports,
+     *         true otherwise.
+     */
+    bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator,
+            const NetworkConfigSet_t& remote_network_config,
+            bool is_fastdds_local) const;
+
+    /**
+     * Must report whether the given locator is supported by at least one of the registered transports.
+     *
+     * @param [in]  locator Locator to check if supported.
+     *
+     * @return false if the input locator is not supported by any of the registered transports,
+     *         true otherwise.
+     */
+    bool is_locator_supported(
+            const Locator_t& locator) const;
 
     /**
      * Must report whether the given locator is allowed by at least one of the registered transports.
@@ -138,6 +170,20 @@ public:
      */
     bool is_locator_remote_or_allowed(
             const Locator_t& locator) const;
+
+    /**
+     * Must report whether the given locator is remote, or allowed by at least one of the registered transports.
+     *
+     * @param [in]  locator Locator to check if remote or allowed.
+     * @param [in]  is_fastdds_local Whether the locator is from a Fast-DDS entity
+     *                               created in this host (from where this method is called).
+     *
+     * @return false if the input locator is not remote, nor supported/allowed by any of the registered transports,
+     *         true otherwise.
+     */
+    bool is_locator_remote_or_allowed(
+            const Locator_t& locator,
+            bool is_fastdds_local) const;
 
     /**
      * Perform the locator selection algorithm.
@@ -261,6 +307,11 @@ public:
             fastdds::rtps::SendResourceList& send_resource_list,
             const LocatorList_t& remote_participant_locators,
             const LocatorList_t& participant_initial_peers) const;
+
+    /**
+     * Returns transports' netmask filter information (transport's netmask filter kind and allowlist).
+     */
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> netmask_filter_info() const;
 
 private:
 

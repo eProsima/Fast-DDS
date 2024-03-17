@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file ExternalLocatorsProcessor.hpp
+ * @file external_locators.hpp
  */
 
-#ifndef _RTPS_NETWORK_EXTERNALLOCATORSPROCESSOR_HPP_
-#define _RTPS_NETWORK_EXTERNALLOCATORSPROCESSOR_HPP_
+#ifndef _RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP_
+#define _RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP_
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -29,7 +29,8 @@
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
-namespace ExternalLocatorsProcessor {
+namespace network {
+namespace external_locators {
 
 using eprosima::fastrtps::rtps::LocatorSelectorEntry;
 using eprosima::fastrtps::rtps::ParticipantProxyData;
@@ -40,60 +41,58 @@ using eprosima::fastrtps::rtps::WriterProxyData;
  * Sets the external locators entry for externality index 0 to a list of listening locators.
  *
  * @param [in,out]  external_locators   The external locators collection to be updated.
- * @param [in]      listening_locators  The list of listening locators to be set on externality index 0.
+ * @param [in]      listening_locators  The list of listening locators to set on externality index 0.
  */
 void set_listening_locators(
-        ExternalLocators& external_locators,
-        const LocatorList& listening_locators);
+        ExternalLocators& /*external_locators*/,
+        const LocatorList& /*listening_locators*/)
+{
+}
 
 /**
- * Adds external locators to the locators announced by a participant.
+ * Add external locators to the locators announced by a participant.
  *
- * @param [in,out]  data                           ParticipantProxyData of the local participant to be updated.
+ * @param [in,out]  data                           ParticipantProxyData of the local participant to update.
  * @param [in]      metatraffic_external_locators  The external locators collection with the external meta-traffic
- *                                                 locators to be announced.
+ *                                                 locators to announce.
  * @param [in]      default_external_locators      The external locators collection with the external default locators
- *                                                 to be announced.
+ *                                                 to announce.
  */
 void add_external_locators(
-        ParticipantProxyData& data,
-        const ExternalLocators& metatraffic_external_locators,
-        const ExternalLocators& default_external_locators);
+        ParticipantProxyData& /*data*/,
+        const ExternalLocators& /*metatraffic_external_locators*/,
+        const ExternalLocators& /*default_external_locators*/)
+{
+}
 
 /**
- * Adds external locators to the locators announced by a writer.
+ * Add external locators to the locators announced by a writer.
  *
- * @param [in,out]  data               WriterProxyData of the local writer to be updated.
- * @param [in]      external_locators  The external locators collection with the external locators to be announced.
+ * @param [in,out]  data               WriterProxyData of the local writer to update.
+ * @param [in]      external_locators  The external locators collection with the external locators to announce.
  */
 void add_external_locators(
-        WriterProxyData& data,
-        const ExternalLocators& external_locators);
+        WriterProxyData& /*data*/,
+        const ExternalLocators& /*external_locators*/)
+{
+}
 
 /**
- * Adds external locators to the locators announced by a reader.
+ * Add external locators to the locators announced by a reader.
  *
- * @param [in,out]  data               ReaderProxyData of the local reader to be updated.
- * @param [in]      external_locators  The external locators collection with the external locators to be announced.
+ * @param [in,out]  data               ReaderProxyData of the local reader to update.
+ * @param [in]      external_locators  The external locators collection with the external locators to announce.
  */
 void add_external_locators(
-        ReaderProxyData& data,
-        const ExternalLocators& external_locators);
+        ReaderProxyData& /*data*/,
+        const ExternalLocators& /*external_locators*/)
+{
+}
 
 /**
- * Adds external locators to a list of locators.
+ * Filter the locators of a remote participant according to the matching algorithm.
  *
- * @param [in,out]  list               LocatorList to be updated.
- * @param [in]      external_locators  The external locators collection with the external locators to be announced.
- */
-void add_external_locators(
-        LocatorList& list,
-        const ExternalLocators& external_locators);
-
-/**
- * Filters the locators of a remote participant according to the matching algorithm.
- *
- * @param [in,out]  data                           ParticipantProxyData of the remote participant to be updated.
+ * @param [in,out]  data                           ParticipantProxyData of the remote participant to update.
  * @param [in]      metatraffic_external_locators  The external locators collection to use for filtering of the
  *                                                 meta-traffic locators.
  * @param [in]      default_external_locators      The external locators collection to use for filtering of the
@@ -102,27 +101,32 @@ void add_external_locators(
  *                                                 should be filtered out.
  */
 void filter_remote_locators(
-        ParticipantProxyData& data,
-        const ExternalLocators& metatraffic_external_locators,
-        const ExternalLocators& default_external_locators,
-        bool ignore_non_matching);
+        ParticipantProxyData& /*data*/,
+        const ExternalLocators& /*metatraffic_external_locators*/,
+        const ExternalLocators& /*default_external_locators*/,
+        bool /*ignore_non_matching*/)
+{
+}
 
 /**
- * Filters the locators of a remote endpoint according to the matching algorithm.
+ * Filter the locators of a remote endpoint according to the matching algorithm.
  *
- * @param [in,out]  locators             LocatorSelectorEntry of the remote destination to be updated.
+ * @param [in,out]  locators             LocatorSelectorEntry of the remote destination to update.
  * @param [in]      external_locators    The external locators collection to use for filtering of the locators.
  * @param [in]      ignore_non_matching  Whether addresses not matching any of the input external locators should be
  *                                       filtered out.
  */
 void filter_remote_locators(
-        LocatorSelectorEntry& locators,
-        const ExternalLocators& external_locators,
-        bool ignore_non_matching);
+        LocatorSelectorEntry& /*locators*/,
+        const ExternalLocators& /*external_locators*/,
+        bool /*ignore_non_matching*/)
+{
+}
 
-} // namespace ExternalLocatorsProcessor
+} // namespace external_locators
+} // namespace network
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif  // _RTPS_NETWORK_EXTERNALLOCATORSPROCESSOR_HPP_
+#endif  // _RTPS_NETWORK_UTILS_EXTERNAL_LOCATORS_HPP_

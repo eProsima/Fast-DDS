@@ -44,7 +44,7 @@
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/messages/RTPSGapBuilder.hpp>
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
@@ -1015,7 +1015,7 @@ void StatefulWriter::select_all_readers_nts(
 bool StatefulWriter::matched_reader_add(
         const ReaderProxyData& rdata)
 {
-    using fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators;
+    using fastdds::rtps::network::external_locators::filter_remote_locators;
 
     if (rdata.guid() == c_Guid_Unknown)
     {

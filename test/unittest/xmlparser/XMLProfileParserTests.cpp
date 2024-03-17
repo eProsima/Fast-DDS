@@ -28,6 +28,9 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/BlockedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
@@ -130,7 +133,7 @@ protected:
 
     std::string xml_filename_ = "test_xml_profile.xml";
 
-    const std::pair<std::string, std::string> c_environment_values_[161]
+    const std::pair<std::string, std::string> c_environment_values_[162]
     {
         {"XML_PROFILES_ENV_VAR_1",   "123"},
         {"XML_PROFILES_ENV_VAR_2",   "4"},
@@ -292,7 +295,8 @@ protected:
         {"XML_PROFILES_ENV_VAR_158", "-1"},
         {"XML_PROFILES_ENV_VAR_159", "0"},
         {"XML_PROFILES_ENV_VAR_160", "0"},
-        {"XML_PROFILES_ENV_VAR_161", "-1"}
+        {"XML_PROFILES_ENV_VAR_161", "-1"},
+        {"XML_PROFILES_ENV_VAR_162",  "ON"}
     };
 
 };
@@ -555,6 +559,7 @@ TEST_P(XMLProfileParserTests, XMLParserParticipant)
     //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
     //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
     EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(rtps_atts.netmaskFilter, eprosima::fastdds::rtps::NetmaskFilterKind::ON);
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
@@ -1710,6 +1715,8 @@ TEST_F(XMLProfileParserBasicTests, tls_config)
 
 TEST_F(XMLProfileParserBasicTests, UDP_transport_descriptors_config)
 {
+    using namespace eprosima::fastdds::rtps;
+
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::loadXMLFile("UDP_transport_descriptors_config_profile.xml"));
 
@@ -1727,7 +1734,11 @@ TEST_F(XMLProfileParserBasicTests, UDP_transport_descriptors_config)
     EXPECT_EQ(descriptor->maxInitialPeersRange, 100u);
     EXPECT_EQ(descriptor->interfaceWhiteList.size(), 2u);
     EXPECT_EQ(descriptor->interfaceWhiteList[0], "192.168.1.41");
-    EXPECT_EQ(descriptor->interfaceWhiteList[1], "127.0.0.1");
+    EXPECT_EQ(descriptor->interfaceWhiteList[1], "lo");
+    EXPECT_EQ(descriptor->netmask_filter, NetmaskFilterKind::ON);
+    EXPECT_EQ(descriptor->interface_allowlist[0], AllowedNetworkInterface("wlp59s0", NetmaskFilterKind::ON));
+    EXPECT_EQ(descriptor->interface_allowlist[1], AllowedNetworkInterface("127.0.0.1", NetmaskFilterKind::AUTO));
+    EXPECT_EQ(descriptor->interface_blocklist[0], BlockedNetworkInterface("docker0"));
     EXPECT_EQ(descriptor->m_output_udp_socket, 5101u);
 }
 

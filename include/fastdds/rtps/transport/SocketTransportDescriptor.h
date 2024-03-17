@@ -19,6 +19,9 @@
 #include <vector>
 #include <string>
 
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/BlockedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 
 namespace eprosima {
@@ -50,6 +53,7 @@ struct SocketTransportDescriptor : public PortBasedTransportDescriptor
         : PortBasedTransportDescriptor(maximumMessageSize, maximumInitialPeersRange)
         , sendBufferSize(0)
         , receiveBufferSize(0)
+        , netmask_filter(NetmaskFilterKind::AUTO)
         , TTL(s_defaultTTL)
     {
     }
@@ -77,6 +81,9 @@ struct SocketTransportDescriptor : public PortBasedTransportDescriptor
         return (this->sendBufferSize == t.min_send_buffer_size() &&
                this->receiveBufferSize == t.receiveBufferSize &&
                this->interfaceWhiteList == t.interfaceWhiteList &&
+               this->netmask_filter == t.netmask_filter &&
+               this->interface_allowlist == t.interface_allowlist &&
+               this->interface_blocklist == t.interface_blocklist &&
                this->TTL == t.TTL &&
                PortBasedTransportDescriptor::operator ==(t));
     }
@@ -85,8 +92,14 @@ struct SocketTransportDescriptor : public PortBasedTransportDescriptor
     uint32_t sendBufferSize;
     //! Length of the receive buffer.
     uint32_t receiveBufferSize;
-    //! Allowed interfaces in an IP string format.
+    //! Allowed interfaces in an IP or device name string format.
     std::vector<std::string> interfaceWhiteList;
+    //! Transport's netmask filter configuration.
+    NetmaskFilterKind netmask_filter;
+    //! Allowed interfaces in an IP or device name string format, each with a specific netmask filter configuration.
+    std::vector<AllowedNetworkInterface> interface_allowlist;
+    //! Blocked interfaces in an IP or device name string format.
+    std::vector<BlockedNetworkInterface> interface_blocklist;
     //! Specified time to live (8bit - 255 max TTL)
     uint8_t TTL;
 };

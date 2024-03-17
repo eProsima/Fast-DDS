@@ -61,7 +61,7 @@
 
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 
 #include <mutex>
 #include <chrono>
@@ -341,7 +341,7 @@ void PDP::initializeParticipantProxyData(
             }
         }
 
-        fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(*participant_data,
+        fastdds::rtps::network::external_locators::add_external_locators(*participant_data,
                 attributes.builtin.metatraffic_external_unicast_locators,
                 attributes.default_external_unicast_locators);
     }

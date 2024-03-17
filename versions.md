@@ -4,6 +4,7 @@ Migrate communication tests in `dds/communication` folder
 
 * Added authentication handshake properties.
 * Added methods OpenOutputChannels and CloseOutputChannels to TransportInterface with LocatorSelectorEntry argument.
+* Added `netmask_filter`, `allowlist` and `blocklist` transport configuration options.
 
 Version 2.13.0
 --------------

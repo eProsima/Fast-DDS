@@ -19,6 +19,8 @@
 #ifndef _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_
 #define _FASTDDS_RTPS_COMMON_LOCATORWITHMASK_HPP_
 
+#include <sstream>
+
 #include <fastrtps/fastrtps_dll.h>
 
 #include <fastdds/rtps/common/Locator.h>
@@ -39,10 +41,7 @@ public:
      *
      * @return number of significant bits on the address of this locator.
      */
-    uint8_t mask() const
-    {
-        return mask_;
-    }
+    uint8_t mask() const;
 
     /**
      * Set the number of significant bits on the address of this locator.
@@ -50,15 +49,30 @@ public:
      * @param mask number of significant bits on the address of this locator.
      */
     void mask(
-            uint8_t mask)
-    {
-        mask_ = mask;
-    }
+            uint8_t mask);
+
+    /**
+     * Check whether the given locator is from the same network as this locator.
+     *
+     * @param loc locator to check if belonging to the same network as this locator.
+     *
+     * @return true if the two locators are from the same network, false otherwise.
+     */
+    bool matches(
+            const Locator& loc) const;
+
+    //! Copy assignment
+    LocatorWithMask& operator =(
+            const Locator& loc);
 
 private:
 
     uint8_t mask_ = 24;
 };
+
+RTPS_DllAPI std::ostream& operator <<(
+        std::ostream& output,
+        const LocatorWithMask& loc);
 
 } // namespace rtps
 } // namespace fastdds

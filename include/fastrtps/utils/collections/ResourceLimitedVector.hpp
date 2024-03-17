@@ -281,6 +281,26 @@ public:
     }
 
     /**
+     * Contains element.
+     *
+     * Checks whether the given element is present in the collection (at least once).
+     *
+     * @param val   Value to look for.
+     *
+     * @return true if the element is present in the collection (at least once), false otherwise.
+     */
+    bool contains(
+            const value_type& val)
+    {
+        iterator it = std::find(collection_.begin(), collection_.end(), val);
+        if (it != collection_.end())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Assign vector content.
      *
      * Assigns new contents to the vector, replacing its current contents, and modifying its size accordingly.

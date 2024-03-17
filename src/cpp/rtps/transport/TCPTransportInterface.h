@@ -23,6 +23,9 @@
 #include <asio.hpp>
 #include <asio/steady_timer.hpp>
 
+#include <fastdds/rtps/common/LocatorWithMask.hpp>
+#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
+#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -76,7 +79,6 @@ class TCPTransportInterface : public TransportInterface
 
 protected:
 
-    std::vector<fastrtps::rtps::IPFinder::info_IP> current_interfaces_;
     asio::io_service io_service_;
     asio::io_service io_service_timers_;
     std::unique_ptr<asio::ip::tcp::socket> initial_peer_local_locator_socket_;
@@ -113,6 +115,9 @@ protected:
     // The key is the physical locator associated with the sender resource, and later to the channel.
     std::map<Locator, std::set<uint16_t>> channel_pending_logical_ports_;
     std::mutex channel_pending_logical_ports_mutex_;
+
+    NetmaskFilterKind netmask_filter_;
+    std::vector<AllowedNetworkInterface> allowed_interfaces_;
 
     TCPTransportInterface(
             int32_t transport_kind);
@@ -153,9 +158,10 @@ protected:
     uint16_t create_acceptor_socket(
             const Locator& locator);
 
-    virtual void get_ips(
+    virtual bool get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& loc_names,
-            bool return_loopback = false) const = 0;
+            bool return_loopback,
+            bool force_lookup) const = 0;
 
     bool is_input_port_open(
             uint16_t port) const;
@@ -289,7 +295,7 @@ public:
             const Locator& loc) const = 0;
 
     virtual bool is_interface_allowed(
-            const std::string& interface) const = 0;
+            const std::string& iface) const = 0;
 
     //! Checks for TCP kinds.
     bool IsLocatorSupported(
@@ -465,6 +471,8 @@ public:
     void update_network_interfaces() override;
 
     bool is_localhost_allowed() const override;
+
+    NetmaskFilterInfo netmask_filter_info() const override;
 
     /**
      * Method to fill local locator physical port.

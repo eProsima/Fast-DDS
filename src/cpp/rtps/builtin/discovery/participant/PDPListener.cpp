@@ -33,7 +33,7 @@
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
-#include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <mutex>
@@ -120,7 +120,7 @@ void PDPListener::onNewCacheChangeAdded(
 
             // Filter locators
             const auto& pattr = parent_pdp_->getRTPSParticipant()->getAttributes();
-            fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators(temp_participant_data_,
+            fastdds::rtps::network::external_locators::filter_remote_locators(temp_participant_data_,
                     pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
                     pattr.ignore_non_matching_locators);
 

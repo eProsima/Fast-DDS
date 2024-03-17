@@ -23,11 +23,13 @@
 
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/utils/IPFinder.h>
 #include <utils/Host.hpp>
 
 #if defined(_WIN32) || defined(__unix__)
@@ -231,12 +233,40 @@ public:
     static std::string get_timestamp(
             const char* format = "%F %T");
 
+    /**
+     * Fetch and store/update the information relative to all network interfaces present on the system.
+     *
+     * @return true if successful, false otherwise
+     */
+    static bool update_interfaces();
+
+    /**
+     * Get the information relative to all network interfaces present on the system.
+     *
+     * The loopback interface is only included in the collection if \c return_loopback is true.
+     * If this information is already cached, it is returned without performing any system call,
+     * unless \c force_lookup is true.
+     *
+     * @param [out] vec_name Collection to be populated with the network interfaces information.
+     * @param [in] return_loopback Whether to include the loopback interface in the collection.
+     * @param [in] force_lookup Whether to force a system call even if information is cached.
+     *
+     * @return true if successful, false otherwise
+     */
+    static bool get_ips(
+            std::vector<fastrtps::rtps::IPFinder::info_IP>& vec_name,
+            bool return_loopback,
+            bool force_lookup);
+
 private:
 
     SystemInfo();
 
     static std::string environment_file_;
 
+    static bool cached_interfaces_;
+    static std::vector<fastrtps::rtps::IPFinder::info_IP> interfaces_;
+    static std::mutex interfaces_mtx_;
 };
 
 /**

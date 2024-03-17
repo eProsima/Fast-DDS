@@ -26,6 +26,7 @@
 #include <string>
 
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorWithMask.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -58,6 +59,7 @@ public:
         std::string name;
         std::string dev;
         Locator_t locator;
+        fastdds::rtps::LocatorWithMask masked_locator;
     }info_IP;
 
     /**

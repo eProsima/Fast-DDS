@@ -36,9 +36,9 @@ TCPAcceptorSecure::TCPAcceptorSecure(
 
 TCPAcceptorSecure::TCPAcceptorSecure(
         io_service& io_service,
-        const std::string& interface,
+        const std::string& iface,
         const Locator_t& locator)
-    : TCPAcceptor(io_service, interface, locator)
+    : TCPAcceptor(io_service, iface, locator)
 {
 }
 

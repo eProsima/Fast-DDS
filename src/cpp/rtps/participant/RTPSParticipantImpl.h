@@ -1101,6 +1101,13 @@ public:
     bool ignore_reader(
             const GUID_t& reader_guid);
 
+    /**
+     * @brief Returns registered transports' netmask filter information (transport's netmask filter kind and allowlist).
+     *
+     * @return A vector with all registered transports' netmask filter information.
+     */
+    std::vector<fastdds::rtps::TransportNetmaskFilterInfo> get_netmask_filter_info() const;
+
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(
             const EntityId_t& entity_id,

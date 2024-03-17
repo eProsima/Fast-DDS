@@ -84,9 +84,10 @@ protected:
         return asio::ip::tcp::v6();
     }
 
-    virtual void get_ips(
+    virtual bool get_ips(
             std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback = false) const override;
+            bool return_loopback,
+            bool force_lookup) const override;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
@@ -102,7 +103,7 @@ protected:
 
     //! Checks if the given interface is allowed by the white list.
     virtual bool is_interface_allowed(
-            const std::string& interface) const override;
+            const std::string& iface) const override;
 
     //! Checks if the given interface is allowed by the white list.
     bool is_interface_allowed(
@@ -122,9 +123,9 @@ protected:
             Locator& locator) const override;
 
     //! Checks if the IP addresses are the same without taking into account the IPv6 scope
-    bool compare_ips(
+    static bool compare_ips(
             const std::string& ip1,
-            const std::string& ip2) const;
+            const std::string& ip2);
 
 public:
 
