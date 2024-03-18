@@ -521,12 +521,12 @@ if(MSVC OR MSVC_IDE)
 
         # replace the values in the manifest template
         configure_file(
-            "${PROJECT_SOURCE_DIR}/cmake/packaging/windows/fastrtps.manifest.in"
-            "${PROJECT_BINARY_DIR}/fastrtps.manifest"
+            "${PROJECT_SOURCE_DIR}/cmake/packaging/windows/fastdds.manifest.in"
+            "${PROJECT_BINARY_DIR}/fastdds.manifest"
             @ONLY
             )
 
-        file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}/fastrtps.manifest" MANIFEST_FILE_PATH)
+        file(TO_NATIVE_PATH "${PROJECT_BINARY_DIR}/fastdds.manifest" MANIFEST_FILE_PATH)
         target_link_options(${PROJECT_NAME} PRIVATE "/MANIFEST:EMBED" "/MANIFESTINPUT:${MANIFEST_FILE_PATH}")
 
         unset(WINDOWS_SOURCE_DIR)
