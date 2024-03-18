@@ -20,7 +20,12 @@
 #ifndef _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
 #define _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_
 
-using eprosima::fastdds::dds::Log;
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+using dds::Log;
 
 class CLIParser
 {
@@ -28,7 +33,7 @@ public:
 
     CLIParser() = delete;
 
-    enum entity_kind
+    enum EntityKind
     {
         PUBLISHER,
         SUBSCRIBER,
@@ -47,7 +52,7 @@ public:
 
     struct hello_world_config
     {
-        entity_kind entity = entity_kind::UNDEFINED;
+        CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
         publisher_config pub_config;
         subscriber_config sub_config;
     };
@@ -80,11 +85,11 @@ public:
 
         if (first_argument == "publisher" )
         {
-            config.entity = entity_kind::PUBLISHER;
+            config.entity = CLIParser::EntityKind::PUBLISHER;
         }
         else if ( first_argument == "subscriber")
         {
-            config.entity = entity_kind::SUBSCRIBER;
+            config.entity = CLIParser::EntityKind::SUBSCRIBER;
         }
         else
         {
@@ -113,11 +118,11 @@ public:
                     try
                     {
                         uint16_t samples = static_cast<uint16_t>(std::stoi(argv[++i]));
-                        if (config.entity == entity_kind::PUBLISHER)
+                        if (config.entity == CLIParser::EntityKind::PUBLISHER)
                         {
                             config.pub_config.samples = samples;
                         }
-                        else if (config.entity == entity_kind::SUBSCRIBER)
+                        else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
                         {
                             config.sub_config.samples = samples;
                         }
@@ -147,7 +152,7 @@ public:
             }
             else if (arg == "-w" || arg == "--waitset")
             {
-                if (config.entity == entity_kind::SUBSCRIBER)
+                if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
                 {
                     config.sub_config.use_waitset = true;
                 }
@@ -168,5 +173,10 @@ public:
     }
 
 };
+
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
 #endif // _FASTDDS_HELLO_WORLD_CLI_PARSER_HPP_

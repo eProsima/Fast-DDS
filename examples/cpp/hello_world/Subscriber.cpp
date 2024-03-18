@@ -34,7 +34,7 @@
 using namespace eprosima::fastdds::dds;
 
 HelloWorldSubscriber::HelloWorldSubscriber(
-        const CLIParser::subscriber_config& config,
+        const eprosima::fastdds::examples::hello_world::CLIParser::subscriber_config& config,
         const std::string& topic_name)
     : participant_(nullptr)
     , subscriber_(nullptr)

@@ -33,7 +33,7 @@
 using namespace eprosima::fastdds::dds;
 
 HelloWorldPublisher::HelloWorldPublisher(
-        const CLIParser::publisher_config& config,
+        const eprosima::fastdds::examples::hello_world::CLIParser::publisher_config& config,
         const std::string& topic_name)
     : participant_(nullptr)
     , publisher_(nullptr)

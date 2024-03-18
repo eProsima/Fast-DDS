@@ -45,11 +45,12 @@ int main(
     const std::string topic_name = "hello_world_topic";
     std::string entity_name = "undefined";
     uint16_t samples = 0;
-    CLIParser::hello_world_config config = CLIParser::parse_cli_options(argc, argv);
+    eprosima::fastdds::examples::hello_world::CLIParser::hello_world_config config =
+            eprosima::fastdds::examples::hello_world::CLIParser::parse_cli_options(argc, argv);
 
     switch (config.entity)
     {
-        case CLIParser::entity_kind::PUBLISHER:
+        case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::PUBLISHER:
             entity_name = "Publisher";
             samples = config.pub_config.samples;
             try
@@ -63,7 +64,7 @@ int main(
                 ret = EXIT_FAILURE;
             }
             break;
-        case CLIParser::entity_kind::SUBSCRIBER:
+        case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::SUBSCRIBER:
             samples = config.sub_config.samples;
             if (config.sub_config.use_waitset)
             {
@@ -96,7 +97,7 @@ int main(
             break;
         default:
             EPROSIMA_LOG_ERROR(CLI_PARSER, "unknown entity");
-            CLIParser::print_help(EXIT_FAILURE);
+            eprosima::fastdds::examples::hello_world::CLIParser::print_help(EXIT_FAILURE);
             break;
     }
 
@@ -109,11 +110,11 @@ int main(
     {
         switch (config.entity)
         {
-            case CLIParser::entity_kind::PUBLISHER:
+            case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::PUBLISHER:
                 std::cout << entity_name << " running " << samples << " samples. Please press Ctrl+C to stop the "
                           << entity_name << " at any time." << std::endl;
                 break;
-            case CLIParser::entity_kind::SUBSCRIBER:
+            case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::SUBSCRIBER:
             default:
                 std::cout << entity_name << " running until " << samples << " samples have been received. Please press "
                           << "Ctrl+C to stop the " << entity_name << " at any time." << std::endl;
@@ -126,13 +127,13 @@ int main(
                 std::cout << "\n" << signal << " received, stopping " << entity_name << " execution." << std::endl;
                 switch (config.entity)
                 {
-                    case CLIParser::entity_kind::PUBLISHER:
+                    case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::PUBLISHER:
                         if (nullptr != publisher)
                         {
                             publisher->stop();
                         }
                         break;
-                    case CLIParser::entity_kind::SUBSCRIBER:
+                    case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::SUBSCRIBER:
                     default:
                         if (config.sub_config.use_waitset)
                         {
@@ -174,13 +175,13 @@ int main(
     delete thread;
     switch (config.entity)
     {
-        case CLIParser::entity_kind::PUBLISHER:
+        case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::PUBLISHER:
             if (nullptr != publisher)
             {
                 delete publisher;
             }
             break;
-        case CLIParser::entity_kind::SUBSCRIBER:
+        case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::SUBSCRIBER:
         default:
             if (config.sub_config.use_waitset)
             {
