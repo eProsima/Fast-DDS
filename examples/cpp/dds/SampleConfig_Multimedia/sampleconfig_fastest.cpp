@@ -41,9 +41,9 @@ void fastest()
     pqos.name("Participant");
 
     // Avoid local matching of this participant's endpoints
-    // pqos.properties().properties().emplace_back(
-    //         "fastdds.ignore_local_endpoints",
-    //         "true");
+    pqos.properties().properties().emplace_back(
+            "fastdds.ignore_local_endpoints",
+            "true");
 
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
     if (participant == nullptr)
