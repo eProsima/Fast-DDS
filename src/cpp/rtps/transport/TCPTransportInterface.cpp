@@ -221,8 +221,6 @@ void TCPTransportInterface::clean()
     }
 }
 
-<<<<<<< HEAD
-=======
 Locator TCPTransportInterface::remote_endpoint_to_locator(
         const std::shared_ptr<TCPChannelResource>& channel) const
 {
@@ -257,7 +255,6 @@ Locator TCPTransportInterface::local_endpoint_to_locator(
     return locator;
 }
 
->>>>>>> 08193d5f7 (Protect asio exception hotfix (#4527))
 void TCPTransportInterface::bind_socket(
         std::shared_ptr<TCPChannelResource>& channel)
 {
@@ -943,10 +940,11 @@ void TCPTransportInterface::perform_listen_operation(
     if (rtcp_message_manager)
     {
         channel = channel_weak.lock();
-        endpoint_to_locator(channel->remote_endpoint(), remote_locator);
 
         if (channel)
         {
+            remote_locator = remote_endpoint_to_locator(channel);
+
             if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
             {
                 rtcp_message_manager->sendConnectionRequest(channel);
@@ -1214,6 +1212,11 @@ bool TCPTransportInterface::Receive(
                     }
                     else
                     {
+                        if (!IsLocatorValid(remote_locator))
+                        {
+                            remote_locator = remote_endpoint_to_locator(channel);
+                        }
+
                         IPLocator::setLogicalPort(remote_locator, tcp_header.logical_port);
                         logInfo(RTCP_MSG_IN, "[RECEIVE] From: " << remote_locator \
                                                                 << " - " << receive_buffer_size << " bytes.");
@@ -1442,10 +1445,8 @@ void TCPTransportInterface::SocketAccepted(
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
             logInfo(RTCP, "Accepted connection (local: "
-                    << channel->local_endpoint().address() << ":"
-                    << channel->local_endpoint().port() << "), remote: "
-                    << channel->remote_endpoint().address() << ":"
-                    << channel->remote_endpoint().port() << ")");
+                    << local_endpoint_to_locator(channel) << ", remote: "
+                    << remote_endpoint_to_locator(channel) << ")");
         }
         else
         {
@@ -1490,10 +1491,8 @@ void TCPTransportInterface::SecureSocketAccepted(
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
             logInfo(RTCP, " Accepted connection (local: "
-                    << socket->lowest_layer().local_endpoint().address() << ":"
-                    << socket->lowest_layer().local_endpoint().port() << "), remote: "
-                    << socket->lowest_layer().remote_endpoint().address() << ":"
-                    << socket->lowest_layer().remote_endpoint().port() << ")");
+                    << local_endpoint_to_locator(secure_channel) << ", remote: "
+                    << remote_endpoint_to_locator(secure_channel) << ")");
         }
         else
         {
