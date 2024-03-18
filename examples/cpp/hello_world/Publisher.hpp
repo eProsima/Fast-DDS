@@ -36,7 +36,7 @@ class HelloWorldPublisher : public DataWriterListener
 public:
 
     HelloWorldPublisher(
-            const CLIParser::publisher_config& config,
+            const eprosima::fastdds::examples::hello_world::CLIParser::publisher_config& config,
             const std::string& topic_name);
 
     ~HelloWorldPublisher() override;

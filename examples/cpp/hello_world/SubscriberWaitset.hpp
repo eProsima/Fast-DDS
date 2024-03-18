@@ -38,7 +38,7 @@ class HelloWorldSubscriberWaitset
 public:
 
     HelloWorldSubscriberWaitset(
-            const CLIParser::subscriber_config& config,
+            const eprosima::fastdds::examples::hello_world::CLIParser::subscriber_config& config,
             const std::string& topic_name);
 
     virtual ~HelloWorldSubscriberWaitset();
