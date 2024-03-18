@@ -363,6 +363,10 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
         {
             reset_default_participant_qos();
         }
+        // Take the default domain id from the default participant profile
+        eprosima::fastrtps::ParticipantAttributes attr;
+        XMLProfileManager::getDefaultParticipantAttributes(attr);
+        default_domain_id_ = attr.domainId;
 
         RTPSDomain::set_filewatch_thread_config(factory_qos_.file_watch_threads(), factory_qos_.file_watch_threads());
     }
@@ -437,7 +441,6 @@ void DomainParticipantFactory::reset_default_participant_qos()
         ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
         utils::set_qos_from_attributes(default_participant_qos_, attr.rtps);
-        default_domain_id_ = attr.domainId;
     }
 }
 
