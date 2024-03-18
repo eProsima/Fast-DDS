@@ -26,9 +26,6 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #include <rtps/network/ReceiverResource.h>
-#include <rtps/network/utils/netmask_filter.hpp>
-
-#include <utils/SystemInfo.hpp>
 
 using namespace std;
 using namespace asio;
@@ -39,56 +36,8 @@ namespace rtps {
 
 using IPFinder = fastrtps::rtps::IPFinder;
 using IPLocator = fastrtps::rtps::IPLocator;
-using Log = fastdds::dds::Log;
 
-static bool get_ipv4s(
-        std::vector<IPFinder::info_IP>& locNames,
-        bool return_loopback,
-        bool force_lookup)
-{
-    if (!SystemInfo::get_ips(locNames, return_loopback, force_lookup))
-    {
-        return false;
-    }
-
-    auto new_end = remove_if(locNames.begin(),
-                    locNames.end(),
-                    [](IPFinder::info_IP ip)
-                    {
-                        return ip.type != IPFinder::IP4 && ip.type != IPFinder::IP4_LOCAL;
-                    });
-    locNames.erase(new_end, locNames.end());
-    std::for_each(locNames.begin(), locNames.end(), [](IPFinder::info_IP& loc)
-            {
-                loc.locator.kind = LOCATOR_KIND_UDPv4;
-                loc.masked_locator.kind = LOCATOR_KIND_UDPv4;
-            });
-    return true;
-}
-
-static bool get_ipv4s_unique_interfaces(
-        std::vector<IPFinder::info_IP>& locNames,
-        bool return_loopback,
-        bool force_lookup)
-{
-    if (!get_ipv4s(locNames, return_loopback, force_lookup))
-    {
-        return false;
-    }
-    std::sort(locNames.begin(), locNames.end(),
-            [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool
-            {
-                return a.dev < b.dev;
-            });
-    auto new_end = std::unique(locNames.begin(), locNames.end(),
-                    [](const IPFinder::info_IP&  a, const IPFinder::info_IP& b) -> bool
-                    {
-                        return a.type != IPFinder::IP4_LOCAL && b.type != IPFinder::IP4_LOCAL && a.dev == b.dev;
-                    });
-    locNames.erase(new_end, locNames.end());
-    return true;
-}
-
+// TODO: move to SocketTransportInterface? not straightforward as overloaded in TCPv4Transport
 static asio::ip::address_v4::bytes_type locator_to_native(
         const Locator& locator)
 {
@@ -110,117 +59,10 @@ static asio::ip::address_v4::bytes_type locator_to_native(
 
 UDPv4Transport::UDPv4Transport(
         const UDPv4TransportDescriptor& descriptor)
-    : UDPTransportInterface(LOCATOR_KIND_UDPv4)
+    : UDPTransportInterface(LOCATOR_KIND_UDPv4, descriptor)
     , configuration_(descriptor)
 {
-    mSendBufferSize = descriptor.sendBufferSize;
-    mReceiveBufferSize = descriptor.receiveBufferSize;
-
-    // Copy descriptor's netmask filter configuration
-    // NOTE: participant's netmask_filter already taken into account before calling tranport registration
-    netmask_filter_ = descriptor.netmask_filter;
-
-    if (!descriptor.interfaceWhiteList.empty() || !descriptor.interface_allowlist.empty() ||
-            !descriptor.interface_blocklist.empty())
-    {
-        const auto white_begin = descriptor.interfaceWhiteList.begin();
-        const auto white_end = descriptor.interfaceWhiteList.end();
-
-        const auto allow_begin = descriptor.interface_allowlist.begin();
-        const auto allow_end = descriptor.interface_allowlist.end();
-
-        const auto block_begin = descriptor.interface_blocklist.begin();
-        const auto block_end = descriptor.interface_blocklist.end();
-
-        if (!descriptor.interfaceWhiteList.empty())
-        {
-            EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
-                    "Support for interfaceWhiteList will be removed in a future release."
-                    << " Please use interface allowlist/blocklist instead.");
-        }
-
-        std::vector<IPFinder::info_IP> local_interfaces;
-        get_ipv4s(local_interfaces, true, false);
-        for (const IPFinder::info_IP& infoIP : local_interfaces)
-        {
-            if (std::find_if(block_begin, block_end, [infoIP](const BlockedNetworkInterface& blocklist_element)
-                    {
-                        return blocklist_element.name == infoIP.dev || blocklist_element.name == infoIP.name;
-                    }) != block_end )
-            {
-                // Before skipping this interface, check if present in whitelist/allowlist and warn the user if found
-                if ((std::find_if(white_begin, white_end, [infoIP](const std::string& whitelist_element)
-                        {
-                            return whitelist_element == infoIP.dev || whitelist_element == infoIP.name;
-                        }) != white_end ) ||
-                        (std::find_if(allow_begin, allow_end,
-                        [infoIP](const AllowedNetworkInterface& allowlist_element)
-                        {
-                            return allowlist_element.name == infoIP.dev || allowlist_element.name == infoIP.name;
-                        }) != allow_end ))
-                {
-                    EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
-                            "Blocked interface " << infoIP.dev << ": " << infoIP.name
-                                                 << " is also present in whitelist/allowlist."
-                                                 << " Blocklist takes precedence over whitelist/allowlist.");
-                }
-                continue;
-            }
-            else if (descriptor.interfaceWhiteList.empty() && descriptor.interface_allowlist.empty())
-            {
-                interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
-                allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
-                        descriptor.netmask_filter);
-            }
-            else if (!descriptor.interface_allowlist.empty())
-            {
-                auto allow_it = std::find_if(
-                    allow_begin,
-                    allow_end,
-                    [&infoIP](const AllowedNetworkInterface& allowlist_element)
-                    {
-                        return allowlist_element.name == infoIP.dev || allowlist_element.name == infoIP.name;
-                    });
-                if (allow_it != allow_end)
-                {
-                    NetmaskFilterKind netmask_filter = allow_it->netmask_filter;
-                    if (network::netmask_filter::validate_and_transform(netmask_filter,
-                            descriptor.netmask_filter))
-                    {
-                        interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
-                        allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
-                                netmask_filter);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
-                                "Ignoring allowed interface " << infoIP.dev << ": " << infoIP.name
-                                                              << " as its netmask filter configuration (" << netmask_filter << ") is incompatible"
-                                                              << " with descriptor's (" << descriptor.netmask_filter <<
-                                ").");
-                    }
-                }
-            }
-            else if (!descriptor.interfaceWhiteList.empty())
-            {
-                if (std::find_if(white_begin, white_end, [infoIP](const std::string& whitelist_element)
-                        {
-                            return whitelist_element == infoIP.dev || whitelist_element == infoIP.name;
-                        }) != white_end )
-                {
-                    interface_whitelist_.emplace_back(ip::address_v4::from_string(infoIP.name));
-                    allowed_interfaces_.emplace_back(infoIP.dev, infoIP.name, infoIP.masked_locator,
-                            descriptor.netmask_filter);
-                }
-            }
-        }
-
-        if (interface_whitelist_.empty())
-        {
-            EPROSIMA_LOG_ERROR(TRANSPORT_UDPV4, "All whitelist interfaces were filtered out");
-            interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
-        }
-    }
+    fill_interface_whitelist_();
 }
 
 UDPv4Transport::UDPv4Transport()
@@ -296,20 +138,6 @@ void UDPv4Transport::AddDefaultOutputLocator(
     defaultList.push_back(locator);
 }
 
-bool UDPv4Transport::compare_locator_ip(
-        const Locator& lh,
-        const Locator& rh) const
-{
-    return IPLocator::compareAddress(lh, rh);
-}
-
-bool UDPv4Transport::compare_locator_ip_and_port(
-        const Locator& lh,
-        const Locator& rh) const
-{
-    return IPLocator::compareAddressAndPhysicalPort(lh, rh);
-}
-
 void UDPv4Transport::endpoint_to_locator(
         ip::udp::endpoint& endpoint,
         Locator& locator)
@@ -318,13 +146,6 @@ void UDPv4Transport::endpoint_to_locator(
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v4().to_bytes();
     IPLocator::setIPv4(locator, ipBytes.data());
-}
-
-void UDPv4Transport::fill_local_ip(
-        Locator& loc) const
-{
-    loc.kind = kind();
-    IPLocator::setIPv4(loc, "127.0.0.1");
 }
 
 const UDPTransportDescriptor* UDPv4Transport::configuration() const
@@ -370,20 +191,6 @@ ip::udp::endpoint UDPv4Transport::generate_local_endpoint(
 asio::ip::udp UDPv4Transport::generate_protocol() const
 {
     return ip::udp::v4();
-}
-
-bool UDPv4Transport::get_ips(
-        std::vector<IPFinder::info_IP>& locNames,
-        bool return_loopback,
-        bool force_lookup) const
-{
-    return get_ipv4s(locNames, return_loopback, force_lookup);
-}
-
-const std::string& UDPv4Transport::localhost_name()
-{
-    static const std::string ip4_localhost = "127.0.0.1";
-    return ip4_localhost;
 }
 
 eProsimaUDPSocket UDPv4Transport::OpenAndBindInputSocket(
@@ -495,7 +302,7 @@ bool UDPv4Transport::OpenInputChannel(
                 if (channelResource->iface() == s_IPv4AddressAny)
                 {
                     std::vector<IPFinder::info_IP> locNames;
-                    get_ipv4s_unique_interfaces(locNames, true, false);
+                    get_ips_unique_interfaces(locNames, true, false);
                     for (const auto& infoIP : locNames)
                     {
                         auto ip = asio::ip::address_v4::from_string(infoIP.name);
@@ -532,28 +339,39 @@ bool UDPv4Transport::OpenInputChannel(
     return success;
 }
 
-std::vector<std::string> UDPv4Transport::get_binding_interfaces_list()
+void UDPv4Transport::fill_interface_whitelist_()
 {
-    std::vector<std::string> vOutputInterfaces;
-    if (is_interface_whitelist_empty())
+    if ((!configuration_.interfaceWhiteList.empty() || !configuration_.interface_allowlist.empty() ||
+            !configuration_.interface_blocklist.empty()) && allowed_interfaces_.empty())
     {
-        vOutputInterfaces.push_back(s_IPv4AddressAny);
+        EPROSIMA_LOG_ERROR(TRANSPORT_UDPV4, "All whitelist interfaces were filtered out");
+        interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
     }
     else
     {
-        for (auto& ip : interface_whitelist_)
+        for (const auto& iface : allowed_interfaces_)
         {
-            vOutputInterfaces.push_back(ip.to_string());
+            interface_whitelist_.emplace_back(ip::address_v4::from_string(iface.ip));
         }
     }
+}
 
-    return vOutputInterfaces;
+bool UDPv4Transport::is_interface_whitelist_empty() const
+{
+    return interface_whitelist_.empty();
 }
 
 bool UDPv4Transport::is_interface_allowed(
         const std::string& iface) const
 {
     return is_interface_allowed(asio::ip::address_v4::from_string(iface));
+}
+
+bool UDPv4Transport::is_interface_allowed(
+        const Locator& loc) const
+{
+    asio::ip::address_v4 ip = asio::ip::address_v4::from_string(IPLocator::toIPv4string(loc));
+    return is_interface_allowed(ip);
 }
 
 bool UDPv4Transport::is_interface_allowed(
@@ -572,9 +390,22 @@ bool UDPv4Transport::is_interface_allowed(
     return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
 }
 
-bool UDPv4Transport::is_interface_whitelist_empty() const
+std::vector<std::string> UDPv4Transport::get_binding_interfaces_list()
 {
-    return interface_whitelist_.empty();
+    std::vector<std::string> vOutputInterfaces;
+    if (is_interface_whitelist_empty())
+    {
+        vOutputInterfaces.push_back(s_IPv4AddressAny);
+    }
+    else
+    {
+        for (auto& ip : interface_whitelist_)
+        {
+            vOutputInterfaces.push_back(ip.to_string());
+        }
+    }
+
+    return vOutputInterfaces;
 }
 
 bool UDPv4Transport::is_locator_allowed(
@@ -589,68 +420,6 @@ bool UDPv4Transport::is_locator_allowed(
         return true;
     }
     return is_interface_allowed(IPLocator::toIPv4string(locator));
-}
-
-LocatorList UDPv4Transport::NormalizeLocator(
-        const Locator& locator)
-{
-    LocatorList list;
-
-    if (IPLocator::isAny(locator))
-    {
-        std::vector<IPFinder::info_IP> locNames;
-        get_ipv4s(locNames, false, false);
-        for (const auto& infoIP : locNames)
-        {
-            auto ip = asio::ip::address_v4::from_string(infoIP.name);
-            if (is_interface_allowed(ip))
-            {
-                Locator newloc(locator);
-                IPLocator::setIPv4(newloc, infoIP.locator);
-                list.push_back(newloc);
-            }
-        }
-        if (list.empty())
-        {
-            Locator newloc(locator);
-            IPLocator::setIPv4(newloc, "127.0.0.1");
-            list.push_back(newloc);
-        }
-    }
-    else
-    {
-        list.push_back(locator);
-    }
-
-    return list;
-}
-
-bool UDPv4Transport::is_local_locator(
-        const Locator& locator) const
-{
-    assert(locator.kind == LOCATOR_KIND_UDPv4);
-
-    if (IPLocator::isLocal(locator))
-    {
-        return true;
-    }
-
-    std::vector<IPFinder::info_IP> currentInterfaces;
-    if (!get_ips(currentInterfaces, false, false))
-    {
-        EPROSIMA_LOG_WARNING(TRANSPORT_UDPV4,
-                "Could not retrieve IPs information to check if locator " << locator << " is local.");
-        return false;
-    }
-    for (const IPFinder::info_IP& localInterface : currentInterfaces)
-    {
-        if (IPLocator::compareAddress(locator, localInterface.locator))
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 void UDPv4Transport::set_receive_buffer_size(
@@ -683,7 +452,7 @@ void UDPv4Transport::update_network_interfaces()
             {
                 // WARNING: SystemInfo::update_interfaces() should have been called prior to this point
                 std::vector<IPFinder::info_IP> locNames;
-                get_ipv4s_unique_interfaces(locNames, true, false);
+                get_ips_unique_interfaces(locNames, true, false);
                 for (const auto& infoIP : locNames)
                 {
                     auto ip = asio::ip::address_v4::from_string(infoIP.name);

@@ -58,11 +58,20 @@ bool UDPTransportDescriptor::operator ==(
 
 UDPTransportInterface::UDPTransportInterface(
         int32_t transport_kind)
-    : TransportInterface(transport_kind)
+    : SocketTransportInterface(transport_kind)
     , mSendBufferSize(0)
     , mReceiveBufferSize(0)
     , first_time_open_output_channel_(true)
-    , netmask_filter_(NetmaskFilterKind::AUTO)
+{
+}
+
+UDPTransportInterface::UDPTransportInterface(
+        int32_t transport_kind,
+        const UDPTransportDescriptor& descriptor)
+    : SocketTransportInterface(transport_kind, descriptor)
+    , mSendBufferSize(descriptor.sendBufferSize)
+    , mReceiveBufferSize(descriptor.receiveBufferSize)
+    , first_time_open_output_channel_(true)
 {
 }
 
@@ -184,12 +193,6 @@ bool UDPTransportInterface::IsInputChannelOpen(
     std::unique_lock<std::recursive_mutex> scopedLock(mInputMapMutex);
     return IsLocatorSupported(locator) && (mInputSockets.find(IPLocator::getPhysicalPort(
                locator)) != mInputSockets.end());
-}
-
-bool UDPTransportInterface::IsLocatorSupported(
-        const Locator& locator) const
-{
-    return locator.kind == transport_kind_;
 }
 
 bool UDPTransportInterface::OpenAndBindInputSockets(
@@ -417,53 +420,6 @@ Locator UDPTransportInterface::RemoteToMainLocal(
     //memset(mainLocal.address, 0x00, sizeof(mainLocal.address));
     mainLocal.set_Invalid_Address();
     return mainLocal;
-}
-
-bool UDPTransportInterface::transform_remote_locator(
-        const Locator& remote_locator,
-        Locator& result_locator,
-        bool allowed_remote_localhost,
-        bool allowed_local_localhost) const
-{
-    if (IsLocatorSupported(remote_locator))
-    {
-        result_locator = remote_locator;
-        if (!is_local_locator(result_locator))
-        {
-            // is_local_locator will return false for multicast addresses as well as remote unicast ones.
-            return true;
-        }
-
-        // If we get here, the locator is a local unicast address
-
-        // Attempt conversion to localhost if remote transport listening on it allows it
-        if (allowed_remote_localhost)
-        {
-            Locator loopbackLocator;
-            fill_local_ip(loopbackLocator);
-            if (is_locator_allowed(loopbackLocator))
-            {
-                // Locator localhost is in the whitelist, so use localhost instead of remote_locator
-                fill_local_ip(result_locator);
-                return true;
-            }
-            else if (allowed_local_localhost)
-            {
-                // Abort transformation if localhost not allowed by this transport, but it is by other local transport
-                // and the remote one.
-                return false;
-            }
-        }
-
-        if (!is_locator_allowed(result_locator))
-        {
-            // Neither original remote locator nor localhost allowed: abort.
-            return false;
-        }
-
-        return true;
-    }
-    return false;
 }
 
 bool UDPTransportInterface::send(
@@ -768,18 +724,6 @@ void UDPTransportInterface::get_unknown_network_interfaces(
 void UDPTransportInterface::update_network_interfaces()
 {
     rescan_interfaces_.store(true);
-}
-
-bool UDPTransportInterface::is_localhost_allowed() const
-{
-    Locator local_locator;
-    fill_local_ip(local_locator);
-    return is_locator_allowed(local_locator);
-}
-
-NetmaskFilterInfo UDPTransportInterface::netmask_filter_info() const
-{
-    return {netmask_filter_, allowed_interfaces_};
 }
 
 } // namespace rtps

@@ -59,12 +59,6 @@ public:
             TransportReceiverInterface*,
             uint32_t) override;
 
-    LocatorList NormalizeLocator(
-            const Locator& locator) override;
-
-    bool is_local_locator(
-            const Locator& locator) const override;
-
     TransportDescriptorInterface* get_configuration() override
     {
         return &configuration_;
@@ -89,22 +83,15 @@ public:
 
 protected:
 
+    UDPv6TransportDescriptor configuration_;
+    std::vector<asio::ip::address_v6> interface_whitelist_;
+
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     UDPv6Transport();
-    UDPv6TransportDescriptor configuration_;
-
-    bool compare_locator_ip(
-            const Locator& lh,
-            const Locator& rh) const override;
-    bool compare_locator_ip_and_port(
-            const Locator& lh,
-            const Locator& rh) const override;
 
     void endpoint_to_locator(
             asio::ip::udp::endpoint& endpoint,
             Locator& locator) override;
-    void fill_local_ip(
-            Locator& loc) const override;
 
     asio::ip::udp::endpoint GenerateAnyAddressEndpoint(
             uint16_t port) override;
@@ -120,19 +107,27 @@ protected:
             const Locator& loc,
             uint16_t port) override;
     asio::ip::udp generate_protocol() const override;
-    bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback,
-            bool force_lookup) const override;
-    const std::string& localhost_name() override;
     eProsimaUDPSocket OpenAndBindInputSocket(
             const std::string& sIp,
             uint16_t port,
             bool is_multicast) override;
 
-    //! Checks for whether locator is allowed.
-    bool is_locator_allowed(
-            const Locator&) const override;
+    virtual void fill_interface_whitelist_() override;
+
+    //! Checks if the interfaces white list is empty.
+    bool is_interface_whitelist_empty() const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    bool is_interface_allowed(
+            const std::string& iface) const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    bool is_interface_allowed(
+            const Locator& loc) const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    bool is_interface_allowed(
+            const asio::ip::address_v6& ip) const;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
@@ -140,13 +135,9 @@ protected:
      */
     std::vector<std::string> get_binding_interfaces_list() override;
 
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const std::string& iface) const override;
-
-    //! Checks if the interfaces white list is empty.
-    bool is_interface_whitelist_empty() const override;
-    std::vector<asio::ip::address_v6> interface_whitelist_;
+    //! Checks for whether locator is allowed.
+    bool is_locator_allowed(
+            const Locator&) const override;
 
     void set_receive_buffer_size(
             uint32_t size) override;
@@ -155,11 +146,6 @@ protected:
     void SetSocketOutboundInterface(
             eProsimaUDPSocket&,
             const std::string&) override;
-
-    //! Checks if the IP address is the same without taking into account the scope of the IPv6 address
-    static bool compare_ips(
-            const std::string& ip1,
-            const std::string& ip2);
 };
 
 } // namespace rtps

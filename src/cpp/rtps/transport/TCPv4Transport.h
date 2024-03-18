@@ -21,7 +21,6 @@
 
 #include <asio.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/tcp/RTCPHeader.h>
 
@@ -53,17 +52,6 @@ protected:
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv4Transport();
 
-    virtual bool compare_locator_ip(
-            const Locator& lh,
-            const Locator& rh) const override;
-
-    virtual bool compare_locator_ip_and_port(
-            const Locator& lh,
-            const Locator& rh) const override;
-
-    virtual void fill_local_ip(
-            Locator& loc) const override;
-
     virtual asio::ip::tcp::endpoint generate_endpoint(
             uint16_t port) const override;
 
@@ -82,10 +70,22 @@ protected:
         return asio::ip::tcp::v4();
     }
 
-    virtual bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback,
-            bool force_lookup) const override;
+    virtual void fill_interface_whitelist_() override;
+
+    //! Checks if the interfaces white list is empty.
+    virtual bool is_interface_whitelist_empty() const override;
+
+    //! Checks if the given ip has been included in the white list to use it.
+    virtual bool is_interface_allowed(
+            const std::string& iface) const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    virtual bool is_interface_allowed(
+            const Locator& loc) const override;
+
+    //! Checks if the given interface is allowed by the white list.
+    bool is_interface_allowed(
+            const asio::ip::address_v4& ip) const;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
@@ -95,21 +95,6 @@ protected:
 
     bool is_locator_allowed(
             const Locator& locator) const override;
-
-    //! Checks if the given ip has been included in the white list to use it.
-    virtual bool is_interface_allowed(
-            const std::string& iface) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const asio::ip::address_v4& ip) const;
-
-    //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(
-            const Locator& loc) const override;
-
-    //! Checks if the interfaces white list is empty.
-    virtual bool is_interface_whitelist_empty() const override;
 
     virtual void set_receive_buffer_size(
             uint32_t size) override;
@@ -130,12 +115,6 @@ public:
     virtual const TCPTransportDescriptor* configuration() const override;
 
     virtual TCPTransportDescriptor* configuration() override;
-
-    virtual LocatorList NormalizeLocator(
-            const Locator& locator) override;
-
-    virtual bool is_local_locator(
-            const Locator& locator) const override;
 
     TransportDescriptorInterface* get_configuration() override
     {

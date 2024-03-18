@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "TCPTransportInterface.h"
+#include <rtps/transport/TCPTransportInterface.h>
 
 #include <algorithm>
 #include <cassert>
@@ -174,7 +174,19 @@ bool TCPTransportDescriptor::operator ==(
 
 TCPTransportInterface::TCPTransportInterface(
         int32_t transport_kind)
-    : TransportInterface(transport_kind)
+    : SocketTransportInterface(transport_kind)
+    , alive_(true)
+#if TLS_FOUND
+    , ssl_context_(asio::ssl::context::sslv23)
+#endif // if TLS_FOUND
+    , keep_alive_event_(io_service_timers_)
+{
+}
+
+TCPTransportInterface::TCPTransportInterface(
+        int32_t transport_kind,
+        const TCPTransportDescriptor& descriptor)
+    : SocketTransportInterface(transport_kind, descriptor)
     , alive_(true)
 #if TLS_FOUND
     , ssl_context_(asio::ssl::context::sslv23)
@@ -558,12 +570,6 @@ bool TCPTransportInterface::IsInputChannelOpen(
     return IsLocatorSupported(locator) && is_input_port_open(IPLocator::getLogicalPort(locator));
 }
 
-bool TCPTransportInterface::IsLocatorSupported(
-        const Locator& locator) const
-{
-    return locator.kind == transport_kind_;
-}
-
 bool TCPTransportInterface::is_output_channel_open_for(
         const Locator& locator) const
 {
@@ -597,55 +603,6 @@ Locator TCPTransportInterface::RemoteToMainLocal(
     Locator mainLocal(remote);
     mainLocal.set_Invalid_Address();
     return mainLocal;
-}
-
-bool TCPTransportInterface::transform_remote_locator(
-        const Locator& remote_locator,
-        Locator& result_locator,
-        bool allowed_remote_localhost,
-        bool allowed_local_localhost) const
-{
-    if (IsLocatorSupported(remote_locator))
-    {
-        result_locator = remote_locator;
-        if (!is_local_locator(result_locator))
-        {
-            // is_local_locator will return false for multicast addresses as well as remote unicast ones.
-            return true;
-        }
-
-        // If we get here, the locator is a local unicast address
-
-        // Attempt conversion to localhost if remote transport listening on it allows it
-        if (allowed_remote_localhost)
-        {
-            Locator loopbackLocator;
-            fill_local_ip(loopbackLocator);
-            if (is_locator_allowed(loopbackLocator))
-            {
-                // Locator localhost is in the whitelist, so use localhost instead of remote_locator
-                fill_local_ip(result_locator);
-                IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
-                IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
-                return true;
-            }
-            else if (allowed_local_localhost)
-            {
-                // Abort transformation if localhost not allowed by this transport, but it is by other local transport
-                // and the remote one.
-                return false;
-            }
-        }
-
-        if (!is_locator_allowed(result_locator))
-        {
-            // Neither original remote locator nor localhost allowed: abort.
-            return false;
-        }
-
-        return true;
-    }
-    return false;
 }
 
 void TCPTransportInterface::SenderResourceHasBeenClosed(
@@ -1870,18 +1827,6 @@ std::string TCPTransportInterface::get_password() const
 void TCPTransportInterface::update_network_interfaces()
 {
     // TODO(jlbueno)
-}
-
-bool TCPTransportInterface::is_localhost_allowed() const
-{
-    Locator local_locator;
-    fill_local_ip(local_locator);
-    return is_locator_allowed(local_locator);
-}
-
-NetmaskFilterInfo TCPTransportInterface::netmask_filter_info() const
-{
-    return {netmask_filter_, allowed_interfaces_};
 }
 
 void TCPTransportInterface::fill_local_physical_port(

@@ -22,13 +22,10 @@
 
 #include <asio.hpp>
 
-#include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastdds/rtps/transport/network/AllowedNetworkInterface.hpp>
-#include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
-#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
 
+#include <rtps/transport/SocketTransportInterface.hpp>
 #include <rtps/transport/UDPChannelResource.h>
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
 
@@ -36,7 +33,7 @@ namespace eprosima {
 namespace fastdds {
 namespace rtps {
 
-class UDPTransportInterface : public TransportInterface
+class UDPTransportInterface : public SocketTransportInterface
 {
     friend class UDPSenderResource;
 
@@ -69,10 +66,6 @@ public:
     bool IsInputChannelOpen(
             const Locator&) const override;
 
-    //! Checks for TCP kinds.
-    bool IsLocatorSupported(
-            const Locator&) const override;
-
     //! Opens a socket on the given address and port (as long as they are white listed).
     bool OpenOutputChannel(
             SendResourceList& sender_resource_list,
@@ -85,25 +78,6 @@ public:
      */
     Locator RemoteToMainLocal(
             const Locator&) const override;
-
-    /**
-     * Transforms a remote locator into a locator optimized for local communications.
-     *
-     * If the remote locator corresponds to one of the local interfaces, it is converted
-     * to the corresponding local address if allowed by both local and remote transports.
-     *
-     * @param [in]  remote_locator Locator to be converted.
-     * @param [out] result_locator Converted locator.
-     * @param [in]  allowed_remote_localhost Whether localhost is allowed (and hence used) in the remote transport.
-     * @param [in]  allowed_local_localhost Whether localhost is allowed locally (by this or other transport).
-     *
-     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
-     */
-    bool transform_remote_locator(
-            const Locator& remote_locator,
-            Locator& result_locator,
-            bool allowed_remote_localhost,
-            bool allowed_local_localhost) const override;
 
     /**
      * Blocking Send through the specified channel. In both modes, using a localLocator of 0.0.0.0 will
@@ -174,10 +148,6 @@ public:
 
     void update_network_interfaces() override;
 
-    bool is_localhost_allowed() const override;
-
-    NetmaskFilterInfo netmask_filter_info() const override;
-
 protected:
 
     friend class UDPChannelResource;
@@ -195,24 +165,16 @@ protected:
     //! First time open output channel flag: open the first socket with the ip::multicast::enable_loopback
     bool first_time_open_output_channel_;
 
-    NetmaskFilterKind netmask_filter_;
-    std::vector<AllowedNetworkInterface> allowed_interfaces_;
-
     UDPTransportInterface(
             int32_t transport_kind);
 
-    virtual bool compare_locator_ip(
-            const Locator& lh,
-            const Locator& rh) const = 0;
-    virtual bool compare_locator_ip_and_port(
-            const Locator& lh,
-            const Locator& rh) const = 0;
+    UDPTransportInterface(
+            int32_t transport_kind,
+            const UDPTransportDescriptor& descriptor);
 
     virtual void endpoint_to_locator(
             asio::ip::udp::endpoint& endpoint,
             Locator& locator) = 0;
-    virtual void fill_local_ip(
-            Locator& loc) const = 0;
 
     virtual asio::ip::udp::endpoint GenerateAnyAddressEndpoint(
             uint16_t port) = 0;
@@ -228,24 +190,6 @@ protected:
             const Locator& loc,
             uint16_t port) = 0;
     virtual asio::ip::udp generate_protocol() const = 0;
-    virtual bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback,
-            bool force_lookup) const = 0;
-    virtual const std::string& localhost_name() = 0;
-
-    //! Checks if the interfaces white list is empty.
-    virtual bool is_interface_whitelist_empty() const = 0;
-
-    //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(
-            const std::string& iface) const = 0;
-
-    /**
-     * Method to get a list of interfaces to bind the socket associated to the given locator.
-     * @return Vector of interfaces in string format.
-     */
-    virtual std::vector<std::string> get_binding_interfaces_list() = 0;
 
     bool OpenAndBindInputSockets(
             const Locator& locator,
