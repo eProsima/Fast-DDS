@@ -35,23 +35,28 @@ void fastest()
     sample my_sample;
     SampleInfo sample_info;
 
-    //Create Publisher Participant
-    DomainParticipantQos ppqos;
-    ppqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
-    ppqos.name("PublisherParticipant");
+    //Create Participant
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
+    pqos.name("Participant");
 
-    DomainParticipant* PubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, ppqos);
-    if (PubParticipant == nullptr)
+    // Avoid local matching of this participant's endpoints
+    // pqos.properties().properties().emplace_back(
+    //         "fastdds.ignore_local_endpoints",
+    //         "true");
+
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    if (participant == nullptr)
     {
-        std::cout << " Something went wrong while creating the Publisher Participant..." << std::endl;
+        std::cout << " Something went wrong while creating the Participant..." << std::endl;
         return;
     }
     //Register Type
-    sampleType.register_type(PubParticipant);
+    sampleType.register_type(participant);
 
     //Create Publisher
     std::cout << "Creating Best-Effort Publisher..." << std::endl;
-    Publisher* myPub = PubParticipant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    Publisher* myPub = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     if (myPub == nullptr)
     {
         std::cout << "Something went wrong while creating the Publisher..." << std::endl;
@@ -59,9 +64,9 @@ void fastest()
     }
 
     //Create Topic
-    Topic* PubTopic = PubParticipant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
 
-    if (PubTopic == nullptr)
+    if (topic == nullptr)
     {
         std::cout << "Something went wrong while creating the Publisher Topic..." << std::endl;
         return;
@@ -74,7 +79,7 @@ void fastest()
     wqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     wqos.history().depth =  5;
 
-    DataWriter* myWriter = myPub->create_datawriter(PubTopic, wqos);
+    DataWriter* myWriter = myPub->create_datawriter(topic, wqos);
 
     if (myWriter == nullptr)
     {
@@ -82,36 +87,12 @@ void fastest()
         return;
     }
 
-
-    //Create Subscriber Participant
-    DomainParticipantQos psqos;
-    psqos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastrtps::c_TimeInfinite;
-    psqos.name("SubscriberParticipant");
-
-    DomainParticipant* SubParticipant = DomainParticipantFactory::get_instance()->create_participant(0, psqos);
-    if (SubParticipant == nullptr)
-    {
-        std::cout << " Something went wrong while creating the Subscriber Participant..." << std::endl;
-        return;
-    }
-    //Register Type
-    sampleType.register_type(SubParticipant);
-
     //Create Subscriber
     std::cout << "Creating Subscriber..." << std::endl;
-    Subscriber* mySub = SubParticipant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    Subscriber* mySub = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     if (mySub == nullptr)
     {
         std::cout << "something went wrong while creating the Subscriber..." << std::endl;
-        return;
-    }
-
-    //Create Topic
-    Topic* SubTopic = SubParticipant->create_topic("samplePubSubTopic", sampleType.get_type_name(), TOPIC_QOS_DEFAULT);
-
-    if (SubTopic == nullptr)
-    {
-        std::cout << "something went wrong while creating the Subscriber Topic..." << std::endl;
         return;
     }
 
@@ -122,7 +103,7 @@ void fastest()
     rqos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
     rqos.history().depth =  5;
 
-    DataReader* myReader = mySub->create_datareader(SubTopic, rqos);
+    DataReader* myReader = mySub->create_datareader(topic, rqos);
 
     if (myReader == nullptr)
     {
@@ -156,12 +137,9 @@ void fastest()
     std::cout << std::endl;
 
     myPub->delete_datawriter(myWriter);
-    PubParticipant->delete_publisher(myPub);
-    PubParticipant->delete_topic(PubTopic);
-    DomainParticipantFactory::get_instance()->delete_participant(PubParticipant);
-
+    participant->delete_publisher(myPub);
+    participant->delete_topic(topic);
     mySub->delete_datareader(myReader);
-    SubParticipant->delete_subscriber(mySub);
-    SubParticipant->delete_topic(SubTopic);
-    DomainParticipantFactory::get_instance()->delete_participant(SubParticipant);
+    participant->delete_subscriber(mySub);
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
