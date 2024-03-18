@@ -15,12 +15,18 @@
 #include "DynamicTypeBuilderImpl.hpp"
 
 #include <cassert>
+#include <string>
+#include <utility>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
+#include "AnnotationDescriptorImpl.hpp"
 #include "DynamicTypeImpl.hpp"
 #include "DynamicTypeMemberImpl.hpp"
 #include "MemberDescriptorImpl.hpp"
+#include "TypeDescriptorImpl.hpp"
 #include "TypeValueConverter.hpp"
 
 namespace eprosima {
@@ -33,7 +39,6 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
     type_descriptor_.copy_from(type_descriptor);
 
     if ((TK_STRUCTURE == type_descriptor_.kind() ||
-            TK_UNION == type_descriptor_.kind() ||
             TK_BITSET == type_descriptor_.kind()) &&
             type_descriptor_.base_type())
     {
@@ -53,7 +58,7 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         if (0 < members_.size())
         {
             traits<DynamicTypeMemberImpl>::ref_type member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                                                                     members_.at(members_.size() - 1))};
+                                                                     members_.back())};
             assert(MEMBER_ID_INVALID != member_impl->get_descriptor().id());
             next_id_ = member_impl->get_descriptor().id() + 1;
         }
@@ -71,8 +76,8 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(
             discriminator_descriptor);
         members_.push_back(dyn_member);
-        member_by_name_.emplace(std::make_pair("discriminator", dyn_member));
-        member_.emplace(std::make_pair(0, dyn_member));
+        member_by_name_.emplace(std::make_pair(discriminator_descriptor.name(), dyn_member));
+        member_.emplace(std::make_pair(discriminator_descriptor.id(), dyn_member));
         next_index_ = 1;
         next_id_ = 1;
     }
@@ -83,7 +88,6 @@ ReturnCode_t DynamicTypeBuilderImpl::get_descriptor(
 {
     if (!descriptor)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor reference is nil");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -109,7 +113,6 @@ ReturnCode_t DynamicTypeBuilderImpl::get_member_by_name(
 
     if (member_by_name_.end() == it)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find a member with name " << name.c_str());
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -132,7 +135,6 @@ ReturnCode_t DynamicTypeBuilderImpl::get_member(
 
     if (member_.end() == it)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find a member with MemberId " << id);
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -158,7 +160,6 @@ ReturnCode_t DynamicTypeBuilderImpl::get_member_by_index(
 {
     if (index >= members_.size())
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Index " << index << " out-of-range");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -177,7 +178,6 @@ ReturnCode_t DynamicTypeBuilderImpl::get_annotation(
 {
     if (!descriptor || idx >= annotation_.size())
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor reference is nil or index is out-of-range");
         return RETCODE_BAD_PARAMETER;
     }
 
@@ -208,18 +208,10 @@ bool DynamicTypeBuilderImpl::equals(
                 TK_STRUCTURE == type_descriptor_.kind() ||
                 TK_UNION ==  type_descriptor_.kind() ||
                 0 == member_.size());
-        assert(TK_ANNOTATION == type_descriptor_.kind() ||
+        assert(TK_ANNOTATION == impl->type_descriptor_.kind() ||
                 TK_STRUCTURE == impl->type_descriptor_.kind() ||
                 TK_UNION ==  impl->type_descriptor_.kind() ||
                 0 == impl->member_.size());
-        assert((TK_ANNOTATION != type_descriptor_.kind() &&
-                TK_STRUCTURE != type_descriptor_.kind() &&
-                TK_UNION != type_descriptor_.kind()) ||
-                0 < member_.size());
-        assert((TK_ANNOTATION != type_descriptor_.kind() &&
-                TK_STRUCTURE != impl->type_descriptor_.kind() &&
-                TK_UNION != impl->type_descriptor_.kind()) ||
-                0 < member_.size());
 
         assert(member_by_name_.size() == members_.size());
         assert(impl->member_by_name_.size() == impl->members_.size());

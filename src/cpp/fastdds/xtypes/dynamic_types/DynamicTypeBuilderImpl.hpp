@@ -15,9 +15,9 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERIMPL_HPP
 
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
-
 #include <vector>
+
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 
 #include "AnnotationDescriptorImpl.hpp"
 #include "DynamicTypeImpl.hpp"
@@ -29,8 +29,6 @@ namespace dds {
 
 class DynamicTypeBuilderImpl : public traits<DynamicTypeBuilder>::base_type
 {
-    friend class DynamicTypeBuilderFactoryImpl;
-
 public:
 
     DynamicTypeBuilderImpl(
@@ -85,8 +83,24 @@ public:
 
     traits<DynamicType>::ref_type build() noexcept override;
 
+    /*!
+     * Initialize the instance copying the information from a @ref DynamicType.
+     *
+     * @param[in] @ref DynamicType reference used to initialize the instance.
+     * @return Currently always return RETCODE_OK.
+     */
     ReturnCode_t copy_from(
             traits<DynamicTypeImpl>::ref_type type);
+
+    const TypeDescriptorImpl& get_descriptor() const noexcept
+    {
+        return type_descriptor_;
+    }
+
+    TypeDescriptorImpl& get_descriptor() noexcept
+    {
+        return type_descriptor_;
+    }
 
 protected:
 
@@ -94,22 +108,31 @@ protected:
 
 private:
 
+    //! Contains the annotations applied by the user.
     std::vector<AnnotationDescriptorImpl> annotation_;
 
+    //! Contains the default discriminator value. This is calculated while the type is being built.
     int32_t default_discriminator_value_ {0};
 
+    //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};
 
+    //! Collection of all members sorted by MemberId.
     DynamicTypeMembersById member_;
 
+    //! Collection of all members sorted by name.
     DynamicTypeMembersByName member_by_name_;
 
+    //! Collection of all members sorted by index.
     std::vector<traits<DynamicTypeMemberImpl>::ref_type> members_;
 
+    //! Next MemberId to be used.
     MemberId next_id_ {0};
 
+    //! Next index to be used.
     uint32_t next_index_ {0};
 
+    //! Copy of the TypeDescriptor provided by the user.
     TypeDescriptorImpl type_descriptor_;
 };
 

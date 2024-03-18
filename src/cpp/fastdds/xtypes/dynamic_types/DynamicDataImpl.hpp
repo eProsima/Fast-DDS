@@ -15,11 +15,11 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICDATAIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICDATAIMPL_HPP
 
-#include <fastdds/dds/core/Types.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-
 #include <map>
 #include <vector>
+
+#include <fastdds/dds/core/Types.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 
 #include "DynamicTypeImpl.hpp"
 #include "TypeForKind.hpp"
@@ -38,18 +38,25 @@ class DynamicDataImpl : public traits<DynamicData>::base_type
 {
     //{{{ Implementation members of DynamicData
 
+    //! The associated type.
     traits<DynamicTypeImpl>::ref_type type_;
 
+    //! Enclosed type in case of `type_` is TK_ALIAS or TK_ENUM. In other case, the same value as `type_`.
     traits<DynamicTypeImpl>::ref_type enclosing_type_;
 
+    //! Contains the values of the current sample.
     std::map<MemberId, std::shared_ptr<void>> value_;
 
+    //! Used in TK_MAP to maintain correlation between keys and MemberIds.
     std::map<std::string, MemberId> key_to_id_;
 
+    //! Used in TK_MAP to know which is the next MemberId to be used.
     MemberId next_map_member_id_ {0};
 
+    //! Stores the loaned values by the user.
     std::vector<MemberId> loaned_values_;
 
+    //! Points to the current selected member in the union.
     MemberId selected_union_member_ {MEMBER_ID_INVALID};
 
     //}}}

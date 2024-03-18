@@ -85,14 +85,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_array
         traits<DynamicType>::ref_type element_type,
         const BoundSeq& bound) noexcept
 {
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val {std::make_shared<DynamicTypeBuilderImpl>(
+                                                          TypeDescriptorImpl{TK_ARRAY, ""})};
+    ret_val->get_descriptor().element_type(element_type);
+    ret_val->get_descriptor().bound() = bound;
 
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_ARRAY, ""});
-    ret_val->type_descriptor_.element_type(element_type);
-    ret_val->type_descriptor_.bound() = bound;
-
-    if (ret_val->type_descriptor_.is_consistent())
+    if (ret_val->get_descriptor().is_consistent())
     {
         return ret_val;
     }
@@ -102,12 +100,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_array
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_bitmask_type(
         uint32_t bound) noexcept
 {
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_BITMASK, ""});
-    ret_val->type_descriptor_.element_type(bool_type_);
-    ret_val->type_descriptor_.bound().push_back(bound);
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val {std::make_shared<DynamicTypeBuilderImpl>(
+                                                          TypeDescriptorImpl{TK_BITMASK, ""})};
+    ret_val->get_descriptor().element_type(bool_type_);
+    ret_val->get_descriptor().bound().push_back(bound);
 
-    if (ret_val->type_descriptor_.is_consistent())
+    if (ret_val->get_descriptor().is_consistent())
     {
         return ret_val;
     }
@@ -120,15 +118,13 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_map_t
         traits<DynamicType>::ref_type element_type,
         uint32_t bound) noexcept
 {
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val {std::make_shared<DynamicTypeBuilderImpl>(
+                                                          TypeDescriptorImpl{TK_MAP, ""})};
+    ret_val->get_descriptor().key_element_type(key_element_type);
+    ret_val->get_descriptor().element_type(element_type);
+    ret_val->get_descriptor().bound().push_back(bound);
 
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_MAP, ""});
-    ret_val->type_descriptor_.key_element_type(key_element_type);
-    ret_val->type_descriptor_.element_type(element_type);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
+    if (ret_val->get_descriptor().is_consistent())
     {
         return ret_val;
     }
@@ -140,14 +136,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_seque
         traits<DynamicType>::ref_type element_type,
         uint32_t bound) noexcept
 {
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val;
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val {std::make_shared<DynamicTypeBuilderImpl>(
+                                                          TypeDescriptorImpl{TK_SEQUENCE, ""})};
+    ret_val->get_descriptor().element_type(element_type);
+    ret_val->get_descriptor().bound().push_back(bound);
 
-    ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_SEQUENCE, ""});
-    ret_val->type_descriptor_.element_type(element_type);
-    ret_val->type_descriptor_.bound().push_back(bound);
-
-    if (ret_val->type_descriptor_.is_consistent())
+    if (ret_val->get_descriptor().is_consistent())
     {
         return ret_val;
     }
@@ -157,12 +151,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_seque
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_string_type(
         uint32_t bound) noexcept
 {
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_STRING8, ""});
-    ret_val->type_descriptor_.element_type(char8_type_);
-    ret_val->type_descriptor_.bound().push_back(bound);
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val {std::make_shared<DynamicTypeBuilderImpl>(
+                                                          TypeDescriptorImpl{TK_STRING8, ""})};
+    ret_val->get_descriptor().element_type(char8_type_);
+    ret_val->get_descriptor().bound().push_back(bound);
 
-    if (ret_val->type_descriptor_.is_consistent())
+    if (ret_val->get_descriptor().is_consistent())
     {
         return ret_val;
     }
@@ -173,12 +167,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_strin
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstring_type(
         uint32_t bound) noexcept
 {
-    traits<DynamicTypeBuilderImpl>::ref_type ret_val = std::make_shared<DynamicTypeBuilderImpl>(
-        TypeDescriptorImpl{TK_STRING16, ""});
-    ret_val->type_descriptor_.element_type(char16_type_);
-    ret_val->type_descriptor_.bound().push_back(bound);
+    traits<DynamicTypeBuilderImpl>::ref_type ret_val {std::make_shared<DynamicTypeBuilderImpl>(
+                                                          TypeDescriptorImpl{TK_STRING16, ""})};
+    ret_val->get_descriptor().element_type(char16_type_);
+    ret_val->get_descriptor().bound().push_back(bound);
 
-    if (ret_val->type_descriptor_.is_consistent())
+    if (ret_val->get_descriptor().is_consistent())
     {
         return ret_val;
     }

@@ -99,6 +99,7 @@ public:
      * @param data object whose payload footprint to calculate
      * @return functor that calculates the size
      */
+    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     FASTDDS_EXPORTED_API std::function<uint32_t()> getSerializedSizeProvider(
             void* data) override;
 

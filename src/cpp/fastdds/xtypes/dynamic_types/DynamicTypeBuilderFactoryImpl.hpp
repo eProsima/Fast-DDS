@@ -15,10 +15,15 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERFACTORYIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEBUILDERFACTORYIMPL_HPP
 
-#include <fastdds/dds/xtypes/common.hpp>
+#include <string>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 
 #include "DynamicTypeImpl.hpp"
+#include "TypeDescriptorImpl.hpp"
 
 
 namespace eprosima {

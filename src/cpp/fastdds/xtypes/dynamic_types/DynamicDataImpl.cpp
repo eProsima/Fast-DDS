@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <bitset>
+#include <cassert>
 #include <functional>
 #include <iterator>
 #include <map>
@@ -31,6 +32,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 
+#include "common.hpp"
 #include "DynamicTypeMemberImpl.hpp"
 #include "TypeValueConverter.hpp"
 
@@ -122,38 +124,6 @@ ReturnCode_t clear_sequence_typed_element(
         }
         ret_value = RETCODE_OK;
     }
-    return ret_value;
-}
-
-eprosima::fastcdr::EncodingAlgorithmFlag get_fastcdr_encoding_flag(
-        ExtensibilityKind ext_kind,
-        eprosima::fastcdr::CdrVersion cdr_version)
-{
-    eprosima::fastcdr::EncodingAlgorithmFlag ret_value {eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR};
-
-    if (eprosima::fastcdr::CdrVersion::XCDRv2 == cdr_version)
-    {
-        switch (ext_kind)
-        {
-            case ExtensibilityKind::MUTABLE:
-                ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2;
-                break;
-            case ExtensibilityKind::APPENDABLE:
-                ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2;
-                break;
-            case ExtensibilityKind::FINAL:
-                ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2;
-                break;
-        }
-    }
-    else
-    {
-        if (ExtensibilityKind::MUTABLE == ext_kind)
-        {
-            ret_value = eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR;
-        }
-    }
-
     return ret_value;
 }
 
