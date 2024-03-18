@@ -17,6 +17,7 @@
 #include <future>
 #include <memory>
 #include <sstream>
+#include <stdlib.h>
 #include <string>
 #include <thread>
 
@@ -566,6 +567,34 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
     ASSERT_EQ(participant->get_domain_id(), domain_id); //Keep the DID given to the method, not the one on the profile
     check_participant_with_profile(participant, "test_participant_profile");
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(participant) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfile)
+{
+    // set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_profile.xml"
+    setenv("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_profile.xml", true);
+
+    uint32_t domain_id = 123u;          // This is the domain ID set in the default profile above
+    uint32_t default_domain_id = 0u;    // This is the default domain ID
+
+    //participant using the given profile
+    DomainParticipant* default_env_participant =
+            DomainParticipantFactory::get_instance()->create_participant_with_default_profile();
+    ASSERT_NE(default_env_participant, nullptr);
+    ASSERT_EQ(default_env_participant->get_domain_id(), domain_id);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                default_env_participant) == ReturnCode_t::RETCODE_OK);
+
+    // unset XML profile environment variable
+    unsetenv("FASTRTPS_DEFAULT_PROFILES_FILE");
+
+    //participant using default values
+    DomainParticipant* default_participant =
+            DomainParticipantFactory::get_instance()->create_participant_with_default_profile();
+    ASSERT_NE(default_participant, nullptr);
+    ASSERT_EQ(default_participant->get_domain_id(), default_domain_id);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                default_participant) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST(ParticipantTests, GetParticipantProfileQos)
