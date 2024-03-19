@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <csignal>
 #include <cstdlib>
 #include <iostream>
 
@@ -181,6 +182,24 @@ public:
         }
 
         return config;
+    }
+
+    static std::string parse_signal(
+            int signum)
+    {
+        switch (signum)
+        {
+            case SIGINT:
+                return "SIGINT";
+            case SIGTERM:
+                return "SIGTERM";
+            case SIGQUIT:
+                return "SIGQUIT";
+            case SIGHUP:
+                return "SIGHUP";
+            default:
+                return "UNKNOWN SIGNAL";
+        }
     }
 
 };

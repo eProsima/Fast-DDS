@@ -31,7 +31,12 @@
 
 using eprosima::fastdds::dds::Log;
 
-std::function<void(std::string)> signal_handler;
+std::function<void(int)> stop_app_handler;
+void signal_handler(
+        int signum)
+{
+    stop_app_handler(signum);
+}
 
 int main(
         int argc,
@@ -122,9 +127,10 @@ int main(
         }
     }
 
-    signal_handler = [&](std::string signal)
+    stop_app_handler = [&](int signum)
             {
-                std::cout << "\n" << signal << " received, stopping " << entity_name << " execution." << std::endl;
+                std::cout << "\n" << eprosima::fastdds::examples::hello_world::CLIParser::parse_signal(signum) <<
+                " received, stopping " << entity_name << " execution." << std::endl;
                 switch (config.entity)
                 {
                     case eprosima::fastdds::examples::hello_world::CLIParser::EntityKind::PUBLISHER:
@@ -152,23 +158,11 @@ int main(
                         break;
                 }
             };
-    signal(SIGINT, [](int /*signum*/)
-            {
-                signal_handler("SIGINT");
-            });
-    signal(SIGTERM, [](int /*signum*/)
-            {
-                signal_handler("SIGTERM");
-            });
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
 #ifndef _WIN32
-    signal(SIGQUIT, [](int /*signum*/)
-            {
-                signal_handler("SIGQUIT");
-            });
-    signal(SIGHUP, [](int /*signum*/)
-            {
-                signal_handler("SIGHUP");
-            });
+    signal(SIGQUIT, signal_handler);
+    signal(SIGHUP, signal_handler);
 #endif // _WIN32
 
     thread->join();
