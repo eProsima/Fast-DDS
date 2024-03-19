@@ -736,7 +736,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                         (TK_SEQUENCE == type_kind &&
                         (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
                         enclosing_type_->get_descriptor().bound().at(0) ||
-                        enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
+                        enclosing_type_->get_descriptor().bound().at(0) > id)))
                 {
                     if (sequence->size() < id + 1)
                     {
@@ -958,11 +958,11 @@ traits<DynamicData>::ref_type DynamicDataImpl::loan_value(
                     auto sequence =
                             std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
                     assert(sequence);
-                    if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                    if ((TK_ARRAY == type_kind && sequence->size() > id) ||
                             (TK_SEQUENCE == type_kind &&
                             (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
                             enclosing_type_->get_descriptor().bound().at(0) ||
-                            enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
+                            enclosing_type_->get_descriptor().bound().at(0) > id)))
                     {
                         if (sequence->size() < id + 1)
                         {
@@ -1046,10 +1046,10 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
             assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
             auto sequence =
                     std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
-            assert((TK_ARRAY == type_kind && sequence->size() >= *loan_it + 1) ||
+            assert((TK_ARRAY == type_kind && sequence->size() > *loan_it) ||
                     (TK_SEQUENCE == type_kind &&
                     (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
-                    enclosing_type_->get_descriptor().bound().at(0) >= *loan_it + 1)));
+                    enclosing_type_->get_descriptor().bound().at(0) > *loan_it)));
             if (sequence->size() >= *loan_it + 1)
             {
                 if (sequence->at(*loan_it) == value)
@@ -1271,11 +1271,11 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
                     auto sequence =
                             std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
                     assert(sequence);
-                    if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                    if ((TK_ARRAY == type_kind && sequence->size() > id) ||
                             (TK_SEQUENCE == type_kind &&
                             (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
                             enclosing_type_->get_descriptor().bound().at(0) ||
-                            enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
+                            enclosing_type_->get_descriptor().bound().at(0) > id)))
                     {
                         if (sequence->size() < id + 1)
                         {
@@ -4249,11 +4249,11 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
                 auto sequence =
                         std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(it->second);
                 assert(sequence);
-                if ((TK_ARRAY == type_kind && sequence->size() >= id + 1) ||
+                if ((TK_ARRAY == type_kind && sequence->size() > id) ||
                         (TK_SEQUENCE == type_kind &&
                         (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
                         enclosing_type_->get_descriptor().bound().at(0) ||
-                        enclosing_type_->get_descriptor().bound().at(0) >= id + 1)))
+                        enclosing_type_->get_descriptor().bound().at(0) > id)))
                 {
                     if (sequence->size() < id + 1)
                     {
