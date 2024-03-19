@@ -69,6 +69,7 @@ public:
         std::cout << "Common options:"                                                          << std::endl;
         std::cout << "  -h, --help                      Print this help message"                << std::endl;
         std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"   << std::endl;
+        std::cout << "                                   [0 <= <num> <= 65535]"                 << std::endl;
         std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
         std::cout << "Subscriber options:"                                                      << std::endl;
         std::cout << "  -w, --waitset                   Use waitset read condition"             << std::endl;
@@ -81,27 +82,30 @@ public:
     {
         hello_world_config config;
 
+        if (argc < 2)
+        {
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "missing entity argument");
+            print_help(EXIT_FAILURE);
+        }
+
         std::string first_argument = argv[1];
 
         if (first_argument == "publisher" )
         {
             config.entity = CLIParser::EntityKind::PUBLISHER;
         }
-        else if ( first_argument == "subscriber")
+        else if (first_argument == "subscriber")
         {
             config.entity = CLIParser::EntityKind::SUBSCRIBER;
         }
+        else if (first_argument == "-h" || first_argument == "--help")
+        {
+            print_help(EXIT_SUCCESS);
+        }
         else
         {
-            if (first_argument == "-h" || first_argument == "--help")
-            {
-                print_help(EXIT_SUCCESS);
-            }
-            else
-            {
-                EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing entity argument");
-                print_help(EXIT_FAILURE);
-            }
+            EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing entity argument " + first_argument);
+            print_help(EXIT_FAILURE);
         }
 
         for (int i = 2; i < argc; ++i)
@@ -117,20 +121,27 @@ public:
                 {
                     try
                     {
-                        uint16_t samples = static_cast<uint16_t>(std::stoi(argv[++i]));
-                        if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                        int16_t input = static_cast<int16_t>(std::stoi(argv[++i]));
+                        if (input < std::numeric_limits<std::uint16_t>::min() ||
+                                input > std::numeric_limits<std::uint16_t>::max())
                         {
-                            config.pub_config.samples = samples;
-                        }
-                        else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
-                        {
-                            config.sub_config.samples = samples;
+                            throw std::out_of_range("sample argument out of range");
                         }
                         else
                         {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --sample argument");
-                            print_help(EXIT_FAILURE);
-
+                            if (config.entity == CLIParser::EntityKind::PUBLISHER)
+                            {
+                                config.pub_config.samples = static_cast<uint16_t>(input);
+                            }
+                            else if (config.entity == CLIParser::EntityKind::SUBSCRIBER)
+                            {
+                                config.sub_config.samples = static_cast<uint16_t>(input);
+                            }
+                            else
+                            {
+                                EPROSIMA_LOG_ERROR(CLI_PARSER, "entity not specified for --sample argument");
+                                print_help(EXIT_FAILURE);
+                            }
                         }
                     }
                     catch (const std::invalid_argument& e)
