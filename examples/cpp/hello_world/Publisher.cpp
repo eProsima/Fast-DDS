@@ -42,7 +42,7 @@ HelloWorldPublisher::HelloWorldPublisher(
     , type_(new HelloWorldPubSubType())
     , stop_(false)
     , matched_(0)
-    , samples_ (config.samples)
+    , samples_(config.samples)
 {
     // Set up the data type with initial values
     hello_.index(0);
@@ -123,14 +123,19 @@ void HelloWorldPublisher::on_publication_matched(
 
 void HelloWorldPublisher::run()
 {
-    while (!is_stopped() && (samples_ == 0 || hello_.index() < samples_))
+    while (!is_stopped() && ((samples_ == 0) || (hello_.index() < samples_)))
     {
         if (publish())
         {
             std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
                       << "' SENT" << std::endl;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(period_ms_));
+        // Wait for period or stop event
+        std::unique_lock<std::mutex> terminate_lock(terminate_mutex_);
+        terminate_cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
+                {
+                    return is_stopped();
+                });
     }
 }
 
@@ -138,12 +143,13 @@ bool HelloWorldPublisher::publish()
 {
     bool ret = false;
     // Wait for the data endpoints discovery
-    std::unique_lock<std::mutex> matched_lock(mutex_);
+    std::unique_lock<std::mutex> matched_lock(matched_mutex_);
     matched_cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
                 return ((matched_ > 0) || is_stopped());
             });
+
     if (!is_stopped())
     {
         hello_.index(hello_.index() + 1);
@@ -161,4 +167,5 @@ void HelloWorldPublisher::stop()
 {
     stop_.store(true);
     matched_cv_.notify_one();
+    terminate_cv_.notify_one();
 }

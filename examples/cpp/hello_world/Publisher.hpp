@@ -78,9 +78,13 @@ private:
 
     uint16_t samples_;
 
-    std::mutex mutex_;
+    std::mutex matched_mutex_;
+
+    std::mutex terminate_mutex_;
 
     std::condition_variable matched_cv_;
+
+    std::condition_variable terminate_cv_;
 
     const uint32_t period_ms_ = 100; // in ms
 };
