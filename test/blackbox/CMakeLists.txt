@@ -69,9 +69,8 @@ set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/KeyedData1mbTypeObjectSupport.cxx
     types/FixedSizedPubSubTypes.cxx
     types/FixedSizedTypeObjectSupport.cxx
-    types/UnboundedHelloWorld.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
-    types/UnboundedHelloWorldv1.cxx
+    types/UnboundedHelloWorldTypeObjectSupport.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
@@ -114,9 +113,8 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/TestIncludeRegression3361TypeObjectSupport.cxx
     types/TestRegression3361PubSubTypes.cxx
     types/TestRegression3361TypeObjectSupport.cxx
-    types/UnboundedHelloWorld.cxx
     types/UnboundedHelloWorldPubSubTypes.cxx
-    types/UnboundedHelloWorldv1.cxx
+    types/UnboundedHelloWorldTypeObjectSupport.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp

@@ -2069,7 +2069,7 @@ void register_bitmodule_BM2_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_BM2;
         CompleteTypeDetail detail_BM2 = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_BM2, ann_custom_BM2, type_name_BM2.to_string());
         CompleteStructHeader header_BM2;
-        if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d() || TK_NONE == type_ids_BM2.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d())
         {
             header_BM2 = TypeObjectUtils::build_complete_struct_header(type_ids_BM2.type_identifier1(), detail_BM2);
         }
@@ -3023,7 +3023,7 @@ void register_StructTest_type_identifier()
         eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_StructTest;
         CompleteTypeDetail detail_StructTest = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_StructTest, ann_custom_StructTest, type_name_StructTest.to_string());
         CompleteStructHeader header_StructTest;
-        if (EK_COMPLETE == type_ids_StructTest.type_identifier1()._d() || TK_NONE == type_ids_StructTest.type_identifier1()._d())
+        if (EK_COMPLETE == type_ids_StructTest.type_identifier1()._d())
         {
             header_StructTest = TypeObjectUtils::build_complete_struct_header(type_ids_StructTest.type_identifier1(), detail_StructTest);
         }
@@ -3935,7 +3935,7 @@ void register_StructTest_type_identifier()
                     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_BM2;
                     CompleteTypeDetail detail_BM2 = TypeObjectUtils::build_complete_type_detail(type_ann_builtin_BM2, ann_custom_BM2, type_name_BM2.to_string());
                     CompleteStructHeader header_BM2;
-                    if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d() || TK_NONE == type_ids_BM2.type_identifier1()._d())
+                    if (EK_COMPLETE == type_ids_BM2.type_identifier1()._d())
                     {
                         header_BM2 = TypeObjectUtils::build_complete_struct_header(type_ids_BM2.type_identifier1(), detail_BM2);
                     }
