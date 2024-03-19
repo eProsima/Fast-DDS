@@ -838,7 +838,10 @@ bool TCPTransportInterface::OpenOutputChannel(
             channel_resources_[physical_locator] = channel;
             channel->connect(channel_resources_[physical_locator]);
             // Add logical port only if it's not 0
-            if (!always_connect) channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+            if (!always_connect)
+            {
+                channel->add_logical_port(logical_port, rtcp_message_manager_.get());
+            }
         }
         else
         {
