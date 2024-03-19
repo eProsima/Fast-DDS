@@ -6,37 +6,86 @@ on:
     - cron: '0 1 * * *'
 
 jobs:
-  nightly-sec-mac-ci:
+  nightly-mac-ci-master:
     strategy:
       fail-fast: false
       matrix:
-        fastdds-branch:
-          - 'master'
-          - '2.13.x'
-          - '2.12.x'
-          - '2.10.x'
-          - '2.6.x'
-          - '3.0.x-devel'
-    uses: ./.github/workflows/reusable-mac-ci.yml
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@master
     with:
-      label: 'nightly-sec-mac-ci-${{ matrix.fastdds-branch }}'
-      cmake-args: "-DSECURITY=ON"
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-master'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
-      fastdds-branch: '${{ matrix.fastdds-branch }}'
+      fastdds-branch: 'master'
 
-  nightly-nosec-mac-ci:
+  nightly-mac-ci-2_13_x:
     strategy:
       fail-fast: false
       matrix:
-        fastdds-branch:
-          - 'master'
-          - '2.13.x'
-          - '2.12.x'
-          - '2.10.x'
-          - '2.6.x'
-    uses: ./.github/workflows/reusable-mac-ci.yml
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.13.x
     with:
-      label: 'nightly-nosec-mac-ci-${{ matrix.fastdds-branch }}'
-      cmake-args: "-DSECURITY=OFF"
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.13.x'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
       ctest-args: "-LE xfail"
-      fastdds-branch: '${{ matrix.fastdds-branch }}'
+      fastdds-branch: '2.13.x'
+
+  nightly-mac-ci-2_12_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.12.x
+    with:
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.12.x'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      ctest-args: "-LE xfail"
+      fastdds-branch: '2.12.x'
+
+  nightly-mac-ci-2_10_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.10.x
+    with:
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.10.x'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      ctest-args: "-LE xfail"
+      fastdds-branch: '2.10.x'
+
+  nightly-mac-ci-2_6_x:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.6.x
+    with:
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.6.x'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      ctest-args: "-LE xfail"
+      fastdds-branch: '2.6.x'
+
+  nightly-mac-ci-3_0_x-devel:
+    strategy:
+      fail-fast: false
+      matrix:
+        security:
+          - 'ON'
+          - 'OFF'
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@3.0.x-devel
+    with:
+      label: 'nightly-sec-${{ matrix.security }}-mac-ci-3.0.x-devel'
+      cmake-args: "-DSECURITY=${{ matrix.security }}"
+      ctest-args: "-LE xfail"
+      fastdds-branch: '3.0.x-devel'
