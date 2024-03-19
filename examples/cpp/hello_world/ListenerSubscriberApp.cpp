@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Subscriber.cpp
+ * @file ListenerSubscriber.cpp
  *
  */
 
-#include "Subscriber.hpp"
+#include "ListenerSubscriberApp.hpp"
 
 #include <condition_variable>
 #include <csignal>
@@ -31,12 +31,22 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
+#include "CLIParser.hpp"
+#include "HelloWorldPubSubTypes.h"
+#include "Application.hpp"
+
 using namespace eprosima::fastdds::dds;
 
-HelloWorldSubscriber::HelloWorldSubscriber(
-        const eprosima::fastdds::examples::hello_world::CLIParser::subscriber_config& config,
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+ListenerSubscriberApp::ListenerSubscriberApp(
+        const CLIParser::subscriber_config& config,
         const std::string& topic_name)
-    : participant_(nullptr)
+    : Application ()
+    , participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
@@ -84,7 +94,7 @@ HelloWorldSubscriber::HelloWorldSubscriber(
     }
 }
 
-HelloWorldSubscriber::~HelloWorldSubscriber()
+ListenerSubscriberApp::~ListenerSubscriberApp()
 {
     if (nullptr != participant_)
     {
@@ -96,7 +106,7 @@ HelloWorldSubscriber::~HelloWorldSubscriber()
     }
 }
 
-void HelloWorldSubscriber::on_subscription_matched(
+void ListenerSubscriberApp::on_subscription_matched(
         DataReader* /*reader*/,
         const SubscriptionMatchedStatus& info)
 {
@@ -115,7 +125,7 @@ void HelloWorldSubscriber::on_subscription_matched(
     }
 }
 
-void HelloWorldSubscriber::on_data_available(
+void ListenerSubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
@@ -135,7 +145,7 @@ void HelloWorldSubscriber::on_data_available(
     }
 }
 
-void HelloWorldSubscriber::run()
+void ListenerSubscriberApp::run()
 {
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, [&]
@@ -144,13 +154,18 @@ void HelloWorldSubscriber::run()
             });
 }
 
-bool HelloWorldSubscriber::is_stopped()
+bool ListenerSubscriberApp::is_stopped()
 {
     return stop_.load();
 }
 
-void HelloWorldSubscriber::stop()
+void ListenerSubscriberApp::stop()
 {
     stop_.store(true);
     terminate_cv_.notify_all();
 }
+
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

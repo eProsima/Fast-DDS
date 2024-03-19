@@ -13,82 +13,86 @@
 // limitations under the License.
 
 /**
- * @file Publisher.hpp
+ * @file ListenerSubscriberApp.hpp
  *
  */
 
-#ifndef _FASTDDS_HELLO_WORLD_PUBLISHER_HPP_
-#define _FASTDDS_HELLO_WORLD_PUBLISHER_HPP_
+#ifndef _FASTDDS_HELLO_WORLD_LISTENER_SUBSCRIBER_APP_HPP_
+#define _FASTDDS_HELLO_WORLD_LISTENER_SUBSCRIBER_APP_HPP_
 
 #include <condition_variable>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.h"
+#include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;
 
-class HelloWorldPublisher : public DataWriterListener
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+class ListenerSubscriberApp : public Application,  public DataReaderListener
 {
 public:
 
-    HelloWorldPublisher(
-            const eprosima::fastdds::examples::hello_world::CLIParser::publisher_config& config,
+    ListenerSubscriberApp(
+            const CLIParser::subscriber_config& config,
             const std::string& topic_name);
 
-    ~HelloWorldPublisher() override;
+    ~ListenerSubscriberApp();
 
-    //! Publisher matched method
-    void on_publication_matched(
-            DataWriter* writer,
-            const PublicationMatchedStatus& info) override;
+    //! Subscription callback
+    void on_data_available(
+            DataReader* reader) override;
 
-    //! Run publisher
-    void run();
+    //! Subscriber matched method
+    void on_subscription_matched(
+            DataReader* reader,
+            const SubscriptionMatchedStatus& info) override;
+
+    //! Run subscriber
+    virtual void run();
 
     //! Trigger the end of execution
-    void stop();
+    virtual void stop();
 
 private:
 
-    //! Publish a sample
-    bool publish();
-
     //! Return the current state of execution
-    bool is_stopped();
+    virtual bool is_stopped();
 
     HelloWorld hello_;
 
     DomainParticipant* participant_;
 
-    Publisher* publisher_;
+    Subscriber* subscriber_;
 
     Topic* topic_;
 
-    DataWriter* writer_;
+    DataReader* reader_;
 
     TypeSupport type_;
 
-    std::atomic<bool> stop_;
-
-    int16_t matched_;
-
     uint16_t samples_;
 
-    std::mutex matched_mutex_;
+    uint16_t received_samples_;
 
-    std::mutex terminate_mutex_;
+    std::atomic<bool> stop_;
 
-    std::condition_variable matched_cv_;
+    mutable std::mutex terminate_cv_mtx_;
 
     std::condition_variable terminate_cv_;
-
-    const uint32_t period_ms_ = 100; // in ms
 };
 
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
 
-
-#endif /* _FASTDDS_HELLO_WORLD_PUBLISHER_HPP_ */
+#endif /* _FASTDDS_HELLO_WORLD_LISTENER_SUBSCRIBER_APP_HPP_ */

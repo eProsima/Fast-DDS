@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file SubscriberWaitset.cpp
+ * @file WaitsetSubscriberApp.cpp
  *
  */
 
-#include "SubscriberWaitset.hpp"
+#include "WaitsetSubscriberApp.hpp"
 
 #include <condition_variable>
 #include <csignal>
@@ -34,12 +34,22 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
+#include "HelloWorldPubSubTypes.h"
+#include "CLIParser.hpp"
+#include "Application.hpp"
+
 using namespace eprosima::fastdds::dds;
 
-HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset(
-        const eprosima::fastdds::examples::hello_world::CLIParser::subscriber_config& config,
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+WaitsetSubscriberApp::WaitsetSubscriberApp(
+        const CLIParser::subscriber_config& config,
         const std::string& topic_name)
-    : participant_(nullptr)
+    : Application ()
+    , participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
@@ -91,7 +101,7 @@ HelloWorldSubscriberWaitset::HelloWorldSubscriberWaitset(
     wait_set_.attach_condition(terminate_condition_);
 }
 
-HelloWorldSubscriberWaitset::~HelloWorldSubscriberWaitset()
+WaitsetSubscriberApp::~WaitsetSubscriberApp()
 {
     if (nullptr != participant_)
     {
@@ -103,7 +113,7 @@ HelloWorldSubscriberWaitset::~HelloWorldSubscriberWaitset()
     }
 }
 
-void HelloWorldSubscriberWaitset::run()
+void WaitsetSubscriberApp::run()
 {
     while (!is_stopped())
     {
@@ -164,13 +174,18 @@ void HelloWorldSubscriberWaitset::run()
     }
 }
 
-bool HelloWorldSubscriberWaitset::is_stopped()
+bool WaitsetSubscriberApp::is_stopped()
 {
     return stop_.load();
 }
 
-void HelloWorldSubscriberWaitset::stop()
+void WaitsetSubscriberApp::stop()
 {
     stop_.store(true);
     terminate_condition_.set_trigger_value(true);
 }
+
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima

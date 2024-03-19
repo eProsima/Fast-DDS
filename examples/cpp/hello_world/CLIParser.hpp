@@ -202,6 +202,21 @@ public:
         }
     }
 
+    static std::string parse_entity_kind(
+            EntityKind entity)
+    {
+        switch (entity)
+        {
+            case EntityKind::PUBLISHER:
+                return "Publisher";
+            case EntityKind::SUBSCRIBER:
+                return "Subscriber";
+            case EntityKind::UNDEFINED:
+            default:
+                return "Undefined entity";
+        }
+    }
+
 };
 
 } // namespace hello_world

@@ -27,7 +27,7 @@ def test_basic_configuration():
         if sent != 0 and received != 0 and sent * 2 == received:
             ret = True
         else:
-            print ('sent: ' + str(sent) + ' received: ' + str(received))
+            print ('ERROR: sent: ' + str(sent) + ', but received: ' + str(received) + '(expected: ' + str(sent * 2) + ')')
             raise subprocess.CalledProcessError(1, '')
 
     except subprocess.CalledProcessError:

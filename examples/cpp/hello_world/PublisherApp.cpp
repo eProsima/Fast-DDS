@@ -13,11 +13,11 @@
 // limitations under the License.
 
 /**
- * @file Publisher.cpp
+ * @file PublisherApp.cpp
  *
  */
 
-#include "Publisher.hpp"
+#include "PublisherApp.hpp"
 
 #include <condition_variable>
 #include <csignal>
@@ -32,17 +32,23 @@
 
 using namespace eprosima::fastdds::dds;
 
-HelloWorldPublisher::HelloWorldPublisher(
-        const eprosima::fastdds::examples::hello_world::CLIParser::publisher_config& config,
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+PublisherApp::PublisherApp(
+        const CLIParser::publisher_config& config,
         const std::string& topic_name)
-    : participant_(nullptr)
+    : Application()
+    , participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
     , type_(new HelloWorldPubSubType())
-    , stop_(false)
     , matched_(0)
     , samples_(config.samples)
+    , stop_(false)
 {
     // Set up the data type with initial values
     hello_.index(0);
@@ -87,7 +93,7 @@ HelloWorldPublisher::HelloWorldPublisher(
     }
 }
 
-HelloWorldPublisher::~HelloWorldPublisher()
+PublisherApp::~PublisherApp()
 {
     if (nullptr != participant_)
     {
@@ -99,7 +105,7 @@ HelloWorldPublisher::~HelloWorldPublisher()
     }
 }
 
-void HelloWorldPublisher::on_publication_matched(
+void PublisherApp::on_publication_matched(
         DataWriter* /*writer*/,
         const PublicationMatchedStatus& info)
 {
@@ -121,7 +127,7 @@ void HelloWorldPublisher::on_publication_matched(
     }
 }
 
-void HelloWorldPublisher::run()
+void PublisherApp::run()
 {
     while (!is_stopped() && ((samples_ == 0) || (hello_.index() < samples_)))
     {
@@ -139,7 +145,7 @@ void HelloWorldPublisher::run()
     }
 }
 
-bool HelloWorldPublisher::publish()
+bool PublisherApp::publish()
 {
     bool ret = false;
     // Wait for the data endpoints discovery
@@ -158,14 +164,19 @@ bool HelloWorldPublisher::publish()
     return ret;
 }
 
-bool HelloWorldPublisher::is_stopped()
+bool PublisherApp::is_stopped()
 {
     return stop_.load();
 }
 
-void HelloWorldPublisher::stop()
+void PublisherApp::stop()
 {
     stop_.store(true);
     matched_cv_.notify_one();
     terminate_cv_.notify_one();
 }
+
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
