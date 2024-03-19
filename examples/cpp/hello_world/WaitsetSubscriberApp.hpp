@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file SubscriberWaitset.hpp
+ * @file WaitsetSubscriberApp.hpp
  *
  */
 
-#ifndef _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_
-#define _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_
+#ifndef _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_
+#define _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_
 
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -30,29 +30,35 @@
 
 #include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.h"
+#include "Application.hpp"
 
 using namespace eprosima::fastdds::dds;
 
-class HelloWorldSubscriberWaitset
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+class WaitsetSubscriberApp : public Application
 {
 public:
 
-    HelloWorldSubscriberWaitset(
-            const eprosima::fastdds::examples::hello_world::CLIParser::subscriber_config& config,
+    WaitsetSubscriberApp(
+            const CLIParser::subscriber_config& config,
             const std::string& topic_name);
 
-    virtual ~HelloWorldSubscriberWaitset();
+    ~WaitsetSubscriberApp();
 
     //! Run subscriber
-    void run();
+    virtual void run();
 
     //! Trigger the end of execution
-    void stop();
+    virtual void stop();
 
 private:
 
     //! Return the current state of execution
-    bool is_stopped();
+    virtual bool is_stopped();
 
     HelloWorld hello_;
 
@@ -77,4 +83,9 @@ private:
     GuardCondition terminate_condition_;
 };
 
-#endif /* _FASTDDS_HELLO_WORLD_SUBSCRIBER_WAITSET_HPP_ */
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
+
+#endif /* _FASTDDS_HELLO_WORLD_WAITSET_SUBSCRIBER_APP_HPP_ */

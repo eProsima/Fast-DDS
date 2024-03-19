@@ -1,0 +1,61 @@
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file Application.hpp
+ *
+ */
+
+#ifndef _FASTDDS_HELLO_WORLD_APPLICATION_HPP_
+#define _FASTDDS_HELLO_WORLD_APPLICATION_HPP_
+
+#include <atomic>
+
+#include "CLIParser.hpp"
+
+namespace eprosima {
+namespace fastdds {
+namespace examples {
+namespace hello_world {
+
+class Application
+{
+public:
+
+    Application();
+
+    //! Run entity (publisher or subscriber)
+    virtual void run();
+
+    //! Trigger the end of execution
+    virtual void stop();
+
+    //! Factory method to create a publisher or subscriber
+    static std::shared_ptr<Application> make_app(
+            const CLIParser::hello_world_config& config,
+            const std::string& topic_name);
+
+private:
+
+    //! Return the current state of execution
+    virtual bool is_stopped();
+
+};
+
+} // namespace hello_world
+} // namespace examples
+} // namespace fastdds
+} // namespace eprosima
+
+#endif /* _FASTDDS_HELLO_WORLD_APPLICATION_HPP_ */
