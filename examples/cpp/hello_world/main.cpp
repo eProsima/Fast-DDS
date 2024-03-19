@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file HelloWorld_main.cpp
+ * @file main.cpp
  *
  */
 
