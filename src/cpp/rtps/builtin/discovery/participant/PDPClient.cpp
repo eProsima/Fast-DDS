@@ -883,7 +883,7 @@ void PDPClient::update_remote_servers_list()
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
             if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
-                !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
+                    !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
             {
                 if (set_logicals)
                 {
