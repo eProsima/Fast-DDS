@@ -2972,7 +2972,8 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         true,
         network_factory(),
         has_shm_transport(),
-        false);
+        false,
+        c_VendorId_eProsima);
 
     return ret && (data.m_guid.entityId == c_EntityId_RTPSParticipant);
 }
@@ -2992,7 +2993,8 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         &serialized_msg,
         network_factory(),
         has_shm_transport(),
-        false);
+        false,
+        c_VendorId_eProsima);
 
     return ret && (data.guid().entityId.is_writer());
 }
@@ -3012,7 +3014,8 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         &serialized_msg,
         network_factory(),
         has_shm_transport(),
-        false);
+        false,
+        c_VendorId_eProsima);
 
     return ret && (data.guid().entityId.is_reader());
 }
