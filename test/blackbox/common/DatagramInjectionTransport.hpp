@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
 #include <mutex>
 #include <set>
 
 #include <fastdds/rtps/transport/ChainingTransport.h>
 #include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
 #include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.h>
 
 using SenderResource = eprosima::fastrtps::rtps::SenderResource;
 
@@ -110,6 +112,26 @@ public:
         bool ret_val = ChainingTransport::OpenOutputChannel(send_resource_list, loc);
         parent_->update_send_resource_list(send_resource_list);
         return ret_val;
+    }
+
+    static void deliver_datagram_from_file(
+            const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+            const char* filename)
+    {
+        std::basic_ifstream<char> file(filename, std::ios::binary | std::ios::in);
+
+        file.seekg(0, file.end);
+        size_t file_size = static_cast<size_t>(file.tellg());
+        file.seekg(0, file.beg);
+
+        std::vector<uint8_t> buf(file_size);
+        file.read(reinterpret_cast<char*>(buf.data()), file_size);
+
+        eprosima::fastdds::rtps::Locator loc;
+        for (const auto& rec : receivers)
+        {
+            rec->OnDataReceived(buf.data(), static_cast<uint32_t>(file_size), loc, loc);
+        }
     }
 
 private:
