@@ -468,11 +468,17 @@ bool ParticipantProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
+                        VendorId_t local_vendor_id = source_vendor_id;
+                        if (c_VendorId_Unknown == local_vendor_id)
+                        {
+                            local_vendor_id = ((c_VendorId_Unknown == m_VendorId) ? c_VendorId_eProsima : m_VendorId);
+                        }
+
                         // Ignore custom PID when coming from other vendors
-                        if (c_VendorId_eProsima != source_vendor_id)
+                        if (c_VendorId_eProsima != local_vendor_id)
                         {
                             EPROSIMA_LOG_INFO(RTPS_PROXY_DATA,
-                                    "Ignoring custom PID" << pid << " from vendor " << source_vendor_id);
+                                    "Ignoring custom PID" << pid << " from vendor " << local_vendor_id);
                             return true;
                         }
 
