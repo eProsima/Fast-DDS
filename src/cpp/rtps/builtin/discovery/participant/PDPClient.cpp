@@ -445,17 +445,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // TCP Clients need to handle logical ports
-        bool set_logicals = false;
-        for (auto& transportDescriptor : pattr.userTransports)
-        {
-            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-            if (pT)
-            {
-                set_logicals = true;
-                break;
-            }
-        }
-        if (set_logicals)
+        if (handle_logical_ports_required())
         {
             for (eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
             {
@@ -869,16 +859,7 @@ void PDPClient::update_remote_servers_list()
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // TCP Clients need to handle logical ports
-        bool set_logicals = false;
-        const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
-        for (auto& transportDescriptor : pattr.userTransports)
-        {
-            TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-            if (pT)
-            {
-                set_logicals = true;
-            }
-        }
+        bool set_logicals = handle_logical_ports_required();
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
@@ -1467,6 +1448,23 @@ bool PDPClient::remove_remote_participant(
     update_remote_servers_list();
 
     return false;
+}
+
+bool PDPClient::handle_logical_ports_required()
+{
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    bool set_logicals = false;
+    for (auto& transportDescriptor : pattr.userTransports)
+    {
+        TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+        if (pT)
+        {
+            set_logicals = true;
+            break;
+        }
+    }
+
+    return set_logicals;
 }
 
 } /* namespace rtps */
