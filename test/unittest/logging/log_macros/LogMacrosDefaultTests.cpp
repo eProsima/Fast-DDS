@@ -48,15 +48,20 @@ TEST_F(LogMacrosTests, default_macros_test)
 # endif  // Visual Studio specific behavior
 #endif  // Check default macro values
 
-#if !HAVE_LOG_NO_INFO && \
+    // Result depends on the log configuration
+#if !HAVE_LOG_NO_INFO &&  \
+    (defined(FASTDDS_ENFORCE_LOG_INFO) || \
     ((defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) || \
-    !defined(NDEBUG)))
-    static constexpr unsigned int expected_result = 3;
+    !defined(NDEBUG))))
+    constexpr unsigned int expected_result = 3;
 #else
-    static constexpr unsigned int expected_result = 2;
+    constexpr unsigned int expected_result = 2;
 #endif // debug macros check
 
-    auto consumedEntries = HELPER_WaitForEntries(expected_result);
+    // Warning and error should always be logged.
+    // Info might be logged depending on the log configuration.
+    // We always wait for 3 entries, though not all of them might be present.
+    auto consumedEntries = HELPER_WaitForEntries(3u);
     ASSERT_EQ(expected_result, consumedEntries.size());
 }
 
