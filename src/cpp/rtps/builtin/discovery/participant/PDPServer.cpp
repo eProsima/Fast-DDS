@@ -34,6 +34,7 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/History.h>
+#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -515,10 +516,23 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
+        bool set_logicals = handle_logical_ports_required();
+
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
+            if(set_logicals)
+            {
+                LocatorSelectorEntry entry(pattr.allocation.locators.max_unicast_locators, pattr.allocation.locators.max_multicast_locators);
+                entry.is_initial_peer_or_ds = true;
+                entry.fill_multicast(it.metatrafficMulticastLocatorList);
+                entry.fill_unicast(it.metatrafficUnicastLocatorList);
+                mp_RTPSParticipant->createSenderResources(entry);
+            }
+            else
+            {
+                mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
+                mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
+            }
 
             if (!secure)
             {
@@ -1186,8 +1200,24 @@ void PDPServer::update_remote_servers_list()
 
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
+    bool set_logicals = handle_logical_ports_required();
+    const RemoteLocatorsAllocationAttributes& rlaa = mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
+
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
+        if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
+                !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
+        {
+            if(set_logicals)
+            {
+                LocatorSelectorEntry entry(rlaa.max_unicast_locators, rlaa.max_multicast_locators);
+                entry.is_initial_peer_or_ds = true;
+                entry.fill_multicast(it.metatrafficMulticastLocatorList);
+                entry.fill_unicast(it.metatrafficUnicastLocatorList);
+                mp_RTPSParticipant->createSenderResources(entry);
+            }
+        }
+
         if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
         {
             match_pdp_writer_nts_(it);
@@ -1203,6 +1233,9 @@ void PDPServer::update_remote_servers_list()
     {
         discovery_db_.add_server(server.guidPrefix);
     }
+
+    // Need to reactivate the server thread to send the DATA(p) to the new servers
+    awake_server_thread();
 }
 
 bool PDPServer::process_writers_acknowledgements()
@@ -2052,6 +2085,23 @@ void PDPServer::release_change_from_writer(
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     endpoints->writer.writer_->release_change(change);
+}
+
+bool PDPServer::handle_logical_ports_required()
+{
+    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
+    bool set_logicals = false;
+    for (auto& transportDescriptor : pattr.userTransports)
+    {
+        TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+        if (pT)
+        {
+            set_logicals = true;
+            break;
+        }
+    }
+
+    return set_logicals;
 }
 
 } // namespace rtps
