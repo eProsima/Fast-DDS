@@ -1485,9 +1485,12 @@ void RTPSParticipantImpl::update_attributes(
                 local_participant_proxy_data->default_locators.add_unicast_locator(locator);
             }
 
-            createSenderResources(m_att.builtin.metatrafficMulticastLocatorList);
-            createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
-            createSenderResources(m_att.defaultUnicastLocatorList);
+            if (local_interfaces_changed)
+            {
+                createSenderResources(m_att.builtin.metatrafficMulticastLocatorList);
+                createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
+                createSenderResources(m_att.defaultUnicastLocatorList);
+            }
             if (!modified_locators.empty())
             {
                 createSenderResources(modified_locators);
