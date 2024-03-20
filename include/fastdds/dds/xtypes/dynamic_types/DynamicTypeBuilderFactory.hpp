@@ -146,6 +146,14 @@ public:
             uint32_t bound) = 0;
 
     /*!
+     * Creates a new @ref DynamicTypeBuilder reference based on the given IDL string.
+     * @param[in] idl representing an IDL string to be parsed.
+     * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
+     */
+    RTPS_DllAPI virtual traits<DynamicTypeBuilder>::ref_type create_type_w_idl(
+            const std::string& idl) = 0;
+
+    /*!
      * Creates a new @ref DynamicTypeBuilder reference by parsing the type description at the given URL.
      * @remark Not implemented yet.
      * @param[in] URL pointing to the XML description.
