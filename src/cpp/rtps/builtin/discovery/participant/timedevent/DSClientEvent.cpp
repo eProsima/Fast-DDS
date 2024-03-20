@@ -90,8 +90,15 @@ bool DSClientEvent::event()
         // This marks to announceParticipantState that the announcement is only meant for missing servers,
         // so it is not a periodic announcement
         mp_PDP->_serverPing = true;
+<<<<<<< HEAD
         mp_PDP->announceParticipantState(false);
         logInfo(CLIENT_PDP_THREAD, "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");
+=======
+        WriteParams __wp = WriteParams::write_params_default();
+        mp_PDP->announceParticipantState(false, false, __wp);
+        EPROSIMA_LOG_INFO(CLIENT_PDP_THREAD,
+                "Client " << mp_PDP->getRTPSParticipant()->getGuid() << " PDP announcement");
+>>>>>>> 63cc242b2 (Fix hidden overloaded virtual methods (#4516))
     }
 
     return restart;

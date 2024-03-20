@@ -191,6 +191,19 @@ public:
     }
 
 #endif // if HAVE_SECURITY
+<<<<<<< HEAD
+=======
+
+    using topic_type_names = std::pair<std::string, std::string>;
+
+    std::future<topic_type_names> remote_names_;
+
+private:
+
+    using DomainParticipantListener::on_participant_discovery;
+
+    std::promise<topic_type_names> is_worth_a_type_;
+>>>>>>> 63cc242b2 (Fix hidden overloaded virtual methods (#4516))
 };
 
 class SubListener : public SubscriberListener

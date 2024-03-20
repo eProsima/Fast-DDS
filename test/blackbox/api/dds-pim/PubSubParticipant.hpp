@@ -192,6 +192,8 @@ private:
 
     private:
 
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
+
         ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
         PubSubParticipant* participant_;

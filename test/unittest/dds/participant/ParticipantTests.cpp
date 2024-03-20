@@ -208,6 +208,9 @@ public:
         return true;
     }
 
+private:
+
+    using TopicDataType::is_plain;
 };
 
 class BarType
@@ -2206,6 +2209,68 @@ TEST(ParticipantTests, SetListener)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+<<<<<<< HEAD
+=======
+class CustomListener2 : public DomainParticipantListener
+{
+public:
+
+    using DomainParticipantListener::on_participant_discovery;
+
+    CustomListener2()
+        : future_(promise_.get_future())
+    {
+    }
+
+    std::future<void>& get_future()
+    {
+        return future_;
+    }
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant*,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&&) override
+    {
+        try
+        {
+            promise_.set_value();
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
+        catch (std::future_error&)
+        {
+            // do nothing
+        }
+    }
+
+private:
+
+    std::promise<void> promise_;
+    std::future<void> future_;
+};
+
+TEST(ParticipantTests, FailingSetListener)
+{
+    CustomListener2 listener;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT, &listener);
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(participant->get_status_mask(), StatusMask::all());
+
+    DomainParticipant* participant_to_discover =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant_to_discover, nullptr);
+
+    // Wait for callback trigger
+    listener.get_future().wait();
+
+    ASSERT_EQ(participant->set_listener(nullptr, std::chrono::seconds(1)), ReturnCode_t::RETCODE_ERROR);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant_to_discover), ReturnCode_t::RETCODE_OK);
+}
+
+>>>>>>> 63cc242b2 (Fix hidden overloaded virtual methods (#4516))
 /*
  * This test checks the negative cases of the check_qos() function.
  * 1. User data is set to be a 5-element size octet vector.

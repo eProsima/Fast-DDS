@@ -48,7 +48,16 @@ public:
                 ++n_matched;
         }
         int n_matched;
+<<<<<<< HEAD:examples/C++/RTPSTest_registered/TestWriterRegistered.h
     }m_listener;
+=======
+
+    private:
+
+        using eprosima::fastrtps::rtps::WriterListener::onWriterMatched;
+    }
+    m_listener;
+>>>>>>> 63cc242b2 (Fix hidden overloaded virtual methods (#4516)):examples/cpp/rtps/Registered/TestWriterRegistered.h
 };
 
 #endif /* TESTWRITER_H_ */

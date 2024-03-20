@@ -52,7 +52,16 @@ public:
         };
         uint32_t n_received;
         uint32_t n_matched;
+<<<<<<< HEAD:examples/C++/RTPSTest_persistent/TestReaderPersistent.h
     }m_listener;
+=======
+
+    private:
+
+        using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
+    }
+    m_listener;
+>>>>>>> 63cc242b2 (Fix hidden overloaded virtual methods (#4516)):examples/cpp/rtps/Persistent/TestReaderPersistent.h
 };
 
 #endif /* TESTREADERPERSISTENT_H_ */

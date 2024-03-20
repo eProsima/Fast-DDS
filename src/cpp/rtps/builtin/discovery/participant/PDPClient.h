@@ -109,8 +109,8 @@ public:
      */
     void announceParticipantState(
             bool new_change,
-            bool dispose = false,
-            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+            bool dispose,
+            WriteParams& wparams) override;
 
     /**
      * These methods wouldn't be needed under perfect server operation
