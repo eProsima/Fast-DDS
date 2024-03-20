@@ -21,8 +21,6 @@
 #include <sstream>
 #include <thread>
 
-#include <asio.hpp>
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
