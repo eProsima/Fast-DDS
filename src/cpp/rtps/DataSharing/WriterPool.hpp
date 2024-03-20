@@ -353,6 +353,8 @@ public:
 
 private:
 
+    using DataSharingPayloadPool::init_shared_memory;
+
     octet* payloads_pool_;          //< Shared pool of payloads
 
     uint32_t max_data_size_;        //< Maximum size of the serialized payload data

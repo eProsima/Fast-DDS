@@ -243,6 +243,10 @@ private:
                 const LivelinessLostStatus& status) override;
 
         PublisherImpl* mp_publisherImpl;
+
+    private:
+
+        using rtps::WriterListener::onWriterMatched;
     }
     m_writerListener;
 

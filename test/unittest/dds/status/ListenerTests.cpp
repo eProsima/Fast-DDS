@@ -531,6 +531,10 @@ public:
         return true;
     }
 
+private:
+
+    using TopicDataType::getSerializedSizeProvider;
+    using TopicDataType::serialize;
 };
 
 class UserListeners : public ::testing::Test

@@ -121,6 +121,10 @@ public:
         return true;
     }
 
+private:
+
+    using TopicDataType::getSerializedSizeProvider;
+    using TopicDataType::serialize;
 };
 
 TEST(TopicTests, ChangeTopicQos)

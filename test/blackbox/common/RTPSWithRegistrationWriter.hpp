@@ -96,6 +96,8 @@ private:
 
     private:
 
+        using eprosima::fastrtps::rtps::WriterListener::onWriterMatched;
+
         Listener& operator =(
                 const Listener&) = delete;
 

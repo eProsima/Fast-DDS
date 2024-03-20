@@ -378,6 +378,10 @@ protected:
                 const fastrtps::rtps::ReaderProxyData* reader_info) override;
 
         DataWriterImpl* data_writer_;
+
+    private:
+
+        using fastrtps::rtps::WriterListener::onWriterMatched;
     }
     writer_listener_;
 
