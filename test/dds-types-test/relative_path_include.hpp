@@ -24,7 +24,7 @@
 
 #include <cstdint>
 #include <utility>
-#include "../IDL/helpers/basic_inner_types.hpp"
+#include "helpers/basic_inner_types.hpp"
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -79,7 +79,7 @@ public:
     eProsima_user_DllExport RelativePathIncludeStruct(
             const RelativePathIncludeStruct& x)
     {
-                    m_value = x.m_value;
+        m_value = x.m_value;
 
     }
 
@@ -101,7 +101,7 @@ public:
             const RelativePathIncludeStruct& x)
     {
 
-                    m_value = x.m_value;
+        m_value = x.m_value;
 
         return *this;
     }
@@ -165,8 +165,6 @@ public:
     {
         return m_value;
     }
-
-
 
 private:
 

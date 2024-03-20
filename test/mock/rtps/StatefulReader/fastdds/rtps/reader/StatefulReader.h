@@ -54,13 +54,17 @@ public:
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD1(matched_writer_add, bool(const WriterProxyData&));
 
+    MOCK_METHOD1(matched_writer_remove, bool(const GUID_t&));
+
     MOCK_METHOD2(matched_writer_remove, bool(const GUID_t&, bool));
 
     MOCK_METHOD1(liveliness_expired, bool(const GUID_t&));
 
     MOCK_METHOD2(change_received, bool(CacheChange_t* a_change, WriterProxy* prox));
 
-    MOCK_METHOD1 (matched_writer_is_matched, bool(const GUID_t& writer_guid));
+    MOCK_METHOD3(change_received, bool(CacheChange_t* a_change, WriterProxy* prox, size_t));
+
+    MOCK_METHOD1(matched_writer_is_matched, bool(const GUID_t& writer_guid));
     // *INDENT-ON*
 
     ReaderTimes& getTimes()

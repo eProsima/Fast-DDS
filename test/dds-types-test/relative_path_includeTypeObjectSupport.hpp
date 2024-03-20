@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_RELATIVE_PATH_INCLUDE_TYPE_OBJECT_SUPPORT_HPP_
 #define _FAST_DDS_GENERATED_RELATIVE_PATH_INCLUDE_TYPE_OBJECT_SUPPORT_HPP_
 
-#include "../IDL/helpers/basic_inner_typesTypeObjectSupport.hpp"
+#include "helpers/basic_inner_typesTypeObjectSupport.hpp"
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

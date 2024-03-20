@@ -31,7 +31,7 @@
 
 #include "relative_path_include.hpp"
 
-#include "../IDL/helpers/basic_inner_typesPubSubTypes.h"
+#include "helpers/basic_inner_typesPubSubTypes.h"
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 2)
 #error \

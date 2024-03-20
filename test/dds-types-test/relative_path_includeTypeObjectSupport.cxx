@@ -35,7 +35,7 @@
 
 #include "relative_path_include.hpp"
 
-#include "../IDL/helpers/basic_inner_types.hpp"
+#include "helpers/basic_inner_types.hpp"
 
 using namespace eprosima::fastdds::dds::xtypes;
 

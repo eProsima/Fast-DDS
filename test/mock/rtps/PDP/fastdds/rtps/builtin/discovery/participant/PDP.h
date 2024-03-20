@@ -21,10 +21,14 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/ProxyPool.hpp>
 
 #ifdef FASTDDS_STATISTICS
