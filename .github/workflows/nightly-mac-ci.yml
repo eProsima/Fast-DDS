@@ -34,20 +34,6 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.13.x'
 
-  nightly-mac-ci-2_12_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-mac-ci.yml@2.12.x
-    with:
-      label: 'nightly-sec-${{ matrix.security }}-mac-ci-2.12.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.12.x'
-
   nightly-mac-ci-2_10_x:
     strategy:
       fail-fast: false
