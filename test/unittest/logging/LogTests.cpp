@@ -533,13 +533,12 @@ TEST_F(LogTests, stdouterr_consumer_stream)
 std::vector<Log::Entry> LogTests::HELPER_WaitForEntries(
         uint32_t amount)
 {
-    size_t entries = 0;
     for (uint32_t i = 0; i != AsyncTries; i++)
     {
-        entries = mockConsumer->ConsumedEntries().size();
-        if (entries == amount)
+        auto entries = mockConsumer->ConsumedEntries();
+        if (entries.size() == amount)
         {
-            break;
+            return entries;
         }
         this_thread::sleep_for(chrono::milliseconds(AsyncWaitMs));
     }
