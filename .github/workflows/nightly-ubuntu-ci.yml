@@ -40,23 +40,6 @@ jobs:
       ctest-args: "-LE xfail"
       fastdds-branch: '2.13.x'
 
-  nightly-ubuntu-ci-2_12_x:
-    strategy:
-      fail-fast: false
-      matrix:
-        os-image:
-          - 'ubuntu-22.04'
-        security:
-          - 'ON'
-          - 'OFF'
-    uses: eProsima/Fast-DDS/.github/workflows/reusable-ubuntu-ci.yml@2.12.x
-    with:
-      os-image: ${{ matrix.os-image }}
-      label: '${{ matrix.os-image }}-nightly-sec-${{ matrix.security }}-ubuntu-ci-2.12.x'
-      cmake-args: "-DSECURITY=${{ matrix.security }}"
-      ctest-args: "-LE xfail"
-      fastdds-branch: '2.12.x'
-
   nightly-ubuntu-ci-2_10_x:
     strategy:
       fail-fast: false
