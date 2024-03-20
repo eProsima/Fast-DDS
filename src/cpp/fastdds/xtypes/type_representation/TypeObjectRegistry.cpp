@@ -600,15 +600,15 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(type_object.complete().sequence_type(),
                                     type_dependencies);
-                    //TODO Collection nnotations are not currently supported, so their dependecies are ignored.
+                    //TODO Collection annotations are not currently supported, so their dependencies are ignored.
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(type_object.complete().array_type(), type_dependencies);
-                    //TODO Collection nnotations are not currently supported, so their dependecies are ignored.
+                    //TODO Collection annotations are not currently supported, so their dependencies are ignored.
                     break;
                 case TK_MAP:
                     ret_code = get_map_dependencies(type_object.complete().map_type(), type_dependencies);
-                    //TODO Collection nnotations are not currently supported, so their dependecies are ignored.
+                    //TODO Collection annotations are not currently supported, so their dependencies are ignored.
                     break;
                 case TK_BITSET:
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
