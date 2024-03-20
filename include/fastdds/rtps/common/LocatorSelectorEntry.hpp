@@ -77,6 +77,7 @@ struct LocatorSelectorEntry
         , state(max_unicast_locators, max_multicast_locators)
         , enabled(false)
         , transport_should_process(false)
+        , is_initial_peer_or_ds(false)
     {
     }
 
@@ -100,6 +101,24 @@ struct LocatorSelectorEntry
         state.multicast.clear();
     }
 
+    void fill_unicast(const LocatorList_t& locators)
+    {
+        for (const Locator_t& locator : locators)
+        {
+            state.unicast.push_back(unicast.size());
+            unicast.push_back(locator);
+        }
+    }
+
+    void fill_multicast(const LocatorList_t& locators)
+    {
+        for (const Locator_t& locator : locators)
+        {
+            state.multicast.push_back(multicast.size());
+            multicast.push_back(locator);
+        }
+    }
+
     //! GUID of the remote entity.
     GUID_t remote_guid;
     //! List of unicast locators to send data to the remote entity.
@@ -112,6 +131,8 @@ struct LocatorSelectorEntry
     bool enabled;
     //! A temporary value for each transport to help optimizing some use cases.
     bool transport_should_process;
+    //! True if the locator is an initial peer or DS connection. False otherwise.
+    bool is_initial_peer_or_ds;
 };
 
 } /* namespace rtps */
