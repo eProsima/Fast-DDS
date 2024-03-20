@@ -769,10 +769,7 @@ bool TCPTransportInterface::OpenOutputChannel(
     // At this point, if there is no SenderResource to reuse, this is the first call to OpenOutputChannel for this locator.
     // Need to check if a channel already exists for this locator.
 
-    EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel (physical: " << IPLocator::getPhysicalPort(
-                locator) << "; logical: "
-                                                                      << IPLocator::getLogicalPort(
-                locator) << ") @ " << IPLocator::to_string(locator));
+    EPROSIMA_LOG_INFO(RTCP, "Called to OpenOutputChannel @ " << IPLocator::to_string(locator));
 
     auto channel_resource = channel_resources_.find(physical_locator);
 
@@ -835,9 +832,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
-            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
-                    << IPLocator::getPhysicalPort(locator) << "; logical: "
-                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
 
             // Create a TCP_CONNECT_TYPE channel
             std::shared_ptr<TCPChannelResource> channel(
@@ -860,14 +855,136 @@ bool TCPTransportInterface::OpenOutputChannel(
         {
             // Server side LARGE_DATA
             // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
-            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] (physical: "
-                    << IPLocator::getPhysicalPort(locator) << "; logical: "
-                    << IPLocator::getLogicalPort(locator) << ") @ " << IPLocator::to_string(locator));
+            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] @ " << IPLocator::to_string(locator));
             std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
             channel_pending_logical_ports_[physical_locator].insert(logical_port);
         }
     }
 
+    statistics_info_.add_entry(locator);
+    send_resource_list.emplace_back(
+        static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
+
+    return true;
+}
+
+bool TCPTransportInterface::OpenOutputChannels(
+        SendResourceList& send_resource_list,
+        const LocatorSelectorEntry& locator_selector_entry)
+{
+    bool success = false;
+    if (locator_selector_entry.is_initial_peer_or_ds)
+    {
+        for (size_t i = 0; i < locator_selector_entry.state.multicast.size(); ++i)
+        {
+            // TODO Carlos: is multicast needed when is initial_peer_or_ds? Or is always zero?
+            size_t index = locator_selector_entry.state.multicast[i];
+            success |= CreateInitialConnect(send_resource_list, locator_selector_entry.multicast[index]);
+        }
+        for (size_t i = 0; i < locator_selector_entry.state.unicast.size(); ++i)
+        {
+            size_t index = locator_selector_entry.state.unicast[i];
+            success |= CreateInitialConnect(send_resource_list, locator_selector_entry.unicast[index]);
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < locator_selector_entry.state.multicast.size(); ++i)
+        {
+            size_t index = locator_selector_entry.state.multicast[i];
+            success |= OpenOutputChannel(send_resource_list, locator_selector_entry.multicast[index]);
+        }
+        for (size_t i = 0; i < locator_selector_entry.state.unicast.size(); ++i)
+        {
+            size_t index = locator_selector_entry.state.unicast[i];
+            success |= OpenOutputChannel(send_resource_list, locator_selector_entry.unicast[index]);
+        }
+    }
+    return success;
+}
+
+bool TCPTransportInterface::CreateInitialConnect(
+            SendResourceList& send_resource_list,
+            const Locator& locator)
+{
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+
+    uint16_t logical_port = IPLocator::getLogicalPort(locator);
+    if (0 == logical_port)
+    {
+        return false;
+    }
+
+    Locator physical_locator = IPLocator::toPhysicalLocator(locator);
+
+    std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
+
+    // TODO Carlos: verify if it is needed to check the SenderResource
+
+    // We try to find a SenderResource that has this locator.
+    // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
+    // already reuses a SenderResource.
+    for (auto& sender_resource : send_resource_list)
+    {
+        TCPSenderResource* tcp_sender_resource = TCPSenderResource::cast(*this, sender_resource.get());
+
+        if (tcp_sender_resource && (physical_locator == tcp_sender_resource->locator() ||
+                (IPLocator::hasWan(locator) &&
+                IPLocator::WanToLanLocator(physical_locator) ==
+                tcp_sender_resource->locator())))
+        {
+            // Add logical port to channel if it's not there yet
+            auto channel_resource = channel_resources_.find(physical_locator);
+
+            // Maybe as WAN?
+            if (channel_resource == channel_resources_.end() && IPLocator::hasWan(locator))
+            {
+                Locator wan_locator = IPLocator::WanToLanLocator(locator);
+                channel_resource = channel_resources_.find(IPLocator::toPhysicalLocator(wan_locator));
+            }
+
+            if (channel_resource != channel_resources_.end())
+            {
+                channel_resource->second->add_logical_port(logical_port, rtcp_message_manager_.get());
+            }
+            else
+            {
+                std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
+                channel_pending_logical_ports_[physical_locator].insert(logical_port);
+            }
+
+            statistics_info_.add_entry(locator);
+            return true;
+        }
+    }
+
+    // At this point, if there is no SenderResource to reuse, this is the first try to open a channel for this locator.
+    // There is no need to check if a channel already exists for this locator because this method is called only when
+    // a new connection is required.
+
+    EPROSIMA_LOG_INFO(RTCP, "Called to CreateInitialConnect @ " << IPLocator::to_string(locator));
+
+    // Create a TCP_CONNECT_TYPE channel
+    std::shared_ptr<TCPChannelResource> channel(
+#if TLS_FOUND
+        (configuration()->apply_security) ?
+        static_cast<TCPChannelResource*>(
+            new TCPChannelResourceSecure(this, io_service_, ssl_context_,
+            physical_locator, configuration()->maxMessageSize)) :
+#endif // if TLS_FOUND
+        static_cast<TCPChannelResource*>(
+            new TCPChannelResourceBasic(this, io_service_, physical_locator,
+            configuration()->maxMessageSize))
+        );
+
+    EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] @ " << IPLocator::to_string(locator));
+
+    channel_resources_[physical_locator] = channel;
+    channel->connect(channel_resources_[physical_locator]);
+    channel->add_logical_port(logical_port, rtcp_message_manager_.get());
     statistics_info_.add_entry(locator);
     send_resource_list.emplace_back(
         static_cast<SenderResource*>(new TCPSenderResource(*this, physical_locator)));
