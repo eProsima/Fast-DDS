@@ -112,6 +112,8 @@ protected:
     std::map<Locator, std::set<uint16_t>> channel_pending_logical_ports_;
     std::mutex channel_pending_logical_ports_mutex_;
 
+    uint16_t listening_port_;
+
     TCPTransportInterface(
             int32_t transport_kind);
 

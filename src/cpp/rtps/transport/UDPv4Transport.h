@@ -87,7 +87,6 @@ public:
 protected:
 
     UDPv4TransportDescriptor configuration_;
-    std::vector<asio::ip::address_v4> interface_whitelist_;
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     UDPv4Transport();
@@ -114,33 +113,6 @@ protected:
             const std::string& sIp,
             uint16_t port,
             bool is_multicast) override;
-
-    virtual void fill_interface_whitelist_() override;
-
-    //! Checks if the interfaces white list is empty.
-    bool is_interface_whitelist_empty() const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const std::string& iface) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const Locator& loc) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const asio::ip::address_v4& ip) const;
-
-    /**
-     * Method to get a list of interfaces to bind the socket associated to the given locator.
-     * @return Vector of interfaces in string format.
-     */
-    std::vector<std::string> get_binding_interfaces_list() override;
-
-    //! Checks for whether locator is allowed.
-    bool is_locator_allowed(
-            const Locator&) const override;
 
     void set_receive_buffer_size(
             uint32_t size) override;

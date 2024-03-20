@@ -57,28 +57,6 @@ TCPv4Transport::TCPv4Transport(
     : TCPTransportInterface(LOCATOR_KIND_TCPv4, descriptor)
     , configuration_(descriptor)
 {
-    fill_interface_whitelist_();
-
-    // TODO: move to TCPTransportInterface if able to move interface_whitelist_ to SocketInterface
-    if (!configuration_.listening_ports.empty())
-    {
-        if (configuration_.listening_ports.size() > 1)
-        {
-            EPROSIMA_LOG_ERROR(TRANSPORT_TCPV4,
-                    "Only one listening port is allowed for TCP transport. Only the first port will be used.");
-            configuration_.listening_ports.erase(
-                configuration_.listening_ports.begin() + 1, configuration_.listening_ports.end());
-        }
-        Locator locator(LOCATOR_KIND_TCPv4, configuration_.listening_ports.front());
-        configuration_.listening_ports.front() = create_acceptor_socket(locator);
-    }
-
-#if !TLS_FOUND
-    if (descriptor.apply_security)
-    {
-        EPROSIMA_LOG_ERROR(RTCP_TLSV4, "Trying to use TCP Transport with TLS but TLS was not found.");
-    }
-#endif // if !TLS_FOUND
 }
 
 TCPv4Transport::TCPv4Transport()
@@ -156,89 +134,6 @@ uint16_t TCPv4Transport::GetLogicalPortRange() const
 uint16_t TCPv4Transport::GetMaxLogicalPort() const
 {
     return configuration_.max_logical_port;
-}
-
-void TCPv4Transport::fill_interface_whitelist_()
-{
-    if ((!configuration_.interfaceWhiteList.empty() || !configuration_.interface_allowlist.empty() ||
-            !configuration_.interface_blocklist.empty()) && allowed_interfaces_.empty())
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCPV4, "All whitelist interfaces were filtered out");
-        interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
-    }
-    else
-    {
-        for (const auto& iface : allowed_interfaces_)
-        {
-            interface_whitelist_.emplace_back(ip::address_v4::from_string(iface.ip));
-        }
-    }
-}
-
-bool TCPv4Transport::is_interface_whitelist_empty() const
-{
-    return interface_whitelist_.empty();
-}
-
-bool TCPv4Transport::is_interface_allowed(
-        const std::string& iface) const
-{
-    return is_interface_allowed(asio::ip::address_v4::from_string(iface));
-}
-
-bool TCPv4Transport::is_interface_allowed(
-        const Locator& loc) const
-{
-    asio::ip::address_v4 ip = asio::ip::address_v4::from_string(IPLocator::toIPv4string(loc));
-    return is_interface_allowed(ip);
-}
-
-bool TCPv4Transport::is_interface_allowed(
-        const ip::address_v4& ip) const
-{
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-
-    if (ip == ip::address_v4::any())
-    {
-        return true;
-    }
-
-    return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
-}
-
-std::vector<std::string> TCPv4Transport::get_binding_interfaces_list()
-{
-    std::vector<std::string> vOutputInterfaces;
-    if (is_interface_whitelist_empty())
-    {
-        vOutputInterfaces.push_back(s_IPv4AddressAny);
-    }
-    else
-    {
-        for (auto& ip : interface_whitelist_)
-        {
-            vOutputInterfaces.push_back(ip.to_string());
-        }
-    }
-
-    return vOutputInterfaces;
-}
-
-bool TCPv4Transport::is_locator_allowed(
-        const Locator& locator) const
-{
-    if (!IsLocatorSupported(locator))
-    {
-        return false;
-    }
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-    return is_interface_allowed(IPLocator::toIPv4string(locator));
 }
 
 ip::tcp::endpoint TCPv4Transport::generate_endpoint(

@@ -60,28 +60,6 @@ TCPv6Transport::TCPv6Transport(
     : TCPTransportInterface(LOCATOR_KIND_TCPv6, descriptor)
     , configuration_(descriptor)
 {
-    fill_interface_whitelist_();
-
-    // TODO: move to TCPTransportInterface if able to move interface_whitelist_ to SocketInterface
-    if (!configuration_.listening_ports.empty())
-    {
-        if (configuration_.listening_ports.size() > 1)
-        {
-            EPROSIMA_LOG_ERROR(TRANSPORT_TCPV6,
-                    "Only one listening port is allowed for TCP transport. Only the first port will be used.");
-            configuration_.listening_ports.erase(
-                configuration_.listening_ports.begin() + 1, configuration_.listening_ports.end());
-        }
-        Locator locator(LOCATOR_KIND_TCPv6, configuration_.listening_ports.front());
-        configuration_.listening_ports.front() = create_acceptor_socket(locator);
-    }
-
-#if !TLS_FOUND
-    if (descriptor.apply_security)
-    {
-        EPROSIMA_LOG_ERROR(RTCP_TLSV6, "Trying to use TCP Transport with TLS but TLS was not found.");
-    }
-#endif // if !TLS_FOUND
 }
 
 TCPv6Transport::TCPv6Transport()
@@ -144,97 +122,6 @@ uint16_t TCPv6Transport::GetLogicalPortIncrement() const
 uint16_t TCPv6Transport::GetMaxLogicalPort() const
 {
     return configuration_.max_logical_port;
-}
-
-void TCPv6Transport::fill_interface_whitelist_()
-{
-    if ((!configuration_.interfaceWhiteList.empty() || !configuration_.interface_allowlist.empty() ||
-            !configuration_.interface_blocklist.empty()) && allowed_interfaces_.empty())
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_TCPV6, "All whitelist interfaces were filtered out");
-        interface_whitelist_.emplace_back(ip::address_v6::from_string("2001:db8::"));
-    }
-    else
-    {
-        for (const auto& iface : allowed_interfaces_)
-        {
-            interface_whitelist_.emplace_back(ip::address_v6::from_string(iface.ip));
-        }
-    }
-}
-
-bool TCPv6Transport::is_interface_whitelist_empty() const
-{
-    return interface_whitelist_.empty();
-}
-
-bool TCPv6Transport::is_interface_allowed(
-        const std::string& iface) const
-{
-    return is_interface_allowed(asio::ip::address_v6::from_string(iface));
-}
-
-bool TCPv6Transport::is_interface_allowed(
-        const Locator& loc) const
-{
-    asio::ip::address_v6 ip = asio::ip::address_v6::from_string(IPLocator::toIPv6string(loc));
-    return is_interface_allowed(ip);
-}
-
-bool TCPv6Transport::is_interface_allowed(
-        const ip::address_v6& ip) const
-{
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-
-    if (ip == ip::address_v6::any())
-    {
-        return true;
-    }
-
-    for (auto& whitelist : interface_whitelist_)
-    {
-        if (compare_ips(whitelist.to_string(), ip.to_string()))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-std::vector<std::string> TCPv6Transport::get_binding_interfaces_list()
-{
-    std::vector<std::string> vOutputInterfaces;
-    if (is_interface_whitelist_empty())
-    {
-        vOutputInterfaces.push_back(s_IPv6AddressAny);
-    }
-    else
-    {
-        for (auto& ip : interface_whitelist_)
-        {
-            vOutputInterfaces.push_back(ip.to_string());
-        }
-    }
-
-    return vOutputInterfaces;
-}
-
-bool TCPv6Transport::is_locator_allowed(
-        const Locator& locator) const
-{
-    if (!IsLocatorSupported(locator))
-    {
-        return false;
-    }
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-    return is_interface_allowed(IPLocator::toIPv6string(locator));
 }
 
 ip::tcp::endpoint TCPv6Transport::generate_endpoint(

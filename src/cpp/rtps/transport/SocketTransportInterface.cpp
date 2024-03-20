@@ -161,7 +161,11 @@ SocketTransportInterface::SocketTransportInterface(
             }
         }
 
-        
+        if (allowed_interfaces_.empty())
+        {
+            EPROSIMA_LOG_ERROR(TRANSPORT_SOCKET, "All whitelist interfaces were filtered out");
+            allowed_interfaces_.emplace_back("dummy_iface");
+        }
     }
 }
 
@@ -400,6 +404,69 @@ const std::string& SocketTransportInterface::localhost_name()
 {
     static const std::string ip_localhost = is_ipv4() ? "127.0.0.1" : "::1";
     return ip_localhost;
+}
+
+bool SocketTransportInterface::is_interface_allowlist_empty() const
+{
+    return allowed_interfaces_.empty();
+}
+
+bool SocketTransportInterface::is_interface_allowed(
+        const std::string& iface) const
+{
+    if (allowed_interfaces_.empty())
+    {
+        return true;
+    }
+
+    if (is_ipv4() ? (iface == s_IPv4AddressAny) : (iface == s_IPv6AddressAny))
+    {
+        return true;
+    }
+
+    return std::find_if(allowed_interfaces_.begin(), allowed_interfaces_.end(), [this, &iface](const AllowedNetworkInterface& allowlist_element)
+            {
+                return compare_ips(allowlist_element.ip, iface);
+            }) != allowed_interfaces_.end();
+}
+
+bool SocketTransportInterface::is_interface_allowed(
+        const Locator& loc) const
+{
+    return is_interface_allowed(is_ipv4() ? IPLocator::toIPv4string(loc) : IPLocator::toIPv6string(loc));
+}
+
+std::vector<std::string> SocketTransportInterface::get_binding_interfaces_list()
+{
+    std::vector<std::string> vOutputInterfaces;
+    if (is_interface_allowlist_empty())
+    {
+        is_ipv4() ? vOutputInterfaces.push_back(s_IPv4AddressAny) : vOutputInterfaces.push_back(s_IPv6AddressAny);
+    }
+    else
+    {
+        for (auto& iface : allowed_interfaces_)
+        {
+            vOutputInterfaces.push_back(iface.ip);
+        }
+    }
+
+    return vOutputInterfaces;
+}
+
+bool SocketTransportInterface::is_locator_allowed(
+        const Locator& locator) const
+{
+    if (!IsLocatorSupported(locator))
+    {
+        return false;
+    }
+    if (allowed_interfaces_.empty() || IPLocator::isMulticast(locator))
+    {
+        return true;
+    }
+
+    return is_interface_allowed(locator);
 }
 
 bool SocketTransportInterface::compare_ips(

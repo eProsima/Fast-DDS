@@ -180,6 +180,7 @@ TCPTransportInterface::TCPTransportInterface(
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
     , keep_alive_event_(io_service_timers_)
+    , listening_port_(0)
 {
 }
 
@@ -192,7 +193,26 @@ TCPTransportInterface::TCPTransportInterface(
     , ssl_context_(asio::ssl::context::sslv23)
 #endif // if TLS_FOUND
     , keep_alive_event_(io_service_timers_)
+    , listening_port_(0)
 {
+    if (!descriptor.listening_ports.empty())
+    {
+        if (descriptor.listening_ports.size() > 1)
+        {
+            EPROSIMA_LOG_WARNING(TRANSPORT_TCP,
+                    "Only one listening port is allowed for TCP transport. Only the first port will be used.");
+        }
+        int32_t kind = is_ipv4() ? LOCATOR_KIND_TCPv4 : LOCATOR_KIND_TCPv6;
+        Locator locator(kind, descriptor.listening_ports.front());
+        listening_port_ = create_acceptor_socket(locator);
+    }
+
+#if !TLS_FOUND
+    if (descriptor.apply_security)
+    {
+        EPROSIMA_LOG_ERROR(RTCP_TLS, "Trying to use TCP Transport with TLS but TLS was not found.");
+    }
+#endif // if !TLS_FOUND
 }
 
 TCPTransportInterface::~TCPTransportInterface()
@@ -345,7 +365,7 @@ uint16_t TCPTransportInterface::create_acceptor_socket(
     uint16_t final_port = 0;
     try
     {
-        if (is_interface_whitelist_empty())
+        if (is_interface_allowlist_empty())
         {
 #if TLS_FOUND
             if (configuration()->apply_security)
@@ -756,17 +776,8 @@ bool TCPTransportInterface::OpenOutputChannel(
     // (Server-Client Topology - Client Side) OR LARGE DATA Topology with PDP discovery before TCP connection
     else
     {
-        // Get listening port (0 if client)
-        uint16_t listening_port = 0;
-        const TCPTransportDescriptor* config = configuration();
-        assert (config != nullptr);
-        if (!config->listening_ports.empty())
-        {
-            listening_port = config->listening_ports.front();
-        }
-
         bool local_lower_interface = false;
-        if (IPLocator::getPhysicalPort(physical_locator) == listening_port)
+        if (IPLocator::getPhysicalPort(physical_locator) == listening_port_) // NOTE: listening port is 0 if client
         {
             std::vector<Locator> list;
             std::vector<fastrtps::rtps::IPFinder::info_IP> local_interfaces;
@@ -789,7 +800,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         // If the remote physical port is higher than our listening port, a new CONNECT channel needs to be created and connected
         // and the locator added to the send_resource_list.
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
-        if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
+        if (IPLocator::getPhysicalPort(physical_locator) > listening_port_ || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "
@@ -1834,7 +1845,7 @@ void TCPTransportInterface::fill_local_physical_port(
 {
     if (!configuration()->listening_ports.empty())
     {
-        IPLocator::setPhysicalPort(locator, *(configuration()->listening_ports.begin()));
+        IPLocator::setPhysicalPort(locator, listening_port_);
     }
     else
     {

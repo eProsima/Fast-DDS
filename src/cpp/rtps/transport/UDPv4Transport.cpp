@@ -62,7 +62,6 @@ UDPv4Transport::UDPv4Transport(
     : UDPTransportInterface(LOCATOR_KIND_UDPv4, descriptor)
     , configuration_(descriptor)
 {
-    fill_interface_whitelist_();
 }
 
 UDPv4Transport::UDPv4Transport()
@@ -249,7 +248,7 @@ bool UDPv4Transport::OpenInputChannel(
         ip::address_v4 locatorAddress = ip::address_v4::from_string(locatorAddressStr);
 
 #ifndef _WIN32
-        if (!is_interface_whitelist_empty())
+        if (!is_interface_allowlist_empty())
         {
             // Either wildcard address or the multicast address needs to be bound on non-windows systems
             bool found = false;
@@ -276,10 +275,10 @@ bool UDPv4Transport::OpenInputChannel(
                                     receiver);
                     mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(p_channel_resource);
 
-                    // Join group on all whitelisted interfaces
-                    for (auto& ip : interface_whitelist_)
+                    // Join group on all allowed interfaces
+                    for (auto& iface : allowed_interfaces_)
                     {
-                        p_channel_resource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip));
+                        p_channel_resource->socket()->set_option(ip::multicast::join_group(locatorAddress, ip::address_v4::from_string(iface.ip)));
                     }
                 }
                 catch (asio::system_error const& e)
@@ -337,89 +336,6 @@ bool UDPv4Transport::OpenInputChannel(
     }
 
     return success;
-}
-
-void UDPv4Transport::fill_interface_whitelist_()
-{
-    if ((!configuration_.interfaceWhiteList.empty() || !configuration_.interface_allowlist.empty() ||
-            !configuration_.interface_blocklist.empty()) && allowed_interfaces_.empty())
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_UDPV4, "All whitelist interfaces were filtered out");
-        interface_whitelist_.emplace_back(ip::address_v4::from_string("192.0.2.0"));
-    }
-    else
-    {
-        for (const auto& iface : allowed_interfaces_)
-        {
-            interface_whitelist_.emplace_back(ip::address_v4::from_string(iface.ip));
-        }
-    }
-}
-
-bool UDPv4Transport::is_interface_whitelist_empty() const
-{
-    return interface_whitelist_.empty();
-}
-
-bool UDPv4Transport::is_interface_allowed(
-        const std::string& iface) const
-{
-    return is_interface_allowed(asio::ip::address_v4::from_string(iface));
-}
-
-bool UDPv4Transport::is_interface_allowed(
-        const Locator& loc) const
-{
-    asio::ip::address_v4 ip = asio::ip::address_v4::from_string(IPLocator::toIPv4string(loc));
-    return is_interface_allowed(ip);
-}
-
-bool UDPv4Transport::is_interface_allowed(
-        const ip::address_v4& ip) const
-{
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-
-    if (ip == ip::address_v4::any())
-    {
-        return true;
-    }
-
-    return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
-}
-
-std::vector<std::string> UDPv4Transport::get_binding_interfaces_list()
-{
-    std::vector<std::string> vOutputInterfaces;
-    if (is_interface_whitelist_empty())
-    {
-        vOutputInterfaces.push_back(s_IPv4AddressAny);
-    }
-    else
-    {
-        for (auto& ip : interface_whitelist_)
-        {
-            vOutputInterfaces.push_back(ip.to_string());
-        }
-    }
-
-    return vOutputInterfaces;
-}
-
-bool UDPv4Transport::is_locator_allowed(
-        const Locator& locator) const
-{
-    if (!IsLocatorSupported(locator))
-    {
-        return false;
-    }
-    if (interface_whitelist_.empty() || IPLocator::isMulticast(locator))
-    {
-        return true;
-    }
-    return is_interface_allowed(IPLocator::toIPv4string(locator));
 }
 
 void UDPv4Transport::set_receive_buffer_size(

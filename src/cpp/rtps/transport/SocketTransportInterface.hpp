@@ -112,24 +112,26 @@ protected:
 
     virtual const std::string& localhost_name();
 
-    virtual void fill_interface_whitelist_() = 0;
+    //! Checks if the interfaces allowlist is empty.
+    virtual bool is_interface_allowlist_empty() const;
 
-    //! Checks if the interfaces whitelist is empty.
-    virtual bool is_interface_whitelist_empty() const = 0;
-
-    //! Checks if the given interface is allowed by the whitelist.
+    //! Checks if the given interface is allowed by the allowlist.
     virtual bool is_interface_allowed(
-            const std::string& iface) const = 0;
+            const std::string& iface) const;
 
-    //! Checks if the given locator is allowed by the whitelist.
+    //! Checks if the given locator is allowed by the allowlist.
     virtual bool is_interface_allowed(
-            const Locator& loc) const = 0;
+            const Locator& loc) const;
 
     /**
      * Method to get a list of interfaces to bind the socket associated to the given locator.
      * @return Vector of interfaces in string format.
      */
-    virtual std::vector<std::string> get_binding_interfaces_list() = 0;
+    virtual std::vector<std::string> get_binding_interfaces_list();
+
+    //! Checks for whether locator is allowed.
+    bool is_locator_allowed(
+            const Locator&) const override;
 
     //! Checks if two IP addresses are the same, without taking into account the scope in the IPv6 case
     bool compare_ips(

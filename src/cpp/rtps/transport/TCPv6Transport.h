@@ -49,7 +49,6 @@ class TCPv6Transport : public TCPTransportInterface
 protected:
 
     TCPv6TransportDescriptor configuration_;
-    std::vector<asio::ip::address_v6> interface_whitelist_;
 
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     TCPv6Transport();
@@ -71,31 +70,6 @@ protected:
     {
         return asio::ip::tcp::v6();
     }
-
-    virtual void fill_interface_whitelist_() override;
-
-    //! Checks if the interfaces white list is empty.
-    virtual bool is_interface_whitelist_empty() const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    virtual bool is_interface_allowed(
-            const std::string& iface) const override;
-
-    virtual bool is_interface_allowed(
-            const Locator& loc) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const asio::ip::address_v6& ip) const;
-
-    /**
-     * Method to get a list of interfaces to bind the socket associated to the given locator.
-     * @return Vector of interfaces in string format.
-     */
-    virtual std::vector<std::string> get_binding_interfaces_list() override;
-
-    bool is_locator_allowed(
-            const Locator& locator) const override;
 
     virtual void set_receive_buffer_size(
             uint32_t size) override;

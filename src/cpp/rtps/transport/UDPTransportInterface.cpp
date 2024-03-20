@@ -313,9 +313,9 @@ bool UDPTransportInterface::OpenOutputChannel(
     try
     {
         uint16_t port = configuration()->m_output_udp_socket;
-        // If there is no whitelist, we can simply open a generic output socket
+        // If there is no allowlist, we can simply open a generic output socket
         // and gain efficiency.
-        if (is_interface_whitelist_empty())
+        if (is_interface_allowlist_empty())
         {
             if (first_time_open_output_channel_)
             {

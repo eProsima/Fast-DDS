@@ -62,7 +62,6 @@ UDPv6Transport::UDPv6Transport(
     : UDPTransportInterface(LOCATOR_KIND_UDPv6, descriptor)
     , configuration_(descriptor)
 {
-    fill_interface_whitelist_();
 }
 
 UDPv6Transport::UDPv6Transport()
@@ -250,7 +249,7 @@ bool UDPv6Transport::OpenInputChannel(
         ip::address_v6 locatorAddress = ip::address_v6::from_string(locatorAddressStr);
 
 #ifndef _WIN32
-        if (!is_interface_whitelist_empty())
+        if (!is_interface_allowlist_empty())
         {
             //Either wildcard address or the multicast address needs to be bound on non-windows systems
             bool found = false;
@@ -277,11 +276,11 @@ bool UDPv6Transport::OpenInputChannel(
                                     receiver);
                     mInputSockets[IPLocator::getPhysicalPort(locator)].push_back(p_channel_resource);
 
-                    // Join group on all whitelisted interfaces
-                    for (auto& ip : interface_whitelist_)
+                    // Join group on all allowed interfaces
+                    for (auto& iface : allowed_interfaces_)
                     {
                         p_channel_resource->socket()->set_option(ip::multicast::join_group(locatorAddress,
-                                ip.scope_id()));
+                                asio::ip::address_v6::from_string(iface.ip).scope_id()));
                     }
                 }
                 catch (asio::system_error const& e)
@@ -339,116 +338,6 @@ bool UDPv6Transport::OpenInputChannel(
         }
     }
     return success;
-}
-
-void UDPv6Transport::fill_interface_whitelist_()
-{
-    if ((!configuration_.interfaceWhiteList.empty() || !configuration_.interface_allowlist.empty() ||
-            !configuration_.interface_blocklist.empty()) && allowed_interfaces_.empty())
-    {
-        EPROSIMA_LOG_ERROR(TRANSPORT_UDPV6, "All whitelist interfaces were filtered out");
-        interface_whitelist_.emplace_back(ip::address_v6::from_string("2001:db8::"));
-    }
-    else
-    {
-        for (const auto& iface : allowed_interfaces_)
-        {
-            interface_whitelist_.emplace_back(ip::address_v6::from_string(iface.ip));
-        }
-    }
-}
-
-bool UDPv6Transport::is_interface_whitelist_empty() const
-{
-    return interface_whitelist_.empty();
-}
-
-bool UDPv6Transport::is_interface_allowed(
-        const std::string& iface) const
-{
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-
-    if (asio::ip::address_v6::from_string(iface) == ip::address_v6::any())
-    {
-        return true;
-    }
-
-    for (auto& whitelist : interface_whitelist_)
-    {
-        if (compare_ips(whitelist.to_string(), iface))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool UDPv6Transport::is_interface_allowed(
-        const Locator& loc) const
-{
-    // TODO: add warning scope ID information is not available
-    asio::ip::address_v6 ip = asio::ip::address_v6::from_string(IPLocator::toIPv6string(loc));
-    return is_interface_allowed(ip);
-}
-
-bool UDPv6Transport::is_interface_allowed(
-        const ip::address_v6& ip) const
-{
-    if (interface_whitelist_.empty())
-    {
-        return true;
-    }
-
-    if (ip == ip::address_v6::any())
-    {
-        return true;
-    }
-
-    for (auto& whitelist : interface_whitelist_)
-    {
-        if (compare_ips(whitelist.to_string(), ip.to_string()))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-std::vector<std::string> UDPv6Transport::get_binding_interfaces_list()
-{
-    std::vector<std::string> vOutputInterfaces;
-    if (is_interface_whitelist_empty())
-    {
-        vOutputInterfaces.push_back(s_IPv6AddressAny);
-    }
-    else
-    {
-        for (auto& ip : interface_whitelist_)
-        {
-            vOutputInterfaces.push_back(ip.to_string());
-        }
-    }
-
-    return vOutputInterfaces;
-}
-
-bool UDPv6Transport::is_locator_allowed(
-        const Locator& locator) const
-{
-    if (!IsLocatorSupported(locator))
-    {
-        return false;
-    }
-    if (interface_whitelist_.empty() || IPLocator::isMulticast(locator))
-    {
-        return true;
-    }
-    return is_interface_allowed(IPLocator::toIPv6string(locator));
 }
 
 void UDPv6Transport::set_receive_buffer_size(
