@@ -1999,6 +1999,14 @@ void RTPSParticipantImpl::createSenderResources(
     m_network_Factory.build_send_resources(send_resource_list_, locator);
 }
 
+void RTPSParticipantImpl::createSenderResources(
+        const LocatorSelectorEntry& locator_selector_entry)
+{
+    std::lock_guard<std::timed_mutex> lock(m_send_resources_mutex_);
+
+    m_network_Factory.build_send_resources(send_resource_list_, locator_selector_entry);
+}
+
 bool RTPSParticipantImpl::deleteUserEndpoint(
         const GUID_t& endpoint)
 {

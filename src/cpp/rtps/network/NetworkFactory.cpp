@@ -82,6 +82,20 @@ bool NetworkFactory::build_send_resources(
     return returned_value;
 }
 
+bool NetworkFactory::build_send_resources(
+        SendResourceList& sender_resource_list,
+        const LocatorSelectorEntry& locator_selector_entry)
+{
+    bool returned_value = false;
+
+    for (auto& transport : mRegisteredTransports)
+    {
+        returned_value |= transport->OpenOutputChannels(sender_resource_list, locator_selector_entry);
+    }
+
+    return returned_value;
+}
+
 bool NetworkFactory::BuildReceiverResources(
         Locator_t& local,
         std::vector<std::shared_ptr<ReceiverResource>>& returned_resources_list,

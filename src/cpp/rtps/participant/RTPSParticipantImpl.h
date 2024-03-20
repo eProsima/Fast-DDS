@@ -1040,6 +1040,9 @@ public:
     void createSenderResources(
             const Locator_t& locator);
 
+    void createSenderResources(
+        const LocatorSelectorEntry& locator_selector);
+
     bool networkFactoryHasRegisteredTransports() const;
 
     /**
