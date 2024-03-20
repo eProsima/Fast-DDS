@@ -549,7 +549,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
-                        for (auto member : type_object.complete().struct_type().member_seq())
+                        for (CompleteStructMember member : type_object.complete().struct_type().member_seq())
                         {
                             if (member.detail().ann_custom().has_value())
                             {
@@ -583,7 +583,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
-                        for (auto member : type_object.complete().union_type().member_seq())
+                        for (CompleteUnionMember member : type_object.complete().union_type().member_seq())
                         {
                             if (member.detail().ann_custom().has_value())
                             {
@@ -600,17 +600,16 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                 case TK_SEQUENCE:
                     ret_code = get_sequence_array_dependencies(type_object.complete().sequence_type(),
                                     type_dependencies);
-                    //TODO Annotations are not currently supported, so their dependecies are ignored.
+                    //TODO Collection nnotations are not currently supported, so their dependecies are ignored.
                     break;
                 case TK_ARRAY:
                     ret_code = get_sequence_array_dependencies(type_object.complete().array_type(), type_dependencies);
-                    //TODO Annotations are not currently supported, so their dependecies are ignored.
+                    //TODO Collection nnotations are not currently supported, so their dependecies are ignored.
                     break;
                 case TK_MAP:
                     ret_code = get_map_dependencies(type_object.complete().map_type(), type_dependencies);
-                    //TODO Annotations are not currently supported, so their dependecies are ignored.
+                    //TODO Collection nnotations are not currently supported, so their dependecies are ignored.
                     break;
-                // No dependencies
                 case TK_BITSET:
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
                             type_object.complete().bitset_type().header().detail().ann_custom().has_value())
@@ -621,7 +620,7 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                     }
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
                     {
-                        for (auto member : type_object.complete().bitset_type().field_seq())
+                        for (CompleteBitfield member : type_object.complete().bitset_type().field_seq())
                         {
                             if (member.detail().ann_custom().has_value())
                             {
@@ -643,6 +642,21 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                             type_object.complete().enumerated_type().header().detail().ann_custom().value(),
                             type_dependencies);
                     }
+                    if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        for (CompleteEnumeratedLiteral member : type_object.complete().enumerated_type().literal_seq())
+                        {
+                            if (member.detail().ann_custom().has_value())
+                            {
+                                ret_code = get_custom_annotations_dependencies(
+                                    member.detail().ann_custom().value(), type_dependencies);
+                                if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     break;
                 case TK_BITMASK:
                     if (ret_code == eprosima::fastdds::dds::RETCODE_OK &&
@@ -651,6 +665,21 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
                         ret_code = get_custom_annotations_dependencies(
                             type_object.complete().bitmask_type().header().detail().ann_custom().value(),
                             type_dependencies);
+                    }
+                    if (ret_code == eprosima::fastdds::dds::RETCODE_OK)
+                    {
+                        for (CompleteBitflag member : type_object.complete().bitmask_type().flag_seq())
+                        {
+                            if (member.detail().ann_custom().has_value())
+                            {
+                                ret_code = get_custom_annotations_dependencies(
+                                    member.detail().ann_custom().value(), type_dependencies);
+                                if (ret_code != eprosima::fastdds::dds::RETCODE_OK)
+                                {
+                                    break;
+                                }
+                            }
+                        }
                     }
                     break;
             }
