@@ -236,9 +236,9 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     descriptor_1->add_listener_port(server_1_port);
     // Init server
     ASSERT_TRUE(server_1.wire_protocol(server_1_qos)
-                        .disable_builtin_transport()
-                        .add_user_transport_to_pparams(descriptor_1)
-                        .init_participant());
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_1)
+                    .init_participant());
 
     /* Create second server */
     PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
@@ -263,9 +263,9 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
 
     // Init server
     ASSERT_TRUE(server_2.wire_protocol(server_2_qos)
-                        .disable_builtin_transport()
-                        .add_user_transport_to_pparams(descriptor_2)
-                        .init_participant());
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_2)
+                    .init_participant());
 
 
     /* Create a client that connects to the first server from the beginning with higher listening_port*/
@@ -282,9 +282,9 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     descriptor_3->add_listener_port(server_1_port + 10);
     // Init client
     ASSERT_TRUE(client_1.wire_protocol(client_qos_1)
-                      .disable_builtin_transport()
-                      .add_user_transport_to_pparams(descriptor_3)
-                      .init_participant());
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_3)
+                    .init_participant());
 
     /* Create a client that connects to the first server from the beginning with lower listening_port*/
     PubSubParticipant<HelloWorldPubSubType> client_2(0u, 0u, 0u, 0u);
@@ -297,9 +297,9 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     descriptor_4->add_listener_port(server_1_port - 10);
     // Init client
     ASSERT_TRUE(client_2.wire_protocol(client_qos_2)
-                      .disable_builtin_transport()
-                      .add_user_transport_to_pparams(descriptor_4)
-                      .init_participant());
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_4)
+                    .init_participant());
 
     server_1.wait_discovery(std::chrono::seconds::zero(), 2, true); // Knows client1 and client2
     client_1.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1

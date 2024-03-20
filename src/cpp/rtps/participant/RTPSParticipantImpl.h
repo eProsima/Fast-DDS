@@ -1041,7 +1041,7 @@ public:
             const Locator_t& locator);
 
     void createSenderResources(
-        const LocatorSelectorEntry& locator_selector);
+            const LocatorSelectorEntry& locator_selector);
 
     bool networkFactoryHasRegisteredTransports() const;
 

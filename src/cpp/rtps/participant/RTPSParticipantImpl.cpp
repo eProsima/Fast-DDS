@@ -315,14 +315,14 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     if (!m_att.builtin.metatrafficUnicastLocatorList.empty())
                     {
                         std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
-                        m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
-                        {
-                            // TCP DS default logical port is the same as the physical one
-                            if (IPLocator::getLogicalPort(locator) == 0)
-                            {
-                                IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
-                            }
-                        });
+                                m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                                {
+                                    // TCP DS default logical port is the same as the physical one
+                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    {
+                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                    }
+                                });
                     }
                 }
             }
@@ -346,13 +346,13 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     {
                         // TCP DS default logical port is the same as the physical one
                         std::for_each(it.metatrafficUnicastLocatorList.begin(),
-                        it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
-                        {
-                            if (IPLocator::getLogicalPort(locator) == 0)
-                            {
-                                IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
-                            }
-                        });
+                                it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                                {
+                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    {
+                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                    }
+                                });
                     }
                 }
             }
@@ -1503,7 +1503,8 @@ void RTPSParticipantImpl::update_attributes(
     bool update_pdp = false;
 
     // Check if discovery servers need to be updated
-    eprosima::fastdds::rtps::RemoteServerList_t converted_discovery_servers = patt.builtin.discovery_config.m_DiscoveryServers;
+    eprosima::fastdds::rtps::RemoteServerList_t converted_discovery_servers =
+            patt.builtin.discovery_config.m_DiscoveryServers;
     if (patt.builtin.discovery_config.m_DiscoveryServers != m_att.builtin.discovery_config.m_DiscoveryServers)
     {
         for (auto& transportDescriptor : m_att.userTransports)
@@ -1515,13 +1516,13 @@ void RTPSParticipantImpl::update_attributes(
                 {
                     // TCP DS default logical port is the same as the physical one
                     std::for_each(it.metatrafficUnicastLocatorList.begin(),
-                    it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
-                    {
-                        if (IPLocator::getLogicalPort(locator) == 0)
-                        {
-                            IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
-                        }
-                    });
+                            it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                            {
+                                if (IPLocator::getLogicalPort(locator) == 0)
+                                {
+                                    IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                }
+                            });
                 }
             }
         }

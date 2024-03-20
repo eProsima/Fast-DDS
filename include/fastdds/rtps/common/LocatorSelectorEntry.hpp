@@ -101,7 +101,8 @@ struct LocatorSelectorEntry
         state.multicast.clear();
     }
 
-    void fill_unicast(const LocatorList_t& locators)
+    void fill_unicast(
+            const LocatorList_t& locators)
     {
         for (const Locator_t& locator : locators)
         {
@@ -110,7 +111,8 @@ struct LocatorSelectorEntry
         }
     }
 
-    void fill_multicast(const LocatorList_t& locators)
+    void fill_multicast(
+            const LocatorList_t& locators)
     {
         for (const Locator_t& locator : locators)
         {

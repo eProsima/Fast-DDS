@@ -327,7 +327,7 @@ public:
      *
      * @return true if the channel was correctly opened or if finding an already opened one.
      */
-     bool OpenOutputChannels(
+    bool OpenOutputChannels(
             SendResourceList& sender_resource_list,
             const fastrtps::rtps::LocatorSelectorEntry& locator_selector_entry) override;
 

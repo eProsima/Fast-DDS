@@ -855,7 +855,8 @@ bool TCPTransportInterface::OpenOutputChannel(
         {
             // Server side LARGE_DATA
             // Act as server and wait to the other endpoint to connect. Add locator to sender_resource_list
-            EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [WAIT_CONNECTION] @ " << IPLocator::to_string(locator));
+            EPROSIMA_LOG_INFO(OpenOutputChannel,
+                    "OpenOutputChannel: [WAIT_CONNECTION] @ " << IPLocator::to_string(locator));
             std::lock_guard<std::mutex> channelPendingLock(channel_pending_logical_ports_mutex_);
             channel_pending_logical_ports_[physical_locator].insert(logical_port);
         }
@@ -904,8 +905,8 @@ bool TCPTransportInterface::OpenOutputChannels(
 }
 
 bool TCPTransportInterface::CreateInitialConnect(
-            SendResourceList& send_resource_list,
-            const Locator& locator)
+        SendResourceList& send_resource_list,
+        const Locator& locator)
 {
     if (!IsLocatorSupported(locator))
     {
