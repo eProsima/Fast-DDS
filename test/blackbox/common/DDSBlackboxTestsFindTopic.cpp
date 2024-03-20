@@ -49,8 +49,10 @@ class DDSFindTopicTest : public testing::Test
     /**
      * A dummy type support class.
      */
-    struct TestType : public TopicDataType
+    class TestType : public TopicDataType
     {
+    public:
+
         TestType()
             : TopicDataType()
         {
@@ -96,6 +98,10 @@ class DDSFindTopicTest : public testing::Test
             return false;
         }
 
+    private:
+
+        using TopicDataType::getSerializedSizeProvider;
+        using TopicDataType::serialize;
     };
 
 public:

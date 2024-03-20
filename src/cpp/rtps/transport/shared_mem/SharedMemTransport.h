@@ -200,6 +200,8 @@ public:
 
 private:
 
+    using TransportInterface::transform_remote_locator;
+
     //! Constructor with no descriptor is necessary for implementations derived from this class.
     SharedMemTransport();
 
