@@ -4767,7 +4767,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 if (std::regex_search(temp, mr, msg_size_regex, std::regex_constants::match_not_null))
                 {
                     std::string value = mr[1];
-                    std::string unit = (mr[2] == "") ? "B" : mr[2].str();
+                    std::string unit = mr[2].str();
                     bt_opts->maxMessageSize = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
                 }
             }
@@ -4799,7 +4799,7 @@ XMLP_ret XMLParser::getXMLBuiltinTransports(
                 if (std::regex_search(temp, mr, sockets_size_regex, std::regex_constants::match_not_null))
                 {
                     std::string value = mr[1];
-                    std::string unit = (mr[2] == "") ? "B" : mr[2].str();
+                    std::string unit = mr[2].str();
                     bt_opts->sockets_buffer_size = eprosima::fastdds::dds::utils::parse_value_and_units(value, unit);
                 }
             }
