@@ -17,10 +17,7 @@
  */
 
 #include <ostream>
-#include <sstream>
-#include <stdexcept>
 #include <string>
-#include <unordered_map>
 
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
@@ -32,21 +29,31 @@ std::ostream& operator <<(
         std::ostream& output,
         const NetmaskFilterKind& netmask_filter_kind)
 {
-    std::string netmask_filter_kind_str = "UNKNOWN";
-    static const std::unordered_map<NetmaskFilterKind, std::string> conversion_map =
+    switch (netmask_filter_kind)
     {
-        {NetmaskFilterKind::OFF, "OFF"},
-        {NetmaskFilterKind::AUTO, "AUTO"},
-        {NetmaskFilterKind::ON, "ON"}
-    };
-
-    auto it = conversion_map.find(netmask_filter_kind);
-    if (it != conversion_map.end())
-    {
-        netmask_filter_kind_str = it->second;
+        case NetmaskFilterKind::OFF:
+        {
+            output << "OFF";
+            break;
+        }
+        case NetmaskFilterKind::AUTO:
+        {
+            output << "AUTO";
+            break;
+        }
+        case NetmaskFilterKind::ON:
+        {
+            output << "ON";
+            break;
+        }
+        default:
+        {
+            output << "UNKNOWN";
+            break;
+        }
     }
 
-    return output << netmask_filter_kind_str;
+    return output;
 }
 
 } // namsepace rtps
