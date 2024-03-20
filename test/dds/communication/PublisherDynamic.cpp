@@ -115,6 +115,8 @@ public:
 
 private:
 
+    using DomainParticipantListener::on_participant_discovery;
+
     bool exit_on_lost_liveliness_;
 };
 

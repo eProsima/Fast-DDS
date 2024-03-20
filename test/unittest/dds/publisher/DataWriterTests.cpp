@@ -390,6 +390,10 @@ TEST(DataWriterTests, get_guid)
         fastrtps::rtps::GUID_t guid;
         std::mutex mutex;
         std::condition_variable cv;
+
+    private:
+
+        using DomainParticipantListener::on_publisher_discovery;
     }
     discovery_listener;
 
@@ -1320,6 +1324,7 @@ class LoanableTypeSupport : public TopicDataType
 public:
 
     typedef LoanableType type;
+    using TopicDataType::is_plain;
 
     LoanableTypeSupport()
         : TopicDataType()
@@ -1493,6 +1498,8 @@ TEST(DataWriterTests, LoanPositiveTests)
 class LoanableTypeSupportTesting : public LoanableTypeSupport
 {
 public:
+
+    using LoanableTypeSupport::is_plain;
 
     bool is_plain_result = true;
     bool construct_sample_result = true;
