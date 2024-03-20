@@ -90,6 +90,10 @@ public:
         setName("");
     }
 
+private:
+
+    using eprosima::fastdds::dds::TopicDataType::getSerializedSizeProvider;
+    using eprosima::fastdds::dds::TopicDataType::serialize;
 };
 
 namespace eprosima {

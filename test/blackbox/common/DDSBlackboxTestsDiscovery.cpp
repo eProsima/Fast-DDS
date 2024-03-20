@@ -451,6 +451,8 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 
     private:
 
+        using DomainParticipantListener::on_participant_discovery;
+
         std::condition_variable* cv_;
 
         std::mutex* mtx_;
@@ -598,6 +600,8 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 
     struct CustomDomainParticipantListener : public DomainParticipantListener
     {
+        using DomainParticipantListener::on_participant_discovery;
+
         std::mutex mtx;
         std::condition_variable cv;
         GUID_t guid;
@@ -1652,6 +1656,8 @@ TEST(DDSDiscovery, DataracePDP)
     class CustomDomainParticipantListener : public DomainParticipantListener
     {
     public:
+
+        using DomainParticipantListener::on_participant_discovery;
 
         CustomDomainParticipantListener()
             : DomainParticipantListener()
