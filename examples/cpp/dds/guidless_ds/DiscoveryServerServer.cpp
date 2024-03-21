@@ -58,7 +58,7 @@ void DiscoveryServer::stop()
 bool DiscoveryServer::init(
         const std::string& server_address,
         unsigned short server_port,
-        unsigned short server_id,
+        unsigned short /*server_id*/,
         TransportKind transport,
         bool has_connection_server,
         const std::string& connection_server_address,
@@ -183,7 +183,7 @@ bool DiscoveryServer::init(
             eprosima::fastrtps::rtps::DiscoveryProtocol_t::SERVER;
 
     // Set SERVER's GUID prefix
-    pqos.wire_protocol().prefix = get_discovery_server_guid_from_id(server_id);
+    set_server_client_random_guidPrefix(pqos.wire_protocol().prefix);
 
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
@@ -195,13 +195,15 @@ bool DiscoveryServer::init(
     RemoteServerAttributes remote_server_att;
     if (has_connection_server)
     {
-        // Set SERVER's GUID prefix
-        remote_server_att.guidPrefix = get_discovery_server_guid_from_id(connection_server_id);
+        // Using unknown GUID prefix.
+        // remote_server_att.guidPrefix = get_discovery_server_guid_from_id(connection_server_id);
+        static_cast<void>(connection_server_id);
 
         // Set SERVER's listening locator for PDP
         remote_server_att.metatrafficUnicastLocatorList.push_back(connection_locator);
 
         // Add remote SERVER to CLIENT's list of SERVERs
+        std::cout << "Adding remote server with GUID " << remote_server_att.guidPrefix << std::endl;
         pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
     }
 
