@@ -122,7 +122,7 @@ public:
                 {
                     try
                     {
-                        int16_t input = static_cast<int16_t>(std::stoi(argv[++i]));
+                        int input = std::stoi(argv[++i]);
                         if (input < std::numeric_limits<std::uint16_t>::min() ||
                                 input > std::numeric_limits<std::uint16_t>::max())
                         {
@@ -185,7 +185,7 @@ public:
     }
 
     static std::string parse_signal(
-            int signum)
+            const int& signum)
     {
         switch (signum)
         {
@@ -203,7 +203,7 @@ public:
     }
 
     static std::string parse_entity_kind(
-            EntityKind entity)
+            const EntityKind& entity)
     {
         switch (entity)
         {
@@ -216,7 +216,6 @@ public:
                 return "Undefined entity";
         }
     }
-
 };
 
 } // namespace hello_world
