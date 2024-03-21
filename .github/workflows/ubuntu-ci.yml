@@ -24,6 +24,14 @@ on:
         type: string
         required: true
 
+  pull_request:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
