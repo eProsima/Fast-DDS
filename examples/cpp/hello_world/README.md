@@ -8,7 +8,6 @@ In this case, the *hello world* example describes the simplest deployment of a F
 
 * [Description of the example](#description-of-the-example)
 * [Run the example](#run-the-example)
-* [Expected output](#expected-output)
 * [Wait-set subscriber](#wait-set-subscriber)
 * [XML profile playground](#xml-profile-playground)
 
@@ -19,21 +18,21 @@ In both cases, the three DDS entities (domain participant, publisher/subscriber 
 If the environment does not specify the expected configuration, they take the default configuration per entity.
 For further information regarding the configuration environment, please refer to the *[XML profile playground](#xml-profile-playground)* section.
 
-This particular example includes two different subscription paradigms: listening callbacks and wait-sets:
+This particular example includes two different subscription paradigms; i.e. listening callbacks and wait-sets:
 
-* The listening callback mechanism consists on declaring a listener class and attach it to the data reader.
-When the data reader is triggered by an event, it runs the listener's method associated to that event, as a callback.
-  For simplicity, in this example the subscriber class inherits the listener class, and it implements it own callback.
+* The listening callback mechanism consists on declaring a listener class and attaching it to the data reader.
+  When the data reader is triggered by an event, it runs the listener's method associated to that event, as a callback.
+  For simplicity, in this example, the subscriber class inherits from the listener class, overriding the corresponding callback.
 
 * The wait-set is a mechanism where a dedicated thread waits until a status condition occurs.
-In that moment, that status condition triggering event would be evaluated to determine witch actions should be taken against it.
+  In that moment, that status condition triggering event would be evaluated to determine witch actions should be taken against it.
 
 For this example, both listening callback and wait-set implementation would run similar code and generate equivalent output for both triggering events: subscription matching and new data available.
 
 ## Run the example
 
 To launch this example, two different terminals are required.
-One of them will run the publisher example application, and the other would run the subscriber application.
+One of them will run the publisher example application, and the other will run the subscriber application.
 
 ### Hello world publisher
 
@@ -69,9 +68,9 @@ One of them will run the publisher example application, and the other would run 
 
 All the example available flags can be queried running the executable with the ``-h`` or ``--help`` flag.
 
-## Expected output
+### Expected output
 
-Regardless of which application is run first, since the published will not start sending that until a subscriber is discovered, the expected output both for publishers and subscriber is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
+Regardless of which application is run first, since the publisher will not start sending data until a subscriber is discovered, the expected output both for publishers and subscribers is a first displayed message acknowledging the match, followed by the amount of samples sent or received until Ctrl+C is pressed.
 
 ### Hello world publisher
 
@@ -128,7 +127,7 @@ The expected output is exactly the same as the described in the *[previous](#exp
 ## XML profile playground
 
 The *eProsima Fast DDS* entities can be configured through an XML profile from the environment.
-It is performed by setting the environment variable ``FASTDDS_DEFAULT_PROFILES_FILE`` with the path to the XML profiles file:
+This is accomplished by setting the environment variable ``FASTDDS_DEFAULT_PROFILES_FILE`` to path to the XML profiles file:
 
 * Ubuntu ( / MacOS )
 
@@ -149,4 +148,4 @@ The example provides with an XML profiles files with certain QoS:
 - Keep-last history with high depth: ensure certain amount of previous samples for late-joiners.
 
 Applying different configurations to the entities will change to a greater or lesser extent how the application behaves in relation to sample management.
-In any case these settings will affect the behavior of the sample itself: the output of the sample will be the same regardless of the configuration (or lack of configuration) provided by the environment variable.
+Even when these settings affect the behavior of the sample management, the applications' output will be the similar.
