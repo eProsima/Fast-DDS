@@ -34,7 +34,7 @@ public:
 
     CLIParser() = delete;
 
-    enum EntityKind
+    enum class EntityKind : uint8_t
     {
         PUBLISHER,
         SUBSCRIBER,
