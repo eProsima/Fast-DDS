@@ -37,22 +37,4 @@
             </builtin>
         </rtps>
     </participant>
-
-    <participant profile_name="UDP_no_prefix">
-        <rtps>
-            <builtin>
-                <discovery_config>
-                    <discoveryProtocol>SERVER</discoveryProtocol>
-                </discovery_config>
-                <metatrafficUnicastLocatorList>
-                    <locator>
-                        <udpv4>
-                            <address>127.0.0.5</address>
-                            <port>11817</port>
-                        </udpv4>
-                    </locator>
-                </metatrafficUnicastLocatorList>
-            </builtin>
-        </rtps>
-    </participant>
 </profiles>
