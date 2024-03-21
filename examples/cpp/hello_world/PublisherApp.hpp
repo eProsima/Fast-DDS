@@ -61,7 +61,7 @@ public:
 private:
 
     //! Return the current state of execution
-    bool is_stopped() override;
+    bool is_stopped();
 
     //! Publish a sample
     bool publish();
@@ -82,9 +82,7 @@ private:
 
     uint16_t samples_;
 
-    std::mutex matched_mutex_;
-
-    std::mutex terminate_mutex_;
+    std::mutex mutex_;
 
     std::condition_variable matched_cv_;
 

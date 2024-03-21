@@ -20,9 +20,7 @@
 #include "WaitsetSubscriberApp.hpp"
 
 #include <condition_variable>
-#include <csignal>
 #include <stdexcept>
-#include <thread>
 
 #include <fastdds/dds/core/condition/GuardCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
@@ -48,13 +46,12 @@ namespace hello_world {
 WaitsetSubscriberApp::WaitsetSubscriberApp(
         const CLIParser::subscriber_config& config,
         const std::string& topic_name)
-    : Application ()
-    , participant_(nullptr)
+    : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
-    , samples_ (config.samples)
+    , samples_(config.samples)
     , received_samples_(0)
     , stop_(false)
 {

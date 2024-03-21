@@ -216,6 +216,7 @@ public:
                 return "Undefined entity";
         }
     }
+
 };
 
 } // namespace hello_world

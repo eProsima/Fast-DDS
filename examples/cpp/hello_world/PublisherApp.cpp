@@ -20,9 +20,7 @@
 #include "PublisherApp.hpp"
 
 #include <condition_variable>
-#include <csignal>
 #include <stdexcept>
-#include <thread>
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -40,8 +38,7 @@ namespace hello_world {
 PublisherApp::PublisherApp(
         const CLIParser::publisher_config& config,
         const std::string& topic_name)
-    : Application()
-    , participant_(nullptr)
+    : participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
@@ -137,7 +134,7 @@ void PublisherApp::run()
                       << "' SENT" << std::endl;
         }
         // Wait for period or stop event
-        std::unique_lock<std::mutex> terminate_lock(terminate_mutex_);
+        std::unique_lock<std::mutex> terminate_lock(mutex_);
         terminate_cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
                 {
                     return is_stopped();
@@ -149,7 +146,7 @@ bool PublisherApp::publish()
 {
     bool ret = false;
     // Wait for the data endpoints discovery
-    std::unique_lock<std::mutex> matched_lock(matched_mutex_);
+    std::unique_lock<std::mutex> matched_lock(mutex_);
     matched_cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
