@@ -45,8 +45,19 @@ int main(
     auto ret = EXIT_SUCCESS;
     const std::string topic_name = "hello_world_topic";
     CLIParser::hello_world_config config = CLIParser::parse_cli_options(argc, argv);
-    uint16_t samples = config.entity == CLIParser::EntityKind::PUBLISHER ? config.pub_config.samples :
-            config.entity == CLIParser::EntityKind::SUBSCRIBER ? config.sub_config.samples : 0;
+    uint16_t samples = 0;
+    switch (config.entity)
+    {
+        case CLIParser::EntityKind::PUBLISHER:
+            samples = config.pub_config.samples;
+            break;
+        case CLIParser::EntityKind::SUBSCRIBER:
+            samples = config.sub_config.samples;
+            break;
+        default:
+            break;
+    }
+
     std::string app_name = CLIParser::parse_entity_kind(config.entity);
     std::shared_ptr<Application> app;
 
