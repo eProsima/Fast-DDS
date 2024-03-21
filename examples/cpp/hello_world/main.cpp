@@ -80,18 +80,8 @@ int main(
     }
     else
     {
-        switch (config.entity)
-        {
-            case CLIParser::EntityKind::PUBLISHER:
-                std::cout << app_name << " running " << samples << " samples. Please press Ctrl+C to stop the "
-                          << app_name << " at any time." << std::endl;
-                break;
-            case CLIParser::EntityKind::SUBSCRIBER:
-            default:
-                std::cout << app_name << " running until " << samples << " samples have been received. Please press "
-                          << "Ctrl+C to stop the " << app_name << " at any time." << std::endl;
-                break;
-        }
+        std::cout << app_name << " running for " << samples << " samples. Please press Ctrl+C to stop the "
+                  << app_name << " at any time." << std::endl;
     }
 
     stop_app_handler = [&](int signum)
