@@ -5557,94 +5557,94 @@ bool DynamicDataImpl::deserialize(
     bool res = true;
 
     TypeKind type_kind = type->get_kind();
-    auto it = value_.begin();
+    auto begin_it = value_.begin();
 
     switch (type_kind)
     {
         //{{{ Primitive types
         case TK_INT32:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT32>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT32>>(begin_it->second);
             break;
         }
         case TK_UINT32:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT32>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT32>>(begin_it->second);
             break;
         }
         case TK_INT8:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT8>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT8>>(begin_it->second);
             break;
         }
         case TK_INT16:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT16>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT16>>(begin_it->second);
             break;
         }
         case TK_UINT16:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT16>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT16>>(begin_it->second);
             break;
         }
         case TK_INT64:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT64>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_INT64>>(begin_it->second);
             break;
         }
         case TK_UINT64:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT64>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT64>>(begin_it->second);
             break;
         }
         case TK_FLOAT32:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(begin_it->second);
             break;
         }
         case TK_FLOAT64:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(begin_it->second);
             break;
         }
         case TK_FLOAT128:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(begin_it->second);
             break;
         }
         case TK_CHAR8:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_CHAR8>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_CHAR8>>(begin_it->second);
             break;
         }
         case TK_CHAR16:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_CHAR16>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_CHAR16>>(begin_it->second);
             break;
         }
         case TK_BOOLEAN:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(begin_it->second);
             break;
         }
         case TK_BYTE:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_BYTE>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_BYTE>>(begin_it->second);
             break;
         }
         case TK_UINT8:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT8>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_UINT8>>(begin_it->second);
             break;
         }
         case TK_STRING8:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING8>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING8>>(begin_it->second);
             break;
         }
         case TK_STRING16:
         {
-            cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING16>>(it->second);
+            cdr >> *std::static_pointer_cast<TypeForKind<TK_STRING16>>(begin_it->second);
             break;
         }
         //}}}
@@ -5656,66 +5656,66 @@ bool DynamicDataImpl::deserialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(begin_it->second));
                     break;
                 case TK_UINT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(begin_it->second));
                     break;
                 case TK_INT8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(begin_it->second));
                     break;
                 case TK_INT16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(begin_it->second));
                     break;
                 case TK_UINT16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(begin_it->second));
                     break;
                 case TK_INT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(begin_it->second));
                     break;
                 case TK_UINT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(begin_it->second));
                     break;
                 case TK_FLOAT32:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(begin_it->second));
                     break;
                 case TK_FLOAT64:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(begin_it->second));
                     break;
                 case TK_FLOAT128:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(begin_it->second));
                     break;
                 case TK_CHAR8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(begin_it->second));
                     break;
                 case TK_CHAR16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(begin_it->second));
                     break;
                 case TK_BOOLEAN:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(begin_it->second));
                     break;
                 case TK_BYTE:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second));
                     break;
                 case TK_UINT8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second));
                     break;
                 case TK_STRING8:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(begin_it->second));
                     break;
                 case TK_STRING16:
-                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second));
+                    cdr.deserialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(begin_it->second));
                     break;
                 case TK_BITMASK:
                 {
                     auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                       it->second)};
+                                       begin_it->second)};
                     cdr.deserialize_array(vector_t->data(), vector_t->size());
                     break;
                 }
                 default:
                     cdr.deserialize_array(*std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                it->second));
+                                begin_it->second));
                     break;
             }
             break;
@@ -5723,7 +5723,7 @@ bool DynamicDataImpl::deserialize(
         case TK_BITMASK:
         {
             uint64_t value {0};
-            auto sequence = std::static_pointer_cast<std::vector<bool>>(it->second);
+            auto sequence = std::static_pointer_cast<std::vector<bool>>(begin_it->second);
             auto bound = type->get_descriptor().bound().at(0);
 
             if (9 > bound)
@@ -6128,60 +6128,60 @@ bool DynamicDataImpl::deserialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(begin_it->second);
                     break;
                 case TK_UINT32:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(begin_it->second);
                     break;
                 case TK_INT8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(begin_it->second);
                     break;
                 case TK_INT16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(begin_it->second);
                     break;
                 case TK_UINT16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(begin_it->second);
                     break;
                 case TK_INT64:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(begin_it->second);
                     break;
                 case TK_UINT64:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(begin_it->second);
                     break;
                 case TK_FLOAT32:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(begin_it->second);
                     break;
                 case TK_FLOAT64:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(begin_it->second);
                     break;
                 case TK_FLOAT128:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(begin_it->second);
                     break;
                 case TK_CHAR8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(begin_it->second);
                     break;
                 case TK_CHAR16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(begin_it->second);
                     break;
                 case TK_BOOLEAN:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(begin_it->second);
                     break;
                 case TK_BYTE:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second);
                     break;
                 case TK_UINT8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second);
                     break;
                 case TK_STRING8:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(begin_it->second);
                     break;
                 case TK_STRING16:
-                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second);
+                    cdr >> *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(begin_it->second);
                     break;
                 default:
                 {
                     auto vector_t = std::static_pointer_cast <std::vector<traits<DynamicDataImpl>::ref_type >> (
-                        it->second);
+                        begin_it->second);
                     uint32_t sequence_length {0};
 
                     if (TK_BITMASK != element_kind &&
@@ -6416,94 +6416,94 @@ void DynamicDataImpl::serialize(
         const traits<DynamicTypeImpl>::ref_type type) const
 {
     TypeKind type_kind = type->get_kind();
-    auto it = value_.begin();
+    auto begin_it = value_.begin();
 
     switch (type_kind)
     {
         //{{{ Primitive types
         case TK_INT32:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_INT32>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_INT32>>(begin_it->second);
             break;
         }
         case TK_UINT32:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT32>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT32>>(begin_it->second);
             break;
         }
         case TK_INT8:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_INT8>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_INT8>>(begin_it->second);
             break;
         }
         case TK_INT16:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_INT16>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_INT16>>(begin_it->second);
             break;
         }
         case TK_UINT16:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT16>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT16>>(begin_it->second);
             break;
         }
         case TK_INT64:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_INT64>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_INT64>>(begin_it->second);
             break;
         }
         case TK_UINT64:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT64>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT64>>(begin_it->second);
             break;
         }
         case TK_FLOAT32:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT32>>(begin_it->second);
             break;
         }
         case TK_FLOAT64:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT64>>(begin_it->second);
             break;
         }
         case TK_FLOAT128:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_FLOAT128>>(begin_it->second);
             break;
         }
         case TK_CHAR8:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_CHAR8>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_CHAR8>>(begin_it->second);
             break;
         }
         case TK_CHAR16:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_CHAR16>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_CHAR16>>(begin_it->second);
             break;
         }
         case TK_BOOLEAN:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_BOOLEAN>>(begin_it->second);
             break;
         }
         case TK_BYTE:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_BYTE>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_BYTE>>(begin_it->second);
             break;
         }
         case TK_UINT8:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT8>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_UINT8>>(begin_it->second);
             break;
         }
         case TK_STRING8:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_STRING8>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_STRING8>>(begin_it->second);
             break;
         }
         case TK_STRING16:
         {
-            cdr << *std::static_pointer_cast<TypeForKind<TK_STRING16>>(it->second);
+            cdr << *std::static_pointer_cast<TypeForKind<TK_STRING16>>(begin_it->second);
             break;
         }
         //}}}
@@ -6514,66 +6514,66 @@ void DynamicDataImpl::serialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(begin_it->second));
                     break;
                 case TK_UINT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(begin_it->second));
                     break;
                 case TK_INT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(begin_it->second));
                     break;
                 case TK_INT16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(begin_it->second));
                     break;
                 case TK_UINT16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(begin_it->second));
                     break;
                 case TK_INT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(begin_it->second));
                     break;
                 case TK_UINT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(begin_it->second));
                     break;
                 case TK_FLOAT32:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(begin_it->second));
                     break;
                 case TK_FLOAT64:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(begin_it->second));
                     break;
                 case TK_FLOAT128:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(begin_it->second));
                     break;
                 case TK_CHAR8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(begin_it->second));
                     break;
                 case TK_CHAR16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(begin_it->second));
                     break;
                 case TK_BOOLEAN:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(begin_it->second));
                     break;
                 case TK_BYTE:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second));
                     break;
                 case TK_UINT8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second));
                     break;
                 case TK_STRING8:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(begin_it->second));
                     break;
                 case TK_STRING16:
-                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second));
+                    cdr.serialize_array(*std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(begin_it->second));
                     break;
                 case TK_BITMASK:
                 {
                     auto vector_t {std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                       it->second)};
+                                       begin_it->second)};
                     cdr.serialize_array(vector_t->data(), vector_t->size());
                     break;
                 }
                 default:
                     cdr.serialize_array(*std::static_pointer_cast<std::vector<traits<DynamicDataImpl>::ref_type>>(
-                                it->second));
+                                begin_it->second));
                     break;
             }
 
@@ -6582,7 +6582,7 @@ void DynamicDataImpl::serialize(
         case TK_BITMASK:
         {
             uint64_t value {0};
-            auto sequence = std::static_pointer_cast<std::vector<bool>>(it->second);
+            auto sequence = std::static_pointer_cast<std::vector<bool>>(begin_it->second);
             auto bound = type->get_descriptor().bound().at(0);
 
             for (size_t pos {0}; pos < sequence->size(); ++pos)
@@ -6872,60 +6872,60 @@ void DynamicDataImpl::serialize(
             switch (element_kind)
             {
                 case TK_INT32:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT32>>(begin_it->second);
                     break;
                 case TK_UINT32:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT32>>(begin_it->second);
                     break;
                 case TK_INT8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT8>>(begin_it->second);
                     break;
                 case TK_INT16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT16>>(begin_it->second);
                     break;
                 case TK_UINT16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT16>>(begin_it->second);
                     break;
                 case TK_INT64:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_INT64>>(begin_it->second);
                     break;
                 case TK_UINT64:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT64>>(begin_it->second);
                     break;
                 case TK_FLOAT32:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT32>>(begin_it->second);
                     break;
                 case TK_FLOAT64:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT64>>(begin_it->second);
                     break;
                 case TK_FLOAT128:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_FLOAT128>>(begin_it->second);
                     break;
                 case TK_CHAR8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR8>>(begin_it->second);
                     break;
                 case TK_CHAR16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_CHAR16>>(begin_it->second);
                     break;
                 case TK_BOOLEAN:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BOOLEAN>>(begin_it->second);
                     break;
                 case TK_BYTE:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_BYTE>>(begin_it->second);
                     break;
                 case TK_UINT8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_UINT8>>(begin_it->second);
                     break;
                 case TK_STRING8:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING8>>(begin_it->second);
                     break;
                 case TK_STRING16:
-                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(it->second);
+                    cdr << *std::static_pointer_cast<SequenceTypeForKind<TK_STRING16>>(begin_it->second);
                     break;
                 default:
                 {
                     auto vector_t = std::static_pointer_cast <std::vector<traits<DynamicDataImpl>::ref_type >> (
-                        it->second);
+                        begin_it->second);
 
                     if (TK_BITMASK != element_kind &&
                             fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version())

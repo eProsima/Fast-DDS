@@ -269,7 +269,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             TK_STRUCTURE != type_descriptor_kind &&
             TK_UNION != type_descriptor_kind)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type of kind " << type_descriptor_kind << " not supports adding members");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Type of kind " << type_descriptor_kind << " does not support adding members");
         return RETCODE_PRECONDITION_NOT_MET;
     }
 
@@ -310,11 +310,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     //}}}
 
-    traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(*descriptor_impl);
+    auto member_id = descriptor_impl->id();
 
-    auto member_id = dyn_member->get_descriptor().id();
-
-    //{{{ If member_id is MEMBER_ID_INVALID when aggregated type, find a new one.
+    //{{{ If member_id is MEMBER_ID_INVALID and type is aggregated, find a new one.
     if (TK_ANNOTATION == type_descriptor_kind ||
             TK_BITMASK == type_descriptor_kind ||
             TK_STRUCTURE == type_descriptor_kind ||
@@ -322,9 +320,8 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         if (MEMBER_ID_INVALID == member_id)
         {
-            dyn_member->get_descriptor().id(next_id_++);
+            member_id = next_id_++;
             id_reverter.activate = true;
-            member_id = dyn_member->get_descriptor().id();
 
         }
 
@@ -342,12 +339,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         if (MEMBER_ID_INVALID == member_id)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId for BITSET must be different MEMBER_ID_INVALID");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId for BITSET must be different than MEMBER_ID_INVALID");
             return RETCODE_BAD_PARAMETER;
         }
     }
     //}}}
-    //{{{ Else, rest of types have to come with MEMBER_ID_INVALID.
+    //{{{ Else, TK_ENUM has to come with MEMBER_ID_INVALID.
     else if (MEMBER_ID_INVALID != member_id)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "MemberId must be MEMBER_ID_INVALID");
@@ -355,12 +352,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     //}}}
 
+    traits<DynamicTypeMemberImpl>::ref_type dyn_member = std::make_shared<DynamicTypeMemberImpl>(*descriptor_impl);
+    dyn_member->get_descriptor().id(member_id);
     //{{{ Set index
-    if (dyn_member->get_descriptor().index() >= next_index_)
-    {
-        dyn_member->get_descriptor().index(next_index_++);
-        index_reverter.activate = true;
-    }
+    dyn_member->get_descriptor().index(next_index_++);
+    index_reverter.activate = true;
     //}}}
 
     //{{{ Check bound in case of BITMASK
@@ -378,12 +374,12 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         {
             const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
 
-            // Check that there isn't any member as default label and that there isn't any member with the same case.
+            // Check default label and label cases uniqueness.
             if (descriptor_impl->is_default_label() && member_impl->member_descriptor_.is_default_label())
             {
                 EPROSIMA_LOG_ERROR(DYN_TYPES,
                         "Member " << member_impl->member_descriptor_.name().c_str() <<
-                        " already defined a default_label");
+                        " already defined as default_label");
                 return RETCODE_BAD_PARAMETER;
             }
             for (const int32_t new_label : descriptor_impl->label())
@@ -410,7 +406,6 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         // In case of default case, store the related MemberId.
         if (descriptor_impl->is_default_label())
         {
-            assert(MEMBER_ID_INVALID != member_id);
             default_union_member_ = member_id;
         }
     }
@@ -427,14 +422,19 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
             const auto member_index {member_impl->get_descriptor().index()};
 
-            assert(mid != new_member_id);
-            if (mid < new_member_id)
+            if (mid == new_member_id)
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because is equal than MemberId(" <<
+                        mid << ")");
+                return RETCODE_BAD_PARAMETER;
+            }
+            else if (mid < new_member_id)
             {
                 const auto bound {type_descriptor_.bound().at(member_index)};
 
                 if (new_member_id < mid + bound)
                 {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because is less than MemberId(" <<
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because is less than MemberId(" <<
                             mid << ") + Bound(" << bound << ")");
                     return RETCODE_BAD_PARAMETER;
                 }
@@ -443,17 +443,18 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             {
                 if (mid < new_member_id + new_member_bound)
                 {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because exists a member with id "
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because there is a member with id "
                             << "less than MemberId(" << new_member_id << ") + Bound(" << new_member_bound << ")");
                     return RETCODE_BAD_PARAMETER;
                 }
             }
         }
 
+        //TODO(richiware) Not valid when bitset refactored to support more than 64bits.
         if (64 < new_member_id + new_member_bound)
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistence in the new MemberId because exceeds the maximum "
-                    << "64 bits length");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because exceeds the maximum "
+                    << "64 bits length is exceeded");
             return RETCODE_BAD_PARAMETER;
         }
     }
@@ -478,7 +479,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             {
                 const auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member)};
 
-                // Check that there isn't already any member with same default value.
+                // Check that there isn't already any member with the same default value.
                 if (0 == descriptor->default_value().compare(member_impl->get_descriptor().default_value()))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
