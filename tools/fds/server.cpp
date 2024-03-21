@@ -165,7 +165,7 @@ int fastdds_discovery_server(
 
     }
 
-    // Retrieve server Id: is mandatory and only specified once
+    // Retrieve server ID: is optional and only specified once
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
     int server_id = 0;
@@ -175,9 +175,10 @@ int fastdds_discovery_server(
         fastdds::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().prefix == prefix_cero)
         {
-            std::cout << "Server id is mandatory if not defined in the XML file: use -i or --server-id option." <<
+            std::cout << "Using random GUID because no server ID was specified (-i option) or defined in the XML file." <<
                 std::endl;
-            return 1;
+            pOp = new option::Option();
+            pOp->arg = "-1";
         }
         else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
                 eprosima::fastdds::rtps::DiscoveryProtocol::SERVER ||
@@ -194,29 +195,34 @@ int fastdds_discovery_server(
         std::cout << "Only one server can be created, thus, only one server id can be specified." << std::endl;
         return 1;
     }
-    else
-    {
-        std::stringstream is;
-        is << pOp->arg;
 
-        // Validation has been already done
-        // Name the server according with the identifier
-        if (!(is >> server_id
-                && eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
-                participantQos.wire_protocol().prefix)))
+    std::stringstream is;
+
+    // Name the server according with the identifier
+    if (pOp != nullptr)
+    {
+        // Cast of option to int has already been checked
+        is << pOp->arg;
+        is >> server_id;
+        if (server_id == -1)
         {
-            std::cout << "The provided server identifier is not valid" << std::endl;
+            eprosima::fastdds::rtps::set_server_client_random_guidPrefix(participantQos.wire_protocol().prefix);
+        }
+        else if(!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
+            participantQos.wire_protocol().prefix))
+        {
+            std::cout << "Failed to set the GUID with the server identifier provided." << std::endl;
             return 1;
         }
-
-        // Clear the std::stringstream state and reset it to an empty string
-        is.clear();
-        is.str("");
-
-        // Set Participant Name
-        is << "eProsima Default Server number " << server_id;
-        participantQos.name(is.str().c_str());
     }
+
+    // Clear the std::stringstream state and reset it to an empty string
+    is.clear();
+    is.str("");
+
+    // Set Participant Name
+    is << "eProsima Default Server number " << server_id;
+    participantQos.name(is.str().c_str());
 
     // Choose the kind of server to create
     pOp = options[BACKUP];
@@ -572,12 +578,13 @@ int fastdds_discovery_server(
         }
 
         // Print running server attributes
+        std::string print_server_id = (server_id == -1) ? "Default" : std::to_string(server_id);
         std::cout << "### Server is running ###" << std::endl;
         std::cout << "  Participant Type:   " <<
             participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
             std::endl;
         std::cout << "  Security:           " << (has_security ? "YES" : "NO") << std::endl;
-        std::cout << "  Server ID:          " << server_id << std::endl;
+        std::cout << "  Server ID:          " << print_server_id << std::endl;
         std::cout << "  Server GUID prefix: " <<
             (has_security ? participantQos.wire_protocol().prefix : pServer->guid().guidPrefix) <<
             std::endl;
@@ -634,7 +641,7 @@ option::ArgStatus Arg::check_server_id(
 
         if (is >> id
                 && is.eof()
-                && id >= 0
+                && id >= -1
                 && id <  256 )
         {
             return option::ARG_OK;
@@ -644,7 +651,8 @@ option::ArgStatus Arg::check_server_id(
     if (msg)
     {
         std::cout << "Option '" << option.name
-                  << "' is mandatory. Should be a key identifier between 0 and 255." << std::endl;
+                  << "' is optional. Should be a key identifier between 0 and 255"
+                  << " or -1 (default) to use a random GUID." << std::endl;
     }
 
     return option::ARG_ILLEGAL;
