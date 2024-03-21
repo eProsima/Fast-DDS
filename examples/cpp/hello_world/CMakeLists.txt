@@ -59,4 +59,6 @@ foreach(XML_FILE_COMPLETE_PATH ${XML_FILES})
         ${XML_FILE_COMPLETE_PATH}                   # from full src path
         ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE}.xml # to relative build path
         COPYONLY)
+    install(FILES ${XML_FILE_COMPLETE_PATH}
+        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/hello_world/${BIN_INSTALL_DIR})
 endforeach()
