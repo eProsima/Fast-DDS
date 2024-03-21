@@ -974,7 +974,9 @@ bool WLP::assert_liveliness_manual_by_participant()
 {
     if (manual_by_participant_writers_.size() > 0)
     {
-        return pub_liveliness_manager_->assert_liveliness(MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+        return pub_liveliness_manager_->assert_liveliness(
+            MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+            mp_participant->getGuid().guidPrefix);
     }
     return false;
 }
