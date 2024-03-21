@@ -64,7 +64,7 @@ bool HelloWorldPublisher::init(
         const std::string& topic_name,
         const std::string& server_address,
         unsigned short server_port,
-        unsigned short server_id,
+        unsigned short /*server_id*/,
         TransportKind transport)
 {
     hello_.index(0);
@@ -158,7 +158,7 @@ bool HelloWorldPublisher::init(
 
     // Set SERVER's GUID prefix
     RemoteServerAttributes remote_server_att;
-    remote_server_att.guidPrefix = get_discovery_server_guid_from_id(server_id);
+    // DO NOT SET remote_server_att.guidPrefix, using Default value (empty array)
 
     // Set SERVER's listening locator for PDP
     remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);

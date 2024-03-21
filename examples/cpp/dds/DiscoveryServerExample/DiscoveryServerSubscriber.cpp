@@ -173,7 +173,7 @@ bool HelloWorldSubscriber::init(
     pqos.transport().user_transports.push_back(descriptor);
 
     // CREATE THE PARTICIPANT
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos, &listener_,
+    participant_ = DomainParticipantFactory::get_instance()->create_participant(42, pqos, &listener_,
                     StatusMask::all() >> StatusMask::data_on_readers());
 
     if (participant_ == nullptr)
