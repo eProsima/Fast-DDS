@@ -84,7 +84,7 @@ private:
 
     std::mutex mutex_;
 
-    std::condition_variable matched_cv_;
+    std::condition_variable cv_;
 
     std::atomic<bool> stop_;
 

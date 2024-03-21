@@ -108,13 +108,13 @@ void PublisherApp::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Publisher matched." << std::endl;
-        matched_cv_.notify_one();
+        cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -134,8 +134,8 @@ void PublisherApp::run()
                       << "' SENT" << std::endl;
         }
         // Wait for period or stop event
-        std::unique_lock<std::mutex> matched_lock(mutex_);
-        matched_cv_.wait_for(matched_lock, std::chrono::milliseconds(period_ms_), [&]()
+        std::unique_lock<std::mutex> period_lock(mutex_);
+        cv_.wait_for(period_lock, std::chrono::milliseconds(period_ms_), [&]()
                 {
                     return is_stopped();
                 });
@@ -147,7 +147,7 @@ bool PublisherApp::publish()
     bool ret = false;
     // Wait for the data endpoints discovery
     std::unique_lock<std::mutex> matched_lock(mutex_);
-    matched_cv_.wait(matched_lock, [&]()
+    cv_.wait(matched_lock, [&]()
             {
                 // at least one has been discovered
                 return ((matched_ > 0) || is_stopped());
@@ -169,7 +169,7 @@ bool PublisherApp::is_stopped()
 void PublisherApp::stop()
 {
     stop_.store(true);
-    matched_cv_.notify_one();
+    cv_.notify_one();
 }
 
 } // namespace hello_world
