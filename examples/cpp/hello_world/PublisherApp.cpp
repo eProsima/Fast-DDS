@@ -134,8 +134,8 @@ void PublisherApp::run()
                       << "' SENT" << std::endl;
         }
         // Wait for period or stop event
-        std::unique_lock<std::mutex> terminate_lock(mutex_);
-        terminate_cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
+        std::unique_lock<std::mutex> matched_lock(mutex_);
+        matched_cv_.wait_for(matched_lock, std::chrono::milliseconds(period_ms_), [&]()
                 {
                     return is_stopped();
                 });
@@ -170,7 +170,6 @@ void PublisherApp::stop()
 {
     stop_.store(true);
     matched_cv_.notify_one();
-    terminate_cv_.notify_one();
 }
 
 } // namespace hello_world
