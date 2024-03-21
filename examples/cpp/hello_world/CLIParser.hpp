@@ -70,10 +70,10 @@ public:
         std::cout << "Common options:"                                                          << std::endl;
         std::cout << "  -h, --help                      Print this help message"                << std::endl;
         std::cout << "  -s <num>, --samples <num>       Number of samples to send or receive"   << std::endl;
-        std::cout << "                                   [0 <= <num> <= 65535]"                 << std::endl;
+        std::cout << "                                  [0 <= <num> <= 65535]"                  << std::endl;
         std::cout << "                                  (Default: 0 [unlimited])"               << std::endl;
         std::cout << "Subscriber options:"                                                      << std::endl;
-        std::cout << "  -w, --waitset                   Use waitset read condition"             << std::endl;
+        std::cout << "  -w, --waitset                   Use waitset & read condition"           << std::endl;
         std::exit(return_code);
     }
 
