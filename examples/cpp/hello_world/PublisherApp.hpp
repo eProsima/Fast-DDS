@@ -86,8 +86,6 @@ private:
 
     std::condition_variable matched_cv_;
 
-    std::condition_variable terminate_cv_;
-
     std::atomic<bool> stop_;
 
     const uint32_t period_ms_ = 100; // in ms
