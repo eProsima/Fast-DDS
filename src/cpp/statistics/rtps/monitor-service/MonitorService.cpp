@@ -17,7 +17,6 @@
  */
 
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
-#include <statistics/rtps/StatisticsBase.hpp>
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/statistics/topic_names.hpp>
@@ -25,6 +24,7 @@
 
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <statistics/rtps/StatisticsBase.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
