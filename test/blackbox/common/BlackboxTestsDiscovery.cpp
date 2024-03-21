@@ -2174,6 +2174,8 @@ TEST(Discovery, discovery_cyclone_participant_with_custom_pid)
 
     private:
 
+        using DomainParticipantListener::on_participant_discovery;
+
         std::atomic<uint8_t> discovered_participants_{0};
     };
 

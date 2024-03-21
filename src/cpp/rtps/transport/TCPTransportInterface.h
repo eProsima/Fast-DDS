@@ -77,6 +77,8 @@ class TCPTransportInterface : public TransportInterface
 
     std::atomic<bool> alive_;
 
+    using TransportInterface::transform_remote_locator;
+
 protected:
 
     asio::io_service io_service_;
