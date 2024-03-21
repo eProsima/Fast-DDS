@@ -73,7 +73,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     auto type_ids_result = local_type_identifiers_.insert({type_name, type_ids});
     auto min_entry_result = type_registry_entries_.insert({type_ids.type_identifier1(), minimal_entry});
     auto max_entry_result = type_registry_entries_.insert({type_ids.type_identifier2(), complete_entry});
-    if (!type_ids_result.second || !min_entry_result.second || !max_entry_result.second)
+    if (!type_ids_result.second || !max_entry_result.second)
     {
         if (local_type_identifiers_[type_name] != type_ids ||
                 type_registry_entries_[type_ids.type_identifier1()] != minimal_entry ||
@@ -438,15 +438,6 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
         const TypeObject& type_object)
 {
     uint32_t type_object_serialized_size = 0;
-    try
-    {
-        TypeObjectUtils::type_object_consistency(type_object);
-    }
-    catch (const InvalidArgumentError& exception)
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent CompleteTypeObject: " << exception.what());
-        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
-    }
     if (type_identifier._d() != type_object._d() ||
             type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
     {
