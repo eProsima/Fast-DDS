@@ -66,6 +66,7 @@
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
 
 #include "../../logging/mock/MockConsumer.h"
+#include "../../common/env_var_utils.hpp"
 
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
@@ -571,22 +572,27 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
 
 TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfile)
 {
-    // set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_profile.xml"
-    setenv("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_profile.xml", true);
-
     uint32_t domain_id = 123u;          // This is the domain ID set in the default profile above
-    uint32_t default_domain_id = 0u;    // This is the default domain ID
+
+    // set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_profile.xml"
+    eprosima::testing::set_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_profile.xml");
 
     //participant using the given profile
     DomainParticipant* default_env_participant =
             DomainParticipantFactory::get_instance()->create_participant_with_default_profile();
+
+    // unset XML profile environment variable
+    eprosima::testing::clear_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE");
+
     ASSERT_NE(default_env_participant, nullptr);
     ASSERT_EQ(default_env_participant->get_domain_id(), domain_id);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
                 default_env_participant) == ReturnCode_t::RETCODE_OK);
+}
 
-    // unset XML profile environment variable
-    unsetenv("FASTRTPS_DEFAULT_PROFILES_FILE");
+TEST(ParticipantTests, CreateDomainParticipantWithoutDefaultProfile)
+{
+    uint32_t default_domain_id = 0u;    // This is the default domain ID
 
     //participant using default values
     DomainParticipant* default_participant =
