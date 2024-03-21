@@ -33,24 +33,16 @@ class Application
 {
 public:
 
-    Application();
-
-    //! Run entity (publisher or subscriber)
-    virtual void run();
+    //! Run application
+    virtual void run() = 0;
 
     //! Trigger the end of execution
-    virtual void stop();
+    virtual void stop() = 0;
 
-    //! Factory method to create a publisher or subscriber
+    //! Factory method to create applications based on configuration
     static std::shared_ptr<Application> make_app(
             const CLIParser::hello_world_config& config,
             const std::string& topic_name);
-
-private:
-
-    //! Return the current state of execution
-    virtual bool is_stopped();
-
 };
 
 } // namespace hello_world

@@ -65,7 +65,7 @@ public:
 private:
 
     //! Return the current state of execution
-    virtual bool is_stopped();
+    bool is_stopped();
 
     HelloWorld hello_;
 

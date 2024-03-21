@@ -31,23 +31,6 @@ namespace fastdds {
 namespace examples {
 namespace hello_world {
 
-Application::Application()
-{
-}
-
-void Application::run()
-{
-}
-
-void Application::stop()
-{
-}
-
-bool Application::is_stopped()
-{
-    return false;
-}
-
 //! Factory method to create a publisher or subscriber
 std::shared_ptr<Application> Application::make_app(
         const CLIParser::hello_world_config& config,

@@ -20,7 +20,6 @@
 #include "ListenerSubscriberApp.hpp"
 
 #include <condition_variable>
-#include <csignal>
 #include <stdexcept>
 
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
@@ -45,13 +44,12 @@ namespace hello_world {
 ListenerSubscriberApp::ListenerSubscriberApp(
         const CLIParser::subscriber_config& config,
         const std::string& topic_name)
-    : Application ()
-    , participant_(nullptr)
+    : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
-    , samples_ (config.samples)
+    , samples_(config.samples)
     , received_samples_(0)
     , stop_(false)
 {
