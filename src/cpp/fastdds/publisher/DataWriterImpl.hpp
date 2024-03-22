@@ -459,6 +459,10 @@ protected:
 #endif //FASTDDS_STATISTICS
 
         DataWriterImpl* data_writer_;
+
+    private:
+
+        using fastrtps::rtps::WriterListener::onWriterMatched;
     }
     writer_listener_;
 

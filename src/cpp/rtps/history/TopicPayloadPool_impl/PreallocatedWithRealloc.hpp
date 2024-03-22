@@ -80,6 +80,8 @@ protected:
 
 private:
 
+    using TopicPayloadPool::get_payload;
+
     uint32_t min_payload_size_;
     uint32_t minimum_pool_size_;    //< Minimum initial pool size (sum of all histories)
 };
