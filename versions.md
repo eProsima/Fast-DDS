@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added authentication handshake properties.
+
 Version 2.13.0
 --------------
 
