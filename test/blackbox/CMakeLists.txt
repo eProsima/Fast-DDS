@@ -107,7 +107,7 @@ target_include_directories(BlackboxTests_RTPS PRIVATE
 target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
     TEST_PREFIX "BlackboxTests_RTPS."
-    TEST_FILTER ${pkcs_filter}
+    TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
     NO_PRETTY_VALUES
     )
 
