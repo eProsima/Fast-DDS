@@ -596,9 +596,9 @@ void DiscoveryDataBase::create_participant_from_change_(
 void DiscoveryDataBase::match_new_server_(
         eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
-    // Send Our DATA(p) to the new participant
-    // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
-    //  so the new participant could never receive out data
+    // Send Our DATA(p) to the new participant.
+    // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
+    // so the new participant could never receive our data
     auto our_data_it = participants_.find(server_guid_prefix_);
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
@@ -699,7 +699,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
         // If the DATA(p) it's from this server, it is already in history and we do nothing here
         if (change_guid.guidPrefix != server_guid_prefix_)
         {
-            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
+            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p).
             // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
             //  our server and we have pinged it. But also if we are its server it could be the case that
             //  our DATA(p) is not acked even when it is our server. Solution: see in PDPServer how the change has
