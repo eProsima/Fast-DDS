@@ -34,12 +34,13 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 
 # Check if /etc/hosts file has been modified to add dummy host test subjects
 if(WIN32)
-    execute_process(COMMAND powershell -C Resolve-DNSName www.acme.com.test
+    execute_process(COMMAND powershell -C Resolve-DNSName -Name www.acme.com.test -CacheOnly
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 else(WIN32)
     execute_process(COMMAND getent hosts www.acme.com.test
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 endif(WIN32)
+message(STATUS "EPROSIMA_TEST_DNS_NOT_SET_UP: '${EPROSIMA_TEST_DNS_NOT_SET_UP}'")
 
 ###############################################################################
 # Testing
