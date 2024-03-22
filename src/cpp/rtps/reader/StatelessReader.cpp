@@ -710,6 +710,26 @@ bool StatelessReader::processDataFragMsg(
                 {
                     if (work_change->sequenceNumber < change_to_add->sequenceNumber)
                     {
+                        SequenceNumber_t updated_seq = work_change->sequenceNumber;
+                        SequenceNumber_t previous_seq{ 0, 0 };
+                        previous_seq = update_last_notified(writer_guid, updated_seq);
+
+                        // Notify lost samples
+                        auto listener = getListener();
+                        if (listener != nullptr)
+                        {
+                            if (SequenceNumber_t{ 0, 0 } != previous_seq)
+                            {
+                                assert(previous_seq < updated_seq);
+                                uint64_t tmp = (updated_seq - previous_seq).to64long();
+                                int32_t lost_samples =
+                                        tmp > static_cast<uint64_t>(std::numeric_limits<int32_t>::max()) ?
+                                        std::numeric_limits<int32_t>::max() : static_cast<int32_t>(tmp);
+                                assert (0 < lost_samples);
+                                listener->on_sample_lost(this, lost_samples);
+                            }
+                        }
+
                         // Pending change should be dropped. Check if it can be reused
                         if (sampleSize <= work_change->serializedPayload.max_size)
                         {
