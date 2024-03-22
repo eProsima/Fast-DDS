@@ -202,8 +202,8 @@ uint32_t TCPChannelResourceSecure::read(
 size_t TCPChannelResourceSecure::send(
         const octet* header,
         size_t header_size,
-        const octet* data,
-        size_t size,
+        const std::list<NetworkBuffer>& buffers,
+        uint32_t total_bytes,
         asio::error_code& ec)
 {
     size_t bytes_sent = 0;
@@ -211,18 +211,22 @@ size_t TCPChannelResourceSecure::send(
     if (eConnecting < connection_status_)
     {
         if (parent_->configuration()->non_blocking_send &&
-                !check_socket_send_buffer(header_size + size,
+                !check_socket_send_buffer(header_size + total_bytes,
                 secure_socket_->lowest_layer().native_handle()))
         {
             return 0;
         }
 
-        std::vector<asio::const_buffer> buffers;
+        // Use a list of const_buffers to send the message
+        std::vector<asio::const_buffer> asio_buffers;
         if (header_size > 0)
         {
-            buffers.push_back(asio::buffer(header, header_size));
+            asio_buffers.push_back(asio::buffer(header, header_size));
         }
-        buffers.push_back(asio::buffer(data, size));
+        for (const NetworkBuffer& buffer : buffers)
+        {
+            asio_buffers.push_back(asio::buffer(buffer.buffer, buffer.size));
+        }
 
         // Work around meanwhile
         std::promise<size_t> write_bytes_promise;
@@ -233,7 +237,7 @@ size_t TCPChannelResourceSecure::send(
                 {
                     if (socket->lowest_layer().is_open())
                     {
-                        size_t bytes_transferred = asio::write(*socket, buffers, ec);
+                        size_t bytes_transferred = asio::write(*socket, asio_buffers, ec);
                         if (!ec)
                         {
                             write_bytes_promise.set_value(bytes_transferred);

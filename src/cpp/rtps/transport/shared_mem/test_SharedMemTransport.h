@@ -30,8 +30,8 @@ public:
             const test_SharedMemTransportDescriptor&);
 
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size,
+            const std::list<NetworkBuffer>& buffers,
+            uint32_t total_bytes,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
             const std::chrono::steady_clock::time_point& max_blocking_time_point) override;

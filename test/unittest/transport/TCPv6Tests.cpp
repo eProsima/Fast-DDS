@@ -29,10 +29,12 @@
 #include "mock/MockTCPv6Transport.h"
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/transport/TCPv6Transport.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;
 using TCPv6Transport = eprosima::fastdds::rtps::TCPv6Transport;
+using NetworkBuffer = eprosima::fastdds::rtps::NetworkBuffer;
 
 #if defined(_WIN32)
 #define GET_PID _getpid
@@ -371,11 +373,14 @@ TEST_F(TCPv6Tests, non_blocking_send)
     std::vector<octet> message(msg_size, 0);
     const octet* data = message.data();
     size_t size = message.size();
+    NetworkBuffer buffers(data, size);
+    std::list<NetworkBuffer> buffer_list;
+    buffer_list.push_back(buffers);
 
     // Send the message with no header
     for (int i = 0; i < 5; i++)
     {
-        sender_channel_resource->send(nullptr, 0, data, size, ec);
+        sender_channel_resource->send(nullptr, 0, buffer_list, size, ec);
     }
 
     socket.shutdown(asio::ip::tcp::socket::shutdown_both);

@@ -273,7 +273,8 @@ public:
 
     /**
      * Send a message to several locations
-     * @param msg Message to send.
+     * @param buffers List of buffers to send.
+     * @param total_bytes Total number of bytes to send.
      * @param sender_guid GUID of the producer of the message.
      * @param destination_locators_begin Iterator at the first destination locator.
      * @param destination_locators_end Iterator at the end destination locator.
@@ -282,7 +283,8 @@ public:
      */
     template<class LocatorIteratorT>
     bool sendSync(
-            CDRMessage_t* msg,
+            const std::list<eprosima::fastdds::rtps::NetworkBuffer>& buffers,
+            const uint32_t& total_bytes,
             const GUID_t& sender_guid,
             const LocatorIteratorT& destination_locators_begin,
             const LocatorIteratorT& destination_locators_end,
@@ -302,7 +304,7 @@ public:
             {
                 LocatorIteratorT locators_begin = destination_locators_begin;
                 LocatorIteratorT locators_end = destination_locators_end;
-                send_resource->send(msg->buffer, msg->length, &locators_begin, &locators_end,
+                send_resource->send(buffers, total_bytes, &locators_begin, &locators_end,
                         max_blocking_time_point);
             }
 
@@ -313,7 +315,7 @@ public:
                 sender_guid,
                 destination_locators_begin,
                 destination_locators_end,
-                msg->length);
+                total_bytes);
 
             // checkout if sender is a discovery endpoint
             on_discovery_packet(

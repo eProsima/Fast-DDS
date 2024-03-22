@@ -41,8 +41,8 @@ public:
             const test_UDPv4TransportDescriptor& descriptor);
 
     virtual bool send(
-            const fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size,
+            const std::list<NetworkBuffer>& send_buffer,
+            uint32_t total_bytes,
             eProsimaUDPSocket& socket,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end,
@@ -107,18 +107,18 @@ private:
             const Locator& remote_locator);
 
     bool log_drop(
-            const fastrtps::rtps::octet* buffer,
+            const std::list<NetworkBuffer>& buffer,
             uint32_t size);
     bool packet_should_drop(
-            const fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size);
+            const std::list<NetworkBuffer>& buffers,
+            uint32_t total_bytes);
     bool random_chance_drop();
     bool should_be_dropped(
             PercentageData* percentage);
 
     bool send(
-            const fastrtps::rtps::octet* send_buffer,
-            uint32_t send_buffer_size,
+            const std::list<NetworkBuffer>& send_buffer,
+            uint32_t total_bytes,
             eProsimaUDPSocket& socket,
             const Locator& remote_locator,
             bool only_multicast_purpose,

@@ -15,10 +15,13 @@
 #ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_
 #define _FASTDDS_RTPS_READER_STATEFULREADER_H_
 
+#include <list>
+
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -96,7 +99,8 @@ public:
     MOCK_METHOD0(getEventResource, ResourceEvent & ());
 
     bool send_sync_nts(
-            CDRMessage_t* /*message*/,
+            const std::list<eprosima::fastdds::rtps::NetworkBuffer>& /*buffers*/,
+            const uint32_t& /*total_bytes*/,
             const LocatorsIterator& /*destination_locators_begin*/,
             const LocatorsIterator& /*destination_locators_end*/,
             std::chrono::steady_clock::time_point& /*max_blocking_time_point*/)

@@ -24,11 +24,13 @@
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
+#include <fastdds/rtps/network/NetworkBuffer.hpp>
 
 #include <vector>
 #include <chrono>
 #include <cassert>
 #include <memory>
+#include <list>
 
 
 namespace eprosima {
@@ -252,7 +254,7 @@ public:
 
     inline uint32_t get_current_bytes_processed() const
     {
-        return current_sent_bytes_ + full_msg_->length;
+        return current_sent_bytes_ + header_msg_->length + buffers_bytes_;
     }
 
 private:
@@ -274,6 +276,8 @@ private:
     void check_and_maybe_flush(
             const GuidPrefix_t& destination_guid_prefix);
 
+    void append_pending_payload();
+
     bool insert_submessage(
             bool is_big_submessage)
     {
@@ -283,6 +287,27 @@ private:
     bool insert_submessage(
             const GuidPrefix_t& destination_guid_prefix,
             bool is_big_submessage);
+
+    bool check_space(
+            CDRMessage_t* msg,
+            const uint32_t length);
+
+
+    /**
+     * Appends a submessage to the RTPS Message so it can be sent.
+     * The submessage is copied into the header_msg_ buffer if it is the first submessage
+     * of the RTPS message. Otherwise, it is copied into copied_msgs_ and added to buffers_to_send_.
+     * Then, if there is a data payload in pending_buffer_ it is added to buffers_to_send_.
+     *
+     * In gather-send operation, the submessage appended only contains the header and pending_buffer_
+     * points to the data payload.
+     *
+     * If gather-send operation is not possible (i.e. Security), the submessage received will contain
+     * the header AND the data payload. The whole submessage will be copied into copied_msgs_.
+     *
+     * @return True if the submessage was successfully appended, false if the copy operation failed.
+     */
+    bool append_submessage();
 
     bool add_info_dst_in_buffer(
             CDRMessage_t* buffer,
@@ -300,7 +325,7 @@ private:
 
     Endpoint* endpoint_ = nullptr;
 
-    CDRMessage_t* full_msg_ = nullptr;
+    CDRMessage_t* header_msg_ = nullptr;
 
     CDRMessage_t* submessage_msg_ = nullptr;
 
@@ -323,6 +348,29 @@ private:
     uint32_t sent_bytes_limitation_ = 0;
 
     uint32_t current_sent_bytes_ = 0;
+
+    // Next buffer that will be send
+    eprosima::fastdds::rtps::NetworkBuffer pending_buffer_;
+
+    // List of buffers that will be send along the header
+    std::list<eprosima::fastdds::rtps::NetworkBuffer> buffers_to_send_;
+
+    // Bytes to send in the next list of buffers
+    uint32_t buffers_bytes_ = 0;
+
+    /**
+     * List of CDRMessages containing the copied messages. This list can contain:
+     * - Submessage headers preceding each DATA/DATA_FRAG
+     * - Protected messages that require encryption
+     * - Heartbeats, gaps, acknacks, nackfrags...
+     */
+    std::list<CDRMessage_t> copied_messages_;
+
+    // Size of the pending padding
+    uint8_t pending_padding_ = 0;
+
+    // Fixed padding to be used whenever needed
+    const octet padding_[3] = {0, 0, 0};
 };
 
 }        /* namespace rtps */

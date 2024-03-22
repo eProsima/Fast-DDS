@@ -151,8 +151,9 @@ public:
             LocatorSelectorSender&,
             const std::chrono::time_point<std::chrono::steady_clock>&));
 
-    MOCK_METHOD3(send_nts, bool(
-            CDRMessage_t*,
+    MOCK_METHOD4(send_nts, bool(
+            const std::list<eprosima::fastdds::rtps::NetworkBuffer>&,
+            const uint32_t&,
             const LocatorSelectorSender&,
             std::chrono::steady_clock::time_point&));
 
