@@ -33,9 +33,6 @@
 
 using namespace eprosima::fastdds::dds;
 
-using std::cout;
-using std::endl;
-
 MemoryTestSubscriber::MemoryTestSubscriber()
 {
     m_datasublistener.up_ = this;
@@ -239,11 +236,11 @@ void MemoryTestSubscriber::DataSubListener::on_subscription_matched(
 
     if (0 < info.current_count_change)
     {
-        cout << C_MAGENTA << "Data Sub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Data Sub Matched " << C_DEF << std::endl;
     }
     else
     {
-        cout << C_MAGENTA << "Data Sub unmatched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Data Sub unmatched " << C_DEF << std::endl;
     }
     up_->disc_count_ += info.current_count_change;
 
@@ -259,11 +256,11 @@ void MemoryTestSubscriber::CommandPubListener::on_publication_matched(
 
     if (0 < info.current_count_change)
     {
-        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Pub Matched " << C_DEF << std::endl;
     }
     else
     {
-        cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << std::endl;
     }
     up_->disc_count_ += info.current_count_change;
 
@@ -279,11 +276,11 @@ void MemoryTestSubscriber::CommandSubListener::on_subscription_matched(
 
     if (0 < info.current_count_change)
     {
-        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Sub Matched " << C_DEF << std::endl;
     }
     else
     {
-        cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << std::endl;
     }
     up_->disc_count_ += info.current_count_change;
 
@@ -297,10 +294,10 @@ void MemoryTestSubscriber::CommandSubListener::on_data_available(
     TestCommandType command;
     if (RETCODE_OK == reader->take_next_sample(&command, &up_->m_sampleinfo))
     {
-        cout << "RCOMMAND: " << command.m_command << endl;
+        std::cout << "RCOMMAND: " << command.m_command << std::endl;
         if (command.m_command == READY)
         {
-            cout << "Publisher has new test ready..." << endl;
+            std::cout << "Publisher has new test ready..." << std::endl;
             up_->mutex_.lock();
             ++up_->comm_count_;
             up_->mutex_.unlock();
@@ -308,7 +305,7 @@ void MemoryTestSubscriber::CommandSubListener::on_data_available(
         }
         else if (command.m_command == STOP)
         {
-            cout << "Publisher has stopped the test" << endl;
+            std::cout << "Publisher has stopped the test" << std::endl;
             up_->mutex_.lock();
             ++up_->data_count_;
             up_->mutex_.unlock();
@@ -316,7 +313,7 @@ void MemoryTestSubscriber::CommandSubListener::on_data_available(
         }
         else if (command.m_command == STOP_ERROR)
         {
-            cout << "Publisher has canceled the test" << endl;
+            std::cout << "Publisher has canceled the test" << std::endl;
             up_->m_status = -1;
             up_->mutex_.lock();
             ++up_->data_count_;
@@ -372,9 +369,9 @@ void MemoryTestSubscriber::run()
 bool MemoryTestSubscriber::test(
         uint32_t datasize)
 {
-    cout << "Preparing test with data size: " << datasize + 4 << endl;
+    std::cout << "Preparing test with data size: " << datasize + 4 << std::endl;
 
-    //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << endl;
+    //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << std::endl;
     if (dynamic_data_)
     {
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);
@@ -392,7 +389,7 @@ bool MemoryTestSubscriber::test(
             });
     disc_lock.unlock();
 
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
+    std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
 
     std::unique_lock<std::mutex> lock(mutex_);
     if (comm_count_ == 0)
@@ -406,7 +403,7 @@ bool MemoryTestSubscriber::test(
     n_received = 0;
     TestCommandType command;
     command.m_command = BEGIN;
-    cout << "Testing with data size: " << datasize + 4 << endl;
+    std::cout << "Testing with data size: " << datasize + 4 << std::endl;
     command_writer_->write(&command);
 
     lock.lock();
@@ -417,7 +414,7 @@ bool MemoryTestSubscriber::test(
     --data_count_;
     lock.unlock();
 
-    cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << endl;
+    std::cout << "TEST OF SIZE: " << datasize + 4 << " ENDS" << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     if (dynamic_data_)
     {

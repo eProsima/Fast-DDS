@@ -1570,19 +1570,24 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
                 for (auto& member : enclosing_type_->get_all_members())
                 {
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
-                    auto it = value_.find(member.first);
+                    auto member_type {traits<DynamicType>::narrow<DynamicTypeImpl>(member_impl->get_descriptor().type())};
 
-                    if (it != value_.end())
+                    if (TK_MAP != member_type->resolve_alias_enclosed_type()->get_kind())
                     {
-                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+                        auto it = value_.find(member.first);
 
-                        calculated_size += calculator.calculate_member_serialized_size(
-                            member.first, member_data, current_alignment);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Error serializing structure member because not found on DynamicData");
+                        if (it != value_.end())
+                        {
+                            auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+
+                            calculated_size += calculator.calculate_member_serialized_size(
+                                member.first, member_data, current_alignment);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                    "Error serializing structure member because not found on DynamicData");
+                        }
                     }
                 }
             }
@@ -1958,6 +1963,10 @@ void DynamicDataImpl::serialize_key(
                 for (auto& member : enclosing_type_->get_all_members())
                 {
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
+                    auto member_type {traits<DynamicType>::narrow<DynamicTypeImpl>(member_impl->get_descriptor().type())};
+
+                    if (TK_MAP != member_type->resolve_alias_enclosed_type()->get_kind())
+                    {
                     auto it = value_.find(member.first);
 
                     if (it != value_.end())
@@ -1970,6 +1979,7 @@ void DynamicDataImpl::serialize_key(
                     {
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
                                 "Error serializing structure member because not found on DynamicData");
+                    }
                     }
                 }
             }

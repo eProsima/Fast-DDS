@@ -201,6 +201,13 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
+    // TK_MAP member cannot be key.
+    if (TK_MAP == type->get_kind() && is_key_)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "TK_MAP member cannot be part of the key.");
+        return false;
+    }
+
     // Check name consistency
     if (0 == name_.size() && (TK_ANNOTATION == parent_kind_ ||
             TK_BITMASK == parent_kind_ ||
