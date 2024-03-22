@@ -29,7 +29,7 @@ set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FIL
 if(WIN32)
     execute_process(COMMAND powershell -C Resolve-DNSName -Name www.acme.com.test -CacheOnly
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
-elif(APPLE)
+elseif(APPLE)
 	execute_process(COMMAND dscacheutil -q host -a name www.acme.com.test
 		RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 else()
