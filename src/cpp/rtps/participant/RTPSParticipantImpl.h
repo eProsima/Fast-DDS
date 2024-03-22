@@ -40,6 +40,7 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
@@ -1265,6 +1266,14 @@ public:
     {
         return match_local_endpoints_;
     }
+
+    /**
+     * Method called on participant removal with the set of locators associated to the participant.
+     *
+     * @param remote_participant_locators Set of locators associated to the participant removed.
+     */
+    void update_removed_participant(
+            const LocatorList_t& remote_participant_locators);
 
 };
 } // namespace rtps
