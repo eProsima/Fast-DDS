@@ -261,7 +261,7 @@
                 <name>default_name</name>
             </rtps>
         </participant>
-        
+
         <publisher profile_name="test_publisher_profile">
             <topic>
                 <kind>NO_KEY</kind>
@@ -481,7 +481,8 @@
                 <increment>0</increment>
             </matchedSubscribersAllocation>
         </publisher>
-        
+
+        <!-- This profile has been updated to ensure that HistoryQoS and ResourceLimitQoS constraints are met (#20401) -->
         <subscriber profile_name="test_subscriber_profile">
             <topic>
                 <kind>NO_KEY</kind>
@@ -492,9 +493,9 @@
                     <depth>500</depth>
                 </historyQos>
                 <resourceLimitsQos>
-                    <max_samples>10</max_samples>
+                    <max_samples>2500</max_samples>
                     <max_instances>5</max_instances>
-                    <max_samples_per_instance>2</max_samples_per_instance>
+                    <max_samples_per_instance>500</max_samples_per_instance>
                     <allocated_samples>10</allocated_samples>
                 </resourceLimitsQos>
             </topic>
@@ -578,7 +579,7 @@
                 <increment>5</increment>
             </matchedPublishersAllocation>
         </subscriber>
-        
+
         <subscriber profile_name="test_default_subscriber_profile" is_default_profile="true">
             <topic>
                 <kind>WITH_KEY</kind>

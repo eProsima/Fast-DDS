@@ -88,7 +88,7 @@ bool HelloWorldPublisher::init()
     DataWriterQos wqos;
     wqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
     wqos.history().kind = KEEP_LAST_HISTORY_QOS;
-    wqos.history().depth = 30;
+    wqos.history().depth = 20;
     wqos.resource_limits().max_samples = 50;
     wqos.resource_limits().max_samples_per_instance = 20;
     wqos.reliable_writer_qos().times.heartbeatPeriod.seconds = 2;
