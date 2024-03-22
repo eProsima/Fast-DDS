@@ -1418,6 +1418,21 @@ bool get_server_client_default_guidPrefix(
     return false;
 }
 
+void set_server_client_random_guidPrefix(
+        GuidPrefix_t& guid)
+{
+    auto now = std::chrono::high_resolution_clock::now();
+    srand(now.time_since_epoch().count());
+    // Random GUIDs always start with "ca.fe."
+    guid.value[0] = static_cast<octet>(202);
+    guid.value[1] = static_cast<octet>(254);
+    for (auto i = 2; i < 12; i++)
+    {
+        guid.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+    }
+    std::cout << "\nRandom GUID: " << guid << "\n" << std::endl;
+}
+
 bool PDPClient::remove_remote_participant(
         const GUID_t& partGUID,
         ParticipantDiscoveryInfo::DISCOVERY_STATUS reason)
