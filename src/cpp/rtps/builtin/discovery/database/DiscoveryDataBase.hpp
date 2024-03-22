@@ -307,11 +307,11 @@ public:
             std::map<eprosima::fastdds::rtps::InstanceHandle_t, fastdds::rtps::CacheChange_t*>& changes_map);
 
     // This function erase the last backup and all the changes that has arrived since then and create
-    // a new backup that shows the actual state of the database
+    // a new backup that shows the actual state of the database.
     // This way we can simulate the state of the database from a clean state of json backup, or from
     // an state in the middle of an routine execution, and every message that has arrived and has not
     // been process.
-    // By this, we do not lose any change or information in any case
+    // By this, we do not lose any change or information in any case.
     // This function must be called with the incoming datas blocked
     void clean_backup();
 
@@ -321,7 +321,7 @@ public:
         data_queues_mutex_.lock();
     }
 
-    // Unock the incoming of new data to the DDB queue
+    // Unlock the incoming of new data to the DDB queue
     void unlock_incoming_data()
     {
         data_queues_mutex_.unlock();
@@ -339,7 +339,7 @@ public:
         return new_updates_.exchange(0);
     }
 
-    // Check if an participant is stored as local. If the participant does not exist, it returns false
+    // Check if a participant is stored as local. If the participant does not exist, it returns false
     bool is_participant_local(
             const eprosima::fastdds::rtps::GuidPrefix_t& participant_prefix);
 
@@ -354,12 +354,12 @@ public:
 
 protected:
 
-    // change a cacheChange by update or new disposal
+    // Change a cacheChange by update or new disposal
     void update_change_and_unmatch_(
             fastdds::rtps::CacheChange_t* new_change,
             ddb::DiscoverySharedInfo& entity);
 
-    // update the acks
+    // Update the acks
     void add_ack_(
             const eprosima::fastdds::rtps::CacheChange_t* change,
             const eprosima::fastdds::rtps::GuidPrefix_t& acked_entity);
@@ -524,7 +524,7 @@ protected:
 
     DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
 
-    //! Covenient per-topic mapping of readers and writers to speed-up queries
+    //! Convenient per-topic mapping of readers and writers to speed-up queries
     std::map<std::string, std::vector<eprosima::fastdds::rtps::GUID_t>> readers_by_topic_;
     std::map<std::string, std::vector<eprosima::fastdds::rtps::GUID_t>> writers_by_topic_;
 

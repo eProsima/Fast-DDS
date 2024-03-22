@@ -151,9 +151,9 @@ constexpr uint16_t DEFAULT_TCP_SERVER_PORT = 42100;
  *    1. The server's GUID prefix must be compliant with the schema
  *       "44.53.<server_id_in_hex>.5f.45.50.52.4f.53.49.4d.41", which is the schema followed by the prefixes generated
  *        when creating server using fastdds cli, being DEFAULT_ROS2_SERVER_GUIDPREFIX the prefix for ID=0.
- *    1. The discovery protocol must be either SIMPLE or SERVER.
- *       1. In the case of SIMPLE, the participant is created as a CLIENT instead.
- *       1. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
+ *    2. The discovery protocol must be either SIMPLE or SERVER.
+ *       a. In the case of SIMPLE, the participant is created as a CLIENT instead.
+ *       b. In the case of SERVER, the participant is created as a SERVER, using the DEFAULT_ROS2_MASTER_URI list to
  *          expand the list of remote servers.
  */
 const char* const DEFAULT_ROS2_MASTER_URI = "ROS_DISCOVERY_SERVER";
