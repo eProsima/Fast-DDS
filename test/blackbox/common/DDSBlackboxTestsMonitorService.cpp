@@ -2305,20 +2305,21 @@ TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
 {
 #ifdef FASTDDS_STATISTICS
 
-    //! In this test we do not need to enforce the validation of samples
+    // In this test we do not need to enforce the validation of samples
     std::bitset<statistics::STATUSES_SIZE> validation_mask;
 
-    //! Setup
+    // Setup consumer participant
     MonitorServiceConsumer MSC(validation_mask);
 
     MSC.init_monitor_service_reader();
 
-    //! Setup
+    // Setup participant with monitor service enabled
     MonitorServiceParticipant MSP;
     auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
     std::atomic<uint8_t> n_gap_messages{0};
 
+    // Prepare filter to intercept gap messages
     test_transport->drop_gap_messages_filter_ = [&n_gap_messages](CDRMessage_t& msg)
             {
 
@@ -2356,8 +2357,9 @@ TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
     MSC.start_reception(std::list<MonitorServiceType::type>());
 
     auto samples = default_helloworld_data_generator(4);
-    // Default hb period is 3 secs.
+    // Default heartbeat period is 3 secs.
     // Ensure that the monitor service writer sends at least one
+    // waiting 1150 milliseconds between samples
     MSP.send(samples, 1150);
 
     ASSERT_TRUE(n_gap_messages > 0u);
@@ -2373,14 +2375,12 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
 {
 #ifdef FASTDDS_STATISTICS
 
-    //! In this test we enforce validating DeadlineMissed samples only
+    // In this test we enforce validating DeadlineMissed samples only
     std::bitset<statistics::STATUSES_SIZE> validation_mask;
     validation_mask[statistics::DEADLINE_MISSED] = true;
 
-    //! Setup
+    // Setup
     MonitorServiceConsumer MSC(validation_mask, false);
-
-    //! Setup
     MonitorServiceParticipant MSP;
 
     MSP.setup();
@@ -2389,7 +2389,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
     DataReaderQos dr_qos;
     DataWriterQos dw_qos;
 
-    //! Set deadline as 0,1 secs
+    // Set deadline as 0,5 secs to continously keep missing the deadline later
     dr_qos.deadline().period = eprosima::fastrtps::Time_t{0, 500000000};
     dw_qos.deadline().period = eprosima::fastrtps::Time_t{0, 500000000};
 
@@ -2400,6 +2400,10 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
     MonitorServiceType::type endpoint_deadline_msg;
     StatisticsGUIDList r_guids, w_guids;
 
+    // Prepare the expected messages or, in this case, the non-expected one
+    // since we should never receive a deadline missed status with a total count of 2
+    // That will prove that only the last update of the instance is being received and, in turn,
+    // verify that the monitor service datawriter is not holding past samples of the same instance.
     r_guids = MSP.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
     endpoint_deadline_msg.local_entity(r_guids.back());
@@ -2418,6 +2422,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
 
     auto samples = default_helloworld_data_generator(5);
 
+    //send a sample every 600 milliseconds (more than the deadline period)
     MSP.send(samples, 600);
 
     // Late joiner consumer
@@ -2427,7 +2432,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
     MSC.start_reception(non_expected_msgs);
 
     // We expect not to have received any deadline missed status
-    // with a total count less than 5
+    // with a total_count less than 5
     ASSERT_FALSE(MSC.block_for_all(std::chrono::seconds(5)));
 #endif //FASTDDS_STATISTICS
 }
