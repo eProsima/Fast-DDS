@@ -42,10 +42,7 @@ class MonitorServiceListener :
 public:
 
     MonitorServiceListener(
-            MonitorService* ms
-            );
-
-public:
+            MonitorService* ms);
 
     bool on_local_entity_status_change(
             const fastrtps::rtps::GUID_t& guid,
@@ -70,6 +67,9 @@ protected:
 
     MonitorService* monitor_srv_;
 
+private:
+
+    using fastrtps::rtps::WriterListener::onWriterMatched;
 
 };
 
