@@ -216,6 +216,13 @@ FASTDDS_EXPORTED_API bool get_server_client_default_guidPrefix(
         int id,
         fastdds::rtps::GuidPrefix_t& guid);
 
+/**
+ * Returns a random generated guidPrefix.
+ * @param[out] guid reference to the guidPrefix to modify
+ */
+FASTDDS_EXPORTED_API void set_server_client_random_guidPrefix(
+        fastrtps::rtps::GuidPrefix_t& guid);
+
 } // rtps
 } // fastdds
 } // namespace eprosima
