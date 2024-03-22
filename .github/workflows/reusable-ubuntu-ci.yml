@@ -53,7 +53,7 @@ jobs:
 
       - name: Add ci-pending label if PR
         if: ${{ github.event_name == 'pull_request' }}
-        uses: eProsima/eProsima-CI/external/remove_labels@feature/labels
+        uses: eProsima/eProsima-CI/external/add_labels@feature/labels
         with:
           labels: ci-pending
           number: ${{ github.event.number }}
