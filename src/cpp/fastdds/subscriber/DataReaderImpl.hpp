@@ -389,6 +389,10 @@ protected:
                 int32_t sample_lost_since_last_update) override;
 
         DataReaderImpl* data_reader_;
+
+    private:
+
+        using fastrtps::rtps::ReaderListener::onReaderMatched;
     }
     reader_listener_;
 

@@ -25,8 +25,11 @@ on:
         required: true
 
   pull_request:
+<<<<<<< HEAD
     branches:
       - '2.6.x'
+=======
+>>>>>>> 7154a57a0 (Run Github Ubuntu CI on PRs (#4598))
     paths-ignore:
       - '**.md'
       - '**.txt'

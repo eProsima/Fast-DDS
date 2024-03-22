@@ -525,6 +525,62 @@ protected:
 
     class MyRTPSParticipantListener : public fastrtps::rtps::RTPSParticipantListener
     {
+<<<<<<< HEAD
+=======
+        struct Sentry
+        {
+            Sentry(
+                    MyRTPSParticipantListener* listener)
+                : listener_(listener)
+                , on_guard_(false)
+            {
+                std::lock_guard<std::mutex> _(listener_->participant_->mtx_gs_);
+                if (listener_ != nullptr && listener_->participant_ != nullptr &&
+                        listener_->participant_->listener_ != nullptr &&
+                        listener_->participant_->participant_ != nullptr)
+                {
+                    if (listener_->callback_counter_ >= 0)
+                    {
+                        ++listener_->callback_counter_;
+                        on_guard_ = true;
+                    }
+                }
+            }
+
+            ~Sentry()
+            {
+                if (on_guard_)
+                {
+                    bool notify = false;
+                    {
+                        std::lock_guard<std::mutex> lock(listener_->participant_->mtx_gs_);
+                        assert(
+                            listener_ != nullptr && listener_->participant_ != nullptr && listener_->participant_->listener_ != nullptr &&
+                            listener_->participant_->participant_ != nullptr);
+                        --listener_->callback_counter_;
+                        notify = !listener_->callback_counter_;
+                    }
+                    if (notify)
+                    {
+                        listener_->participant_->cv_gs_.notify_all();
+                    }
+                }
+            }
+
+            operator bool () const
+            {
+                return on_guard_;
+            }
+
+            MyRTPSParticipantListener* listener_ = nullptr;
+            bool on_guard_;
+        };
+
+        using fastrtps::rtps::RTPSParticipantListener::onParticipantDiscovery;
+        using fastrtps::rtps::RTPSParticipantListener::onReaderDiscovery;
+        using fastrtps::rtps::RTPSParticipantListener::onWriterDiscovery;
+
+>>>>>>> 7154a57a0 (Run Github Ubuntu CI on PRs (#4598))
     public:
 
         MyRTPSParticipantListener(
