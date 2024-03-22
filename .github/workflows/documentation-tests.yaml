@@ -9,6 +9,8 @@ on:
         default: 'master'
 
   pull_request:
+    types:
+      - labeled
     paths-ignore:
       - '**.md'
       - '**.txt'
