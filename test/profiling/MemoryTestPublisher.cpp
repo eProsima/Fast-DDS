@@ -43,9 +43,6 @@
 
 using namespace eprosima::fastdds::dds;
 
-using std::cout;
-using std::endl;
-
 MemoryTestPublisher::MemoryTestPublisher()
 {
     m_datapublistener.up_ = this;
@@ -98,7 +95,7 @@ bool MemoryTestPublisher::init(
         struct_type_builder->add_member(member_descriptor);
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->create_sequence_type(factory->get_primitive_type(eprosima::fastdds::dds::
-                        TK_UINT32), 0)->build());
+                        TK_BYTE), 0)->build());
         member_descriptor->name("data");
         struct_type_builder->add_member(member_descriptor);
 
@@ -178,13 +175,9 @@ bool MemoryTestPublisher::init(
 
     if (m_data_size > 60000)
     {
-            << << << < HEAD
-            PubDataparam.historyMemoryPolicy = eprosima::fastrtps::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-        PubDataparam.qos.m_publishMode.kind =
-                eprosima::fastdds::dds::PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
-        == == == =
-                writer_qos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
-        >> >> >> > 7092350d 2 (Refs #17138. Refactor test to use DDS API)
+        writer_qos.endpoint().history_memory_policy =
+                eprosima::fastrtps::rtps::MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+        writer_qos.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
     }
 
     if (m_sXMLConfigFile.length() > 0)
@@ -211,15 +204,7 @@ bool MemoryTestPublisher::init(
         pct << asio::ip::host_name() << "_";
     }
     pct << pid << "_PUB2SUB";
-        << << << < HEAD
-        PubCommandParam.topic.topicName = pct.str();
-    PubCommandParam.topic.historyQos.kind = KEEP_ALL_HISTORY_QOS;
-    PubCommandParam.qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    PubCommandParam.qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-    PubCommandParam.qos.m_publishMode.kind = eprosima::fastdds::dds::PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
-    == == == =
-            command_pub_topic_ = participant_->create_topic(pct.str(), "TestCommandType", TOPIC_QOS_DEFAULT);
-    >> >> >> > 7092350d 2 (Refs #17138. Refactor test to use DDS API)
+    command_pub_topic_ = participant_->create_topic(pct.str(), "TestCommandType", TOPIC_QOS_DEFAULT);
 
     if (nullptr == command_pub_topic_)
     {
@@ -276,7 +261,7 @@ void MemoryTestPublisher::DataPubListener::on_publication_matched(
 
     if (0 < info.current_count_change)
     {
-        cout << C_MAGENTA << "Data Pub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Data Pub Matched " << C_DEF << std::endl;
 
         n_matched = info.total_count;
         if (n_matched > up_->n_subscribers)
@@ -288,7 +273,7 @@ void MemoryTestPublisher::DataPubListener::on_publication_matched(
     }
     else
     {
-        cout << C_MAGENTA << "Data Pub Unmatched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Data Pub Unmatched " << C_DEF << std::endl;
     }
     up_->disc_count_ += info.current_count_change;
 
@@ -304,7 +289,7 @@ void MemoryTestPublisher::CommandPubListener::on_publication_matched(
 
     if (0 < info.current_count_change)
     {
-        cout << C_MAGENTA << "Command Pub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Pub Matched " << C_DEF << std::endl;
 
         n_matched = info.total_count;
         if (n_matched > up_->n_subscribers)
@@ -315,7 +300,7 @@ void MemoryTestPublisher::CommandPubListener::on_publication_matched(
     }
     else
     {
-        cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Pub unmatched " << C_DEF << std::endl;
     }
     up_->disc_count_ += info.current_count_change;
 
@@ -331,7 +316,7 @@ void MemoryTestPublisher::CommandSubListener::on_subscription_matched(
 
     if (0 < info.current_count_change)
     {
-        cout << C_MAGENTA << "Command Sub Matched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Sub Matched " << C_DEF << std::endl;
 
         n_matched = info.total_count;
         if (n_matched > up_->n_subscribers)
@@ -342,7 +327,7 @@ void MemoryTestPublisher::CommandSubListener::on_subscription_matched(
     }
     else
     {
-        cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << endl;
+        std::cout << C_MAGENTA << "Command Sub unmatched " << C_DEF << std::endl;
     }
     up_->disc_count_ += info.current_count_change;
 
@@ -371,7 +356,7 @@ void MemoryTestPublisher::CommandSubListener::on_data_available(
     }
     else
     {
-        cout << "Problem reading" << endl;
+        std::cout << "Problem reading" << std::endl;
     }
 }
 
@@ -396,7 +381,6 @@ bool MemoryTestPublisher::test(
         uint32_t test_time,
         uint32_t datasize)
 {
-    //cout << "Beginning test of size: "<<datasize+4 <<endl;
     m_status = 0;
     n_received = 0;
 
@@ -426,13 +410,12 @@ bool MemoryTestPublisher::test(
                 return disc_count_ >= (n_subscribers * 3);
             });
     disc_lock.unlock();
-    cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << endl;
+    std::cout << C_B_MAGENTA << "DISCOVERY COMPLETE " << C_DEF << std::endl;
 
     TestCommandType command;
     command.m_command = READY;
     command_writer_->write(&command);
 
-    //cout << "WAITING FOR COMMAND RESPONSES "<<endl;;
     std::unique_lock<std::mutex> lock(mutex_);
     comm_cond_.wait(lock, [&]()
             {
@@ -440,7 +423,6 @@ bool MemoryTestPublisher::test(
             });
     --comm_count_;
     lock.unlock();
-    //cout << endl;
     //BEGIN THE TEST:
 
     auto t_start_ = std::chrono::steady_clock::now();
@@ -452,7 +434,6 @@ bool MemoryTestPublisher::test(
             if (dynamic_data_)
             {
                 m_DynData->set_uint32_value(0, count);
-                std::cout << "writing" << std::endl;
                 data_writer_->write(&m_DynData);
             }
             else
@@ -469,7 +450,7 @@ bool MemoryTestPublisher::test(
 
     if (m_status != 0)
     {
-        cout << "Error in test " << endl;
+        std::cout << "Error in test " << std::endl;
         return false;
     }
     //TEST FINISHED:

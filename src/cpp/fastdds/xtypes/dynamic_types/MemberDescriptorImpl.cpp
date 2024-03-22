@@ -210,7 +210,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
             TK_UNION == parent_kind_))
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                "Parent type is an ANNOTATION|BITMASK|ENUM|STRUCTURE|UNION and the member has no name.");
+                "Parent type is an ANNOTATION|BITMASK|BITSET|ENUM|STRUCTURE|UNION and the member has no name.");
         return false;
     }
 

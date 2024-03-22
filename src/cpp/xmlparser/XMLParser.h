@@ -290,7 +290,7 @@ protected:
     static XMLP_ret parseXMLBitmaskDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    static fastdds::dds::DynamicType::_ref_type parseXMLBitfieldDynamicType(
+    static XMLP_ret parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
             fastdds::dds::DynamicTypeBuilder::_ref_type builder,
             fastdds::dds::MemberId& position);

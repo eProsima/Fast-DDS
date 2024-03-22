@@ -20,16 +20,16 @@
 #ifndef MEMORYTESTSUBSCRIBER_H_
 #define MEMORYTESTSUBSCRIBER_H_
 
-#include <asio.hpp>
 #include <condition_variable>
+
+#include <asio.hpp>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-#include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>

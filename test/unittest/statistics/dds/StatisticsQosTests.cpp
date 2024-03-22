@@ -39,8 +39,6 @@ namespace fastdds {
 namespace statistics {
 namespace dds {
 
-using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
-
 class StatisticsFromXMLProfileTests : public ::testing::Test
 {
 public:

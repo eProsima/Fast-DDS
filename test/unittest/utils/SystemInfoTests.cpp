@@ -32,7 +32,6 @@
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
-#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <utils/SystemInfo.hpp>
 

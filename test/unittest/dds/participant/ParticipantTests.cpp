@@ -44,6 +44,7 @@
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>

@@ -50,7 +50,6 @@ target_include_directories(StringMatchingTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(StringMatchingTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}

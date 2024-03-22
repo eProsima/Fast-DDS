@@ -20,7 +20,6 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>

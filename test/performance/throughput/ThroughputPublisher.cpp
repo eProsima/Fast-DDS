@@ -32,6 +32,11 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/utils/TimeConversion.h>
@@ -1053,7 +1058,7 @@ bool ThroughputPublisher::init_dynamic_types()
     struct_type_builder->add_member(member_descriptor);
     member_descriptor->name("data");
     member_descriptor->type(factory->create_sequence_type(
-                factory->get_primitive_type(TK_UINT32), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+                factory->get_primitive_type(TK_BYTE), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     struct_type_builder->add_member(member_descriptor);
     dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 

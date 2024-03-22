@@ -32,13 +32,6 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include "LatencyTestTypes.hpp"
 
 #include "../optionarg.hpp"
