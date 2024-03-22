@@ -1180,6 +1180,7 @@ ReturnCode_t DynamicDataImpl::set_string_value(
 {
     if (TK_STRING8 == enclosing_type_->get_kind())
     {
+        assert(1 == enclosing_type_->get_descriptor().bound().size());
         auto bound = enclosing_type_->get_descriptor().bound().at(0);
         if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound && value.length() > bound)
         {
@@ -1198,6 +1199,7 @@ ReturnCode_t DynamicDataImpl::set_wstring_value(
 {
     if (TK_STRING16 == enclosing_type_->get_kind())
     {
+        assert(1 == enclosing_type_->get_descriptor().bound().size());
         auto bound = enclosing_type_->get_descriptor().bound().at(0);
         if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound && value.length() > bound)
         {
@@ -1451,6 +1453,7 @@ ReturnCode_t DynamicDataImpl::set_string_values(
                             enclosing_type_->get_descriptor().element_type()));
         if (TK_STRING8 == element_type->get_kind())
         {
+            assert(1 == element_type->get_descriptor().bound().size());
             auto bound = element_type->get_descriptor().bound().at(0);
             if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound &&
                     value.end() != std::find_if(value.begin(), value.end(), [bound](const std::string& str)
@@ -1488,6 +1491,7 @@ ReturnCode_t DynamicDataImpl::set_wstring_values(
                             enclosing_type_->get_descriptor().element_type()));
         if (TK_STRING16 == element_type->get_kind())
         {
+            assert(1 == element_type->get_descriptor().bound().size());
             auto bound = element_type->get_descriptor().bound().at(0);
             if (static_cast<uint32_t>(LENGTH_UNLIMITED) != bound &&
                     value.end() != std::find_if(value.begin(), value.end(), [bound](const std::wstring& str)
@@ -1867,6 +1871,7 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
         }
         case TK_BITMASK:
         {
+            assert(1 == type_impl->get_descriptor().bound().size());
             auto bound = type_impl->get_descriptor().bound().at(0);
 
             if (9 > bound)
@@ -5083,6 +5088,7 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_BITMASK:
         {
+            assert(1 == type->get_descriptor().bound().size());
             auto bound = type->get_descriptor().bound().at(0);
 
             if (9 > bound)
@@ -5724,6 +5730,7 @@ bool DynamicDataImpl::deserialize(
         {
             uint64_t value {0};
             auto sequence = std::static_pointer_cast<std::vector<bool>>(begin_it->second);
+            assert(1 == type->get_descriptor().bound().size());
             auto bound = type->get_descriptor().bound().at(0);
 
             if (9 > bound)
@@ -6583,6 +6590,7 @@ void DynamicDataImpl::serialize(
         {
             uint64_t value {0};
             auto sequence = std::static_pointer_cast<std::vector<bool>>(begin_it->second);
+            assert(1 == type->get_descriptor().bound().size());
             auto bound = type->get_descriptor().bound().at(0);
 
             for (size_t pos {0}; pos < sequence->size(); ++pos)

@@ -328,6 +328,7 @@ int main(
 
                     DynamicData::_ref_type inner {sample->loan_value(2)};
                     inner->get_byte_value(count, 0);
+                    sample->return_loaned_value(inner);
 
                     std::cout << "Received sample: index(" << index << "), message("
                               << message << "), inner_count(" << std::hex << (uint32_t)count << ")" << std::endl;

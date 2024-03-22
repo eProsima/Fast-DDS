@@ -205,10 +205,14 @@ bool DynamicTypeBuilderImpl::equals(
 
         ret_value &= member_.size() == impl->member_.size();
         assert(TK_ANNOTATION == type_descriptor_.kind() ||
+                TK_BITMASK == type_descriptor_.kind() ||
+                TK_BITSET == type_descriptor_.kind() ||
                 TK_STRUCTURE == type_descriptor_.kind() ||
                 TK_UNION ==  type_descriptor_.kind() ||
                 0 == member_.size());
         assert(TK_ANNOTATION == impl->type_descriptor_.kind() ||
+                TK_BITMASK == impl->type_descriptor_.kind() ||
+                TK_BITSET == impl->type_descriptor_.kind() ||
                 TK_STRUCTURE == impl->type_descriptor_.kind() ||
                 TK_UNION ==  impl->type_descriptor_.kind() ||
                 0 == impl->member_.size());
@@ -396,9 +400,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
                 }
 
                 // Recalculate the default discriminator value (for default case or default implicit member).
-                if (new_label >= default_discriminator_value_)
+                if (new_label >= default_value_)
                 {
-                    default_discriminator_value_ = new_label + 1;
+                    default_value_ = new_label + 1;
                 }
             }
         }
@@ -490,14 +494,14 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             }
             TypeForKind<TK_INT32> value = TypeValueConverter::sto(descriptor->default_value());
 
-            if (value >= default_discriminator_value_)
+            if (value >= default_value_)
             {
-                default_discriminator_value_ = value + 1;
+                default_value_ = value + 1;
             }
         }
         else
         {
-            dyn_member->get_descriptor().default_value(std::to_string(default_discriminator_value_++));
+            dyn_member->get_descriptor().default_value(std::to_string(default_value_++));
         }
     }
     //}}}
@@ -516,13 +520,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     {
         auto it = members_.begin() + dyn_member->get_descriptor().index();
         it = members_.insert(it, dyn_member);
-        for (auto next_it {++it}; next_it != members_.end(); ++next_it)
+        for (++it; it != members_.end(); ++it)
         {
-            auto next_member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(*next_it);
+            auto next_member = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(*it);
             next_member->get_descriptor().index(next_member->get_descriptor().index() + 1);
         }
-        assert(next_index_ == traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
-                    *members_.rbegin())->get_descriptor().index());
         ++next_index_;
     }
     else
@@ -530,6 +532,9 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
         assert(dyn_member->get_descriptor().index() == members_.size()); // Check continuity on index.
         members_.push_back(dyn_member);
     }
+    assert(next_index_ == traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(
+                *members_.rbegin())->get_descriptor().index());
+
     member_by_name_.emplace(std::make_pair(member_name, dyn_member));
     if (TK_ANNOTATION == type_descriptor_kind ||
             TK_BITMASK == type_descriptor_kind ||
@@ -552,7 +557,17 @@ ReturnCode_t DynamicTypeBuilderImpl::apply_annotation(
     {
         return RETCODE_BAD_PARAMETER;
     }
+
     auto descriptor_impl = traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor);
+
+    if (annotation_.end() != std::find_if(annotation_.begin(), annotation_.end(),
+            [&descriptor_impl](AnnotationDescriptorImpl& x)
+            {
+                return x.equals(descriptor_impl);
+            }))
+    {
+        return RETCODE_BAD_PARAMETER;
+    }
 
     annotation_.emplace_back();
     annotation_.back().copy_from(*descriptor_impl);
@@ -581,6 +596,15 @@ ReturnCode_t DynamicTypeBuilderImpl::apply_annotation_to_member(
 
     auto member_impl = traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(it->second);
     auto descriptor_impl = traits<AnnotationDescriptor>::narrow<AnnotationDescriptorImpl>(descriptor);
+
+    if (member_impl->annotation_.end() != std::find_if(member_impl->annotation_.begin(), member_impl->annotation_.end(),
+            [&descriptor_impl](AnnotationDescriptorImpl& x)
+            {
+                return x.equals(descriptor_impl);
+            }))
+    {
+        return RETCODE_BAD_PARAMETER;
+    }
 
     member_impl->annotation_.emplace_back();
     member_impl->annotation_.back().copy_from(descriptor_impl);
@@ -622,7 +646,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
             ret_val->member_ = member_;
             ret_val->member_by_name_ = member_by_name_;
             ret_val->members_ = members_;
-            ret_val->default_discriminator_value_ = default_discriminator_value_;
+            ret_val->default_discriminator_value_ = default_value_;
             ret_val->default_union_member_ = default_union_member_;
         }
     }
@@ -645,7 +669,11 @@ ReturnCode_t DynamicTypeBuilderImpl::copy_from(
     return RETCODE_OK;
 }
 
-} // namespace dds
+traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderImpl::_this()
+{
+    return shared_from_this();
+}
 
+} // namespace dds
 } // namespace fastdds
 } // namespace eprosima

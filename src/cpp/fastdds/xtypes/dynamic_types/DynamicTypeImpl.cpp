@@ -14,7 +14,9 @@
 
 #include "DynamicTypeImpl.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <memory>
 
 namespace eprosima {
 namespace fastdds {
@@ -160,7 +162,12 @@ bool DynamicTypeImpl::equals(
         {
             for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
             {
-                ret_value &= annotation_.at(count).equals(impl->annotation_.at(count));
+                auto& annotation = annotation_.at(count);
+                ret_value &= impl->annotation_.end() != std::find_if(impl->annotation_.begin(), impl->annotation_.end(),
+                                [&annotation](AnnotationDescriptorImpl& a)
+                                {
+                                    return annotation.equals(a);
+                                });
             }
         }
 
@@ -171,7 +178,7 @@ bool DynamicTypeImpl::equals(
                 TK_STRUCTURE == type_descriptor_.kind() ||
                 TK_UNION ==  type_descriptor_.kind() ||
                 0 == member_.size());
-        assert(TK_ANNOTATION == type_descriptor_.kind() ||
+        assert(TK_ANNOTATION == impl->type_descriptor_.kind() ||
                 TK_BITMASK == impl->type_descriptor_.kind() ||
                 TK_BITSET == impl->type_descriptor_.kind() ||
                 TK_STRUCTURE == impl->type_descriptor_.kind() ||
@@ -179,7 +186,6 @@ bool DynamicTypeImpl::equals(
                 0 == impl->member_.size());
 
         assert(member_by_name_.size() == members_.size());
-        assert(impl->member_by_name_.size() == impl->members_.size());
         ret_value &= member_by_name_.size() == impl->member_by_name_.size();
         if (ret_value)
         {
@@ -199,7 +205,12 @@ bool DynamicTypeImpl::equals(
         {
             for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
             {
-                ret_value &= verbatim_.at(count).equals(impl->verbatim_.at(count));
+                auto& verbatim = verbatim_.at(count);
+                ret_value &= impl->verbatim_.end() != std::find_if(impl->verbatim_.begin(), impl->verbatim_.end(),
+                                [&verbatim](VerbatimTextDescriptorImpl& v)
+                                {
+                                    return verbatim.equals(v);
+                                });
             }
         }
     }

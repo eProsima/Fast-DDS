@@ -14,6 +14,8 @@
 
 #include "TypeDescriptorImpl.hpp"
 
+#include <cctype>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
@@ -167,15 +169,14 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     if (base_type_ &&
             TK_ALIAS != kind_ &&
             TK_BITSET != kind_ &&
-            TK_STRUCTURE != kind_ &&
-            TK_UNION != kind_)
+            TK_STRUCTURE != kind_)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                "Descriptor doesn't describe an ALIAS|BITSET|STRUCTURE|UNIONbut the base_type was set");
+                "Descriptor doesn't describe an ALIAS|BITSET|STRUCTURE but the base_type was set");
         return false;
     }
 
-    // Check the parent in of same kind.
+    // Check the parent is of the same kind.
     if (base_type_ && TK_ALIAS != kind_)
     {
         auto base_type =
@@ -183,8 +184,7 @@ bool TypeDescriptorImpl::is_consistent() noexcept
 
         if (kind_ != base_type->get_kind())
         {
-            EPROSIMA_LOG_ERROR(DYN_TYPES,
-                    "Descriptor doesn't describe an ALIAS|BITSET|STRUCTURE|UNIONbut the base_type was set");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor type and the base_type are not of the same kind");
             return false;
         }
     }
@@ -228,7 +228,7 @@ bool TypeDescriptorImpl::is_consistent() noexcept
         else
         {
             // Check discriminator kind and the type is a integer (labels are int32_t).
-            // boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enumera, alias
+            // boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enum, alias
             auto discriminator_type =
                     traits<DynamicType>::narrow<DynamicTypeImpl>(discriminator_type_)->resolve_alias_enclosed_type();
             TypeKind discriminator_kind = discriminator_type->get_kind();
@@ -291,6 +291,7 @@ bool TypeDescriptorImpl::is_consistent() noexcept
             TK_BITMASK == key_element_type()->get_kind() ||
             TK_MAP == key_element_type()->get_kind() ||
             TK_SEQUENCE == key_element_type()->get_kind() ||
+            TK_STRING16 == key_element_type()->get_kind() ||
             TK_STRUCTURE == key_element_type()->get_kind() ||
             TK_UNION == key_element_type()->get_kind()
             ))

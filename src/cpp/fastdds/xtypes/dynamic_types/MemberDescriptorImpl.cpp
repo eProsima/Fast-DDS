@@ -15,7 +15,6 @@
 #include "MemberDescriptorImpl.hpp"
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 #include "DynamicTypeImpl.hpp"
@@ -73,7 +72,7 @@ bool MemberDescriptorImpl::equals(
 {
     return name_ == descriptor.name_ &&
            id_ == descriptor.id_ &&
-           ((!type_ && !descriptor.type_) || (type_ && type_->equals(descriptor.type_))) &&
+           (type_ && type_->equals(descriptor.type_)) &&
            default_value_ == descriptor.default_value_ &&
            index_ == descriptor.index_ &&
            label_ == descriptor.label_ &&
@@ -141,6 +140,19 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         return false;
     }
 
+    // Check uniqueness of labels.
+    if (TK_UNION == parent_kind_)
+    {
+        UnionCaseLabelSeq label_copy {label_};
+        std::sort(label_copy.begin(), label_copy.end());
+        auto last = std::unique(label_copy.begin(), label_copy.end());
+        if (label_copy.end() != last)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor contains duplicated labels");
+            return false;
+        }
+    }
+
     if (!default_value_.empty() &&
             !TypeValueConverter::is_string_consistent(type->get_kind(), type->get_all_members_by_index(),
             default_value_))
@@ -185,7 +197,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
     // Check bitmask enclosing type.
     if (TK_BITMASK ==  parent_kind_ && TK_BOOLEAN != type->get_kind())
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is an BITMASK and the enclosing type is not BOOLEAN");
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Parent type is a BITMASK and the enclosing type is not BOOLEAN");
         return false;
     }
 

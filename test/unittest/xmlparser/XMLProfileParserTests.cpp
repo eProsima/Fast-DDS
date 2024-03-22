@@ -1774,8 +1774,8 @@ TEST_F(XMLProfileParserBasicTests, insertTransportByIdNegativeClauses)
 TEST_F(XMLProfileParserBasicTests, getDynamicTypeByNameNegativeClausesNegativeClauses)
 {
     eprosima::fastdds::dds::traits<eprosima::fastdds::dds::DynamicType>::ref_type type;
-    EXPECT_EQ(xmlparser::XMLP_ret::XML_OK, xmlparser::XMLProfileManager::getDynamicTypeByName(type, "wrong_type"));
-    ASSERT_TRUE(type);
+    EXPECT_EQ(xmlparser::XMLP_ret::XML_ERROR, xmlparser::XMLProfileManager::getDynamicTypeByName(type, "wrong_type"));
+    ASSERT_FALSE(type);
 }
 
 /*

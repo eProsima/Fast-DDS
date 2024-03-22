@@ -15,9 +15,11 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEMEMBERIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEMEMBERIMPL_HPP
 
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
-
 #include <vector>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 #include "AnnotationDescriptorImpl.hpp"
 #include "MemberDescriptorImpl.hpp"

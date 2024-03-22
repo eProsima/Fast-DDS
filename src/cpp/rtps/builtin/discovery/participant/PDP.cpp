@@ -17,8 +17,6 @@
  *
  */
 
-#include <fastdds/dds/core/ReturnCode.hpp>
-
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 

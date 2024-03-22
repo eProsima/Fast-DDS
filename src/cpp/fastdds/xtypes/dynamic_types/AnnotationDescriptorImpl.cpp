@@ -89,7 +89,7 @@ bool AnnotationDescriptorImpl::equals(
 bool AnnotationDescriptorImpl::equals(
         AnnotationDescriptorImpl& descriptor) noexcept
 {
-    return type_->equals(descriptor.type_) &&
+    return (type_ && type_->equals(descriptor.type_)) &&
            value_ == descriptor.value_;
 }
 

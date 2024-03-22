@@ -104,15 +104,16 @@ public:
 
 protected:
 
-    traits<DynamicTypeBuilderImpl>::ref_type _this ();
+    traits<DynamicTypeBuilder>::ref_type _this();
 
 private:
 
     //! Contains the annotations applied by the user.
     std::vector<AnnotationDescriptorImpl> annotation_;
 
-    //! Contains the default discriminator value. This is calculated while the type is being built.
-    int32_t default_discriminator_value_ {0};
+    //! Contains the default value of discriminator (TK_UNION) or next literal (TK_ENUM).
+    //! This is calculated while the type is being built.
+    int32_t default_value_ {0};
 
     //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};

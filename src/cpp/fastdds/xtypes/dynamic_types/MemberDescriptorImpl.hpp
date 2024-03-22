@@ -15,7 +15,12 @@
 #ifndef _FASTDDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_IMPL_HPP_
 #define _FASTDDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_IMPL_HPP_
 
+#include <string>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -23,10 +28,10 @@ namespace dds {
 
 class MemberDescriptorImpl : public virtual MemberDescriptor
 {
-    //! Default value of the member in string.
+    //! Default value of the member in string form.
     std::string default_value_;
 
-    //! MemberId, it should be filled automatically when the member is added.
+    //! MemberId, it should be filled automatically when the member is added if not set (MEMBER_ID_INVALID).
     MemberId id_ {MEMBER_ID_INVALID};
 
     //! Definition order of the member inside its parent.
@@ -53,7 +58,7 @@ class MemberDescriptorImpl : public virtual MemberDescriptor
     //! Name of the member
     ObjectName name_;
 
-    //! Kind of the DynamicType which will contains this member.
+    //! Kind of the DynamicType which will contain this member.
     TypeKind parent_kind_ {TK_NONE};
 
     //! @ref TryConstructKind
@@ -155,7 +160,7 @@ public:
         return index_;
     }
 
-    uint32_t& index() noexcept override
+    uint32_t& index() noexcept
     {
         return index_;
     }

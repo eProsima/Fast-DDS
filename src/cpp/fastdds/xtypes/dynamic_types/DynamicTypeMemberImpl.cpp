@@ -14,6 +14,8 @@
 
 #include "DynamicTypeMemberImpl.hpp"
 
+#include <algorithm>
+
 #include <fastdds/dds/xtypes/common.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
@@ -86,7 +88,12 @@ bool DynamicTypeMemberImpl::equals(
     {
         for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
         {
-            ret_value &= annotation_.at(count).equals(impl->annotation_.at(count));
+            auto& annotation = annotation_.at(count);
+            ret_value &= impl->annotation_.end() != std::find_if(impl->annotation_.begin(), impl->annotation_.end(),
+                            [&annotation](AnnotationDescriptorImpl& a)
+                            {
+                                return annotation.equals(a);
+                            });
         }
     }
 
@@ -97,7 +104,12 @@ bool DynamicTypeMemberImpl::equals(
     {
         for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
         {
-            ret_value &= verbatim_.at(count).equals(impl->verbatim_.at(count));
+            auto& verbatim = verbatim_.at(count);
+            ret_value &= impl->verbatim_.end() != std::find_if(impl->verbatim_.begin(), impl->verbatim_.end(),
+                            [&verbatim](VerbatimTextDescriptorImpl& v)
+                            {
+                                return verbatim.equals(v);
+                            });
         }
     }
 

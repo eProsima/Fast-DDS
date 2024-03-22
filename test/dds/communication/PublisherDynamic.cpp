@@ -39,7 +39,6 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastdds::dds::xtypes;
 
 static bool run = true;
 
