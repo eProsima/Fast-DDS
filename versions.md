@@ -1,8 +1,6 @@
 Forthcoming
 -----------
 
-* Added authentication handshake properties.
-
 Version 2.13.0
 --------------
 
@@ -16,6 +14,23 @@ Version 2.13.0
   variable and XML.
 * Added `non_blocking_send` to TCP Transport.
 * Define "super-client" by environment variable.
+
+Version 2.12.2
+--------------
+* Methods to configure transport scenario.
+* Support ``Autofill port`` (automatically set the port) for TCP Transport.
+* Support TCP for Discovery server CLI and environment variable.
+* Define a super client by environment variable.
+* Change serialize function default behaviour to omit the data representation.
+* ``LARGE_DATA`` Participants logic with same listening ports.
+* TCP Client&Server Participant Decision-Making logic.
+* Expose Authentication Handshake Properties.
+* Enabling multiple interfaces through whitelist in TCP servers.
+
+Version 2.12.1
+--------------
+* The period for the timer within the :ref:`disablepositiveacksqospolicy` is now updatable.
+* Log error message upon receiver resource creation failure.
 
 Version 2.12.0
 --------------
