@@ -25,6 +25,8 @@ on:
         required: true
 
   pull_request:
+    types:
+      - labeled
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -43,6 +45,14 @@ jobs:
         os-image:
           - 'ubuntu-22.04'
 
+    if: ${{ (
+              (github.event_name == 'workflow_dispatch') ||
+              contains(github.event.pull_request.labels.*.name, 'run-ci')
+            ) &&
+            (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
       os-image: ${{ matrix.os-image }}

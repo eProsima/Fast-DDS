@@ -13,6 +13,8 @@ on:
         default: 'master'
 
   pull_request:
+    types:
+      - labeled
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -28,9 +30,15 @@ concurrency:
 jobs:
   asan-test:
 
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
-              contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
+    if: ${{ (
+              (github.event_name == 'workflow_dispatch') ||
+              contains(github.event.pull_request.labels.*.name, 'run-ci')
+            ) &&
+            (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
 
     runs-on: ubuntu-22.04
 
@@ -38,6 +46,23 @@ jobs:
         FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
 
     steps:
+      - name: Remove run-ci label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/remove_labels@feature/labels
+        with:
+          labels: run-ci
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+          fail_on_error: 'false'
+
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/remove_labels@feature/labels
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
       # https://github.com/actions/runner-images/issues/9491
       - name: Fix kernel mmap rnd bits
         run: sudo sysctl vm.mmap_rnd_bits=28
@@ -124,9 +149,15 @@ jobs:
 
   asan-discovery-server-test:
 
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
-              contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
+    if: ${{ (
+              (github.event_name == 'workflow_dispatch') ||
+              contains(github.event.pull_request.labels.*.name, 'run-ci')
+            ) &&
+            (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
 
     runs-on: ubuntu-22.04
 
@@ -135,6 +166,23 @@ jobs:
       DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'master' }}
 
     steps:
+      - name: Remove run-ci label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/remove_labels@feature/labels
+        with:
+          labels: run-ci
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+          fail_on_error: 'false'
+
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/remove_labels@feature/labels
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
       # https://github.com/actions/runner-images/issues/9491
       - name: Fix kernel mmap rnd bits
         run: sudo sysctl vm.mmap_rnd_bits=28

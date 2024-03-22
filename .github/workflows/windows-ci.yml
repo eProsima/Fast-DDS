@@ -25,6 +25,8 @@ on:
         required: true
 
   pull_request:
+    types:
+      - labeled
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -36,9 +38,15 @@ concurrency:
 
 jobs:
   windows-ci:
+    if: ${{ (
+              (github.event_name == 'workflow_dispatch') ||
+              contains(github.event.pull_request.labels.*.name, 'run-ci')
+            ) &&
+            (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-windows-ci.yml
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
     with:
       label: ${{ inputs.label || 'windows-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
