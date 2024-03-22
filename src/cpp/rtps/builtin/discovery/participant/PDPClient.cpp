@@ -274,7 +274,7 @@ bool PDPClient::create_ds_pdp_best_effort_reader(
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
 
-    // change depending of backup mode
+    // Change depending of backup mode
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
@@ -623,7 +623,7 @@ void PDPClient::removeRemoteEndpoints(
             if (!should_protect_discovery())
 #endif // HAVE_SECURITY
             {
-                // rematch but discarding any previous state of the server
+                // Rematch but discarding any previous state of the server
                 // because we know the server shutdown intentionally
                 auto temp_writer_data = get_temporary_writer_proxies_pool().get();
 
@@ -670,10 +670,10 @@ bool PDPClient::all_servers_acknowledge_PDP()
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
 
-    // check if already initialized
+    // Check if already initialized
     assert(endpoints->writer.history_ && endpoints->writer.writer_);
 
-    // get a reference to client proxy data
+    // Get a reference to client proxy data
     CacheChange_t* pPD;
     if (endpoints->writer.history_->get_min_change(&pPD))
     {
@@ -730,9 +730,9 @@ void PDPClient::announceParticipantState(
         // Add the write params to the sample
         if (dispose)
         {
-            // we must assure when the server is dying that all client are send at least a DATA(p)
-            // note here we can no longer receive and DATA or ACKNACK from clients.
-            // In order to avoid that we send the message directly as in the standard stateless PDP
+            // We must assure when the server is dying that all client are send at least a DATA(p).
+            // Note here we can no longer receive and DATA or ACKNACK from clients.
+            // In order to avoid that we send the message directly as in the standard stateless PDP.
 
             CacheChange_t* change = nullptr;
 
@@ -743,7 +743,7 @@ void PDPClient::announceParticipantState(
                         },
                         NOT_ALIVE_DISPOSED_UNREGISTERED, getLocalParticipantProxyData()->m_key)))
             {
-                // update the sequence number
+                // Update the sequence number
                 change->sequenceNumber = history.next_sequence_number();
                 change->write_params = wp;
 
@@ -761,15 +761,14 @@ void PDPClient::announceParticipantState(
                 //    //locators.push_back(ep.multicastLocatorList);
                 //}
                 {
-                    // temporary workaround
+                    // Temporary workaround
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
-                        // if we are matched to a server report demise
+                        // If we are matched to a server report demise
                         if (svr.is_connected)
                         {
-                            //locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
                             remote_readers.emplace_back(svr.guidPrefix,
                                     endpoints->reader.reader_->getGuid().entityId);
@@ -783,7 +782,7 @@ void PDPClient::announceParticipantState(
                 }
             }
 
-            // free change
+            // Free change
             writer.release_change(change);
         }
         else
@@ -792,7 +791,7 @@ void PDPClient::announceParticipantState(
 
             if (!new_change)
             {
-                // retrieve the participant discovery data
+                // Retrieve the participant discovery data
                 CacheChange_t* pPD;
                 if (history.get_min_change(&pPD))
                 {
@@ -802,7 +801,7 @@ void PDPClient::announceParticipantState(
 
                     for (auto& svr : mp_builtin->m_DiscoveryServers)
                     {
-                        // non-pinging announcements like lease duration ones must be
+                        // Non-pinging announcements like lease duration ones must be
                         // broadcast to all servers
                         if (!svr.is_connected || !_serverPing)
                         {
@@ -813,8 +812,8 @@ void PDPClient::announceParticipantState(
 
                     direct_send(getRTPSParticipant(), locators, *pPD);
 
-                    // ping done independtly of which triggered the announcement
-                    // note all event callbacks are currently serialized
+                    // Ping done independently of which triggered the announcement.
+                    // Note all event callbacks are currently serialized
                     _serverPing = false;
                 }
                 else
@@ -1003,13 +1002,13 @@ bool load_environment_server_info(
             {
                 if (port > std::numeric_limits<uint16_t>::max())
                 {
-                    throw std::out_of_range("Too large udp port passed into the server's list");
+                    throw std::out_of_range("Too large port passed into the server's list");
                 }
 
                 if (!IPLocator::setPhysicalPort(server, static_cast<uint16_t>(port)))
                 {
                     std::stringstream ss;
-                    ss << "Wrong udp port passed into the server's list " << port;
+                    ss << "Wrong port passed into the server's list " << port;
                     throw std::invalid_argument(ss.str());
                 }
             };
@@ -1019,13 +1018,13 @@ bool load_environment_server_info(
             {
                 RemoteServerAttributes server_att;
 
-                // add the server to the list
+                // Add the server to the list
                 if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
                 {
                     throw std::invalid_argument("The maximum number of default discovery servers has been reached");
                 }
 
-                // split multi and unicast locators
+                // Split multi and unicast locators
                 auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
 
                 LocatorList mlist;
@@ -1064,13 +1063,13 @@ bool load_environment_server_info(
 
             if (sm.matched)
             {
-                // now we must parse the inner expression
+                // Now we must parse the inner expression
                 std::smatch mr;
                 std::string locator(sm);
 
                 if (locator.empty())
                 {
-                    // it's intencionally empty to hint us to ignore this server
+                    // It's intencionally empty to hint us to ignore this server
                 }
                 // Try first with IPv4
                 else if (std::regex_match(locator, mr, ROS2_IPV4_ADDRESSPORT_PATTERN,
@@ -1078,7 +1077,7 @@ bool load_environment_server_info(
                 {
                     std::smatch::iterator it = mr.cbegin();
 
-                    // traverse submatches
+                    // Traverse submatches
                     if (++it != mr.cend())
                     {
                         std::string address = it->str();
@@ -1098,17 +1097,17 @@ bool load_environment_server_info(
                             IPLocator::setIPv4(server_locator, "127.0.0.1");
                         }
 
-                        // get port if any
+                        // Get port if any
                         int port = DEFAULT_ROS2_SERVER_PORT;
                         if (++it != mr.cend() && it->matched)
                         {
                             port = stoi(it->str());
                         }
 
-                        process_port( port, server_locator);
+                        process_port(port, server_locator);
                     }
 
-                    // add server to the list
+                    // Add server to the list
                     add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
                 }
                 // Try IPv6 next
@@ -1117,7 +1116,7 @@ bool load_environment_server_info(
                 {
                     std::smatch::iterator it = mr.cbegin();
 
-                    // traverse submatches
+                    // Traverse submatches
                     if (++it != mr.cend())
                     {
                         std::string address = it->str();
@@ -1137,20 +1136,20 @@ bool load_environment_server_info(
                             IPLocator::setIPv6(server_locator, "::1");
                         }
 
-                        // get port if any
+                        // Get port if any
                         int port = DEFAULT_ROS2_SERVER_PORT;
                         if (++it != mr.cend() && it->matched)
                         {
                             port = stoi(it->str());
                         }
 
-                        process_port( port, server_locator);
+                        process_port(port, server_locator);
                     }
 
-                    // add server to the list
+                    // Add server to the list
                     add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
                 }
-                // try resolve DNS
+                // Try resolve DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
                         std::regex_constants::match_not_null))
                 {
@@ -1162,7 +1161,7 @@ bool load_environment_server_info(
                                 std::ios_base::out |
                                 std::ios_base::ate);
 
-                        // first try the formal notation, add default port if necessary
+                        // First try the formal notation, add default port if necessary
                         if (!mr[2].matched)
                         {
                             new_locator << ":" << DEFAULT_ROS2_SERVER_PORT;
@@ -1182,14 +1181,14 @@ bool load_environment_server_info(
                         {
                             std::smatch::iterator it = mr.cbegin();
 
-                            // traverse submatches
+                            // Traverse submatches
                             if (++it != mr.cend())
                             {
                                 std::string domain_name = it->str();
                                 std::set<std::string> ipv4, ipv6;
                                 std::tie(ipv4, ipv6) = IPLocator::resolveNameDNS(domain_name);
 
-                                // get port if any
+                                // Get port if any
                                 int port = DEFAULT_ROS2_SERVER_PORT;
                                 if (++it != mr.cend() && it->matched)
                                 {
@@ -1208,7 +1207,7 @@ bool load_environment_server_info(
                                         IPLocator::setIPv4(server_locator, "127.0.0.1");
                                     }
 
-                                    process_port( port, server_locator);
+                                    process_port(port, server_locator);
                                     flist.push_front(server_locator);
                                 }
 
@@ -1224,7 +1223,7 @@ bool load_environment_server_info(
                                         IPLocator::setIPv6(server_locator, "::1");
                                     }
 
-                                    process_port( port, server_locator);
+                                    process_port(port, server_locator);
                                     flist.push_front(server_locator);
                                 }
                             }
@@ -1238,10 +1237,10 @@ bool load_environment_server_info(
                         throw std::invalid_argument(ss.str());
                     }
 
-                    // add server to the list
+                    // Add server to the list
                     add_server2qos(server_id, std::move(flist), attributes);
                 }
-                // try resolve TCP DNS
+                // Try resolve TCP DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN_TCP,
                         std::regex_constants::match_not_null))
                 {
@@ -1253,7 +1252,7 @@ bool load_environment_server_info(
                                 std::ios_base::out |
                                 std::ios_base::ate);
 
-                        // first try the formal notation, add default port if necessary
+                        // First try the formal notation, add default port if necessary
                         if (!mr[2].matched)
                         {
                             new_locator << ":" << DEFAULT_TCP_SERVER_PORT;
@@ -1267,21 +1266,21 @@ bool load_environment_server_info(
                     {
                         case LOCATOR_KIND_TCPv4:
                         case LOCATOR_KIND_TCPv6:
-                            IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(server_locator.port));
+                            IPLocator::setLogicalPort(server_locator, IPLocator::getPhysicalPort(server_locator));
                             flist.push_front(server_locator);
                             break;
                         case LOCATOR_KIND_INVALID:
                         {
                             std::smatch::iterator it = mr.cbegin();
 
-                            // traverse submatches
+                            // Traverse submatches
                             if (++it != mr.cend())
                             {
                                 std::string domain_name = it->str();
                                 std::set<std::string> ipv4, ipv6;
                                 std::tie(ipv4, ipv6) = IPLocator::resolveNameDNS(domain_name);
 
-                                // get port if any
+                                // Get port if any
                                 int port = DEFAULT_TCP_SERVER_PORT;
                                 if (++it != mr.cend() && it->matched)
                                 {
@@ -1300,7 +1299,7 @@ bool load_environment_server_info(
                                         IPLocator::setIPv4(server_locator, "127.0.0.1");
                                     }
 
-                                    process_port( port, server_locator);
+                                    process_port(port, server_locator);
                                     IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(port));
                                     flist.push_front(server_locator);
                                 }
@@ -1317,7 +1316,7 @@ bool load_environment_server_info(
                                         IPLocator::setIPv6(server_locator, "::1");
                                     }
 
-                                    process_port( port, server_locator);
+                                    process_port(port, server_locator);
                                     IPLocator::setLogicalPort(server_locator, static_cast<uint16_t>(port));
                                     flist.push_front(server_locator);
                                 }
@@ -1332,7 +1331,7 @@ bool load_environment_server_info(
                         throw std::invalid_argument(ss.str());
                     }
 
-                    // add server to the list
+                    // Add server to the list
                     add_server2qos(server_id, std::move(flist), attributes);
                 }
                 else
@@ -1343,7 +1342,7 @@ bool load_environment_server_info(
                 }
             }
 
-            // advance to the next server if any
+            // Advance to the next server if any
             ++server_id;
             ++server_it;
         }

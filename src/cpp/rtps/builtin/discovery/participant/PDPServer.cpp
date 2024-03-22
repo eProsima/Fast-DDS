@@ -116,7 +116,7 @@ bool PDPServer::init(
         return false;
     }
 
-    //INIT EDP
+    // INIT EDP
     mp_EDP = new EDPServer(this, mp_RTPSParticipant, durability_);
     if (!mp_EDP->initEDP(m_discovery))
     {
@@ -198,15 +198,15 @@ ParticipantProxyData* PDPServer::createParticipantProxyData(
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-    // lease duration is controlled for owned clients or linked servers
-    // other clients liveliness is provided through server's PDP discovery data
+    // Lease duration is controlled for owned clients or linked servers.
+    // Other clients liveliness is provided through server's PDP discovery data
 
-    // check if the DATA msg is relayed by another server
+    // Check if the DATA msg is relayed by another server
     bool do_lease = participant_data.m_guid.guidPrefix == writer_guid.guidPrefix;
 
     if (!do_lease)
     {
-        // if not a client verify this participant is a server
+        // If not a client verify this participant is a server
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
             for (auto& svr : mp_builtin->m_DiscoveryServers)
@@ -289,7 +289,7 @@ bool PDPServer::create_ds_pdp_best_effort_reader(
     ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
-    // change depending of backup mode
+    // Change depending of backup mode
     ratt.endpoint.durabilityKind = VOLATILE;
     ratt.endpoint.reliabilityKind = BEST_EFFORT;
 
@@ -377,7 +377,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     ratt.endpoint.external_unicast_locators = mp_builtin->m_att.metatraffic_external_unicast_locators;
     ratt.endpoint.ignore_non_matching_locators = pattr.ignore_non_matching_locators;
     ratt.endpoint.topicKind = WITH_KEY;
-    // change depending of backup mode
+    // Change depending of backup mode
     ratt.endpoint.durabilityKind = durability_;
     ratt.endpoint.reliabilityKind = RELIABLE;
     ratt.times.heartbeatResponseDelay = pdp_heartbeat_response_delay;
@@ -586,7 +586,7 @@ void PDPServer::match_reliable_pdp_endpoints(
     bool use_multicast_locators = !mp_RTPSParticipant->getAttributes().builtin.avoid_builtin_multicast ||
             pdata.metatraffic_locators.unicast.empty();
 
-    // only SERVER and CLIENT participants will be received. All builtin must be there
+    // Only SERVER and CLIENT participants will be received. All builtin must be there
     uint32_t auxendp = endp &
             (DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER |
             DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_ANNOUNCER);
@@ -622,7 +622,7 @@ void PDPServer::match_reliable_pdp_endpoints(
         return;
     }
 
-    // only SERVER and CLIENT participants will be received. All builtin must be there
+    // Only SERVER and CLIENT participants will be received. All builtin must be there
     auxendp = endp & (DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR | DISC_BUILTIN_ENDPOINT_PARTICIPANT_SECURE_DETECTOR);
     if (0 != auxendp)
     {
@@ -717,7 +717,7 @@ bool PDPServer::pairing_remote_reader_with_local_writer_after_security(
 void PDPServer::perform_builtin_endpoints_matching(
         const ParticipantProxyData& pdata)
 {
-    //Inform EDP of new RTPSParticipant data:
+    // Inform EDP of new RTPSParticipant data:
     if (mp_EDP != nullptr)
     {
         mp_EDP->assignRemoteEndpoints(pdata, true);
@@ -889,7 +889,7 @@ void PDPServer::announceParticipantState(
                         return;
                     }
 
-                    // assign identity
+                    // Assign identity
                     change->sequenceNumber = sn;
 
                     // Create a RemoteLocatorList for metatraffic_locators
@@ -929,7 +929,7 @@ void PDPServer::announceParticipantState(
                     }
                 }
                 // Doesn't make sense to send the DATA directly if it hasn't been introduced in the history yet (missing
-                // sequence number.
+                // sequence number).
                 return;
             }
             else
@@ -995,7 +995,7 @@ void PDPServer::announceParticipantState(
                 }
                 else
                 {
-                    // Dispose if already there
+                    // Dispose if already there.
                     // It may happen if the participant is not removed fast enough
                     writer.release_change(change);
                     return;
@@ -1003,7 +1003,7 @@ void PDPServer::announceParticipantState(
             }
             else
             {
-                // failed to create the disposal change
+                // Failed to create the disposal change
                 EPROSIMA_LOG_ERROR(RTPS_PDP_SERVER, "Server failed to create its DATA(Up)");
                 return;
             }
@@ -1078,24 +1078,24 @@ bool PDPServer::remove_remote_participant(
             // Notify the database
             if (discovery_db_.update(pC, ddb::DiscoveryParticipantChangeData()))
             {
-                // assure processing time for the cache
+                // Assure processing time for the cache
                 awake_routine_thread();
 
-                // the discovery database takes ownership of the CacheChange_t
-                // henceforth there are no references to the CacheChange_t
+                // The discovery database takes ownership of the CacheChange_t
+                // Henceforth, there are no references to the CacheChange_t
             }
             else
             {
-                // if the database doesn't take the ownership remove
+                // If the database doesn't take the ownership remove
                 endpoints->reader.reader_->releaseCache(pC);
             }
         }
     }
 
-    // check if is a server who has been disposed
+    // Check if is a server who has been disposed
     awake_server_thread();
 
-    // delegate into the base class for inherited proxy database removal
+    // Delegate into the base class for inherited proxy database removal
     return PDP::remove_remote_participant(partGUID, reason);
 }
 
@@ -1224,7 +1224,7 @@ bool PDPServer::process_writers_acknowledgements()
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
 
     // Execute first ACK for endpoints because PDP acked changes relevance in EDP,
-    //  which can result in false positives in EDP acknowledgements.
+    // which can result in false positives in EDP acknowledgements.
 
     /* EDP Subscriptions Writer's History */
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
@@ -1313,8 +1313,8 @@ History::iterator PDPServer::process_change_acknowledgement(
             // Remove entry from `participants_|writers_|readers_`
             // AND put the change in changes_release
             discovery_db_.delete_entity_of_change(c);
-            // Remove from writer's history
-            // remove false because the clean of the change is made by release_change of ddb
+            // Remove from writer's history.
+            // Remove false because the clean of the change is made by release_change of ddb
             return writer_history->remove_change(cit, false);
         }
     }
@@ -1396,7 +1396,7 @@ void PDPServer::process_changes_release_(
     for (auto ch : changes)
     {
         // Check if change owner is this participant. In that case, the change comes from a writer pool (PDP, EDP
-        // publications or EDP subscriptions)
+        // publications or EDP subscriptions).
         // We compare the instance handle, as the only changes from our own server are its owns
         if (discovery_db().guid_from_change(ch) == endpoints->writer.writer_->getGuid())
         {
@@ -1613,7 +1613,7 @@ eprosima::fastrtps::rtps::ResourceEvent& PDPServer::get_resource_event_thread()
 
 bool PDPServer::all_servers_acknowledge_pdp()
 {
-    // check if already initialized
+    // Check if already initialized
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     static_cast<void>(endpoints);
     assert(endpoints->writer.history_ && endpoints->writer.writer_);
@@ -1640,7 +1640,7 @@ void PDPServer::ping_remote_servers()
             auto server_it = std::find(ack_pending_servers.begin(), ack_pending_servers.end(), server.guidPrefix);
             if (server_it != ack_pending_servers.end())
             {
-                // get the info to send to this already known locators
+                // Get the info to send to this already known locators
                 locators.push_back(server.metatrafficUnicastLocatorList);
             }
         }
@@ -1810,16 +1810,16 @@ bool PDPServer::process_backup_discovery_database_restore(
                 }
             }
 
-            // deserialize from json to change already created
+            // Deserialize from json to change already created
             ddb::from_json(it.value()["change"], *change_aux);
 
             changes_map.insert(
                 std::make_pair(change_aux->instanceHandle, change_aux));
 
             // TODO refactor for multiple servers
-            // should not send the virtual changes by the listener
-            // should store in DDB if it is local even for endpoints
-            // call listener to create proxy info for other entities different than server
+            // Should not send the virtual changes by the listener.
+            // Should store in DDB if it is local even for endpoints.
+            // Call listener to create proxy info for other entities different than server.
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     endpoints->writer.writer_->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE
@@ -1849,13 +1849,13 @@ bool PDPServer::process_backup_discovery_database_restore(
                 }
             }
 
-            // deserialize from json to change already created
+            // Deserialize from json to change already created
             ddb::from_json(it.value()["change"], *change_aux);
 
             changes_map.insert(
                 std::make_pair(change_aux->instanceHandle, change_aux));
 
-            // call listener to create proxy info for other entities different than server
+            // Call listener to create proxy info for other entities different than server
             if (change_aux->write_params.sample_identity().writer_guid().guidPrefix !=
                     endpoints->writer.writer_->getGuid().guidPrefix
                     && change_aux->kind == fastrtps::rtps::ALIVE
@@ -1865,7 +1865,7 @@ bool PDPServer::process_backup_discovery_database_restore(
             }
         }
 
-        // load database
+        // Load database
         discovery_db_.from_json(j, changes_map);
     }
     catch (std::ios_base::failure&)

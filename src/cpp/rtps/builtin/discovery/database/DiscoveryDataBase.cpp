@@ -180,7 +180,7 @@ bool DiscoveryDataBase::pdp_is_relevant(
     // Lock(shared mode) mutex locally
     std::lock_guard<std::recursive_mutex> guard(mutex_);
 
-    EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "PDP is " << change.instanceHandle << " relevant to " << reader_guid);
+    EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "PDP " << change.instanceHandle << " is relevant to " << reader_guid);
 
     auto it = participants_.find(change_guid_prefix);
     if (it != participants_.end())
@@ -596,9 +596,9 @@ void DiscoveryDataBase::create_participant_from_change_(
 void DiscoveryDataBase::match_new_server_(
         eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
 {
-    // Send Our DATA(p) to the new participant
-    // If this is not done, our data could be skip afterwards because a gap sent in newer DATA(p)s
-    //  so the new participant could never receive out data
+    // Send Our DATA(p) to the new participant.
+    // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
+    // so the new participant could never receive our data
     auto our_data_it = participants_.find(server_guid_prefix_);
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
@@ -699,7 +699,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
         // If the DATA(p) it's from this server, it is already in history and we do nothing here
         if (change_guid.guidPrefix != server_guid_prefix_)
         {
-            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p)
+            // If the participant is a new participant, mark that not everyone has ACKed this server's DATA(p).
             // TODO if the new participant is a server it may be that our DATA(p) is already acked because he is
             //  our server and we have pinged it. But also if we are its server it could be the case that
             //  our DATA(p) is not acked even when it is our server. Solution: see in PDPServer how the change has
@@ -821,7 +821,7 @@ void DiscoveryDataBase::create_writers_from_change_(
             // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
             if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
             {
                 // Update the change related to the writer and return the old change to the pool
@@ -838,11 +838,11 @@ void DiscoveryDataBase::create_writers_from_change_(
                 }
             }
         }
-        // if the cache is not new we have to release it, because it is repeated or outdated
+        // If the cache is not new we have to release it, because it is repeated or outdated
         else
         {
-            // if the change is the same that we already have, we update the ack list. This is because we have
-            //  received the data from two servers, so we have to set that both of them already know this data
+            // If the change is the same that we already have, we update the ack list. This is because we have
+            // received the data from two servers, so we have to set that both of them already know this data
             if (ch->write_params.sample_identity().sequence_number() ==
                     writer_it->second.change()->write_params.sample_identity().sequence_number())
             {
@@ -956,7 +956,7 @@ void DiscoveryDataBase::create_readers_from_change_(
                 }
             }
         }
-        // if the cache is not new we have to release it, because it is repeated or outdated
+        // If the cache is not new we have to release it, because it is repeated or outdated
         else
         {
             // if the change is the same that we already have, we update the ack list. This is because we have
@@ -1014,7 +1014,7 @@ void DiscoveryDataBase::create_readers_from_change_(
         // we avoid backprogation of the data.
         reader_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
 
-        // if topic is virtual, it must iterate over all readers
+        // If topic is virtual, it must iterate over all readers
         if (topic_name == virtual_topic_)
         {
             for (auto writer_it : writers_)
@@ -1091,7 +1091,7 @@ void DiscoveryDataBase::match_writer_reader_(
     // TODO reduce number of cases. This is more visual, but can be reduce joining them
     if (writer_info.is_virtual())
     {
-        // writer virtual
+        // Writer virtual
 
         // If reader is virtual do not exchange info
         // If not, writer needs all the info from this endpoint
@@ -1426,7 +1426,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                             // If the status is 0, add DATA(r) to a `edp_publications_to_send_` (if it's not there).
                             if (add_edp_subscriptions_to_send_(readers_it->second.change()))
                             {
-                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(r) to send: "
                                         << readers_it->second.change()->instanceHandle);
                             }
                         }
@@ -1436,7 +1436,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                         // Add DATA(p) of the client with the writer to `pdp_to_send_` (if it's not there).
                         if (add_pdp_to_send_(parts_reader_it->second.change()))
                         {
-                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind readers' DATA(p) to send: "
+                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding readers' DATA(p) to send: "
                                     << parts_reader_it->second.change()->instanceHandle);
                         }
                         // Set topic as not-clearable.
@@ -1458,7 +1458,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                             // If the status is 0, add DATA(w) to a `edp_subscriptions_to_send_` (if it's not there).
                             if (add_edp_publications_to_send_(writers_it->second.change()))
                             {
-                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+                                EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(w) to send: "
                                         << writers_it->second.change()->instanceHandle);
                             }
                         }
@@ -1468,7 +1468,7 @@ bool DiscoveryDataBase::process_dirty_topics()
                         // Add DATA(p) of the client with the reader to `pdp_to_send_` (if it's not there).
                         if (add_pdp_to_send_(parts_writer_it->second.change()))
                         {
-                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind writers' DATA(p) to send: "
+                            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding writers' DATA(p) to send: "
                                     << parts_writer_it->second.change()->instanceHandle);
                         }
                         // Set topic as not-clearable.
@@ -2323,7 +2323,7 @@ bool DiscoveryDataBase::add_pdp_to_send_(
                 pdp_to_send_.end(),
                 change) == pdp_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(p) to send: "
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(p) to send: "
                 << change->instanceHandle);
         pdp_to_send_.push_back(change);
         return true;
@@ -2340,7 +2340,7 @@ bool DiscoveryDataBase::add_edp_publications_to_send_(
                 edp_publications_to_send_.end(),
                 change) == edp_publications_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(w) to send: "
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(w) to send: "
                 << change->instanceHandle);
         edp_publications_to_send_.push_back(change);
         return true;
@@ -2357,7 +2357,7 @@ bool DiscoveryDataBase::add_edp_subscriptions_to_send_(
                 edp_subscriptions_to_send_.end(),
                 change) == edp_subscriptions_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Addind DATA(r) to send: "
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(r) to send: "
                 << change->instanceHandle);
         edp_subscriptions_to_send_.push_back(change);
         return true;

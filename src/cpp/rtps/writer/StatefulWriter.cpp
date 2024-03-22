@@ -412,18 +412,18 @@ void StatefulWriter::unsent_change_added_to_history(
                 [this, &should_be_sent, &change, &max_blocking_time](ReaderProxy* reader)
                 {
                     ChangeForReader_t changeForReader(change);
-                    bool is_revelant = reader->rtps_is_relevant(change);
+                    bool is_relevant = reader->rtps_is_relevant(change);
 
                     if (m_pushMode || !reader->is_reliable() || reader->is_local_reader())
                     {
                         //ChangeForReader_t construct sets status to UNSENT.
-                        should_be_sent |= is_revelant;
+                        should_be_sent |= is_relevant;
                     }
                     else
                     {
                         changeForReader.setStatus(UNACKNOWLEDGED);
                     }
-                    reader->add_change(changeForReader, is_revelant, false, max_blocking_time);
+                    reader->add_change(changeForReader, is_relevant, false, max_blocking_time);
 
                     return false;
                 }

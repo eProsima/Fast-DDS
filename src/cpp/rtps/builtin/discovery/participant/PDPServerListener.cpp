@@ -338,7 +338,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
             }
-            // Case ParticipantProxyData already exists but was known remotly and now must be local
+            // Case ParticipantProxyData already exists but was known remotely and now must be local
             else if (is_local && !was_local)
             {
                 // Realease PDP mutex
