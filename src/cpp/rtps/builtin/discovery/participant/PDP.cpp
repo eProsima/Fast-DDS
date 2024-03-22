@@ -217,7 +217,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 
     return ret_val;
 }
-
+// TODO Carlos: remove for GUID_less ds
 bool PDP::data_matches_with_prefix(
         const GuidPrefix_t& guid_prefix,
         const ParticipantProxyData& participant_data)
@@ -233,6 +233,38 @@ bool PDP::data_matches_with_prefix(
 #endif  // HAVE_SECURITY
 
     return ret_val;
+}
+
+bool PDP::data_matches_with_locatorlist(
+        const LocatorList_t& locators,
+        const ParticipantProxyData& participant_data)
+{
+    auto pdata_unicast = participant_data.metatraffic_locators.unicast;
+
+    // TODO Carlos: make sure that this method works with SECURITY
+
+    for (const Locator_t& loc : locators)
+    {
+        if (!pdata_unicast.contains(loc))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool PDP::is_server_guid(
+    const GuidPrefix_t& guid_prefix)
+{
+    // GUIDs generated randomly always starts with "ca.fe" which is "202.254"
+    if (guid_prefix.value[0] == static_cast<octet>(202) &&
+            guid_prefix.value[1] == static_cast<octet>(254))
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void PDP::initializeParticipantProxyData(
