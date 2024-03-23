@@ -59,6 +59,7 @@ bool VerbatimTextDescriptorImpl::equals(
 
 bool VerbatimTextDescriptorImpl::is_consistent() noexcept
 {
+    //TODO
     return true;
 }
 

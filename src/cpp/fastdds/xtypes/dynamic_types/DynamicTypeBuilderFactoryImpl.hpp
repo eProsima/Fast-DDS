@@ -97,6 +97,10 @@ public:
     traits<DynamicType>::ref_type get_primitive_type(
             TypeKind kind) noexcept override;
 
+protected:
+
+    traits<DynamicTypeBuilderFactory>::ref_type _this();
+
 private:
 
     static traits<DynamicTypeBuilderFactoryImpl>::ref_type instance_;

@@ -529,7 +529,6 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     else
     {
-        assert(dyn_member->get_descriptor().index() == members_.size()); // Check continuity on index.
         members_.push_back(dyn_member);
     }
     assert(next_index_ == traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(

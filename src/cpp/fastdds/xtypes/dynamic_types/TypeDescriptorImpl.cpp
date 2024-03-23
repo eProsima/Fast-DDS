@@ -14,6 +14,7 @@
 
 #include "TypeDescriptorImpl.hpp"
 
+#include <algorithm>
 #include <cctype>
 
 #include <fastdds/dds/log/Log.hpp>
@@ -206,6 +207,17 @@ bool TypeDescriptorImpl::is_consistent() noexcept
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES,
                 "Descriptor describes an SEQUENCE|MAP|BITMASK|STRING but bound doesn't contain only one element");
+        return false;
+    }
+
+    // Check no bound is zero.
+    if (bound_.end() != std::find_if(bound_.begin(), bound_.end(),
+            [](uint32_t bound)
+            {
+                return 0 == bound;
+            }))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Bounds contains a zero and it is not a valid value.");
         return false;
     }
 

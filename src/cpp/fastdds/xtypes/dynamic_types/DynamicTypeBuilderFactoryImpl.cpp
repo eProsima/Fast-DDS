@@ -268,6 +268,11 @@ traits<DynamicType>::ref_type DynamicTypeBuilderFactoryImpl::get_primitive_type(
     return ret_val;
 }
 
+traits<DynamicTypeBuilderFactory>::ref_type DynamicTypeBuilderFactoryImpl::_this()
+{
+    return shared_from_this();
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

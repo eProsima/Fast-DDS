@@ -56,7 +56,6 @@ ReturnCode_t MemberDescriptorImpl::copy_from(
     is_must_understand_ = descriptor.is_must_understand_;
     is_shared_ = descriptor.is_shared_;
     is_default_label_ = descriptor.is_default_label_;
-    parent_kind_ = descriptor.parent_kind_;
 
     return RETCODE_OK;
 }

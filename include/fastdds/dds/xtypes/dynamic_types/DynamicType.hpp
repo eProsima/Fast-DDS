@@ -83,7 +83,7 @@ public:
      * @param[in] id @ref MemberId
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
-     * @retval RETCODE_BAD_PARAMETER when the member doesn't exists.
+     * @retval RETCODE_BAD_PARAMETER when the member doesn't exist.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t get_member(
             traits<DynamicTypeMember>::ref_type& member,
@@ -166,7 +166,7 @@ protected:
 
     virtual ~DynamicType() = default;
 
-    traits<DynamicType>::ref_type _this ();
+    traits<DynamicType>::ref_type _this();
 
 private:
 

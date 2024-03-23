@@ -111,7 +111,7 @@ protected:
 
     virtual ~DynamicTypeMember() = default;
 
-    traits<DynamicTypeMember>::ref_type _this ();
+    traits<DynamicTypeMember>::ref_type _this();
 
 private:
 

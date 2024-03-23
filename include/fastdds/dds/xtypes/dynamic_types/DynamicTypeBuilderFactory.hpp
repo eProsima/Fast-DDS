@@ -189,7 +189,7 @@ protected:
 
     virtual ~DynamicTypeBuilderFactory() = default;
 
-    traits<DynamicTypeBuilderFactory>::ref_type _this ();
+    traits<DynamicTypeBuilderFactory>::ref_type _this();
 
 private:
 

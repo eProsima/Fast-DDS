@@ -232,7 +232,7 @@ traits<DynamicTypeImpl>::ref_type DynamicTypeImpl::resolve_alias_enclosed_type()
     return ret_value;
 }
 
-traits<DynamicType>::ref_type DynamicTypeImpl::_this ()
+traits<DynamicType>::ref_type DynamicTypeImpl::_this()
 {
     return shared_from_this();
 }

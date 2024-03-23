@@ -1524,6 +1524,11 @@ traits<DynamicType>::ref_type DynamicDataImpl::type() noexcept
     return type_;
 }
 
+traits<DynamicData>::ref_type DynamicDataImpl::_this()
+{
+    return shared_from_this();
+}
+
 //{{{ Encoding/decoding functions
 
 size_t DynamicDataImpl::calculate_key_serialized_size(
@@ -1572,6 +1577,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
                     auto member_impl {traits<DynamicTypeMember>::narrow<DynamicTypeMemberImpl>(member.second)};
                     auto member_type {traits<DynamicType>::narrow<DynamicTypeImpl>(member_impl->get_descriptor().type())};
 
+                    //TODO(richiware) For the future support of optionals. Optional member cannot be a keyed member.
                     if (TK_MAP != member_type->resolve_alias_enclosed_type()->get_kind())
                     {
                         auto it = value_.find(member.first);
@@ -1787,17 +1793,15 @@ size_t DynamicDataImpl::calculate_max_serialized_size(
             auto dimension {std::accumulate(type_impl->get_descriptor().bound().begin(),
                                     type_impl->get_descriptor().bound().end(), 1, std::multiplies<uint32_t>())};
 
-            if (0 < dimension)
-            {
-                current_alignment += calculate_max_serialized_size(
-                    type_impl->get_descriptor().element_type(), current_alignment);
+            assert(0 < dimension);
+            current_alignment += calculate_max_serialized_size(
+                type_impl->get_descriptor().element_type(), current_alignment);
 
-                if (1 < dimension)
-                {
-                    auto element_size_after_first = calculate_max_serialized_size(
-                        type_impl->get_descriptor().element_type(), current_alignment);
-                    current_alignment += element_size_after_first * (dimension - 1);
-                }
+            if (1 < dimension)
+            {
+                auto element_size_after_first = calculate_max_serialized_size(
+                    type_impl->get_descriptor().element_type(), current_alignment);
+                current_alignment += element_size_after_first * (dimension - 1);
             }
 
             break;
@@ -1967,19 +1971,19 @@ void DynamicDataImpl::serialize_key(
 
                     if (TK_MAP != member_type->resolve_alias_enclosed_type()->get_kind())
                     {
-                    auto it = value_.find(member.first);
+                        auto it = value_.find(member.first);
 
-                    if (it != value_.end())
-                    {
-                        auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
+                        if (it != value_.end())
+                        {
+                            auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
 
-                        member_data->serialize_key(cdr);
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Error serializing structure member because not found on DynamicData");
-                    }
+                            member_data->serialize_key(cdr);
+                        }
+                        else
+                        {
+                            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                                    "Error serializing structure member because not found on DynamicData");
+                        }
                     }
                 }
             }
@@ -3233,6 +3237,11 @@ ReturnCode_t DynamicDataImpl::get_primitive_value(
     return ret_value;
 }
 
+/*!
+ * Specialization for TK_STRING8.
+ * @param[in] member_id Indicates the position of the character to be returned. MEMBER_ID_INVALID can be used to
+ * return all the string instead of a single character.
+ */
 template<>
 ReturnCode_t DynamicDataImpl::get_primitive_value<TK_STRING8>(
         TypeKind element_kind,
@@ -3261,6 +3270,11 @@ ReturnCode_t DynamicDataImpl::get_primitive_value<TK_STRING8>(
     return ret_value;
 }
 
+/*!
+ * Specialization for TK_STRING16.
+ * @param[in] member_id Indicates the position of the character to be returned. MEMBER_ID_INVALID can be used to
+ * return all the string instead of a single character.
+ */
 template<>
 ReturnCode_t DynamicDataImpl::get_primitive_value<TK_STRING16>(
         TypeKind element_kind,
@@ -5125,12 +5139,9 @@ size_t DynamicDataImpl::calculate_serialized_size(
         }
         case TK_BITSET:
         {
-            auto sum {0};
-            if (0 < type->get_all_members_by_index().size())
-            {
-                sum = type->get_all_members_by_index().rbegin()->get()->get_id() +
-                        *type->get_descriptor().bound().rbegin();
-            }
+            assert(0 < type->get_all_members_by_index().size());
+            auto sum {type->get_all_members_by_index().rbegin()->get()->get_id() +
+                      *type->get_descriptor().bound().rbegin()};
 
             if (9 > sum)
             {

@@ -436,7 +436,7 @@ public:
 
 protected:
 
-    traits<DynamicDataImpl>::ref_type _this();
+    traits<DynamicData>::ref_type _this();
 
 private:
 
@@ -626,6 +626,7 @@ private:
 
     /*!
      * Auxiliary template with the common code for getting the values of a primitive sequence from a TK_ARRAY or TK_SEQUENCE.
+     * @param[in] number_of_elements Number of elements. 0 value means all elements.
      */
     template<TypeKind TK>
     ReturnCode_t get_sequence_values_primitive(
@@ -638,6 +639,7 @@ private:
     /*!
      * Auxiliary template with the common code for getting the values of a primitive sequence supporting promotion
      * from a TK_ARRAY or TK_SEQUENCE.
+     * @param[in] number_of_elements Number of elements. 0 value means all elements.
      */
     template<TypeKind TK, TypeKind ToTK>
     ReturnCode_t get_sequence_values_promoting(

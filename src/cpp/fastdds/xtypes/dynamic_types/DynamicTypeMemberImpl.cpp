@@ -126,7 +126,7 @@ ObjectName DynamicTypeMemberImpl::get_name() noexcept
     return member_descriptor_.name();
 }
 
-traits<DynamicTypeMember>::ref_type DynamicTypeMemberImpl::_this ()
+traits<DynamicTypeMember>::ref_type DynamicTypeMemberImpl::_this()
 {
     return shared_from_this();
 }

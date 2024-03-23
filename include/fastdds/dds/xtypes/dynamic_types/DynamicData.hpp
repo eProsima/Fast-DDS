@@ -97,8 +97,7 @@ public:
      *     dimensions.
      * @li If the object is of a bitmask type, return the number of named flags that are currently set in the bitmask.
      * @li If the object is of a structure or annotation type, return the number of members in the object.
-     *     This value may be different than the number of members in the corresponding @ref DynamicType (some optional
-     *     members may be omitted).
+     *     This value may be different than the number of members in the corresponding @ref DynamicType.
      * @li If the object is of a union type, return the number of members in the object. This number will be two if the
      *     discriminator value selects a member and one otherwise.
      * @li if the object is of a primitive or enumerated type, it is atomic: return one.
@@ -118,15 +117,13 @@ public:
      * Clear all members not associated to the key
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the cleaning was successful.
-     * @todo Improve this documentation.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t clear_nonkey_values() = 0;
 
     /*!
      * Clear a member.
      * The meaning of "clearing" depends on the type of the sample:
-     * @li If aggregated type, and the indicated member is optional, remove it.
-     * If the indicated member is not optional, set it to its default value.
+     * @li If aggregated type, set it to its default value.
      * @li If variable-length collection type, remove the indicated element, shifting any subsequence elements to the
      * next-lowest index.
      * @li If array type, set the indicated element to its default value.

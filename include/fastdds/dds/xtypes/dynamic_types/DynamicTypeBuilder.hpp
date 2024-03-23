@@ -185,7 +185,7 @@ protected:
 
     virtual ~DynamicTypeBuilder() = default;
 
-    traits<DynamicTypeBuilder>::ref_type _this ();
+    traits<DynamicTypeBuilder>::ref_type _this();
 
 private:
 
