@@ -13,13 +13,8 @@ on:
         default: '2.13.x'
 
   pull_request:
-<<<<<<< HEAD
-    branches:
-      - '2.13.x'
-=======
     types:
       - review_requested
->>>>>>> d0a334b11 (Only run PRs CI when run-ci label is added (#4599))
     paths-ignore:
       - '**.md'
       - '**.txt'
