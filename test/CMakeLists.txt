@@ -37,8 +37,10 @@ if(WIN32)
     execute_process(COMMAND powershell -C Resolve-DNSName -Name www.acme.com.test -CacheOnly
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 elseif(APPLE)
-	execute_process(COMMAND dscacheutil -q host -a name www.acme.com.test
-		RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
+	execute_process(
+        COMMAND dscacheutil -q host -a name www.acme.com.test
+        COMMAND grep www.acme.com.test
+        RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
 else()
     execute_process(COMMAND getent hosts www.acme.com.test
         RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
