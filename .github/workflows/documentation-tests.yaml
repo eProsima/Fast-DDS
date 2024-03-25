@@ -10,7 +10,7 @@ on:
 
   pull_request:
     types:
-      - labeled
+      - review_requested
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -27,25 +27,12 @@ jobs:
   ubuntu-build-and-test-documentation:
     name: Documentation build and test
     if: ${{ (
-              (github.event_name == 'workflow_dispatch') ||
-              contains(github.event.pull_request.labels.*.name, 'run-ci')
-            ) &&
-            (
               !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
               !contains(github.event.pull_request.labels.*.name, 'conflicts')
             ) }}
 
     runs-on: ubuntu-22.04
     steps:
-      - name: Remove run-ci label if PR
-        if: ${{ github.event_name == 'pull_request' }}
-        uses: eProsima/eProsima-CI/external/remove_labels@v0
-        with:
-          labels: run-ci
-          number: ${{ github.event.number }}
-          repo: eProsima/Fast-DDS
-          fail_on_error: 'false'
-
       - name: Add ci-pending label if PR
         if: ${{ github.event_name == 'pull_request' }}
         uses: eProsima/eProsima-CI/external/add_labels@v0

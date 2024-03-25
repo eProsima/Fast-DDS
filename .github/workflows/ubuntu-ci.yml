@@ -26,14 +26,14 @@ on:
 
   pull_request:
     types:
-      - labeled
+      - review_requested
     paths-ignore:
       - '**.md'
       - '**.txt'
       - '!**/CMakeLists.txt'
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -46,10 +46,6 @@ jobs:
           - 'ubuntu-22.04'
 
     if: ${{ (
-              (github.event_name == 'workflow_dispatch') ||
-              contains(github.event.pull_request.labels.*.name, 'run-ci')
-            ) &&
-            (
               !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
               !contains(github.event.pull_request.labels.*.name, 'conflicts')
             ) }}

@@ -26,7 +26,7 @@ on:
 
   pull_request:
     types:
-      - labeled
+      - review_requested
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -39,10 +39,6 @@ concurrency:
 jobs:
   windows-ci:
     if: ${{ (
-              (github.event_name == 'workflow_dispatch') ||
-              contains(github.event.pull_request.labels.*.name, 'run-ci')
-            ) &&
-            (
               !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
               !contains(github.event.pull_request.labels.*.name, 'conflicts')
             ) }}
