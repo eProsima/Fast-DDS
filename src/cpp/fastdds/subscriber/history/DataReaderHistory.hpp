@@ -44,7 +44,7 @@
 
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include "DataReaderHistoryCounters.hpp"
 #include "DataReaderInstance.hpp"

@@ -22,22 +22,18 @@
 #include <mutex>
 #include <set>
 
-#include <fastrtps/utils/TimedMutex.hpp>
-
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
-
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/History.h>
-
+#include <fastdds/utils/TimedMutex.hpp>
 #include <fastrtps/utils/TimeConversion.h>
-#include <fastdds/dds/core/policy/QosPolicies.hpp>
-#include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServerListeners.hpp>
@@ -49,9 +45,7 @@
 #include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 #include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
 namespace eprosima {

@@ -54,7 +54,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatefulPersistentWriter.h>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/UnitsParser.hpp>
 

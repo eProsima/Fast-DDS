@@ -21,7 +21,7 @@
 
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
 namespace fastrtps {

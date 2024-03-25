@@ -22,7 +22,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <memory>
 #include <atomic>

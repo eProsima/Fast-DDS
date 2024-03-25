@@ -25,7 +25,7 @@
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
 
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include "DataReaderCacheChange.hpp"
 #include "DataReaderHistoryCounters.hpp"

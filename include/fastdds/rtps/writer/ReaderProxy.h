@@ -34,7 +34,7 @@
 #include <fastdds/rtps/writer/ChangeForReader.h>
 #include <fastdds/rtps/writer/ReaderLocator.h>
 
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <algorithm>
 #include <mutex>
