@@ -127,6 +127,25 @@ ReturnCode_t clear_sequence_typed_element(
     return ret_value;
 }
 
+template<>
+ReturnCode_t clear_sequence_typed_element(
+        std::shared_ptr<std::vector<bool>>& sequence,
+        TypeKind type_kind,
+        MemberId id)
+{
+    ReturnCode_t ret_value = RETCODE_BAD_PARAMETER;
+    if (sequence->size() > id)
+    {
+        auto it = sequence->erase(sequence->begin() + id);
+        if (TK_ARRAY == type_kind)
+        {
+            sequence->insert(it, false);
+        }
+        ret_value = RETCODE_OK;
+    }
+    return ret_value;
+}
+
 //{{{ Public functions
 
 DynamicDataImpl::DynamicDataImpl(
@@ -141,7 +160,6 @@ DynamicDataImpl::DynamicDataImpl(
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
-        uint32_t index {0};
         for (auto& member : enclosing_type_->get_all_members_by_index())
         {
             traits<DynamicData>::ref_type data = DynamicDataFactory::get_instance()->create_data(
@@ -151,7 +169,6 @@ DynamicDataImpl::DynamicDataImpl(
             set_default_value(member, data_impl);
 
             value_.emplace(member->get_id(), data);
-            ++index;
         }
     }
     else if (TK_ARRAY == type_kind ||
