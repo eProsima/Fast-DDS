@@ -17,7 +17,7 @@
 #include <chrono>
 #include <thread>
 
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 #include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {

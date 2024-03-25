@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 #include "new_features_4_2.h"
 

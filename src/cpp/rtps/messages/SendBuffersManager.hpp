@@ -22,8 +22,8 @@
 
 #include "RTPSMessageGroup_t.hpp"
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
-#include <fastrtps/utils/TimedMutex.hpp>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 #include <vector>              // std::vector
 #include <memory>              // std::unique_ptr

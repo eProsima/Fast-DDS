@@ -27,7 +27,7 @@
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 
 #include <rtps/transport/UDPChannelResource.h>
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>

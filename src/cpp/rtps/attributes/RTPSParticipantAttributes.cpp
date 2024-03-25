@@ -26,7 +26,7 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <xmlparser/XMLProfileManager.h>

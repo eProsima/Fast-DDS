@@ -20,7 +20,7 @@
 #define _FASTDDS_RTPS_COMMON_REMOTELOCATORS_HPP_
 
 #include <fastdds/rtps/common/Locator.h>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {

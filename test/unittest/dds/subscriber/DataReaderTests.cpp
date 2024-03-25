@@ -56,7 +56,7 @@
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include "../../common/CustomPayloadPool.hpp"
 #include "../../logging/mock/MockConsumer.h"

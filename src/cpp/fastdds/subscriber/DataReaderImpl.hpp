@@ -33,11 +33,11 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/subscriber/DataReaderImpl/DataReaderLoanManager.hpp>

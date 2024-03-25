@@ -32,7 +32,7 @@
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 namespace fastrtps {

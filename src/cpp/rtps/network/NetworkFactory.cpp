@@ -21,8 +21,8 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <rtps/transport/TCPTransportInterface.h>
 

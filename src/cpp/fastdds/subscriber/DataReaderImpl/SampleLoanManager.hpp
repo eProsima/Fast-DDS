@@ -30,8 +30,8 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/history/PoolConfig.h>
 

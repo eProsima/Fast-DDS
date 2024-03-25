@@ -35,7 +35,7 @@
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/ProxyPool.hpp>
 
 namespace eprosima {

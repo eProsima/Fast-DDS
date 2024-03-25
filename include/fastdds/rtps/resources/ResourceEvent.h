@@ -28,8 +28,8 @@
 #include <vector>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/utils/TimedMutex.hpp>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 

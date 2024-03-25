@@ -32,7 +32,7 @@
  */
 
 /* interface header */
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 /* system implementation headers */
 #include <cstdio>
