@@ -470,6 +470,7 @@ protected:
 struct SampleValidator
 {
     SampleValidator()
+        : assert_on_non_expected_msgs_(true)
     {
         validation_mask.set();
     }
@@ -477,8 +478,16 @@ struct SampleValidator
     SampleValidator(
             std::bitset<statistics::STATUSES_SIZE>& val_mask)
         : validation_mask(val_mask)
+        , assert_on_non_expected_msgs_(true)
     {
+    }
 
+    SampleValidator(
+            std::bitset<statistics::STATUSES_SIZE>& val_mask,
+            bool assert_on_non_expected_msgs)
+        : validation_mask(val_mask)
+        , assert_on_non_expected_msgs_(assert_on_non_expected_msgs)
+    {
     }
 
     //! Avoid declaring it as virtual
@@ -494,6 +503,7 @@ struct SampleValidator
     }
 
     std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    bool assert_on_non_expected_msgs_;
 
 };
 
@@ -505,6 +515,7 @@ public:
     MonitorServiceConsumer()
         : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
         , sample_validator_( new SampleValidator())
+        , reader_history_kind_(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
     {
 
     }
@@ -513,6 +524,17 @@ public:
             std::bitset<statistics::STATUSES_SIZE>& val_mask)
         : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
         , sample_validator_( new SampleValidator(val_mask))
+        , reader_history_kind_(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
+    {
+
+    }
+
+    MonitorServiceConsumer(
+            std::bitset<statistics::STATUSES_SIZE>& val_mask,
+            bool assert_on_non_expected_msgs)
+        : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
+        , sample_validator_( new SampleValidator(val_mask, assert_on_non_expected_msgs))
+        , reader_history_kind_(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
     {
 
     }
@@ -542,7 +564,7 @@ public:
     {
         reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
         durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
-        history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
+        history_kind(reader_history_kind_);
         resource_limits_max_samples(4000);
         resource_limits_max_samples_per_instance(100);
         resource_limits_max_instances(30);
@@ -556,7 +578,7 @@ public:
     {
         reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
         durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
-        history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
+        history_kind(reader_history_kind_);
         history_depth(1);
 
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
@@ -568,6 +590,13 @@ public:
         init();
 
         statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
+    }
+
+    MonitorServiceConsumer& set_reader_history_kind(
+            HistoryQosPolicyKind kind)
+    {
+        reader_history_kind_ = kind;
+        return *this;
     }
 
     SequenceNumber_t start_reception(
@@ -633,6 +662,8 @@ protected:
     std::mutex validator_mtx_;
 
     statistics::dds::DomainParticipant* statistics_part_;
+
+    HistoryQosPolicyKind reader_history_kind_;
 };
 
 struct ProxySampleValidator : public SampleValidator
@@ -660,9 +691,8 @@ struct ProxySampleValidator : public SampleValidator
             {
                 std::cout << "Unexpected proxy " << statistics::to_fastdds_type(data.local_entity()) <<
                     data.status_kind() << std::endl;
+                return;
             }
-
-            ASSERT_NE(it, total_msgs.end());
 
             GUID_t guid = statistics::to_fastdds_type(data.local_entity());
 
@@ -729,11 +759,13 @@ struct ProxySampleValidator : public SampleValidator
             std::cout << "Received unregistration of instance "
                       << info.instance_handle << std::endl;
 
-            ASSERT_NE(it, total_msgs.end());
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
         }
     }
 
@@ -839,11 +871,13 @@ struct ConnectionListSampleValidator : public SampleValidator
                                 return false;
                             });
 
-            ASSERT_NE(it, total_msgs.end());
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
         }
     }
 
@@ -871,16 +905,18 @@ struct IncompatibleQoSSampleValidator : public SampleValidator
                                 == elem.value().incompatible_qos_status().last_policy_id());
                             });
 
-            ASSERT_NE(it, total_msgs.end());
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
 
             std::cout << "Received QoS Incompatibility on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
                       << "\n\tLast policy id: " << data.value().incompatible_qos_status().last_policy_id()
                       << std::endl;
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
         }
     }
 
@@ -908,16 +944,18 @@ struct LivelinessLostSampleValidator : public SampleValidator
                                 == elem.value().liveliness_lost_status().total_count());
                             });
 
-            ASSERT_NE(it, total_msgs.end());
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
 
             std::cout << "Received QoS Incompatibility on local_entity "
                       << statistics::to_fastdds_type(data.local_entity())
                       << "\n\tLiveliness Lost Count: " << data.value().liveliness_lost_status().total_count()
                       << std::endl;
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
         }
     }
 
@@ -950,11 +988,13 @@ struct LivelinessChangedSampleValidator : public SampleValidator
                       << "\n\tNot Alive Count: " << data.value().liveliness_changed_status().not_alive_count()
                       << std::endl;
 
-            ASSERT_NE(it, total_msgs.end());
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
         }
     }
 
@@ -969,6 +1009,11 @@ struct DeadlineMissedSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
+        std::cout << "Received Deadline Missed on local_entity "
+                  << statistics::to_fastdds_type(data.local_entity())
+                  << "\n\tTotal Count: " << data.value().deadline_missed_status().total_count()
+                  << std::endl;
+
         if (validation_mask[statistics::DEADLINE_MISSED]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
@@ -987,11 +1032,13 @@ struct DeadlineMissedSampleValidator : public SampleValidator
                       << "\n\tTotal Count: " << data.value().deadline_missed_status().total_count()
                       << std::endl;
 
-            ASSERT_NE(it, total_msgs.end());
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
         }
     }
 
@@ -1024,11 +1071,13 @@ struct SampleLostSampleValidator : public SampleValidator
                       << std::endl;
 
 
-            ASSERT_NE(it, total_msgs.end());
-
-            total_msgs.erase(it);
-            ++processed_count;
-            cv.notify_one();
+            if (assert_on_non_expected_msgs_)
+            {
+                ASSERT_NE(it, total_msgs.end());
+                total_msgs.erase(it);
+                ++processed_count;
+                cv.notify_one();
+            }
         }
     }
 
@@ -2242,6 +2291,149 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
         //! The assertion checking whether the on_data_availble() was called is assumed in the following one
         ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
     }
+#endif //FASTDDS_STATISTICS
+}
+
+/**
+ * Regression test for Redmine issue #20625.
+ *
+ * The monitor service writer must correctly handle instances, removing old changes
+ * when its going to publish a new change in the same instance since it is
+ * defined as KEEP_LAST 1.
+ */
+TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
+{
+#ifdef FASTDDS_STATISTICS
+
+    // In this test we do not need to enforce the validation of samples
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+
+    // Setup consumer participant
+    MonitorServiceConsumer MSC(validation_mask);
+
+    MSC.init_monitor_service_reader();
+
+    // Setup participant with monitor service enabled
+    MonitorServiceParticipant MSP;
+    auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    std::atomic<uint8_t> n_gap_messages{0};
+
+    // Prepare filter to intercept gap messages
+    test_transport->drop_gap_messages_filter_ = [&n_gap_messages](CDRMessage_t& msg)
+            {
+
+                // Jump the reader entity id
+                msg.pos += 4;
+                // Read the writer's entity id
+                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+
+                if (ENTITYID_MONITOR_SERVICE_WRITER == writer_entity_id)
+                {
+                    n_gap_messages.fetch_add(1);
+                }
+
+                return false;
+            };
+
+    DomainParticipantQos participant_qos;
+    participant_qos.transport().user_transports.push_back(test_transport);
+    participant_qos.transport().use_builtin_transports = false;
+
+    MSP.setup(participant_qos);
+    MSP.enable_monitor_service();
+
+    DataReaderQos dr_qos;
+    DataWriterQos dw_qos;
+
+    //! Set deadline as 1 sec
+    dr_qos.deadline().period = eprosima::fastrtps::Time_t{1, 000000000};
+    dw_qos.deadline().period = eprosima::fastrtps::Time_t{1, 000000000};
+
+    MSP.create_and_add_reader(dr_qos);
+    MSP.create_and_add_writer(dw_qos);
+
+    MSC.start_reception(std::list<MonitorServiceType::type>());
+
+    auto samples = default_helloworld_data_generator(4);
+    // Default heartbeat period is 3 secs.
+    // Ensure that the monitor service writer sends at least one
+    // waiting 1150 milliseconds between samples
+    MSP.send(samples, 1150);
+
+    ASSERT_TRUE(n_gap_messages > 0u);
+#endif //FASTDDS_STATISTICS
+}
+
+/**
+ * Regression test for Redmine issue #20625.
+ *
+ * A monitor service consumer receives only the last instance status when late joins.
+ */
+TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_the_latest_instance_statuses)
+{
+#ifdef FASTDDS_STATISTICS
+
+    // In this test we enforce validating DeadlineMissed samples only
+    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::DEADLINE_MISSED] = true;
+
+    // Setup
+    MonitorServiceConsumer MSC(validation_mask, false);
+    MonitorServiceParticipant MSP;
+
+    MSP.setup();
+    MSP.enable_monitor_service();
+
+    DataReaderQos dr_qos;
+    DataWriterQos dw_qos;
+
+    // Set deadline as 0,5 secs to continously keep missing the deadline later
+    dr_qos.deadline().period = eprosima::fastrtps::Time_t{0, 500000000};
+    dw_qos.deadline().period = eprosima::fastrtps::Time_t{0, 500000000};
+
+    MSP.create_and_add_reader(dr_qos);
+    MSP.create_and_add_writer(dw_qos);
+
+    std::list<MonitorServiceType::type> non_expected_msgs;
+    MonitorServiceType::type endpoint_deadline_msg;
+    StatisticsGUIDList r_guids, w_guids;
+
+    // Prepare the expected messages or, in this case, the non-expected one
+    // since we should never receive a deadline missed status with a total count of 2
+    // That will prove that only the last update of the instance is being received and, in turn,
+    // verify that the monitor service datawriter is not holding past samples of the same instance.
+    r_guids = MSP.get_reader_guids();
+    ASSERT_EQ(r_guids.size(), 1);
+    endpoint_deadline_msg.local_entity(r_guids.back());
+
+    statistics::DeadlineMissedStatus_s deadline_missed_status;
+    deadline_missed_status.total_count() = 2;
+    endpoint_deadline_msg.value().deadline_missed_status(deadline_missed_status);
+
+    non_expected_msgs.push_back(endpoint_deadline_msg);
+
+    w_guids = MSP.get_writer_guids();
+    ASSERT_EQ(w_guids.size(), 1);
+    endpoint_deadline_msg.local_entity(w_guids.back());
+
+    non_expected_msgs.push_back(endpoint_deadline_msg);
+
+    auto samples = default_helloworld_data_generator(5);
+
+    //send a sample every 600 milliseconds (more than the deadline period)
+    MSP.send(samples, 600);
+
+    // Late joiner consumer
+    MSC.set_reader_history_kind(eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS)
+            .init_monitor_service_reader();
+
+    MSC.start_reception(non_expected_msgs);
+
+    // We expect not to have received any deadline missed status
+    // with a total_count less than 5
+    ASSERT_FALSE(MSC.block_for_all(std::chrono::seconds(5)));
 #endif //FASTDDS_STATISTICS
 }
 

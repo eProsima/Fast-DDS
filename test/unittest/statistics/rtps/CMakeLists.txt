@@ -146,24 +146,26 @@ target_compile_definitions(MonitorServiceTests PRIVATE FASTRTPS_NO_LIB
     )
 
 target_include_directories(MonitorServiceTests PRIVATE
+    mock/Publisher
     mock/StatisticsBase
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/BuiltinProtocols
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WLP
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReaderHistory
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSReader
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SecurityManager
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatefulWriter
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessReader
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/StatelessWriter
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TypeLookupManager
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WLP
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/WriterHistory
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
