@@ -29,7 +29,7 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastrtps {

@@ -23,11 +23,11 @@
 
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/qos/WriterQos.h>
 
 namespace eprosima {

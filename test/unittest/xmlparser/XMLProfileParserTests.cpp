@@ -35,7 +35,7 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPTransportDescriptor.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <xmlparser/XMLProfileManager.h>
 

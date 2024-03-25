@@ -28,7 +28,7 @@
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>

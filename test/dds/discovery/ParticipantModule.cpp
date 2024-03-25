@@ -28,7 +28,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

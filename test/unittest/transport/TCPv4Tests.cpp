@@ -21,8 +21,8 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
 #include "mock/MockTCPChannelResource.h"

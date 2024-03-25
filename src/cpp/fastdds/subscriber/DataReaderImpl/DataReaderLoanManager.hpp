@@ -28,8 +28,8 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace fastdds {

@@ -24,12 +24,11 @@
 #include <string>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-
-#include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 // This version of TypeSupport has `is_bounded()`
 #define TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED

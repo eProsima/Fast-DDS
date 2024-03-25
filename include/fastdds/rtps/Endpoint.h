@@ -20,15 +20,12 @@
 #define _FASTDDS_RTPS_ENDPOINT_H_
 
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
-
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/Types.h>
-
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
-
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

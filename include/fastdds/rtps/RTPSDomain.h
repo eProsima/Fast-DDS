@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/history/IChangePool.h>
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastrtps {
