@@ -119,6 +119,7 @@ public:
      * @param[in] data Pointer to data.
      * @return Functor which calculates the serialized size of the data.
      */
+    // FASTDDS_TODO_BEFORE(3, 0, "Remove this overload")
     FASTDDS_EXPORTED_API virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data) = 0;
 

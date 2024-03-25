@@ -28,6 +28,22 @@ namespace dds {
 
 constexpr MemberId MEMBER_ID_INVALID {0x0FFFFFFF};
 
+class DynamicData;
+
+template<>
+struct traits<DynamicData> : public object_traits<DynamicData>
+{
+    using base_type = DynamicData;
+};
+
+class DynamicDataFactory;
+
+template<>
+struct traits<DynamicDataFactory> : public object_traits<DynamicDataFactory>
+{
+    using base_type = DynamicDataFactory;
+};
+
 class DynamicType;
 
 template<>
@@ -65,5 +81,3 @@ struct traits<DynamicTypeMember> : public object_traits<DynamicTypeMember>
 } // namespace eprosima
 
 #endif // _FASTDDS_DDS_XTYPES_DYNAMIC_TYPES_TYPES_HPP_
-
-

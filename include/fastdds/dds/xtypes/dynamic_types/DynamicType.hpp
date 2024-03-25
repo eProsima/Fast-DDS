@@ -29,7 +29,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FASTDDS_EXPORTED_API DynamicType : public std::enable_shared_from_this<DynamicType>
+class DynamicType : public std::enable_shared_from_this<DynamicType>
 {
 public:
 
@@ -42,30 +42,30 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
-    virtual ReturnCode_t get_descriptor(
-            traits<TypeDescriptor>::ref_type descriptor) = 0;
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_descriptor(
+            traits<TypeDescriptor>::ref_type& descriptor) = 0;
 
     /*!
      * Returns the fully qualified name of this type
      * @return Type name.
      */
-    virtual ObjectName get_name() = 0;
+    FASTDDS_EXPORTED_API virtual ObjectName get_name() = 0;
 
     /*!
      * Returns the @ref TypeKind associated
      * @return @ref TypeKind
      */
-    virtual TypeKind get_kind() = 0;
+    FASTDDS_EXPORTED_API virtual TypeKind get_kind() = 0;
 
     /*!
      * Returns the member that corresponds to the specified name.
      * @param[inout] member @ref DynamicTypeMember reference used to return the reference to the member.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
-     * @retval RETCODE_BAD_PARAMETER when the member doesn't exists.
+     * @retval RETCODE_BAD_PARAMETER when the member doesn't exist.
      */
-    virtual ReturnCode_t get_member_by_name(
-            traits<DynamicTypeMember>::ref_type member,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_member_by_name(
+            traits<DynamicTypeMember>::ref_type& member,
             const ObjectName& name) = 0;
 
     /*!
@@ -74,7 +74,7 @@ public:
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK
      */
-    virtual ReturnCode_t get_all_members_by_name(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_all_members_by_name(
             DynamicTypeMembersByName& member) = 0;
 
     /*!
@@ -83,10 +83,10 @@ public:
      * @param[in] id @ref MemberId
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
-     * @retval RETCODE_BAD_PARAMETER when the member doesn't exists.
+     * @retval RETCODE_BAD_PARAMETER when the member doesn't exist.
      */
-    virtual ReturnCode_t get_member(
-            traits<DynamicTypeMember>::ref_type member,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_member(
+            traits<DynamicTypeMember>::ref_type& member,
             MemberId id) = 0;
 
     /*!
@@ -95,14 +95,14 @@ public:
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK
      */
-    virtual ReturnCode_t get_all_members(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_all_members(
             DynamicTypeMembersById& member) = 0;
 
     /*!
      * This operation returns the current number of members.
      * @return Current number of members
      */
-    virtual uint32_t get_member_count() = 0;
+    FASTDDS_EXPORTED_API virtual uint32_t get_member_count() = 0;
 
     /**
      * This operation returns the member that corresponds to the specified index.
@@ -112,15 +112,15 @@ public:
      * @retval RETCODE_OK when the member was found.
      * @retval RETCODE_BAD_PARAMETER when the index is out-of-range.
      */
-    virtual ReturnCode_t get_member_by_index(
-            traits<DynamicTypeMember>::ref_type member,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_member_by_index(
+            traits<DynamicTypeMember>::ref_type& member,
             uint32_t index) = 0;
 
     /*!
      * Returns the number of applied annotations to the type.
      * @return Number of annotations.
      */
-    virtual uint32_t get_annotation_count() = 0;
+    FASTDDS_EXPORTED_API virtual uint32_t get_annotation_count() = 0;
 
     /*!
      * Returns an applied annotation by index.
@@ -130,15 +130,15 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
-    virtual ReturnCode_t get_annotation(
-            traits<AnnotationDescriptor>::ref_type descriptor,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_annotation(
+            traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /*!
      * Returns the number of applied verbatim text to the type.
      * @return Number of verbatim texts.
      */
-    virtual uint32_t get_verbatim_text_count() = 0;
+    FASTDDS_EXPORTED_API virtual uint32_t get_verbatim_text_count() = 0;
 
     /*!
      * Returns an applied verbatim text by index.
@@ -148,8 +148,8 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or index is out-of-range.
      */
-    virtual ReturnCode_t get_verbatim_text(
-            traits<VerbatimTextDescriptor>::ref_type descriptor,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_verbatim_text(
+            traits<VerbatimTextDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /**
@@ -157,7 +157,7 @@ public:
      * @param[in] other @DynamicType reference to compare to
      * @return \b bool `true` on equality
      */
-    virtual bool equals(
+    FASTDDS_EXPORTED_API virtual bool equals(
             traits<DynamicType>::ref_type other) = 0;
 
 protected:
@@ -166,7 +166,7 @@ protected:
 
     virtual ~DynamicType() = default;
 
-    traits<DynamicType>::ref_type _this ();
+    traits<DynamicType>::ref_type _this();
 
 private:
 

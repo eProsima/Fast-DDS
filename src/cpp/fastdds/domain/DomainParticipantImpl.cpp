@@ -39,6 +39,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
@@ -51,10 +53,6 @@
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/publisher/DataWriterImpl.hpp>
@@ -1579,9 +1577,9 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
 }
 
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
-        fastrtps::types::DynamicType_ptr dyn_type)
+        DynamicType::_ref_type dyn_type)
 {
-    TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     return get_participant()->register_type(type);
 }
 

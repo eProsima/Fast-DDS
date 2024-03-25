@@ -32,6 +32,8 @@ class FASTDDS_EXPORTED_API TypeDescriptor
 {
 public:
 
+    using _ref_type = typename traits<TypeDescriptor>::ref_type;
+
     /*!
      * Returns the @ref TypeKind associated.
      * @return standard @ref TypeKind.

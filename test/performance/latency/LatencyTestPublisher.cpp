@@ -32,6 +32,11 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
@@ -574,12 +579,16 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
         }
 
         // Check if is the expected echo message
-        if ((pub->dynamic_types_
-                && (pub->dynamic_data_in_->get_uint32_value(0)
-                != pub->dynamic_data_out_->get_uint32_value(0)))
-                || (!pub->dynamic_types_
-                && (pub->latency_data_in_->seqnum
-                != pub->latency_data_out_->seqnum)))
+        uint32_t dyn_value_in {0};
+        uint32_t dyn_value_out {0};
+        if (pub->dynamic_types_)
+        {
+            (*pub->dynamic_data_in_)->get_uint32_value(dyn_value_in, 0);
+            (*pub->dynamic_data_out_)->get_uint32_value(dyn_value_out, 0);
+        }
+
+        if ((pub->dynamic_types_ && dyn_value_in != dyn_value_out)
+                || (!pub->dynamic_types_ && pub->latency_data_in_->seqnum != pub->latency_data_out_->seqnum))
         {
             EPROSIMA_LOG_INFO(LatencyTest, "Echo message received is not the expected one");
         }
@@ -604,7 +613,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
             // Reset seqnum from out data
             if (pub->dynamic_types_)
             {
-                pub->dynamic_data_out_->set_uint32_value(0, 0);
+                (*pub->dynamic_data_out_)->set_uint32_value(0, 0);
             }
             else
             {
@@ -699,43 +708,39 @@ bool LatencyTestPublisher::test(
 
     if (dynamic_types_)
     {
-        dynamic_data_in_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
-        dynamic_data_out_ = static_cast<eprosima::fastrtps::types::DynamicData*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_in_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
+        dynamic_data_out_ = static_cast<DynamicData::_ref_type*>(dynamic_pub_sub_type_->createData());
 
         if (nullptr == dynamic_data_in_)
         {
             EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
-                    "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data In");
+                    "Iteration failed: Failed to create Dynamic Data In");
             return false;
         }
 
         if (nullptr == dynamic_data_out_)
         {
             EPROSIMA_LOG_ERROR(LATENCYPUBLISHER,
-                    "Iteration failed: Failed to create eprosima::fastrtps::types::Dynamic Data Out");
+                    "Iteration failed: Failed to create Dynamic Data Out");
             return false;
         }
 
-        eprosima::fastrtps::types::MemberId id_in;
-        eprosima::fastrtps::types::MemberId id_out;
-        eprosima::fastrtps::types::DynamicData* data_in = dynamic_data_in_->loan_value(
-            dynamic_data_in_->get_member_id_at_index(1));
-        eprosima::fastrtps::types::DynamicData* data_out = dynamic_data_out_->loan_value(
-            dynamic_data_out_->get_member_id_at_index(1));
+        DynamicData::_ref_type data_in = (*dynamic_data_in_)->loan_value(
+            (*dynamic_data_in_)->get_member_id_at_index(1));
+        DynamicData::_ref_type data_out = (*dynamic_data_out_)->loan_value(
+            (*dynamic_data_out_)->get_member_id_at_index(1));
 
         // fill until complete the desired payload size
         uint32_t padding = datasize - 4; // sequence number is a DWORD
 
         for (uint32_t i = 0; i < padding; ++i)
         {
-            data_in->insert_sequence_data(id_in);
-            data_in->set_byte_value(0, id_in);
-            data_out->insert_sequence_data(id_out);
-            data_out->set_byte_value(0, id_out);
+            data_in->set_byte_value(i, 0);
+            data_out->set_byte_value(i, 0);
         }
 
-        dynamic_data_in_->return_loaned_value(data_in);
-        dynamic_data_out_->return_loaned_value(data_out);
+        (*dynamic_data_in_)->return_loaned_value(data_in);
+        (*dynamic_data_out_)->return_loaned_value(data_out);
     }
     else if (init_static_types(datasize) && create_data_endpoints())
     {
@@ -784,12 +789,12 @@ bool LatencyTestPublisher::test(
     // The first measurement it's usually not representative, so we take one more and then drop the first one.
     for (unsigned int count = 1; count <= samples_ + 1; ++count)
     {
-        void* data = nullptr;
+        void* data {nullptr};
 
         if (dynamic_types_)
         {
-            dynamic_data_in_->set_uint32_value(0, 0);
-            dynamic_data_out_->set_uint32_value(count, 0);
+            (*dynamic_data_in_)->set_uint32_value(0, 0);
+            (*dynamic_data_out_)->set_uint32_value(0, count);
             data = dynamic_data_out_;
         }
         else
@@ -890,8 +895,8 @@ bool LatencyTestPublisher::test(
     // Delete Data Sample
     if (dynamic_types_)
     {
-        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_in_);
-        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(dynamic_data_out_);
+        dynamic_pub_sub_type_->deleteData(dynamic_data_in_);
+        dynamic_pub_sub_type_->deleteData(dynamic_data_out_);
     }
     else
     {
@@ -1064,20 +1069,24 @@ bool LatencyTestPublisher::init_dynamic_types()
     }
 
     // Dummy type registration
+    DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
     // Create basic builders
-    eprosima::fastrtps::types::DynamicTypeBuilder_ptr struct_type_builder(eprosima::fastrtps::types::
-                    DynamicTypeBuilderFactory::get_instance()->
-                    create_struct_builder());
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name(LatencyDataType::type_name_);
+
+    DynamicTypeBuilder::_ref_type struct_type_builder {factory->create_type(type_descriptor)};
 
     // Add members to the struct.
-    struct_type_builder->add_member(0, "seqnum",
-            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-    struct_type_builder->add_member(1, "data",
-            eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                eprosima::fastrtps::types::DynamicTypeBuilderFactory::get_instance()->create_byte_type(),
-                eprosima::fastrtps::types::BOUND_UNLIMITED));
-    struct_type_builder->set_name(LatencyDataType::type_name_);
-    dynamic_pub_sub_type_.reset(new eprosima::fastrtps::types::DynamicPubSubType(struct_type_builder->build()));
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member_descriptor->name("seqnum");
+    member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+    struct_type_builder->add_member(member_descriptor);
+    member_descriptor->name("data");
+    member_descriptor->type(factory->create_sequence_type(
+                factory->get_primitive_type(TK_BYTE), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
+    struct_type_builder->add_member(member_descriptor);
+    dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
     // Register the data type
     if (RETCODE_OK != dynamic_pub_sub_type_.register_type(participant_))
@@ -1264,7 +1273,7 @@ bool LatencyTestPublisher::destroy_data_endpoints()
 
     latency_data_type_.reset();
     dynamic_pub_sub_type_.reset();
-    eprosima::fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
+    DynamicTypeBuilderFactory::delete_instance();
 
     return true;
 }

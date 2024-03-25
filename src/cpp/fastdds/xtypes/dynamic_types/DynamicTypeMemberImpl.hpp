@@ -15,9 +15,11 @@
 #ifndef FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEMEMBERIMPL_HPP
 #define FASTDDS_XTYPES_DYNAMIC_TYPES_DYNAMICTYPEMEMBERIMPL_HPP
 
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
-
 #include <vector>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 #include "AnnotationDescriptorImpl.hpp"
 #include "MemberDescriptorImpl.hpp"
@@ -29,21 +31,26 @@ namespace dds {
 
 class DynamicTypeMemberImpl : public virtual traits<DynamicTypeMember>::base_type
 {
+    friend class DynamicTypeBuilderImpl;
+
 public:
 
+    DynamicTypeMemberImpl(
+            const MemberDescriptorImpl&) noexcept;
+
     ReturnCode_t get_descriptor(
-            traits<MemberDescriptor>::ref_type md) noexcept override;
+            traits<MemberDescriptor>::ref_type& md) noexcept override;
 
     uint32_t get_annotation_count() noexcept override;
 
     ReturnCode_t get_annotation(
-            traits<AnnotationDescriptor>::ref_type descriptor,
+            traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) noexcept override;
 
     uint32_t get_verbatim_text_count() noexcept override;
 
     ReturnCode_t get_verbatim_text(
-            traits<VerbatimTextDescriptor>::ref_type descriptor,
+            traits<VerbatimTextDescriptor>::ref_type& descriptor,
             uint32_t idx) noexcept override;
 
     bool equals(
@@ -52,6 +59,16 @@ public:
     MemberId get_id() noexcept override;
 
     ObjectName get_name() noexcept override;
+
+    MemberDescriptorImpl& get_descriptor() noexcept
+    {
+        return member_descriptor_;
+    }
+
+    const MemberDescriptorImpl& get_descriptor() const noexcept
+    {
+        return member_descriptor_;
+    }
 
 protected:
 

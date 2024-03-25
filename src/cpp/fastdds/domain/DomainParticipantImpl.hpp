@@ -25,24 +25,23 @@
 #include <mutex>
 #include <condition_variable>
 
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/ContentFilteredTopic.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
-
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
+
 
 namespace eprosima {
 namespace fastrtps {
@@ -659,7 +658,7 @@ protected:
             InstanceHandle_t& handle);
 
     ReturnCode_t register_dynamic_type(
-            fastrtps::types::DynamicType_ptr dyn_type);
+            DynamicType::_ref_type dyn_type);
 
     virtual PublisherImpl* create_publisher_impl(
             const PublisherQos& qos,

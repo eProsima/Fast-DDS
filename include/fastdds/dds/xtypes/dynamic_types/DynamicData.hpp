@@ -21,14 +21,14 @@
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
-#include <fastdds/fastdds_dll.h>
+#include <fastdds/fastdds_dll.hpp>
 #include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FASTDDS_EXPORTED_API DynamicData : public std::enable_shared_from_this<DynamicData>
+class DynamicData : public std::enable_shared_from_this<DynamicData>
 {
 public:
 
@@ -38,17 +38,17 @@ public:
      * Retrieve the @ref DynamicType reference associated to this @ref DynamicData
      * @return Non-nil @ref DynamicType reference
      */
-    virtual traits<DynamicType>::ref_type type() = 0;
+    FASTDDS_EXPORTED_API virtual traits<DynamicType>::ref_type type() = 0;
 
     /*!
      * Retrieves the @ref MemberDescriptor associated to a member.
      * @param[inout] value Non-nil @ref MemberDescriptor reference where the information is copied.
      * @param[in] id Identifier of the member to be retrieved.
      * @retval RETCODE_OK when the copy was successful.
-     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
+     * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil or member identifier is not found.
      */
-    virtual ReturnCode_t get_descriptor(
-            traits<MemberDescriptor>::ref_type value,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_descriptor(
+            traits<MemberDescriptor>::ref_type& value,
             MemberId id) = 0;
 
     /*!
@@ -57,12 +57,10 @@ public:
      *     - All contained values are equal and occur in the same order
      *     - If the samples' type is an aggregated type, previous rule shall be amended as follows:
      *          -# Members shall be compared without regard to their order.
-     *          -# One of the samples may omit a non-optional member that is present in the other if that
-     *             member takes its default value in the latter sample.
      * @param [in] other @ref DynamicData reference to compare to
      * @return `true` on equality
      */
-    virtual bool equals(
+    FASTDDS_EXPORTED_API virtual bool equals(
             traits<DynamicData>::ref_type other) = 0;
 
     /*!
@@ -75,7 +73,7 @@ public:
      * @param[in] name string
      * @return MemberId or MEMBER_ID_INVALID on failure
      */
-    virtual MemberId get_member_id_by_name(
+    FASTDDS_EXPORTED_API virtual MemberId get_member_id_by_name(
             const ObjectName& name) = 0;
 
     /*!
@@ -91,7 +89,7 @@ public:
      * @param[in] index Index.
      * @return MemberId or MEMBER_ID_INVALID on failure
      */
-    virtual MemberId get_member_id_at_index(
+    FASTDDS_EXPORTED_API virtual MemberId get_member_id_at_index(
             uint32_t index) = 0;
 
     /*!
@@ -101,36 +99,33 @@ public:
      *     dimensions.
      * @li If the object is of a bitmask type, return the number of named flags that are currently set in the bitmask.
      * @li If the object is of a structure or annotation type, return the number of members in the object.
-     *     This value may be different than the number of members in the corresponding @ref DynamicType (some optional
-     *     members may be omitted).
+     *     This value may be different than the number of members in the corresponding @ref DynamicType.
      * @li If the object is of a union type, return the number of members in the object. This number will be two if the
      *     discriminator value selects a member and one otherwise.
      * @li if the object is of a primitive or enumerated type, it is atomic: return one.
      * @li if the object is of an alias type, return the value appropriate for the alias base type.
      * @return count as defined above
      */
-    virtual uint32_t get_item_count() = 0;
+    FASTDDS_EXPORTED_API virtual uint32_t get_item_count() = 0;
 
     /*!
      * Clear all members associated to the object.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the cleaning was successful.
      */
-    virtual ReturnCode_t clear_all_values() = 0;
+    FASTDDS_EXPORTED_API virtual ReturnCode_t clear_all_values() = 0;
 
     /*!
      * Clear all members not associated to the key
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the cleaning was successful.
-     * @todo Improve this documentation.
      */
-    virtual ReturnCode_t clear_nonkey_values() = 0;
+    FASTDDS_EXPORTED_API virtual ReturnCode_t clear_nonkey_values() = 0;
 
     /*!
      * Clear a member.
      * The meaning of "clearing" depends on the type of the sample:
-     * @li If aggregated type, and the indicated member is optional, remove it.
-     * If the indicated member is not optional, set it to its default value.
+     * @li If aggregated type, set it to its default value.
      * @li If variable-length collection type, remove the indicated element, shifting any subsequence elements to the
      * next-lowest index.
      * @li If array type, set the indicated element to its default value.
@@ -142,7 +137,7 @@ public:
      * @retval RETCODE_OK when the cleaning was successful.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid.
      */
-    virtual ReturnCode_t clear_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t clear_value(
             MemberId id) = 0;
 
     /*!
@@ -151,7 +146,7 @@ public:
      * @param[in] id identifier of the object to retrieve
      * @return @ref DynamicData reference loaned or \b nil on outstanding loaned data
      */
-    virtual traits<DynamicData>::ref_type loan_value(
+    FASTDDS_EXPORTED_API virtual traits<DynamicData>::ref_type loan_value(
             MemberId id) = 0;
 
     /*!
@@ -160,7 +155,7 @@ public:
      * @retval RETCODE_OK when the loan was returned successfully.
      * @retval RETCODE_PRECONDITION_NOT_MET when the loan is invalid.
      */
-    virtual ReturnCode_t return_loaned_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t return_loaned_value(
             traits<DynamicData>::ref_type value) = 0;
 
     /*!
@@ -168,7 +163,7 @@ public:
      * A comparison of this object and the clone using equals immediately following this call will return `true`.
      * @return @ref DynamicData reference
      */
-    virtual traits<DynamicData>::ref_type clone() = 0;
+    FASTDDS_EXPORTED_API virtual traits<DynamicData>::ref_type clone() = 0;
 
     /*!
      * Retrieves an \b int32 value associated to an identifier.
@@ -178,7 +173,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
      */
-    virtual ReturnCode_t get_int32_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int32_value(
             int32_t& value,
             MemberId id) = 0;
 
@@ -190,7 +185,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int32.
      */
-    virtual ReturnCode_t set_int32_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int32_value(
             MemberId id,
             int32_t value) = 0;
 
@@ -202,7 +197,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint32.
      */
-    virtual ReturnCode_t get_uint32_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint32_value(
             uint32_t& value,
             MemberId id) = 0;
 
@@ -214,7 +209,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint32.
      */
-    virtual ReturnCode_t set_uint32_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint32_value(
             MemberId id,
             uint32_t value) = 0;
 
@@ -226,7 +221,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int8.
      */
-    virtual ReturnCode_t get_int8_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int8_value(
             int8_t& value,
             MemberId id) = 0;
 
@@ -238,7 +233,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int8.
      */
-    virtual ReturnCode_t set_int8_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int8_value(
             MemberId id,
             int8_t value) = 0;
 
@@ -250,7 +245,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint8.
      */
-    virtual ReturnCode_t get_uint8_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint8_value(
             uint8_t& value,
             MemberId id) = 0;
 
@@ -262,7 +257,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint8.
      */
-    virtual ReturnCode_t set_uint8_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint8_value(
             MemberId id,
             uint8_t value) = 0;
 
@@ -274,7 +269,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int16.
      */
-    virtual ReturnCode_t get_int16_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int16_value(
             int16_t& value,
             MemberId id) = 0;
 
@@ -286,7 +281,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int16.
      */
-    virtual ReturnCode_t set_int16_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int16_value(
             MemberId id,
             int16_t value) = 0;
 
@@ -298,7 +293,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint16.
      */
-    virtual ReturnCode_t get_uint16_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint16_value(
             uint16_t& value,
             MemberId id) = 0;
 
@@ -310,7 +305,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint16.
      */
-    virtual ReturnCode_t set_uint16_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint16_value(
             MemberId id,
             uint16_t value) = 0;
 
@@ -322,7 +317,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int64.
      */
-    virtual ReturnCode_t get_int64_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int64_value(
             int64_t& value,
             MemberId id) = 0;
 
@@ -334,7 +329,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b int64.
      */
-    virtual ReturnCode_t set_int64_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int64_value(
             MemberId id,
             int64_t value) = 0;
 
@@ -346,7 +341,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint64.
      */
-    virtual ReturnCode_t get_uint64_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint64_value(
             uint64_t& value,
             MemberId id) = 0;
 
@@ -358,7 +353,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b uint64.
      */
-    virtual ReturnCode_t set_uint64_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint64_value(
             MemberId id,
             uint64_t value) = 0;
 
@@ -370,7 +365,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float32.
      */
-    virtual ReturnCode_t get_float32_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_float32_value(
             float& value,
             MemberId id) = 0;
 
@@ -382,7 +377,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float32.
      */
-    virtual ReturnCode_t set_float32_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_float32_value(
             MemberId id,
             float value) = 0;
 
@@ -394,7 +389,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float64.
      */
-    virtual ReturnCode_t get_float64_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_float64_value(
             double& value,
             MemberId id) = 0;
 
@@ -406,7 +401,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float64.
      */
-    virtual ReturnCode_t set_float64_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_float64_value(
             MemberId id,
             double value) = 0;
 
@@ -419,7 +414,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float128.
      */
-    virtual ReturnCode_t get_float128_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_float128_value(
             long double& value,
             MemberId id) = 0;
 
@@ -431,7 +426,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b float128.
      */
-    virtual ReturnCode_t set_float128_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_float128_value(
             MemberId id,
             long double value) = 0;
 
@@ -443,7 +438,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char8.
      */
-    virtual ReturnCode_t get_char8_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_char8_value(
             char& value,
             MemberId id) = 0;
 
@@ -455,7 +450,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char8.
      */
-    virtual ReturnCode_t set_char8_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_char8_value(
             MemberId id,
             char value) = 0;
 
@@ -467,7 +462,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char16.
      */
-    virtual ReturnCode_t get_char16_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_char16_value(
             wchar_t& value,
             MemberId id) = 0;
 
@@ -479,7 +474,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b char16.
      */
-    virtual ReturnCode_t set_char16_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_char16_value(
             MemberId id,
             wchar_t value) = 0;
 
@@ -491,7 +486,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
      */
-    virtual ReturnCode_t get_byte_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_byte_value(
             eprosima::fastrtps::rtps::octet& value,
             MemberId id) = 0;
 
@@ -503,7 +498,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b byte.
      */
-    virtual ReturnCode_t set_byte_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_byte_value(
             MemberId id,
             eprosima::fastrtps::rtps::octet value) = 0;
 
@@ -515,7 +510,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b bool.
      */
-    virtual ReturnCode_t get_boolean_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_boolean_value(
             bool& value,
             MemberId id) = 0;
 
@@ -527,7 +522,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b bool.
      */
-    virtual ReturnCode_t set_boolean_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_boolean_value(
             MemberId id,
             bool value) = 0;
 
@@ -539,7 +534,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string.
      */
-    virtual ReturnCode_t get_string_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_string_value(
             std::string& value,
             MemberId id) = 0;
 
@@ -549,9 +544,10 @@ public:
      * @param[in] value \b string to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b string
+     * or the string length is greater than the string bound.
      */
-    virtual ReturnCode_t set_string_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_string_value(
             MemberId id,
             const std::string& value) = 0;
 
@@ -563,7 +559,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring.
      */
-    virtual ReturnCode_t get_wstring_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_wstring_value(
             std::wstring& value,
             MemberId id) = 0;
 
@@ -573,9 +569,10 @@ public:
      * @param[in] value \b wstring to set.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring.
+     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b wstring
+     * or the string length is greater than the string bound.
      */
-    virtual ReturnCode_t set_wstring_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_wstring_value(
             MemberId id,
             const std::wstring& value) = 0;
 
@@ -587,8 +584,8 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
      */
-    virtual ReturnCode_t get_complex_value(
-            traits<DynamicData>::ref_type value,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_complex_value(
+            traits<DynamicData>::ref_type& value,
             MemberId id) = 0;
 
     /*!
@@ -597,9 +594,10 @@ public:
      * @param[in] value @ref DynamicData reference to set
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the value was set successfully.
-     * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to \b complex.
+     * @retval RETCODE_BAD_PARAMETER when the value reference is nil or @ref MemberId is invalid or the member type is
+     * not promotable to \b complex.
      */
-    virtual ReturnCode_t set_complex_value(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_complex_value(
             MemberId id,
             traits<DynamicData>::ref_type value) = 0;
 
@@ -611,7 +609,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int32.
      */
-    virtual ReturnCode_t get_int32_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int32_values(
             Int32Seq& value,
             MemberId id) = 0;
 
@@ -623,7 +621,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int32.
      */
-    virtual ReturnCode_t set_int32_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int32_values(
             MemberId id,
             const Int32Seq& value) = 0;
 
@@ -635,7 +633,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint32.
      */
-    virtual ReturnCode_t get_uint32_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint32_values(
             UInt32Seq& value,
             MemberId id) = 0;
 
@@ -647,7 +645,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint32.
      */
-    virtual ReturnCode_t set_uint32_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint32_values(
             MemberId id,
             const UInt32Seq& value) = 0;
 
@@ -659,7 +657,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int8.
      */
-    virtual ReturnCode_t get_int8_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int8_values(
             Int8Seq& value,
             MemberId id) = 0;
 
@@ -671,7 +669,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int8.
      */
-    virtual ReturnCode_t set_int8_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int8_values(
             MemberId id,
             const Int8Seq& value) = 0;
 
@@ -683,7 +681,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint8.
      */
-    virtual ReturnCode_t get_uint8_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint8_values(
             UInt8Seq& value,
             MemberId id) = 0;
 
@@ -695,7 +693,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint8.
      */
-    virtual ReturnCode_t set_uint8_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint8_values(
             MemberId id,
             const UInt8Seq& value) = 0;
 
@@ -707,7 +705,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int16.
      */
-    virtual ReturnCode_t get_int16_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int16_values(
             Int16Seq& value,
             MemberId id) = 0;
 
@@ -719,7 +717,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int16.
      */
-    virtual ReturnCode_t set_int16_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int16_values(
             MemberId id,
             const Int16Seq& value) = 0;
 
@@ -731,7 +729,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint16.
      */
-    virtual ReturnCode_t get_uint16_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint16_values(
             UInt16Seq& value,
             MemberId id) = 0;
 
@@ -743,7 +741,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint16.
      */
-    virtual ReturnCode_t set_uint16_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint16_values(
             MemberId id,
             const UInt16Seq& value) = 0;
 
@@ -755,7 +753,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int64.
      */
-    virtual ReturnCode_t get_int64_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_int64_values(
             Int64Seq& value,
             MemberId id) = 0;
 
@@ -767,7 +765,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b int64.
      */
-    virtual ReturnCode_t set_int64_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_int64_values(
             MemberId id,
             const Int64Seq& value) = 0;
 
@@ -779,7 +777,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint64.
      */
-    virtual ReturnCode_t get_uint64_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_uint64_values(
             UInt64Seq& value,
             MemberId id) = 0;
 
@@ -791,7 +789,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b uint64.
      */
-    virtual ReturnCode_t set_uint64_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_uint64_values(
             MemberId id,
             const UInt64Seq& value) = 0;
 
@@ -803,7 +801,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float32.
      */
-    virtual ReturnCode_t get_float32_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_float32_values(
             Float32Seq& value,
             MemberId id) = 0;
 
@@ -815,7 +813,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float32.
      */
-    virtual ReturnCode_t set_float32_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_float32_values(
             MemberId id,
             const Float32Seq& value) = 0;
 
@@ -827,7 +825,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float64.
      */
-    virtual ReturnCode_t get_float64_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_float64_values(
             Float64Seq& value,
             MemberId id) = 0;
 
@@ -839,7 +837,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float64.
      */
-    virtual ReturnCode_t set_float64_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_float64_values(
             MemberId id,
             const Float64Seq& value) = 0;
 
@@ -853,7 +851,7 @@ public:
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b
      * float128.
      */
-    virtual ReturnCode_t get_float128_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_float128_values(
             Float128Seq& value,
             MemberId id) = 0;
 
@@ -866,7 +864,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b float128.
      */
-    virtual ReturnCode_t set_float128_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_float128_values(
             MemberId id,
             const Float128Seq& value) = 0;
 
@@ -878,7 +876,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char8.
      */
-    virtual ReturnCode_t get_char8_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_char8_values(
             CharSeq& value,
             MemberId id) = 0;
 
@@ -890,7 +888,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char8.
      */
-    virtual ReturnCode_t set_char8_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_char8_values(
             MemberId id,
             const CharSeq& value) = 0;
 
@@ -902,7 +900,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char16.
      */
-    virtual ReturnCode_t get_char16_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_char16_values(
             WcharSeq& value,
             MemberId id) = 0;
 
@@ -914,7 +912,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b char16.
      */
-    virtual ReturnCode_t set_char16_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_char16_values(
             MemberId id,
             const WcharSeq& value) = 0;
 
@@ -926,7 +924,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b byte.
      */
-    virtual ReturnCode_t get_byte_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_byte_values(
             ByteSeq& value,
             MemberId id) = 0;
 
@@ -938,7 +936,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b byte.
      */
-    virtual ReturnCode_t set_byte_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_byte_values(
             MemberId id,
             const ByteSeq& value) = 0;
 
@@ -950,7 +948,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b bool.
      */
-    virtual ReturnCode_t get_boolean_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_boolean_values(
             BooleanSeq& value,
             MemberId id) = 0;
 
@@ -962,7 +960,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b bool.
      */
-    virtual ReturnCode_t set_boolean_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_boolean_values(
             MemberId id,
             const BooleanSeq& value) = 0;
 
@@ -974,7 +972,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b string.
      */
-    virtual ReturnCode_t get_string_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_string_values(
             StringSeq& value,
             MemberId id) = 0;
 
@@ -986,7 +984,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b string.
      */
-    virtual ReturnCode_t set_string_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_string_values(
             MemberId id,
             const StringSeq& value) = 0;
 
@@ -998,7 +996,7 @@ public:
      * @retval RETCODE_OK when the value was retrieved successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b wstring.
      */
-    virtual ReturnCode_t get_wstring_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_wstring_values(
             WstringSeq& value,
             MemberId id) = 0;
 
@@ -1010,7 +1008,7 @@ public:
      * @retval RETCODE_OK when the value was set successfully.
      * @retval RETCODE_BAD_PARAMETER when the @ref MemberId is invalid or the member type is not promotable to sequence of \b wstring.
      */
-    virtual ReturnCode_t set_wstring_values(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t set_wstring_values(
             MemberId id,
             const WstringSeq& value) = 0;
 

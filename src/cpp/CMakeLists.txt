@@ -14,8 +14,10 @@
 
 include(CheckCXXSourceCompiles)
 
-# Set source files
+add_subdirectory(fastdds/log)
+add_subdirectory(fastdds/xtypes)
 
+# Set source files
 if(WIN32)
 
 file(GLOB_RECURSE ALL_HEADERS
@@ -31,25 +33,12 @@ endif(WIN32)
 
 file(GLOB DDSSQLFILTER_SOURCES fastdds/topic/DDSSQLFilter/*.cpp)
 
+
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
 
     ${DDSSQLFILTER_SOURCES}
 
-    dynamic-types/AnnotationDescriptor.cpp
-    dynamic-types/DynamicData.cpp
-    dynamic-types/DynamicDataFactory.cpp
-    dynamic-types/DynamicDataHelper.cpp
-    dynamic-types/DynamicDataPtr.cpp
-    dynamic-types/DynamicPubSubType.cpp
-    dynamic-types/DynamicType.cpp
-    dynamic-types/DynamicTypeBuilder.cpp
-    dynamic-types/DynamicTypeBuilderFactory.cpp
-    dynamic-types/DynamicTypeBuilderPtr.cpp
-    dynamic-types/DynamicTypeMember.cpp
-    dynamic-types/DynamicTypePtr.cpp
-    dynamic-types/MemberDescriptor.cpp
-    dynamic-types/TypeDescriptor.cpp
     fastdds/builtin/type_lookup_service/detail/rpc_typesPubSubTypes.cxx
     fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.cxx
     fastdds/builtin/type_lookup_service/TypeLookupManager.cpp
@@ -471,13 +460,21 @@ else()
 endif()
 
 # Link library to external libraries.
-target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
+target_link_libraries(${PROJECT_NAME}
+    ${PRIVACY}
+    fastcdr
+    foonathan_memory
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
     ${TINYXML2_LIBRARY}
     $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto$<$<BOOL:${WIN32}>:$<SEMICOLON>crypt32.lib>>
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
-    PRIVATE eProsima_atomic
+
+    PRIVATE
+    eProsima_atomic
+    fastdds::log
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
     )
 
 if(MSVC OR MSVC_IDE)

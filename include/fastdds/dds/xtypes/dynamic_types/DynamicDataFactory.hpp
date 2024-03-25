@@ -19,14 +19,13 @@
 
 #include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/Types.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FASTDDS_EXPORTED_API DynamicDataFactory : public std::enable_shared_from_this<DynamicDataFactory>
+class DynamicDataFactory : public std::enable_shared_from_this<DynamicDataFactory>
 {
 public:
 
@@ -37,15 +36,15 @@ public:
      * @remark This method is non thread-safe.
      * @return @ref DynamicDataFactory reference.
      */
-    static traits<DynamicDataFactory>::ref_type get_instance();
+    FASTDDS_EXPORTED_API static traits<DynamicDataFactory>::ref_type get_instance();
 
     /*!
      * Resets the singleton reference.
      * @return @ref ReturnCode_t
-     * @retval RETCODE_OK is always returned.
-     * @todo Improve this documentation.
+     * @retval RETCODE_BAD_PARAMETER if singleton reference is currently nil.
+     * @retval RETCODE_OK otherwise.
      */
-    static ReturnCode_t delete_instance();
+    FASTDDS_EXPORTED_API static ReturnCode_t delete_instance();
 
     /**
      * Creates a new @ref DynamicData reference based on the given @ref DynamicType reference.
@@ -53,7 +52,7 @@ public:
      * @param[in] type @ref DynamicType reference associated.
      * @return new @ref DynamicData reference
      */
-    virtual traits<DynamicData>::ref_type create_data(
+    FASTDDS_EXPORTED_API virtual traits<DynamicData>::ref_type create_data(
             traits<DynamicType>::ref_type type) = 0;
 
     /**
@@ -63,8 +62,13 @@ public:
      * @retval RETCODE_BAD_PARAMETER if reference is nil.
      * @retval RETCODE_OK is otherwise returned.
      */
-    virtual ReturnCode_t delete_data(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t delete_data(
             traits<DynamicData>::ref_type data) = 0;
+
+protected:
+
+    virtual ~DynamicDataFactory() = default;
+
 };
 
 } // namespace dds

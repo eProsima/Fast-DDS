@@ -41,8 +41,6 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/types/DynamicPubSubType.h>
-
 #include <fastdds/rtps/common/LocatorList.hpp>
 
 #include <fastrtps/utils/TimeConversion.h>

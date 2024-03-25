@@ -24,11 +24,11 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/utils/QosConverters.hpp>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/log/LogResources.hpp>
@@ -77,8 +77,8 @@ DomainParticipantFactory::~DomainParticipantFactory()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
-    fastrtps::types::DynamicDataFactory::delete_instance();
+    fastdds::dds::DynamicDataFactory::delete_instance();
+    fastdds::dds::DynamicTypeBuilderFactory::delete_instance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     eprosima::fastdds::dds::Log::KillThread();
@@ -504,14 +504,13 @@ ReturnCode_t DomainParticipantFactory::set_library_settings(
 
 ReturnCode_t DomainParticipantFactory::get_dynamic_type_builder_from_xml_by_name(
         const std::string& type_name,
-        fastrtps::types::DynamicTypeBuilder*& type)
+        DynamicType::_ref_type& type)
 {
     if (type_name.empty())
     {
         return RETCODE_BAD_PARAMETER;
     }
-    type = XMLProfileManager::getDynamicTypeByName(type_name);
-    if (nullptr == type)
+    if (XMLP_ret::XML_OK != XMLProfileManager::getDynamicTypeByName(type, type_name))
     {
         return RETCODE_NO_DATA;
     }

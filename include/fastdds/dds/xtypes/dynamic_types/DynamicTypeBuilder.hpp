@@ -28,9 +28,11 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FASTDDS_EXPORTED_API DynamicTypeBuilder : public std::enable_shared_from_this<DynamicTypeBuilder>
+class DynamicTypeBuilder : public std::enable_shared_from_this<DynamicTypeBuilder>
 {
 public:
+
+    using _ref_type = typename traits<DynamicTypeBuilder>::ref_type;
 
     /*!
      * Provides a summary of the state of this type overwriting a provided object.
@@ -39,20 +41,20 @@ public:
      * @retval RETCODE_OK when the copy was successful.
      * @retval RETCODE_BAD_PARAMETER when descriptor reference is nil.
      */
-    virtual ReturnCode_t get_descriptor(
-            traits<TypeDescriptor>::ref_type descriptor) = 0;
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_descriptor(
+            traits<TypeDescriptor>::ref_type& descriptor) = 0;
 
     /*!
      * Returns the fully qualified name of this type
      * @return Type name.
      */
-    virtual ObjectName get_name() = 0;
+    FASTDDS_EXPORTED_API virtual ObjectName get_name() = 0;
 
     /*!
      * Returns the @ref TypeKind associated
      * @return @ref TypeKind
      */
-    virtual TypeKind get_kind() = 0;
+    FASTDDS_EXPORTED_API virtual TypeKind get_kind() = 0;
 
     /*!
      * Returns a member looked for by name.
@@ -62,8 +64,8 @@ public:
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when member wasn't found.
      */
-    virtual ReturnCode_t get_member_by_name(
-            traits<DynamicTypeMember>::ref_type member,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_member_by_name(
+            traits<DynamicTypeMember>::ref_type& member,
             const ObjectName& name) = 0;
 
     /*!
@@ -72,7 +74,7 @@ public:
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK always.
      */
-    virtual ReturnCode_t get_all_members_by_name(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_all_members_by_name(
             DynamicTypeMembersByName& member) = 0;
     /*!
      * Returns a member looked for by @ref MemberId.
@@ -82,8 +84,8 @@ public:
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when member wasn't found.
      */
-    virtual ReturnCode_t get_member(
-            traits<DynamicTypeMember>::ref_type member,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_member(
+            traits<DynamicTypeMember>::ref_type& member,
             MemberId id) = 0;
 
     /*!
@@ -92,14 +94,14 @@ public:
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK always.
      */
-    virtual ReturnCode_t get_all_members(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_all_members(
             DynamicTypeMembersById& member) = 0;
 
     /*!
      * This operation returns the current number of members.
      * @return Current number of members
      */
-    virtual uint32_t get_member_count() = 0;
+    FASTDDS_EXPORTED_API virtual uint32_t get_member_count() = 0;
 
     /*!
      * This operation returns the member that corresponds to the specified index.
@@ -109,15 +111,15 @@ public:
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when index is out-of-range.
      */
-    virtual ReturnCode_t get_member_by_index(
-            traits<DynamicTypeMember>::ref_type member,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_member_by_index(
+            traits<DynamicTypeMember>::ref_type& member,
             uint32_t index) = 0;
 
     /*!
      * This operation returns the current number of annotations to the type.
      * @return Current number of annotations
      */
-    virtual uint32_t get_annotation_count() = 0;
+    FASTDDS_EXPORTED_API virtual uint32_t get_annotation_count() = 0;
 
     /*!
      * This operation returns the annotation that corresponds to the specified index.
@@ -127,8 +129,8 @@ public:
      * @retval RETCODE_OK when member was found.
      * @retval RETCODE_BAD_PARAMETER when reference is nil or index is out-of-range.
      */
-    virtual ReturnCode_t get_annotation(
-            traits<AnnotationDescriptor>::ref_type descriptor,
+    FASTDDS_EXPORTED_API virtual ReturnCode_t get_annotation(
+            traits<AnnotationDescriptor>::ref_type& descriptor,
             uint32_t idx) = 0;
 
     /*!
@@ -136,7 +138,7 @@ public:
      * @param[in] other @ref DynamicType reference to compare to.
      * @return \b bool `true` on equality
      */
-    virtual bool equals(
+    FASTDDS_EXPORTED_API virtual bool equals(
             traits<DynamicType>::ref_type other) = 0;
 
     /*!
@@ -146,8 +148,9 @@ public:
      * @return ReturnCode_t
      * @retval RETCODE_OK when the member was created successfully.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
+     * @retval RETCODE_PRECONDITION_NOT_MET when the type does not have members.
      */
-    virtual ReturnCode_t add_member(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t add_member(
             traits<MemberDescriptor>::ref_type descriptor) = 0;
 
     /*!
@@ -157,7 +160,7 @@ public:
      * @retval RETCODE_OK when the annotation was applied successful.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
      */
-    virtual ReturnCode_t apply_annotation(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t apply_annotation(
             traits<AnnotationDescriptor>::ref_type descriptor) = 0;
 
     /*!
@@ -167,7 +170,7 @@ public:
      * @retval RETCODE_OK when the annotation was applied successful.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
      */
-    virtual ReturnCode_t apply_annotation_to_member(
+    FASTDDS_EXPORTED_API virtual ReturnCode_t apply_annotation_to_member(
             MemberId member_id,
             traits<AnnotationDescriptor>::ref_type descriptor) = 0;
 
@@ -175,7 +178,7 @@ public:
      * Create an immutable DynamicType object containing a snapshot of this builder's current state.
      * @return @ref DynamicType reference.
      */
-    virtual traits<DynamicType>::ref_type build() = 0;
+    FASTDDS_EXPORTED_API virtual traits<DynamicType>::ref_type build() = 0;
 
 protected:
 
@@ -183,7 +186,7 @@ protected:
 
     virtual ~DynamicTypeBuilder() = default;
 
-    traits<DynamicTypeBuilder>::ref_type _this ();
+    traits<DynamicTypeBuilder>::ref_type _this();
 
 private:
 

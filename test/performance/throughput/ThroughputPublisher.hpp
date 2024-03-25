@@ -34,17 +34,8 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastrtps/fastrtps_fwd.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/TypeDescriptor.h>
 
 #include "../optionarg.hpp"
 #include "ThroughputTypes.hpp"
@@ -79,7 +70,7 @@ public:
             uint32_t test_time,
             uint32_t recovery_time_ms,
             int demand,
-            int msg_size,
+            uint32_t msg_size,
             uint32_t subscribers);
 
 private:
@@ -135,7 +126,7 @@ private:
     ThroughputType* throughput_data_ = nullptr;
     eprosima::fastdds::dds::TypeSupport throughput_data_type_;
     // Dynamic Data
-    eprosima::fastrtps::types::DynamicData* dynamic_data_ = nullptr;
+    eprosima::fastdds::dds::DynamicData::_ref_type* dynamic_data_ {nullptr};
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
     // QoS Profiles
     eprosima::fastdds::dds::DataWriterQos dw_qos_;

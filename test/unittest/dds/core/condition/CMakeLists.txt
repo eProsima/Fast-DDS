@@ -13,10 +13,6 @@
 # limitations under the License.
 
 set(LOG_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 )
 
@@ -46,7 +42,10 @@ target_include_directories(ConditionTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(ConditionTests GTest::gtest)
+target_link_libraries(ConditionTests
+    fastdds::log
+    GTest::gtest
+    )
 gtest_discover_tests(ConditionTests)
 
 ### ConditionNotifier ###
@@ -68,7 +67,11 @@ target_include_directories(ConditionNotifierTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(ConditionNotifierTests GTest::gtest GTest::gmock)
+target_link_libraries(ConditionNotifierTests
+    fastdds::log
+    GTest::gtest
+    GTest::gmock
+    )
 gtest_discover_tests(ConditionNotifierTests)
 
 ### StatusConditionImpl ###
@@ -92,7 +95,11 @@ target_include_directories(StatusConditionImplTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(StatusConditionImplTests GTest::gtest GTest::gmock)
+target_link_libraries(StatusConditionImplTests
+    fastdds::log
+    GTest::gtest
+    GTest::gmock
+    )
 gtest_discover_tests(StatusConditionImplTests)
 
 ### WaitSetImpl ###
@@ -115,5 +122,9 @@ target_include_directories(WaitSetImplTests PRIVATE
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
-target_link_libraries(WaitSetImplTests GTest::gtest GTest::gmock)
+target_link_libraries(WaitSetImplTests
+    fastdds::log
+    GTest::gtest
+    GTest::gmock
+    )
 gtest_discover_tests(WaitSetImplTests)

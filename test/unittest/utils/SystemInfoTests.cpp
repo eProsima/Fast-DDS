@@ -30,9 +30,9 @@
 #endif // _WIN32
 
 #include <gtest/gtest.h>
-#include <fastdds/rtps/attributes/ServerAttributes.h>
-#include <fastrtps/types/TypesBase.h>
 #include <nlohmann/json.hpp>
+
+#include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <utils/SystemInfo.hpp>
 
 #define SIZE 512

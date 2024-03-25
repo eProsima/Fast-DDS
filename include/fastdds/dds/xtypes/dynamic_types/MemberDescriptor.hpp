@@ -33,6 +33,8 @@ class FASTDDS_EXPORTED_API MemberDescriptor
 {
 public:
 
+    using _ref_type = typename traits<MemberDescriptor>::ref_type;
+
     /*!
      * Returns the name of this member.
      * @return Member's name.
@@ -127,13 +129,13 @@ public:
      * Returns the order of definition of the member.
      * @return Order of definition.
      */
-    virtual uint32_t index() const = 0;
+    virtual uint32_t& index() = 0;
 
     /*!
      * Returns the order of definition of the member.
      * @return Order of definition.
      */
-    virtual uint32_t& index() = 0;
+    virtual uint32_t index() const = 0;
 
     /*!
      * Returns the labels the member belongs to.

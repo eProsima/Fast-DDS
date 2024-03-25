@@ -15,7 +15,12 @@
 #ifndef _FASTDDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_IMPL_HPP_
 #define _FASTDDS_XTYPES_DYNAMIC_TYPES_MEMBER_DESCRIPTOR_IMPL_HPP_
 
+#include <string>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -23,41 +28,44 @@ namespace dds {
 
 class MemberDescriptorImpl : public virtual MemberDescriptor
 {
-    //! Name of the member
-    ObjectName name_;
-
-    //! MemberId, it should be filled automatically when the member is added.
-    MemberId id_ {MEMBER_ID_INVALID};
-
-    //! Member's type
-    traits<DynamicType>::ref_type type_;
-
-    //! Default value of the member in string.
+    //! Default value of the member in string form.
     std::string default_value_;
 
+    //! MemberId, it should be filled automatically when the member is added if not set (MEMBER_ID_INVALID).
+    MemberId id_ {MEMBER_ID_INVALID};
+
     //! Definition order of the member inside its parent.
-    uint32_t index_ {0};
+    uint32_t index_ {0xFFFFFFFF};
 
-    //! Case Labels for unions.
-    UnionCaseLabelSeq label_;
-
-    //! @ref TryConstructKind
-    TryConstructKind try_construct_kind_ {TryConstructKind::DISCARD};
+    //! If the union member is default.
+    bool is_default_label_ {false};
 
     //! If the member is key.
     bool is_key_ {false};
 
-    //! If the member is optional.
-    bool is_optional_ {false};
-
     //! If the member is must_understand.
     bool is_must_understand_ {false};
+
+    //! If the member is optional.
+    bool is_optional_ {false};
 
     //! If the member is shared (external).
     bool is_shared_ {false};
 
-    //! If the union member is default.
-    bool is_default_label_ {false};
+    //! Case Labels for unions.
+    UnionCaseLabelSeq label_;
+
+    //! Name of the member
+    ObjectName name_;
+
+    //! Kind of the DynamicType which will contain this member.
+    TypeKind parent_kind_ {TK_NONE};
+
+    //! @ref TryConstructKind
+    TryConstructKind try_construct_kind_ {TryConstructKind::DISCARD};
+
+    //! Member's type
+    traits<DynamicType>::ref_type type_;
 
 public:
 
@@ -158,7 +166,7 @@ public:
     }
 
     void index(
-            uint32_t index) noexcept override
+            uint32_t index) noexcept
     {
         index_ = index;
     }
@@ -183,6 +191,22 @@ public:
             UnionCaseLabelSeq&& label) noexcept override
     {
         label_ = std::move(label);
+    }
+
+    TypeKind parent_kind() const noexcept
+    {
+        return parent_kind_;
+    }
+
+    TypeKind& parent_kind() noexcept
+    {
+        return parent_kind_;
+    }
+
+    void parent_kind(
+            TypeKind parent_kind) noexcept
+    {
+        parent_kind_ = parent_kind;
     }
 
     TryConstructKind try_construct_kind() const noexcept override

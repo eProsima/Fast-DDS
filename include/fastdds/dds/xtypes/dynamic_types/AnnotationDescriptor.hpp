@@ -29,6 +29,8 @@ class FASTDDS_EXPORTED_API AnnotationDescriptor
 {
 public:
 
+    using _ref_type = typename traits<AnnotationDescriptor>::ref_type;
+
     /*!
      * Returns a reference to the type. The reference can be nil.
      * @return @ref DynamicType reference.

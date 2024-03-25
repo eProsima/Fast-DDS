@@ -17,10 +17,6 @@ if(WIN32)
 endif()
 
 set(LOG_COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
@@ -39,7 +35,10 @@ target_compile_definitions(LogMacrosAllActiveTests PRIVATE
 target_include_directories(LogMacrosAllActiveTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogMacrosAllActiveTests GTest::gtest ${MOCKS}
+target_link_libraries(LogMacrosAllActiveTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogMacrosAllActiveTests)
@@ -60,7 +59,10 @@ target_compile_definitions(LogMacrosNoInfoTests PRIVATE
 target_include_directories(LogMacrosNoInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogMacrosNoInfoTests GTest::gtest ${MOCKS}
+target_link_libraries(LogMacrosNoInfoTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogMacrosNoInfoTests)
@@ -81,7 +83,10 @@ target_compile_definitions(LogMacrosNoWarningTests PRIVATE
 target_include_directories(LogMacrosNoWarningTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogMacrosNoWarningTests GTest::gtest ${MOCKS}
+target_link_libraries(LogMacrosNoWarningTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogMacrosNoWarningTests)
@@ -102,7 +107,10 @@ target_compile_definitions(LogMacrosNoErrorTests PRIVATE
 target_include_directories(LogMacrosNoErrorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogMacrosNoErrorTests GTest::gtest ${MOCKS}
+target_link_libraries(LogMacrosNoErrorTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogMacrosNoErrorTests)
@@ -123,7 +131,10 @@ target_compile_definitions(LogMacrosDefaultTests PRIVATE
 target_include_directories(LogMacrosDefaultTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogMacrosDefaultTests GTest::gtest ${MOCKS}
+target_link_libraries(LogMacrosDefaultTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogMacrosDefaultTests)
@@ -146,7 +157,10 @@ target_compile_definitions(LogMacrosInternalDebugOffTests PRIVATE
 target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogMacrosInternalDebugOffTests GTest::gtest ${MOCKS}
+target_link_libraries(LogMacrosInternalDebugOffTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogMacrosInternalDebugOffTests)
@@ -166,7 +180,10 @@ target_compile_definitions(OldLogMacrosTests PRIVATE
 target_include_directories(OldLogMacrosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(OldLogMacrosTests GTest::gtest ${MOCKS}
+target_link_libraries(OldLogMacrosTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(OldLogMacrosTests)
@@ -187,7 +204,10 @@ target_compile_definitions(OldLogMacrosDisableTests PRIVATE
 target_include_directories(OldLogMacrosDisableTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(OldLogMacrosDisableTests GTest::gtest ${MOCKS}
+target_link_libraries(OldLogMacrosDisableTests
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(OldLogMacrosDisableTests)

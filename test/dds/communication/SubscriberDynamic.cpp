@@ -34,8 +34,9 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
-#include <fastrtps/types/DynamicData.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::dds::xtypes;
@@ -253,12 +254,13 @@ int main(
         auto& topic_name = remote_names.first;
         auto& type_name = remote_names.second;
 
-        eprosima::fastrtps::types::DynamicType_ptr type;
+        DynamicType::_ref_type type;
 
         {
             TypeObjectPair type_objects;
             if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
                         type_name, type_objects))
+
             {
                 std::cout << "ERROR: TypeObject cannot be retrieved for type: "
                           << type_name << std::endl;
@@ -268,7 +270,7 @@ int main(
             // TODO(XTypes): PENDING DynamicTypeBuilderFactory::create_type_w_type_object
             // type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
 
-            if (type == nullptr)
+            if (!type)
             {
                 std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
                 throw 1;
@@ -307,12 +309,11 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            eprosima::fastrtps::types::DynamicPubSubType pst(type);
-            eprosima::fastrtps::types::DynamicData_ptr sample(static_cast<eprosima::fastrtps::types::DynamicData*>(pst.
-                            createData()));
+            DynamicPubSubType pst(type);
+            DynamicData* sample {static_cast<DynamicData*>(pst.createData())};
             eprosima::fastdds::dds::SampleInfo info;
 
-            if (RETCODE_OK == reader->take_next_sample(sample.get(), &info))
+            if (RETCODE_OK == reader->take_next_sample(sample, &info))
             {
                 if (info.valid_data)
                 {
@@ -325,7 +326,7 @@ int main(
                     sample->get_string_value(message, 0);
                     sample->get_uint32_value(index, 1);
 
-                    eprosima::fastrtps::types::DynamicData* inner = sample->loan_value(2);
+                    DynamicData::_ref_type inner {sample->loan_value(2)};
                     inner->get_byte_value(count, 0);
                     sample->return_loaned_value(inner);
 

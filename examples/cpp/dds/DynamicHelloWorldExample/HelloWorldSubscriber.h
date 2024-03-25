@@ -29,6 +29,8 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 class HelloWorldSubscriber
 {
@@ -59,9 +61,9 @@ private:
 
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::Topic*> topics_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::DynamicType::_ref_type> readers_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::DynamicData::_ref_type> datas_;
 
     eprosima::fastdds::dds::DataReaderQos qos_;
 
@@ -99,7 +101,7 @@ public:
 
         std::condition_variable types_cv_;
 
-        eprosima::fastrtps::types::DynamicType_ptr received_type_;
+        eprosima::fastdds::dds::DynamicType::_ref_type received_type_;
 
         std::atomic<bool> reception_flag_{false};
 

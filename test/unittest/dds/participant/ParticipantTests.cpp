@@ -38,6 +38,14 @@
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
@@ -50,14 +58,6 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypePtr.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -82,12 +82,6 @@ namespace dds {
 using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
-using fastrtps::types::DynamicData_ptr;
-using fastrtps::types::DynamicDataFactory;
-using fastrtps::types::DynamicType_ptr;
-using fastrtps::types::DynamicTypeBuilder_ptr;
-using fastrtps::types::DynamicTypeBuilderFactory;
-using fastrtps::types::TypeDescriptor;
 
 // Mocked TopicDataType for Topic creation tests
 class TopicDataTypeMock : public TopicDataType
@@ -423,7 +417,7 @@ TEST(ParticipantTests, DomainParticipantFactoryLibrarySettings)
 
 TEST(ParticipantTests, DomainParticipantFactoryGetDynamicTypeBuilder)
 {
-    fastrtps::types::DynamicTypeBuilder* type = nullptr;
+    traits<DynamicType>::ref_type type;
     std::string type_name("MyAloneEnumType");
     // Trying to get a Dynamic Type with empty name returns RETCODE_BAD_PARAMETER
     EXPECT_EQ(RETCODE_BAD_PARAMETER,
@@ -3063,118 +3057,21 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
         (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
 
     // Create the dynamic type builder
-    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-    builder->add_member(0, "uint", base_type);
+    traits<TypeDescriptor>::ref_type type_descriptor = traits<TypeDescriptor>::make_shared();
+    type_descriptor->kind(TK_STRUCTURE);
+    type_descriptor->name("mystruct");
+    traits<DynamicTypeBuilder>::ref_type builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
+    traits<MemberDescriptor>::ref_type member_descriptor = traits<MemberDescriptor>::make_shared();
+    member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    member_descriptor->name("myuint");
+    builder->add_member(member_descriptor);
     // Build the complete dynamic type
-    DynamicType_ptr dyn_type = builder->build();
+    traits<DynamicType>::ref_type dyn_type {builder->build()};
     // Create the data instance
-    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+    traits<DynamicData>::ref_type data {DynamicDataFactory::get_instance()->create_data(dyn_type)};
     // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    // Activating the auto_fill_type_information settings, the participant will try to
-    // add the type dynamic type factories
-    type->auto_fill_type_information(true);
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     ASSERT_EQ(type.register_type(participant), RETCODE_OK);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-/*
- * This test adds a complete dynamic type to the participant dynamic type factories without enabling the
- * auto_fill_type_information setting
- */
-TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
-{
-    // Do not enable entities on creation
-    DomainParticipantFactoryQos factory_qos;
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    // Create a disabled participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    // Create the dynamic type builder
-    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-    builder->add_member(0, "uint", base_type);
-
-    // Build the complete dynamic type
-    DynamicType_ptr dyn_type = builder->build();
-    // Create the data instance
-    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
-
-    // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    type->auto_fill_type_information(false);
-    ASSERT_EQ(type.register_type(participant), RETCODE_OK);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);
-}
-
-// Mocked DynamicType for DynamicType creation tests
-class DynamicTypeMock : public eprosima::fastrtps::types::DynamicType
-{
-public:
-
-    DynamicTypeMock(
-            const eprosima::fastrtps::types::TypeDescriptor* descriptor)
-        : eprosima::fastrtps::types::DynamicType(descriptor)
-    {
-    }
-
-    DynamicType_ptr get_base_type_wrapper() const
-    {
-        return get_base_type();
-    }
-
-};
-
-/*
- * This test attempts to add a non supported custom dynamic type to the participant dynamic type factories. The type
- * should be registered in the participant but not added to the dynamic types factories.
- */
-TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
-{
-    // Do not enable entities on creation
-    DomainParticipantFactoryQos factory_qos;
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    // Create a disabled participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(
-        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
-
-    // Create a not supported TypeDescriptor
-    const TypeDescriptor* myDescriptor = new TypeDescriptor("my_descriptor", 0x11);
-    // Create the base type for the dynamic type
-    DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
-    // Create a custom dynamic type builder using the wrong TypeDescriptor
-    DynamicTypeBuilder_ptr builder =
-            DynamicTypeBuilderFactory::get_instance()->create_custom_builder(myDescriptor, "my_dynamic_type");
-    builder->add_member(0, "uint", base_type);
-    // Create the dynamic type
-    DynamicType_ptr dyn_type = builder->build();
-    // Create the data instance
-    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
-
-    // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    type->auto_fill_type_information(true);
-    type.register_type(participant);
-
-    TypeSupport ret_type = participant->find_type("my_dynamic_type");
-
-    // The type is registered in the participant but not in the dynamic types factories
-    ASSERT_FALSE(ret_type.empty());
-
-    // Remove TypeDescriptor before closing
-    delete myDescriptor;
 
     // Remove the participant
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), RETCODE_OK);

@@ -35,6 +35,8 @@ public:
     ReturnCode_t delete_data(
             traits<DynamicData>::ref_type data) noexcept override;
 
+    virtual ~DynamicDataFactoryImpl() = default;
+
 private:
 
     static traits<DynamicDataFactoryImpl>::ref_type instance_;
