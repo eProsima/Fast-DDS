@@ -202,7 +202,7 @@ static DDSFilterPredicate::OperationKind get_predicate_op(
 
 struct ExpressionParsingState
 {
-    const std::shared_ptr<xtypes::TypeObject>& type_object;
+    const std::shared_ptr<xtypes::TypeObject> type_object;
     const IContentFilterFactory::ParameterSeq& filter_parameters;
     DDSFilterExpression* filter;
 };
@@ -538,7 +538,7 @@ ReturnCode_t DDSFilterFactory::create_content_filter(
             {
                 DynamicType::_ref_type dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
                     type_objects->complete_type_object)->build();
-                if (nullptr != dyn_type)
+                if (dyn_type)
                 {
                     DDSFilterExpression* expr = get_expression();
                     expr->set_type(dyn_type);

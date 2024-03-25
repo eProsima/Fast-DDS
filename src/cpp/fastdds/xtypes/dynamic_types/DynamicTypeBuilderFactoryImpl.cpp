@@ -14,9 +14,7 @@
 
 #include "DynamicTypeBuilderFactoryImpl.hpp"
 
-#include <codecvt>
 #include <ios>
-#include <locale>
 #include <sstream>
 #include <string>
 

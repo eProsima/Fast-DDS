@@ -203,7 +203,8 @@ bool DynamicTypeBuilderImpl::equals(
             }
         }
 
-        if (verbatim_.size() == impl->verbatim_.size())
+        ret_value &= verbatim_.size() == impl->verbatim_.size();
+        if (ret_value)
         {
             for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
             {
