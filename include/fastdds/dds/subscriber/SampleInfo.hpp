@@ -90,6 +90,9 @@ struct SampleInfo
     //!Flag to indicate if there are more replies (Extension for RPC)
     bool has_more_replies = false;
 
+    //!Persistence Sample Identity (Extension for RPC)
+    rtps::SampleIdentity persistence_sample_identity;
+
 };
 
 }  // namespace dds
