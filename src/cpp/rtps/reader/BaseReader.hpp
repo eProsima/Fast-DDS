@@ -396,6 +396,14 @@ protected:
             const fastdds::rtps::GUID_t& guid);
 
     /**
+     * @brief Retrieve the persistence guid for the provided writer guid.
+     *
+     * @param guid  The writer GUID to query.
+     */
+    GUID_t get_persistence_guid(
+            const GUID_t& guid);
+
+    /**
      * @brief Update the last notified sequence for a writer's GUID.
      *
      * @param guid  The GUID of the writer.

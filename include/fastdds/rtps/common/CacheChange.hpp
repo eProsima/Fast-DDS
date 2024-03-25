@@ -68,6 +68,8 @@ struct CacheChangeReaderInfo_t
     int32_t no_writers_generation_count;
     //! Ownership stregth of its writer when the sample was received.
     uint32_t writer_ownership_strength;
+    //! Persistence writer guid associated with received sample.
+    GUID_t persistence_writer_guid;
 };
 
 /**
