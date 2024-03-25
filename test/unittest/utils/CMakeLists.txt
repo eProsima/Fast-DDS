@@ -148,18 +148,11 @@ if(QNX)
     target_link_libraries(LocatorTests socket)
 endif()
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(IGNORE_COMMAND LocatorDNSTests)
+    message(STATUS "Ignoring 'LocatorDNSTests*'")
+    set(IGNORE_COMMAND "-LocatorDNSTests*")
 endif()
 gtest_discover_tests(LocatorTests TEST_FILTER ${IGNORE_COMMAND})
 unset(IGNORE_COMMAND)
-# Skip DNS related tests when not running on our CI
-if(NOT(EPROSIMA_BUILD))
-    message(STATUS "Ignoring DNS tests")
-    set(CTEST_CUSTOM_TESTS_IGNORE
-        ${CTEST_CUSTOM_TESTS_IGNORE}
-        LocatorDNSTests
-        )
-endif()
 
 add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})
 target_include_directories(FixedSizeQueueTests PRIVATE
