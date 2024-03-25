@@ -48,17 +48,12 @@ TEST_F(LogMacrosTests, default_macros_test)
 # endif  // Visual Studio specific behavior
 #endif  // Check default macro values
 
-<<<<<<< HEAD
-#if !HAVE_LOG_NO_INFO && (defined(_DEBUG) || defined(__DEBUG) || !defined(NDEBUG))
-    static constexpr unsigned int expected_result = 3;
-=======
     // Result depends on the log configuration
 #if !HAVE_LOG_NO_INFO &&  \
     (defined(FASTDDS_ENFORCE_LOG_INFO) || \
     ((defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG) || \
     !defined(NDEBUG))))
     constexpr unsigned int expected_result = 3;
->>>>>>> bdef74e2e (Fix flaky Log tests (#4582))
 #else
     constexpr unsigned int expected_result = 2;
 #endif // debug macros check
