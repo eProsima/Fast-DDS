@@ -40,7 +40,9 @@
         ├ data_writer               [0~*],
         ├ data_reader               [0~*],
         ├ transport_descriptors     [0~1],
-        └ topic                     [0~*] -->
+        ├ topic                     [0~1],
+        ├ replier                   [0~1],
+        └ requester                 [0~*] -->
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->

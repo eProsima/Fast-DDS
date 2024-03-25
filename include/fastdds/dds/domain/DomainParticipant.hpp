@@ -37,7 +37,6 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -61,9 +60,6 @@ class ResourceEvent;
 namespace types {
 class TypeInformation;
 } // namespace types
-
-class PublisherAttributes;
-class SubscriberAttributes;
 
 } //namespace fastrtps
 
