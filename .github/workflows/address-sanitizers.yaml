@@ -13,8 +13,13 @@ on:
         default: '2.6.x'
 
   pull_request:
+<<<<<<< HEAD
     branches:
       - '2.6.x'
+=======
+    types:
+      - review_requested
+>>>>>>> d0a334b11 (Only run PRs CI when run-ci label is added (#4599))
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -27,9 +32,11 @@ concurrency:
 jobs:
   asan-test:
 
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
-              contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
 
     runs-on: ubuntu-22.04
 
@@ -37,6 +44,14 @@ jobs:
         FASTDDS_BRANCH: ${{ github.head_ref || github.event.inputs.fastdds_branch || '2.6.x' }}
 
     steps:
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/add_labels@v0
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
       # https://github.com/actions/runner-images/issues/9491
       - name: Fix kernel mmap rnd bits
         run: sudo sysctl vm.mmap_rnd_bits=28
@@ -123,9 +138,11 @@ jobs:
 
   asan-discovery-server-test:
 
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
-              contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
 
     runs-on: ubuntu-22.04
 
@@ -134,6 +151,14 @@ jobs:
       DEFAULT_DISCOVERY_SERVER_BRANCH: ${{ github.event.inputs.discovery_server_branch || 'v1.2.1' }}
 
     steps:
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/add_labels@v0
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
       # https://github.com/actions/runner-images/issues/9491
       - name: Fix kernel mmap rnd bits
         run: sudo sysctl vm.mmap_rnd_bits=28
