@@ -97,11 +97,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: ${{ inputs.cmake-args }}
-<<<<<<< HEAD
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall"
-=======
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
->>>>>>> 63cc242b2 (Fix hidden overloaded virtual methods (#4516))
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
