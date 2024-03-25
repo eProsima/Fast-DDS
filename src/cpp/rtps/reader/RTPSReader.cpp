@@ -331,6 +331,20 @@ SequenceNumber_t RTPSReader::get_last_notified(
     return ret_val;
 }
 
+GUID_t RTPSReader::get_persistence_guid(
+        const GUID_t& guid)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    GUID_t ret_val = guid;
+    auto p_guid = history_state_->persistence_guid_map.find(guid);
+    if (p_guid != history_state_->persistence_guid_map.end())
+    {
+        ret_val = p_guid->second;
+    }
+
+    return ret_val;
+}
+
 void RTPSReader::set_last_notified(
         const GUID_t& peristence_guid,
         const SequenceNumber_t& seq)

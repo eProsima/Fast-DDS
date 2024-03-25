@@ -435,6 +435,9 @@ protected:
     SequenceNumber_t get_last_notified(
             const GUID_t& guid);
 
+    GUID_t get_persistence_guid(
+            const GUID_t& guid);
+
     /*!
      * @brief Update the last notified sequence for a RTPS guid
      * @param guid The RTPS guid of the writer

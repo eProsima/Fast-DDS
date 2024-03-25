@@ -350,6 +350,9 @@ bool StatelessReader::change_received(
             change->reader_info.writer_ownership_strength = (std::numeric_limits<uint32_t>::max)();
         }
 
+        // Update persistence GUID information on the CacheChange.
+        change->reader_info.persistence_writer_guid = get_persistence_guid(change->writerGUID);
+
         if (mp_history->received_change(change, 0))
         {
             auto payload_length = change->serializedPayload.length;
