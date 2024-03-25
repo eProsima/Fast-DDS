@@ -17,15 +17,15 @@
  *
  */
 
+#include <utils/UnitsParser.hpp>
+
 #include <algorithm>
 #include <cstdint>
 #include <limits>
 #include <map>
-#include <set>
 #include <regex>
+#include <set>
 #include <stdexcept>
-
-#include <utils/UnitsParser.hpp>
 
 namespace eprosima {
 namespace fastdds {
