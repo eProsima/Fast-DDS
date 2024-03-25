@@ -24,7 +24,9 @@
 #include <condition_variable>
 #include <mutex>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 #include "Application.hpp"
 #include "CLIParser.hpp"

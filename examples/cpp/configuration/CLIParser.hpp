@@ -31,7 +31,7 @@ namespace examples {
 namespace configuration {
 
 using namespace eprosima::fastdds::dds;
-using Log;
+using dds::Log;
 
 class CLIParser
 {
@@ -306,10 +306,10 @@ public:
                     try
                     {
                         int input = std::stoi(argv[i]);
-                        if (input < 0 || input > 232)
+                        if (input < 1 || input > 255)
                         {
                             throw std::out_of_range("domain argument " + std::string(
-                                              argv[i]) + " out of range [0, 232].");
+                                              argv[i]) + " out of range [1, 255].");
                         }
                         else
                         {
@@ -501,7 +501,7 @@ public:
                     try
                     {
                         int input = std::stoi(argv[i]);
-                        if (input < 1 || input > max_duration)
+                        if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                         {
                             throw std::out_of_range("deadline argument " + std::string(
                                               argv[i]) + " out of range [1, " + std::to_string(
@@ -551,7 +551,7 @@ public:
                     try
                     {
                         int input = std::stoi(argv[i]);
-                        if (input < 1 || input > max_duration)
+                        if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                         {
                             throw std::out_of_range("lifespan argument " + std::string(
                                               argv[i]) + " out of range [1, " + std::to_string(
@@ -587,7 +587,7 @@ public:
                     try
                     {
                         int input = std::stoi(argv[i]);
-                        if (input < 1 || input > max_duration)
+                        if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                         {
                             throw std::out_of_range("liveliness argument " + std::string(
                                               argv[i]) + " out of range [1, " + std::to_string(
@@ -639,7 +639,7 @@ public:
                     }
                     else
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing liveliness-kind argument");
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing liveliness-kind argument " + kind);
                         print_help(EXIT_FAILURE);
                     }
                 }
@@ -656,7 +656,7 @@ public:
                     try
                     {
                         int input = std::stoi(argv[i]);
-                        if (input < 1 || input > max_duration)
+                        if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                         {
                             throw std::out_of_range("liveliness-assert argument " + std::string(
                                               argv[i]) + " out of range [1, " + std::to_string(
@@ -713,7 +713,7 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < 1 || input > max_duration)
+                            if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                             {
                                 throw std::out_of_range("wait argument " + std::string(
                                                   argv[i]) + " out of range [1, " + std::to_string(
@@ -757,7 +757,7 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < 1 || input > std::numeric_limits<uint32_t>::max())
+                            if (input < 1 || static_cast<long>(input) > static_cast<long>(std::numeric_limits<uint32_t>::max()))
                             {
                                 throw std::out_of_range("strength argument " + std::string(
                                                   argv[i]) + " out of range [1, " +
@@ -802,7 +802,7 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < 1 || input > max_duration)
+                            if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                             {
                                 throw std::out_of_range("interval argument " + std::string(
                                                   argv[i]) + " out of range [1, " + std::to_string(
@@ -858,7 +858,7 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < 1 || input > max_duration)
+                            if (input < 1 || static_cast<long>(input) > static_cast<long>(max_duration))
                             {
                                 throw std::out_of_range("ack-keep-duration argument " + std::string(
                                                   argv[i]) + " out of range [1, " + std::to_string(
@@ -903,8 +903,8 @@ public:
                         try
                         {
                             int input = std::stoi(argv[i]);
-                            if (input < std::numeric_limits<uint32_t>::min() ||
-                                    input > std::numeric_limits<uint32_t>::max())
+                            if (static_cast<long>(input) < static_cast<long>(std::numeric_limits<uint32_t>::min()) ||
+                                    static_cast<long>(input) > static_cast<long>(std::numeric_limits<uint32_t>::max()))
                             {
                                 throw std::out_of_range("strength argument " + std::string(
                                                   argv[i]) + " out of range [0, " +
@@ -947,6 +947,39 @@ public:
             }
         }
         return config;
+    }
+
+    static std::string parse_signal(
+            const int& signum)
+    {
+        switch (signum)
+        {
+            case SIGINT:
+                return "SIGINT";
+            case SIGTERM:
+                return "SIGTERM";
+            case SIGQUIT:
+                return "SIGQUIT";
+            case SIGHUP:
+                return "SIGHUP";
+            default:
+                return "UNKNOWN SIGNAL";
+        }
+    }
+
+    static std::string parse_entity_kind(
+            const EntityKind& entity)
+    {
+        switch (entity)
+        {
+            case EntityKind::PUBLISHER:
+                return "Publisher";
+            case EntityKind::SUBSCRIBER:
+                return "Subscriber";
+            case EntityKind::UNDEFINED:
+            default:
+                return "Undefined entity";
+        }
     }
 
 };

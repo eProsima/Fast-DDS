@@ -207,7 +207,7 @@ void PublisherApp::run()
         }
         // Wait for period or stop event
         std::unique_lock<std::mutex> terminate_lock(mutex_);
-        terminate_cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
+        cv_.wait_for(terminate_lock, std::chrono::milliseconds(period_ms_), [&]()
                 {
                     return is_stopped();
                 });
