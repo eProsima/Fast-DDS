@@ -28,7 +28,7 @@
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 
 #include <rtps/transport/tcp/RTCPHeader.h>
 #include <rtps/transport/TCPAcceptorBasic.h>

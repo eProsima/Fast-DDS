@@ -18,27 +18,22 @@
  */
 
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/common/Locator.h>
 
+#include <algorithm>
+
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/utils/IPFinder.h>
 
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/builtin/discovery/participant/PDPClient.h>
-
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
-
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPFinder.h>
-
-#include <algorithm>
 
 using namespace eprosima::fastrtps;
 

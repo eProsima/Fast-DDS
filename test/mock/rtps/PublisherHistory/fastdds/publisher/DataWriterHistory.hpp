@@ -21,6 +21,7 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/ChangeKind_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -29,8 +30,7 @@
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
-#include <fastrtps/attributes/TopicAttributes.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <fastdds/publisher/history/DataWriterInstance.hpp>
 

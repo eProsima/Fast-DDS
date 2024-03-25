@@ -25,8 +25,8 @@
 #include <vector>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/utils/fixed_size_bitmap.hpp>
 #include <fastdds/rtps/common/Types.h>
+#include <fastdds/utils/fixed_size_bitmap.hpp>
 
 namespace eprosima {
 namespace fastrtps {

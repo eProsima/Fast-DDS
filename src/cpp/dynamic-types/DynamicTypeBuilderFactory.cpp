@@ -15,6 +15,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/utils/md5.h>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
@@ -26,7 +27,6 @@
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/utils/md5.h>
 #include <fastrtps/utils/string_convert.hpp>
 
 namespace eprosima {

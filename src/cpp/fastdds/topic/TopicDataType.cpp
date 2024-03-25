@@ -20,12 +20,12 @@
 #include <memory>
 #include <string>
 
-#include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include <fastdds/fastdds_dll.hpp>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/utils/md5.h>
 
 namespace eprosima {
 namespace fastdds {

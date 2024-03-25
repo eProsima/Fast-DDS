@@ -19,7 +19,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {

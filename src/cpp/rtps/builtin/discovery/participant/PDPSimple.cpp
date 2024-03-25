@@ -38,7 +38,7 @@
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>

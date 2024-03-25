@@ -21,14 +21,12 @@
 #define _FASTDDS_RTPS_HISTORY_H_
 
 #include <fastdds/fastdds_dll.hpp>
-
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
-
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 #include <cassert>
 #include <functional>
