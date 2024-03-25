@@ -368,7 +368,7 @@ TEST_F(TCPv6Tests, non_blocking_send)
 
     // Prepare the message
     asio::error_code ec;
-    std::vector<octet> message(msg_size*2, 0);
+    std::vector<octet> message(msg_size * 2, 0);
     const octet* data = message.data();
     size_t size = message.size();
 
@@ -382,8 +382,8 @@ TEST_F(TCPv6Tests, non_blocking_send)
     size_t bytes_read = asio::read(socket, asio::buffer(buffer, size), asio::transfer_exactly(size), ec);
     ASSERT_EQ(bytes_read, size);
 
-    // Now try to send a message that is bigger than the buffer size: (msg_size*2 + 1) + bytes_in_send_buffer(0) > 2*sendBufferSize 
-    message.resize(msg_size*2 + 1);
+    // Now try to send a message that is bigger than the buffer size: (msg_size*2 + 1) + bytes_in_send_buffer(0) > 2*sendBufferSize
+    message.resize(msg_size * 2 + 1);
     data = message.data();
     size = message.size();
     bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
