@@ -141,12 +141,6 @@ target_include_directories(MonitorServiceTests PRIVATE
     mock/Publisher
     mock/StatisticsBase
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/BuiltinProtocols
-<<<<<<< HEAD
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/ExternalLocatorsProcessor
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSParticipantImpl
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
-=======
->>>>>>> 84960eba0 (Monitor service properly managing instances (#4564))
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Endpoint
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/external_locators
@@ -175,7 +169,7 @@ target_link_libraries(MonitorServiceTests
     GTest::gtest
     GTest::gmock
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
-    
+
 gtest_discover_tests(MonitorServiceTests)
 
 if(QNX)
