@@ -248,6 +248,8 @@ struct ReadTakeCommand
         info.sample_identity.writer_guid(item->writerGUID);
         info.sample_identity.sequence_number(item->sequenceNumber);
         info.related_sample_identity = item->write_params.sample_identity();
+        info.persistence_sample_identity.writer_guid(item->reader_info.persistence_writer_guid);
+        info.persistence_sample_identity.sequence_number(item->sequenceNumber);
 
         info.valid_data = true;
 
