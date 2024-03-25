@@ -24,8 +24,19 @@ on:
         type: string
         required: true
 
+<<<<<<< HEAD
+=======
+  pull_request:
+    types:
+      - review_requested
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '!**/CMakeLists.txt'
+
+>>>>>>> d0a334b11 (Only run PRs CI when run-ci label is added (#4599))
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -37,6 +48,10 @@ jobs:
         os-image:
           - 'ubuntu-22.04'
 
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-ubuntu-ci.yml
     with:
       os-image: ${{ matrix.os-image }}

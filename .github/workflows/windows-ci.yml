@@ -25,8 +25,13 @@ on:
         required: true
 
   pull_request:
+<<<<<<< HEAD
     branches:
       - '2.13.x'
+=======
+    types:
+      - review_requested
+>>>>>>> d0a334b11 (Only run PRs CI when run-ci label is added (#4599))
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -38,9 +43,11 @@ concurrency:
 
 jobs:
   windows-ci:
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-windows-ci.yml
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
     with:
       label: ${{ inputs.label || 'windows-ci' }}
       colcon-args: ${{ inputs.colcon-args }}

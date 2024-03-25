@@ -9,8 +9,13 @@ on:
         default: '2.13.x'
 
   pull_request:
+<<<<<<< HEAD
     branches:
       - '2.13.x'
+=======
+    types:
+      - review_requested
+>>>>>>> d0a334b11 (Only run PRs CI when run-ci label is added (#4599))
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -26,11 +31,21 @@ env:
 jobs:
   ubuntu-build-and-test-documentation:
     name: Documentation build and test
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
 
     runs-on: ubuntu-22.04
     steps:
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/add_labels@v0
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
