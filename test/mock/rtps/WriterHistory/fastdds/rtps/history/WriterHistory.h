@@ -26,7 +26,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/common/CacheChange.h>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

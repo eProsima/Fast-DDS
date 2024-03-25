@@ -36,8 +36,8 @@
 
 #include <nlohmann/json.hpp>
 
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/utils/IPFinder.h>
 #include <utils/threading.hpp>
 
 namespace eprosima {

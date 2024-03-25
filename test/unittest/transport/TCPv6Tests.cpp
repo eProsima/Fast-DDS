@@ -22,7 +22,7 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
 #include <MockReceiverResource.h>

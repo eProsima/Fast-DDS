@@ -19,8 +19,8 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/utils/IPFinder.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPFinder.h>
+#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
 #include <MockReceiverResource.h>

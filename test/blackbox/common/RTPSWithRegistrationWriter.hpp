@@ -32,6 +32,7 @@
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
@@ -40,7 +41,6 @@
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
-#include <fastrtps/attributes/TopicAttributes.h>
 
 template<class TypeSupport>
 class RTPSWithRegistrationWriter

@@ -22,7 +22,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 #include <fastrtps/utils/Semaphore.h>
 
 #include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"

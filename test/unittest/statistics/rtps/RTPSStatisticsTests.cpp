@@ -31,6 +31,7 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -42,7 +43,6 @@
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
-#include <fastrtps/attributes/TopicAttributes.h>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>

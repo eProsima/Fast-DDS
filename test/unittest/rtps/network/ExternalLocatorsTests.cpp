@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/common/LocatorWithMask.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <rtps/network/utils/external_locators.hpp>
 

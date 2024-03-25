@@ -30,7 +30,7 @@
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
 #endif // if HAVE_SECURITY
-#include <fastrtps/attributes/TopicAttributes.h>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 
 namespace eprosima {
 namespace fastrtps {

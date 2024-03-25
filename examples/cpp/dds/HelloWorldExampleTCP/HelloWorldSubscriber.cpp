@@ -25,7 +25,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;

@@ -41,7 +41,7 @@
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/all_common.h>
 
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 

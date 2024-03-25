@@ -35,7 +35,7 @@
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 namespace fastrtps {
