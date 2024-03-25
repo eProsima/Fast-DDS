@@ -24,8 +24,6 @@ on:
         type: string
         required: true
 
-<<<<<<< HEAD
-=======
   pull_request:
     types:
       - review_requested
@@ -34,7 +32,6 @@ on:
       - '**.txt'
       - '!**/CMakeLists.txt'
 
->>>>>>> d0a334b11 (Only run PRs CI when run-ci label is added (#4599))
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
