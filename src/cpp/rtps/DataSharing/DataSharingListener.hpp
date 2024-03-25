@@ -25,7 +25,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 #include <rtps/DataSharing/IDataSharingListener.hpp>
 #include <rtps/DataSharing/DataSharingNotification.hpp>

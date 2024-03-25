@@ -34,7 +34,7 @@ char dummy;
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 using namespace eprosima::fastrtps::rtps;
 

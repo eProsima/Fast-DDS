@@ -27,7 +27,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerConsts.hpp>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
 namespace fastrtps {

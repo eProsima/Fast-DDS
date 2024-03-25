@@ -26,6 +26,7 @@
 #ifndef _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_H_
 #define _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_H_
 
+
 #include <array>
 #include <bitset>
 #include <cstdint>
@@ -69,7 +70,7 @@ class Cdr;
 
 
 namespace TestModule {
-typedef std::string MACHINEID;
+    typedef std::string MACHINEID;
 
 } // namespace TestModule
 

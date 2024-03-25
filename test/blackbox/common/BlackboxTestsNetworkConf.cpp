@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastrtps/utils/IPFinder.h>
+#include <fastdds/utils/IPFinder.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

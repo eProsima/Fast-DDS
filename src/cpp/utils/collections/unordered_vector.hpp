@@ -19,7 +19,7 @@
 #ifndef SRC_CPP_UTILS_COLLECTIONS_UNORDERED_VECTOR_HPP_
 #define SRC_CPP_UTILS_COLLECTIONS_UNORDERED_VECTOR_HPP_
 
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
 namespace utilities {
