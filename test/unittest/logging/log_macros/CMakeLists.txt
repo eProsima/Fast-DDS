@@ -36,7 +36,6 @@ target_include_directories(LogMacrosAllActiveTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosAllActiveTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -61,7 +60,6 @@ target_include_directories(LogMacrosNoInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoInfoTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -86,7 +84,6 @@ target_include_directories(LogMacrosNoWarningTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoWarningTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -111,7 +108,6 @@ target_include_directories(LogMacrosNoErrorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosNoErrorTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -136,7 +132,6 @@ target_include_directories(LogMacrosDefaultTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosDefaultTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -163,7 +158,6 @@ target_include_directories(LogMacrosInternalDebugOffTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LogMacrosInternalDebugOffTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -187,7 +181,6 @@ target_include_directories(OldLogMacrosTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -212,7 +205,6 @@ target_include_directories(OldLogMacrosDisableTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(OldLogMacrosDisableTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}

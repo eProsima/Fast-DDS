@@ -81,7 +81,7 @@ bool MemoryTestSubscriber::init(
         struct_type_builder->add_member(member_descriptor);
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->create_sequence_type(factory->get_primitive_type(eprosima::fastdds::dds::
-                        TK_BYTE), 0)->build());
+                        TK_BYTE), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
         member_descriptor->name("data");
         struct_type_builder->add_member(member_descriptor);
         m_pDynType = struct_type_builder->build();
@@ -371,7 +371,6 @@ bool MemoryTestSubscriber::test(
 {
     std::cout << "Preparing test with data size: " << datasize + 4 << std::endl;
 
-    //cout << "Ready to start data size: " << m_datasize << " and demand; "<<m_demand << std::endl;
     if (dynamic_data_)
     {
         m_DynData = DynamicDataFactory::get_instance()->create_data(m_pDynType);

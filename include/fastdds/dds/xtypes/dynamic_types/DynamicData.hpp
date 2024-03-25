@@ -55,6 +55,8 @@ public:
      * Compares two @ref DynamicData, equality requires:
      *     - Their respective type definitions are equal
      *     - All contained values are equal and occur in the same order
+     *     - If the samples' type is an aggregated type, previous rule shall be amended as follows:
+     *          -# Members shall be compared without regard to their order.
      * @param [in] other @ref DynamicData reference to compare to
      * @return `true` on equality
      */

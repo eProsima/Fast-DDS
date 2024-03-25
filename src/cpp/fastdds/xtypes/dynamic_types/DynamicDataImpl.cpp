@@ -775,7 +775,7 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. MemberId not found.");
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting complex value. MemberId not found.");
                 }
             }
         }
@@ -1244,7 +1244,7 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
                     }
                     else
                     {
-                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the types are different.");
+                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the fact that types are different.");
                     }
                 }
                 else
@@ -1264,36 +1264,34 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                 enclosing_type_->get_descriptor().element_type()));
-            if (enclosing_type_->get_descriptor().element_type()->equals(value->type()))
+            if (enclosing_type_->get_descriptor().element_type()->equals(value->type()) &&
+                    is_complex_kind(element_kind))
             {
-                if (is_complex_kind(element_kind))
+                auto it = value_.cbegin();
+                assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
+                auto sequence =
+                        std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
+                assert(sequence);
+                if ((TK_ARRAY == type_kind && sequence->size() > id) ||
+                        (TK_SEQUENCE == type_kind &&
+                        (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
+                        enclosing_type_->get_descriptor().bound().at(0) ||
+                        enclosing_type_->get_descriptor().bound().at(0) > id)))
                 {
-                    auto it = value_.cbegin();
-                    assert(value_.cend() != it && MEMBER_ID_INVALID == it->first);
-                    auto sequence =
-                            std::static_pointer_cast<std::vector<traits<DynamicData>::ref_type>>(it->second);
-                    assert(sequence);
-                    if ((TK_ARRAY == type_kind && sequence->size() > id) ||
-                            (TK_SEQUENCE == type_kind &&
-                            (static_cast<uint32_t>(LENGTH_UNLIMITED) ==
-                            enclosing_type_->get_descriptor().bound().at(0) ||
-                            enclosing_type_->get_descriptor().bound().at(0) > id)))
+                    if (sequence->size() < id + 1)
                     {
-                        if (sequence->size() < id + 1)
-                        {
-                            sequence->resize(id + 1);
-                        }
-
-                        auto pos = sequence->begin() + id;
-                        pos = sequence->erase(pos);
-                        sequence->emplace(pos, value->clone());
-                        ret_value =  RETCODE_OK;
+                        sequence->resize(id + 1);
                     }
+
+                    auto pos = sequence->begin() + id;
+                    pos = sequence->erase(pos);
+                    sequence->emplace(pos, value->clone());
+                    ret_value =  RETCODE_OK;
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the types are different.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the fact that types are different.");
             }
         }
         else if (TK_MAP == type_kind)
@@ -1301,26 +1299,24 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
             TypeKind element_kind =
                     get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
                                 enclosing_type_->get_descriptor().element_type()));
-            if (enclosing_type_->get_descriptor().element_type()->equals(value->type()))
+            if (enclosing_type_->get_descriptor().element_type()->equals(value->type()) &&
+                    is_complex_kind(element_kind))
             {
-                if (is_complex_kind(element_kind))
+                auto it = value_.find(id);
+                if (it != value_.end())
                 {
-                    auto it = value_.find(id);
-                    if (it != value_.end())
-                    {
-                        value_.erase(it);
-                        value_.emplace(id, value->clone());
-                        ret_value =  RETCODE_OK;
-                    }
-                    else
-                    {
-                        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. MemberId not found.");
-                    }
+                    value_.erase(it);
+                    value_.emplace(id, value->clone());
+                    ret_value =  RETCODE_OK;
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex value. MemberId not found.");
                 }
             }
             else
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the types are different.");
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting due to the fact that types are different.");
             }
         }
     }
@@ -1592,7 +1588,7 @@ size_t DynamicDataImpl::calculate_key_serialized_size(
                         else
                         {
                             EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                    "Error serializing structure member because not found on DynamicData");
+                                    "Error calculating structure member size because it is not found on DynamicData");
                         }
                     }
                 }
@@ -1957,7 +1953,7 @@ void DynamicDataImpl::serialize_key(
                     else
                     {
                         EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                "Error serializing structure member because not found on DynamicData");
+                                "Error serializing structure member because it is not found on DynamicData");
                     }
                 }
             }
@@ -1982,7 +1978,7 @@ void DynamicDataImpl::serialize_key(
                         else
                         {
                             EPROSIMA_LOG_ERROR(DYN_TYPES,
-                                    "Error serializing structure member because not found on DynamicData");
+                                    "Error serializing structure member because it is not found on DynamicData");
                         }
                     }
                 }
@@ -3746,6 +3742,10 @@ ReturnCode_t DynamicDataImpl::get_value(
                     value,
                     MEMBER_ID_INVALID);
             }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. MemberId not found.");
+            }
         }
         else
         {
@@ -3804,6 +3804,10 @@ ReturnCode_t DynamicDataImpl::get_value(
                 {
                     ret_value = get_primitive_value<TK>(element_kind, it, value, MEMBER_ID_INVALID);
                 }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting value. MemberId not found.");
             }
         }
         else
@@ -3919,7 +3923,7 @@ void DynamicDataImpl::set_default_value(
     if (TK_UNION == enclosing_type_->get_kind() && 0 == member->get_descriptor().index())
     {
         // Set default discriminator value.
-        set_discriminator_value(enclosing_type_->default_discriminator_value(), member_type, data);
+        set_discriminator_value(enclosing_type_->default_value(), member_type, data);
         selected_union_member_ = enclosing_type_->default_union_member();
     }
     // Other case, set member with default value.
@@ -3950,7 +3954,7 @@ void DynamicDataImpl::set_discriminator_value(
 
     if (m_impl->get_descriptor().is_default_label())
     {
-        label = enclosing_type_->default_discriminator_value();
+        label = enclosing_type_->default_value();
     }
     else
     {
@@ -4751,20 +4755,14 @@ void DynamicDataImpl::set_value(
         {
             auto& members = enclosed_type->get_all_members_by_index();
             assert(0 < members.size());
-            TypeForKind<TK_UINT64> value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
-            bool found = false;
+            TypeForKind<TK_UINT32> value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
             for (auto member_it {members.begin()}; member_it != members.end(); ++member_it)
             {
                 if (0 == sValue.to_string().compare((*member_it)->get_name().to_string()))
                 {
-                    found = true;
+                    value = TypeValueConverter::sto((*member_it)->get_descriptor().default_value());
                     break;
                 }
-            }
-
-            if (found)
-            {
-                value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
             }
 
             switch (enclosing_type_->get_kind())
@@ -4832,6 +4830,10 @@ ReturnCode_t DynamicDataImpl::set_value(
                 ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->set_value<TK>(
                     MEMBER_ID_INVALID, new_value);
             }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. MemberId not found.");
+            }
 
             if (RETCODE_OK == ret_value && TK_UNION == type_kind && 0 != id)     // Set new discriminator.
             {
@@ -4887,6 +4889,10 @@ ReturnCode_t DynamicDataImpl::set_value(
                 {
                     ret_value = set_primitive_value<TK>(element_type, it, value);
                 }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting value. MemberId not found.");
             }
         }
         else
@@ -5182,7 +5188,8 @@ size_t DynamicDataImpl::calculate_serialized_size(
                 current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
             }
 
-            // Serializing map's length. Standard rule 15 doesn't specify this but we think it is a typo.
+            // Serializing map's length. XTypes v1.3 section 7.4.3.5.3 rule 15 doesn't specify this but it is probably a
+            // typo (other collection types behave this way).
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
             calculated_size = current_alignment - initial_alignment;
@@ -5901,7 +5908,7 @@ bool DynamicDataImpl::deserialize(
                 else
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
-                            "Error deserializing bitset bitfield because not found on DynamicData");
+                            "Error deserializing bitset bitfield because it is not found on DynamicData");
                 }
 
                 ++index;
@@ -6676,7 +6683,7 @@ void DynamicDataImpl::serialize(
                 else
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
-                            "Error serializing bitset bitfield because not found on DynamicData");
+                            "Error serializing bitset bitfield because it is not found on DynamicData");
                 }
 
                 ++index;
@@ -7018,7 +7025,7 @@ void DynamicDataImpl::serialize(
                 else
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES,
-                            "Error serializing structure member because not found on DynamicData");
+                            "Error serializing structure member because it is not found on DynamicData");
                 }
             }
 

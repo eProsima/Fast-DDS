@@ -47,7 +47,6 @@ target_include_directories(TimedEventTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(TimedEventTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${CMAKE_DL_LIBS}

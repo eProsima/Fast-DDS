@@ -36,6 +36,7 @@
 #include <xmlparser/XMLProfileManager.h>
 #include <xmlparser/XMLTree.h>
 #include "../fastdds/xtypes/dynamic_types/AnnotationDescriptorImpl.hpp"
+#include "../fastdds/xtypes/dynamic_types/DynamicTypeImpl.hpp"
 #include "../fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp"
 #include "../fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp"
 
@@ -433,7 +434,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
             if (boundStr != nullptr)
             {
-                bound = std::stoul(boundStr);
+                bound = static_cast<uint32_t>(std::stoul(boundStr));
             }
             value_type = getDiscriminatorTypeBuilder(type, bound);
         }
@@ -522,7 +523,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
 
         if (nullptr != member_name)
         {
-            bitset_descriptor->bound().push_back(std::stoul(bit_bound));
+            bitset_descriptor->bound().push_back(static_cast<uint32_t>(std::stoul(bit_bound)));
         }
     }
     //}}}
@@ -532,7 +533,8 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     {
         DynamicType::_ref_type parent_type;
         XMLProfileManager::getDynamicTypeByName(parent_type, baseType);
-        if (parent_type && (TK_BITSET == parent_type->get_kind() || TK_ALIAS == parent_type->get_kind()))
+        if (parent_type && (TK_BITSET == parent_type->get_kind() ||
+                TK_BITSET == traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
         {
             bitset_descriptor->base_type(parent_type);
         }
@@ -611,7 +613,7 @@ XMLP_ret XMLParser::parseXMLBitfieldDynamicType(
 
     try
     {
-        size = std::stoul(bit_bound);
+        size = static_cast<uint32_t>(std::stoul(bit_bound));
     }
     catch (...)
     {
@@ -875,7 +877,9 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     {
         DynamicType::_ref_type parent_type;
         XMLProfileManager::getDynamicTypeByName(parent_type, baseType);
-        if (parent_type && (TK_STRUCTURE == parent_type->get_kind() || TK_ALIAS == parent_type->get_kind()))
+        
+        if (parent_type && (TK_STRUCTURE == parent_type->get_kind() ||
+                TK_STRUCTURE == traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
         {
             structure_descriptor->base_type(parent_type);
         }
@@ -1048,7 +1052,7 @@ static bool dimensionsToLabels(
         }
         else
         {
-            labels.push_back(std::stoul(item.c_str()));
+            labels.push_back(static_cast<int32_t>(std::stol(item.c_str())));
         }
     }
 
@@ -1137,7 +1141,7 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         uint32_t length {0};
         try
         {
-            length = static_cast<uint32_t>(std::stoi(memberSequence));
+            length = static_cast<uint32_t>(std::stoul(memberSequence));
         }
         catch (const std::exception&)
         {
@@ -1217,7 +1221,7 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
         uint32_t length {0};
         try
         {
-            length = static_cast<uint32_t>(std::stoi(lengthStr));
+            length = static_cast<uint32_t>(std::stoul(lengthStr));
         }
         catch (const std::exception&)
         {
@@ -1474,7 +1478,7 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (nullptr != boundStr)
         {
-            bound = std::stoul(boundStr);
+            bound = static_cast<uint32_t>(std::stoul(boundStr));
         }
 
         DynamicTypeBuilder::_ref_type string_builder = factory->create_string_type(bound);
@@ -1499,7 +1503,7 @@ DynamicType::_ref_type XMLParser:: parseXMLMemberDynamicType(
 
         if (nullptr != boundStr)
         {
-            bound = std::stoul(boundStr);
+            bound = static_cast<uint32_t>(std::stoul(boundStr));
         }
 
         DynamicTypeBuilder::_ref_type wstring_builder = factory->create_wstring_type(bound);

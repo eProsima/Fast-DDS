@@ -160,9 +160,8 @@ bool DynamicTypeImpl::equals(
         ret_value &= annotation_.size() == impl->annotation_.size();
         if (ret_value)
         {
-            for (size_t count {0}; ret_value && count < annotation_.size(); ++count)
+            for (auto& annotation : annotation_)
             {
-                auto& annotation = annotation_.at(count);
                 ret_value &= impl->annotation_.end() != std::find_if(impl->annotation_.begin(), impl->annotation_.end(),
                                 [&annotation](AnnotationDescriptorImpl& a)
                                 {
@@ -203,9 +202,8 @@ bool DynamicTypeImpl::equals(
         ret_value &= verbatim_.size() == impl->verbatim_.size();
         if (ret_value)
         {
-            for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
+            for (auto& verbatim : verbatim_)
             {
-                auto& verbatim = verbatim_.at(count);
                 ret_value &= impl->verbatim_.end() != std::find_if(impl->verbatim_.begin(), impl->verbatim_.end(),
                                 [&verbatim](VerbatimTextDescriptorImpl& v)
                                 {

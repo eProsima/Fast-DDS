@@ -160,7 +160,7 @@ public:
         return index_;
     }
 
-    uint32_t& index() noexcept
+    uint32_t& index() noexcept override
     {
         return index_;
     }

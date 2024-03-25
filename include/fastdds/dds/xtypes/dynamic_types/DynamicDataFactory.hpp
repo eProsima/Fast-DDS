@@ -42,7 +42,7 @@ public:
      * Resets the singleton reference.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK is always returned.
-     * @todo Improve this documentation.
+     * @retval RETCODE_BAD_PARAMETER if singleton reference is currently nil.
      */
     FASTDDS_EXPORTED_API static ReturnCode_t delete_instance();
 

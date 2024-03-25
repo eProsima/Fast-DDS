@@ -428,7 +428,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
             if (mid == new_member_id)
             {
-                EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because is equal than MemberId(" <<
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Inconsistency in the new MemberId because it is equal to MemberId(" <<
                         mid << ")");
                 return RETCODE_BAD_PARAMETER;
             }
@@ -626,7 +626,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Expected more members in BITSET according to the size of bounds.");
         }
 
-        // In case of ENUM, it must have at least one literal
+        // In case of ENUM and BITSET, it must have at least one member
         preconditions &= (TK_ENUM != type_descriptor_.kind() && TK_BITSET != type_descriptor_.kind())
                 || 0 < members_.size();
         if (!preconditions)
@@ -645,7 +645,7 @@ traits<DynamicType>::ref_type DynamicTypeBuilderImpl::build() noexcept
             ret_val->member_ = member_;
             ret_val->member_by_name_ = member_by_name_;
             ret_val->members_ = members_;
-            ret_val->default_discriminator_value_ = default_value_;
+            ret_val->default_value_ = default_value_;
             ret_val->default_union_member_ = default_union_member_;
         }
     }

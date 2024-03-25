@@ -96,9 +96,9 @@ public:
         return type_descriptor_;
     }
 
-    int32_t default_discriminator_value() const noexcept
+    int32_t default_value() const noexcept
     {
-        return default_discriminator_value_;
+        return default_value_;
     }
 
     MemberId default_union_member() const noexcept
@@ -114,20 +114,29 @@ protected:
 
 private:
 
+    //! Contains the annotations applied by the user.
     std::vector<AnnotationDescriptorImpl> annotation_;
 
-    int32_t default_discriminator_value_ {0};
+    //! Contains the default value of discriminator (TK_UNION) or next literal (TK_ENUM).
+    //! This is calculated while the type is being built.
+    int32_t default_value_ {0};
 
+    //! Points to the default union member.
     MemberId default_union_member_ {MEMBER_ID_INVALID};
 
+    //! Collection of all members sorted by MemberId.
     DynamicTypeMembersById member_;
 
+    //! Collection of all members sorted by name.
     DynamicTypeMembersByName member_by_name_;
 
+    //! Collection of all members sorted by index.
     std::vector<traits<DynamicTypeMemberImpl>::ref_type> members_;
 
+    //! Copy of the TypeDescriptor provided by the user.
     TypeDescriptorImpl type_descriptor_;
 
+    //! Contains the verbatim builtin annotation applied by the user.
     std::vector<VerbatimTextDescriptorImpl> verbatim_;
 };
 

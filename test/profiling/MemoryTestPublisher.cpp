@@ -95,7 +95,7 @@ bool MemoryTestPublisher::init(
         struct_type_builder->add_member(member_descriptor);
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->create_sequence_type(factory->get_primitive_type(eprosima::fastdds::dds::
-                        TK_BYTE), 0)->build());
+                        TK_BYTE), static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
         member_descriptor->name("data");
         struct_type_builder->add_member(member_descriptor);
 

@@ -43,7 +43,6 @@ target_include_directories(ConditionTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(ConditionTests
-    fastcdr
     fastdds::log
     GTest::gtest
     )
@@ -69,7 +68,6 @@ target_include_directories(ConditionNotifierTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(ConditionNotifierTests
-    fastcdr
     fastdds::log
     GTest::gtest
     GTest::gmock
@@ -98,7 +96,6 @@ target_include_directories(StatusConditionImplTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(StatusConditionImplTests
-    fastcdr
     fastdds::log
     GTest::gtest
     GTest::gmock
@@ -126,7 +123,6 @@ target_include_directories(WaitSetImplTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     )
 target_link_libraries(WaitSetImplTests
-    fastcdr
     fastdds::log
     GTest::gtest
     GTest::gmock

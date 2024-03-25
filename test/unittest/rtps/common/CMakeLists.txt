@@ -66,7 +66,6 @@ target_include_directories(GuidUtilsTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
 target_link_libraries(GuidUtilsTests
     GTest::gtest
-    fastcdr
     fastdds::log
     )
 if(QNX)
@@ -97,7 +96,6 @@ target_include_directories(PortParametersTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(PortParametersTests
     GTest::gtest
-    fastcdr
     fastdds::log
     )
 gtest_discover_tests(PortParametersTests PROPERTIES LABELS "NoMemoryCheck")

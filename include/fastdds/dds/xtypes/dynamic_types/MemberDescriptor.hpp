@@ -129,6 +129,12 @@ public:
      * Returns the order of definition of the member.
      * @return Order of definition.
      */
+    virtual uint32_t& index() = 0;
+
+    /*!
+     * Returns the order of definition of the member.
+     * @return Order of definition.
+     */
     virtual uint32_t index() const = 0;
 
     /*!

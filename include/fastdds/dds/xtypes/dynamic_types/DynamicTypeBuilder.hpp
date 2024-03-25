@@ -148,6 +148,7 @@ public:
      * @return ReturnCode_t
      * @retval RETCODE_OK when the member was created successfully.
      * @retval RETCODE_BAD_PARAMETER when there is an inconsistency.
+     * @retval RETCODE_PRECONDITION_NOT_MET when the type does not have members.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t add_member(
             traits<MemberDescriptor>::ref_type descriptor) = 0;

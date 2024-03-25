@@ -494,7 +494,7 @@ private:
         {
             ret_value = true;
 
-            if (enclosing_type_->default_discriminator_value() != static_cast<int32_t>(value))
+            if (enclosing_type_->default_value() != static_cast<int32_t>(value))
             {
                 for (auto member : enclosing_type_->get_all_members_by_index())
                 {

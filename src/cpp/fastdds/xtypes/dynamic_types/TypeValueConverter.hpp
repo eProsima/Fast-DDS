@@ -57,22 +57,22 @@ template <> inline converter::operator TypeForKind<TK_UINT16>()
 
 template <> inline converter::operator TypeForKind<TK_INT32>()
 {
-    return std::stol(x);
+    return static_cast<int32_t>(std::stol(x));
 }
 
 template <> inline converter::operator TypeForKind<TK_UINT32>()
 {
-    return std::stoul(x);
+    return static_cast<uint32_t>(std::stoul(x));
 }
 
 template <> inline converter::operator TypeForKind<TK_INT64>()
 {
-    return std::stoll(x);
+    return static_cast<int64_t>(std::stoll(x));
 }
 
 template <> inline converter::operator TypeForKind<TK_UINT64>()
 {
-    return std::stoull(x);
+    return static_cast<uint64_t>(std::stoull(x));
 }
 
 template <> inline converter::operator TypeForKind<TK_FLOAT32>()

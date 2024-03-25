@@ -93,7 +93,6 @@ target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LocatorTests
-    fastcdr
     fastdds::log
     GTest::gtest
     ${MOCKS}
@@ -125,7 +124,6 @@ add_executable(SystemInfoTests ${SYSTEMINFOTESTS_SOURCE})
 target_include_directories(SystemInfoTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
 target_link_libraries(SystemInfoTests
-    fastcdr
     fastdds::log
     GTest::gtest
     )
