@@ -534,7 +534,8 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         DynamicType::_ref_type parent_type;
         XMLProfileManager::getDynamicTypeByName(parent_type, baseType);
         if (parent_type && (TK_BITSET == parent_type->get_kind() ||
-                TK_BITSET == traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
+                TK_BITSET ==
+                traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
         {
             bitset_descriptor->base_type(parent_type);
         }
@@ -877,9 +878,10 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     {
         DynamicType::_ref_type parent_type;
         XMLProfileManager::getDynamicTypeByName(parent_type, baseType);
-        
+
         if (parent_type && (TK_STRUCTURE == parent_type->get_kind() ||
-                TK_STRUCTURE == traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
+                TK_STRUCTURE ==
+                traits<DynamicType>::narrow<DynamicTypeImpl>(parent_type)->resolve_alias_enclosed_type()->get_kind()))
         {
             structure_descriptor->base_type(parent_type);
         }

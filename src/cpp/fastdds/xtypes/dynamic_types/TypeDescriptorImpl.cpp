@@ -243,8 +243,8 @@ bool TypeDescriptorImpl::is_consistent() noexcept
             // boolean, byte, char8, char16, int8, uint8, int16, uint16, int32, uint32, enum, alias
             TypeKind discriminator_kind =
                     traits<DynamicType>::narrow<DynamicTypeImpl>(discriminator_type_)->resolve_alias_enclosed_type()
-                    ->get_kind();
-    
+                            ->get_kind();
+
             switch (discriminator_kind)
             {
                 case TK_BOOLEAN:
