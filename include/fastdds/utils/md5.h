@@ -37,7 +37,6 @@
 #include <iostream>
 
 #include <fastdds/fastdds_dll.hpp>
-
 /**
  * Class MD5, for calculating MD5 hashes of strings or byte arrays
  * it is not meant to be fast or secure
@@ -99,7 +98,6 @@ private:
     uint1 buffer[blocksize]; // bytes that didn't fit in last 64 byte chunk
     uint4 count[2]; // 64bit counter for number of bits (lo, hi)
     uint4 state[4]; // digest so far
-
 
     // low level logic operations
     static inline uint4 F(

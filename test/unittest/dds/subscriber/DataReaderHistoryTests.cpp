@@ -2,7 +2,7 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
-#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastdds/utils/TimedMutex.hpp>
 #include <fastdds/rtps/reader/StatelessReader.h>
 
 

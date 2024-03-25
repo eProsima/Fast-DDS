@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 #include "FixedSized.h"
 
@@ -140,7 +140,7 @@ public:
     eProsima_user_DllExport inline bool is_plain(
         eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
-        if(data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
+        if (data_representation == eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)
         {
             return is_plain_xcdrv2_impl();
         }

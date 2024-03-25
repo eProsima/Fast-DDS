@@ -19,26 +19,19 @@
 
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
-
-#include <fastrtps/attributes/TopicAttributes.h>
-
-#include <fastrtps/utils/StringMatching.h>
-
 #include <fastrtps/types/TypeObjectFactory.h>
-
-#include <fastdds/core/policy/ParameterList.hpp>
+#include <fastrtps/utils/StringMatching.h>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>

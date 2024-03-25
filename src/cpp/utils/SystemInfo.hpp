@@ -27,9 +27,8 @@
 #include <string>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-
+#include <fastdds/utils/IPFinder.h>
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/utils/IPFinder.h>
 #include <utils/Host.hpp>
 
 #if defined(_WIN32) || defined(__unix__)

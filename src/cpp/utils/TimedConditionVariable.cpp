@@ -16,22 +16,22 @@
  * @file TimedConditionVariable.cpp
  */
 
-#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastdds/utils/TimedConditionVariable.hpp>
 
 #if defined(_WIN32)
 #include <windows.h>
 /*
-#define MS_PER_SEC      1000ULL     // MS = milliseconds
-#define US_PER_MS       1000ULL     // US = microseconds
-#define HNS_PER_US      10ULL       // HNS = hundred-nanoseconds (e.g., 1 hns = 100 ns)
-#define NS_PER_US       1000ULL
+ #define MS_PER_SEC      1000ULL     // MS = milliseconds
+ #define US_PER_MS       1000ULL     // US = microseconds
+ #define HNS_PER_US      10ULL       // HNS = hundred-nanoseconds (e.g., 1 hns = 100 ns)
+ #define NS_PER_US       1000ULL
 
-#define HNS_PER_SEC     (MS_PER_SEC * US_PER_MS * HNS_PER_US)
-#define NS_PER_HNS      (100ULL)    // NS = nanoseconds
-#define NS_PER_SEC      (MS_PER_SEC * US_PER_MS * NS_PER_US)
+ #define HNS_PER_SEC     (MS_PER_SEC * US_PER_MS * HNS_PER_US)
+ #define NS_PER_HNS      (100ULL)    // NS = nanoseconds
+ #define NS_PER_SEC      (MS_PER_SEC * US_PER_MS * NS_PER_US)
 
-int clock_gettime(int, struct timespec* tv)
-{
+   int clock_gettime(int, struct timespec* tv)
+   {
     FILETIME ft;
     ULARGE_INTEGER hnsTime;
 
@@ -48,32 +48,40 @@ int clock_gettime(int, struct timespec* tv)
     tv->tv_sec = (long)(hnsTime.QuadPart / HNS_PER_SEC);
 
     return 0;
-}
-*/
+   }
+ */
 #define exp7           10000000i64     //1E+7     //C-file part
 #define exp9         1000000000i64     //1E+9
 #define w2ux 116444736000000000i64     //1.jan1601 to 1.jan1970
-void unix_time(struct timespec* spec)
+void unix_time(
+        struct timespec* spec)
 {
-    __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)& wintime);
+    __int64 wintime; GetSystemTimeAsFileTime((FILETIME*)&wintime);
     wintime -= w2ux;  spec->tv_sec = wintime / exp7;
     spec->tv_nsec = wintime % exp7 * 100;
 }
-int clock_gettime(int, timespec* spec)
+
+int clock_gettime(
+        int,
+        timespec* spec)
 {
-    static  struct timespec startspec; static double ticks2nano;
+    static struct timespec startspec; static double ticks2nano;
     static __int64 startticks, tps = 0;    __int64 tmp, curticks;
-    QueryPerformanceFrequency((LARGE_INTEGER*)& tmp); //some strange system can
-    if (tps != tmp) {
+    QueryPerformanceFrequency((LARGE_INTEGER*)&tmp);  //some strange system can
+    if (tps != tmp)
+    {
         tps = tmp; //init ~~ONCE         //possibly change freq ?
-        QueryPerformanceCounter((LARGE_INTEGER*)& startticks);
+        QueryPerformanceCounter((LARGE_INTEGER*)&startticks);
         unix_time(&startspec); ticks2nano = (double)exp9 / tps;
     }
-    QueryPerformanceCounter((LARGE_INTEGER*)& curticks); curticks -= startticks;
+    QueryPerformanceCounter((LARGE_INTEGER*)&curticks); curticks -= startticks;
     spec->tv_sec = startspec.tv_sec + (curticks / tps);
     spec->tv_nsec = (long)(startspec.tv_nsec + (double)(curticks % tps) * ticks2nano);
-    if (!(spec->tv_nsec < exp9)) { spec->tv_sec++; spec->tv_nsec -= exp9; }
+    if (!(spec->tv_nsec < exp9))
+    {
+        spec->tv_sec++; spec->tv_nsec -= exp9;
+    }
     return 0;
 }
 
-#endif
+#endif // if defined(_WIN32)

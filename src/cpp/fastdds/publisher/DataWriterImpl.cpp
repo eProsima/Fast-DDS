@@ -34,6 +34,7 @@
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 #include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
@@ -41,7 +42,6 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastrtps/attributes/TopicAttributes.h>
 #include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>

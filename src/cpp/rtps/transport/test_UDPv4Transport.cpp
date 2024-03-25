@@ -18,7 +18,7 @@
 #include <functional>
 
 #include <asio.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 using namespace std;
 

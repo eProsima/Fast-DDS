@@ -24,7 +24,7 @@
 #include <fastdds/rtps/attributes/EndpointAttributes.h>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/utils/collections/ResourceLimitedContainerConfig.hpp>
+#include <fastdds/utils/collections/ResourceLimitedContainerConfig.hpp>
 
 namespace eprosima {
 namespace fastrtps {

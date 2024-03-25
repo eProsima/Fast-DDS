@@ -27,7 +27,7 @@
 
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/utils/IPLocator.h>
 
 #include <xmlparser/XMLParser.h>
 #include <xmlparser/XMLProfileManager.h>
