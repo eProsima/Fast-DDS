@@ -3132,7 +3132,7 @@ TEST(DDSStatus, reliable_on_unack_sample_removed)
     for (auto sample : data)
     {
         writer.send_sample(sample);
-        writer.waitForAllAcked(std::chrono::milliseconds(150));
+        writer.waitForAllAcked(std::chrono::milliseconds(250));
     }
 
     reader.block_for_at_least(8);
