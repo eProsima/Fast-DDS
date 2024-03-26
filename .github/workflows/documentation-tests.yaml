@@ -9,8 +9,6 @@ on:
         default: '2.10.x'
 
   pull_request:
-    branches:
-      - '2.10.x'
     paths-ignore:
       - '**.md'
       - '**.txt'
