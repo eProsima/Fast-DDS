@@ -118,6 +118,8 @@ public:
     //!
     ProxyHashTable<WriterProxyData>* m_writers = nullptr;
 
+    SampleIdentity m_sample_identity;
+
     /**
      * Update the data.
      * @param pdata Object to copy the data from
