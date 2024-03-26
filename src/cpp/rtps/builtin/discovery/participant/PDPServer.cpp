@@ -1593,15 +1593,15 @@ bool PDPServer::pending_ack()
     return ret;
 }
 
-std::set<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
+std::vector<fastrtps::rtps::GuidPrefix_t> PDPServer::servers_prefixes()
 {
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
-    std::set<GuidPrefix_t> servers;
+    std::vector<GuidPrefix_t> servers;
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
-        servers.insert(it.guidPrefix);
+        servers.push_back(it.guidPrefix);
     }
     return servers;
 }
