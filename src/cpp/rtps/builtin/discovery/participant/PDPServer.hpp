@@ -286,7 +286,7 @@ protected:
             nlohmann::json& ddb_json,
             std::vector<nlohmann::json>& new_changes);
 
-    std::set<fastdds::rtps::GuidPrefix_t> servers_prefixes();
+    std::vector<fastdds::rtps::GuidPrefix_t> servers_prefixes();
 
     // General file name for the prefix of every backup file
     std::ostringstream get_persistence_file_name_() const;

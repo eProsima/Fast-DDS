@@ -118,7 +118,7 @@ public:
 
     DiscoveryDataBase(
             fastdds::rtps::GuidPrefix_t server_guid_prefix,
-            std::set<fastdds::rtps::GuidPrefix_t> servers);
+            std::vector<fastdds::rtps::GuidPrefix_t> servers);
 
     ~DiscoveryDataBase();
 
@@ -568,7 +568,7 @@ protected:
     std::atomic<bool> server_acked_by_all_;
 
     //! List of GUID prefixes of the remote servers
-    std::set<fastdds::rtps::GuidPrefix_t> servers_;
+    std::vector<fastdds::rtps::GuidPrefix_t> servers_;
 
     // The virtual topic associated with virtual writers and readers
     const std::string virtual_topic_ = "eprosima_server_virtual_topic";
