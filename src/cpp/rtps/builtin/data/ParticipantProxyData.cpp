@@ -161,7 +161,7 @@ uint32_t ParticipantProxyData::get_serialized_size(
     ret_val += 4 + PARAMETER_GUID_LENGTH;
 
     // PID_NETWORK_CONFIGURATION_SET
-    ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
+    // ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
     // PID_METATRAFFIC_MULTICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * metatraffic_locators.multicast.size());
@@ -268,12 +268,14 @@ bool ParticipantProxyData::writeToCDRMessage(
         }
     }
     {
+        /*
         ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
         p.netconfigSet = m_networkConfiguration;
         if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
+        */
     }
     for (const Locator_t& it : metatraffic_locators.multicast)
     {
@@ -466,6 +468,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_key = p.guid;
                         break;
                     }
+                    /*
                     case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
                     {
                         VendorId_t local_vendor_id = source_vendor_id;
@@ -492,6 +495,7 @@ bool ParticipantProxyData::readFromCDRMessage(
                         m_networkConfiguration = p.netconfigSet;
                         break;
                     }
+                    */
                     case fastdds::dds::PID_METATRAFFIC_MULTICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
