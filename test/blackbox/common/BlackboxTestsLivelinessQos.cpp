@@ -26,6 +26,8 @@
 #include <gtest/gtest.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <rtps/transport/test_UDPv4Transport.h>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -1944,6 +1946,56 @@ TEST(LivelinessTests, Detect_Deadlock_ManualByParticipant_Intraprocess)
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     // Test failure is due to timeout
+}
+
+// Regression test of Refs #20584, github issue #4373
+TEST(LivelinessTests, Reader_Successfully_Asserts_Liveliness_on_a_Disconnected_Writer)
+{
+    // Create a TestTransport to simulate a network shutdown (Ctrl+C)
+    auto testTransport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
+    // Create two writer participants
+    PubSubWriter<HelloWorldPubSubType> writer_1(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer_2(TEST_TOPIC_NAME + "2");
+
+    // Create a reader participant containing 2 subscribers and readers
+    PubSubParticipant<HelloWorldPubSubType> reader(0, 2, 0, 2);
+
+    reader.init_participant();
+    // Define the reader's lease duration in 1.6 secs
+    reader.sub_liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 600000000));
+
+    // Create Subscribers and readers, one for each writer
+    reader.sub_topic_name(TEST_TOPIC_NAME);
+    reader.init_subscriber(0);
+    reader.sub_topic_name(TEST_TOPIC_NAME + "2");
+    reader.init_subscriber(1);
+
+    // Create writers
+    writer_1.disable_builtin_transport()
+            .lease_duration(c_TimeInfinite, 1)
+            .add_user_transport_to_pparams(testTransport)
+            .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
+            .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 500000000))
+            .init();
+
+    writer_2.lease_duration(c_TimeInfinite, 1)
+            .liveliness_lease_duration(eprosima::fastrtps::Time_t(1, 0))
+            .liveliness_kind(eprosima::fastdds::dds::AUTOMATIC_LIVELINESS_QOS)
+            .liveliness_announcement_period(eprosima::fastrtps::Time_t(0, 500000000))
+            .init();
+
+    // Wait for discovery to occur. Liveliness should be recovered twice,
+    // one per matched reader.
+    reader.sub_wait_liveliness_recovered(2);
+
+    // Simulate a Ctrl+C in one of the writers
+    eprosima::fastdds::rtps::test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork = true;
+
+    // After 1.6 secs, we should receive a on_liveliness_changed(status lost)
+    // in the TEST_TOPIC_NAME reader that was matched with the disconnected writer_1
+    ASSERT_EQ(reader.sub_wait_liveliness_lost_for(1, std::chrono::seconds(4)), 1u);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
