@@ -1337,7 +1337,6 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
     // Create a TCP Server transport
     using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
     using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
-    using TLSHSRole = TCPTransportDescriptor::TLSConfig::TLSHandShakeRole;
     TCPv4TransportDescriptor senderDescriptor;
     senderDescriptor.add_listener_port(port);
     senderDescriptor.apply_security = true;
