@@ -47,12 +47,19 @@ endif()
 
 # Filter pksc11 related tests if library is not available
 if(NOT LibP11_FOUND)
-    set(pkcs_filter "-*pkcs*")
+    set(pkcs_filter "*pkcs*")
 endif() # LibP11_FOUND
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(dns_filter "-*ServerClientEnvironmentSetUpDNS*")
+    set(dns_filter "*ServerClientEnvironmentSetUpDNS*")
 endif()
+
+string(JOIN ":" BLACKBOX_HIGH_LEVEL_IGNORED_TESTS ${pkcs_filter} ${dns_filter})
+if(NOT BLACKBOX_HIGH_LEVEL_IGNORED_TESTS STREQUAL "")
+	message(STATUS "Ignoring tests '${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}'")
+    string(PREPEND BLACKBOX_HIGH_LEVEL_IGNORED_TESTS "-")
+endif()
+message(STATUS "BLACKBOX_HIGH_LEVEL_IGNORED_TESTS set to '${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}'")
 
 file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
@@ -100,7 +107,7 @@ target_include_directories(BlackboxTests_RTPS PRIVATE
 target_link_libraries(BlackboxTests_RTPS fastrtps fastcdr foonathan_memory GTest::gtest)
 gtest_discover_tests(BlackboxTests_RTPS
     TEST_PREFIX "BlackboxTests_RTPS."
-    TEST_FILTER ${pkcs_filter}
+    TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
     NO_PRETTY_VALUES
     )
 
@@ -226,7 +233,7 @@ if(FASTRTPS_API_TESTS)
             ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
             ENVIRONMENT $<IF:$<BOOL:${OPENSSL_CONF}>,OPENSSL_CONF=${OPENSSL_CONF},>
         TEST_PREFIX "BlackboxTests_FastRTPS."
-        TEST_FILTER ${pkcs_filter} ${dns_filter}
+        TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
         NO_PRETTY_VALUES
         )
 endif(FASTRTPS_API_TESTS)
@@ -281,7 +288,7 @@ if(FASTDDS_PIM_API_TESTS)
             ENVIRONMENT "MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
             ENVIRONMENT $<IF:$<BOOL:${OPENSSL_CONF}>,OPENSSL_CONF=${OPENSSL_CONF},>
         TEST_PREFIX "BlackboxTests_DDS_PIM."
-        TEST_FILTER ${pkcs_filter} ${dns_filter}
+        TEST_FILTER ${BLACKBOX_HIGH_LEVEL_IGNORED_TESTS}
         NO_PRETTY_VALUES
         )
 endif(FASTDDS_PIM_API_TESTS)
