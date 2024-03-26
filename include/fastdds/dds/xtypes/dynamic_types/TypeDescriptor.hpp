@@ -215,7 +215,7 @@ public:
 
     /*!
      * Mofifies the is_nested property.
-     * @param[in] is_nested
+     * @param[in] is_nested Boolean value to be set.
      */
     virtual void is_nested(
             bool is_nested) = 0;

@@ -227,6 +227,9 @@ public:
      * @brief Register a remote TypeObject.
      *        This auxiliary method might register only the minimal TypeObject and TypeIdentifier or register both
      *        TypeObjects constructing the minimal from the complete TypeObject information.
+     *        TypeObject consistency is not checked in this method as the order of the dependencies received by the
+     *        TypeLookupService is not guaranteed.
+     *        The consistency is checked by the TypeLookupService after all denpendencies are registered
      *
      * @pre TypeIdentifier discriminator must match TypeObject discriminator.
      *      TypeIdentifier consistency is only checked in Debug build mode.
@@ -237,7 +240,6 @@ public:
      *                      RETCODE_PRECONDITION_NOT_MET if the discriminators differ.
      *                      RETCODE_PRECONDITION_NOT_MET if the TypeIdentifier is not consistent with the given
      *                      TypeObject.
-     *                      RETCODE_PRECONDITION_NOT_MET if the given TypeObject is not consistent.
      */
     ReturnCode_t register_type_object(
             const TypeIdentifier& type_identifier,

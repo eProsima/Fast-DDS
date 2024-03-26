@@ -165,7 +165,7 @@ public:
 
     /*!
      * Apply the given annotation to a member of this type.
-     * @param[in] member_id the id of the member.
+     * @param[in] member_id Member identifier.
      * @param[in] descriptor @ref AnnotationDescriptor reference to be applied.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the annotation was applied successful.

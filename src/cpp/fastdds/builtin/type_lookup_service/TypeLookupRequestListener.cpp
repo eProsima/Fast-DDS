@@ -239,13 +239,15 @@ void TypeLookupRequestListener::check_get_types_request(
     else if (RETCODE_NO_DATA == type_result)
     {
         // Log error for type not found and reply with appropriate exception
-        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not found in the registry.");
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "Requested TypeIdentifier is not found in the registry.");
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
     }
     else if (RETCODE_PRECONDITION_NOT_MET == type_result)
     {
         // Log error for invalid argument and reply with appropriate exception
-        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not a direct hash.");
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "Requested TypeIdentifier is not a direct hash.");
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
     }
 }
@@ -265,7 +267,7 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
             auto requests_it = requests_with_continuation_.find(request.type_ids());
             if (requests_it != requests_with_continuation_.end())
             {
-                // Get the dependencies without chechking the registry
+                // Get the dependencies without checking the registry
                 type_dependencies = requests_it->second;
                 type_dependencies_result = RETCODE_OK;
             }
@@ -273,7 +275,7 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
             {
                 // If the the received request is not found, log error and answer with exception
                 EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
-                        "Error processing ongoing type dependencies.");
+                        "Error processing ongoing type dependencies request.");
                 answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
             }
         }
@@ -303,13 +305,15 @@ void TypeLookupRequestListener::check_get_type_dependencies_request(
     else if (RETCODE_NO_DATA == type_dependencies_result)
     {
         // Log error for type not found and reply with appropriate exception
-        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not found in the registry.");
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "Requested TypeIdentifier is not found in the registry.");
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_UNKNOWN_EXCEPTION);
     }
     else if (RETCODE_BAD_PARAMETER == type_dependencies_result)
     {
         // Log error for invalid argument and reply with appropriate exception
-        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER, "TypeIdentifier is not a direct hash.");
+        EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REQUEST_LISTENER,
+                "Requested TypeIdentifier is not a direct hash.");
         answer_request(request_id, rpc::RemoteExceptionCode_t::REMOTE_EX_INVALID_ARGUMENT);
     }
 }

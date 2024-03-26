@@ -584,6 +584,14 @@ bool EDP::valid_matching(
             return false;
         }
     }
+    else
+    {
+        if (wdata->typeName() != rdata->typeName())
+        {
+            reason.set(MatchingFailureMask::inconsistent_topic);
+            return false;
+        }
+    }
 
     if (wdata->topicKind() != rdata->topicKind())
     {
