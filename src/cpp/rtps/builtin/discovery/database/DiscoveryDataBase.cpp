@@ -2640,6 +2640,42 @@ bool DiscoveryDataBase::is_participant_local(
     return false; // In case it does not exist
 }
 
+void DiscoveryDataBase::add_server_GUID(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& server_guid_prefix)
+{
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+
+    for (auto& prefix : servers_)
+    {
+        if (prefix == eprosima::fastrtps::rtps::c_GuidPrefix_Unknown)
+        {
+            // Update one of the unknown servers with the real GUID
+            prefix = server_guid_prefix;
+            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE,  "Server GUID [" << server_guid_prefix << "] correctly updated.");
+            return;
+        }
+    }
+    EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Failed to add [" << server_guid_prefix << "] to the database server list.");
+}
+
+void DiscoveryDataBase::remove_server_GUID(
+        const eprosima::fastrtps::rtps::GuidPrefix_t& server_guid_prefix)
+{
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
+
+    for (auto& prefix : servers_)
+    {
+        if (prefix == server_guid_prefix)
+        {
+            // Update the real GUID to Unknown, locator will be used to match again
+            prefix = eprosima::fastrtps::rtps::c_GuidPrefix_Unknown;
+            EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Server GUID [" << server_guid_prefix << "] correctly removed.");
+            return;
+        }
+    }
+    EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Trying to remove server GUID [" << server_guid_prefix << "] that is not in the database server list.");
+}
+
 } // namespace ddb
 } // namespace rtps
 } // namespace fastdds
