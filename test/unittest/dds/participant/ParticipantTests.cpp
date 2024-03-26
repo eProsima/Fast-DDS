@@ -13,11 +13,11 @@
 // limitations under the License.
 
 #include <chrono>
+#include <cstdlib>
 #include <fstream>
 #include <future>
 #include <memory>
 #include <sstream>
-#include <stdlib.h>
 #include <string>
 #include <thread>
 
@@ -65,8 +65,8 @@
 #include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/attributes/SubscriberAttributes.hpp>
 
-#include "../../logging/mock/MockConsumer.h"
 #include "../../common/env_var_utils.hpp"
+#include "../../logging/mock/MockConsumer.h"
 
 #if defined(__cplusplus_winrt)
 #define GET_PID GetCurrentProcessId
@@ -586,6 +586,31 @@ TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfile)
 
     ASSERT_NE(default_env_participant, nullptr);
     ASSERT_EQ(default_env_participant->get_domain_id(), domain_id);
+    ASSERT_EQ(default_env_participant->get_listener(), nullptr);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                default_env_participant) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfileListener)
+{
+    uint32_t domain_id = 123u;          // This is the domain ID set in the default profile above
+
+    // set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_profile.xml"
+    eprosima::testing::set_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_profile.xml");
+
+    DomainParticipantListener* listener = new DomainParticipantListener();
+
+    //participant using the given profile
+    DomainParticipant* default_env_participant =
+            DomainParticipantFactory::get_instance()->create_participant_with_default_profile(listener,
+                    StatusMask::none());
+
+    // unset XML profile environment variable
+    eprosima::testing::clear_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE");
+
+    ASSERT_NE(default_env_participant, nullptr);
+    ASSERT_EQ(default_env_participant->get_domain_id(), domain_id);
+    ASSERT_EQ(default_env_participant->get_listener(), listener);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
                 default_env_participant) == ReturnCode_t::RETCODE_OK);
 }
@@ -599,6 +624,24 @@ TEST(ParticipantTests, CreateDomainParticipantWithoutDefaultProfile)
             DomainParticipantFactory::get_instance()->create_participant_with_default_profile();
     ASSERT_NE(default_participant, nullptr);
     ASSERT_EQ(default_participant->get_domain_id(), default_domain_id);
+    ASSERT_EQ(default_participant->get_listener(), nullptr);
+    ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
+                default_participant) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, CreateDomainParticipantWithoutDefaultProfileListener)
+{
+    uint32_t default_domain_id = 0u;    // This is the default domain ID
+
+    DomainParticipantListener* listener = new DomainParticipantListener();
+
+    //participant using default values
+    DomainParticipant* default_participant =
+            DomainParticipantFactory::get_instance()->create_participant_with_default_profile(listener,
+                    StatusMask::none());
+    ASSERT_NE(default_participant, nullptr);
+    ASSERT_EQ(default_participant->get_domain_id(), default_domain_id);
+    ASSERT_EQ(default_participant->get_listener(), listener);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
                 default_participant) == ReturnCode_t::RETCODE_OK);
 }
