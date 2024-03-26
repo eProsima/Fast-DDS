@@ -25,8 +25,8 @@ on:
         required: true
 
   pull_request:
-    branches:
-      - '2.6.x'
+    types:
+      - review_requested
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -38,9 +38,11 @@ concurrency:
 
 jobs:
   mac-ci:
+    if: ${{ (
+              !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+              !contains(github.event.pull_request.labels.*.name, 'conflicts')
+            ) }}
     uses: ./.github/workflows/reusable-mac-ci.yml
-    if: ${{ !(contains(github.event.pull_request.labels.*.name, 'skip-ci') ||
-              contains(github.event.pull_request.labels.*.name, 'conflicts')) }}
     with:
       label: ${{ inputs.label || 'mac-ci' }}
       colcon-args: ${{ inputs.colcon-args }}
