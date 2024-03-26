@@ -781,9 +781,9 @@ void sample_lost_test_init(
     // Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
     // other possible loss.
     constexpr uint32_t BUFFER_SIZE =
-        300ul * 1024ul // sample size
-        * 13ul         // number of samples
-        * 2ul;         // 2x to avoid any possible loss
+            300ul * 1024ul // sample size
+            * 13ul         // number of samples
+            * 2ul;         // 2x to avoid any possible loss
     reader.socket_buffer_size(BUFFER_SIZE);
     writer.socket_buffer_size(BUFFER_SIZE);
 
