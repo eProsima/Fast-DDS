@@ -284,6 +284,8 @@ protected:
 
 private:
 
+    using DataSharingPayloadPool::init_shared_memory;
+
     bool is_volatile_;              //< Whether the reader is volatile or not
     uint64_t next_payload_;         //< Index of the next history position to read
     SequenceNumber_t last_sn_;      //< Sequence number of the last read payload

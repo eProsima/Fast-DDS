@@ -66,6 +66,10 @@ public:
 
         uint32_t n_received;
         uint32_t n_matched;
+
+    private:
+
+        using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
     }
     m_listener;
 };

@@ -130,6 +130,10 @@ public:
         return true;
     }
 
+private:
+
+    using eprosima::fastdds::dds::TopicDataType::getSerializedSizeProvider;
+    using eprosima::fastdds::dds::TopicDataType::serialize;
 };
 
 class StatisticsDomainParticipantTests : public ::testing::Test

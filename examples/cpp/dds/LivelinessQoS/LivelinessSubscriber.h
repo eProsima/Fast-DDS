@@ -101,9 +101,15 @@ private:
 
     class PartListener : public eprosima::fastdds::dds::DomainParticipantListener
     {
+    public:
+
         virtual void on_participant_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
                 eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+
+    private:
+
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
     };
 
     PartListener part_listener_;
