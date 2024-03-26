@@ -29,19 +29,19 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-class FASTDDS_EXPORTED_API ReplierQos
+class ReplierQos
 {
 public:
 
     /**
      * @brief Constructor
      */
-    ReplierQos() = default;
+    FASTDDS_EXPORTED_API ReplierQos() = default;
 
     /**
      * @brief Equal comparison operator
      */
-    bool operator ==(
+    FASTDDS_EXPORTED_API bool operator ==(
             const ReplierQos& b) const
     {
         return (this->service_name == b.service_name) &&
