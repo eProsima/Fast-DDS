@@ -536,7 +536,8 @@ void PDPClient::assignRemoteEndpoints(
                             match_pdp_writer_nts_(svr);
                             match_pdp_reader_nts_(svr);
                         }
-                        EPROSIMA_LOG_INFO(RTPS_PDP, "Server [" << pdata->m_guid.guidPrefix << "] mathed and added to database.");
+                        EPROSIMA_LOG_INFO(RTPS_PDP,
+                                "Server [" << pdata->m_guid.guidPrefix << "] mathed and added to database.");
                     }
                 }
             }

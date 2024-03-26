@@ -558,8 +558,8 @@ protected:
      * @return true when locator lists are equivalent
      */
     bool data_matches_with_locatorlist(
-        const LocatorList_t& locators,
-        const ParticipantProxyData& participant_data);
+            const LocatorList_t& locators,
+            const ParticipantProxyData& participant_data);
 
     /**
      * Checks if a GUID prefix was generated randomly.
@@ -569,7 +569,7 @@ protected:
      * @return true when the GUID was genereted randomly
      */
     bool is_server_guid(
-        const GuidPrefix_t& guid_prefix);
+            const GuidPrefix_t& guid_prefix);
 
     /**
      * Gets the key of a participant proxy data.

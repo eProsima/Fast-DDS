@@ -350,11 +350,11 @@ public:
 
     //! Replace an unknown GUID with the real GUID of a server that has been discovered
     void add_server_GUID(
-        const fastrtps::rtps::GuidPrefix_t& server_guid_prefix);
+            const fastrtps::rtps::GuidPrefix_t& server_guid_prefix);
 
     //! Replace an unknown GUID with the real GUID of a server that has been discovered
     void remove_server_GUID(
-        const fastrtps::rtps::GuidPrefix_t& server_guid_prefix);
+            const fastrtps::rtps::GuidPrefix_t& server_guid_prefix);
 
     // Removes all the changes whose original sender was entity_guid_prefix from writer_history
     void remove_related_alive_from_history_nts(
