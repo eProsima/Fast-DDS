@@ -198,6 +198,7 @@ static void setup_transports_large_data(
 
         auto tcp_transport = create_tcpv4_transport(att);
         att.userTransports.push_back(tcp_transport);
+        att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
 
         Locator_t tcp_loc;
         tcp_loc.kind = LOCATOR_KIND_TCPv4;
@@ -234,6 +235,7 @@ static void setup_transports_large_datav6(
 
         auto tcp_transport = create_tcpv6_transport(att);
         att.userTransports.push_back(tcp_transport);
+        att.properties.properties().emplace_back("fastdds.tcp_transport.non_blocking_send", "true");
 
         Locator_t tcp_loc;
         tcp_loc.kind = LOCATOR_KIND_TCPv6;
