@@ -150,6 +150,8 @@ public:
 
 private:
 
+    using DomainParticipantListener::on_participant_discovery;
+
     std::promise<topic_type_names> is_worth_a_type_;
 };
 

@@ -39,5 +39,7 @@ public:
 
 private:
 
+    using BaseImpl::get_payload;
+
     uint32_t min_payload_size_;
 };

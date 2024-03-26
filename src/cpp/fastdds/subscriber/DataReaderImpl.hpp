@@ -446,6 +446,10 @@ protected:
                 const fastrtps::rtps::CacheChange_t* const change) override;
 
         DataReaderImpl* data_reader_;
+
+    private:
+
+        using fastrtps::rtps::ReaderListener::onReaderMatched;
     }
     reader_listener_;
 

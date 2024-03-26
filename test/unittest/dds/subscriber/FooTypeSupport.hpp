@@ -169,6 +169,9 @@ public:
         return true;
     }
 
+private:
+
+    using TopicDataType::is_plain;
 };
 
 } // namespace dds

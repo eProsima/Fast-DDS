@@ -85,6 +85,10 @@ public:
 
     MOCK_METHOD2(onParticipantAuthentication, void (RTPSParticipant*, const ParticipantAuthenticationInfo&));
 #endif // if HAVE_SECURITY
+
+private:
+
+    using RTPSParticipantListener::onParticipantDiscovery;
 };
 
 class RTPSParticipantImpl

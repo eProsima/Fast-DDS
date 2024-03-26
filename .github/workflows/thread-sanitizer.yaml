@@ -16,8 +16,6 @@ on:
         type: string
 
   pull_request:
-    branches:
-      - '2.10.x'
     paths-ignore:
       - '**.md'
       - '**.txt'

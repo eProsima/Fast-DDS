@@ -448,6 +448,8 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 
     private:
 
+        using DomainParticipantListener::on_participant_discovery;
+
         std::condition_variable* cv_;
 
         std::mutex* mtx_;
@@ -613,6 +615,9 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
             }
         }
 
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
     };
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();

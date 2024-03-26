@@ -221,6 +221,10 @@ private:
                 rtps::RTPSReader* reader,
                 const LivelinessChangedStatus& status) override;
         SubscriberImpl* mp_subscriberImpl;
+
+    private:
+
+        using rtps::ReaderListener::onReaderMatched;
     }
     m_readerListener;
 
