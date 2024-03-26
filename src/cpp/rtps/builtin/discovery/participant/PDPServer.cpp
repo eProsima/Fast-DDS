@@ -1202,8 +1202,6 @@ void PDPServer::update_remote_servers_list()
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
     bool set_logicals = handle_logical_ports_required();
-    const RemoteLocatorsAllocationAttributes& rlaa =
-            mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
@@ -1212,6 +1210,8 @@ void PDPServer::update_remote_servers_list()
         {
             if (set_logicals)
             {
+                const RemoteLocatorsAllocationAttributes& rlaa =
+                        mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
                 LocatorSelectorEntry entry(rlaa.max_unicast_locators, rlaa.max_multicast_locators);
                 entry.is_initial_peer_or_ds = true;
                 entry.fill_multicast(it.metatrafficMulticastLocatorList);
