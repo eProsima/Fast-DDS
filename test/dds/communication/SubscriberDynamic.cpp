@@ -191,6 +191,10 @@ public:
     }
 
 #endif // if HAVE_SECURITY
+
+private:
+
+    using DomainParticipantListener::on_participant_discovery;
 };
 
 class SubListener : public SubscriberListener

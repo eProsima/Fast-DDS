@@ -52,6 +52,8 @@ public:
 
 private:
 
+    using DomainParticipantListener::on_participant_discovery;
+
     unsigned int matched_ = 0;
     DomainParticipant* participant_ = nullptr;
     DiscoveryProtocol_t discovery_protocol_;

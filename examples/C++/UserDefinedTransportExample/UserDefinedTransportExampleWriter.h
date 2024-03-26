@@ -28,44 +28,50 @@
 #include <list>
 #include <stdio.h>
 
-class my_WriterListener: public eprosima::fastrtps::rtps::WriterListener
+class my_WriterListener : public eprosima::fastrtps::rtps::WriterListener
 {
-    public:
-        my_WriterListener();
-        ~my_WriterListener() override;
-        void onWriterMatched(
-                eprosima::fastrtps::rtps::RTPSWriter* writer,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
-        int n_matched;
+public:
+
+    my_WriterListener();
+    ~my_WriterListener() override;
+    void onWriterMatched(
+            eprosima::fastrtps::rtps::RTPSWriter* writer,
+            eprosima::fastrtps::rtps::MatchingInfo& info) override;
+    int n_matched;
+
+private:
+
+    using eprosima::fastrtps::rtps::WriterListener::onWriterMatched;
 };
 
 
 class UserDefinedTransportExampleWriter
 {
-    private:
+private:
 
-    my_WriterListener *my_listener;
+    my_WriterListener* my_listener;
     void waitformatching();
 
-    public:
+public:
 
-        UserDefinedTransportExampleWriter();
-        ~UserDefinedTransportExampleWriter();
+    UserDefinedTransportExampleWriter();
+    ~UserDefinedTransportExampleWriter();
 
-        void init();
-        bool isInitialized();
+    void init();
+    bool isInitialized();
     void sendData();
 
-    private:
-        eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-        eprosima::fastrtps::rtps::RTPSParticipant *my_participant;
-        eprosima::fastrtps::rtps::WriterAttributes wattr;
-        eprosima::fastrtps::rtps::RTPSWriter *my_writer;
-        eprosima::fastrtps::rtps::HistoryAttributes hattr;
-        eprosima::fastrtps::rtps::WriterHistory *my_history;
-        eprosima::fastrtps::TopicAttributes tattr;
-        eprosima::fastrtps::WriterQos wqos;
-        bool initialized_;
+private:
+
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
+    eprosima::fastrtps::rtps::RTPSParticipant* my_participant;
+    eprosima::fastrtps::rtps::WriterAttributes wattr;
+    eprosima::fastrtps::rtps::RTPSWriter* my_writer;
+    eprosima::fastrtps::rtps::HistoryAttributes hattr;
+    eprosima::fastrtps::rtps::WriterHistory* my_history;
+    eprosima::fastrtps::TopicAttributes tattr;
+    eprosima::fastrtps::WriterQos wqos;
+    bool initialized_;
 };
 
 

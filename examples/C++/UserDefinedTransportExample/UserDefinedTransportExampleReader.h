@@ -27,39 +27,49 @@
 #include <string>
 #include <list>
 
-class my_ReaderListener: public eprosima::fastrtps::rtps::ReaderListener
+class my_ReaderListener : public eprosima::fastrtps::rtps::ReaderListener
 {
-    public:
-        int n_received;
-        my_ReaderListener();
-        ~my_ReaderListener() override;
-        void onNewCacheChangeAdded(
-                eprosima::fastrtps::rtps::RTPSReader* reader,
-                const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
+public:
 
-        void onReaderMatched(
-                eprosima::fastrtps::rtps::RTPSReader* reader,
-                eprosima::fastrtps::rtps::MatchingInfo& info) override;
+    int n_received;
+    my_ReaderListener();
+    ~my_ReaderListener() override;
+    void onNewCacheChangeAdded(
+            eprosima::fastrtps::rtps::RTPSReader* reader,
+            const eprosima::fastrtps::rtps::CacheChange_t* const change) override;
+
+    void onReaderMatched(
+            eprosima::fastrtps::rtps::RTPSReader* reader,
+            eprosima::fastrtps::rtps::MatchingInfo& info) override;
+
+private:
+
+    using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
 };
 
 class UserDefinedTransportExampleReader
 {
-    private:
-        my_ReaderListener *my_listener;
-    public:
-        UserDefinedTransportExampleReader();
-        ~UserDefinedTransportExampleReader();
-        void init();
-        bool isInitialized();
-        bool read();
-    private:
-        eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
-        eprosima::fastrtps::rtps::RTPSParticipant *my_participant;
-        eprosima::fastrtps::rtps::ReaderAttributes rattr;
-        eprosima::fastrtps::rtps::RTPSReader *my_reader;
-        eprosima::fastrtps::rtps::HistoryAttributes hattr;
-        eprosima::fastrtps::ReaderQos rqos;
-        eprosima::fastrtps::TopicAttributes tattr;
-        eprosima::fastrtps::rtps::ReaderHistory *my_history;
-        bool initialized_;
+private:
+
+    my_ReaderListener* my_listener;
+
+public:
+
+    UserDefinedTransportExampleReader();
+    ~UserDefinedTransportExampleReader();
+    void init();
+    bool isInitialized();
+    bool read();
+
+private:
+
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes pattr;
+    eprosima::fastrtps::rtps::RTPSParticipant* my_participant;
+    eprosima::fastrtps::rtps::ReaderAttributes rattr;
+    eprosima::fastrtps::rtps::RTPSReader* my_reader;
+    eprosima::fastrtps::rtps::HistoryAttributes hattr;
+    eprosima::fastrtps::ReaderQos rqos;
+    eprosima::fastrtps::TopicAttributes tattr;
+    eprosima::fastrtps::rtps::ReaderHistory* my_history;
+    bool initialized_;
 };
