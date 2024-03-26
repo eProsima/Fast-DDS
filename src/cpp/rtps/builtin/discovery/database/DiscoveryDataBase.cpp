@@ -2673,7 +2673,9 @@ void DiscoveryDataBase::remove_server_GUID(
             return;
         }
     }
-    EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Trying to remove server GUID [" << server_guid_prefix << "] that is not in the database server list.");
+    EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
+            "Trying to remove server GUID [" << server_guid_prefix <<
+                            "] that is not in the database server list.");
 }
 
 } // namespace ddb

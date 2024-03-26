@@ -176,8 +176,8 @@ int fastdds_discovery_server(
         fastrtps::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().prefix == prefix_cero)
         {
-            std::cout << "Using random GUID because no server ID was specified (-i option) or defined in the XML file." <<
-                std::endl;
+            std::cout << "Using random GUID because no server ID was specified"
+                      << "(-i option) or defined in the XML file." << std::endl;
             pOp = new option::Option();
             pOp->arg = "-1";
         }
@@ -209,8 +209,8 @@ int fastdds_discovery_server(
         {
             eprosima::fastdds::rtps::set_server_client_random_guidPrefix(participantQos.wire_protocol().prefix);
         }
-        else if(!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
-            participantQos.wire_protocol().prefix))
+        else if (!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
+                participantQos.wire_protocol().prefix))
         {
             std::cout << "Failed to set the GUID with the server identifier provided." << std::endl;
             return 1;

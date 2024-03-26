@@ -217,6 +217,7 @@ ParticipantProxyData* PDP::add_participant_proxy_data(
 
     return ret_val;
 }
+
 // TODO Carlos: remove for GUID_less ds
 bool PDP::data_matches_with_prefix(
         const GuidPrefix_t& guid_prefix,
@@ -255,7 +256,7 @@ bool PDP::data_matches_with_locatorlist(
 }
 
 bool PDP::is_server_guid(
-    const GuidPrefix_t& guid_prefix)
+        const GuidPrefix_t& guid_prefix)
 {
     // GUIDs generated randomly always starts with "ca.fe" which is "202.254"
     if (guid_prefix.value[0] == static_cast<octet>(202) &&
