@@ -38,7 +38,7 @@ namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
         fastrtps::rtps::GuidPrefix_t server_guid_prefix,
-        std::set<fastrtps::rtps::GuidPrefix_t> servers)
+        std::vector<fastrtps::rtps::GuidPrefix_t> servers)
     : server_guid_prefix_(server_guid_prefix)
     , server_acked_by_all_(servers.size() == 0)
     , servers_(servers)
@@ -66,7 +66,10 @@ void DiscoveryDataBase::add_server(
         fastrtps::rtps::GuidPrefix_t server)
 {
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Server " << server << " added");
-    servers_.insert(server);
+    if (std::find(servers_.begin(), servers_.end(), server) == servers_.end())
+    {
+        servers_.push_back(server);
+    }
 }
 
 void DiscoveryDataBase::remove_related_alive_from_history_nts(
@@ -1646,7 +1649,7 @@ bool DiscoveryDataBase::server_acked_by_my_servers()
 
     assert(this_server != participants_.end());
 
-    for (auto prefix : servers_)
+    for (const auto prefix : servers_)
     {
         if (!this_server->second.is_matched(prefix))
         {
@@ -1663,7 +1666,7 @@ std::vector<fastrtps::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers
     std::vector<fastrtps::rtps::GuidPrefix_t> ack_pending_servers;
     // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
     auto this_server = participants_.find(server_guid_prefix_);
-    for (auto prefix : servers_)
+    for (const auto prefix : servers_)
     {
         if (!this_server->second.is_matched(prefix))
         {
