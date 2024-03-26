@@ -482,6 +482,8 @@ bool TypeLookupManager::remove_async_get_type_request(
 
 bool TypeLookupManager::create_endpoints()
 {
+    bool ret = true;
+
     const RTPSParticipantAttributes& pattr = participant_->getRTPSParticipantAttributes();
 
     // Built-in history attributes.
@@ -514,10 +516,10 @@ bool TypeLookupManager::create_endpoints()
     ratt.endpoint.reliabilityKind = fastrtps::rtps::RELIABLE;
     ratt.endpoint.durabilityKind = fastrtps::rtps::VOLATILE;
 
-    request_listener_ = new TypeLookupRequestListener(this);
-
     // Built-in request writer
+    request_listener_ = new TypeLookupRequestListener(this);
     builtin_request_writer_history_ = new WriterHistory(hatt);
+
     RTPSWriter* req_writer;
     if (participant_->createWriter(
                 &req_writer,
@@ -533,15 +535,16 @@ bool TypeLookupManager::create_endpoints()
     else
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request writer creation failed.");
-        delete builtin_request_writer_history_;
-        builtin_request_writer_history_ = nullptr;
-        delete request_listener_;
-        request_listener_ = nullptr;
-        return false;
+        ret = false;
     }
 
     // Built-in request reader
+    if (nullptr == request_listener_)
+    {
+        request_listener_ = new TypeLookupRequestListener(this);
+    }
     builtin_request_reader_history_ = new ReaderHistory(hatt);
+
     RTPSReader* req_reader;
     if (participant_->createReader(
                 &req_reader,
@@ -557,17 +560,13 @@ bool TypeLookupManager::create_endpoints()
     else
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup request reader creation failed.");
-        delete builtin_request_reader_history_;
-        builtin_request_reader_history_ = nullptr;
-        delete request_listener_;
-        request_listener_ = nullptr;
-        return false;
+        ret = false;
     }
 
-    reply_listener_ = new TypeLookupReplyListener(this);
-
     // Built-in reply writer
+    reply_listener_ = new TypeLookupReplyListener(this);
     builtin_reply_writer_history_ = new WriterHistory(hatt);
+
     RTPSWriter* rep_writer;
     if (participant_->createWriter(
                 &rep_writer,
@@ -583,15 +582,16 @@ bool TypeLookupManager::create_endpoints()
     else
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply writer creation failed.");
-        delete builtin_reply_writer_history_;
-        builtin_reply_writer_history_ = nullptr;
-        delete reply_listener_;
-        reply_listener_ = nullptr;
-        return false;
+        ret = false;
     }
 
     // Built-in reply reader
+    if (nullptr == reply_listener_)
+    {
+        reply_listener_ = new TypeLookupReplyListener(this);
+    }
     builtin_reply_reader_history_ = new ReaderHistory(hatt);
+
     RTPSReader* rep_reader;
     if (participant_->createReader(
                 &rep_reader,
@@ -607,14 +607,49 @@ bool TypeLookupManager::create_endpoints()
     else
     {
         EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE, "Typelookup reply reader creation failed.");
-        delete builtin_reply_reader_history_;
-        builtin_reply_reader_history_ = nullptr;
-        delete reply_listener_;
-        reply_listener_ = nullptr;
-        return false;
+        ret = false;
     }
 
-    return true;
+    // Clean up if something failed.
+    if (!ret)
+    {
+        if (nullptr != builtin_request_writer_history_)
+        {
+            delete builtin_request_writer_history_;
+            builtin_request_writer_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_reply_writer_history_)
+        {
+            delete builtin_reply_writer_history_;
+            builtin_reply_writer_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_request_reader_history_)
+        {
+            delete builtin_request_reader_history_;
+            builtin_request_reader_history_ = nullptr;
+        }
+
+        if (nullptr != builtin_reply_reader_history_)
+        {
+            delete builtin_reply_reader_history_;
+            builtin_reply_reader_history_ = nullptr;
+        }
+
+        if (nullptr != request_listener_)
+        {
+            delete request_listener_;
+            request_listener_ = nullptr;
+        }
+        if (nullptr != reply_listener_)
+        {
+            delete reply_listener_;
+            reply_listener_ = nullptr;
+        }
+    }
+
+    return ret;
 }
 
 TypeLookup_Request* TypeLookupManager::create_request(
@@ -724,8 +759,8 @@ bool TypeLookupManager::receive(
         return false;
     }
 
-    //Compare only the guid.guidPrefix
-    if ((request.header().instanceName().to_string()).substr(0, 24) != local_instance_name_.substr(0, 24))
+    //Compare only the "dds.builtin.TOS." + guid.guidPrefix
+    if ((request.header().instanceName().to_string()).substr(0, 40) != local_instance_name_.substr(0, 40))
     {
         // Ignore request
         return false;

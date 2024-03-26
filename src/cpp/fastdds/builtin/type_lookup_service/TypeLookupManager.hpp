@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_SERVICE_MANAGER_HPP_
-#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_SERVICE_MANAGER_HPP_
+#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
+#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_
 
 #include <mutex>
 #include <unordered_map>
@@ -248,7 +248,7 @@ protected:
             SampleIdentity request);
 
     /**
-     * Creates a TypeLookup_Request with for the given type_server.
+     * Creates a TypeLookup_Request for the given type_server.
      * @param type_server[in] GUID corresponding to the remote participant.
      * @param pupsubtype[out] PubSubType in charge of TypeLookup_Request .
      * @return the TypeLookup_Request created.
@@ -442,4 +442,4 @@ protected:
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_SERVICE_MANAGER_HPP_ */
+#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_MANAGER_HPP_ */

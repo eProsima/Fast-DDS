@@ -25,26 +25,27 @@ include_directories(${Asio_INCLUDE_DIR})
 # Binaries
 ###############################################################################
 
-# Dynamic types test
-set(DDS_PUBLISHER_DYNAMIC_SOURCE
-    PublisherDynamic.cpp
-    )
-add_executable(DDSSimpleCommunicationDynamicPublisher ${DDS_PUBLISHER_DYNAMIC_SOURCE})
-target_compile_definitions(DDSSimpleCommunicationDynamicPublisher PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_link_libraries(DDSSimpleCommunicationDynamicPublisher fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+# TODO Restore when Dynamic types are registered in TypeObjectRegistry
+# # Dynamic types test
+# set(DDS_PUBLISHER_DYNAMIC_SOURCE
+#     PublisherDynamic.cpp
+#     )
+# add_executable(DDSSimpleCommunicationDynamicPublisher ${DDS_PUBLISHER_DYNAMIC_SOURCE})
+# target_compile_definitions(DDSSimpleCommunicationDynamicPublisher PRIVATE
+#     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+#     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+#     )
+# target_link_libraries(DDSSimpleCommunicationDynamicPublisher fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
-set(DDS_SUBSCRIBER_DYNAMIC_SOURCE
-    SubscriberDynamic.cpp
-    )
-add_executable(DDSSimpleCommunicationDynamicSubscriber ${DDS_SUBSCRIBER_DYNAMIC_SOURCE})
-target_compile_definitions(DDSSimpleCommunicationDynamicSubscriber PRIVATE
-    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
-    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
-    )
-target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
+# set(DDS_SUBSCRIBER_DYNAMIC_SOURCE
+#     SubscriberDynamic.cpp
+#     )
+# add_executable(DDSSimpleCommunicationDynamicSubscriber ${DDS_SUBSCRIBER_DYNAMIC_SOURCE})
+# target_compile_definitions(DDSSimpleCommunicationDynamicSubscriber PRIVATE
+#     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+#     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+#     )
+# target_link_libraries(DDSSimpleCommunicationDynamicSubscriber fastdds fastcdr foonathan_memory ${CMAKE_DL_LIBS})
 
 # Standard tests
 set(COMMON_SOURCE
@@ -94,9 +95,10 @@ target_link_libraries(DDSCommunicationPubSub fastdds fastcdr foonathan_memory ${
 ###############################################################################
 # Necessary files
 ###############################################################################
-# Dynamic types test
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication_dynamic.py
-    ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py COPYONLY)
+# TODO Restore when Dynamic types are registered in TypeObjectRegistry
+# # Dynamic types test
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_communication_dynamic.py
+#     ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/example_type_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/example_type_profile.xml COPYONLY)
 
@@ -180,22 +182,24 @@ endif()
 # Tests specification
 ###############################################################################
 if(Python3_Interpreter_FOUND)
-    # Dynamic types test
-    add_test(NAME DDSSimpleCommunicationTypeDiscovery
-        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
 
-    # Set test with label NoMemoryCheck
-    set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
+    # TODO Restore when Dynamic types are registered in TypeObjectRegistry
+    # # Dynamic types test
+    # add_test(NAME DDSSimpleCommunicationTypeDiscovery
+    #     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication_dynamic.py)
 
-    set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY ENVIRONMENT
-        "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicPublisher>")
-    set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
-        "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicSubscriber>")
-    if(WIN32)
-        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
-        set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
-            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
-    endif()
+    # # Set test with label NoMemoryCheck
+    # set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY LABELS "NoMemoryCheck")
+
+    # set_property(TEST DDSSimpleCommunicationTypeDiscovery PROPERTY ENVIRONMENT
+    #     "DDS_SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicPublisher>")
+    # set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
+    #     "DDS_SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:DDSSimpleCommunicationDynamicSubscriber>")
+    # if(WIN32)
+    #     string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+    #     set_property(TEST DDSSimpleCommunicationTypeDiscovery APPEND PROPERTY ENVIRONMENT
+    #         "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    # endif()
 
     # Standard types test
     set(TEST_BUILDER ${BINARY_TEST_DIR}test_build.py)

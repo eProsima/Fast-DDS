@@ -117,7 +117,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference representing an array.
      * @param[in] element_type @ref DynamicType reference which becomes the element type
-     * @param[in] bound `uint32_t` representing the desired dimensions.
+     * @param[in] bound `uint32_t` sequence representing the desired dimensions.
      * @return new @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicTypeBuilder>::ref_type create_array_type(
@@ -148,7 +148,7 @@ public:
     /*!
      * Creates a new @ref DynamicTypeBuilder reference by parsing the type description at the given URL.
      * @remark Not implemented yet.
-     * @param[in] document_url pointing to the XML description.
+     * @param[in] document_url pointing to the url containing the type description.
      * @param[in] type_name Fully qualified name of the type to be loaded from the document.
      * @param[in] include_paths A collection of URLs to directories to be searched for additional type description
      * documents.

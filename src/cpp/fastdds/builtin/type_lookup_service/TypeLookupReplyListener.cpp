@@ -18,6 +18,7 @@
  */
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupReplyListener.hpp>
+
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
@@ -148,24 +149,24 @@ void TypeLookupReplyListener::check_get_types_reply(
             {
                 // If any of the types is not registered, log error
                 EPROSIMA_LOG_WARNING(TYPELOOKUP_SERVICE_REPLY_LISTENER,
-                        "Error registering type: the discriminators differ");
+                        "Error registering remote type");
                 register_result = RETCODE_ERROR;
             }
         }
 
         if (RETCODE_OK == register_result)
         {
-            // Check if this reply requires a continuation_point
+            // Check if the get_type_dependencies related to this reply required a continuation_point
             std::unique_lock<std::mutex> guard(replies_with_continuation_mutex_);
             auto it = std::find(replies_with_continuation_.begin(), replies_with_continuation_.end(), related_request);
             if (it != replies_with_continuation_.end())
             {
-                // If it does, remove it from the list and continue
+                // If it did, remove it from the list and continue
                 replies_with_continuation_.erase(it);
             }
             else
             {
-                // If it does not, check that the type that originated the request is consistent
+                // If it did not, check that the type that originated the request is consistent
                 // before notifying the callbacks associated with the request
                 try
                 {
@@ -179,7 +180,7 @@ void TypeLookupReplyListener::check_get_types_reply(
                 catch (const std::exception& exception)
                 {
                     EPROSIMA_LOG_ERROR(TYPELOOKUP_SERVICE_REPLY_LISTENER,
-                            "Error registering type: " << exception.what());
+                            "Error registering remote type: " << exception.what());
                 }
             }
         }

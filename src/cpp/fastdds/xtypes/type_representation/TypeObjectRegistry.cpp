@@ -697,7 +697,7 @@ const TypeIdentifier TypeObjectRegistry::get_complementary_type_identifier(
         {
             return it.second.type_identifier2();
         }
-        else if (it.second.type_identifier2() == type_id && TK_NONE != it.second.type_identifier1()._d())
+        else if (it.second.type_identifier2() == type_id || TK_NONE == it.second.type_identifier2()._d())
         {
             return it.second.type_identifier1();
         }
