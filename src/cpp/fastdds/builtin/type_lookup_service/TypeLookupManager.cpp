@@ -539,10 +539,6 @@ bool TypeLookupManager::create_endpoints()
     }
 
     // Built-in request reader
-    if (nullptr == request_listener_)
-    {
-        request_listener_ = new TypeLookupRequestListener(this);
-    }
     builtin_request_reader_history_ = new ReaderHistory(hatt);
 
     RTPSReader* req_reader;
@@ -586,10 +582,6 @@ bool TypeLookupManager::create_endpoints()
     }
 
     // Built-in reply reader
-    if (nullptr == reply_listener_)
-    {
-        reply_listener_ = new TypeLookupReplyListener(this);
-    }
     builtin_reply_reader_history_ = new ReaderHistory(hatt);
 
     RTPSReader* rep_reader;
