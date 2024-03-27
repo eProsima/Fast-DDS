@@ -1,0 +1,65 @@
+name: Sanitizer analysis (nightly)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  nightly-address-sanitizer:
+    strategy:
+      fail-fast: false
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
+    uses: ./.github/workflows/reusable-sanitizer.yml
+    with:
+      label: 'nightly-address-sanitizer-${{ matrix.fastdds-branch }}'
+      colcon_meta: 'src/fastrtps/.github/workflows/config/asan_colcon.meta'
+      cmake_args: ''
+      ctest_args: '--label-exclude xfail --timeout 300'
+      fastdds_branch: '${{ matrix.fastdds-branch }}'
+      asan_report: 'true'
+
+  nightly-discovery-server-address-sanitizer:
+    strategy:
+      fail-fast: false
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
+    uses: ./.github/workflows/reusable-sanitizer.yml
+    with:
+      label: 'nightly-discovery-server-address-sanitizer-${{ matrix.fastdds-branch }}'
+      colcon_meta: 'src/fastrtps/.github/workflows/config/asan_colcon.meta'
+      cmake_args: ''
+      ctest_args: '--label-exclude xfail --timeout 300'
+      fastdds_branch: '${{ matrix.fastdds-branch }}'
+      asan_discovery_server_report: 'true'
+
+  nightly-thread-sanitizer:
+    strategy:
+      fail-fast: false
+      matrix:
+        fastdds-branch:
+          - 'master'
+          - '2.13.x'
+          - '2.12.x'
+          - '2.10.x'
+          - '2.6.x'
+    uses: ./.github/workflows/reusable-sanitizer.yml
+    with:
+      label: 'nightly-thread-sanitizer-${{ matrix.fastdds-branch }}'
+      colcon_meta: 'src/fastrtps/.github/workflows/config/tsan_colcon.meta'
+      cmake_args: '-DCMAKE_BUILD_TYPE=Debug'
+      ctest_args: '-timeout 30 -V -E DDSSQLFilterValueTests'
+      fastdds_branch: '${{ matrix.fastdds-branch }}'
+      tsan_report: 'true'
+
