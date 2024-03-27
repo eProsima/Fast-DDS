@@ -364,7 +364,7 @@ ReturnCode_t DomainParticipantFactory::load_profiles()
             reset_default_participant_qos();
         }
         // Take the default domain id from the default participant profile
-        eprosima::fastrtps::ParticipantAttributes attr;
+        eprosima::fastdds::ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
         default_domain_id_ = attr.domainId;
 
