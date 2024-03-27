@@ -2,11 +2,10 @@ name: Documentation build and test
 on:
   workflow_dispatch:
     inputs:
-      documentation_branch:
-        description: 'Documentation branch name'
+      fastdds_docs_branch:
+        description: 'Fast DDS Docs branch'
         required: true
         type: string
-        default: 'master'
 
   pull_request:
     types:
@@ -19,9 +18,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-
-env:
-  ACTION_BRANCH_NAME: ${{ github.ref }}
 
 jobs:
   ubuntu-build-and-test-documentation:
@@ -85,62 +81,19 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
-      - name: Determine the Fast DDS Documentation branch to be used
-        run: |
-          if [[ ${{ github.event_name }} == "push" ]]
-          then
-            echo "ACTION_BRANCH_NAME=${{ github.ref }}" >> $GITHUB_ENV
-            echo "Push event: using pushed branch '${{ github.ref }}' for docs repository"
+      - name: Get Fast DDS Docs branch
+        id: get_fastdds_docs_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@feature/get_related_branch_from_repo
+        with:
+          remote_repository: eProsima/Fast-DDS-docs
+          fallback_branch: ${{ inputs.fastdds_docs_branch || 'master' }}
 
-          elif [[ ${{ github.event_name }} == "workflow_dispatch" ]]
-          then
-            echo "ACTION_BRANCH_NAME=${{ inputs.documentation_branch }}" >> $GITHUB_ENV
-            echo "Workflow dispatch event: using input branch '${{ inputs.documentation_branch }}' for docs repository"
-
-          elif [[ ${{ github.event_name }} == "pull_request" ]]
-          then
-            DOCS_REPO=https://github.com/eProsima/fast-dds-docs.git
-
-            # Attempt to use PR's source branch
-            TEMP_BRANCH=${{ github.head_ref }}
-            RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
-
-            if [[ ${RESPONSE_CODE} == "0" ]]
-            then
-              echo "PR source branch '$TEMP_BRANCH' branch DOES NOT exist in $DOCS_REPO"
-
-              # Attempt to use PR's base branch
-              TEMP_BRANCH=${{ github.base_ref }}
-              RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
-
-              if [[ ${RESPONSE_CODE} == "0" ]]
-              then
-                echo "PR base branch '$TEMP_BRANCH' branch DOES NOT exist in $DOCS_REPO"
-
-                # Attempt to use version's branch, which will most likely be the base anyways.
-                # This is just in case the PR was to an intermediate branch
-                TEMP_BRANCH=master
-                RESPONSE_CODE=$(git ls-remote --heads $DOCS_REPO $TEMP_BRANCH | wc -l)
-
-                if [[ ${RESPONSE_CODE} == "0" ]]
-                then
-                  # There are no more fallbacks, so we need to fail here
-                  echo "Version branch '$TEMP_BRANCH' branch DOES NOT exist in $DOCS_REPO"
-                  exit 1
-                fi
-              fi
-            fi
-
-            echo "ACTION_BRANCH_NAME=$TEMP_BRANCH" >> $GITHUB_ENV
-            echo "PR event: using deduced branch '$TEMP_BRANCH' for docs repository"
-          fi
-
-      - name: Download FastDDS documentation repo
+      - name: Download Fast DDS documentation repo
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
           repository: eProsima/Fast-DDS-docs
           path: src/fastdds-docs
-          ref: ${{ env.ACTION_BRANCH_NAME }}
+          ref: ${{ steps.deduce_branch.outputs.deduced_branch }}
 
       - name: Install Fast DDS Docs required python packages
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
