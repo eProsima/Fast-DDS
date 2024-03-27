@@ -97,6 +97,25 @@ public:
             const StatusMask& mask = StatusMask::all());
 
     /**
+     * Create a Participant with default domain id and qos.
+     *
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     */
+    FASTDDS_EXPORTED_API DomainParticipant* create_participant_with_default_profile();
+
+
+    /**
+     * Create a Participant with default domain id and qos.
+     *
+     * @return DomainParticipant pointer. (nullptr if not created.)
+     * @param listener DomainParticipantListener Pointer
+     * @param mask StatusMask Reference
+     */
+    FASTDDS_EXPORTED_API DomainParticipant* create_participant_with_default_profile(
+            DomainParticipantListener* listener,
+            const StatusMask& mask);
+
+    /**
      * Create a Participant.
      *
      * @param domain_id Domain Id.
@@ -341,6 +360,8 @@ protected:
     mutable std::mutex mtx_participants_;
 
     mutable bool default_xml_profiles_loaded;
+
+    DomainId_t default_domain_id_;
 
     DomainParticipantFactoryQos factory_qos_;
 
