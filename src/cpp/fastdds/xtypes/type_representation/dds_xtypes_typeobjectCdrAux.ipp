@@ -56,8 +56,8 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+                case EK_COMPLETE:
+                case EK_MINIMAL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.hash(), current_alignment);
                     break;
@@ -114,24 +114,40 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case EK_COMPLETE:
-                                                        case EK_MINIMAL:
-                                                            dcdr >> data.hash();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case EK_COMPLETE:
+                                                case EK_MINIMAL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::EquivalenceHash hash_value{0};
+                                                        data.hash(std::move(hash_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case EK_COMPLETE:
+                                                case EK_MINIMAL:
+                                                    dcdr >> data.hash();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1245,55 +1261,55 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+                case TI_STRING8_SMALL:
+                case TI_STRING16_SMALL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.string_sdefn(), current_alignment);
                     break;
 
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+                case TI_STRING8_LARGE:
+                case TI_STRING16_LARGE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.string_ldefn(), current_alignment);
                     break;
 
-        case TI_PLAIN_SEQUENCE_SMALL:
+                case TI_PLAIN_SEQUENCE_SMALL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.seq_sdefn(), current_alignment);
                     break;
 
-        case TI_PLAIN_SEQUENCE_LARGE:
+                case TI_PLAIN_SEQUENCE_LARGE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.seq_ldefn(), current_alignment);
                     break;
 
-        case TI_PLAIN_ARRAY_SMALL:
+                case TI_PLAIN_ARRAY_SMALL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.array_sdefn(), current_alignment);
                     break;
 
-        case TI_PLAIN_ARRAY_LARGE:
+                case TI_PLAIN_ARRAY_LARGE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.array_ldefn(), current_alignment);
                     break;
 
-        case TI_PLAIN_MAP_SMALL:
+                case TI_PLAIN_MAP_SMALL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.map_sdefn(), current_alignment);
                     break;
 
-        case TI_PLAIN_MAP_LARGE:
+                case TI_PLAIN_MAP_LARGE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_ldefn(), current_alignment);
                     break;
 
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+                case TI_STRONGLY_CONNECTED_COMPONENT:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.sc_component_id(), current_alignment);
                     break;
 
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+                case EK_COMPLETE:
+                case EK_MINIMAL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.equivalence_hash(), current_alignment);
                     break;
@@ -1393,64 +1409,159 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case TI_STRING8_SMALL:
-                                                        case TI_STRING16_SMALL:
-                                                            dcdr >> data.string_sdefn();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case TI_STRING8_LARGE:
-                                                        case TI_STRING16_LARGE:
-                                                            dcdr >> data.string_ldefn();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case TI_STRING8_SMALL:
+                                                case TI_STRING16_SMALL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::StringSTypeDefn string_sdefn_value;
+                                                        data.string_sdefn(std::move(string_sdefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_PLAIN_SEQUENCE_SMALL:
-                                                            dcdr >> data.seq_sdefn();
-                                                            break;
+                                                case TI_STRING8_LARGE:
+                                                case TI_STRING16_LARGE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::StringLTypeDefn string_ldefn_value;
+                                                        data.string_ldefn(std::move(string_ldefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_PLAIN_SEQUENCE_LARGE:
-                                                            dcdr >> data.seq_ldefn();
-                                                            break;
+                                                case TI_PLAIN_SEQUENCE_SMALL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::PlainSequenceSElemDefn seq_sdefn_value;
+                                                        data.seq_sdefn(std::move(seq_sdefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_PLAIN_ARRAY_SMALL:
-                                                            dcdr >> data.array_sdefn();
-                                                            break;
+                                                case TI_PLAIN_SEQUENCE_LARGE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::PlainSequenceLElemDefn seq_ldefn_value;
+                                                        data.seq_ldefn(std::move(seq_ldefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_PLAIN_ARRAY_LARGE:
-                                                            dcdr >> data.array_ldefn();
-                                                            break;
+                                                case TI_PLAIN_ARRAY_SMALL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::PlainArraySElemDefn array_sdefn_value;
+                                                        data.array_sdefn(std::move(array_sdefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_PLAIN_MAP_SMALL:
-                                                            dcdr >> data.map_sdefn();
-                                                            break;
+                                                case TI_PLAIN_ARRAY_LARGE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::PlainArrayLElemDefn array_ldefn_value;
+                                                        data.array_ldefn(std::move(array_ldefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_PLAIN_MAP_LARGE:
-                                                            dcdr >> data.map_ldefn();
-                                                            break;
+                                                case TI_PLAIN_MAP_SMALL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::PlainMapSTypeDefn map_sdefn_value;
+                                                        data.map_sdefn(std::move(map_sdefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TI_STRONGLY_CONNECTED_COMPONENT:
-                                                            dcdr >> data.sc_component_id();
-                                                            break;
+                                                case TI_PLAIN_MAP_LARGE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::PlainMapLTypeDefn map_ldefn_value;
+                                                        data.map_ldefn(std::move(map_ldefn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case EK_COMPLETE:
-                                                        case EK_MINIMAL:
-                                                            dcdr >> data.equivalence_hash();
-                                                            break;
+                                                case TI_STRONGLY_CONNECTED_COMPONENT:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::StronglyConnectedComponentId sc_component_id_value;
+                                                        data.sc_component_id(std::move(sc_component_id_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        default:
-                                                            dcdr >> data.extended_defn();
-                                                            break;
+                                                case EK_COMPLETE:
+                                                case EK_MINIMAL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::EquivalenceHash equivalence_hash_value{0};
+                                                        data.equivalence_hash(std::move(equivalence_hash_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                        }
-                        ret_value = false;
-                        break;
+                                                default:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::ExtendedTypeDefn extended_defn_value;
+                                                        data.extended_defn(std::move(extended_defn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case TI_STRING8_SMALL:
+                                                case TI_STRING16_SMALL:
+                                                    dcdr >> data.string_sdefn();
+                                                    break;
+
+                                                case TI_STRING8_LARGE:
+                                                case TI_STRING16_LARGE:
+                                                    dcdr >> data.string_ldefn();
+                                                    break;
+
+                                                case TI_PLAIN_SEQUENCE_SMALL:
+                                                    dcdr >> data.seq_sdefn();
+                                                    break;
+
+                                                case TI_PLAIN_SEQUENCE_LARGE:
+                                                    dcdr >> data.seq_ldefn();
+                                                    break;
+
+                                                case TI_PLAIN_ARRAY_SMALL:
+                                                    dcdr >> data.array_sdefn();
+                                                    break;
+
+                                                case TI_PLAIN_ARRAY_LARGE:
+                                                    dcdr >> data.array_ldefn();
+                                                    break;
+
+                                                case TI_PLAIN_MAP_SMALL:
+                                                    dcdr >> data.map_sdefn();
+                                                    break;
+
+                                                case TI_PLAIN_MAP_LARGE:
+                                                    dcdr >> data.map_ldefn();
+                                                    break;
+
+                                                case TI_STRONGLY_CONNECTED_COMPONENT:
+                                                    dcdr >> data.sc_component_id();
+                                                    break;
+
+                                                case EK_COMPLETE:
+                                                case EK_MINIMAL:
+                                                    dcdr >> data.equivalence_hash();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.extended_defn();
+                                                    break;
+
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1554,92 +1665,92 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case TK_BOOLEAN:
+                case TK_BOOLEAN:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.boolean_value(), current_alignment);
                     break;
 
-        case TK_BYTE:
+                case TK_BYTE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.byte_value(), current_alignment);
                     break;
 
-        case TK_INT8:
+                case TK_INT8:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.int8_value(), current_alignment);
                     break;
 
-        case TK_UINT8:
+                case TK_UINT8:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.uint8_value(), current_alignment);
                     break;
 
-        case TK_INT16:
+                case TK_INT16:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.int16_value(), current_alignment);
                     break;
 
-        case TK_UINT16:
+                case TK_UINT16:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.uint_16_value(), current_alignment);
                     break;
 
-        case TK_INT32:
+                case TK_INT32:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.int32_value(), current_alignment);
                     break;
 
-        case TK_UINT32:
+                case TK_UINT32:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.uint32_value(), current_alignment);
                     break;
 
-        case TK_INT64:
+                case TK_INT64:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.int64_value(), current_alignment);
                     break;
 
-        case TK_UINT64:
+                case TK_UINT64:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.uint64_value(), current_alignment);
                     break;
 
-        case TK_FLOAT32:
+                case TK_FLOAT32:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                                 data.float32_value(), current_alignment);
                     break;
 
-        case TK_FLOAT64:
+                case TK_FLOAT64:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
                                 data.float64_value(), current_alignment);
                     break;
 
-        case TK_FLOAT128:
+                case TK_FLOAT128:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(13),
                                 data.float128_value(), current_alignment);
                     break;
 
-        case TK_CHAR8:
+                case TK_CHAR8:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(14),
                                 data.char_value(), current_alignment);
                     break;
 
-        case TK_CHAR16:
+                case TK_CHAR16:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
                                 data.wchar_value(), current_alignment);
                     break;
 
-        case TK_ENUM:
+                case TK_ENUM:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
                                 data.enumerated_value(), current_alignment);
                     break;
 
-        case TK_STRING8:
+                case TK_STRING8:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
                                 data.string8_value(), current_alignment);
                     break;
 
-        case TK_STRING16:
+                case TK_STRING16:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
                                 data.string16_value(), current_alignment);
                     break;
@@ -1768,93 +1879,249 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case TK_BOOLEAN:
-                                                            dcdr >> data.boolean_value();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case TK_BYTE:
-                                                            dcdr >> data.byte_value();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case TK_BOOLEAN:
+                                                    {
+                                                        bool boolean_value_value{false};
+                                                        data.boolean_value(std::move(boolean_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_INT8:
-                                                            dcdr >> data.int8_value();
-                                                            break;
+                                                case TK_BYTE:
+                                                    {
+                                                        uint8_t byte_value_value{0};
+                                                        data.byte_value(std::move(byte_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_UINT8:
-                                                            dcdr >> data.uint8_value();
-                                                            break;
+                                                case TK_INT8:
+                                                    {
+                                                        int8_t int8_value_value{0};
+                                                        data.int8_value(std::move(int8_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_INT16:
-                                                            dcdr >> data.int16_value();
-                                                            break;
+                                                case TK_UINT8:
+                                                    {
+                                                        uint8_t uint8_value_value{0};
+                                                        data.uint8_value(std::move(uint8_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_UINT16:
-                                                            dcdr >> data.uint_16_value();
-                                                            break;
+                                                case TK_INT16:
+                                                    {
+                                                        int16_t int16_value_value{0};
+                                                        data.int16_value(std::move(int16_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_INT32:
-                                                            dcdr >> data.int32_value();
-                                                            break;
+                                                case TK_UINT16:
+                                                    {
+                                                        uint16_t uint_16_value_value{0};
+                                                        data.uint_16_value(std::move(uint_16_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_UINT32:
-                                                            dcdr >> data.uint32_value();
-                                                            break;
+                                                case TK_INT32:
+                                                    {
+                                                        int32_t int32_value_value{0};
+                                                        data.int32_value(std::move(int32_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_INT64:
-                                                            dcdr >> data.int64_value();
-                                                            break;
+                                                case TK_UINT32:
+                                                    {
+                                                        uint32_t uint32_value_value{0};
+                                                        data.uint32_value(std::move(uint32_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_UINT64:
-                                                            dcdr >> data.uint64_value();
-                                                            break;
+                                                case TK_INT64:
+                                                    {
+                                                        int64_t int64_value_value{0};
+                                                        data.int64_value(std::move(int64_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_FLOAT32:
-                                                            dcdr >> data.float32_value();
-                                                            break;
+                                                case TK_UINT64:
+                                                    {
+                                                        uint64_t uint64_value_value{0};
+                                                        data.uint64_value(std::move(uint64_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_FLOAT64:
-                                                            dcdr >> data.float64_value();
-                                                            break;
+                                                case TK_FLOAT32:
+                                                    {
+                                                        float float32_value_value{0.0};
+                                                        data.float32_value(std::move(float32_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_FLOAT128:
-                                                            dcdr >> data.float128_value();
-                                                            break;
+                                                case TK_FLOAT64:
+                                                    {
+                                                        double float64_value_value{0.0};
+                                                        data.float64_value(std::move(float64_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_CHAR8:
-                                                            dcdr >> data.char_value();
-                                                            break;
+                                                case TK_FLOAT128:
+                                                    {
+                                                        long double float128_value_value{0.0};
+                                                        data.float128_value(std::move(float128_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_CHAR16:
-                                                            dcdr >> data.wchar_value();
-                                                            break;
+                                                case TK_CHAR8:
+                                                    {
+                                                        char char_value_value{0};
+                                                        data.char_value(std::move(char_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_ENUM:
-                                                            dcdr >> data.enumerated_value();
-                                                            break;
+                                                case TK_CHAR16:
+                                                    {
+                                                        wchar_t wchar_value_value{0};
+                                                        data.wchar_value(std::move(wchar_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_STRING8:
-                                                            dcdr >> data.string8_value();
-                                                            break;
+                                                case TK_ENUM:
+                                                    {
+                                                        int32_t enumerated_value_value{0};
+                                                        data.enumerated_value(std::move(enumerated_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_STRING16:
-                                                            dcdr >> data.string16_value();
-                                                            break;
+                                                case TK_STRING8:
+                                                    {
+                                                        eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN> string8_value_value;
+                                                        data.string8_value(std::move(string8_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        default:
-                                                            dcdr >> data.extended_value();
-                                                            break;
+                                                case TK_STRING16:
+                                                    {
+                                                        std::wstring string16_value_value;
+                                                        data.string16_value(std::move(string16_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                        }
-                        ret_value = false;
-                        break;
+                                                default:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::ExtendedAnnotationParameterValue extended_value_value;
+                                                        data.extended_value(std::move(extended_value_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case TK_BOOLEAN:
+                                                    dcdr >> data.boolean_value();
+                                                    break;
+
+                                                case TK_BYTE:
+                                                    dcdr >> data.byte_value();
+                                                    break;
+
+                                                case TK_INT8:
+                                                    dcdr >> data.int8_value();
+                                                    break;
+
+                                                case TK_UINT8:
+                                                    dcdr >> data.uint8_value();
+                                                    break;
+
+                                                case TK_INT16:
+                                                    dcdr >> data.int16_value();
+                                                    break;
+
+                                                case TK_UINT16:
+                                                    dcdr >> data.uint_16_value();
+                                                    break;
+
+                                                case TK_INT32:
+                                                    dcdr >> data.int32_value();
+                                                    break;
+
+                                                case TK_UINT32:
+                                                    dcdr >> data.uint32_value();
+                                                    break;
+
+                                                case TK_INT64:
+                                                    dcdr >> data.int64_value();
+                                                    break;
+
+                                                case TK_UINT64:
+                                                    dcdr >> data.uint64_value();
+                                                    break;
+
+                                                case TK_FLOAT32:
+                                                    dcdr >> data.float32_value();
+                                                    break;
+
+                                                case TK_FLOAT64:
+                                                    dcdr >> data.float64_value();
+                                                    break;
+
+                                                case TK_FLOAT128:
+                                                    dcdr >> data.float128_value();
+                                                    break;
+
+                                                case TK_CHAR8:
+                                                    dcdr >> data.char_value();
+                                                    break;
+
+                                                case TK_CHAR16:
+                                                    dcdr >> data.wchar_value();
+                                                    break;
+
+                                                case TK_ENUM:
+                                                    dcdr >> data.enumerated_value();
+                                                    break;
+
+                                                case TK_STRING8:
+                                                    dcdr >> data.string8_value();
+                                                    break;
+
+                                                case TK_STRING16:
+                                                    dcdr >> data.string16_value();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.extended_value();
+                                                    break;
+
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -9144,52 +9411,52 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case TK_ALIAS:
+                case TK_ALIAS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.alias_type(), current_alignment);
                     break;
 
-        case TK_ANNOTATION:
+                case TK_ANNOTATION:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.annotation_type(), current_alignment);
                     break;
 
-        case TK_STRUCTURE:
+                case TK_STRUCTURE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.struct_type(), current_alignment);
                     break;
 
-        case TK_UNION:
+                case TK_UNION:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.union_type(), current_alignment);
                     break;
 
-        case TK_BITSET:
+                case TK_BITSET:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.bitset_type(), current_alignment);
                     break;
 
-        case TK_SEQUENCE:
+                case TK_SEQUENCE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.sequence_type(), current_alignment);
                     break;
 
-        case TK_ARRAY:
+                case TK_ARRAY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.array_type(), current_alignment);
                     break;
 
-        case TK_MAP:
+                case TK_MAP:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_type(), current_alignment);
                     break;
 
-        case TK_ENUM:
+                case TK_ENUM:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.enumerated_type(), current_alignment);
                     break;
 
-        case TK_BITMASK:
+                case TK_BITMASK:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.bitmask_type(), current_alignment);
                     break;
@@ -9286,61 +9553,153 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case TK_ALIAS:
-                                                            dcdr >> data.alias_type();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case TK_ANNOTATION:
-                                                            dcdr >> data.annotation_type();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case TK_ALIAS:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteAliasType alias_type_value;
+                                                        data.alias_type(std::move(alias_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_STRUCTURE:
-                                                            dcdr >> data.struct_type();
-                                                            break;
+                                                case TK_ANNOTATION:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteAnnotationType annotation_type_value;
+                                                        data.annotation_type(std::move(annotation_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_UNION:
-                                                            dcdr >> data.union_type();
-                                                            break;
+                                                case TK_STRUCTURE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteStructType struct_type_value;
+                                                        data.struct_type(std::move(struct_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_BITSET:
-                                                            dcdr >> data.bitset_type();
-                                                            break;
+                                                case TK_UNION:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteUnionType union_type_value;
+                                                        data.union_type(std::move(union_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_SEQUENCE:
-                                                            dcdr >> data.sequence_type();
-                                                            break;
+                                                case TK_BITSET:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteBitsetType bitset_type_value;
+                                                        data.bitset_type(std::move(bitset_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_ARRAY:
-                                                            dcdr >> data.array_type();
-                                                            break;
+                                                case TK_SEQUENCE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteSequenceType sequence_type_value;
+                                                        data.sequence_type(std::move(sequence_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_MAP:
-                                                            dcdr >> data.map_type();
-                                                            break;
+                                                case TK_ARRAY:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteArrayType array_type_value;
+                                                        data.array_type(std::move(array_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_ENUM:
-                                                            dcdr >> data.enumerated_type();
-                                                            break;
+                                                case TK_MAP:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteMapType map_type_value;
+                                                        data.map_type(std::move(map_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_BITMASK:
-                                                            dcdr >> data.bitmask_type();
-                                                            break;
+                                                case TK_ENUM:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteEnumeratedType enumerated_type_value;
+                                                        data.enumerated_type(std::move(enumerated_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        default:
-                                                            dcdr >> data.extended_type();
-                                                            break;
+                                                case TK_BITMASK:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteBitmaskType bitmask_type_value;
+                                                        data.bitmask_type(std::move(bitmask_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                        }
-                        ret_value = false;
-                        break;
+                                                default:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteExtendedType extended_type_value;
+                                                        data.extended_type(std::move(extended_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case TK_ALIAS:
+                                                    dcdr >> data.alias_type();
+                                                    break;
+
+                                                case TK_ANNOTATION:
+                                                    dcdr >> data.annotation_type();
+                                                    break;
+
+                                                case TK_STRUCTURE:
+                                                    dcdr >> data.struct_type();
+                                                    break;
+
+                                                case TK_UNION:
+                                                    dcdr >> data.union_type();
+                                                    break;
+
+                                                case TK_BITSET:
+                                                    dcdr >> data.bitset_type();
+                                                    break;
+
+                                                case TK_SEQUENCE:
+                                                    dcdr >> data.sequence_type();
+                                                    break;
+
+                                                case TK_ARRAY:
+                                                    dcdr >> data.array_type();
+                                                    break;
+
+                                                case TK_MAP:
+                                                    dcdr >> data.map_type();
+                                                    break;
+
+                                                case TK_ENUM:
+                                                    dcdr >> data.enumerated_type();
+                                                    break;
+
+                                                case TK_BITMASK:
+                                                    dcdr >> data.bitmask_type();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.extended_type();
+                                                    break;
+
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -9440,52 +9799,52 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case TK_ALIAS:
+                case TK_ALIAS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.alias_type(), current_alignment);
                     break;
 
-        case TK_ANNOTATION:
+                case TK_ANNOTATION:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.annotation_type(), current_alignment);
                     break;
 
-        case TK_STRUCTURE:
+                case TK_STRUCTURE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.struct_type(), current_alignment);
                     break;
 
-        case TK_UNION:
+                case TK_UNION:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.union_type(), current_alignment);
                     break;
 
-        case TK_BITSET:
+                case TK_BITSET:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.bitset_type(), current_alignment);
                     break;
 
-        case TK_SEQUENCE:
+                case TK_SEQUENCE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.sequence_type(), current_alignment);
                     break;
 
-        case TK_ARRAY:
+                case TK_ARRAY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.array_type(), current_alignment);
                     break;
 
-        case TK_MAP:
+                case TK_MAP:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.map_type(), current_alignment);
                     break;
 
-        case TK_ENUM:
+                case TK_ENUM:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
                                 data.enumerated_type(), current_alignment);
                     break;
 
-        case TK_BITMASK:
+                case TK_BITMASK:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                                 data.bitmask_type(), current_alignment);
                     break;
@@ -9582,61 +9941,153 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case TK_ALIAS:
-                                                            dcdr >> data.alias_type();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case TK_ANNOTATION:
-                                                            dcdr >> data.annotation_type();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case TK_ALIAS:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalAliasType alias_type_value;
+                                                        data.alias_type(std::move(alias_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_STRUCTURE:
-                                                            dcdr >> data.struct_type();
-                                                            break;
+                                                case TK_ANNOTATION:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalAnnotationType annotation_type_value;
+                                                        data.annotation_type(std::move(annotation_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_UNION:
-                                                            dcdr >> data.union_type();
-                                                            break;
+                                                case TK_STRUCTURE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalStructType struct_type_value;
+                                                        data.struct_type(std::move(struct_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_BITSET:
-                                                            dcdr >> data.bitset_type();
-                                                            break;
+                                                case TK_UNION:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalUnionType union_type_value;
+                                                        data.union_type(std::move(union_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_SEQUENCE:
-                                                            dcdr >> data.sequence_type();
-                                                            break;
+                                                case TK_BITSET:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalBitsetType bitset_type_value;
+                                                        data.bitset_type(std::move(bitset_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_ARRAY:
-                                                            dcdr >> data.array_type();
-                                                            break;
+                                                case TK_SEQUENCE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalSequenceType sequence_type_value;
+                                                        data.sequence_type(std::move(sequence_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_MAP:
-                                                            dcdr >> data.map_type();
-                                                            break;
+                                                case TK_ARRAY:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalArrayType array_type_value;
+                                                        data.array_type(std::move(array_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_ENUM:
-                                                            dcdr >> data.enumerated_type();
-                                                            break;
+                                                case TK_MAP:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalMapType map_type_value;
+                                                        data.map_type(std::move(map_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case TK_BITMASK:
-                                                            dcdr >> data.bitmask_type();
-                                                            break;
+                                                case TK_ENUM:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalEnumeratedType enumerated_type_value;
+                                                        data.enumerated_type(std::move(enumerated_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        default:
-                                                            dcdr >> data.extended_type();
-                                                            break;
+                                                case TK_BITMASK:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalBitmaskType bitmask_type_value;
+                                                        data.bitmask_type(std::move(bitmask_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                        }
-                        ret_value = false;
-                        break;
+                                                default:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalExtendedType extended_type_value;
+                                                        data.extended_type(std::move(extended_type_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case TK_ALIAS:
+                                                    dcdr >> data.alias_type();
+                                                    break;
+
+                                                case TK_ANNOTATION:
+                                                    dcdr >> data.annotation_type();
+                                                    break;
+
+                                                case TK_STRUCTURE:
+                                                    dcdr >> data.struct_type();
+                                                    break;
+
+                                                case TK_UNION:
+                                                    dcdr >> data.union_type();
+                                                    break;
+
+                                                case TK_BITSET:
+                                                    dcdr >> data.bitset_type();
+                                                    break;
+
+                                                case TK_SEQUENCE:
+                                                    dcdr >> data.sequence_type();
+                                                    break;
+
+                                                case TK_ARRAY:
+                                                    dcdr >> data.array_type();
+                                                    break;
+
+                                                case TK_MAP:
+                                                    dcdr >> data.map_type();
+                                                    break;
+
+                                                case TK_ENUM:
+                                                    dcdr >> data.enumerated_type();
+                                                    break;
+
+                                                case TK_BITMASK:
+                                                    dcdr >> data.bitmask_type();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.extended_type();
+                                                    break;
+
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -9664,12 +10115,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case EK_COMPLETE:
+                case EK_COMPLETE:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.complete(), current_alignment);
                     break;
 
-        case EK_MINIMAL:
+                case EK_MINIMAL:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.minimal(), current_alignment);
                     break;
@@ -9729,27 +10180,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case EK_COMPLETE:
-                                                            dcdr >> data.complete();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case EK_MINIMAL:
-                                                            dcdr >> data.minimal();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case EK_COMPLETE:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::CompleteTypeObject complete_value;
+                                                        data.complete(std::move(complete_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case EK_MINIMAL:
+                                                    {
+                                                        eprosima::fastdds::dds::xtypes::MinimalTypeObject minimal_value;
+                                                        data.minimal(std::move(minimal_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case EK_COMPLETE:
+                                                    dcdr >> data.complete();
+                                                    break;
+
+                                                case EK_MINIMAL:
+                                                    dcdr >> data.minimal();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });

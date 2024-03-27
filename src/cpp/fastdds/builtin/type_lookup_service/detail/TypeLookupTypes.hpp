@@ -23,6 +23,7 @@
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_DDS_BUILTIN_TYPELOOKUPTYPES_HPP_
 
 #include <cstdint>
+#include <functional>
 #include <utility>
 #include <vector>
 
@@ -393,7 +394,6 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypes_Result()
     {
-        m__d = eprosima::fastdds::dds::RETCODE_OK;
     }
 
     /*!
@@ -401,6 +401,10 @@ public:
      */
     eProsima_user_DllExport ~TypeLookup_getTypes_Result()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -412,14 +416,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = x.m_result;
-                break;
+                        case 0x00000001:
+                            result_() = x.m_result;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -432,15 +434,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = std::move(x.m_result);
+                        case 0x00000001:
+                            result_() = std::move(x.m_result);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -453,14 +452,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = x.m_result;
-                break;
+                        case 0x00000001:
+                            result_() = x.m_result;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -475,15 +472,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = std::move(x.m_result);
+                        case 0x00000001:
+                            result_() = std::move(x.m_result);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -496,21 +490,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeLookup_getTypes_Result& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_result == x.m_result);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                return (m_result == x.m_result);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -531,26 +525,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                switch (__d)
-                {
-                    case eprosima::fastdds::dds::RETCODE_OK:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case eprosima::fastdds::dds::RETCODE_OK:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -568,24 +556,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member result
      * @param _result New value to be copied in member result
      */
     eProsima_user_DllExport void result(
             const TypeLookup_getTypes_Out& _result)
     {
-        m_result = _result;
+        result_() = _result;
         m__d = eprosima::fastdds::dds::RETCODE_OK;
-
     }
 
     /*!
@@ -595,9 +573,8 @@ public:
     eProsima_user_DllExport void result(
             TypeLookup_getTypes_Out&& _result)
     {
-        m_result = std::move(_result);
+        result_() = _result;
         m__d = eprosima::fastdds::dds::RETCODE_OK;
-
     }
 
     /*!
@@ -607,18 +584,7 @@ public:
      */
     eProsima_user_DllExport const TypeLookup_getTypes_Out& result() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -633,18 +599,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypes_Out& result()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -653,12 +608,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            TypeLookup_getTypes_Out& result_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    TypeLookup_getTypes_Out m_result;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_result.~TypeLookup_getTypes_Out();};
+                    new(&m_result) TypeLookup_getTypes_Out();
+    ;
+                }
+
+                return m_result;
+            }
+
+
+    int32_t m__d {1};
+
+    union
+    {
+        TypeLookup_getTypes_Out m_result;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure TypeLookup_getTypeDependencies_In defined by the user in the IDL file.
@@ -1033,7 +1024,6 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypeDependencies_Result()
     {
-        m__d = eprosima::fastdds::dds::RETCODE_OK;
     }
 
     /*!
@@ -1041,6 +1031,10 @@ public:
      */
     eProsima_user_DllExport ~TypeLookup_getTypeDependencies_Result()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1052,14 +1046,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = x.m_result;
-                break;
+                        case 0x00000001:
+                            result_() = x.m_result;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1072,15 +1064,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = std::move(x.m_result);
+                        case 0x00000001:
+                            result_() = std::move(x.m_result);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1093,14 +1082,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = x.m_result;
-                break;
+                        case 0x00000001:
+                            result_() = x.m_result;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1115,15 +1102,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                m_result = std::move(x.m_result);
+                        case 0x00000001:
+                            result_() = std::move(x.m_result);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -1136,21 +1120,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeLookup_getTypeDependencies_Result& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_result == x.m_result);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                return (m_result == x.m_result);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1171,26 +1155,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                switch (__d)
-                {
-                    case eprosima::fastdds::dds::RETCODE_OK:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case eprosima::fastdds::dds::RETCODE_OK:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1208,24 +1186,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member result
      * @param _result New value to be copied in member result
      */
     eProsima_user_DllExport void result(
             const TypeLookup_getTypeDependencies_Out& _result)
     {
-        m_result = _result;
+        result_() = _result;
         m__d = eprosima::fastdds::dds::RETCODE_OK;
-
     }
 
     /*!
@@ -1235,9 +1203,8 @@ public:
     eProsima_user_DllExport void result(
             TypeLookup_getTypeDependencies_Out&& _result)
     {
-        m_result = std::move(_result);
+        result_() = _result;
         m__d = eprosima::fastdds::dds::RETCODE_OK;
-
     }
 
     /*!
@@ -1247,18 +1214,7 @@ public:
      */
     eProsima_user_DllExport const TypeLookup_getTypeDependencies_Out& result() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1273,18 +1229,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypeDependencies_Out& result()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case eprosima::fastdds::dds::RETCODE_OK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1293,12 +1238,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            TypeLookup_getTypeDependencies_Out& result_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    TypeLookup_getTypeDependencies_Out m_result;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_result.~TypeLookup_getTypeDependencies_Out();};
+                    new(&m_result) TypeLookup_getTypeDependencies_Out();
+    ;
+                }
+
+                return m_result;
+            }
+
+
+    int32_t m__d {1};
+
+    union
+    {
+        TypeLookup_getTypeDependencies_Out m_result;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union TypeLookup_Call defined by the user in the IDL file.
@@ -1313,7 +1294,6 @@ public:
      */
     eProsima_user_DllExport TypeLookup_Call()
     {
-        m__d = TypeLookup_getTypes_HashId;
     }
 
     /*!
@@ -1321,6 +1301,10 @@ public:
      */
     eProsima_user_DllExport ~TypeLookup_Call()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1332,19 +1316,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getTypes = x.m_getTypes;
-                break;
+                        case 0x00000001:
+                            getTypes_() = x.m_getTypes;
+                            break;
 
+                        case 0x00000002:
+                            getTypeDependencies_() = x.m_getTypeDependencies;
+                            break;
 
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = x.m_getTypeDependencies;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1357,21 +1338,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getTypes = std::move(x.m_getTypes);
+                        case 0x00000001:
+                            getTypes_() = std::move(x.m_getTypes);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            getTypeDependencies_() = std::move(x.m_getTypeDependencies);
+                            break;
 
-
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = std::move(x.m_getTypeDependencies);
-
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1384,19 +1360,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getTypes = x.m_getTypes;
-                break;
+                        case 0x00000001:
+                            getTypes_() = x.m_getTypes;
+                            break;
 
+                        case 0x00000002:
+                            getTypeDependencies_() = x.m_getTypeDependencies;
+                            break;
 
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = x.m_getTypeDependencies;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -1411,21 +1384,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getTypes = std::move(x.m_getTypes);
+                        case 0x00000001:
+                            getTypes_() = std::move(x.m_getTypes);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            getTypeDependencies_() = std::move(x.m_getTypeDependencies);
+                            break;
 
-
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = std::move(x.m_getTypeDependencies);
-
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -1438,26 +1406,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeLookup_Call& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_getTypes == x.m_getTypes);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_getTypeDependencies == x.m_getTypeDependencies);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case TypeLookup_getTypes_HashId:
-                return (m_getTypes == x.m_getTypes);
-                break;
-
-
-            case TypeLookup_getDependencies_HashId:
-                return (m_getTypeDependencies == x.m_getTypeDependencies);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1478,38 +1445,27 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case TypeLookup_getTypes_HashId:
-                switch (__d)
-                {
-                    case TypeLookup_getTypes_HashId:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TypeLookup_getTypes_HashId:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TypeLookup_getDependencies_HashId:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TypeLookup_getDependencies_HashId:
-                switch (__d)
-                {
-                    case TypeLookup_getDependencies_HashId:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1527,24 +1483,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member getTypes
      * @param _getTypes New value to be copied in member getTypes
      */
     eProsima_user_DllExport void getTypes(
             const TypeLookup_getTypes_In& _getTypes)
     {
-        m_getTypes = _getTypes;
+        getTypes_() = _getTypes;
         m__d = TypeLookup_getTypes_HashId;
-
     }
 
     /*!
@@ -1554,9 +1500,8 @@ public:
     eProsima_user_DllExport void getTypes(
             TypeLookup_getTypes_In&& _getTypes)
     {
-        m_getTypes = std::move(_getTypes);
+        getTypes_() = _getTypes;
         m__d = TypeLookup_getTypes_HashId;
-
     }
 
     /*!
@@ -1566,18 +1511,7 @@ public:
      */
     eProsima_user_DllExport const TypeLookup_getTypes_In& getTypes() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getTypes_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1592,18 +1526,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypes_In& getTypes()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getTypes_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1619,9 +1542,8 @@ public:
     eProsima_user_DllExport void getTypeDependencies(
             const TypeLookup_getTypeDependencies_In& _getTypeDependencies)
     {
-        m_getTypeDependencies = _getTypeDependencies;
+        getTypeDependencies_() = _getTypeDependencies;
         m__d = TypeLookup_getDependencies_HashId;
-
     }
 
     /*!
@@ -1631,9 +1553,8 @@ public:
     eProsima_user_DllExport void getTypeDependencies(
             TypeLookup_getTypeDependencies_In&& _getTypeDependencies)
     {
-        m_getTypeDependencies = std::move(_getTypeDependencies);
+        getTypeDependencies_() = _getTypeDependencies;
         m__d = TypeLookup_getDependencies_HashId;
-
     }
 
     /*!
@@ -1643,18 +1564,7 @@ public:
      */
     eProsima_user_DllExport const TypeLookup_getTypeDependencies_In& getTypeDependencies() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getDependencies_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1669,18 +1579,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypeDependencies_In& getTypeDependencies()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getDependencies_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1689,13 +1588,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            TypeLookup_getTypes_In& getTypes_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    TypeLookup_getTypes_In m_getTypes;
-    TypeLookup_getTypeDependencies_In m_getTypeDependencies;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_getTypes.~TypeLookup_getTypes_In();};
+                    new(&m_getTypes) TypeLookup_getTypes_In();
+    ;
+                }
+
+                return m_getTypes;
+            }
+
+            TypeLookup_getTypeDependencies_In& getTypeDependencies_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_getTypeDependencies.~TypeLookup_getTypeDependencies_In();};
+                    new(&m_getTypeDependencies) TypeLookup_getTypeDependencies_In();
+    ;
+                }
+
+                return m_getTypeDependencies;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        TypeLookup_getTypes_In m_getTypes;
+        TypeLookup_getTypeDependencies_In m_getTypeDependencies;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure TypeLookup_Request defined by the user in the IDL file.
@@ -1890,7 +1843,6 @@ public:
      */
     eProsima_user_DllExport TypeLookup_Return()
     {
-        m__d = TypeLookup_getTypes_HashId;
     }
 
     /*!
@@ -1898,6 +1850,10 @@ public:
      */
     eProsima_user_DllExport ~TypeLookup_Return()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1909,19 +1865,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getType = x.m_getType;
-                break;
+                        case 0x00000001:
+                            getType_() = x.m_getType;
+                            break;
 
+                        case 0x00000002:
+                            getTypeDependencies_() = x.m_getTypeDependencies;
+                            break;
 
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = x.m_getTypeDependencies;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1934,21 +1887,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getType = std::move(x.m_getType);
+                        case 0x00000001:
+                            getType_() = std::move(x.m_getType);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            getTypeDependencies_() = std::move(x.m_getTypeDependencies);
+                            break;
 
-
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = std::move(x.m_getTypeDependencies);
-
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1961,19 +1909,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getType = x.m_getType;
-                break;
+                        case 0x00000001:
+                            getType_() = x.m_getType;
+                            break;
 
+                        case 0x00000002:
+                            getTypeDependencies_() = x.m_getTypeDependencies;
+                            break;
 
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = x.m_getTypeDependencies;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -1988,21 +1933,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TypeLookup_getTypes_HashId:
-                m_getType = std::move(x.m_getType);
+                        case 0x00000001:
+                            getType_() = std::move(x.m_getType);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            getTypeDependencies_() = std::move(x.m_getTypeDependencies);
+                            break;
 
-
-            case TypeLookup_getDependencies_HashId:
-                m_getTypeDependencies = std::move(x.m_getTypeDependencies);
-
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -2015,26 +1955,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeLookup_Return& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_getType == x.m_getType);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_getTypeDependencies == x.m_getTypeDependencies);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case TypeLookup_getTypes_HashId:
-                return (m_getType == x.m_getType);
-                break;
-
-
-            case TypeLookup_getDependencies_HashId:
-                return (m_getTypeDependencies == x.m_getTypeDependencies);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -2055,38 +1994,27 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case TypeLookup_getTypes_HashId:
-                switch (__d)
-                {
-                    case TypeLookup_getTypes_HashId:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TypeLookup_getTypes_HashId:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TypeLookup_getDependencies_HashId:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TypeLookup_getDependencies_HashId:
-                switch (__d)
-                {
-                    case TypeLookup_getDependencies_HashId:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -2104,24 +2032,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member getType
      * @param _getType New value to be copied in member getType
      */
     eProsima_user_DllExport void getType(
             const TypeLookup_getTypes_Result& _getType)
     {
-        m_getType = _getType;
+        getType_() = _getType;
         m__d = TypeLookup_getTypes_HashId;
-
     }
 
     /*!
@@ -2131,9 +2049,8 @@ public:
     eProsima_user_DllExport void getType(
             TypeLookup_getTypes_Result&& _getType)
     {
-        m_getType = std::move(_getType);
+        getType_() = _getType;
         m__d = TypeLookup_getTypes_HashId;
-
     }
 
     /*!
@@ -2143,18 +2060,7 @@ public:
      */
     eProsima_user_DllExport const TypeLookup_getTypes_Result& getType() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getTypes_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2169,18 +2075,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypes_Result& getType()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getTypes_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2196,9 +2091,8 @@ public:
     eProsima_user_DllExport void getTypeDependencies(
             const TypeLookup_getTypeDependencies_Result& _getTypeDependencies)
     {
-        m_getTypeDependencies = _getTypeDependencies;
+        getTypeDependencies_() = _getTypeDependencies;
         m__d = TypeLookup_getDependencies_HashId;
-
     }
 
     /*!
@@ -2208,9 +2102,8 @@ public:
     eProsima_user_DllExport void getTypeDependencies(
             TypeLookup_getTypeDependencies_Result&& _getTypeDependencies)
     {
-        m_getTypeDependencies = std::move(_getTypeDependencies);
+        getTypeDependencies_() = _getTypeDependencies;
         m__d = TypeLookup_getDependencies_HashId;
-
     }
 
     /*!
@@ -2220,18 +2113,7 @@ public:
      */
     eProsima_user_DllExport const TypeLookup_getTypeDependencies_Result& getTypeDependencies() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getDependencies_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2246,18 +2128,7 @@ public:
      */
     eProsima_user_DllExport TypeLookup_getTypeDependencies_Result& getTypeDependencies()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TypeLookup_getDependencies_HashId:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2266,13 +2137,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            TypeLookup_getTypes_Result& getType_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    TypeLookup_getTypes_Result m_getType;
-    TypeLookup_getTypeDependencies_Result m_getTypeDependencies;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_getType.~TypeLookup_getTypes_Result();};
+                    new(&m_getType) TypeLookup_getTypes_Result();
+    ;
+                }
+
+                return m_getType;
+            }
+
+            TypeLookup_getTypeDependencies_Result& getTypeDependencies_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_getTypeDependencies.~TypeLookup_getTypeDependencies_Result();};
+                    new(&m_getTypeDependencies) TypeLookup_getTypeDependencies_Result();
+    ;
+                }
+
+                return m_getTypeDependencies;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        TypeLookup_getTypes_Result m_getType;
+        TypeLookup_getTypeDependencies_Result m_getTypeDependencies;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure TypeLookup_Reply defined by the user in the IDL file.
