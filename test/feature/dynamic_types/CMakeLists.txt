@@ -24,6 +24,7 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     dds_types_tests/DynamicTypesAliasesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesArraysDDSTypesTests.cpp
+    dds_types_tests/DynamicTypesEnumerationsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesInheritanceDDSTypesTests.cpp
     dds_types_tests/DynamicTypesMapsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesPrimitivesDDSTypesTests.cpp
@@ -60,8 +61,8 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/declarationsPubSubTypes.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/externalPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalTypeObjectSupport.cxx

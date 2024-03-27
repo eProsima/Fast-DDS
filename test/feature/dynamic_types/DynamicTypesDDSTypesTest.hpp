@@ -39,6 +39,12 @@ constexpr const char* bitmask_flag_1_name = "flag1";
 constexpr const char* bitmask_flag_4_name = "flag4";
 constexpr const char* bitmask_flag_6_name = "flag6";
 
+constexpr const char* bounded_bitmask_name = "InnerBoundedBitMaskHelper";
+constexpr const char* bounded_bitmask_bflag_0_name = "bflag0";
+constexpr const char* bounded_bitmask_bflag_1_name = "bflag1";
+constexpr const char* bounded_bitmask_bflag_4_name = "bflag4";
+constexpr const char* bounded_bitmask_bflag_6_name = "bflag6";
+
 constexpr const char* alias_name = "InnerAliasHelper";
 
 constexpr const char* union_name = "InnerUnionHelper";
@@ -133,6 +139,7 @@ public:
      */
     static DynamicType::_ref_type create_inner_enum_helper();
     static DynamicType::_ref_type create_inner_bitmask_helper();
+    static DynamicType::_ref_type create_inner_bounded_bitmask_helper();
     static DynamicType::_ref_type create_inner_alias_helper();
     static DynamicType::_ref_type create_inner_struct_helper();
     static DynamicType::_ref_type create_inner_empty_struct_helper();

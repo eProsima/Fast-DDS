@@ -97,6 +97,40 @@ DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bitmask_helper()
     return bitmask_builder->build();
 }
 
+DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_bounded_bitmask_helper()
+{
+    TypeDescriptor::_ref_type bounded_bitmask_descriptor {traits<TypeDescriptor>::make_shared()};
+    bounded_bitmask_descriptor->kind(TK_BITMASK);
+    bounded_bitmask_descriptor->name(bounded_bitmask_name);
+    bounded_bitmask_descriptor->element_type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
+    bounded_bitmask_descriptor->bound().push_back(8);
+    DynamicTypeBuilder::_ref_type bounded_bitmask_builder {DynamicTypeBuilderFactory::get_instance()->create_type(
+                                                               bounded_bitmask_descriptor)};
+
+    MemberDescriptor::_ref_type bitfield_descriptor {traits<MemberDescriptor>::make_shared()};
+    bitfield_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
+    bitfield_descriptor->name(bounded_bitmask_bflag_0_name);
+    bitfield_descriptor->id(0);
+    bounded_bitmask_builder->add_member(bitfield_descriptor);
+    bitfield_descriptor = traits<MemberDescriptor>::make_shared();
+    bitfield_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
+    bitfield_descriptor->name(bounded_bitmask_bflag_1_name);
+    bitfield_descriptor->id(1);
+    bounded_bitmask_builder->add_member(bitfield_descriptor);
+    bitfield_descriptor = traits<MemberDescriptor>::make_shared();
+    bitfield_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
+    bitfield_descriptor->name(bounded_bitmask_bflag_4_name);
+    bitfield_descriptor->id(4);
+    bounded_bitmask_builder->add_member(bitfield_descriptor);
+    bitfield_descriptor = traits<MemberDescriptor>::make_shared();
+    bitfield_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_BOOLEAN));
+    bitfield_descriptor->name(bounded_bitmask_bflag_6_name);
+    bitfield_descriptor->id(6);
+    bounded_bitmask_builder->add_member(bitfield_descriptor);
+
+    return bounded_bitmask_builder->build();
+}
+
 DynamicType::_ref_type DynamicTypesDDSTypesTest::create_inner_alias_helper()
 {
     TypeDescriptor::_ref_type inner_alias_descriptor {traits<TypeDescriptor>::make_shared()};
