@@ -647,10 +647,10 @@ ReturnCode_t DataReaderImpl::return_loan(
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
 
-    // They should have a loan
+    // If there is ownership that means there are no loans, case in which we just return OK
     if (data_values.has_ownership() == true)
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return ReturnCode_t::RETCODE_OK;
     }
 
     std::lock_guard<RecursiveTimedMutex> lock(reader_->getMutex());

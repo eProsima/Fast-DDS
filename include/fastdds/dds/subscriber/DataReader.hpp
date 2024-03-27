@@ -733,9 +733,9 @@ public:
      *
      * The use of the @ref return_loan operation is only necessary if the read or take calls "loaned" buffers to the
      * application. This only occurs if the @c data_values and @c sample_infos collections had <tt> max_len == 0 </tt>
-     * at the time read or take was called. The application may also examine the @c owns property of the collection to
-     * determine if there is an outstanding loan. However, calling @ref return_loan on a collection that does not have
-     * a loan is safe and has no side effects.
+     * at the time read or take was called. The application may also examine the @c has_ownership property of the
+     * collection to determine if there is an outstanding loan. However, calling @ref return_loan on a collection that
+     * does not have a loan is safe, has no side effects, and returns RETCODE_OK.
      *
      * If the collections had a loan, upon return from return_loan the collections will have <tt> max_len == 0 </tt>.
      *
