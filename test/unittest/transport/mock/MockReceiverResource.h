@@ -17,8 +17,7 @@
 
 #include <functional>
 
-#include <fastdds/rtps/messages/MessageReceiver.h>
-
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/ReceiverResource.h>
 
 namespace eprosima {

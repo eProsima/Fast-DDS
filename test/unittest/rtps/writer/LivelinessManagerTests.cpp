@@ -1,4 +1,4 @@
-// Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 #include <thread>
 
 #include <asio.hpp>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
+
+#include <rtps/writer/LivelinessManager.hpp>
 
 class LivelinessManagerTests : public ::testing::Test
 {

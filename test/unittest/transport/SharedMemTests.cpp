@@ -23,12 +23,14 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/Semaphore.h>
+
+#include <utils/Semaphore.hpp>
 
 #include "../../../src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp"
 #include "../../../src/cpp/rtps/transport/shared_mem/SharedMemSenderResource.hpp"
+
 #include <MockReceiverResource.h>
 #include <SharedMemGlobalMock.hpp>
 

@@ -6,7 +6,23 @@ Forthcoming
 * Remove API marked as deprecated.
 * Removed deprecated FastRTPS API tests.
 * Removed no longer supported `FASTRTPS_API_TESTS` CMake options.
-* XML Parser API no longer public.
+* Public API that is no longer public:
+  * XML Parser API no longer public.
+  * ParticipantAttributes
+  * ReplierAttributes
+  * RequesterAttributes
+  * PublisherAttributes
+  * SubscriberAttributes
+  * All discovery implementation related API
+  * ProxyPool
+  * Semaphore
+  * MessageReceiver
+  * BuiltinProtocols
+  * Liveliness implementation related API
+  * shared_mutex
+  * StringMatching
+  * TimeConversion
+  * DBQueue
 
 Version 2.14.0
 --------------

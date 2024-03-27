@@ -23,14 +23,16 @@
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/Semaphore.h>
 
 #include "mock/MockTCPChannelResource.h"
 #include "mock/MockTCPv4Transport.h"
 #include <MockReceiverResource.h>
+
 #include <rtps/transport/tcp/RTCPHeader.h>
 #include <rtps/transport/TCPv4Transport.h>
+#include <utils/Semaphore.hpp>
 
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;

@@ -43,7 +43,6 @@
 
 using namespace eprosima::fastrtps::xmlparser;
 
-using eprosima::fastrtps::ParticipantAttributes;
 using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::RTPSDomain;
@@ -421,7 +420,7 @@ void DomainParticipantFactory::reset_default_participant_qos()
     DomainParticipantImpl::set_qos(default_participant_qos_, PARTICIPANT_QOS_DEFAULT, true);
     if (true == default_xml_profiles_loaded)
     {
-        eprosima::fastrtps::ParticipantAttributes attr;
+        ParticipantAttributes attr;
         XMLProfileManager::getDefaultParticipantAttributes(attr);
         utils::set_qos_from_attributes(default_participant_qos_, attr.rtps);
     }

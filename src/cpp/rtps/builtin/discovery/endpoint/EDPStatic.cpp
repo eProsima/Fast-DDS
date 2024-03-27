@@ -17,6 +17,8 @@
  *
  */
 
+#include <rtps/builtin/discovery/endpoint/EDPStatic.h>
+
 #include <mutex>
 #include <sstream>
 
@@ -26,11 +28,10 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <xmlparser/XMLEndpointParser.h>
 

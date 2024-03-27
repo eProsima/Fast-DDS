@@ -23,17 +23,17 @@
 
 #include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/messages/MessageReceiver.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/utils/shared_mutex.hpp>
 
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-#include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
+#include <statistics/rtps/StatisticsBase.hpp>
+#include <utils/shared_mutex.hpp>
 
 #define INFO_SRC_SUBMSG_LENGTH 20
 

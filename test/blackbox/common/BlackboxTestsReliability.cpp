@@ -14,7 +14,6 @@
 
 #include <thread>
 
-#include <fastrtps/utils/TimeConversion.h>
 #include <gtest/gtest.h>
 
 // TODO(jlbueno): remove private header

@@ -240,6 +240,32 @@ void set_qos_from_attributes(
     qos.presentation() = attr.qos.m_presentation;
 }
 
+void set_qos_from_attributes(
+        ReplierQos& qos,
+        const ReplierAttributes& attr)
+{
+    qos.service_name = attr.service_name;
+    qos.request_type = attr.request_type;
+    qos.reply_type = attr.reply_type;
+    qos.request_topic_name = attr.request_topic_name;
+    qos.reply_topic_name = attr.reply_topic_name;
+    set_qos_from_attributes(qos.writer_qos, attr.publisher);
+    set_qos_from_attributes(qos.reader_qos, attr.subscriber);
+}
+
+void set_qos_from_attributes(
+        RequesterQos& qos,
+        const RequesterAttributes& attr)
+{
+    qos.service_name = attr.service_name;
+    qos.request_type = attr.request_type;
+    qos.reply_type = attr.reply_type;
+    qos.request_topic_name = attr.request_topic_name;
+    qos.reply_topic_name = attr.reply_topic_name;
+    set_qos_from_attributes(qos.writer_qos, attr.publisher);
+    set_qos_from_attributes(qos.reader_qos, attr.subscriber);
+}
+
 } /* namespace utils */
 } /* namespace dds */
 } /* namespace fastdds */

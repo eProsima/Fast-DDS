@@ -37,7 +37,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/types/TypesBase.h>
 
 // TODO(jlbueno): remove private headers
