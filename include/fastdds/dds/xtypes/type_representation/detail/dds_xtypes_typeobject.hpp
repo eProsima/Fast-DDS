@@ -24,6 +24,7 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -151,7 +152,6 @@ public:
      */
     eProsima_user_DllExport TypeObjectHashId()
     {
-        m__d = EK_COMPLETE;
     }
 
     /*!
@@ -159,6 +159,10 @@ public:
      */
     eProsima_user_DllExport ~TypeObjectHashId()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -170,15 +174,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_hash = x.m_hash;
-                break;
+                        case 0x00000001:
+                            hash_() = x.m_hash;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -191,16 +192,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_hash = std::move(x.m_hash);
+                        case 0x00000001:
+                            hash_() = std::move(x.m_hash);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -213,15 +210,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_hash = x.m_hash;
-                break;
+                        case 0x00000001:
+                            hash_() = x.m_hash;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -236,16 +230,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_hash = std::move(x.m_hash);
+                        case 0x00000001:
+                            hash_() = std::move(x.m_hash);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -258,22 +248,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeObjectHashId& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_hash == x.m_hash);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                return (m_hash == x.m_hash);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -294,28 +283,21 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                switch (__d)
-                {
-                    case EK_COMPLETE:
-                    case EK_MINIMAL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case EK_COMPLETE:
+                        case EK_MINIMAL:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -333,24 +315,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member hash
      * @param _hash New value to be copied in member hash
      */
     eProsima_user_DllExport void hash(
             const EquivalenceHash& _hash)
     {
-        m_hash = _hash;
+        hash_() = _hash;
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -360,9 +332,8 @@ public:
     eProsima_user_DllExport void hash(
             EquivalenceHash&& _hash)
     {
-        m_hash = std::move(_hash);
+        hash_() = _hash;
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -372,19 +343,7 @@ public:
      */
     eProsima_user_DllExport const EquivalenceHash& hash() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -399,19 +358,7 @@ public:
      */
     eProsima_user_DllExport EquivalenceHash& hash()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -420,12 +367,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint8_t m__d;
+            EquivalenceHash& hash_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    EquivalenceHash m_hash{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_hash.~EquivalenceHash();};
+                    new(&m_hash) EquivalenceHash();
+    ;
+                }
+
+                return m_hash;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        EquivalenceHash m_hash;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This enumeration represents the MemberFlag bitflags defined by the user in the IDL file.
@@ -2734,7 +2717,7 @@ public:
      */
     eProsima_user_DllExport TypeIdentifier()
     {
-        m__d = 0;
+        extended_defn_();
     }
 
     /*!
@@ -2742,6 +2725,10 @@ public:
      */
     eProsima_user_DllExport ~TypeIdentifier()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -2753,65 +2740,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                m_string_sdefn = x.m_string_sdefn;
-                break;
+                        case 0x00000001:
+                            string_sdefn_() = x.m_string_sdefn;
+                            break;
 
+                        case 0x00000002:
+                            string_ldefn_() = x.m_string_ldefn;
+                            break;
 
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                m_string_ldefn = x.m_string_ldefn;
-                break;
+                        case 0x00000003:
+                            seq_sdefn_() = x.m_seq_sdefn;
+                            break;
 
+                        case 0x00000004:
+                            seq_ldefn_() = x.m_seq_ldefn;
+                            break;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
-                m_seq_sdefn = x.m_seq_sdefn;
-                break;
+                        case 0x00000005:
+                            array_sdefn_() = x.m_array_sdefn;
+                            break;
 
+                        case 0x00000006:
+                            array_ldefn_() = x.m_array_ldefn;
+                            break;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
-                m_seq_ldefn = x.m_seq_ldefn;
-                break;
+                        case 0x00000007:
+                            map_sdefn_() = x.m_map_sdefn;
+                            break;
 
+                        case 0x00000008:
+                            map_ldefn_() = x.m_map_ldefn;
+                            break;
 
-            case TI_PLAIN_ARRAY_SMALL:
-                m_array_sdefn = x.m_array_sdefn;
-                break;
+                        case 0x00000009:
+                            sc_component_id_() = x.m_sc_component_id;
+                            break;
 
+                        case 0x0000000a:
+                            equivalence_hash_() = x.m_equivalence_hash;
+                            break;
 
-            case TI_PLAIN_ARRAY_LARGE:
-                m_array_ldefn = x.m_array_ldefn;
-                break;
+                        case 0x0000000b:
+                            extended_defn_() = x.m_extended_defn;
+                            break;
 
-
-            case TI_PLAIN_MAP_SMALL:
-                m_map_sdefn = x.m_map_sdefn;
-                break;
-
-
-            case TI_PLAIN_MAP_LARGE:
-                m_map_ldefn = x.m_map_ldefn;
-                break;
-
-
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                m_sc_component_id = x.m_sc_component_id;
-                break;
-
-
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_equivalence_hash = x.m_equivalence_hash;
-                break;
-
-
-            default:
-                m_extended_defn = x.m_extended_defn;
-
-                break;
         }
     }
 
@@ -2824,75 +2798,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                m_string_sdefn = std::move(x.m_string_sdefn);
+                        case 0x00000001:
+                            string_sdefn_() = std::move(x.m_string_sdefn);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            string_ldefn_() = std::move(x.m_string_ldefn);
+                            break;
 
+                        case 0x00000003:
+                            seq_sdefn_() = std::move(x.m_seq_sdefn);
+                            break;
 
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                m_string_ldefn = std::move(x.m_string_ldefn);
+                        case 0x00000004:
+                            seq_ldefn_() = std::move(x.m_seq_ldefn);
+                            break;
 
-                break;
+                        case 0x00000005:
+                            array_sdefn_() = std::move(x.m_array_sdefn);
+                            break;
 
+                        case 0x00000006:
+                            array_ldefn_() = std::move(x.m_array_ldefn);
+                            break;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
-                m_seq_sdefn = std::move(x.m_seq_sdefn);
+                        case 0x00000007:
+                            map_sdefn_() = std::move(x.m_map_sdefn);
+                            break;
 
-                break;
+                        case 0x00000008:
+                            map_ldefn_() = std::move(x.m_map_ldefn);
+                            break;
 
+                        case 0x00000009:
+                            sc_component_id_() = std::move(x.m_sc_component_id);
+                            break;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
-                m_seq_ldefn = std::move(x.m_seq_ldefn);
+                        case 0x0000000a:
+                            equivalence_hash_() = std::move(x.m_equivalence_hash);
+                            break;
 
-                break;
+                        case 0x0000000b:
+                            extended_defn_() = std::move(x.m_extended_defn);
+                            break;
 
-
-            case TI_PLAIN_ARRAY_SMALL:
-                m_array_sdefn = std::move(x.m_array_sdefn);
-
-                break;
-
-
-            case TI_PLAIN_ARRAY_LARGE:
-                m_array_ldefn = std::move(x.m_array_ldefn);
-
-                break;
-
-
-            case TI_PLAIN_MAP_SMALL:
-                m_map_sdefn = std::move(x.m_map_sdefn);
-
-                break;
-
-
-            case TI_PLAIN_MAP_LARGE:
-                m_map_ldefn = std::move(x.m_map_ldefn);
-
-                break;
-
-
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                m_sc_component_id = std::move(x.m_sc_component_id);
-
-                break;
-
-
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_equivalence_hash = std::move(x.m_equivalence_hash);
-
-                break;
-
-
-            default:
-                m_extended_defn = std::move(x.m_extended_defn);
-
-                break;
         }
     }
 
@@ -2905,65 +2856,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                m_string_sdefn = x.m_string_sdefn;
-                break;
+                        case 0x00000001:
+                            string_sdefn_() = x.m_string_sdefn;
+                            break;
 
+                        case 0x00000002:
+                            string_ldefn_() = x.m_string_ldefn;
+                            break;
 
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                m_string_ldefn = x.m_string_ldefn;
-                break;
+                        case 0x00000003:
+                            seq_sdefn_() = x.m_seq_sdefn;
+                            break;
 
+                        case 0x00000004:
+                            seq_ldefn_() = x.m_seq_ldefn;
+                            break;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
-                m_seq_sdefn = x.m_seq_sdefn;
-                break;
+                        case 0x00000005:
+                            array_sdefn_() = x.m_array_sdefn;
+                            break;
 
+                        case 0x00000006:
+                            array_ldefn_() = x.m_array_ldefn;
+                            break;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
-                m_seq_ldefn = x.m_seq_ldefn;
-                break;
+                        case 0x00000007:
+                            map_sdefn_() = x.m_map_sdefn;
+                            break;
 
+                        case 0x00000008:
+                            map_ldefn_() = x.m_map_ldefn;
+                            break;
 
-            case TI_PLAIN_ARRAY_SMALL:
-                m_array_sdefn = x.m_array_sdefn;
-                break;
+                        case 0x00000009:
+                            sc_component_id_() = x.m_sc_component_id;
+                            break;
 
+                        case 0x0000000a:
+                            equivalence_hash_() = x.m_equivalence_hash;
+                            break;
 
-            case TI_PLAIN_ARRAY_LARGE:
-                m_array_ldefn = x.m_array_ldefn;
-                break;
+                        case 0x0000000b:
+                            extended_defn_() = x.m_extended_defn;
+                            break;
 
-
-            case TI_PLAIN_MAP_SMALL:
-                m_map_sdefn = x.m_map_sdefn;
-                break;
-
-
-            case TI_PLAIN_MAP_LARGE:
-                m_map_ldefn = x.m_map_ldefn;
-                break;
-
-
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                m_sc_component_id = x.m_sc_component_id;
-                break;
-
-
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_equivalence_hash = x.m_equivalence_hash;
-                break;
-
-
-            default:
-                m_extended_defn = x.m_extended_defn;
-
-                break;
         }
 
         return *this;
@@ -2978,75 +2916,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                m_string_sdefn = std::move(x.m_string_sdefn);
+                        case 0x00000001:
+                            string_sdefn_() = std::move(x.m_string_sdefn);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            string_ldefn_() = std::move(x.m_string_ldefn);
+                            break;
 
+                        case 0x00000003:
+                            seq_sdefn_() = std::move(x.m_seq_sdefn);
+                            break;
 
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                m_string_ldefn = std::move(x.m_string_ldefn);
+                        case 0x00000004:
+                            seq_ldefn_() = std::move(x.m_seq_ldefn);
+                            break;
 
-                break;
+                        case 0x00000005:
+                            array_sdefn_() = std::move(x.m_array_sdefn);
+                            break;
 
+                        case 0x00000006:
+                            array_ldefn_() = std::move(x.m_array_ldefn);
+                            break;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
-                m_seq_sdefn = std::move(x.m_seq_sdefn);
+                        case 0x00000007:
+                            map_sdefn_() = std::move(x.m_map_sdefn);
+                            break;
 
-                break;
+                        case 0x00000008:
+                            map_ldefn_() = std::move(x.m_map_ldefn);
+                            break;
 
+                        case 0x00000009:
+                            sc_component_id_() = std::move(x.m_sc_component_id);
+                            break;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
-                m_seq_ldefn = std::move(x.m_seq_ldefn);
+                        case 0x0000000a:
+                            equivalence_hash_() = std::move(x.m_equivalence_hash);
+                            break;
 
-                break;
+                        case 0x0000000b:
+                            extended_defn_() = std::move(x.m_extended_defn);
+                            break;
 
-
-            case TI_PLAIN_ARRAY_SMALL:
-                m_array_sdefn = std::move(x.m_array_sdefn);
-
-                break;
-
-
-            case TI_PLAIN_ARRAY_LARGE:
-                m_array_ldefn = std::move(x.m_array_ldefn);
-
-                break;
-
-
-            case TI_PLAIN_MAP_SMALL:
-                m_map_sdefn = std::move(x.m_map_sdefn);
-
-                break;
-
-
-            case TI_PLAIN_MAP_LARGE:
-                m_map_ldefn = std::move(x.m_map_ldefn);
-
-                break;
-
-
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                m_sc_component_id = std::move(x.m_sc_component_id);
-
-                break;
-
-
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                m_equivalence_hash = std::move(x.m_equivalence_hash);
-
-                break;
-
-
-            default:
-                m_extended_defn = std::move(x.m_extended_defn);
-
-                break;
         }
 
         return *this;
@@ -3059,71 +2974,61 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeIdentifier& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_string_sdefn == x.m_string_sdefn);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_string_ldefn == x.m_string_ldefn);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_seq_sdefn == x.m_seq_sdefn);
+                                    break;
+
+                                case 0x00000004:
+                                    ret_value = (m_seq_ldefn == x.m_seq_ldefn);
+                                    break;
+
+                                case 0x00000005:
+                                    ret_value = (m_array_sdefn == x.m_array_sdefn);
+                                    break;
+
+                                case 0x00000006:
+                                    ret_value = (m_array_ldefn == x.m_array_ldefn);
+                                    break;
+
+                                case 0x00000007:
+                                    ret_value = (m_map_sdefn == x.m_map_sdefn);
+                                    break;
+
+                                case 0x00000008:
+                                    ret_value = (m_map_ldefn == x.m_map_ldefn);
+                                    break;
+
+                                case 0x00000009:
+                                    ret_value = (m_sc_component_id == x.m_sc_component_id);
+                                    break;
+
+                                case 0x0000000a:
+                                    ret_value = (m_equivalence_hash == x.m_equivalence_hash);
+                                    break;
+
+                                case 0x0000000b:
+                                    ret_value = (m_extended_defn == x.m_extended_defn);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                return (m_string_sdefn == x.m_string_sdefn);
-                break;
-
-
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                return (m_string_ldefn == x.m_string_ldefn);
-                break;
-
-
-            case TI_PLAIN_SEQUENCE_SMALL:
-                return (m_seq_sdefn == x.m_seq_sdefn);
-                break;
-
-
-            case TI_PLAIN_SEQUENCE_LARGE:
-                return (m_seq_ldefn == x.m_seq_ldefn);
-                break;
-
-
-            case TI_PLAIN_ARRAY_SMALL:
-                return (m_array_sdefn == x.m_array_sdefn);
-                break;
-
-
-            case TI_PLAIN_ARRAY_LARGE:
-                return (m_array_ldefn == x.m_array_ldefn);
-                break;
-
-
-            case TI_PLAIN_MAP_SMALL:
-                return (m_map_sdefn == x.m_map_sdefn);
-                break;
-
-
-            case TI_PLAIN_MAP_LARGE:
-                return (m_map_ldefn == x.m_map_ldefn);
-                break;
-
-
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                return (m_sc_component_id == x.m_sc_component_id);
-                break;
-
-
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                return (m_equivalence_hash == x.m_equivalence_hash);
-                break;
-
-
-            default:
-                return m_extended_defn == x.m_extended_defn;
-
-                break;
-        }
+        return ret_value;
     }
 
     /*!
@@ -3144,163 +3049,93 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                switch (__d)
-                {
-                    case TI_STRING8_SMALL:
-                    case TI_STRING16_SMALL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TI_STRING8_SMALL:
+                        case TI_STRING16_SMALL:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TI_STRING8_LARGE:
+                        case TI_STRING16_LARGE:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                switch (__d)
-                {
-                    case TI_STRING8_LARGE:
-                    case TI_STRING16_LARGE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TI_PLAIN_SEQUENCE_SMALL:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TI_PLAIN_SEQUENCE_LARGE:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
-                switch (__d)
-                {
-                    case TI_PLAIN_SEQUENCE_SMALL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TI_PLAIN_ARRAY_SMALL:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TI_PLAIN_ARRAY_LARGE:
+                            if (0x00000006 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
-                switch (__d)
-                {
-                    case TI_PLAIN_SEQUENCE_LARGE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TI_PLAIN_MAP_SMALL:
+                            if (0x00000007 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TI_PLAIN_MAP_LARGE:
+                            if (0x00000008 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TI_PLAIN_ARRAY_SMALL:
-                switch (__d)
-                {
-                    case TI_PLAIN_ARRAY_SMALL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TI_STRONGLY_CONNECTED_COMPONENT:
+                            if (0x00000009 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case EK_COMPLETE:
+                        case EK_MINIMAL:
+                            if (0x0000000a == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TI_PLAIN_ARRAY_LARGE:
-                switch (__d)
-                {
-                    case TI_PLAIN_ARRAY_LARGE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TI_PLAIN_MAP_SMALL:
-                switch (__d)
-                {
-                    case TI_PLAIN_MAP_SMALL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TI_PLAIN_MAP_LARGE:
-                switch (__d)
-                {
-                    case TI_PLAIN_MAP_LARGE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                switch (__d)
-                {
-                    case TI_STRONGLY_CONNECTED_COMPONENT:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                switch (__d)
-                {
-                    case EK_COMPLETE:
-                    case EK_MINIMAL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            default:
-                b = true;
-                switch (__d)
-                {
-                    case TI_STRING8_SMALL:
-                    case TI_STRING16_SMALL:
-                    case TI_STRING8_LARGE:
-                    case TI_STRING16_LARGE:
-                    case TI_PLAIN_SEQUENCE_SMALL:
-                    case TI_PLAIN_SEQUENCE_LARGE:
-                    case TI_PLAIN_ARRAY_SMALL:
-                    case TI_PLAIN_ARRAY_LARGE:
-                    case TI_PLAIN_MAP_SMALL:
-                    case TI_PLAIN_MAP_LARGE:
-                    case TI_STRONGLY_CONNECTED_COMPONENT:
-                    case EK_COMPLETE:
-                    case EK_MINIMAL:
-                        b = false;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            if (0x0000000b == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -3318,24 +3153,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member string_sdefn
      * @param _string_sdefn New value to be copied in member string_sdefn
      */
     eProsima_user_DllExport void string_sdefn(
             const StringSTypeDefn& _string_sdefn)
     {
-        m_string_sdefn = _string_sdefn;
+        string_sdefn_() = _string_sdefn;
         m__d = TI_STRING8_SMALL;
-
     }
 
     /*!
@@ -3345,9 +3170,8 @@ public:
     eProsima_user_DllExport void string_sdefn(
             StringSTypeDefn&& _string_sdefn)
     {
-        m_string_sdefn = std::move(_string_sdefn);
+        string_sdefn_() = _string_sdefn;
         m__d = TI_STRING8_SMALL;
-
     }
 
     /*!
@@ -3357,19 +3181,7 @@ public:
      */
     eProsima_user_DllExport const StringSTypeDefn& string_sdefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3384,19 +3196,7 @@ public:
      */
     eProsima_user_DllExport StringSTypeDefn& string_sdefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3412,9 +3212,8 @@ public:
     eProsima_user_DllExport void string_ldefn(
             const StringLTypeDefn& _string_ldefn)
     {
-        m_string_ldefn = _string_ldefn;
+        string_ldefn_() = _string_ldefn;
         m__d = TI_STRING8_LARGE;
-
     }
 
     /*!
@@ -3424,9 +3223,8 @@ public:
     eProsima_user_DllExport void string_ldefn(
             StringLTypeDefn&& _string_ldefn)
     {
-        m_string_ldefn = std::move(_string_ldefn);
+        string_ldefn_() = _string_ldefn;
         m__d = TI_STRING8_LARGE;
-
     }
 
     /*!
@@ -3436,19 +3234,7 @@ public:
      */
     eProsima_user_DllExport const StringLTypeDefn& string_ldefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3463,19 +3249,7 @@ public:
      */
     eProsima_user_DllExport StringLTypeDefn& string_ldefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3491,9 +3265,8 @@ public:
     eProsima_user_DllExport void seq_sdefn(
             const PlainSequenceSElemDefn& _seq_sdefn)
     {
-        m_seq_sdefn = _seq_sdefn;
+        seq_sdefn_() = _seq_sdefn;
         m__d = TI_PLAIN_SEQUENCE_SMALL;
-
     }
 
     /*!
@@ -3503,9 +3276,8 @@ public:
     eProsima_user_DllExport void seq_sdefn(
             PlainSequenceSElemDefn&& _seq_sdefn)
     {
-        m_seq_sdefn = std::move(_seq_sdefn);
+        seq_sdefn_() = _seq_sdefn;
         m__d = TI_PLAIN_SEQUENCE_SMALL;
-
     }
 
     /*!
@@ -3515,18 +3287,7 @@ public:
      */
     eProsima_user_DllExport const PlainSequenceSElemDefn& seq_sdefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_SEQUENCE_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3541,18 +3302,7 @@ public:
      */
     eProsima_user_DllExport PlainSequenceSElemDefn& seq_sdefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_SEQUENCE_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3568,9 +3318,8 @@ public:
     eProsima_user_DllExport void seq_ldefn(
             const PlainSequenceLElemDefn& _seq_ldefn)
     {
-        m_seq_ldefn = _seq_ldefn;
+        seq_ldefn_() = _seq_ldefn;
         m__d = TI_PLAIN_SEQUENCE_LARGE;
-
     }
 
     /*!
@@ -3580,9 +3329,8 @@ public:
     eProsima_user_DllExport void seq_ldefn(
             PlainSequenceLElemDefn&& _seq_ldefn)
     {
-        m_seq_ldefn = std::move(_seq_ldefn);
+        seq_ldefn_() = _seq_ldefn;
         m__d = TI_PLAIN_SEQUENCE_LARGE;
-
     }
 
     /*!
@@ -3592,18 +3340,7 @@ public:
      */
     eProsima_user_DllExport const PlainSequenceLElemDefn& seq_ldefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_SEQUENCE_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3618,18 +3355,7 @@ public:
      */
     eProsima_user_DllExport PlainSequenceLElemDefn& seq_ldefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_SEQUENCE_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3645,9 +3371,8 @@ public:
     eProsima_user_DllExport void array_sdefn(
             const PlainArraySElemDefn& _array_sdefn)
     {
-        m_array_sdefn = _array_sdefn;
+        array_sdefn_() = _array_sdefn;
         m__d = TI_PLAIN_ARRAY_SMALL;
-
     }
 
     /*!
@@ -3657,9 +3382,8 @@ public:
     eProsima_user_DllExport void array_sdefn(
             PlainArraySElemDefn&& _array_sdefn)
     {
-        m_array_sdefn = std::move(_array_sdefn);
+        array_sdefn_() = _array_sdefn;
         m__d = TI_PLAIN_ARRAY_SMALL;
-
     }
 
     /*!
@@ -3669,18 +3393,7 @@ public:
      */
     eProsima_user_DllExport const PlainArraySElemDefn& array_sdefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_ARRAY_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3695,18 +3408,7 @@ public:
      */
     eProsima_user_DllExport PlainArraySElemDefn& array_sdefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_ARRAY_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3722,9 +3424,8 @@ public:
     eProsima_user_DllExport void array_ldefn(
             const PlainArrayLElemDefn& _array_ldefn)
     {
-        m_array_ldefn = _array_ldefn;
+        array_ldefn_() = _array_ldefn;
         m__d = TI_PLAIN_ARRAY_LARGE;
-
     }
 
     /*!
@@ -3734,9 +3435,8 @@ public:
     eProsima_user_DllExport void array_ldefn(
             PlainArrayLElemDefn&& _array_ldefn)
     {
-        m_array_ldefn = std::move(_array_ldefn);
+        array_ldefn_() = _array_ldefn;
         m__d = TI_PLAIN_ARRAY_LARGE;
-
     }
 
     /*!
@@ -3746,18 +3446,7 @@ public:
      */
     eProsima_user_DllExport const PlainArrayLElemDefn& array_ldefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_ARRAY_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3772,18 +3461,7 @@ public:
      */
     eProsima_user_DllExport PlainArrayLElemDefn& array_ldefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_ARRAY_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3799,9 +3477,8 @@ public:
     eProsima_user_DllExport void map_sdefn(
             const PlainMapSTypeDefn& _map_sdefn)
     {
-        m_map_sdefn = _map_sdefn;
+        map_sdefn_() = _map_sdefn;
         m__d = TI_PLAIN_MAP_SMALL;
-
     }
 
     /*!
@@ -3811,9 +3488,8 @@ public:
     eProsima_user_DllExport void map_sdefn(
             PlainMapSTypeDefn&& _map_sdefn)
     {
-        m_map_sdefn = std::move(_map_sdefn);
+        map_sdefn_() = _map_sdefn;
         m__d = TI_PLAIN_MAP_SMALL;
-
     }
 
     /*!
@@ -3823,18 +3499,7 @@ public:
      */
     eProsima_user_DllExport const PlainMapSTypeDefn& map_sdefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_MAP_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3849,18 +3514,7 @@ public:
      */
     eProsima_user_DllExport PlainMapSTypeDefn& map_sdefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_MAP_SMALL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3876,9 +3530,8 @@ public:
     eProsima_user_DllExport void map_ldefn(
             const PlainMapLTypeDefn& _map_ldefn)
     {
-        m_map_ldefn = _map_ldefn;
+        map_ldefn_() = _map_ldefn;
         m__d = TI_PLAIN_MAP_LARGE;
-
     }
 
     /*!
@@ -3888,9 +3541,8 @@ public:
     eProsima_user_DllExport void map_ldefn(
             PlainMapLTypeDefn&& _map_ldefn)
     {
-        m_map_ldefn = std::move(_map_ldefn);
+        map_ldefn_() = _map_ldefn;
         m__d = TI_PLAIN_MAP_LARGE;
-
     }
 
     /*!
@@ -3900,18 +3552,7 @@ public:
      */
     eProsima_user_DllExport const PlainMapLTypeDefn& map_ldefn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_MAP_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3926,18 +3567,7 @@ public:
      */
     eProsima_user_DllExport PlainMapLTypeDefn& map_ldefn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_PLAIN_MAP_LARGE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3953,9 +3583,8 @@ public:
     eProsima_user_DllExport void sc_component_id(
             const StronglyConnectedComponentId& _sc_component_id)
     {
-        m_sc_component_id = _sc_component_id;
+        sc_component_id_() = _sc_component_id;
         m__d = TI_STRONGLY_CONNECTED_COMPONENT;
-
     }
 
     /*!
@@ -3965,9 +3594,8 @@ public:
     eProsima_user_DllExport void sc_component_id(
             StronglyConnectedComponentId&& _sc_component_id)
     {
-        m_sc_component_id = std::move(_sc_component_id);
+        sc_component_id_() = _sc_component_id;
         m__d = TI_STRONGLY_CONNECTED_COMPONENT;
-
     }
 
     /*!
@@ -3977,18 +3605,7 @@ public:
      */
     eProsima_user_DllExport const StronglyConnectedComponentId& sc_component_id() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4003,18 +3620,7 @@ public:
      */
     eProsima_user_DllExport StronglyConnectedComponentId& sc_component_id()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4030,9 +3636,8 @@ public:
     eProsima_user_DllExport void equivalence_hash(
             const EquivalenceHash& _equivalence_hash)
     {
-        m_equivalence_hash = _equivalence_hash;
+        equivalence_hash_() = _equivalence_hash;
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -4042,9 +3647,8 @@ public:
     eProsima_user_DllExport void equivalence_hash(
             EquivalenceHash&& _equivalence_hash)
     {
-        m_equivalence_hash = std::move(_equivalence_hash);
+        equivalence_hash_() = _equivalence_hash;
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -4054,19 +3658,7 @@ public:
      */
     eProsima_user_DllExport const EquivalenceHash& equivalence_hash() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4081,19 +3673,7 @@ public:
      */
     eProsima_user_DllExport EquivalenceHash& equivalence_hash()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4109,9 +3689,8 @@ public:
     eProsima_user_DllExport void extended_defn(
             const ExtendedTypeDefn& _extended_defn)
     {
-        m_extended_defn = _extended_defn;
+        extended_defn_() = _extended_defn;
         m__d = 0;
-
     }
 
     /*!
@@ -4121,9 +3700,8 @@ public:
     eProsima_user_DllExport void extended_defn(
             ExtendedTypeDefn&& _extended_defn)
     {
-        m_extended_defn = std::move(_extended_defn);
+        extended_defn_() = _extended_defn;
         m__d = 0;
-
     }
 
     /*!
@@ -4133,29 +3711,7 @@ public:
      */
     eProsima_user_DllExport const ExtendedTypeDefn& extended_defn() const
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-            case TI_PLAIN_SEQUENCE_SMALL:
-            case TI_PLAIN_SEQUENCE_LARGE:
-            case TI_PLAIN_ARRAY_SMALL:
-            case TI_PLAIN_ARRAY_LARGE:
-            case TI_PLAIN_MAP_SMALL:
-            case TI_PLAIN_MAP_LARGE:
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4170,29 +3726,7 @@ public:
      */
     eProsima_user_DllExport ExtendedTypeDefn& extended_defn()
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TI_STRING8_SMALL:
-            case TI_STRING16_SMALL:
-            case TI_STRING8_LARGE:
-            case TI_STRING16_LARGE:
-            case TI_PLAIN_SEQUENCE_SMALL:
-            case TI_PLAIN_SEQUENCE_LARGE:
-            case TI_PLAIN_ARRAY_SMALL:
-            case TI_PLAIN_ARRAY_LARGE:
-            case TI_PLAIN_MAP_SMALL:
-            case TI_PLAIN_MAP_LARGE:
-            case TI_STRONGLY_CONNECTED_COMPONENT:
-            case EK_COMPLETE:
-            case EK_MINIMAL:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4204,19 +3738,225 @@ public:
 
 private:
 
-    uint8_t m__d;
+            StringSTypeDefn& string_sdefn_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    StringSTypeDefn m_string_sdefn;
-    StringLTypeDefn m_string_ldefn;
-    PlainSequenceSElemDefn m_seq_sdefn;
-    PlainSequenceLElemDefn m_seq_ldefn;
-    PlainArraySElemDefn m_array_sdefn;
-    PlainArrayLElemDefn m_array_ldefn;
-    PlainMapSTypeDefn m_map_sdefn;
-    PlainMapLTypeDefn m_map_ldefn;
-    StronglyConnectedComponentId m_sc_component_id;
-    EquivalenceHash m_equivalence_hash{0};
-    ExtendedTypeDefn m_extended_defn;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_string_sdefn.~StringSTypeDefn();};
+                    new(&m_string_sdefn) StringSTypeDefn();
+    ;
+                }
+
+                return m_string_sdefn;
+            }
+
+            StringLTypeDefn& string_ldefn_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_string_ldefn.~StringLTypeDefn();};
+                    new(&m_string_ldefn) StringLTypeDefn();
+    ;
+                }
+
+                return m_string_ldefn;
+            }
+
+            PlainSequenceSElemDefn& seq_sdefn_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_seq_sdefn.~PlainSequenceSElemDefn();};
+                    new(&m_seq_sdefn) PlainSequenceSElemDefn();
+    ;
+                }
+
+                return m_seq_sdefn;
+            }
+
+            PlainSequenceLElemDefn& seq_ldefn_()
+            {
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_seq_ldefn.~PlainSequenceLElemDefn();};
+                    new(&m_seq_ldefn) PlainSequenceLElemDefn();
+    ;
+                }
+
+                return m_seq_ldefn;
+            }
+
+            PlainArraySElemDefn& array_sdefn_()
+            {
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_array_sdefn.~PlainArraySElemDefn();};
+                    new(&m_array_sdefn) PlainArraySElemDefn();
+    ;
+                }
+
+                return m_array_sdefn;
+            }
+
+            PlainArrayLElemDefn& array_ldefn_()
+            {
+                if (0x00000006 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000006;
+                    member_destructor_ = [&]() {m_array_ldefn.~PlainArrayLElemDefn();};
+                    new(&m_array_ldefn) PlainArrayLElemDefn();
+    ;
+                }
+
+                return m_array_ldefn;
+            }
+
+            PlainMapSTypeDefn& map_sdefn_()
+            {
+                if (0x00000007 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000007;
+                    member_destructor_ = [&]() {m_map_sdefn.~PlainMapSTypeDefn();};
+                    new(&m_map_sdefn) PlainMapSTypeDefn();
+    ;
+                }
+
+                return m_map_sdefn;
+            }
+
+            PlainMapLTypeDefn& map_ldefn_()
+            {
+                if (0x00000008 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000008;
+                    member_destructor_ = [&]() {m_map_ldefn.~PlainMapLTypeDefn();};
+                    new(&m_map_ldefn) PlainMapLTypeDefn();
+    ;
+                }
+
+                return m_map_ldefn;
+            }
+
+            StronglyConnectedComponentId& sc_component_id_()
+            {
+                if (0x00000009 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000009;
+                    member_destructor_ = [&]() {m_sc_component_id.~StronglyConnectedComponentId();};
+                    new(&m_sc_component_id) StronglyConnectedComponentId();
+    ;
+                }
+
+                return m_sc_component_id;
+            }
+
+            EquivalenceHash& equivalence_hash_()
+            {
+                if (0x0000000a != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000a;
+                    member_destructor_ = [&]() {m_equivalence_hash.~EquivalenceHash();};
+                    new(&m_equivalence_hash) EquivalenceHash();
+    ;
+                }
+
+                return m_equivalence_hash;
+            }
+
+            ExtendedTypeDefn& extended_defn_()
+            {
+                if (0x0000000b != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000b;
+                    member_destructor_ = [&]() {m_extended_defn.~ExtendedTypeDefn();};
+                    new(&m_extended_defn) ExtendedTypeDefn();
+    ;
+                }
+
+                return m_extended_defn;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        StringSTypeDefn m_string_sdefn;
+        StringLTypeDefn m_string_ldefn;
+        PlainSequenceSElemDefn m_seq_sdefn;
+        PlainSequenceLElemDefn m_seq_ldefn;
+        PlainArraySElemDefn m_array_sdefn;
+        PlainArrayLElemDefn m_array_ldefn;
+        PlainMapSTypeDefn m_map_sdefn;
+        PlainMapLTypeDefn m_map_ldefn;
+        StronglyConnectedComponentId m_sc_component_id;
+        EquivalenceHash m_equivalence_hash;
+        ExtendedTypeDefn m_extended_defn;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 typedef std::vector<TypeIdentifier> TypeIdentifierSeq;
 
@@ -4332,7 +4072,7 @@ public:
      */
     eProsima_user_DllExport AnnotationParameterValue()
     {
-        m__d = 0;
+        extended_value_();
     }
 
     /*!
@@ -4340,6 +4080,10 @@ public:
      */
     eProsima_user_DllExport ~AnnotationParameterValue()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -4351,102 +4095,84 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_BOOLEAN:
-                m_boolean_value = x.m_boolean_value;
-                break;
+                        case 0x00000001:
+                            boolean_value_() = x.m_boolean_value;
+                            break;
 
+                        case 0x00000002:
+                            byte_value_() = x.m_byte_value;
+                            break;
 
-            case TK_BYTE:
-                m_byte_value = x.m_byte_value;
-                break;
+                        case 0x00000003:
+                            int8_value_() = x.m_int8_value;
+                            break;
 
+                        case 0x00000004:
+                            uint8_value_() = x.m_uint8_value;
+                            break;
 
-            case TK_INT8:
-                m_int8_value = x.m_int8_value;
-                break;
+                        case 0x00000005:
+                            int16_value_() = x.m_int16_value;
+                            break;
 
+                        case 0x00000006:
+                            uint_16_value_() = x.m_uint_16_value;
+                            break;
 
-            case TK_UINT8:
-                m_uint8_value = x.m_uint8_value;
-                break;
+                        case 0x00000007:
+                            int32_value_() = x.m_int32_value;
+                            break;
 
+                        case 0x00000008:
+                            uint32_value_() = x.m_uint32_value;
+                            break;
 
-            case TK_INT16:
-                m_int16_value = x.m_int16_value;
-                break;
+                        case 0x00000009:
+                            int64_value_() = x.m_int64_value;
+                            break;
 
+                        case 0x0000000a:
+                            uint64_value_() = x.m_uint64_value;
+                            break;
 
-            case TK_UINT16:
-                m_uint_16_value = x.m_uint_16_value;
-                break;
+                        case 0x0000000b:
+                            float32_value_() = x.m_float32_value;
+                            break;
 
+                        case 0x0000000c:
+                            float64_value_() = x.m_float64_value;
+                            break;
 
-            case TK_INT32:
-                m_int32_value = x.m_int32_value;
-                break;
+                        case 0x0000000d:
+                            float128_value_() = x.m_float128_value;
+                            break;
 
+                        case 0x0000000e:
+                            char_value_() = x.m_char_value;
+                            break;
 
-            case TK_UINT32:
-                m_uint32_value = x.m_uint32_value;
-                break;
+                        case 0x0000000f:
+                            wchar_value_() = x.m_wchar_value;
+                            break;
 
+                        case 0x00000010:
+                            enumerated_value_() = x.m_enumerated_value;
+                            break;
 
-            case TK_INT64:
-                m_int64_value = x.m_int64_value;
-                break;
+                        case 0x00000011:
+                            string8_value_() = x.m_string8_value;
+                            break;
 
+                        case 0x00000012:
+                            string16_value_() = x.m_string16_value;
+                            break;
 
-            case TK_UINT64:
-                m_uint64_value = x.m_uint64_value;
-                break;
+                        case 0x00000013:
+                            extended_value_() = x.m_extended_value;
+                            break;
 
-
-            case TK_FLOAT32:
-                m_float32_value = x.m_float32_value;
-                break;
-
-
-            case TK_FLOAT64:
-                m_float64_value = x.m_float64_value;
-                break;
-
-
-            case TK_FLOAT128:
-                m_float128_value = x.m_float128_value;
-                break;
-
-
-            case TK_CHAR8:
-                m_char_value = x.m_char_value;
-                break;
-
-
-            case TK_CHAR16:
-                m_wchar_value = x.m_wchar_value;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_value = x.m_enumerated_value;
-                break;
-
-
-            case TK_STRING8:
-                m_string8_value = x.m_string8_value;
-                break;
-
-
-            case TK_STRING16:
-                m_string16_value = x.m_string16_value;
-                break;
-
-
-            default:
-                m_extended_value = x.m_extended_value;
-
-                break;
         }
     }
 
@@ -4459,104 +4185,84 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_BOOLEAN:
-                m_boolean_value = x.m_boolean_value;
-                break;
+                        case 0x00000001:
+                            boolean_value_() = std::move(x.m_boolean_value);
+                            break;
 
+                        case 0x00000002:
+                            byte_value_() = std::move(x.m_byte_value);
+                            break;
 
-            case TK_BYTE:
-                m_byte_value = x.m_byte_value;
-                break;
+                        case 0x00000003:
+                            int8_value_() = std::move(x.m_int8_value);
+                            break;
 
+                        case 0x00000004:
+                            uint8_value_() = std::move(x.m_uint8_value);
+                            break;
 
-            case TK_INT8:
-                m_int8_value = x.m_int8_value;
-                break;
+                        case 0x00000005:
+                            int16_value_() = std::move(x.m_int16_value);
+                            break;
 
+                        case 0x00000006:
+                            uint_16_value_() = std::move(x.m_uint_16_value);
+                            break;
 
-            case TK_UINT8:
-                m_uint8_value = x.m_uint8_value;
-                break;
+                        case 0x00000007:
+                            int32_value_() = std::move(x.m_int32_value);
+                            break;
 
+                        case 0x00000008:
+                            uint32_value_() = std::move(x.m_uint32_value);
+                            break;
 
-            case TK_INT16:
-                m_int16_value = x.m_int16_value;
-                break;
+                        case 0x00000009:
+                            int64_value_() = std::move(x.m_int64_value);
+                            break;
 
+                        case 0x0000000a:
+                            uint64_value_() = std::move(x.m_uint64_value);
+                            break;
 
-            case TK_UINT16:
-                m_uint_16_value = x.m_uint_16_value;
-                break;
+                        case 0x0000000b:
+                            float32_value_() = std::move(x.m_float32_value);
+                            break;
 
+                        case 0x0000000c:
+                            float64_value_() = std::move(x.m_float64_value);
+                            break;
 
-            case TK_INT32:
-                m_int32_value = x.m_int32_value;
-                break;
+                        case 0x0000000d:
+                            float128_value_() = std::move(x.m_float128_value);
+                            break;
 
+                        case 0x0000000e:
+                            char_value_() = std::move(x.m_char_value);
+                            break;
 
-            case TK_UINT32:
-                m_uint32_value = x.m_uint32_value;
-                break;
+                        case 0x0000000f:
+                            wchar_value_() = std::move(x.m_wchar_value);
+                            break;
 
+                        case 0x00000010:
+                            enumerated_value_() = std::move(x.m_enumerated_value);
+                            break;
 
-            case TK_INT64:
-                m_int64_value = x.m_int64_value;
-                break;
+                        case 0x00000011:
+                            string8_value_() = std::move(x.m_string8_value);
+                            break;
 
+                        case 0x00000012:
+                            string16_value_() = std::move(x.m_string16_value);
+                            break;
 
-            case TK_UINT64:
-                m_uint64_value = x.m_uint64_value;
-                break;
+                        case 0x00000013:
+                            extended_value_() = std::move(x.m_extended_value);
+                            break;
 
-
-            case TK_FLOAT32:
-                m_float32_value = x.m_float32_value;
-                break;
-
-
-            case TK_FLOAT64:
-                m_float64_value = x.m_float64_value;
-                break;
-
-
-            case TK_FLOAT128:
-                m_float128_value = x.m_float128_value;
-                break;
-
-
-            case TK_CHAR8:
-                m_char_value = x.m_char_value;
-                break;
-
-
-            case TK_CHAR16:
-                m_wchar_value = x.m_wchar_value;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_value = x.m_enumerated_value;
-                break;
-
-
-            case TK_STRING8:
-                m_string8_value = std::move(x.m_string8_value);
-
-                break;
-
-
-            case TK_STRING16:
-                m_string16_value = std::move(x.m_string16_value);
-
-                break;
-
-
-            default:
-                m_extended_value = std::move(x.m_extended_value);
-
-                break;
         }
     }
 
@@ -4569,102 +4275,84 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_BOOLEAN:
-                m_boolean_value = x.m_boolean_value;
-                break;
+                        case 0x00000001:
+                            boolean_value_() = x.m_boolean_value;
+                            break;
 
+                        case 0x00000002:
+                            byte_value_() = x.m_byte_value;
+                            break;
 
-            case TK_BYTE:
-                m_byte_value = x.m_byte_value;
-                break;
+                        case 0x00000003:
+                            int8_value_() = x.m_int8_value;
+                            break;
 
+                        case 0x00000004:
+                            uint8_value_() = x.m_uint8_value;
+                            break;
 
-            case TK_INT8:
-                m_int8_value = x.m_int8_value;
-                break;
+                        case 0x00000005:
+                            int16_value_() = x.m_int16_value;
+                            break;
 
+                        case 0x00000006:
+                            uint_16_value_() = x.m_uint_16_value;
+                            break;
 
-            case TK_UINT8:
-                m_uint8_value = x.m_uint8_value;
-                break;
+                        case 0x00000007:
+                            int32_value_() = x.m_int32_value;
+                            break;
 
+                        case 0x00000008:
+                            uint32_value_() = x.m_uint32_value;
+                            break;
 
-            case TK_INT16:
-                m_int16_value = x.m_int16_value;
-                break;
+                        case 0x00000009:
+                            int64_value_() = x.m_int64_value;
+                            break;
 
+                        case 0x0000000a:
+                            uint64_value_() = x.m_uint64_value;
+                            break;
 
-            case TK_UINT16:
-                m_uint_16_value = x.m_uint_16_value;
-                break;
+                        case 0x0000000b:
+                            float32_value_() = x.m_float32_value;
+                            break;
 
+                        case 0x0000000c:
+                            float64_value_() = x.m_float64_value;
+                            break;
 
-            case TK_INT32:
-                m_int32_value = x.m_int32_value;
-                break;
+                        case 0x0000000d:
+                            float128_value_() = x.m_float128_value;
+                            break;
 
+                        case 0x0000000e:
+                            char_value_() = x.m_char_value;
+                            break;
 
-            case TK_UINT32:
-                m_uint32_value = x.m_uint32_value;
-                break;
+                        case 0x0000000f:
+                            wchar_value_() = x.m_wchar_value;
+                            break;
 
+                        case 0x00000010:
+                            enumerated_value_() = x.m_enumerated_value;
+                            break;
 
-            case TK_INT64:
-                m_int64_value = x.m_int64_value;
-                break;
+                        case 0x00000011:
+                            string8_value_() = x.m_string8_value;
+                            break;
 
+                        case 0x00000012:
+                            string16_value_() = x.m_string16_value;
+                            break;
 
-            case TK_UINT64:
-                m_uint64_value = x.m_uint64_value;
-                break;
+                        case 0x00000013:
+                            extended_value_() = x.m_extended_value;
+                            break;
 
-
-            case TK_FLOAT32:
-                m_float32_value = x.m_float32_value;
-                break;
-
-
-            case TK_FLOAT64:
-                m_float64_value = x.m_float64_value;
-                break;
-
-
-            case TK_FLOAT128:
-                m_float128_value = x.m_float128_value;
-                break;
-
-
-            case TK_CHAR8:
-                m_char_value = x.m_char_value;
-                break;
-
-
-            case TK_CHAR16:
-                m_wchar_value = x.m_wchar_value;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_value = x.m_enumerated_value;
-                break;
-
-
-            case TK_STRING8:
-                m_string8_value = x.m_string8_value;
-                break;
-
-
-            case TK_STRING16:
-                m_string16_value = x.m_string16_value;
-                break;
-
-
-            default:
-                m_extended_value = x.m_extended_value;
-
-                break;
         }
 
         return *this;
@@ -4679,104 +4367,84 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_BOOLEAN:
-                m_boolean_value = x.m_boolean_value;
-                break;
+                        case 0x00000001:
+                            boolean_value_() = std::move(x.m_boolean_value);
+                            break;
 
+                        case 0x00000002:
+                            byte_value_() = std::move(x.m_byte_value);
+                            break;
 
-            case TK_BYTE:
-                m_byte_value = x.m_byte_value;
-                break;
+                        case 0x00000003:
+                            int8_value_() = std::move(x.m_int8_value);
+                            break;
 
+                        case 0x00000004:
+                            uint8_value_() = std::move(x.m_uint8_value);
+                            break;
 
-            case TK_INT8:
-                m_int8_value = x.m_int8_value;
-                break;
+                        case 0x00000005:
+                            int16_value_() = std::move(x.m_int16_value);
+                            break;
 
+                        case 0x00000006:
+                            uint_16_value_() = std::move(x.m_uint_16_value);
+                            break;
 
-            case TK_UINT8:
-                m_uint8_value = x.m_uint8_value;
-                break;
+                        case 0x00000007:
+                            int32_value_() = std::move(x.m_int32_value);
+                            break;
 
+                        case 0x00000008:
+                            uint32_value_() = std::move(x.m_uint32_value);
+                            break;
 
-            case TK_INT16:
-                m_int16_value = x.m_int16_value;
-                break;
+                        case 0x00000009:
+                            int64_value_() = std::move(x.m_int64_value);
+                            break;
 
+                        case 0x0000000a:
+                            uint64_value_() = std::move(x.m_uint64_value);
+                            break;
 
-            case TK_UINT16:
-                m_uint_16_value = x.m_uint_16_value;
-                break;
+                        case 0x0000000b:
+                            float32_value_() = std::move(x.m_float32_value);
+                            break;
 
+                        case 0x0000000c:
+                            float64_value_() = std::move(x.m_float64_value);
+                            break;
 
-            case TK_INT32:
-                m_int32_value = x.m_int32_value;
-                break;
+                        case 0x0000000d:
+                            float128_value_() = std::move(x.m_float128_value);
+                            break;
 
+                        case 0x0000000e:
+                            char_value_() = std::move(x.m_char_value);
+                            break;
 
-            case TK_UINT32:
-                m_uint32_value = x.m_uint32_value;
-                break;
+                        case 0x0000000f:
+                            wchar_value_() = std::move(x.m_wchar_value);
+                            break;
 
+                        case 0x00000010:
+                            enumerated_value_() = std::move(x.m_enumerated_value);
+                            break;
 
-            case TK_INT64:
-                m_int64_value = x.m_int64_value;
-                break;
+                        case 0x00000011:
+                            string8_value_() = std::move(x.m_string8_value);
+                            break;
 
+                        case 0x00000012:
+                            string16_value_() = std::move(x.m_string16_value);
+                            break;
 
-            case TK_UINT64:
-                m_uint64_value = x.m_uint64_value;
-                break;
+                        case 0x00000013:
+                            extended_value_() = std::move(x.m_extended_value);
+                            break;
 
-
-            case TK_FLOAT32:
-                m_float32_value = x.m_float32_value;
-                break;
-
-
-            case TK_FLOAT64:
-                m_float64_value = x.m_float64_value;
-                break;
-
-
-            case TK_FLOAT128:
-                m_float128_value = x.m_float128_value;
-                break;
-
-
-            case TK_CHAR8:
-                m_char_value = x.m_char_value;
-                break;
-
-
-            case TK_CHAR16:
-                m_wchar_value = x.m_wchar_value;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_value = x.m_enumerated_value;
-                break;
-
-
-            case TK_STRING8:
-                m_string8_value = std::move(x.m_string8_value);
-
-                break;
-
-
-            case TK_STRING16:
-                m_string16_value = std::move(x.m_string16_value);
-
-                break;
-
-
-            default:
-                m_extended_value = std::move(x.m_extended_value);
-
-                break;
         }
 
         return *this;
@@ -4789,108 +4457,93 @@ public:
     eProsima_user_DllExport bool operator ==(
             const AnnotationParameterValue& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_boolean_value == x.m_boolean_value);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_byte_value == x.m_byte_value);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_int8_value == x.m_int8_value);
+                                    break;
+
+                                case 0x00000004:
+                                    ret_value = (m_uint8_value == x.m_uint8_value);
+                                    break;
+
+                                case 0x00000005:
+                                    ret_value = (m_int16_value == x.m_int16_value);
+                                    break;
+
+                                case 0x00000006:
+                                    ret_value = (m_uint_16_value == x.m_uint_16_value);
+                                    break;
+
+                                case 0x00000007:
+                                    ret_value = (m_int32_value == x.m_int32_value);
+                                    break;
+
+                                case 0x00000008:
+                                    ret_value = (m_uint32_value == x.m_uint32_value);
+                                    break;
+
+                                case 0x00000009:
+                                    ret_value = (m_int64_value == x.m_int64_value);
+                                    break;
+
+                                case 0x0000000a:
+                                    ret_value = (m_uint64_value == x.m_uint64_value);
+                                    break;
+
+                                case 0x0000000b:
+                                    ret_value = (m_float32_value == x.m_float32_value);
+                                    break;
+
+                                case 0x0000000c:
+                                    ret_value = (m_float64_value == x.m_float64_value);
+                                    break;
+
+                                case 0x0000000d:
+                                    ret_value = (m_float128_value == x.m_float128_value);
+                                    break;
+
+                                case 0x0000000e:
+                                    ret_value = (m_char_value == x.m_char_value);
+                                    break;
+
+                                case 0x0000000f:
+                                    ret_value = (m_wchar_value == x.m_wchar_value);
+                                    break;
+
+                                case 0x00000010:
+                                    ret_value = (m_enumerated_value == x.m_enumerated_value);
+                                    break;
+
+                                case 0x00000011:
+                                    ret_value = (m_string8_value == x.m_string8_value);
+                                    break;
+
+                                case 0x00000012:
+                                    ret_value = (m_string16_value == x.m_string16_value);
+                                    break;
+
+                                case 0x00000013:
+                                    ret_value = (m_extended_value == x.m_extended_value);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case TK_BOOLEAN:
-                return (m_boolean_value == x.m_boolean_value);
-                break;
-
-
-            case TK_BYTE:
-                return (m_byte_value == x.m_byte_value);
-                break;
-
-
-            case TK_INT8:
-                return (m_int8_value == x.m_int8_value);
-                break;
-
-
-            case TK_UINT8:
-                return (m_uint8_value == x.m_uint8_value);
-                break;
-
-
-            case TK_INT16:
-                return (m_int16_value == x.m_int16_value);
-                break;
-
-
-            case TK_UINT16:
-                return (m_uint_16_value == x.m_uint_16_value);
-                break;
-
-
-            case TK_INT32:
-                return (m_int32_value == x.m_int32_value);
-                break;
-
-
-            case TK_UINT32:
-                return (m_uint32_value == x.m_uint32_value);
-                break;
-
-
-            case TK_INT64:
-                return (m_int64_value == x.m_int64_value);
-                break;
-
-
-            case TK_UINT64:
-                return (m_uint64_value == x.m_uint64_value);
-                break;
-
-
-            case TK_FLOAT32:
-                return (m_float32_value == x.m_float32_value);
-                break;
-
-
-            case TK_FLOAT64:
-                return (m_float64_value == x.m_float64_value);
-                break;
-
-
-            case TK_FLOAT128:
-                return (m_float128_value == x.m_float128_value);
-                break;
-
-
-            case TK_CHAR8:
-                return (m_char_value == x.m_char_value);
-                break;
-
-
-            case TK_CHAR16:
-                return (m_wchar_value == x.m_wchar_value);
-                break;
-
-
-            case TK_ENUM:
-                return (m_enumerated_value == x.m_enumerated_value);
-                break;
-
-
-            case TK_STRING8:
-                return (m_string8_value == x.m_string8_value);
-                break;
-
-
-            case TK_STRING16:
-                return (m_string16_value == x.m_string16_value);
-                break;
-
-
-            default:
-                return m_extended_value == x.m_extended_value;
-
-                break;
-        }
+        return ret_value;
     }
 
     /*!
@@ -4911,258 +4564,146 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case TK_BOOLEAN:
-                switch (__d)
-                {
-                    case TK_BOOLEAN:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_BOOLEAN:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_BYTE:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_BYTE:
-                switch (__d)
-                {
-                    case TK_BYTE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_INT8:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_UINT8:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_INT8:
-                switch (__d)
-                {
-                    case TK_INT8:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_INT16:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_UINT16:
+                            if (0x00000006 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_UINT8:
-                switch (__d)
-                {
-                    case TK_UINT8:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_INT32:
+                            if (0x00000007 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_UINT32:
+                            if (0x00000008 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_INT16:
-                switch (__d)
-                {
-                    case TK_INT16:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_INT64:
+                            if (0x00000009 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_UINT64:
+                            if (0x0000000a == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_UINT16:
-                switch (__d)
-                {
-                    case TK_UINT16:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_FLOAT32:
+                            if (0x0000000b == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_FLOAT64:
+                            if (0x0000000c == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_INT32:
-                switch (__d)
-                {
-                    case TK_INT32:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_FLOAT128:
+                            if (0x0000000d == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_CHAR8:
+                            if (0x0000000e == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_UINT32:
-                switch (__d)
-                {
-                    case TK_UINT32:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_CHAR16:
+                            if (0x0000000f == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_ENUM:
+                            if (0x00000010 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_INT64:
-                switch (__d)
-                {
-                    case TK_INT64:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_STRING8:
+                            if (0x00000011 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_STRING16:
+                            if (0x00000012 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_UINT64:
-                switch (__d)
-                {
-                    case TK_UINT64:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_FLOAT32:
-                switch (__d)
-                {
-                    case TK_FLOAT32:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_FLOAT64:
-                switch (__d)
-                {
-                    case TK_FLOAT64:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_FLOAT128:
-                switch (__d)
-                {
-                    case TK_FLOAT128:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_CHAR8:
-                switch (__d)
-                {
-                    case TK_CHAR8:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_CHAR16:
-                switch (__d)
-                {
-                    case TK_CHAR16:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_ENUM:
-                switch (__d)
-                {
-                    case TK_ENUM:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_STRING8:
-                switch (__d)
-                {
-                    case TK_STRING8:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_STRING16:
-                switch (__d)
-                {
-                    case TK_STRING16:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            default:
-                b = true;
-                switch (__d)
-                {
-                    case TK_BOOLEAN:
-                    case TK_BYTE:
-                    case TK_INT8:
-                    case TK_UINT8:
-                    case TK_INT16:
-                    case TK_UINT16:
-                    case TK_INT32:
-                    case TK_UINT32:
-                    case TK_INT64:
-                    case TK_UINT64:
-                    case TK_FLOAT32:
-                    case TK_FLOAT64:
-                    case TK_FLOAT128:
-                    case TK_CHAR8:
-                    case TK_CHAR16:
-                    case TK_ENUM:
-                    case TK_STRING8:
-                    case TK_STRING16:
-                        b = false;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            if (0x00000013 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -5180,24 +4721,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member boolean_value
      * @param _boolean_value New value for member boolean_value
      */
     eProsima_user_DllExport void boolean_value(
             bool _boolean_value)
     {
-        m_boolean_value = _boolean_value;
+        boolean_value_() = _boolean_value;
         m__d = TK_BOOLEAN;
-
     }
 
     /*!
@@ -5207,18 +4738,7 @@ public:
      */
     eProsima_user_DllExport bool boolean_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BOOLEAN:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5233,18 +4753,7 @@ public:
      */
     eProsima_user_DllExport bool& boolean_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BOOLEAN:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5260,9 +4769,8 @@ public:
     eProsima_user_DllExport void byte_value(
             uint8_t _byte_value)
     {
-        m_byte_value = _byte_value;
+        byte_value_() = _byte_value;
         m__d = TK_BYTE;
-
     }
 
     /*!
@@ -5272,18 +4780,7 @@ public:
      */
     eProsima_user_DllExport uint8_t byte_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BYTE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5298,18 +4795,7 @@ public:
      */
     eProsima_user_DllExport uint8_t& byte_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BYTE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5325,9 +4811,8 @@ public:
     eProsima_user_DllExport void int8_value(
             int8_t _int8_value)
     {
-        m_int8_value = _int8_value;
+        int8_value_() = _int8_value;
         m__d = TK_INT8;
-
     }
 
     /*!
@@ -5337,18 +4822,7 @@ public:
      */
     eProsima_user_DllExport int8_t int8_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5363,18 +4837,7 @@ public:
      */
     eProsima_user_DllExport int8_t& int8_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5390,9 +4853,8 @@ public:
     eProsima_user_DllExport void uint8_value(
             uint8_t _uint8_value)
     {
-        m_uint8_value = _uint8_value;
+        uint8_value_() = _uint8_value;
         m__d = TK_UINT8;
-
     }
 
     /*!
@@ -5402,18 +4864,7 @@ public:
      */
     eProsima_user_DllExport uint8_t uint8_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5428,18 +4879,7 @@ public:
      */
     eProsima_user_DllExport uint8_t& uint8_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5455,9 +4895,8 @@ public:
     eProsima_user_DllExport void int16_value(
             int16_t _int16_value)
     {
-        m_int16_value = _int16_value;
+        int16_value_() = _int16_value;
         m__d = TK_INT16;
-
     }
 
     /*!
@@ -5467,18 +4906,7 @@ public:
      */
     eProsima_user_DllExport int16_t int16_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5493,18 +4921,7 @@ public:
      */
     eProsima_user_DllExport int16_t& int16_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5520,9 +4937,8 @@ public:
     eProsima_user_DllExport void uint_16_value(
             uint16_t _uint_16_value)
     {
-        m_uint_16_value = _uint_16_value;
+        uint_16_value_() = _uint_16_value;
         m__d = TK_UINT16;
-
     }
 
     /*!
@@ -5532,18 +4948,7 @@ public:
      */
     eProsima_user_DllExport uint16_t uint_16_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5558,18 +4963,7 @@ public:
      */
     eProsima_user_DllExport uint16_t& uint_16_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5585,9 +4979,8 @@ public:
     eProsima_user_DllExport void int32_value(
             int32_t _int32_value)
     {
-        m_int32_value = _int32_value;
+        int32_value_() = _int32_value;
         m__d = TK_INT32;
-
     }
 
     /*!
@@ -5597,18 +4990,7 @@ public:
      */
     eProsima_user_DllExport int32_t int32_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT32:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5623,18 +5005,7 @@ public:
      */
     eProsima_user_DllExport int32_t& int32_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT32:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5650,9 +5021,8 @@ public:
     eProsima_user_DllExport void uint32_value(
             uint32_t _uint32_value)
     {
-        m_uint32_value = _uint32_value;
+        uint32_value_() = _uint32_value;
         m__d = TK_UINT32;
-
     }
 
     /*!
@@ -5662,18 +5032,7 @@ public:
      */
     eProsima_user_DllExport uint32_t uint32_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT32:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5688,18 +5047,7 @@ public:
      */
     eProsima_user_DllExport uint32_t& uint32_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT32:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5715,9 +5063,8 @@ public:
     eProsima_user_DllExport void int64_value(
             int64_t _int64_value)
     {
-        m_int64_value = _int64_value;
+        int64_value_() = _int64_value;
         m__d = TK_INT64;
-
     }
 
     /*!
@@ -5727,18 +5074,7 @@ public:
      */
     eProsima_user_DllExport int64_t int64_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT64:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5753,18 +5089,7 @@ public:
      */
     eProsima_user_DllExport int64_t& int64_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_INT64:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5780,9 +5105,8 @@ public:
     eProsima_user_DllExport void uint64_value(
             uint64_t _uint64_value)
     {
-        m_uint64_value = _uint64_value;
+        uint64_value_() = _uint64_value;
         m__d = TK_UINT64;
-
     }
 
     /*!
@@ -5792,18 +5116,7 @@ public:
      */
     eProsima_user_DllExport uint64_t uint64_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT64:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5818,18 +5131,7 @@ public:
      */
     eProsima_user_DllExport uint64_t& uint64_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UINT64:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5845,9 +5147,8 @@ public:
     eProsima_user_DllExport void float32_value(
             float _float32_value)
     {
-        m_float32_value = _float32_value;
+        float32_value_() = _float32_value;
         m__d = TK_FLOAT32;
-
     }
 
     /*!
@@ -5857,18 +5158,7 @@ public:
      */
     eProsima_user_DllExport float float32_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_FLOAT32:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5883,18 +5173,7 @@ public:
      */
     eProsima_user_DllExport float& float32_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_FLOAT32:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5910,9 +5189,8 @@ public:
     eProsima_user_DllExport void float64_value(
             double _float64_value)
     {
-        m_float64_value = _float64_value;
+        float64_value_() = _float64_value;
         m__d = TK_FLOAT64;
-
     }
 
     /*!
@@ -5922,18 +5200,7 @@ public:
      */
     eProsima_user_DllExport double float64_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_FLOAT64:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000c != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5948,18 +5215,7 @@ public:
      */
     eProsima_user_DllExport double& float64_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_FLOAT64:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000c != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5975,9 +5231,8 @@ public:
     eProsima_user_DllExport void float128_value(
             long double _float128_value)
     {
-        m_float128_value = _float128_value;
+        float128_value_() = _float128_value;
         m__d = TK_FLOAT128;
-
     }
 
     /*!
@@ -5987,18 +5242,7 @@ public:
      */
     eProsima_user_DllExport long double float128_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_FLOAT128:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000d != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6013,18 +5257,7 @@ public:
      */
     eProsima_user_DllExport long double& float128_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_FLOAT128:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000d != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6040,9 +5273,8 @@ public:
     eProsima_user_DllExport void char_value(
             char _char_value)
     {
-        m_char_value = _char_value;
+        char_value_() = _char_value;
         m__d = TK_CHAR8;
-
     }
 
     /*!
@@ -6052,18 +5284,7 @@ public:
      */
     eProsima_user_DllExport char char_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_CHAR8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000e != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6078,18 +5299,7 @@ public:
      */
     eProsima_user_DllExport char& char_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_CHAR8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000e != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6105,9 +5315,8 @@ public:
     eProsima_user_DllExport void wchar_value(
             wchar_t _wchar_value)
     {
-        m_wchar_value = _wchar_value;
+        wchar_value_() = _wchar_value;
         m__d = TK_CHAR16;
-
     }
 
     /*!
@@ -6117,18 +5326,7 @@ public:
      */
     eProsima_user_DllExport wchar_t wchar_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_CHAR16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000f != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6143,18 +5341,7 @@ public:
      */
     eProsima_user_DllExport wchar_t& wchar_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_CHAR16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000f != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6170,9 +5357,8 @@ public:
     eProsima_user_DllExport void enumerated_value(
             int32_t _enumerated_value)
     {
-        m_enumerated_value = _enumerated_value;
+        enumerated_value_() = _enumerated_value;
         m__d = TK_ENUM;
-
     }
 
     /*!
@@ -6182,18 +5368,7 @@ public:
      */
     eProsima_user_DllExport int32_t enumerated_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ENUM:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000010 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6208,18 +5383,7 @@ public:
      */
     eProsima_user_DllExport int32_t& enumerated_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ENUM:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000010 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6235,9 +5399,8 @@ public:
     eProsima_user_DllExport void string8_value(
             const eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>& _string8_value)
     {
-        m_string8_value = _string8_value;
+        string8_value_() = _string8_value;
         m__d = TK_STRING8;
-
     }
 
     /*!
@@ -6247,9 +5410,8 @@ public:
     eProsima_user_DllExport void string8_value(
             eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>&& _string8_value)
     {
-        m_string8_value = std::move(_string8_value);
+        string8_value_() = _string8_value;
         m__d = TK_STRING8;
-
     }
 
     /*!
@@ -6259,18 +5421,7 @@ public:
      */
     eProsima_user_DllExport const eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>& string8_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRING8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000011 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6285,18 +5436,7 @@ public:
      */
     eProsima_user_DllExport eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>& string8_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRING8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000011 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6312,9 +5452,8 @@ public:
     eProsima_user_DllExport void string16_value(
             const std::wstring& _string16_value)
     {
-        m_string16_value = _string16_value;
+        string16_value_() = _string16_value;
         m__d = TK_STRING16;
-
     }
 
     /*!
@@ -6324,9 +5463,8 @@ public:
     eProsima_user_DllExport void string16_value(
             std::wstring&& _string16_value)
     {
-        m_string16_value = std::move(_string16_value);
+        string16_value_() = _string16_value;
         m__d = TK_STRING16;
-
     }
 
     /*!
@@ -6336,18 +5474,7 @@ public:
      */
     eProsima_user_DllExport const std::wstring& string16_value() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRING16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000012 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6362,18 +5489,7 @@ public:
      */
     eProsima_user_DllExport std::wstring& string16_value()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRING16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000012 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6389,9 +5505,8 @@ public:
     eProsima_user_DllExport void extended_value(
             const ExtendedAnnotationParameterValue& _extended_value)
     {
-        m_extended_value = _extended_value;
+        extended_value_() = _extended_value;
         m__d = 0;
-
     }
 
     /*!
@@ -6401,9 +5516,8 @@ public:
     eProsima_user_DllExport void extended_value(
             ExtendedAnnotationParameterValue&& _extended_value)
     {
-        m_extended_value = std::move(_extended_value);
+        extended_value_() = _extended_value;
         m__d = 0;
-
     }
 
     /*!
@@ -6413,34 +5527,7 @@ public:
      */
     eProsima_user_DllExport const ExtendedAnnotationParameterValue& extended_value() const
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TK_BOOLEAN:
-            case TK_BYTE:
-            case TK_INT8:
-            case TK_UINT8:
-            case TK_INT16:
-            case TK_UINT16:
-            case TK_INT32:
-            case TK_UINT32:
-            case TK_INT64:
-            case TK_UINT64:
-            case TK_FLOAT32:
-            case TK_FLOAT64:
-            case TK_FLOAT128:
-            case TK_CHAR8:
-            case TK_CHAR16:
-            case TK_ENUM:
-            case TK_STRING8:
-            case TK_STRING16:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x00000013 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6455,34 +5542,7 @@ public:
      */
     eProsima_user_DllExport ExtendedAnnotationParameterValue& extended_value()
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TK_BOOLEAN:
-            case TK_BYTE:
-            case TK_INT8:
-            case TK_UINT8:
-            case TK_INT16:
-            case TK_UINT16:
-            case TK_INT32:
-            case TK_UINT32:
-            case TK_INT64:
-            case TK_UINT64:
-            case TK_FLOAT32:
-            case TK_FLOAT64:
-            case TK_FLOAT128:
-            case TK_CHAR8:
-            case TK_CHAR16:
-            case TK_ENUM:
-            case TK_STRING8:
-            case TK_STRING16:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x00000013 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6494,27 +5554,377 @@ public:
 
 private:
 
-    uint8_t m__d;
+            bool& boolean_value_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    bool m_boolean_value{false};
-    uint8_t m_byte_value{0};
-    int8_t m_int8_value{0};
-    uint8_t m_uint8_value{0};
-    int16_t m_int16_value{0};
-    uint16_t m_uint_16_value{0};
-    int32_t m_int32_value{0};
-    uint32_t m_uint32_value{0};
-    int64_t m_int64_value{0};
-    uint64_t m_uint64_value{0};
-    float m_float32_value{0.0};
-    double m_float64_value{0.0};
-    long double m_float128_value{0.0};
-    char m_char_value{0};
-    wchar_t m_wchar_value{0};
-    int32_t m_enumerated_value{0};
-    eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN> m_string8_value;
-    std::wstring m_string16_value;
-    ExtendedAnnotationParameterValue m_extended_value;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_boolean_value = {false};
+    ;
+                }
+
+                return m_boolean_value;
+            }
+
+            uint8_t& byte_value_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_byte_value = {0};
+    ;
+                }
+
+                return m_byte_value;
+            }
+
+            int8_t& int8_value_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_int8_value = {0};
+    ;
+                }
+
+                return m_int8_value;
+            }
+
+            uint8_t& uint8_value_()
+            {
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = nullptr;
+                    m_uint8_value = {0};
+    ;
+                }
+
+                return m_uint8_value;
+            }
+
+            int16_t& int16_value_()
+            {
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = nullptr;
+                    m_int16_value = {0};
+    ;
+                }
+
+                return m_int16_value;
+            }
+
+            uint16_t& uint_16_value_()
+            {
+                if (0x00000006 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000006;
+                    member_destructor_ = nullptr;
+                    m_uint_16_value = {0};
+    ;
+                }
+
+                return m_uint_16_value;
+            }
+
+            int32_t& int32_value_()
+            {
+                if (0x00000007 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000007;
+                    member_destructor_ = nullptr;
+                    m_int32_value = {0};
+    ;
+                }
+
+                return m_int32_value;
+            }
+
+            uint32_t& uint32_value_()
+            {
+                if (0x00000008 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000008;
+                    member_destructor_ = nullptr;
+                    m_uint32_value = {0};
+    ;
+                }
+
+                return m_uint32_value;
+            }
+
+            int64_t& int64_value_()
+            {
+                if (0x00000009 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000009;
+                    member_destructor_ = nullptr;
+                    m_int64_value = {0};
+    ;
+                }
+
+                return m_int64_value;
+            }
+
+            uint64_t& uint64_value_()
+            {
+                if (0x0000000a != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000a;
+                    member_destructor_ = nullptr;
+                    m_uint64_value = {0};
+    ;
+                }
+
+                return m_uint64_value;
+            }
+
+            float& float32_value_()
+            {
+                if (0x0000000b != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000b;
+                    member_destructor_ = nullptr;
+                    m_float32_value = {0.0};
+    ;
+                }
+
+                return m_float32_value;
+            }
+
+            double& float64_value_()
+            {
+                if (0x0000000c != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000c;
+                    member_destructor_ = nullptr;
+                    m_float64_value = {0.0};
+    ;
+                }
+
+                return m_float64_value;
+            }
+
+            long double& float128_value_()
+            {
+                if (0x0000000d != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000d;
+                    member_destructor_ = nullptr;
+                    m_float128_value = {0.0};
+    ;
+                }
+
+                return m_float128_value;
+            }
+
+            char& char_value_()
+            {
+                if (0x0000000e != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000e;
+                    member_destructor_ = nullptr;
+                    m_char_value = {0};
+    ;
+                }
+
+                return m_char_value;
+            }
+
+            wchar_t& wchar_value_()
+            {
+                if (0x0000000f != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000f;
+                    member_destructor_ = nullptr;
+                    m_wchar_value = {0};
+    ;
+                }
+
+                return m_wchar_value;
+            }
+
+            int32_t& enumerated_value_()
+            {
+                if (0x00000010 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000010;
+                    member_destructor_ = nullptr;
+                    m_enumerated_value = {0};
+    ;
+                }
+
+                return m_enumerated_value;
+            }
+
+            eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>& string8_value_()
+            {
+                if (0x00000011 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000011;
+                    member_destructor_ = [&]() {m_string8_value.~fixed_string();};
+                    new(&m_string8_value) eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN>();
+    ;
+                }
+
+                return m_string8_value;
+            }
+
+            std::wstring& string16_value_()
+            {
+                if (0x00000012 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000012;
+                    member_destructor_ = [&]() {m_string16_value.~basic_string();};
+                    new(&m_string16_value) std::wstring();
+    ;
+                }
+
+                return m_string16_value;
+            }
+
+            ExtendedAnnotationParameterValue& extended_value_()
+            {
+                if (0x00000013 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000013;
+                    member_destructor_ = [&]() {m_extended_value.~ExtendedAnnotationParameterValue();};
+                    new(&m_extended_value) ExtendedAnnotationParameterValue();
+    ;
+                }
+
+                return m_extended_value;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        bool m_boolean_value;
+        uint8_t m_byte_value;
+        int8_t m_int8_value;
+        uint8_t m_uint8_value;
+        int16_t m_int16_value;
+        uint16_t m_uint_16_value;
+        int32_t m_int32_value;
+        uint32_t m_uint32_value;
+        int64_t m_int64_value;
+        uint64_t m_uint64_value;
+        float m_float32_value;
+        double m_float64_value;
+        long double m_float128_value;
+        char m_char_value;
+        wchar_t m_wchar_value;
+        int32_t m_enumerated_value;
+        eprosima::fastcdr::fixed_string<ANNOTATION_STR_VALUE_MAX_LEN> m_string8_value;
+        std::wstring m_string16_value;
+        ExtendedAnnotationParameterValue m_extended_value;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure AppliedAnnotationParameter defined by the user in the IDL file.
@@ -21067,7 +20477,7 @@ public:
      */
     eProsima_user_DllExport CompleteTypeObject()
     {
-        m__d = 0;
+        extended_type_();
     }
 
     /*!
@@ -21075,6 +20485,10 @@ public:
      */
     eProsima_user_DllExport ~CompleteTypeObject()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -21086,62 +20500,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = x.m_alias_type;
-                break;
+                        case 0x00000001:
+                            alias_type_() = x.m_alias_type;
+                            break;
 
+                        case 0x00000002:
+                            annotation_type_() = x.m_annotation_type;
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = x.m_annotation_type;
-                break;
+                        case 0x00000003:
+                            struct_type_() = x.m_struct_type;
+                            break;
 
+                        case 0x00000004:
+                            union_type_() = x.m_union_type;
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = x.m_struct_type;
-                break;
+                        case 0x00000005:
+                            bitset_type_() = x.m_bitset_type;
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = x.m_sequence_type;
+                            break;
 
-            case TK_UNION:
-                m_union_type = x.m_union_type;
-                break;
+                        case 0x00000007:
+                            array_type_() = x.m_array_type;
+                            break;
 
+                        case 0x00000008:
+                            map_type_() = x.m_map_type;
+                            break;
 
-            case TK_BITSET:
-                m_bitset_type = x.m_bitset_type;
-                break;
+                        case 0x00000009:
+                            enumerated_type_() = x.m_enumerated_type;
+                            break;
 
+                        case 0x0000000a:
+                            bitmask_type_() = x.m_bitmask_type;
+                            break;
 
-            case TK_SEQUENCE:
-                m_sequence_type = x.m_sequence_type;
-                break;
+                        case 0x0000000b:
+                            extended_type_() = x.m_extended_type;
+                            break;
 
-
-            case TK_ARRAY:
-                m_array_type = x.m_array_type;
-                break;
-
-
-            case TK_MAP:
-                m_map_type = x.m_map_type;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = x.m_enumerated_type;
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = x.m_bitmask_type;
-                break;
-
-
-            default:
-                m_extended_type = x.m_extended_type;
-
-                break;
         }
     }
 
@@ -21154,72 +20558,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = std::move(x.m_alias_type);
+                        case 0x00000001:
+                            alias_type_() = std::move(x.m_alias_type);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            annotation_type_() = std::move(x.m_annotation_type);
+                            break;
 
+                        case 0x00000003:
+                            struct_type_() = std::move(x.m_struct_type);
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = std::move(x.m_annotation_type);
+                        case 0x00000004:
+                            union_type_() = std::move(x.m_union_type);
+                            break;
 
-                break;
+                        case 0x00000005:
+                            bitset_type_() = std::move(x.m_bitset_type);
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = std::move(x.m_sequence_type);
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = std::move(x.m_struct_type);
+                        case 0x00000007:
+                            array_type_() = std::move(x.m_array_type);
+                            break;
 
-                break;
+                        case 0x00000008:
+                            map_type_() = std::move(x.m_map_type);
+                            break;
 
+                        case 0x00000009:
+                            enumerated_type_() = std::move(x.m_enumerated_type);
+                            break;
 
-            case TK_UNION:
-                m_union_type = std::move(x.m_union_type);
+                        case 0x0000000a:
+                            bitmask_type_() = std::move(x.m_bitmask_type);
+                            break;
 
-                break;
+                        case 0x0000000b:
+                            extended_type_() = std::move(x.m_extended_type);
+                            break;
 
-
-            case TK_BITSET:
-                m_bitset_type = std::move(x.m_bitset_type);
-
-                break;
-
-
-            case TK_SEQUENCE:
-                m_sequence_type = std::move(x.m_sequence_type);
-
-                break;
-
-
-            case TK_ARRAY:
-                m_array_type = std::move(x.m_array_type);
-
-                break;
-
-
-            case TK_MAP:
-                m_map_type = std::move(x.m_map_type);
-
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = std::move(x.m_enumerated_type);
-
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = std::move(x.m_bitmask_type);
-
-                break;
-
-
-            default:
-                m_extended_type = std::move(x.m_extended_type);
-
-                break;
         }
     }
 
@@ -21232,62 +20616,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = x.m_alias_type;
-                break;
+                        case 0x00000001:
+                            alias_type_() = x.m_alias_type;
+                            break;
 
+                        case 0x00000002:
+                            annotation_type_() = x.m_annotation_type;
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = x.m_annotation_type;
-                break;
+                        case 0x00000003:
+                            struct_type_() = x.m_struct_type;
+                            break;
 
+                        case 0x00000004:
+                            union_type_() = x.m_union_type;
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = x.m_struct_type;
-                break;
+                        case 0x00000005:
+                            bitset_type_() = x.m_bitset_type;
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = x.m_sequence_type;
+                            break;
 
-            case TK_UNION:
-                m_union_type = x.m_union_type;
-                break;
+                        case 0x00000007:
+                            array_type_() = x.m_array_type;
+                            break;
 
+                        case 0x00000008:
+                            map_type_() = x.m_map_type;
+                            break;
 
-            case TK_BITSET:
-                m_bitset_type = x.m_bitset_type;
-                break;
+                        case 0x00000009:
+                            enumerated_type_() = x.m_enumerated_type;
+                            break;
 
+                        case 0x0000000a:
+                            bitmask_type_() = x.m_bitmask_type;
+                            break;
 
-            case TK_SEQUENCE:
-                m_sequence_type = x.m_sequence_type;
-                break;
+                        case 0x0000000b:
+                            extended_type_() = x.m_extended_type;
+                            break;
 
-
-            case TK_ARRAY:
-                m_array_type = x.m_array_type;
-                break;
-
-
-            case TK_MAP:
-                m_map_type = x.m_map_type;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = x.m_enumerated_type;
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = x.m_bitmask_type;
-                break;
-
-
-            default:
-                m_extended_type = x.m_extended_type;
-
-                break;
         }
 
         return *this;
@@ -21302,72 +20676,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = std::move(x.m_alias_type);
+                        case 0x00000001:
+                            alias_type_() = std::move(x.m_alias_type);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            annotation_type_() = std::move(x.m_annotation_type);
+                            break;
 
+                        case 0x00000003:
+                            struct_type_() = std::move(x.m_struct_type);
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = std::move(x.m_annotation_type);
+                        case 0x00000004:
+                            union_type_() = std::move(x.m_union_type);
+                            break;
 
-                break;
+                        case 0x00000005:
+                            bitset_type_() = std::move(x.m_bitset_type);
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = std::move(x.m_sequence_type);
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = std::move(x.m_struct_type);
+                        case 0x00000007:
+                            array_type_() = std::move(x.m_array_type);
+                            break;
 
-                break;
+                        case 0x00000008:
+                            map_type_() = std::move(x.m_map_type);
+                            break;
 
+                        case 0x00000009:
+                            enumerated_type_() = std::move(x.m_enumerated_type);
+                            break;
 
-            case TK_UNION:
-                m_union_type = std::move(x.m_union_type);
+                        case 0x0000000a:
+                            bitmask_type_() = std::move(x.m_bitmask_type);
+                            break;
 
-                break;
+                        case 0x0000000b:
+                            extended_type_() = std::move(x.m_extended_type);
+                            break;
 
-
-            case TK_BITSET:
-                m_bitset_type = std::move(x.m_bitset_type);
-
-                break;
-
-
-            case TK_SEQUENCE:
-                m_sequence_type = std::move(x.m_sequence_type);
-
-                break;
-
-
-            case TK_ARRAY:
-                m_array_type = std::move(x.m_array_type);
-
-                break;
-
-
-            case TK_MAP:
-                m_map_type = std::move(x.m_map_type);
-
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = std::move(x.m_enumerated_type);
-
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = std::move(x.m_bitmask_type);
-
-                break;
-
-
-            default:
-                m_extended_type = std::move(x.m_extended_type);
-
-                break;
         }
 
         return *this;
@@ -21380,68 +20734,61 @@ public:
     eProsima_user_DllExport bool operator ==(
             const CompleteTypeObject& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_alias_type == x.m_alias_type);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_annotation_type == x.m_annotation_type);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_struct_type == x.m_struct_type);
+                                    break;
+
+                                case 0x00000004:
+                                    ret_value = (m_union_type == x.m_union_type);
+                                    break;
+
+                                case 0x00000005:
+                                    ret_value = (m_bitset_type == x.m_bitset_type);
+                                    break;
+
+                                case 0x00000006:
+                                    ret_value = (m_sequence_type == x.m_sequence_type);
+                                    break;
+
+                                case 0x00000007:
+                                    ret_value = (m_array_type == x.m_array_type);
+                                    break;
+
+                                case 0x00000008:
+                                    ret_value = (m_map_type == x.m_map_type);
+                                    break;
+
+                                case 0x00000009:
+                                    ret_value = (m_enumerated_type == x.m_enumerated_type);
+                                    break;
+
+                                case 0x0000000a:
+                                    ret_value = (m_bitmask_type == x.m_bitmask_type);
+                                    break;
+
+                                case 0x0000000b:
+                                    ret_value = (m_extended_type == x.m_extended_type);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case TK_ALIAS:
-                return (m_alias_type == x.m_alias_type);
-                break;
-
-
-            case TK_ANNOTATION:
-                return (m_annotation_type == x.m_annotation_type);
-                break;
-
-
-            case TK_STRUCTURE:
-                return (m_struct_type == x.m_struct_type);
-                break;
-
-
-            case TK_UNION:
-                return (m_union_type == x.m_union_type);
-                break;
-
-
-            case TK_BITSET:
-                return (m_bitset_type == x.m_bitset_type);
-                break;
-
-
-            case TK_SEQUENCE:
-                return (m_sequence_type == x.m_sequence_type);
-                break;
-
-
-            case TK_ARRAY:
-                return (m_array_type == x.m_array_type);
-                break;
-
-
-            case TK_MAP:
-                return (m_map_type == x.m_map_type);
-                break;
-
-
-            case TK_ENUM:
-                return (m_enumerated_type == x.m_enumerated_type);
-                break;
-
-
-            case TK_BITMASK:
-                return (m_bitmask_type == x.m_bitmask_type);
-                break;
-
-
-            default:
-                return m_extended_type == x.m_extended_type;
-
-                break;
-        }
+        return ret_value;
     }
 
     /*!
@@ -21462,154 +20809,90 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case TK_ALIAS:
-                switch (__d)
-                {
-                    case TK_ALIAS:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_ALIAS:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_ANNOTATION:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_ANNOTATION:
-                switch (__d)
-                {
-                    case TK_ANNOTATION:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_STRUCTURE:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_UNION:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_STRUCTURE:
-                switch (__d)
-                {
-                    case TK_STRUCTURE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_BITSET:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_SEQUENCE:
+                            if (0x00000006 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_UNION:
-                switch (__d)
-                {
-                    case TK_UNION:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_ARRAY:
+                            if (0x00000007 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_MAP:
+                            if (0x00000008 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_BITSET:
-                switch (__d)
-                {
-                    case TK_BITSET:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_ENUM:
+                            if (0x00000009 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_BITMASK:
+                            if (0x0000000a == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_SEQUENCE:
-                switch (__d)
-                {
-                    case TK_SEQUENCE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_ARRAY:
-                switch (__d)
-                {
-                    case TK_ARRAY:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_MAP:
-                switch (__d)
-                {
-                    case TK_MAP:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_ENUM:
-                switch (__d)
-                {
-                    case TK_ENUM:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_BITMASK:
-                switch (__d)
-                {
-                    case TK_BITMASK:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            default:
-                b = true;
-                switch (__d)
-                {
-                    case TK_ALIAS:
-                    case TK_ANNOTATION:
-                    case TK_STRUCTURE:
-                    case TK_UNION:
-                    case TK_BITSET:
-                    case TK_SEQUENCE:
-                    case TK_ARRAY:
-                    case TK_MAP:
-                    case TK_ENUM:
-                    case TK_BITMASK:
-                        b = false;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            if (0x0000000b == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -21627,24 +20910,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member alias_type
      * @param _alias_type New value to be copied in member alias_type
      */
     eProsima_user_DllExport void alias_type(
             const CompleteAliasType& _alias_type)
     {
-        m_alias_type = _alias_type;
+        alias_type_() = _alias_type;
         m__d = TK_ALIAS;
-
     }
 
     /*!
@@ -21654,9 +20927,8 @@ public:
     eProsima_user_DllExport void alias_type(
             CompleteAliasType&& _alias_type)
     {
-        m_alias_type = std::move(_alias_type);
+        alias_type_() = _alias_type;
         m__d = TK_ALIAS;
-
     }
 
     /*!
@@ -21666,18 +20938,7 @@ public:
      */
     eProsima_user_DllExport const CompleteAliasType& alias_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21692,18 +20953,7 @@ public:
      */
     eProsima_user_DllExport CompleteAliasType& alias_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21719,9 +20969,8 @@ public:
     eProsima_user_DllExport void annotation_type(
             const CompleteAnnotationType& _annotation_type)
     {
-        m_annotation_type = _annotation_type;
+        annotation_type_() = _annotation_type;
         m__d = TK_ANNOTATION;
-
     }
 
     /*!
@@ -21731,9 +20980,8 @@ public:
     eProsima_user_DllExport void annotation_type(
             CompleteAnnotationType&& _annotation_type)
     {
-        m_annotation_type = std::move(_annotation_type);
+        annotation_type_() = _annotation_type;
         m__d = TK_ANNOTATION;
-
     }
 
     /*!
@@ -21743,18 +20991,7 @@ public:
      */
     eProsima_user_DllExport const CompleteAnnotationType& annotation_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ANNOTATION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21769,18 +21006,7 @@ public:
      */
     eProsima_user_DllExport CompleteAnnotationType& annotation_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ANNOTATION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21796,9 +21022,8 @@ public:
     eProsima_user_DllExport void struct_type(
             const CompleteStructType& _struct_type)
     {
-        m_struct_type = _struct_type;
+        struct_type_() = _struct_type;
         m__d = TK_STRUCTURE;
-
     }
 
     /*!
@@ -21808,9 +21033,8 @@ public:
     eProsima_user_DllExport void struct_type(
             CompleteStructType&& _struct_type)
     {
-        m_struct_type = std::move(_struct_type);
+        struct_type_() = _struct_type;
         m__d = TK_STRUCTURE;
-
     }
 
     /*!
@@ -21820,18 +21044,7 @@ public:
      */
     eProsima_user_DllExport const CompleteStructType& struct_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRUCTURE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21846,18 +21059,7 @@ public:
      */
     eProsima_user_DllExport CompleteStructType& struct_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRUCTURE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21873,9 +21075,8 @@ public:
     eProsima_user_DllExport void union_type(
             const CompleteUnionType& _union_type)
     {
-        m_union_type = _union_type;
+        union_type_() = _union_type;
         m__d = TK_UNION;
-
     }
 
     /*!
@@ -21885,9 +21086,8 @@ public:
     eProsima_user_DllExport void union_type(
             CompleteUnionType&& _union_type)
     {
-        m_union_type = std::move(_union_type);
+        union_type_() = _union_type;
         m__d = TK_UNION;
-
     }
 
     /*!
@@ -21897,18 +21097,7 @@ public:
      */
     eProsima_user_DllExport const CompleteUnionType& union_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UNION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21923,18 +21112,7 @@ public:
      */
     eProsima_user_DllExport CompleteUnionType& union_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UNION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -21950,9 +21128,8 @@ public:
     eProsima_user_DllExport void bitset_type(
             const CompleteBitsetType& _bitset_type)
     {
-        m_bitset_type = _bitset_type;
+        bitset_type_() = _bitset_type;
         m__d = TK_BITSET;
-
     }
 
     /*!
@@ -21962,9 +21139,8 @@ public:
     eProsima_user_DllExport void bitset_type(
             CompleteBitsetType&& _bitset_type)
     {
-        m_bitset_type = std::move(_bitset_type);
+        bitset_type_() = _bitset_type;
         m__d = TK_BITSET;
-
     }
 
     /*!
@@ -21974,18 +21150,7 @@ public:
      */
     eProsima_user_DllExport const CompleteBitsetType& bitset_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITSET:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22000,18 +21165,7 @@ public:
      */
     eProsima_user_DllExport CompleteBitsetType& bitset_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITSET:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22027,9 +21181,8 @@ public:
     eProsima_user_DllExport void sequence_type(
             const CompleteSequenceType& _sequence_type)
     {
-        m_sequence_type = _sequence_type;
+        sequence_type_() = _sequence_type;
         m__d = TK_SEQUENCE;
-
     }
 
     /*!
@@ -22039,9 +21192,8 @@ public:
     eProsima_user_DllExport void sequence_type(
             CompleteSequenceType&& _sequence_type)
     {
-        m_sequence_type = std::move(_sequence_type);
+        sequence_type_() = _sequence_type;
         m__d = TK_SEQUENCE;
-
     }
 
     /*!
@@ -22051,18 +21203,7 @@ public:
      */
     eProsima_user_DllExport const CompleteSequenceType& sequence_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_SEQUENCE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22077,18 +21218,7 @@ public:
      */
     eProsima_user_DllExport CompleteSequenceType& sequence_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_SEQUENCE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22104,9 +21234,8 @@ public:
     eProsima_user_DllExport void array_type(
             const CompleteArrayType& _array_type)
     {
-        m_array_type = _array_type;
+        array_type_() = _array_type;
         m__d = TK_ARRAY;
-
     }
 
     /*!
@@ -22116,9 +21245,8 @@ public:
     eProsima_user_DllExport void array_type(
             CompleteArrayType&& _array_type)
     {
-        m_array_type = std::move(_array_type);
+        array_type_() = _array_type;
         m__d = TK_ARRAY;
-
     }
 
     /*!
@@ -22128,18 +21256,7 @@ public:
      */
     eProsima_user_DllExport const CompleteArrayType& array_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ARRAY:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22154,18 +21271,7 @@ public:
      */
     eProsima_user_DllExport CompleteArrayType& array_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ARRAY:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22181,9 +21287,8 @@ public:
     eProsima_user_DllExport void map_type(
             const CompleteMapType& _map_type)
     {
-        m_map_type = _map_type;
+        map_type_() = _map_type;
         m__d = TK_MAP;
-
     }
 
     /*!
@@ -22193,9 +21298,8 @@ public:
     eProsima_user_DllExport void map_type(
             CompleteMapType&& _map_type)
     {
-        m_map_type = std::move(_map_type);
+        map_type_() = _map_type;
         m__d = TK_MAP;
-
     }
 
     /*!
@@ -22205,18 +21309,7 @@ public:
      */
     eProsima_user_DllExport const CompleteMapType& map_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_MAP:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22231,18 +21324,7 @@ public:
      */
     eProsima_user_DllExport CompleteMapType& map_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_MAP:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22258,9 +21340,8 @@ public:
     eProsima_user_DllExport void enumerated_type(
             const CompleteEnumeratedType& _enumerated_type)
     {
-        m_enumerated_type = _enumerated_type;
+        enumerated_type_() = _enumerated_type;
         m__d = TK_ENUM;
-
     }
 
     /*!
@@ -22270,9 +21351,8 @@ public:
     eProsima_user_DllExport void enumerated_type(
             CompleteEnumeratedType&& _enumerated_type)
     {
-        m_enumerated_type = std::move(_enumerated_type);
+        enumerated_type_() = _enumerated_type;
         m__d = TK_ENUM;
-
     }
 
     /*!
@@ -22282,18 +21362,7 @@ public:
      */
     eProsima_user_DllExport const CompleteEnumeratedType& enumerated_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ENUM:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22308,18 +21377,7 @@ public:
      */
     eProsima_user_DllExport CompleteEnumeratedType& enumerated_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ENUM:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22335,9 +21393,8 @@ public:
     eProsima_user_DllExport void bitmask_type(
             const CompleteBitmaskType& _bitmask_type)
     {
-        m_bitmask_type = _bitmask_type;
+        bitmask_type_() = _bitmask_type;
         m__d = TK_BITMASK;
-
     }
 
     /*!
@@ -22347,9 +21404,8 @@ public:
     eProsima_user_DllExport void bitmask_type(
             CompleteBitmaskType&& _bitmask_type)
     {
-        m_bitmask_type = std::move(_bitmask_type);
+        bitmask_type_() = _bitmask_type;
         m__d = TK_BITMASK;
-
     }
 
     /*!
@@ -22359,18 +21415,7 @@ public:
      */
     eProsima_user_DllExport const CompleteBitmaskType& bitmask_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITMASK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22385,18 +21430,7 @@ public:
      */
     eProsima_user_DllExport CompleteBitmaskType& bitmask_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITMASK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22412,9 +21446,8 @@ public:
     eProsima_user_DllExport void extended_type(
             const CompleteExtendedType& _extended_type)
     {
-        m_extended_type = _extended_type;
+        extended_type_() = _extended_type;
         m__d = 0;
-
     }
 
     /*!
@@ -22424,9 +21457,8 @@ public:
     eProsima_user_DllExport void extended_type(
             CompleteExtendedType&& _extended_type)
     {
-        m_extended_type = std::move(_extended_type);
+        extended_type_() = _extended_type;
         m__d = 0;
-
     }
 
     /*!
@@ -22436,26 +21468,7 @@ public:
      */
     eProsima_user_DllExport const CompleteExtendedType& extended_type() const
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-            case TK_ANNOTATION:
-            case TK_STRUCTURE:
-            case TK_UNION:
-            case TK_BITSET:
-            case TK_SEQUENCE:
-            case TK_ARRAY:
-            case TK_MAP:
-            case TK_ENUM:
-            case TK_BITMASK:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22470,26 +21483,7 @@ public:
      */
     eProsima_user_DllExport CompleteExtendedType& extended_type()
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-            case TK_ANNOTATION:
-            case TK_STRUCTURE:
-            case TK_UNION:
-            case TK_BITSET:
-            case TK_SEQUENCE:
-            case TK_ARRAY:
-            case TK_MAP:
-            case TK_ENUM:
-            case TK_BITMASK:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -22501,19 +21495,225 @@ public:
 
 private:
 
-    uint8_t m__d;
+            CompleteAliasType& alias_type_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    CompleteAliasType m_alias_type;
-    CompleteAnnotationType m_annotation_type;
-    CompleteStructType m_struct_type;
-    CompleteUnionType m_union_type;
-    CompleteBitsetType m_bitset_type;
-    CompleteSequenceType m_sequence_type;
-    CompleteArrayType m_array_type;
-    CompleteMapType m_map_type;
-    CompleteEnumeratedType m_enumerated_type;
-    CompleteBitmaskType m_bitmask_type;
-    CompleteExtendedType m_extended_type;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_alias_type.~CompleteAliasType();};
+                    new(&m_alias_type) CompleteAliasType();
+    ;
+                }
+
+                return m_alias_type;
+            }
+
+            CompleteAnnotationType& annotation_type_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_annotation_type.~CompleteAnnotationType();};
+                    new(&m_annotation_type) CompleteAnnotationType();
+    ;
+                }
+
+                return m_annotation_type;
+            }
+
+            CompleteStructType& struct_type_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_struct_type.~CompleteStructType();};
+                    new(&m_struct_type) CompleteStructType();
+    ;
+                }
+
+                return m_struct_type;
+            }
+
+            CompleteUnionType& union_type_()
+            {
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_union_type.~CompleteUnionType();};
+                    new(&m_union_type) CompleteUnionType();
+    ;
+                }
+
+                return m_union_type;
+            }
+
+            CompleteBitsetType& bitset_type_()
+            {
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_bitset_type.~CompleteBitsetType();};
+                    new(&m_bitset_type) CompleteBitsetType();
+    ;
+                }
+
+                return m_bitset_type;
+            }
+
+            CompleteSequenceType& sequence_type_()
+            {
+                if (0x00000006 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000006;
+                    member_destructor_ = [&]() {m_sequence_type.~CompleteSequenceType();};
+                    new(&m_sequence_type) CompleteSequenceType();
+    ;
+                }
+
+                return m_sequence_type;
+            }
+
+            CompleteArrayType& array_type_()
+            {
+                if (0x00000007 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000007;
+                    member_destructor_ = [&]() {m_array_type.~CompleteArrayType();};
+                    new(&m_array_type) CompleteArrayType();
+    ;
+                }
+
+                return m_array_type;
+            }
+
+            CompleteMapType& map_type_()
+            {
+                if (0x00000008 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000008;
+                    member_destructor_ = [&]() {m_map_type.~CompleteMapType();};
+                    new(&m_map_type) CompleteMapType();
+    ;
+                }
+
+                return m_map_type;
+            }
+
+            CompleteEnumeratedType& enumerated_type_()
+            {
+                if (0x00000009 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000009;
+                    member_destructor_ = [&]() {m_enumerated_type.~CompleteEnumeratedType();};
+                    new(&m_enumerated_type) CompleteEnumeratedType();
+    ;
+                }
+
+                return m_enumerated_type;
+            }
+
+            CompleteBitmaskType& bitmask_type_()
+            {
+                if (0x0000000a != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000a;
+                    member_destructor_ = [&]() {m_bitmask_type.~CompleteBitmaskType();};
+                    new(&m_bitmask_type) CompleteBitmaskType();
+    ;
+                }
+
+                return m_bitmask_type;
+            }
+
+            CompleteExtendedType& extended_type_()
+            {
+                if (0x0000000b != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000b;
+                    member_destructor_ = [&]() {m_extended_type.~CompleteExtendedType();};
+                    new(&m_extended_type) CompleteExtendedType();
+    ;
+                }
+
+                return m_extended_type;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        CompleteAliasType m_alias_type;
+        CompleteAnnotationType m_annotation_type;
+        CompleteStructType m_struct_type;
+        CompleteUnionType m_union_type;
+        CompleteBitsetType m_bitset_type;
+        CompleteSequenceType m_sequence_type;
+        CompleteArrayType m_array_type;
+        CompleteMapType m_map_type;
+        CompleteEnumeratedType m_enumerated_type;
+        CompleteBitmaskType m_bitmask_type;
+        CompleteExtendedType m_extended_type;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure MinimalExtendedType defined by the user in the IDL file.
@@ -22623,7 +21823,7 @@ public:
      */
     eProsima_user_DllExport MinimalTypeObject()
     {
-        m__d = 0;
+        extended_type_();
     }
 
     /*!
@@ -22631,6 +21831,10 @@ public:
      */
     eProsima_user_DllExport ~MinimalTypeObject()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -22642,62 +21846,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = x.m_alias_type;
-                break;
+                        case 0x00000001:
+                            alias_type_() = x.m_alias_type;
+                            break;
 
+                        case 0x00000002:
+                            annotation_type_() = x.m_annotation_type;
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = x.m_annotation_type;
-                break;
+                        case 0x00000003:
+                            struct_type_() = x.m_struct_type;
+                            break;
 
+                        case 0x00000004:
+                            union_type_() = x.m_union_type;
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = x.m_struct_type;
-                break;
+                        case 0x00000005:
+                            bitset_type_() = x.m_bitset_type;
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = x.m_sequence_type;
+                            break;
 
-            case TK_UNION:
-                m_union_type = x.m_union_type;
-                break;
+                        case 0x00000007:
+                            array_type_() = x.m_array_type;
+                            break;
 
+                        case 0x00000008:
+                            map_type_() = x.m_map_type;
+                            break;
 
-            case TK_BITSET:
-                m_bitset_type = x.m_bitset_type;
-                break;
+                        case 0x00000009:
+                            enumerated_type_() = x.m_enumerated_type;
+                            break;
 
+                        case 0x0000000a:
+                            bitmask_type_() = x.m_bitmask_type;
+                            break;
 
-            case TK_SEQUENCE:
-                m_sequence_type = x.m_sequence_type;
-                break;
+                        case 0x0000000b:
+                            extended_type_() = x.m_extended_type;
+                            break;
 
-
-            case TK_ARRAY:
-                m_array_type = x.m_array_type;
-                break;
-
-
-            case TK_MAP:
-                m_map_type = x.m_map_type;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = x.m_enumerated_type;
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = x.m_bitmask_type;
-                break;
-
-
-            default:
-                m_extended_type = x.m_extended_type;
-
-                break;
         }
     }
 
@@ -22710,72 +21904,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = std::move(x.m_alias_type);
+                        case 0x00000001:
+                            alias_type_() = std::move(x.m_alias_type);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            annotation_type_() = std::move(x.m_annotation_type);
+                            break;
 
+                        case 0x00000003:
+                            struct_type_() = std::move(x.m_struct_type);
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = std::move(x.m_annotation_type);
+                        case 0x00000004:
+                            union_type_() = std::move(x.m_union_type);
+                            break;
 
-                break;
+                        case 0x00000005:
+                            bitset_type_() = std::move(x.m_bitset_type);
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = std::move(x.m_sequence_type);
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = std::move(x.m_struct_type);
+                        case 0x00000007:
+                            array_type_() = std::move(x.m_array_type);
+                            break;
 
-                break;
+                        case 0x00000008:
+                            map_type_() = std::move(x.m_map_type);
+                            break;
 
+                        case 0x00000009:
+                            enumerated_type_() = std::move(x.m_enumerated_type);
+                            break;
 
-            case TK_UNION:
-                m_union_type = std::move(x.m_union_type);
+                        case 0x0000000a:
+                            bitmask_type_() = std::move(x.m_bitmask_type);
+                            break;
 
-                break;
+                        case 0x0000000b:
+                            extended_type_() = std::move(x.m_extended_type);
+                            break;
 
-
-            case TK_BITSET:
-                m_bitset_type = std::move(x.m_bitset_type);
-
-                break;
-
-
-            case TK_SEQUENCE:
-                m_sequence_type = std::move(x.m_sequence_type);
-
-                break;
-
-
-            case TK_ARRAY:
-                m_array_type = std::move(x.m_array_type);
-
-                break;
-
-
-            case TK_MAP:
-                m_map_type = std::move(x.m_map_type);
-
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = std::move(x.m_enumerated_type);
-
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = std::move(x.m_bitmask_type);
-
-                break;
-
-
-            default:
-                m_extended_type = std::move(x.m_extended_type);
-
-                break;
         }
     }
 
@@ -22788,62 +21962,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = x.m_alias_type;
-                break;
+                        case 0x00000001:
+                            alias_type_() = x.m_alias_type;
+                            break;
 
+                        case 0x00000002:
+                            annotation_type_() = x.m_annotation_type;
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = x.m_annotation_type;
-                break;
+                        case 0x00000003:
+                            struct_type_() = x.m_struct_type;
+                            break;
 
+                        case 0x00000004:
+                            union_type_() = x.m_union_type;
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = x.m_struct_type;
-                break;
+                        case 0x00000005:
+                            bitset_type_() = x.m_bitset_type;
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = x.m_sequence_type;
+                            break;
 
-            case TK_UNION:
-                m_union_type = x.m_union_type;
-                break;
+                        case 0x00000007:
+                            array_type_() = x.m_array_type;
+                            break;
 
+                        case 0x00000008:
+                            map_type_() = x.m_map_type;
+                            break;
 
-            case TK_BITSET:
-                m_bitset_type = x.m_bitset_type;
-                break;
+                        case 0x00000009:
+                            enumerated_type_() = x.m_enumerated_type;
+                            break;
 
+                        case 0x0000000a:
+                            bitmask_type_() = x.m_bitmask_type;
+                            break;
 
-            case TK_SEQUENCE:
-                m_sequence_type = x.m_sequence_type;
-                break;
+                        case 0x0000000b:
+                            extended_type_() = x.m_extended_type;
+                            break;
 
-
-            case TK_ARRAY:
-                m_array_type = x.m_array_type;
-                break;
-
-
-            case TK_MAP:
-                m_map_type = x.m_map_type;
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = x.m_enumerated_type;
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = x.m_bitmask_type;
-                break;
-
-
-            default:
-                m_extended_type = x.m_extended_type;
-
-                break;
         }
 
         return *this;
@@ -22858,72 +22022,52 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case TK_ALIAS:
-                m_alias_type = std::move(x.m_alias_type);
+                        case 0x00000001:
+                            alias_type_() = std::move(x.m_alias_type);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            annotation_type_() = std::move(x.m_annotation_type);
+                            break;
 
+                        case 0x00000003:
+                            struct_type_() = std::move(x.m_struct_type);
+                            break;
 
-            case TK_ANNOTATION:
-                m_annotation_type = std::move(x.m_annotation_type);
+                        case 0x00000004:
+                            union_type_() = std::move(x.m_union_type);
+                            break;
 
-                break;
+                        case 0x00000005:
+                            bitset_type_() = std::move(x.m_bitset_type);
+                            break;
 
+                        case 0x00000006:
+                            sequence_type_() = std::move(x.m_sequence_type);
+                            break;
 
-            case TK_STRUCTURE:
-                m_struct_type = std::move(x.m_struct_type);
+                        case 0x00000007:
+                            array_type_() = std::move(x.m_array_type);
+                            break;
 
-                break;
+                        case 0x00000008:
+                            map_type_() = std::move(x.m_map_type);
+                            break;
 
+                        case 0x00000009:
+                            enumerated_type_() = std::move(x.m_enumerated_type);
+                            break;
 
-            case TK_UNION:
-                m_union_type = std::move(x.m_union_type);
+                        case 0x0000000a:
+                            bitmask_type_() = std::move(x.m_bitmask_type);
+                            break;
 
-                break;
+                        case 0x0000000b:
+                            extended_type_() = std::move(x.m_extended_type);
+                            break;
 
-
-            case TK_BITSET:
-                m_bitset_type = std::move(x.m_bitset_type);
-
-                break;
-
-
-            case TK_SEQUENCE:
-                m_sequence_type = std::move(x.m_sequence_type);
-
-                break;
-
-
-            case TK_ARRAY:
-                m_array_type = std::move(x.m_array_type);
-
-                break;
-
-
-            case TK_MAP:
-                m_map_type = std::move(x.m_map_type);
-
-                break;
-
-
-            case TK_ENUM:
-                m_enumerated_type = std::move(x.m_enumerated_type);
-
-                break;
-
-
-            case TK_BITMASK:
-                m_bitmask_type = std::move(x.m_bitmask_type);
-
-                break;
-
-
-            default:
-                m_extended_type = std::move(x.m_extended_type);
-
-                break;
         }
 
         return *this;
@@ -22936,68 +22080,61 @@ public:
     eProsima_user_DllExport bool operator ==(
             const MinimalTypeObject& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_alias_type == x.m_alias_type);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_annotation_type == x.m_annotation_type);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_struct_type == x.m_struct_type);
+                                    break;
+
+                                case 0x00000004:
+                                    ret_value = (m_union_type == x.m_union_type);
+                                    break;
+
+                                case 0x00000005:
+                                    ret_value = (m_bitset_type == x.m_bitset_type);
+                                    break;
+
+                                case 0x00000006:
+                                    ret_value = (m_sequence_type == x.m_sequence_type);
+                                    break;
+
+                                case 0x00000007:
+                                    ret_value = (m_array_type == x.m_array_type);
+                                    break;
+
+                                case 0x00000008:
+                                    ret_value = (m_map_type == x.m_map_type);
+                                    break;
+
+                                case 0x00000009:
+                                    ret_value = (m_enumerated_type == x.m_enumerated_type);
+                                    break;
+
+                                case 0x0000000a:
+                                    ret_value = (m_bitmask_type == x.m_bitmask_type);
+                                    break;
+
+                                case 0x0000000b:
+                                    ret_value = (m_extended_type == x.m_extended_type);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case TK_ALIAS:
-                return (m_alias_type == x.m_alias_type);
-                break;
-
-
-            case TK_ANNOTATION:
-                return (m_annotation_type == x.m_annotation_type);
-                break;
-
-
-            case TK_STRUCTURE:
-                return (m_struct_type == x.m_struct_type);
-                break;
-
-
-            case TK_UNION:
-                return (m_union_type == x.m_union_type);
-                break;
-
-
-            case TK_BITSET:
-                return (m_bitset_type == x.m_bitset_type);
-                break;
-
-
-            case TK_SEQUENCE:
-                return (m_sequence_type == x.m_sequence_type);
-                break;
-
-
-            case TK_ARRAY:
-                return (m_array_type == x.m_array_type);
-                break;
-
-
-            case TK_MAP:
-                return (m_map_type == x.m_map_type);
-                break;
-
-
-            case TK_ENUM:
-                return (m_enumerated_type == x.m_enumerated_type);
-                break;
-
-
-            case TK_BITMASK:
-                return (m_bitmask_type == x.m_bitmask_type);
-                break;
-
-
-            default:
-                return m_extended_type == x.m_extended_type;
-
-                break;
-        }
+        return ret_value;
     }
 
     /*!
@@ -23018,154 +22155,90 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case TK_ALIAS:
-                switch (__d)
-                {
-                    case TK_ALIAS:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_ALIAS:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_ANNOTATION:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_ANNOTATION:
-                switch (__d)
-                {
-                    case TK_ANNOTATION:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_STRUCTURE:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_UNION:
+                            if (0x00000004 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_STRUCTURE:
-                switch (__d)
-                {
-                    case TK_STRUCTURE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_BITSET:
+                            if (0x00000005 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_SEQUENCE:
+                            if (0x00000006 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_UNION:
-                switch (__d)
-                {
-                    case TK_UNION:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_ARRAY:
+                            if (0x00000007 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_MAP:
+                            if (0x00000008 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_BITSET:
-                switch (__d)
-                {
-                    case TK_BITSET:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case TK_ENUM:
+                            if (0x00000009 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case TK_BITMASK:
+                            if (0x0000000a == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case TK_SEQUENCE:
-                switch (__d)
-                {
-                    case TK_SEQUENCE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_ARRAY:
-                switch (__d)
-                {
-                    case TK_ARRAY:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_MAP:
-                switch (__d)
-                {
-                    case TK_MAP:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_ENUM:
-                switch (__d)
-                {
-                    case TK_ENUM:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            case TK_BITMASK:
-                switch (__d)
-                {
-                    case TK_BITMASK:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            default:
-                b = true;
-                switch (__d)
-                {
-                    case TK_ALIAS:
-                    case TK_ANNOTATION:
-                    case TK_STRUCTURE:
-                    case TK_UNION:
-                    case TK_BITSET:
-                    case TK_SEQUENCE:
-                    case TK_ARRAY:
-                    case TK_MAP:
-                    case TK_ENUM:
-                    case TK_BITMASK:
-                        b = false;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            if (0x0000000b == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -23183,24 +22256,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member alias_type
      * @param _alias_type New value to be copied in member alias_type
      */
     eProsima_user_DllExport void alias_type(
             const MinimalAliasType& _alias_type)
     {
-        m_alias_type = _alias_type;
+        alias_type_() = _alias_type;
         m__d = TK_ALIAS;
-
     }
 
     /*!
@@ -23210,9 +22273,8 @@ public:
     eProsima_user_DllExport void alias_type(
             MinimalAliasType&& _alias_type)
     {
-        m_alias_type = std::move(_alias_type);
+        alias_type_() = _alias_type;
         m__d = TK_ALIAS;
-
     }
 
     /*!
@@ -23222,18 +22284,7 @@ public:
      */
     eProsima_user_DllExport const MinimalAliasType& alias_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23248,18 +22299,7 @@ public:
      */
     eProsima_user_DllExport MinimalAliasType& alias_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23275,9 +22315,8 @@ public:
     eProsima_user_DllExport void annotation_type(
             const MinimalAnnotationType& _annotation_type)
     {
-        m_annotation_type = _annotation_type;
+        annotation_type_() = _annotation_type;
         m__d = TK_ANNOTATION;
-
     }
 
     /*!
@@ -23287,9 +22326,8 @@ public:
     eProsima_user_DllExport void annotation_type(
             MinimalAnnotationType&& _annotation_type)
     {
-        m_annotation_type = std::move(_annotation_type);
+        annotation_type_() = _annotation_type;
         m__d = TK_ANNOTATION;
-
     }
 
     /*!
@@ -23299,18 +22337,7 @@ public:
      */
     eProsima_user_DllExport const MinimalAnnotationType& annotation_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ANNOTATION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23325,18 +22352,7 @@ public:
      */
     eProsima_user_DllExport MinimalAnnotationType& annotation_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ANNOTATION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23352,9 +22368,8 @@ public:
     eProsima_user_DllExport void struct_type(
             const MinimalStructType& _struct_type)
     {
-        m_struct_type = _struct_type;
+        struct_type_() = _struct_type;
         m__d = TK_STRUCTURE;
-
     }
 
     /*!
@@ -23364,9 +22379,8 @@ public:
     eProsima_user_DllExport void struct_type(
             MinimalStructType&& _struct_type)
     {
-        m_struct_type = std::move(_struct_type);
+        struct_type_() = _struct_type;
         m__d = TK_STRUCTURE;
-
     }
 
     /*!
@@ -23376,18 +22390,7 @@ public:
      */
     eProsima_user_DllExport const MinimalStructType& struct_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRUCTURE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23402,18 +22405,7 @@ public:
      */
     eProsima_user_DllExport MinimalStructType& struct_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_STRUCTURE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23429,9 +22421,8 @@ public:
     eProsima_user_DllExport void union_type(
             const MinimalUnionType& _union_type)
     {
-        m_union_type = _union_type;
+        union_type_() = _union_type;
         m__d = TK_UNION;
-
     }
 
     /*!
@@ -23441,9 +22432,8 @@ public:
     eProsima_user_DllExport void union_type(
             MinimalUnionType&& _union_type)
     {
-        m_union_type = std::move(_union_type);
+        union_type_() = _union_type;
         m__d = TK_UNION;
-
     }
 
     /*!
@@ -23453,18 +22443,7 @@ public:
      */
     eProsima_user_DllExport const MinimalUnionType& union_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UNION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23479,18 +22458,7 @@ public:
      */
     eProsima_user_DllExport MinimalUnionType& union_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_UNION:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000004 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23506,9 +22474,8 @@ public:
     eProsima_user_DllExport void bitset_type(
             const MinimalBitsetType& _bitset_type)
     {
-        m_bitset_type = _bitset_type;
+        bitset_type_() = _bitset_type;
         m__d = TK_BITSET;
-
     }
 
     /*!
@@ -23518,9 +22485,8 @@ public:
     eProsima_user_DllExport void bitset_type(
             MinimalBitsetType&& _bitset_type)
     {
-        m_bitset_type = std::move(_bitset_type);
+        bitset_type_() = _bitset_type;
         m__d = TK_BITSET;
-
     }
 
     /*!
@@ -23530,18 +22496,7 @@ public:
      */
     eProsima_user_DllExport const MinimalBitsetType& bitset_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITSET:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23556,18 +22511,7 @@ public:
      */
     eProsima_user_DllExport MinimalBitsetType& bitset_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITSET:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000005 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23583,9 +22527,8 @@ public:
     eProsima_user_DllExport void sequence_type(
             const MinimalSequenceType& _sequence_type)
     {
-        m_sequence_type = _sequence_type;
+        sequence_type_() = _sequence_type;
         m__d = TK_SEQUENCE;
-
     }
 
     /*!
@@ -23595,9 +22538,8 @@ public:
     eProsima_user_DllExport void sequence_type(
             MinimalSequenceType&& _sequence_type)
     {
-        m_sequence_type = std::move(_sequence_type);
+        sequence_type_() = _sequence_type;
         m__d = TK_SEQUENCE;
-
     }
 
     /*!
@@ -23607,18 +22549,7 @@ public:
      */
     eProsima_user_DllExport const MinimalSequenceType& sequence_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_SEQUENCE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23633,18 +22564,7 @@ public:
      */
     eProsima_user_DllExport MinimalSequenceType& sequence_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_SEQUENCE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000006 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23660,9 +22580,8 @@ public:
     eProsima_user_DllExport void array_type(
             const MinimalArrayType& _array_type)
     {
-        m_array_type = _array_type;
+        array_type_() = _array_type;
         m__d = TK_ARRAY;
-
     }
 
     /*!
@@ -23672,9 +22591,8 @@ public:
     eProsima_user_DllExport void array_type(
             MinimalArrayType&& _array_type)
     {
-        m_array_type = std::move(_array_type);
+        array_type_() = _array_type;
         m__d = TK_ARRAY;
-
     }
 
     /*!
@@ -23684,18 +22602,7 @@ public:
      */
     eProsima_user_DllExport const MinimalArrayType& array_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ARRAY:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23710,18 +22617,7 @@ public:
      */
     eProsima_user_DllExport MinimalArrayType& array_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ARRAY:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000007 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23737,9 +22633,8 @@ public:
     eProsima_user_DllExport void map_type(
             const MinimalMapType& _map_type)
     {
-        m_map_type = _map_type;
+        map_type_() = _map_type;
         m__d = TK_MAP;
-
     }
 
     /*!
@@ -23749,9 +22644,8 @@ public:
     eProsima_user_DllExport void map_type(
             MinimalMapType&& _map_type)
     {
-        m_map_type = std::move(_map_type);
+        map_type_() = _map_type;
         m__d = TK_MAP;
-
     }
 
     /*!
@@ -23761,18 +22655,7 @@ public:
      */
     eProsima_user_DllExport const MinimalMapType& map_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_MAP:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23787,18 +22670,7 @@ public:
      */
     eProsima_user_DllExport MinimalMapType& map_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_MAP:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000008 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23814,9 +22686,8 @@ public:
     eProsima_user_DllExport void enumerated_type(
             const MinimalEnumeratedType& _enumerated_type)
     {
-        m_enumerated_type = _enumerated_type;
+        enumerated_type_() = _enumerated_type;
         m__d = TK_ENUM;
-
     }
 
     /*!
@@ -23826,9 +22697,8 @@ public:
     eProsima_user_DllExport void enumerated_type(
             MinimalEnumeratedType&& _enumerated_type)
     {
-        m_enumerated_type = std::move(_enumerated_type);
+        enumerated_type_() = _enumerated_type;
         m__d = TK_ENUM;
-
     }
 
     /*!
@@ -23838,18 +22708,7 @@ public:
      */
     eProsima_user_DllExport const MinimalEnumeratedType& enumerated_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ENUM:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23864,18 +22723,7 @@ public:
      */
     eProsima_user_DllExport MinimalEnumeratedType& enumerated_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_ENUM:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000009 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23891,9 +22739,8 @@ public:
     eProsima_user_DllExport void bitmask_type(
             const MinimalBitmaskType& _bitmask_type)
     {
-        m_bitmask_type = _bitmask_type;
+        bitmask_type_() = _bitmask_type;
         m__d = TK_BITMASK;
-
     }
 
     /*!
@@ -23903,9 +22750,8 @@ public:
     eProsima_user_DllExport void bitmask_type(
             MinimalBitmaskType&& _bitmask_type)
     {
-        m_bitmask_type = std::move(_bitmask_type);
+        bitmask_type_() = _bitmask_type;
         m__d = TK_BITMASK;
-
     }
 
     /*!
@@ -23915,18 +22761,7 @@ public:
      */
     eProsima_user_DllExport const MinimalBitmaskType& bitmask_type() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITMASK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23941,18 +22776,7 @@ public:
      */
     eProsima_user_DllExport MinimalBitmaskType& bitmask_type()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case TK_BITMASK:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x0000000a != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -23968,9 +22792,8 @@ public:
     eProsima_user_DllExport void extended_type(
             const MinimalExtendedType& _extended_type)
     {
-        m_extended_type = _extended_type;
+        extended_type_() = _extended_type;
         m__d = 0;
-
     }
 
     /*!
@@ -23980,9 +22803,8 @@ public:
     eProsima_user_DllExport void extended_type(
             MinimalExtendedType&& _extended_type)
     {
-        m_extended_type = std::move(_extended_type);
+        extended_type_() = _extended_type;
         m__d = 0;
-
     }
 
     /*!
@@ -23992,26 +22814,7 @@ public:
      */
     eProsima_user_DllExport const MinimalExtendedType& extended_type() const
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-            case TK_ANNOTATION:
-            case TK_STRUCTURE:
-            case TK_UNION:
-            case TK_BITSET:
-            case TK_SEQUENCE:
-            case TK_ARRAY:
-            case TK_MAP:
-            case TK_ENUM:
-            case TK_BITMASK:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -24026,26 +22829,7 @@ public:
      */
     eProsima_user_DllExport MinimalExtendedType& extended_type()
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case TK_ALIAS:
-            case TK_ANNOTATION:
-            case TK_STRUCTURE:
-            case TK_UNION:
-            case TK_BITSET:
-            case TK_SEQUENCE:
-            case TK_ARRAY:
-            case TK_MAP:
-            case TK_ENUM:
-            case TK_BITMASK:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x0000000b != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -24057,19 +22841,225 @@ public:
 
 private:
 
-    uint8_t m__d;
+            MinimalAliasType& alias_type_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    MinimalAliasType m_alias_type;
-    MinimalAnnotationType m_annotation_type;
-    MinimalStructType m_struct_type;
-    MinimalUnionType m_union_type;
-    MinimalBitsetType m_bitset_type;
-    MinimalSequenceType m_sequence_type;
-    MinimalArrayType m_array_type;
-    MinimalMapType m_map_type;
-    MinimalEnumeratedType m_enumerated_type;
-    MinimalBitmaskType m_bitmask_type;
-    MinimalExtendedType m_extended_type;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_alias_type.~MinimalAliasType();};
+                    new(&m_alias_type) MinimalAliasType();
+    ;
+                }
+
+                return m_alias_type;
+            }
+
+            MinimalAnnotationType& annotation_type_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_annotation_type.~MinimalAnnotationType();};
+                    new(&m_annotation_type) MinimalAnnotationType();
+    ;
+                }
+
+                return m_annotation_type;
+            }
+
+            MinimalStructType& struct_type_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = [&]() {m_struct_type.~MinimalStructType();};
+                    new(&m_struct_type) MinimalStructType();
+    ;
+                }
+
+                return m_struct_type;
+            }
+
+            MinimalUnionType& union_type_()
+            {
+                if (0x00000004 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000004;
+                    member_destructor_ = [&]() {m_union_type.~MinimalUnionType();};
+                    new(&m_union_type) MinimalUnionType();
+    ;
+                }
+
+                return m_union_type;
+            }
+
+            MinimalBitsetType& bitset_type_()
+            {
+                if (0x00000005 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000005;
+                    member_destructor_ = [&]() {m_bitset_type.~MinimalBitsetType();};
+                    new(&m_bitset_type) MinimalBitsetType();
+    ;
+                }
+
+                return m_bitset_type;
+            }
+
+            MinimalSequenceType& sequence_type_()
+            {
+                if (0x00000006 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000006;
+                    member_destructor_ = [&]() {m_sequence_type.~MinimalSequenceType();};
+                    new(&m_sequence_type) MinimalSequenceType();
+    ;
+                }
+
+                return m_sequence_type;
+            }
+
+            MinimalArrayType& array_type_()
+            {
+                if (0x00000007 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000007;
+                    member_destructor_ = [&]() {m_array_type.~MinimalArrayType();};
+                    new(&m_array_type) MinimalArrayType();
+    ;
+                }
+
+                return m_array_type;
+            }
+
+            MinimalMapType& map_type_()
+            {
+                if (0x00000008 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000008;
+                    member_destructor_ = [&]() {m_map_type.~MinimalMapType();};
+                    new(&m_map_type) MinimalMapType();
+    ;
+                }
+
+                return m_map_type;
+            }
+
+            MinimalEnumeratedType& enumerated_type_()
+            {
+                if (0x00000009 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000009;
+                    member_destructor_ = [&]() {m_enumerated_type.~MinimalEnumeratedType();};
+                    new(&m_enumerated_type) MinimalEnumeratedType();
+    ;
+                }
+
+                return m_enumerated_type;
+            }
+
+            MinimalBitmaskType& bitmask_type_()
+            {
+                if (0x0000000a != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000a;
+                    member_destructor_ = [&]() {m_bitmask_type.~MinimalBitmaskType();};
+                    new(&m_bitmask_type) MinimalBitmaskType();
+    ;
+                }
+
+                return m_bitmask_type;
+            }
+
+            MinimalExtendedType& extended_type_()
+            {
+                if (0x0000000b != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x0000000b;
+                    member_destructor_ = [&]() {m_extended_type.~MinimalExtendedType();};
+                    new(&m_extended_type) MinimalExtendedType();
+    ;
+                }
+
+                return m_extended_type;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        MinimalAliasType m_alias_type;
+        MinimalAnnotationType m_annotation_type;
+        MinimalStructType m_struct_type;
+        MinimalUnionType m_union_type;
+        MinimalBitsetType m_bitset_type;
+        MinimalSequenceType m_sequence_type;
+        MinimalArrayType m_array_type;
+        MinimalMapType m_map_type;
+        MinimalEnumeratedType m_enumerated_type;
+        MinimalBitmaskType m_bitmask_type;
+        MinimalExtendedType m_extended_type;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union TypeObject defined by the user in the IDL file.
@@ -24084,7 +23074,6 @@ public:
      */
     eProsima_user_DllExport TypeObject()
     {
-        m__d = EK_COMPLETE;
     }
 
     /*!
@@ -24092,6 +23081,10 @@ public:
      */
     eProsima_user_DllExport ~TypeObject()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -24103,19 +23096,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-                m_complete = x.m_complete;
-                break;
+                        case 0x00000001:
+                            complete_() = x.m_complete;
+                            break;
 
+                        case 0x00000002:
+                            minimal_() = x.m_minimal;
+                            break;
 
-            case EK_MINIMAL:
-                m_minimal = x.m_minimal;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -24128,21 +23118,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-                m_complete = std::move(x.m_complete);
+                        case 0x00000001:
+                            complete_() = std::move(x.m_complete);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            minimal_() = std::move(x.m_minimal);
+                            break;
 
-
-            case EK_MINIMAL:
-                m_minimal = std::move(x.m_minimal);
-
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -24155,19 +23140,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-                m_complete = x.m_complete;
-                break;
+                        case 0x00000001:
+                            complete_() = x.m_complete;
+                            break;
 
+                        case 0x00000002:
+                            minimal_() = x.m_minimal;
+                            break;
 
-            case EK_MINIMAL:
-                m_minimal = x.m_minimal;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -24182,21 +23164,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case EK_COMPLETE:
-                m_complete = std::move(x.m_complete);
+                        case 0x00000001:
+                            complete_() = std::move(x.m_complete);
+                            break;
 
-                break;
+                        case 0x00000002:
+                            minimal_() = std::move(x.m_minimal);
+                            break;
 
-
-            case EK_MINIMAL:
-                m_minimal = std::move(x.m_minimal);
-
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -24209,26 +23186,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TypeObject& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_complete == x.m_complete);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_minimal == x.m_minimal);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-                return (m_complete == x.m_complete);
-                break;
-
-
-            case EK_MINIMAL:
-                return (m_minimal == x.m_minimal);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -24249,38 +23225,27 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case EK_COMPLETE:
-                switch (__d)
-                {
-                    case EK_COMPLETE:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case EK_COMPLETE:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case EK_MINIMAL:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case EK_MINIMAL:
-                switch (__d)
-                {
-                    case EK_MINIMAL:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -24298,24 +23263,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member complete
      * @param _complete New value to be copied in member complete
      */
     eProsima_user_DllExport void complete(
             const CompleteTypeObject& _complete)
     {
-        m_complete = _complete;
+        complete_() = _complete;
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -24325,9 +23280,8 @@ public:
     eProsima_user_DllExport void complete(
             CompleteTypeObject&& _complete)
     {
-        m_complete = std::move(_complete);
+        complete_() = _complete;
         m__d = EK_COMPLETE;
-
     }
 
     /*!
@@ -24337,18 +23291,7 @@ public:
      */
     eProsima_user_DllExport const CompleteTypeObject& complete() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -24363,18 +23306,7 @@ public:
      */
     eProsima_user_DllExport CompleteTypeObject& complete()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_COMPLETE:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -24390,9 +23322,8 @@ public:
     eProsima_user_DllExport void minimal(
             const MinimalTypeObject& _minimal)
     {
-        m_minimal = _minimal;
+        minimal_() = _minimal;
         m__d = EK_MINIMAL;
-
     }
 
     /*!
@@ -24402,9 +23333,8 @@ public:
     eProsima_user_DllExport void minimal(
             MinimalTypeObject&& _minimal)
     {
-        m_minimal = std::move(_minimal);
+        minimal_() = _minimal;
         m__d = EK_MINIMAL;
-
     }
 
     /*!
@@ -24414,18 +23344,7 @@ public:
      */
     eProsima_user_DllExport const MinimalTypeObject& minimal() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_MINIMAL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -24440,18 +23359,7 @@ public:
      */
     eProsima_user_DllExport MinimalTypeObject& minimal()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case EK_MINIMAL:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -24460,13 +23368,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint8_t m__d;
+            CompleteTypeObject& complete_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    CompleteTypeObject m_complete;
-    MinimalTypeObject m_minimal;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_complete.~CompleteTypeObject();};
+                    new(&m_complete) CompleteTypeObject();
+    ;
+                }
+
+                return m_complete;
+            }
+
+            MinimalTypeObject& minimal_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_minimal.~MinimalTypeObject();};
+                    new(&m_minimal) MinimalTypeObject();
+    ;
+                }
+
+                return m_minimal;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        CompleteTypeObject m_complete;
+        MinimalTypeObject m_minimal;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 typedef std::vector<TypeObject> TypeObjectSeq;
 

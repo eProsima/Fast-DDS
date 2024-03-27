@@ -68,7 +68,7 @@ void* DynamicPubSubType::createData()
 void DynamicPubSubType::deleteData(
         void* data)
 {
-    traits<DynamicDataImpl>::ref_type* data_ptr = static_cast<traits<DynamicDataImpl>::ref_type*>(data);
+    traits<DynamicData>::ref_type* data_ptr = static_cast<traits<DynamicData>::ref_type*>(data);
     DynamicDataFactory::get_instance()->delete_data(*data_ptr);
     delete data_ptr;
 }

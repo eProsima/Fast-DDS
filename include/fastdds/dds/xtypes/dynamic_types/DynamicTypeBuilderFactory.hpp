@@ -79,7 +79,6 @@ public:
 
     /*!
      * Creates a new @ref DynamicTypeBuilder reference based on the given @ref TypeObject instance.
-     * @remark Not implemented yet.
      * @param[in] type_object @ref TypeObject instance to be used.
      * @return New @ref DynamicTypeBuilder reference. Nil reference returned in error case.
      */

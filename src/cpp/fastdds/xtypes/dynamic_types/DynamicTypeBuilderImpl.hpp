@@ -102,6 +102,16 @@ public:
         return type_descriptor_;
     }
 
+    const std::vector<VerbatimTextDescriptorImpl>& get_verbatim() const noexcept
+    {
+        return verbatim_;
+    }
+
+    std::vector<VerbatimTextDescriptorImpl>& get_verbatim() noexcept
+    {
+        return verbatim_;
+    }
+
 protected:
 
     traits<DynamicTypeBuilder>::ref_type _this();
@@ -135,6 +145,9 @@ private:
 
     //! Copy of the TypeDescriptor provided by the user.
     TypeDescriptorImpl type_descriptor_;
+
+    std::vector<VerbatimTextDescriptorImpl> verbatim_;
+
 };
 
 } // namespace dds

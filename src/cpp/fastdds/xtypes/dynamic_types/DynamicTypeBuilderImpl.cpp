@@ -203,6 +203,15 @@ bool DynamicTypeBuilderImpl::equals(
             }
         }
 
+        ret_value &= verbatim_.size() == impl->verbatim_.size();
+        if (ret_value)
+        {
+            for (size_t count {0}; ret_value && count < verbatim_.size(); ++count)
+            {
+                ret_value &= verbatim_.at(count).equals(impl->verbatim_.at(count));
+            }
+        }
+
         ret_value &= member_.size() == impl->member_.size();
         assert(TK_ANNOTATION == type_descriptor_.kind() ||
                 TK_BITMASK == type_descriptor_.kind() ||
@@ -665,6 +674,11 @@ ReturnCode_t DynamicTypeBuilderImpl::copy_from(
     member_ = type->member_;
     member_by_name_ = type->member_by_name_;
     members_ = type->members_;
+    for (auto& verbatim : type->verbatim_)
+    {
+        verbatim_.emplace_back();
+        verbatim_.back().copy_from(verbatim);
+    }
     return RETCODE_OK;
 }
 

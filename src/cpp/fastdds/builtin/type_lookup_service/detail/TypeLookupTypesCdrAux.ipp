@@ -232,7 +232,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case eprosima::fastdds::dds::RETCODE_OK:
+                case eprosima::fastdds::dds::RETCODE_OK:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.result(), current_alignment);
                     break;
@@ -288,23 +288,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case eprosima::fastdds::dds::RETCODE_OK:
-                                                            dcdr >> data.result();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case eprosima::fastdds::dds::RETCODE_OK:
+                                                    {
+                                                        eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out result_value;
+                                                        data.result(std::move(result_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case eprosima::fastdds::dds::RETCODE_OK:
+                                                    dcdr >> data.result();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -516,7 +531,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case eprosima::fastdds::dds::RETCODE_OK:
+                case eprosima::fastdds::dds::RETCODE_OK:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.result(), current_alignment);
                     break;
@@ -572,23 +587,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case eprosima::fastdds::dds::RETCODE_OK:
-                                                            dcdr >> data.result();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case eprosima::fastdds::dds::RETCODE_OK:
+                                                    {
+                                                        eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out result_value;
+                                                        data.result(std::move(result_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case eprosima::fastdds::dds::RETCODE_OK:
+                                                    dcdr >> data.result();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -616,12 +646,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case TypeLookup_getTypes_HashId:
+                case TypeLookup_getTypes_HashId:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.getTypes(), current_alignment);
                     break;
 
-        case TypeLookup_getDependencies_HashId:
+                case TypeLookup_getDependencies_HashId:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.getTypeDependencies(), current_alignment);
                     break;
@@ -681,27 +711,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case TypeLookup_getTypes_HashId:
-                                                            dcdr >> data.getTypes();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case TypeLookup_getDependencies_HashId:
-                                                            dcdr >> data.getTypeDependencies();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case TypeLookup_getTypes_HashId:
+                                                    {
+                                                        eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In getTypes_value;
+                                                        data.getTypes(std::move(getTypes_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case TypeLookup_getDependencies_HashId:
+                                                    {
+                                                        eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In getTypeDependencies_value;
+                                                        data.getTypeDependencies(std::move(getTypeDependencies_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case TypeLookup_getTypes_HashId:
+                                                    dcdr >> data.getTypes();
+                                                    break;
+
+                                                case TypeLookup_getDependencies_HashId:
+                                                    dcdr >> data.getTypeDependencies();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -821,12 +874,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case TypeLookup_getTypes_HashId:
+                case TypeLookup_getTypes_HashId:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.getType(), current_alignment);
                     break;
 
-        case TypeLookup_getDependencies_HashId:
+                case TypeLookup_getDependencies_HashId:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.getTypeDependencies(), current_alignment);
                     break;
@@ -886,27 +939,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case TypeLookup_getTypes_HashId:
-                                                            dcdr >> data.getType();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case TypeLookup_getDependencies_HashId:
-                                                            dcdr >> data.getTypeDependencies();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case TypeLookup_getTypes_HashId:
+                                                    {
+                                                        eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result getType_value;
+                                                        data.getType(std::move(getType_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case TypeLookup_getDependencies_HashId:
+                                                    {
+                                                        eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result getTypeDependencies_value;
+                                                        data.getTypeDependencies(std::move(getTypeDependencies_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case TypeLookup_getTypes_HashId:
+                                                    dcdr >> data.getType();
+                                                    break;
+
+                                                case TypeLookup_getDependencies_HashId:
+                                                    dcdr >> data.getTypeDependencies();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });

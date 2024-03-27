@@ -240,16 +240,16 @@ ReturnCode_t TypeObjectRegistry::get_type_objects(
         if (EK_MINIMAL == type_ids.type_identifier1()._d())
         {
             type_objects.minimal_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.minimal();
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_;
             type_objects.complete_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.complete();
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_;
         }
         else
         {
             type_objects.complete_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_.complete();
+                    type_registry_entries_.at(type_ids.type_identifier1()).type_object_;
             type_objects.minimal_type_object =
-                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_.minimal();
+                    type_registry_entries_.at(type_ids.type_identifier2()).type_object_;
         }
     }
     return ret_code;
@@ -438,7 +438,15 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
         const TypeObject& type_object)
 {
     uint32_t type_object_serialized_size = 0;
-    TypeObject minimal_type_object;
+    try
+    {
+        TypeObjectUtils::type_object_consistency(type_object);
+    }
+    catch (const InvalidArgumentError& exception)
+    {
+        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent CompleteTypeObject: " << exception.what());
+        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
+    }
     if (type_identifier._d() != type_object._d() ||
             type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
     {

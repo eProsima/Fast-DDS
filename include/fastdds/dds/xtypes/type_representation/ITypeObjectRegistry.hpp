@@ -35,9 +35,9 @@ namespace xtypes {
 struct TypeObjectPair
 {
     // Minimal TypeObject
-    MinimalTypeObject minimal_type_object;
+    TypeObject minimal_type_object;
     // Complete TypeObject
-    CompleteTypeObject complete_type_object;
+    TypeObject complete_type_object;
 };
 
 class ITypeObjectRegistry
