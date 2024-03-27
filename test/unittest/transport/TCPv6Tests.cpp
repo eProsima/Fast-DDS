@@ -302,7 +302,7 @@ TEST_F(TCPv6Tests, client_announced_local_port_uniqueness)
 }
 
 #ifndef _WIN32
-// The primary purpose of this test is to check the non-blocking behavior of a secure socket sending data to a
+// The primary purpose of this test is to check the non-blocking behavior of a socket sending data to a
 // destination that does not read or does it so slowly.
 TEST_F(TCPv6Tests, non_blocking_send)
 {
@@ -322,8 +322,8 @@ TEST_F(TCPv6Tests, non_blocking_send)
     // saturate the reception socket of the datareader. This saturation requires
     // preventing the datareader from reading from the socket, what inevitably
     // happens continuously if instantiating and connecting the receiver transport.
-    // Hence, a raw socket is opened and connected to the server. There won't be read
-    // calls on that socket.
+    // Hence, a raw socket is opened and connected to the server. Read calls on that
+    // socket are controlled.
     Locator_t serverLoc;
     serverLoc.kind = LOCATOR_KIND_TCPv6;
     IPLocator::setIPv6(serverLoc, "::1");
@@ -368,15 +368,26 @@ TEST_F(TCPv6Tests, non_blocking_send)
 
     // Prepare the message
     asio::error_code ec;
-    std::vector<octet> message(msg_size, 0);
+    std::vector<octet> message(msg_size * 2, 0);
     const octet* data = message.data();
     size_t size = message.size();
 
-    // Send the message with no header
-    for (int i = 0; i < 5; i++)
-    {
-        sender_channel_resource->send(nullptr, 0, data, size, ec);
-    }
+    // Send the message with no header. Since TCP actually allocates twice the size of the buffer requested
+    // it should be able to send a message of msg_size*2.
+    size_t bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
+    ASSERT_EQ(bytes_sent, size);
+
+    // Now wait until the receive buffer is flushed (send buffer will be empty too)
+    std::vector<octet> buffer(size, 0);
+    size_t bytes_read = asio::read(socket, asio::buffer(buffer, size), asio::transfer_exactly(size), ec);
+    ASSERT_EQ(bytes_read, size);
+
+    // Now try to send a message that is bigger than the buffer size: (msg_size*2 + 1) + bytes_in_send_buffer(0) > 2*sendBufferSize
+    message.resize(msg_size * 2 + 1);
+    data = message.data();
+    size = message.size();
+    bytes_sent = sender_channel_resource->send(nullptr, 0, data, size, ec);
+    ASSERT_EQ(bytes_sent, 0u);
 
     socket.shutdown(asio::ip::tcp::socket::shutdown_both);
     socket.cancel();
