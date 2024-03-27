@@ -23,7 +23,7 @@
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastrtps/utils/TimeConversion.h>
+#include <utils/TimeConversion.hpp>
 #include <fastdds/rtps/common/LocatorListComparisons.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -69,7 +69,7 @@ ReaderProxy::ReaderProxy(
                             writer_->perform_nack_supression(guid());
                             return false;
                         },
-                        TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
+                        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
 
         initial_heartbeat_event_ = new TimedEvent(participant->getEventResource(),
                         [&]() -> bool

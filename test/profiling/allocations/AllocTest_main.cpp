@@ -19,8 +19,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
-#include "AllocTestPublisher.h"
-#include "AllocTestSubscriber.h"
+#include "AllocTestPublisher.hpp"
+#include "AllocTestSubscriber.hpp"
 
 using namespace eprosima;
 using namespace fastrtps;

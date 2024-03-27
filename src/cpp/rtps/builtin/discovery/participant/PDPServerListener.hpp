@@ -21,7 +21,7 @@
 #define _FASTDDS_RTPS_PDPSERVERLISTENER2_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
 
 namespace eprosima {
 namespace fastdds {

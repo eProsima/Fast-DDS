@@ -21,10 +21,11 @@
 #define _DS_PDP_SECURITY_INITIATOR_LISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <mutex>
+
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <mutex>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
 
 namespace eprosima {
 namespace fastrtps {

@@ -21,9 +21,13 @@
 #include <string>
 #include <vector>
 
+#include <gmock/gmock.h>
+
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
@@ -31,6 +35,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
@@ -39,13 +44,11 @@
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/RTPSDomain.h>
-#include <fastrtps/types/TypesBase.h>
-#include <gmock/gmock.h>
-
-#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
+#include <fastrtps/types/TypesBase.h>
+
 #include <xmlparser/XMLProfileManager.h>
 
 using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
@@ -511,6 +514,20 @@ public:
     const ReturnCode_t get_topic_qos_from_profile(
             const std::string& /*profile_name*/,
             TopicQos& /*qos*/) const
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    const ReturnCode_t get_replier_qos_from_profile(
+            const std::string& /*profile_name*/,
+            ReplierQos& /*qos*/) const
+    {
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    const ReturnCode_t get_requester_qos_from_profile(
+            const std::string& /*profile_name*/,
+            RequesterQos& /*qos*/) const
     {
         return ReturnCode_t::RETCODE_OK;
     }

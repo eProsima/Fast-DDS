@@ -24,8 +24,6 @@
 
 #include <asio.hpp>
 
-#include "fastdds/rtps/common/Guid.h"
-#include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -38,16 +36,23 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
+#include <fastdds/topic/TopicImpl.hpp>
+#include <fastdds/topic/TopicProxy.hpp>
+#include <fastdds/topic/TopicProxyFactory.hpp>
+#include <fastdds/utils/QosConverters.hpp>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
@@ -55,16 +60,13 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypesBase.h>
 
-#include <fastdds/publisher/DataWriterImpl.hpp>
-#include <fastdds/publisher/PublisherImpl.hpp>
-#include <fastdds/subscriber/SubscriberImpl.hpp>
-#include <fastdds/topic/ContentFilteredTopicImpl.hpp>
-#include <fastdds/topic/TopicImpl.hpp>
-#include <fastdds/topic/TopicProxy.hpp>
-#include <fastdds/topic/TopicProxyFactory.hpp>
-#include <fastdds/utils/QosConverters.hpp>
+#include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/attributes/PublisherAttributes.hpp>
+#include <xmlparser/attributes/ReplierAttributes.hpp>
+#include <xmlparser/attributes/RequesterAttributes.hpp>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
@@ -73,25 +75,25 @@ namespace dds {
 
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
-using fastrtps::ParticipantAttributes;
 using fastrtps::TopicAttributes;
-using fastrtps::SubscriberAttributes;
-using fastrtps::PublisherAttributes;
+using fastrtps::rtps::ParticipantDiscoveryInfo;
 using fastrtps::rtps::RTPSDomain;
 using fastrtps::rtps::RTPSDomainImpl;
 using fastrtps::rtps::RTPSParticipant;
-using fastrtps::rtps::ParticipantDiscoveryInfo;
+using fastrtps::TopicAttributes;
+using fastrtps::xmlparser::XMLP_ret;
+using fastrtps::xmlparser::XMLProfileManager;
 #if HAVE_SECURITY
 using fastrtps::rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
+using eprosima::fastdds::dds::Log;
+using fastrtps::rtps::EndpointKind_t;
+using fastrtps::rtps::GUID_t;
 using fastrtps::rtps::ReaderDiscoveryInfo;
 using fastrtps::rtps::ReaderProxyData;
+using fastrtps::rtps::ResourceEvent;
 using fastrtps::rtps::WriterDiscoveryInfo;
 using fastrtps::rtps::WriterProxyData;
-using fastrtps::rtps::GUID_t;
-using fastrtps::rtps::EndpointKind_t;
-using fastrtps::rtps::ResourceEvent;
-using eprosima::fastdds::dds::Log;
 
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
@@ -1130,6 +1132,34 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillTopicAttributes(profile_name, attr))
     {
         qos = default_topic_qos_;
+        utils::set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
+const ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
+        const std::string& profile_name,
+        ReplierQos& qos) const
+{
+    ReplierAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillReplierAttributes(profile_name, attr))
+    {
+        utils::set_qos_from_attributes(qos, attr);
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
+const ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
+        const std::string& profile_name,
+        RequesterQos& qos) const
+{
+    RequesterAttributes attr;
+    if (XMLP_ret::XML_OK == XMLProfileManager::fillRequesterAttributes(profile_name, attr))
+    {
         utils::set_qos_from_attributes(qos, attr);
         return ReturnCode_t::RETCODE_OK;
     }

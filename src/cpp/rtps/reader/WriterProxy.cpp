@@ -20,19 +20,16 @@
 #include <rtps/reader/WriterProxy.h>
 
 #include <fastdds/dds/log/Log.hpp>
-
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastrtps/utils/TimeConversion.h>
-
-#include <rtps/network/utils/external_locators.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
-
 #include "rtps/RTPSDomainImpl.hpp"
 #include "utils/collections/node_size_helpers.hpp"
+#include <rtps/network/utils/external_locators.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 
 #if !defined(NDEBUG) && !defined(ANDROID) && defined(FASTDDS_SOURCE) && defined(__unix__)
 #define SHOULD_DEBUG_LINUX

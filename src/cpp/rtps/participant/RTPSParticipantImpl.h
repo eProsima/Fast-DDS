@@ -43,13 +43,11 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
-#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/shared_mutex.hpp>
 
 #include "../flowcontrol/FlowControllerFactory.hpp"
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/messages/RTPSMessageGroup_t.hpp>
 #include <rtps/messages/SendBuffersManager.hpp>
 #include <rtps/network/NetworkFactory.h>
@@ -58,6 +56,8 @@
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsQueryable.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/types/monitorservice_types.h>
+#include <utils/shared_mutex.hpp>
+#include <utils/Semaphore.hpp>
 
 #if HAVE_SECURITY
 #include <fastdds/rtps/Endpoint.h>

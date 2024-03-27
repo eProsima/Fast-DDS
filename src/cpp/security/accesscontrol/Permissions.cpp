@@ -16,21 +16,10 @@
  * @file Permissions.cpp
  */
 
-#include <security/accesscontrol/Permissions.h>
-#include <security/accesscontrol/AccessPermissionsHandle.h>
-#include <security/accesscontrol/GovernanceParser.h>
-#include <security/accesscontrol/PermissionsParser.h>
-#include <security/authentication/PKIIdentityHandle.h>
-#include <security/logging/LogTopic.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/security/exceptions/SecurityException.h>
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/utils/StringMatching.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <cassert>
+#include <fstream>
 
 #include <openssl/opensslv.h>
-
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 #define IS_OPENSSL_1_1 1
 #define OPENSSL_CONST const
@@ -43,17 +32,28 @@
 #include <openssl/err.h>
 #include <openssl/obj_mac.h>
 
-#include <security/artifact_providers/FileProvider.hpp>
-#include <security/accesscontrol/DistinguishedName.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/security/exceptions/SecurityException.h>
 
-#include <cassert>
-#include <fstream>
+#include <security/accesscontrol/AccessPermissionsHandle.h>
+#include <security/accesscontrol/DistinguishedName.h>
+#include <security/accesscontrol/GovernanceParser.h>
+#include <security/accesscontrol/Permissions.h>
+#include <security/accesscontrol/PermissionsParser.h>
+#include <security/artifact_providers/FileProvider.hpp>
+#include <security/authentication/PKIIdentityHandle.h>
+#include <security/logging/LogTopic.h>
+#include <utils/StringMatching.hpp>
 
 #define S1(x) #x
 #define S2(x) S1(x)
 #define LOCATION " (" __FILE__ ":" S2(__LINE__) ")"
 #define _SecurityException_(str) SecurityException(std::string(str) + LOCATION)
 
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;

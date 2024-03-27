@@ -19,4 +19,5 @@ message(STATUS "Configuring fuzz_processCDRMsg...")
 file(GLOB SOURCES_CXX "fuzz_*.cxx")
 
 add_executable(fuzz_processCDRMsg ${SOURCES_CXX})
+target_include_directories(fuzz_processCDRMsg PRIVATE ${CMAKE_SOURCE_DIR}/src/cpp/rtps/messages)
 target_link_libraries(fuzz_processCDRMsg fastdds fastcdr foonathan_memory $ENV{LIB_FUZZING_ENGINE})

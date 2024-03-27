@@ -385,6 +385,20 @@ ReturnCode_t DomainParticipant::get_topic_qos_from_profile(
     return impl_->get_topic_qos_from_profile(profile_name, qos);
 }
 
+ReturnCode_t DomainParticipant::get_replier_qos_from_profile(
+        const std::string& profile_name,
+        ReplierQos& qos) const
+{
+    return impl_->get_replier_qos_from_profile(profile_name, qos);
+}
+
+ReturnCode_t DomainParticipant::get_requester_qos_from_profile(
+        const std::string& profile_name,
+        RequesterQos& qos) const
+{
+    return impl_->get_requester_qos_from_profile(profile_name, qos);
+}
+
 ReturnCode_t DomainParticipant::get_discovered_participants(
         std::vector<InstanceHandle_t>& participant_handles) const
 {

@@ -17,134 +17,166 @@
  *
  */
 
-#include "AllocTestSubscriber.h"
+#include "AllocTestSubscriber.hpp"
 
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <cstdint>
+#include <mutex>
+#include <string>
 #include <thread>
 
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/Domain.h>
-#include <fastrtps/participant/Participant.h>
-#include <fastrtps/subscriber/Subscriber.h>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 #include "AllocTestCommon.h"
+#include "AllocTestTypePubSubTypes.h"
 
-using namespace eprosima::fastrtps;
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::dds;
+
+#define CHECK_RETURN_CODE(ret) \
+    if (ReturnCode_t::RETCODE_OK != ret) \
+    { \
+        return false; \
+    }
+
+#define CHECK_ENTITY_CREATION(entity) \
+    if (nullptr != entity) \
+    { \
+        return false; \
+    }
 
 AllocTestSubscriber::AllocTestSubscriber()
-    : mp_participant(nullptr)
-    , mp_subscriber(nullptr)
+    : type_(new AllocTestTypePubSubType())
+    , participant_(nullptr)
+    , topic_(nullptr)
+    , subscriber_(nullptr)
+    , reader_(nullptr)
+    , profile_("")
+    , output_file_("")
+    , matched_(0)
+    , samples_(0)
 {
-}
-
-bool AllocTestSubscriber::init(
-        const char* profile,
-        int domainId,
-        const std::string& outputFile)
-{
-    m_profile = profile;
-    m_outputFile = outputFile;
-    Domain::loadXMLProfilesFile("test_xml_profile.xml");
-
-    ParticipantAttributes participant_att;
-    // TODO(jlbueno): migrate to DomainParticipantFactory::get_participant_qos_from_profile
-    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==
-            eprosima::fastrtps::xmlparser::XMLProfileManager::fillParticipantAttributes("test_participant_profile",
-            participant_att))
-    {
-        participant_att.domainId = domainId;
-        mp_participant = Domain::createParticipant(participant_att);
-    }
-
-    if (mp_participant == nullptr)
-    {
-        return false;
-    }
-
-    //REGISTER THE TYPE
-    Domain::registerType(mp_participant, &m_type);
-
-    //CREATE THE SUBSCRIBER
-    std::string prof("test_subscriber_profile_");
-    prof.append(profile);
-    mp_subscriber = Domain::createSubscriber(mp_participant, prof, &m_listener);
-
-    if (mp_subscriber == nullptr)
-    {
-        return false;
-    }
-
-    bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
-    eprosima_profiling::entities_created(show_allocation_traces);
-    return true;
 }
 
 AllocTestSubscriber::~AllocTestSubscriber()
 {
-    Domain::removeParticipant(mp_participant);
+    if (participant_ != nullptr)
+    {
+        participant_->delete_contained_entities();
+        DomainParticipantFactory::get_shared_instance()->delete_participant(participant_);
+        participant_ = nullptr;
+    }
 }
 
-void AllocTestSubscriber::SubListener::onSubscriptionMatched(
-        Subscriber* /*sub*/,
-        MatchingInfo& info)
+bool AllocTestSubscriber::init(
+        const char* profile,
+        uint32_t domain_id,
+        const std::string& output_file)
 {
-    std::unique_lock<std::mutex> lock(mtx);
-    if (info.status == MATCHED_MATCHING)
+    profile_ = profile;
+    output_file_ = output_file;
+
+    ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
+
+    std::shared_ptr<DomainParticipantFactory> factory = DomainParticipantFactory::get_shared_instance();
+    ret = factory->load_XML_profiles_file("test_xml_profile.xml");
+    CHECK_RETURN_CODE(ret);
+
+    DomainParticipantQos pqos;
+    ret = factory->get_participant_qos_from_profile("test_participant_profile", pqos);
+    CHECK_RETURN_CODE(ret);
+
+    participant_ = factory->create_participant(domain_id, pqos);
+    CHECK_ENTITY_CREATION(participant_);
+
+    ret = type_.register_type(participant_);
+    CHECK_RETURN_CODE(ret);
+
+    topic_ = participant_->create_topic("AllocTestTopic", type_.get_type_name(), TOPIC_QOS_DEFAULT);
+    CHECK_ENTITY_CREATION(topic_);
+
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    CHECK_ENTITY_CREATION(subscriber_);
+
+    std::string prof = "test_subscriber_profile_" + profile_;
+    reader_ = subscriber_->create_datareader_with_profile(topic_, prof, this);
+    CHECK_ENTITY_CREATION(reader_);
+
+    bool show_allocation_traces = std::getenv("FASTDDS_PROFILING_PRINT_TRACES") != nullptr;
+    eprosima_profiling::entities_created(show_allocation_traces);
+    return ret == ReturnCode_t::RETCODE_OK;
+}
+
+void AllocTestSubscriber::on_subscription_matched(
+        DataReader* /*reader*/,
+        const SubscriptionMatchedStatus& status)
+{
+    if (status.current_count_change == 1)
     {
-        n_matched++;
+        matched_++;
         std::cout << "Subscriber matched" << std::endl;
+    }
+    else if (status.current_count_change == -1)
+    {
+        matched_--;
+        std::cout << "Subscriber unmatched" << std::endl;
     }
     else
     {
-        n_matched--;
-        std::cout << "Subscriber unmatched" << std::endl;
+        std::cout << status.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
     }
-    cv.notify_all();
+    cv_.notify_all();
 }
 
-void AllocTestSubscriber::SubListener::onNewDataMessage(
-        Subscriber* sub)
+void AllocTestSubscriber::on_data_available(
+        DataReader* reader)
 {
-    if (sub->takeNextData((void*)&m_Hello, &m_info))
+    SampleInfo info;
+    if (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&data_, &info))
     {
-        if (m_info.sampleKind == ALIVE)
+        if ((info.instance_state == ALIVE_INSTANCE_STATE) && (info.valid_data) &&
+                (reader->is_sample_valid(&data_, &info)))
         {
-            std::unique_lock<std::mutex> lock(mtx);
-            this->n_samples++;
-            // Print your structure data here.
-            std::cout << "Message " << m_Hello.index() << " RECEIVED" << std::endl;
-            cv.notify_all();
+            samples_++;
+            std::cout << "Message " << data_.index() << " RECEIVED" << std::endl;
+            cv_.notify_all();
         }
     }
-
 }
 
-void AllocTestSubscriber::SubListener::wait_match()
+void AllocTestSubscriber::wait_match()
 {
-    std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [this]()
+    std::unique_lock<std::mutex> lck(mtx_);
+    cv_.wait(lck, [this]()
             {
-                return n_matched > 0;
+                return matched_ > 0;
             });
 }
 
-void AllocTestSubscriber::SubListener::wait_unmatch()
+void AllocTestSubscriber::wait_unmatch()
 {
-    std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [this]()
+    std::unique_lock<std::mutex> lck(mtx_);
+    cv_.wait(lck, [this]()
             {
-                return n_matched <= 0;
+                return matched_ <= 0;
             });
 }
 
-void AllocTestSubscriber::SubListener::wait_until_total_received_at_least(
+void AllocTestSubscriber::wait_until_total_received_at_least(
         uint32_t n)
 {
-    std::unique_lock<std::mutex> lock(mtx);
-    cv.wait(lock, [this, n]()
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [this, n]()
             {
-                return n_samples >= n;
+                return samples_ >= n;
             });
 }
 
@@ -156,36 +188,36 @@ void AllocTestSubscriber::run(
 
 void AllocTestSubscriber::run(
         uint32_t number,
-        bool wait_unmatch)
+        bool wait_unmatching)
 {
     // Restart callgrind graph
     eprosima_profiling::callgrind_zero_count();
 
     std::cout << "Subscriber waiting for publisher..." << std::endl;
-    m_listener.wait_match();
+    wait_match();
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
     eprosima_profiling::discovery_finished();
 
     std::cout << "Subscriber matched. Waiting for first sample..." << std::endl;
-    m_listener.wait_until_total_received_at_least(1ul);
+    wait_until_total_received_at_least(1ul);
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
     eprosima_profiling::first_sample_exchanged();
 
     std::cout << "First sample received. Waiting for rest of samples..." << std::endl;
-    m_listener.wait_until_total_received_at_least(number);
+    wait_until_total_received_at_least(number);
 
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
     eprosima_profiling::all_samples_exchanged();
 
-    if (wait_unmatch)
+    if (wait_unmatching)
     {
         std::cout << "All messages received. Waiting for publisher to stop." << std::endl;
-        m_listener.wait_unmatch();
+        wait_unmatch();
     }
     else
     {
@@ -196,5 +228,5 @@ void AllocTestSubscriber::run(
     // Flush callgrind graph
     eprosima_profiling::callgrind_dump();
     eprosima_profiling::undiscovery_finished();
-    eprosima_profiling::print_results(m_outputFile, "subscriber", m_profile);
+    eprosima_profiling::print_results(output_file_, "subscriber", profile_);
 }

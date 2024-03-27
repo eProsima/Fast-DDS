@@ -33,13 +33,13 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/utils/QosConverters.hpp>
-#include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <rtps/network/utils/netmask_filter.hpp>
-#include <xmlparser/XMLProfileManager.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
 #endif //FASTDDS_STATISTICS
+#include <xmlparser/attributes/PublisherAttributes.hpp>
+#include <xmlparser/XMLProfileManager.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -49,7 +49,6 @@ using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::rtps::InstanceHandle_t;
 using fastrtps::Duration_t;
-using fastrtps::PublisherAttributes;
 
 PublisherImpl::PublisherImpl(
         DomainParticipantImpl* p,
