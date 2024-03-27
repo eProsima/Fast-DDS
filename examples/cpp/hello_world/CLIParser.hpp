@@ -147,12 +147,12 @@ public:
                     }
                     catch (const std::invalid_argument& e)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg);
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid sample argument for " + arg + ": " + e.what());
                         print_help(EXIT_FAILURE);
                     }
                     catch (const std::out_of_range& e)
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "sample argument out of range for " + arg);
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "sample argument out of range for " + arg + ": " + e.what());
                         print_help(EXIT_FAILURE);
                     }
                 }
@@ -193,10 +193,12 @@ public:
                 return "SIGINT";
             case SIGTERM:
                 return "SIGTERM";
+#ifndef _WIN32
             case SIGQUIT:
                 return "SIGQUIT";
             case SIGHUP:
                 return "SIGHUP";
+#endif // _WIN32
             default:
                 return "UNKNOWN SIGNAL";
         }
