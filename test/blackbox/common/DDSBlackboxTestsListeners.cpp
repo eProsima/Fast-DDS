@@ -768,14 +768,6 @@ void sample_lost_test_dr_init(
         PubSubReader<T>& reader,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
-    // We want to ensure that samples are only lost due to the custom filter we have set in sample_lost_test_dw_init.
-    // Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
-    // other possible loss.
-    constexpr uint32_t BUFFER_SIZE =
-            300ul * 1024ul // sample size
-            * 13ul       // number of samples
-            * 2ul;       // 2x to avoid any possible loss
-    reader.socket_buffer_size(BUFFER_SIZE);
     reader.sample_lost_status_functor(functor)
             .init();
 
@@ -788,6 +780,16 @@ void sample_lost_test_init(
         PubSubWriter<T>& writer,
         std::function<void(const eprosima::fastdds::dds::SampleLostStatus& status)> functor)
 {
+    // We want to ensure that samples are only lost due to the custom filter we have set in sample_lost_test_dw_init.
+    // Since we are going to send 300KB samples in the test for fragments, let's increase the buffer size to avoid any
+    // other possible loss.
+    constexpr uint32_t BUFFER_SIZE =
+            300ul * 1024ul // sample size
+            * 13ul         // number of samples
+            * 2ul;         // 2x to avoid any possible loss
+    reader.socket_buffer_size(BUFFER_SIZE);
+    writer.socket_buffer_size(BUFFER_SIZE);
+
     sample_lost_test_dw_init(writer);
     sample_lost_test_dr_init(reader, functor);
 
