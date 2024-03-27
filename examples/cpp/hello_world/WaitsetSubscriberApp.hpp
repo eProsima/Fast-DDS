@@ -50,10 +50,10 @@ public:
     ~WaitsetSubscriberApp();
 
     //! Run subscriber
-    virtual void run();
+    void run() override;
 
     //! Trigger the end of execution
-    virtual void stop();
+    void stop() override;
 
 private:
 

@@ -108,13 +108,13 @@ void PublisherApp::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher matched." << std::endl;
         cv_.notify_one();
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.current_count;
+        matched_ = static_cast<int16_t>(info.current_count);
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
