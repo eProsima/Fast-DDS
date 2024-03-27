@@ -598,11 +598,11 @@ TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfileListener)
     // set XML profile as environment variable: "export FASTDDS_DEFAULT_PROFILES_FILE=test_xml_profile.xml"
     eprosima::testing::set_environment_variable("FASTDDS_DEFAULT_PROFILES_FILE", "test_xml_profile.xml");
 
-    DomainParticipantListener* listener = new DomainParticipantListener();
+    DomainParticipantListener listener;
 
     //participant using the given profile
     DomainParticipant* default_env_participant =
-            DomainParticipantFactory::get_instance()->create_participant_with_default_profile(listener,
+            DomainParticipantFactory::get_instance()->create_participant_with_default_profile(&listener,
                     StatusMask::none());
 
     // unset XML profile environment variable
@@ -610,7 +610,7 @@ TEST(ParticipantTests, CreateDomainParticipantWithDefaultProfileListener)
 
     ASSERT_NE(default_env_participant, nullptr);
     ASSERT_EQ(default_env_participant->get_domain_id(), domain_id);
-    ASSERT_EQ(default_env_participant->get_listener(), listener);
+    ASSERT_EQ(default_env_participant->get_listener(), &listener);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
                 default_env_participant) == ReturnCode_t::RETCODE_OK);
 }
@@ -633,15 +633,15 @@ TEST(ParticipantTests, CreateDomainParticipantWithoutDefaultProfileListener)
 {
     uint32_t default_domain_id = 0u;    // This is the default domain ID
 
-    DomainParticipantListener* listener = new DomainParticipantListener();
+    DomainParticipantListener listener;
 
     //participant using default values
     DomainParticipant* default_participant =
-            DomainParticipantFactory::get_instance()->create_participant_with_default_profile(listener,
+            DomainParticipantFactory::get_instance()->create_participant_with_default_profile(&listener,
                     StatusMask::none());
     ASSERT_NE(default_participant, nullptr);
     ASSERT_EQ(default_participant->get_domain_id(), default_domain_id);
-    ASSERT_EQ(default_participant->get_listener(), listener);
+    ASSERT_EQ(default_participant->get_listener(), &listener);
     ASSERT_TRUE(DomainParticipantFactory::get_instance()->delete_participant(
                 default_participant) == ReturnCode_t::RETCODE_OK);
 }
