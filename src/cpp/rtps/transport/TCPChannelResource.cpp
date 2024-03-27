@@ -362,7 +362,8 @@ bool TCPChannelResource::check_socket_send_buffer(
 
 
     size_t future_queue_size = size_t(bytesInSendQueue) + msg_size;
-    if (future_queue_size > size_t(parent_->configuration()->sendBufferSize))
+    // TCP actually allocates twice the size of the buffer requested.
+    if (future_queue_size > size_t(2 * parent_->configuration()->sendBufferSize))
     {
         return false;
     }
