@@ -17,26 +17,26 @@
  *
  */
 
-#include <fastdds/rtps/writer/StatelessWriter.h>
-#include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <rtps/history/HistoryAttributesExtension.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
-
 #include <algorithm>
 #include <mutex>
 #include <set>
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <rtps/history/BasicPayloadPool.hpp>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
+
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
-#include <rtps/DataSharing/DataSharingNotifier.hpp>
+#include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/history/HistoryAttributesExtension.hpp>
 #include <rtps/network/utils/external_locators.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
 #include "../flowcontrol/FlowController.hpp"

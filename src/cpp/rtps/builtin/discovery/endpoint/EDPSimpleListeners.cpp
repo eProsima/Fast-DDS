@@ -21,19 +21,19 @@
 
 #include <mutex>
 
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
-#include <fastdds/core/policy/ParameterList.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/network/NetworkFactory.h>
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;

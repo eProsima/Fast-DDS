@@ -17,6 +17,8 @@
  *
  */
 
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
+
 #include <algorithm>
 #include <forward_list>
 #include <mutex>
@@ -26,19 +28,18 @@
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/ReaderAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPSimpleListeners.h>
 #include <rtps/builtin/discovery/endpoint/EDPUtils.hpp>
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;

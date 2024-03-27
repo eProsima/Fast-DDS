@@ -18,7 +18,8 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/messages/MessageReceiver.h>
+
+#include <rtps/messages/MessageReceiver.h>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 

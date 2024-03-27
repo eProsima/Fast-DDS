@@ -37,7 +37,6 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/attributes/PublisherAttributes.h>
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
 #include <fastdds/utils/QosConverters.hpp>
@@ -47,6 +46,7 @@
 #include <statistics/types/types.h>
 #include <statistics/types/typesPubSubTypes.h>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/attributes/PublisherAttributes.hpp>
 #include <xmlparser/XMLParserCommon.h>
 #include <xmlparser/XMLProfileManager.h>
 
@@ -58,7 +58,6 @@ namespace dds {
 using fastrtps::xmlparser::XMLProfileManager;
 using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::xmlparser::DEFAULT_STATISTICS_DATAWRITER_PROFILE;
-using fastrtps::PublisherAttributes;
 
 constexpr const char* HISTORY_LATENCY_TOPIC_ALIAS = "HISTORY_LATENCY_TOPIC";
 constexpr const char* NETWORK_LATENCY_TOPIC_ALIAS = "NETWORK_LATENCY_TOPIC";

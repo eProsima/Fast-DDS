@@ -21,7 +21,6 @@
 #include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/persistence/sqlite3.h>
 

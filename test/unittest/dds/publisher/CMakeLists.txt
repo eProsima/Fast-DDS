@@ -367,7 +367,7 @@ target_compile_definitions(DataWriterTests PRIVATE
 )
 target_include_directories(DataWriterTests PRIVATE
     $<$<BOOL:${OPENSSL_INCLUDE_DIR}>:${OPENSSL_INCLUDE_DIR}>
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/PublisherHistory
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/DataWriterHistory
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp
