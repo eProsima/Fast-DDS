@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 
-project(AdvancedConfigurationExample VERSION 1 LANGUAGES CXX)
+project(fastdds_configuration_example VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -35,19 +35,32 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     endif()
 endif()
 
-message(STATUS "Configuring AdvancedConfiguration example...")
-file(GLOB ADVANCED_CONFIG_EXAMPLE_SOURCES_CXX "*.cxx")
-file(GLOB ADVANCED_CONFIG_EXAMPLE_SOURCES_CPP "*.cpp")
+message(STATUS "Configuring configuration example...")
+file(GLOB CONFIGURATION_SOURCES_CXX "*.cxx")
+file(GLOB CONFIGURATION_SOURCES_CPP "*.cpp")
 
-add_executable(${PROJECT_NAME} ${ADVANCED_CONFIG_EXAMPLE_SOURCES_CXX} ${ADVANCED_CONFIG_EXAMPLE_SOURCES_CPP})
-target_compile_definitions(${PROJECT_NAME} PRIVATE
+add_executable(configuration ${CONFIGURATION_SOURCES_CXX} ${CONFIGURATION_SOURCES_CPP})
+target_compile_definitions(configuration PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
 )
 
-target_link_libraries(${PROJECT_NAME} fastdds fastcdr fastdds::optionparser)
-install(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})
+target_link_libraries(configuration fastdds fastcdr)
+install(TARGETS configuration
+    RUNTIME DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/configuration/${BIN_INSTALL_DIR})
 
-file(COPY shm_off.xml DESTINATION ${PROJECT_BINARY_DIR})
+# Copy the XML files over to the build directory
+file(GLOB_RECURSE XML_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.xml)
+# for each xml file detected
+foreach(XML_FILE_COMPLETE_PATH ${XML_FILES})
+    # obtain the file name
+    get_filename_component(XML_FILE ${XML_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_FILE_COMPLETE_PATH}                   # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/${XML_FILE}.xml # to relative build path
+        COPYONLY)
+    install(FILES ${XML_FILE_COMPLETE_PATH}
+        DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/cpp/configuration/${BIN_INSTALL_DIR})
+endforeach()
