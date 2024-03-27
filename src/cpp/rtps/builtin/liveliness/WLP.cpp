@@ -16,32 +16,31 @@
  * @file WLP.cpp
  *
  */
+
+#include <rtps/builtin/liveliness/WLP.h>
+
 #include <limits>
-
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
-#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
-#include <rtps/participant/RTPSParticipantImpl.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/resources/ResourceEvent.h>
-
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/TimeConversion.h>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+#include <fastdds/rtps/writer/WriterListener.h>
 
-#include <mutex>
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/liveliness/WLPListener.h>
+#include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/writer/LivelinessManager.hpp>
+#include <utils/TimeConversion.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -623,7 +622,8 @@ bool WLP::add_local_writer(
     std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
     EPROSIMA_LOG_INFO(RTPS_LIVELINESS, W->getGuid().entityId << " to Liveliness Protocol");
 
-    double wAnnouncementPeriodMilliSec(TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.announcement_period));
+    double wAnnouncementPeriodMilliSec(fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(wqos.m_liveliness.
+                    announcement_period));
 
     if (wqos.m_liveliness.kind == AUTOMATIC_LIVELINESS_QOS )
     {
@@ -737,7 +737,8 @@ bool WLP::remove_local_writer(
         // There are still some writers. Calculate the new minimum announcement period
         for (const auto& w : automatic_writers_)
         {
-            auto announcement_period = TimeConv::Duration_t2MilliSecondsDouble(w->get_liveliness_announcement_period());
+            auto announcement_period = fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(
+                w->get_liveliness_announcement_period());
             if (min_automatic_ms_ > announcement_period)
             {
                 min_automatic_ms_ = announcement_period;
@@ -780,7 +781,8 @@ bool WLP::remove_local_writer(
         // There are still some writers. Calculate the new minimum announcement period
         for (const auto& w : manual_by_participant_writers_)
         {
-            auto announcement_period = TimeConv::Duration_t2MilliSecondsDouble(w->get_liveliness_announcement_period());
+            auto announcement_period = fastdds::rtps::TimeConv::Duration_t2MilliSecondsDouble(
+                w->get_liveliness_announcement_period());
             if (min_manual_by_participant_ms_ > announcement_period)
             {
                 min_manual_by_participant_ms_ = announcement_period;

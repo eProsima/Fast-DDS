@@ -23,6 +23,7 @@
 
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {

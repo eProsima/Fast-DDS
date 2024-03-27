@@ -1471,7 +1471,7 @@ public:
                 if (profile->getType() == eprosima::fastrtps::xmlparser::NodeType::PARTICIPANT)
                 {
                     participant_attr_ =
-         *(dynamic_cast<eprosima::fastrtps::xmlparser::DataNode<eprosima::fastrtps::ParticipantAttributes>
+         *(dynamic_cast<eprosima::fastrtps::xmlparser::DataNode<eprosima::fastdds::ParticipantAttributes>
          *>(
                                 profile.get())->get());
                 }

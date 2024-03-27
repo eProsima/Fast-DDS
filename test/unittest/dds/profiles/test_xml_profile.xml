@@ -699,6 +699,50 @@
                 <allocated_samples>50</allocated_samples>
             </resourceLimitsQos>
         </topic>
+
+        <replier profile_name="test_replier_profile"
+                service_name="service_name"
+                request_type="request_type"
+                reply_type="reply_type">
+            <request_topic_name>request_topic_name</request_topic_name>
+            <reply_topic_name>reply_topic_name</reply_topic_name>
+            <data_writer>
+                <qos>
+                    <liveliness>
+                        <kind>MANUAL_BY_TOPIC</kind>
+                    </liveliness>
+                </qos>
+            </data_writer>
+            <data_reader>
+                <qos>
+                    <liveliness>
+                        <kind>MANUAL_BY_TOPIC</kind>
+                    </liveliness>
+                </qos>
+            </data_reader>
+        </replier>
+
+        <requester profile_name="test_requester_profile"
+                service_name="service_name"
+                request_type="request_type"
+                reply_type="reply_type">
+            <request_topic_name>request_topic_name</request_topic_name>
+            <reply_topic_name>reply_topic_name</reply_topic_name>
+            <data_writer>
+                <qos>
+                    <liveliness>
+                        <kind>MANUAL_BY_TOPIC</kind>
+                    </liveliness>
+                </qos>
+            </data_writer>
+            <data_reader>
+                <qos>
+                    <liveliness>
+                        <kind>MANUAL_BY_TOPIC</kind>
+                    </liveliness>
+                </qos>
+            </data_reader>
+        </requester>
     </profiles>
     <library_settings>
         <intraprocess_delivery>FULL</intraprocess_delivery>

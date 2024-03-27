@@ -17,8 +17,8 @@
 #include <asio.hpp>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/messages/MessageReceiver.h>
 
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/transport/UDPTransportInterface.h>
 #include <utils/threading.hpp>
 

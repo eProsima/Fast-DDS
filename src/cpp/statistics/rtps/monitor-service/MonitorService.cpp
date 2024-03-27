@@ -20,11 +20,11 @@
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/history/PoolConfig.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
+#include <utils/TimeConversion.hpp>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -486,7 +486,7 @@ bool MonitorService::add_change(
 
         std::unique_lock<RecursiveTimedMutex> lock(status_writer_->getMutex());
         auto max_blocking_time = std::chrono::steady_clock::now() +
-                std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(Duration_t()));
+                std::chrono::microseconds(fastdds::rtps::TimeConv::Time_t2MicroSecondsInt64(Duration_t()));
         datawriter_history->add_pub_change(change, wp, lock, max_blocking_time);
     }
     else

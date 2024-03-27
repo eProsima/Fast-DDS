@@ -17,8 +17,8 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/messages/MessageReceiver.h>
 
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 #include <rtps/transport/ChannelResource.h>

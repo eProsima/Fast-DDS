@@ -17,20 +17,19 @@
  *
  */
 
-#include <memory>
-
 #include <rtps/builtin/discovery/participant/PDPServerListener.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <memory>
 
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 
 #include <rtps/builtin/discovery/database/DiscoveryParticipantChangeData.hpp>
-#include <rtps/builtin/discovery/participant/PDPServer.hpp>
+#include <rtps/builtin/discovery/endpoint/EDP.h>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/PDPServer.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 

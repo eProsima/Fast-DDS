@@ -1656,7 +1656,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
             datawriter->get_instance_handle(), max_wait));
 #endif // NDEBUG
 
-    // Access PublisherHistory
+    // Access DataWriterHistory
     DataWriterTest* instance_datawriter_test = static_cast<DataWriterTest*>(instance_datawriter);
     ASSERT_NE(nullptr, instance_datawriter_test);
     DataWriterImpl* datawriter_impl = instance_datawriter_test->get_impl();

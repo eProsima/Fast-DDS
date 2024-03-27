@@ -21,11 +21,13 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/utils/IPFinder.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/Semaphore.h>
+
+#include <utils/Semaphore.hpp>
 
 #include <MockReceiverResource.h>
 #include <rtps/transport/UDPv4Transport.h>
 
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using UDPv4Transport = eprosima::fastdds::rtps::UDPv4Transport;

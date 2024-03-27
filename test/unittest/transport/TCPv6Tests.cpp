@@ -23,12 +23,13 @@
 #include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/Semaphore.h>
 
-#include <MockReceiverResource.h>
-#include "mock/MockTCPv6Transport.h"
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/transport/TCPv6Transport.h>
+#include <utils/Semaphore.hpp>
+
+#include "mock/MockTCPv6Transport.h"
+#include <MockReceiverResource.h>
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps;

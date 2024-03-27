@@ -393,7 +393,7 @@ TEST(ReaderProxyTests, acknack_count)
     ReaderProxy rproxy(w_times, alloc, &writer_mock);
 
     ReaderProxyData reader_attributes(0, 0);
-    reader_attributes.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    reader_attributes.m_qos.m_reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
     rproxy.start(reader_attributes);
 
     // Check that the initial acknack count is 0.
