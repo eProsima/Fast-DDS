@@ -571,8 +571,8 @@ option(INSTALL_EXAMPLES "Install example" OFF)
 if(INSTALL_EXAMPLES)
   # Install examples
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/examples/cpp
-      DESTINATION examples/
-      COMPONENT examples
+      DESTINATION ${DATA_INSTALL_DIR}/fastdds/examples/
+      COMPONENT ${DATA_INSTALL_DIR}/fastdds/examples
       PATTERN "examples/CMakeLists.txt" EXCLUDE
       )
 endif()

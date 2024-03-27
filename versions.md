@@ -24,6 +24,8 @@ Forthcoming
   * TimeConversion
   * DBQueue
 * Added create participant methods that use environment XML profile for participant configuration.
+* Refactor examples:
+  * Hello world example with wait-sets and environment XML profiles.
 
 Version 2.14.0
 --------------

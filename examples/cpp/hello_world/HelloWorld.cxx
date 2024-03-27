@@ -28,8 +28,6 @@ char dummy;
 
 #include "HelloWorld.h"
 
-#if FASTCDR_VERSION_MAJOR > 1
-
 #include <fastcdr/Cdr.h>
 
 
@@ -165,4 +163,3 @@ std::string& HelloWorld::message()
 // Include auxiliary functions like for serializing/deserializing.
 #include "HelloWorldCdrAux.ipp"
 
-#endif // FASTCDR_VERSION_MAJOR > 1
