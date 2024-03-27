@@ -30,6 +30,8 @@ Forthcoming
 * Refactor Dynamic Language Binding API according to OMG XTypes v1.3 specification.
 * Refactor ReturnCode complying with OMG DDS specification.
 * Calling `DataReader::return_loan` returns `ReturnCode_t::RETCODE_OK` both for empty sequences and for sequences that were not loaned.
+* Refactor examples:
+  * Hello world example with wait-sets and environment XML profiles.
 
 Version 2.14.0
 --------------
