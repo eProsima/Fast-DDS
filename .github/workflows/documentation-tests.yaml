@@ -6,6 +6,10 @@ on:
         description: 'Fast DDS Docs branch'
         required: true
         type: string
+      fastdds_python_branch:
+        description: 'Fast DDS Python branch'
+        required: true
+        type: string
 
   pull_request:
     types:
@@ -80,6 +84,20 @@ jobs:
           vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
+
+      - name: Get Fast DDS Python branch
+        id: get_fastdds_python_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@feature/get_related_branch_from_repo
+        with:
+          remote_repository: eProsima/Fast-DDS-python
+          fallback_branch: ${{ inputs.fastdds_python_branch || 'main' }}
+
+      - name: Download Fast DDS Python repo
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Fast-DDS-python
+          path: src/fastdds-python
+          ref: ${{ steps.deduce_branch.outputs.deduced_branch }}
 
       - name: Get Fast DDS Docs branch
         id: get_fastdds_docs_branch
