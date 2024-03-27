@@ -127,7 +127,7 @@ void ListenerSubscriberApp::on_data_available(
         DataReader* reader)
 {
     SampleInfo info;
-    if ((!is_stopped()) && (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&hello_, &info)))
+    while ((!is_stopped()) && (ReturnCode_t::RETCODE_OK == reader->take_next_sample(&hello_, &info)))
     {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
         {
