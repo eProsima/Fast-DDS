@@ -1055,6 +1055,7 @@ const DataWriterQos& DataWriterImpl::get_qos() const
 ReturnCode_t DataWriterImpl::set_listener(
         DataWriterListener* listener)
 {
+    std::lock_guard<std::mutex> scoped_lock(listener_mutex_);
     listener_ = listener;
     return ReturnCode_t::RETCODE_OK;
 }
@@ -1779,6 +1780,7 @@ bool DataWriterImpl::can_qos_be_updated(
 DataWriterListener* DataWriterImpl::get_listener_for(
         const StatusMask& status)
 {
+    std::lock_guard<std::mutex> scoped_lock(listener_mutex_);
     if (listener_ != nullptr &&
             user_datawriter_->get_status_mask().is_active(status))
     {

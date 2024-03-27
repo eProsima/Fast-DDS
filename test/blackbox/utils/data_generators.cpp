@@ -84,6 +84,35 @@ std::list<KeyedHelloWorld> default_keyedhelloworld_data_generator(
     return returnedValue;
 }
 
+std::list<KeyedHelloWorld> default_keyedhelloworld_per_participant_data_generator(
+        size_t participants,
+        size_t max)
+{
+    uint16_t participant_key = 0;
+    uint16_t index = 0;
+    size_t maximum = max ? max : 10;
+    std::list<KeyedHelloWorld> returnedValue(maximum * participants);
+
+    std::generate(returnedValue.begin(), returnedValue.end(), [&index, &participant_key, &maximum]
+            {
+                KeyedHelloWorld hello;
+                hello.index(index);
+                hello.key(participant_key);
+                std::stringstream ss;
+                ss << "HelloWorld " << index;
+                hello.message(ss.str());
+                ++index;
+                if (index == maximum)
+                {
+                    index = 0;
+                    ++participant_key;
+                }
+                return hello;
+            });
+
+    return returnedValue;
+}
+
 std::list<StringTest> default_large_string_data_generator(
         size_t max)
 {

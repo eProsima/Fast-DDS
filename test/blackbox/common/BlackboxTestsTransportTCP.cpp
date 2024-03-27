@@ -13,10 +13,15 @@
 // limitations under the License.
 
 #include "BlackboxTests.hpp"
+
 #include "TCPReqRepHelloWorldRequester.hpp"
 #include "TCPReqRepHelloWorldReplier.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+
+#include <chrono>
+#include <thread>
+#include <random>
 
 #include <gtest/gtest.h>
 
@@ -658,6 +663,115 @@ TEST_P(TransportTCP, TCPv6_autofill_port)
     LocatorList_t p2_locators;
     p2.get_native_reader().get_listening_locators(p2_locators);
     EXPECT_TRUE(IPLocator::getPhysicalPort(p2_locators.begin()[0]) == port);
+}
+
+// Test TCP transport on LARGE_DATA topology
+TEST_P(TransportTCP, large_data_topology)
+{
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Warning);
+
+    // Limited to 12 readers and 12 writers so as not to exceed the system's file descriptor limit.
+    uint16_t n_participants = 12;
+    constexpr uint32_t samples_per_participant = 10;
+
+    /* Test configuration */
+    std::vector<std::unique_ptr<PubSubReader<KeyedHelloWorldPubSubType>>> readers;
+    std::vector<std::unique_ptr<PubSubWriter<KeyedHelloWorldPubSubType>>> writers;
+
+    for (uint16_t i = 0; i < n_participants; i++)
+    {
+        readers.emplace_back(new PubSubReader<KeyedHelloWorldPubSubType>(TEST_TOPIC_NAME));
+        writers.emplace_back(new PubSubWriter<KeyedHelloWorldPubSubType>(TEST_TOPIC_NAME));
+    }
+
+    // Create a vector of ports and shuffle it
+    std::vector<uint16_t> ports;
+    for (uint16_t i = 0; i < 2 * n_participants; i++)
+    {
+        ports.push_back(7200 + i);
+    }
+    auto rng = std::default_random_engine{};
+    std::shuffle(ports.begin(), ports.end(), rng);
+
+    // Reliable Keep_all to wait for all acked as end condition
+    for (uint16_t i = 0; i < n_participants; i++)
+    {
+        writers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
+                .resource_limits_max_instances(1)
+                .resource_limits_max_samples_per_instance(samples_per_participant);
+
+        readers[i]->reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+                .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
+                .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
+                .lease_duration(eprosima::fastrtps::c_TimeInfinite, eprosima::fastrtps::Duration_t(3, 0))
+                .resource_limits_max_instances(n_participants)
+                .resource_limits_max_samples_per_instance(samples_per_participant);
+
+        // Force TCP EDP discovery & data communication and UDP PDP discovery (NO SHM)
+        writers[i]->setup_large_data_tcp(use_ipv6, ports[i]);
+        readers[i]->setup_large_data_tcp(use_ipv6, ports[n_participants + i]);
+    }
+
+    // Init participants
+    for (uint16_t i = 0; i < n_participants; i++)
+    {
+        writers[i]->init();
+        readers[i]->init();
+        ASSERT_TRUE(writers[i]->isInitialized());
+        ASSERT_TRUE(readers[i]->isInitialized());
+    }
+
+    // Wait for discovery
+    for (uint16_t i = 0; i < n_participants; i++)
+    {
+        writers[i]->wait_discovery(n_participants, std::chrono::seconds(0));
+        ASSERT_EQ(writers[i]->get_matched(), n_participants);
+        readers[i]->wait_discovery(std::chrono::seconds(0), n_participants);
+        ASSERT_EQ(readers[i]->get_matched(), n_participants);
+    }
+
+    // Send and receive data
+    std::list<KeyedHelloWorld> data;
+    data = default_keyedhelloworld_per_participant_data_generator(n_participants, samples_per_participant);
+
+    for (auto& reader : readers)
+    {
+        reader->startReception(data);
+    }
+
+    auto validate_key = [](const std::list<KeyedHelloWorld>& data, uint16_t participant_key)
+            {
+                for (const auto& sample : data)
+                {
+                    ASSERT_EQ(sample.key(), participant_key);
+                }
+            };
+
+    for (uint16_t i = 0; i < n_participants; i++)
+    {
+        auto start = std::next(data.begin(), i * samples_per_participant );
+        auto end = std::next(start, samples_per_participant);
+        auto writer_data(std::list<KeyedHelloWorld>(start, end));
+        validate_key(writer_data, i);
+        writers[i]->send(writer_data);
+        EXPECT_TRUE(writer_data.empty());
+    }
+
+    for (auto& reader : readers)
+    {
+        reader->block_for_all();
+    }
+    for (auto& writer : writers)
+    {
+        EXPECT_TRUE(writer->waitForAllAcked(std::chrono::seconds(5)));
+    }
+
+    // Destroy participants
+    readers.clear();
+    writers.clear();
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

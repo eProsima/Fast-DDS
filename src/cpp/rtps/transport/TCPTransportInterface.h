@@ -64,7 +64,7 @@ class TCPTransportInterface : public TransportInterface
     {
     public:
 
-        bool in_use = false;
+        uint16_t in_use = 0;
 
         std::condition_variable cv;
     };
@@ -100,7 +100,9 @@ protected:
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;
+    // Mutex to control access to channel_resources_
     mutable std::mutex sockets_map_mutex_;
+    // Mutex to control access to unbound_channel_resources_
     mutable std::mutex unbound_map_mutex_;
 
     std::map<Locator, std::shared_ptr<TCPChannelResource>> channel_resources_; // The key is the "Physical locator"
@@ -203,12 +205,13 @@ protected:
     std::string get_password() const;
 
     /**
-     * Send a buffer to a destination
+     * Send a buffer to a destination indicated by the locator.
+     * There must exist a channel bound to the locator, otherwise the send will be skipped.
      */
     bool send(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
-            std::shared_ptr<TCPChannelResource>& channel,
+            const eprosima::fastrtps::rtps::Locator_t& locator,
             const Locator& remote_locator);
 
 public:
@@ -225,9 +228,9 @@ public:
     bool CloseInputChannel(
             const Locator&) override;
 
-    //! Removes all outbound sockets on the given port.
+    //! Resets the locator bound to the sender resource.
     void CloseOutputChannel(
-            std::shared_ptr<TCPChannelResource>& channel);
+            fastrtps::rtps::Locator_t& locator);
 
     //! Reports whether Locators correspond to the same port.
     bool DoInputLocatorsMatch(
@@ -339,11 +342,11 @@ public:
             Locator& remote_locator);
 
     /**
-     * Blocking Send through the specified channel.
+     * Blocking Send through the channel inside channel_resources_ matching the locator provided.
      * @param send_buffer Slice into the raw data to send.
      * @param send_buffer_size Size of the raw data. It will be used as a bounds check for the previous argument.
      * It must not exceed the send_buffer_size fed to this class during construction.
-     * @param channel channel we're sending from.
+     * @param locator Physical locator we're sending to.
      * @param destination_locators_begin pointer to destination locators iterator begin, the iterator can be advanced inside this fuction
      * so should not be reuse.
      * @param destination_locators_end pointer to destination locators iterator end, the iterator can be advanced inside this fuction
@@ -352,7 +355,7 @@ public:
     bool send(
             const fastrtps::rtps::octet* send_buffer,
             uint32_t send_buffer_size,
-            std::shared_ptr<TCPChannelResource>& channel,
+            const fastrtps::rtps::Locator_t& locator,
             fastrtps::rtps::LocatorsIterator* destination_locators_begin,
             fastrtps::rtps::LocatorsIterator* destination_locators_end);
 

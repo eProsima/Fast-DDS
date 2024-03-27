@@ -132,8 +132,11 @@ TEST_F(TCPv4Tests, opening_and_closing_output_channel_with_listener)
 
     Locator_t genericOutputChannelLocator;
     genericOutputChannelLocator.kind = LOCATOR_KIND_TCPv4;
-    genericOutputChannelLocator.port = g_output_port; // arbitrary
-    IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port);
+    // The OpenOutputChannel locator argument has to be greater than the listening port
+    // to avoid falling in large data behavior, that would make the channel behave as an
+    // acceptor (no channel resource is created until it receives a connection request).
+    genericOutputChannelLocator.port = g_output_port + 1;
+    IPLocator::setLogicalPort(genericOutputChannelLocator, g_output_port + 1);
     SendResourceList send_resource_list;
 
     // Then
