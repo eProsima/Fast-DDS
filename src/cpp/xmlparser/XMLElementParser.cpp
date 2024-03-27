@@ -27,10 +27,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/UnitsParser.hpp>
 
 #include <utils/string_utilities.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/UnitsParser.hpp>
 #include <xmlparser/XMLParser.h>
 #include <xmlparser/XMLParserCommon.h>
 #include <xmlparser/XMLParserUtils.hpp>
@@ -897,7 +897,7 @@ XMLP_ret XMLParser::getXMLPortParameters(
 
 XMLP_ret XMLParser::getXMLTransports(
         tinyxml2::XMLElement* elem,
-        std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
+        std::vector<std::shared_ptr<fastdds::rtps::TransportDescriptorInterface>>& transports,
         uint8_t /*ident*/)
 {
     /*
@@ -926,7 +926,8 @@ XMLP_ret XMLParser::getXMLTransports(
         }
         else
         {
-            std::shared_ptr<TransportDescriptorInterface> pDescriptor = XMLProfileManager::getTransportById(text);
+            std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> pDescriptor =
+                    XMLProfileManager::getTransportById(text);
             if (pDescriptor != nullptr)
             {
                 transports.emplace_back(pDescriptor);
@@ -1294,7 +1295,7 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(
 
 XMLP_ret XMLParser::getXMLWriterQosPolicies(
         tinyxml2::XMLElement* elem,
-        WriterQos& qos,
+        fastdds::dds::WriterQos& qos,
         uint8_t ident)
 {
     /*
@@ -1479,7 +1480,7 @@ XMLP_ret XMLParser::getXMLWriterQosPolicies(
 
 XMLP_ret XMLParser::getXMLReaderQosPolicies(
         tinyxml2::XMLElement* elem,
-        ReaderQos& qos,
+        fastdds::dds::ReaderQos& qos,
         uint8_t ident)
 {
     /*

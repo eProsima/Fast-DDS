@@ -49,7 +49,6 @@
 #include <fastdds/rtps/writer/StatelessPersistentWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/utils/IPFinder.h>
-#include <fastrtps/utils/UnitsParser.hpp>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
@@ -68,6 +67,7 @@
 #include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/UnitsParser.hpp>
 #include <xmlparser/XMLProfileManager.h>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
@@ -1398,7 +1398,7 @@ void RTPSParticipantImpl::disableReader(
 bool RTPSParticipantImpl::registerWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     return this->mp_builtinProtocols->addLocalWriter(Writer, topicAtt, wqos);
 }
@@ -1406,7 +1406,7 @@ bool RTPSParticipantImpl::registerWriter(
 bool RTPSParticipantImpl::registerReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     return this->mp_builtinProtocols->addLocalReader(reader, topicAtt, rqos, content_filter);
@@ -1640,7 +1640,7 @@ void RTPSParticipantImpl::update_attributes(
 bool RTPSParticipantImpl::updateLocalWriter(
         RTPSWriter* Writer,
         const TopicAttributes& topicAtt,
-        const WriterQos& wqos)
+        const fastdds::dds::WriterQos& wqos)
 {
     return this->mp_builtinProtocols->updateLocalWriter(Writer, topicAtt, wqos);
 }
@@ -1648,7 +1648,7 @@ bool RTPSParticipantImpl::updateLocalWriter(
 bool RTPSParticipantImpl::updateLocalReader(
         RTPSReader* reader,
         const TopicAttributes& topicAtt,
-        const ReaderQos& rqos,
+        const fastdds::dds::ReaderQos& rqos,
         const fastdds::rtps::ContentFilterProperty* content_filter)
 {
     return this->mp_builtinProtocols->updateLocalReader(reader, topicAtt, rqos, content_filter);

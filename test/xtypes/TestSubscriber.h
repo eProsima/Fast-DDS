@@ -31,7 +31,6 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 class TestSubscriber

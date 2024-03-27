@@ -852,7 +852,7 @@ TEST_P(XMLProfileParserTests, XMLParserPublisher)
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
     TopicAttributes& pub_topic = publisher_atts.topic;
-    WriterQos& pub_qos = publisher_atts.qos;
+    dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     WriterTimes& pub_times = publisher_atts.times;
@@ -927,7 +927,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserPublisherDeprecated)
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
     TopicAttributes& pub_topic = publisher_atts.topic;
-    WriterQos& pub_qos = publisher_atts.qos;
+    dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     WriterTimes& pub_times = publisher_atts.times;
@@ -1000,7 +1000,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
     TopicAttributes& pub_topic = publisher_atts.topic;
-    WriterQos& pub_qos = publisher_atts.qos;
+    dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     WriterTimes& pub_times = publisher_atts.times;
@@ -1073,7 +1073,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultPublisherProfileDeprecated)
     xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
     TopicAttributes& pub_topic = publisher_atts.topic;
-    WriterQos& pub_qos = publisher_atts.qos;
+    dds::WriterQos& pub_qos = publisher_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     WriterTimes& pub_times = publisher_atts.times;
@@ -1148,7 +1148,7 @@ TEST_P(XMLProfileParserTests, XMLParserSubscriber)
             xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
     TopicAttributes& sub_topic = subscriber_atts.topic;
-    ReaderQos& sub_qos = subscriber_atts.qos;
+    dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     ReaderTimes& sub_times = subscriber_atts.times;
@@ -1220,7 +1220,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserSubscriberDeprecated)
             xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
     TopicAttributes& sub_topic = subscriber_atts.topic;
-    ReaderQos& sub_qos = subscriber_atts.qos;
+    dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     ReaderTimes& sub_times = subscriber_atts.times;
@@ -1290,7 +1290,7 @@ TEST_P(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(subscriber_atts);
 
     TopicAttributes& sub_topic = subscriber_atts.topic;
-    ReaderQos& sub_qos = subscriber_atts.qos;
+    dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     ReaderTimes& sub_times = subscriber_atts.times;
@@ -1360,7 +1360,7 @@ TEST_F(XMLProfileParserBasicTests, XMLParserDefaultSubscriberProfileDeprecated)
     xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(subscriber_atts);
 
     TopicAttributes& sub_topic = subscriber_atts.topic;
-    ReaderQos& sub_qos = subscriber_atts.qos;
+    dds::ReaderQos& sub_qos = subscriber_atts.qos;
     Locator_t locator;
     LocatorListIterator loc_list_it;
     ReaderTimes& sub_times = subscriber_atts.times;

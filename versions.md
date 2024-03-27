@@ -23,6 +23,7 @@ Forthcoming
   * StringMatching
   * TimeConversion
   * DBQueue
+  * UnitsParser
 * Added create participant methods that use environment XML profile for participant configuration.
 
 Version 2.14.0

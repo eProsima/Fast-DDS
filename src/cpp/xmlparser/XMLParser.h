@@ -27,7 +27,7 @@
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
@@ -419,12 +419,12 @@ protected:
 
     static XMLP_ret getXMLWriterQosPolicies(
             tinyxml2::XMLElement* elem,
-            WriterQos& qos,
+            fastdds::dds::WriterQos& qos,
             uint8_t ident);
 
     static XMLP_ret getXMLReaderQosPolicies(
             tinyxml2::XMLElement* elem,
-            ReaderQos& qos,
+            fastdds::dds::ReaderQos& qos,
             uint8_t ident);
 
     static XMLP_ret getXMLPublishModeQos(

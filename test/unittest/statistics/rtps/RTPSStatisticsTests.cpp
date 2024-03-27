@@ -363,14 +363,14 @@ public:
         Tatt.topicDataType = data_type;
         Tatt.topicName = topic_name;
 
-        WriterQos Wqos;
+        dds::WriterQos Wqos;
         auto& watt = writer_->getAttributes();
         Wqos.m_durability.durabilityKind(watt.durabilityKind);
         Wqos.m_reliability.kind =
                 RELIABLE ==
                 watt.reliabilityKind ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
 
-        ReaderQos Rqos;
+        dds::ReaderQos Rqos;
         auto& ratt = writer_->getAttributes();
         Rqos.m_durability.durabilityKind(ratt.durabilityKind);
         Rqos.m_reliability.kind =
