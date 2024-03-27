@@ -12,22 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <climits>
+#include <sstream>
 
+#include <gtest/gtest.h>
+
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+
+#include <rtps/common/GuidUtils.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <rtps/persistence/sqlite3.h>
 #include <rtps/persistence/SQLite3PersistenceServiceStatements.h>
-
-#include <rtps/common/GuidUtils.hpp>
-#include <fastrtps/utils/TimeConversion.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-
 #include <utils/SystemInfo.hpp>
-
-#include <climits>
-#include <sstream>
-#include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps::rtps;
 

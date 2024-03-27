@@ -22,18 +22,18 @@
 #include <thread>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
 
-#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/writer/LivelinessManager.hpp>
 
 #include "rtps/RTPSDomainImpl.hpp"
 

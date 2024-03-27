@@ -21,13 +21,15 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/Semaphore.h>
+
+#include <rtps/transport/UDPv6Transport.h>
+#include <utils/Semaphore.hpp>
 
 #include <MockReceiverResource.h>
-#include <rtps/transport/UDPv6Transport.h>
 
-using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 using UDPv6Transport = eprosima::fastdds::rtps::UDPv6Transport;
 
 #ifndef __APPLE__

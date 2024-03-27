@@ -21,11 +21,12 @@
 #define _FASTDDS_RTPS_EDPSERVER2_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
+#include <fastdds/rtps/common/CacheChange.h>
+
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPSimple.h>
 #include <rtps/builtin/discovery/participant/PDPServer.hpp>
 
 namespace eprosima {

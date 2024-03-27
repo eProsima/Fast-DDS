@@ -25,8 +25,6 @@
 #include <mutex>
 #include <thread>
 
-#include <rtps/security/ISecurityPluginFactory.h>
-
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -37,8 +35,10 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/security/authentication/Handshake.h>
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
-#include <fastrtps/utils/ProxyPool.hpp>
-#include <fastrtps/utils/shared_mutex.hpp>
+
+#include <rtps/security/ISecurityPluginFactory.h>
+#include <utils/ProxyPool.hpp>
+#include <utils/shared_mutex.hpp>
 
 namespace eprosima {
 namespace fastrtps {

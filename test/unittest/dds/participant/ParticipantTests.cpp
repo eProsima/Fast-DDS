@@ -30,6 +30,8 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -49,18 +51,18 @@
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <utils/SystemInfo.hpp>
+#include <xmlparser/attributes/PublisherAttributes.hpp>
+#include <xmlparser/attributes/SubscriberAttributes.hpp>
 
 #include "../../logging/mock/MockConsumer.h"
 
@@ -78,7 +80,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
 using fastrtps::types::DynamicData_ptr;
@@ -1950,6 +1951,51 @@ TEST(ParticipantTests, GetPublisherProfileQos)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+TEST(ParticipantTests, GetReplierProfileQos)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Extract qos from profile
+    ReplierQos qos;
+    EXPECT_EQ(
+        participant->get_replier_qos_from_profile("test_replier_profile", qos),
+        ReturnCode_t::RETCODE_OK);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_replier_qos_from_profile("incorrect_profile_name", qos),
+        ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+TEST(ParticipantTests, GetRequesterProfileQos)
+{
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    // Extract qos from profile
+    RequesterQos qos;
+    EXPECT_EQ(
+        participant->get_requester_qos_from_profile("test_requester_profile", qos),
+        ReturnCode_t::RETCODE_OK);
+
+    // Test return when a non-existent profile is used
+    EXPECT_EQ(
+        participant->get_requester_qos_from_profile("incorrect_profile_name", qos),
+        ReturnCode_t::RETCODE_BAD_PARAMETER);
+
+    // Clean up
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
 
 TEST(ParticipantTests, DeletePublisher)
 {

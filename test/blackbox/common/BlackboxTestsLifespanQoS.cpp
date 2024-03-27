@@ -14,7 +14,6 @@
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastrtps/utils/TimeConversion.h>
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
