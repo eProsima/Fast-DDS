@@ -19,25 +19,22 @@
 
 #include <rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <mutex>
 
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/core/policy/ParameterList.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastrtps/utils/TimeConversion.h>
-
-#include <fastdds/core/policy/ParameterList.hpp>
+#include <rtps/builtin/discovery/endpoint/EDP.h>
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <mutex>
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 

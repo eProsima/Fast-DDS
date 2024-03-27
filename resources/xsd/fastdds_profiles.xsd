@@ -40,7 +40,9 @@
         ├ data_writer               [0~*],
         ├ data_reader               [0~*],
         ├ transport_descriptors     [0~1],
-        └ topic                     [0~*] -->
+        ├ topic                     [0~1],
+        ├ replier                   [0~1],
+        └ requester                 [0~*] -->
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
@@ -50,6 +52,8 @@
                 <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
                 <xs:element name="transport_descriptors" type="TransportDescriptorListType" maxOccurs="1"/>
                 <xs:element name="topic" type="topicProfileType" maxOccurs="unbounded"/>
+                <xs:element name="replier" type="replierRequesterProfileType" maxOccurs="unbounded"/>
+                <xs:element name="requester" type="replierRequesterProfileType" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -211,7 +215,37 @@
         </xs:simpleContent>
     </xs:complexType>
 
-    <!--Data writer / publisher:
+    <!--Data writer / publisher no attributes:
+        ├ topic                        [0~1],
+        ├ qos                          [0~1],
+        ├ times                        [0~1],
+        ├ unicastLocatorList           [0~1],
+        ├ multicastLocatorList         [0~1],
+        ├ external_unicast_locators    [0~1],
+        ├ ignore_non_matching_locators [bool],
+        ├ historyMemoryPolicy          [0~1],
+        ├ propertiesPolicy             [0~1],
+        ├ userDefinedID                [int16],
+        ├ entityID                     [int16],
+        └ matchedSubscribersAllocation [0~1]-->
+    <xs:complexType name="publisherProfileNoAttributesType">
+        <xs:all>
+            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="qos" type="dataWriterQosPoliciesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="times" type="writerTimesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="userDefinedID" type="int16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="entityID" type="int16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="matchedSubscribersAllocation" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Data writer / publisher
         | ╠ att. profile_name       [string] REQ,
         | ╚ att. is_default_profile [bool],
         |
@@ -228,22 +262,44 @@
         ├ entityID                     [int16],
         └ matchedSubscribersAllocation [0~1]-->
     <xs:complexType name="publisherProfileType">
-        <xs:all>
+        <xs:complexContent>
+            <xs:extension base="publisherProfileNoAttributesType">
+                <xs:attribute name="profile_name" type="string" use="required"/>
+                <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!--Data reader / subscriber no attributes:
+        ├ topic                        [0~1],
+        ├ qos                          [0~1],
+        ├ times                        [0~1],
+        ├ unicastLocatorList           [0~1],
+        ├ multicastLocatorList         [0~1],
+        ├ external_unicast_locators    [0~1],
+        ├ ignore_non_matching_locators [bool],
+        ├ expectsInlineQos             [bool],
+        ├ historyMemoryPolicy          [0~1],
+        ├ propertiesPolicy             [0~1],
+        ├ userDefinedID                [int16],
+        ├ entityID                     [int16],
+        └ matchedPublishersAllocation  [0~1]-->
+    <xs:complexType name="subscriberProfileNoAttributesType">
+        <xs:all minOccurs="0">
             <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="qos" type="dataWriterQosPoliciesType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="times" type="writerTimesType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="userDefinedID" type="int16" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="entityID" type="int16" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="matchedSubscribersAllocation" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="qos" type="dataReaderQosPoliciesType" minOccurs="0"/>
+            <xs:element name="times" type="readerTimesType" minOccurs="0"/>
+            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
+            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
+            <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0"/>
+            <xs:element name="expectsInlineQos" type="boolean" minOccurs="0"/>
+            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
+            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
+            <xs:element name="userDefinedID" type="int16" minOccurs="0"/>
+            <xs:element name="entityID" type="int16" minOccurs="0"/>
+            <xs:element name="matchedPublishersAllocation" type="allocationConfigType" minOccurs="0"/>
         </xs:all>
-        <xs:attribute name="profile_name" type="string" use="required"/>
-        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
     </xs:complexType>
 
     <!--Data reader / subscriber:
@@ -264,23 +320,12 @@
         ├ entityID                     [int16],
         └ matchedPublishersAllocation  [0~1]-->
     <xs:complexType name="subscriberProfileType">
-        <xs:all minOccurs="0">
-            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="qos" type="dataReaderQosPoliciesType" minOccurs="0"/>
-            <xs:element name="times" type="readerTimesType" minOccurs="0"/>
-            <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
-            <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
-            <xs:element name="external_unicast_locators" type="externalLocatorListType" minOccurs="0"/>
-            <xs:element name="ignore_non_matching_locators" type="boolean" minOccurs="0"/>
-            <xs:element name="expectsInlineQos" type="boolean" minOccurs="0"/>
-            <xs:element name="historyMemoryPolicy" type="historyMemoryPolicyType" minOccurs="0"/>
-            <xs:element name="propertiesPolicy" type="propertyPolicyType" minOccurs="0"/>
-            <xs:element name="userDefinedID" type="int16" minOccurs="0"/>
-            <xs:element name="entityID" type="int16" minOccurs="0"/>
-            <xs:element name="matchedPublishersAllocation" type="allocationConfigType" minOccurs="0"/>
-        </xs:all>
-        <xs:attribute name="profile_name" type="string" use="required"/>
-        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+        <xs:complexContent>
+            <xs:extension base="subscriberProfileNoAttributesType">
+                <xs:attribute name="profile_name" type="string" use="required"/>
+                <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <!--Transport descriptor list:
@@ -346,6 +391,28 @@
         </xs:all>
     </xs:complexType>
 
+    <!--Replier / Requester (profile):
+        | ╠ att. profile_name       [string] REQ,
+        | ╠ att. service_name       [string] REQ,
+        | ╠ att. request_type       [string] REQ,
+        | ╚ att. reply_type         [string] REQ,
+        |
+        ├ request_topic_name        [0~1],
+        ├ reply_topic_name          [0~1],
+        ├ data_writer               [0~*],
+        └ data_reader               [0~1] -->
+    <xs:complexType name="replierRequesterProfileType">
+        <xs:all minOccurs="0">
+            <xs:element name="request_topic_name" type="string" minOccurs="0"/>
+            <xs:element name="reply_topic_name" type="string" minOccurs="0"/>
+            <xs:element name="data_writer" type="publisherProfileNoAttributesType" minOccurs="0"/>
+            <xs:element name="data_reader" type="subscriberProfileNoAttributesType" minOccurs="0"/>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="service_name" type="string" use="required"/>
+        <xs:attribute name="request_type" type="string" use="required"/>
+        <xs:attribute name="reply_type" type="string" use="required"/>
+    </xs:complexType>
 
     <!--| DYNAMIC TYPES ELEMENTS |-->
     <!--Type:
@@ -1831,8 +1898,6 @@
     </xs:complexType>
 
     <!--Thread Settings Type:
-        | ╠ att. port        [uint32]
-        |
         ├ scheduling_policy  [int32],
         ├ priority           [int32],
         ├ affinity           [uint64],
@@ -1846,7 +1911,7 @@
         </xs:all>
     </xs:complexType>
 
-    <!--Thread Settings Type:
+    <!--Thread Settings with Port Type:
         | ╠ att. port        [uint32]
         |
         ├ scheduling_policy  [int32],

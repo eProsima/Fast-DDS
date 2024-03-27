@@ -20,12 +20,12 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/Semaphore.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 
 #include <rtps/common/ChangeComparison.hpp>
 #include <utils/collections/sorted_vector_insert.hpp>
+#include <utils/Semaphore.hpp>
 
 #include <mutex>
 

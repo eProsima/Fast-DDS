@@ -17,19 +17,19 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
-#include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-
-#include <fastdds/dds/log/Log.hpp>
+#include <rtps/builtin/discovery/endpoint/EDPClient.h>
 
 #include <mutex>
 
-#include <rtps/builtin/discovery/endpoint/EDPClient.h>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/StatefulWriter.h>
+
+#include <rtps/builtin/discovery/participant/PDP.h>
 
 namespace eprosima {
 namespace fastdds {

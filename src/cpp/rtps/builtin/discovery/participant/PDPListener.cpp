@@ -17,27 +17,23 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <rtps/builtin/discovery/participant/PDPListener.h>
 
+#include <mutex>
+
+#include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
-
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 
-#include <fastrtps/utils/TimeConversion.h>
-
-#include <fastdds/core/policy/ParameterList.hpp>
+#include <rtps/builtin/discovery/endpoint/EDP.h>
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <mutex>
-
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
 #endif //FASTDDS_STATISTICS

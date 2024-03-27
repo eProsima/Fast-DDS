@@ -17,13 +17,17 @@
  *
  */
 
-#include <stdint.h>
-#include <vector>
-
 #ifndef LATENCYTESTTYPES_H_
 #define LATENCYTESTTYPES_H_
 
-#include "fastrtps/fastrtps_all.h"
+#include <cstdint>
+#include <vector>
+#include <string>
+
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 
 #define MAX_TYPE_SIZE 10 * 1024 * 1024
 
@@ -160,7 +164,7 @@ public:
 
 private:
 
-    using eprosima::fastrtps::TopicDataType::is_plain;
+    using eprosima::fastdds::dds::TopicDataType::is_plain;
 };
 
 enum TESTCOMMAND : uint32_t

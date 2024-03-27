@@ -28,8 +28,8 @@
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/utils/IPLocator.h>
-#include <fastrtps/utils/TimeConversion.h>
 
+#include <utils/TimeConversion.hpp>
 #include <xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
@@ -449,7 +449,7 @@ XMLP_ret XMLEndpointParser::loadXMLReaderEndpoint(
             {
                 uint32_t milliseclease = std::strtoul(auxstring.c_str(), nullptr, 10);
                 rdata->m_qos.m_liveliness.lease_duration =
-                        TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
+                        fastdds::rtps::TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if (milliseclease == 0)
                 {
                     EPROSIMA_LOG_WARNING(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");
@@ -741,7 +741,7 @@ XMLP_ret XMLEndpointParser::loadXMLWriterEndpoint(
             {
                 uint32_t milliseclease = std::strtoul(auxstring.c_str(), nullptr, 10);
                 wdata->m_qos.m_liveliness.lease_duration =
-                        TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
+                        fastdds::rtps::TimeConv::MilliSeconds2Time_t((double)milliseclease).to_duration_t();
                 if (milliseclease == 0)
                 {
                     EPROSIMA_LOG_WARNING(RTPS_EDP, "BAD XML:livelinessQos leaseDuration is 0");

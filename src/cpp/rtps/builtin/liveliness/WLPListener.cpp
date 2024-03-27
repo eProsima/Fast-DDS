@@ -16,7 +16,7 @@
  * @file WLPListener.cpp
  *
  */
-#include <fastdds/rtps/builtin/liveliness/WLPListener.h>
+#include <rtps/builtin/liveliness/WLPListener.h>
 
 #include <cstdint>
 #include <cstring>
@@ -25,9 +25,6 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/common/GuidPrefix_t.hpp>
@@ -37,7 +34,11 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
+
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
+#include <rtps/builtin/liveliness/WLP.h>
+#include <rtps/writer/LivelinessManager.hpp>
 
 namespace eprosima {
 namespace fastrtps {

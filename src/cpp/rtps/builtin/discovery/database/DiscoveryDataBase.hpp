@@ -27,17 +27,17 @@
 #include <set>
 #include <vector>
 
+#include <nlohmann/json.hpp>
+
+#include <fastdds/rtps/common/CacheChange.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
-#include <fastdds/rtps/common/CacheChange.h>
-#include <fastrtps/utils/DBQueue.h>
 
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
-#include <rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp>
-#include <rtps/builtin/discovery/database/DiscoveryEndpointInfo.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataQueueInfo.hpp>
-
-#include <nlohmann/json.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryEndpointInfo.hpp>
+#include <rtps/builtin/discovery/database/DiscoveryParticipantInfo.hpp>
+#include <utils/DBQueue.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -520,9 +520,9 @@ protected:
     ////////////////
     // Variables
 
-    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
+    DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo> pdp_data_queue_;
 
-    fastrtps::DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
+    DBQueue<eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo> edp_data_queue_;
 
     //! Covenient per-topic mapping of readers and writers to speed-up queries
     std::map<std::string, std::vector<eprosima::fastrtps::rtps::GUID_t>> readers_by_topic_;

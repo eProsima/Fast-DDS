@@ -7,6 +7,7 @@ target_compile_definitions(user_thread_nonblocked_test PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
+target_include_directories(user_thread_nonblocked_test PRIVATE ${CMAKE_SOURCE_DIR}/src/cpp/utils)
 target_link_libraries(user_thread_nonblocked_test mutex_testing_tool fastdds fastcdr GTest::gtest)
 
 STRING(REPLACE " " "\\ " MUTEX_PRELOAD_LIBRARY_FILE "$<TARGET_FILE:mutex_testing_tool_preload>")

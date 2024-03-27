@@ -22,8 +22,6 @@
 #include <vector>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
@@ -36,8 +34,10 @@
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
-#include <fastrtps/utils/TimeConversion.h>
+#include <utils/TimeConversion.hpp>
 
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
@@ -281,7 +281,7 @@ void StatefulWriter::init(
         {
             return send_periodic_heartbeat();
         },
-        TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
+        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.heartbeatPeriod));
 
     nack_response_event_ = new TimedEvent(
         pimpl->getEventResource(),
@@ -290,7 +290,7 @@ void StatefulWriter::init(
             perform_nack_response();
             return false;
         },
-        TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
+        fastdds::rtps::TimeConv::Time_t2MilliSecondsDouble(m_times.nackResponseDelay));
 
     if (disable_positive_acks_)
     {
@@ -1458,7 +1458,7 @@ bool StatefulWriter::wait_for_all_acked(
 
     if (!all_acked_)
     {
-        std::chrono::microseconds max_w(TimeConv::Duration_t2MicroSecondsInt64(max_wait));
+        std::chrono::microseconds max_w(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(max_wait));
         all_acked_cond_.wait_for(all_acked_lock, max_w, [&]()
                 {
                     return all_acked_;

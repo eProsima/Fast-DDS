@@ -161,7 +161,7 @@ gtest_discover_tests(SystemInfoTests)
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)
 target_compile_definitions(SharedMutexTests PUBLIC USE_THIRDPARTY_SHARED_MUTEX=1)
-target_include_directories(SharedMutexTests PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(SharedMutexTests PRIVATE ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(SharedMutexTests PUBLIC GTest::gtest)
 gtest_discover_tests(SharedMutexTests)
 
