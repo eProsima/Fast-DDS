@@ -15,12 +15,13 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/attributes/ParticipantAttributes.h>
 
+#include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/XMLTree.h>
 
 #include "../logging/mock/MockConsumer.h"
 
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::xmlparser;

@@ -29,7 +29,6 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 
 #include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
 

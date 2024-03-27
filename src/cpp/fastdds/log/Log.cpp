@@ -18,13 +18,13 @@
 #include <memory>
 #include <mutex>
 
-#include <fastrtps/utils/DBQueue.h>
-
+#include <fastdds/dds/log/Colors.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include <fastdds/dds/log/Colors.hpp>
+
+#include <utils/DBQueue.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>
@@ -341,7 +341,7 @@ private:
         return true;
     }
 
-    fastrtps::DBQueue<Log::Entry> logs_;
+    DBQueue<Log::Entry> logs_;
     std::vector<std::unique_ptr<LogConsumer>> consumers_;
     eprosima::thread logging_thread_;
 

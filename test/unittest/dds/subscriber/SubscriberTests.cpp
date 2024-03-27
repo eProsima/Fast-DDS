@@ -29,8 +29,6 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
 
 namespace eprosima {
 namespace fastdds {

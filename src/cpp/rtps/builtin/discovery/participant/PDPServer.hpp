@@ -21,7 +21,7 @@
 #define _FASTDDS_RTPS_PDPSERVER2_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <rtps/builtin/discovery/participant/PDP.h>
 
 #include <set>
 #include <sstream>
@@ -31,10 +31,11 @@
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/history/History.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
+
 #include <rtps/builtin/discovery/database/DiscoveryDataBase.hpp>
 #include <rtps/builtin/discovery/database/DiscoveryDataFilter.hpp>
-#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 #include <rtps/builtin/discovery/participant/DS/DiscoveryServerPDPEndpointsSecure.hpp>
+#include <rtps/builtin/discovery/participant/timedevent/DServerEvent.hpp>
 
 namespace eprosima {
 namespace fastdds {

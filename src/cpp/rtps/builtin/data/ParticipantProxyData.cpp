@@ -25,16 +25,16 @@
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/resources/TimedEvent.h>
-#include <fastrtps/utils/TimeConversion.h>
 
+#include <rtps/builtin/BuiltinProtocols.h>
+#include <rtps/builtin/discovery/participant/PDPSimple.h>
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
+#include <utils/TimeConversion.hpp>
 
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"
@@ -614,7 +614,7 @@ bool ParticipantProxyData::readFromCDRMessage(
 
                         m_leaseDuration = p.time.to_duration_t();
                         lease_duration_ =
-                                std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(
+                                std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
                                             m_leaseDuration));
                         break;
                     }
@@ -777,7 +777,9 @@ void ParticipantProxyData::copy(
     default_locators = pdata.default_locators;
     m_participantName = pdata.m_participantName;
     m_leaseDuration = pdata.m_leaseDuration;
-    lease_duration_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(pdata.m_leaseDuration));
+    lease_duration_ =
+            std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(
+                        pdata.m_leaseDuration));
     m_key = pdata.m_key;
     isAlive = pdata.isAlive;
     m_userData = pdata.m_userData;
@@ -811,7 +813,8 @@ bool ParticipantProxyData::updateData(
     security_attributes_ = pdata.security_attributes_;
     plugin_security_attributes_ = pdata.plugin_security_attributes_;
 #endif // if HAVE_SECURITY
-    auto new_lease_duration = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
+    auto new_lease_duration =
+            std::chrono::microseconds(fastdds::rtps::TimeConv::Duration_t2MicroSecondsInt64(m_leaseDuration));
     if (lease_duration_event != nullptr)
     {
         if (new_lease_duration < lease_duration_)

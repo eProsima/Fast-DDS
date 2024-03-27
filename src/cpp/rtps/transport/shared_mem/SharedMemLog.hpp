@@ -19,9 +19,9 @@
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/common/Locator.h>
-#include <fastrtps/utils/DBQueue.h>
 
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
+#include <utils/DBQueue.hpp>
 #include <utils/SystemInfo.hpp>
 #include <utils/thread.hpp>
 #include <utils/threading.hpp>
@@ -334,7 +334,7 @@ private:
 
     struct Resources
     {
-        eprosima::fastrtps::DBQueue<typename TPacketConsumer::Pkt> logs;
+        DBQueue<typename TPacketConsumer::Pkt> logs;
         std::vector<std::unique_ptr<SHMPacketFileConsumer>> consumers;
         eprosima::thread logging_thread;
 

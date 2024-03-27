@@ -19,11 +19,11 @@
 #include <utility>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/utils/IPLocator.h>
 
+#include <rtps/messages/MessageReceiver.h>
 #include <rtps/network/utils/netmask_filter.hpp>
 #include <utils/SystemInfo.hpp>
 

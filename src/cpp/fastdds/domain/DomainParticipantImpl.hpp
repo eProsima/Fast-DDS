@@ -22,27 +22,26 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <atomic>
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/ReplierQos.hpp>
+#include <fastdds/dds/domain/qos/RequesterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
+#include <fastdds/dds/topic/IContentFilterFactory.hpp>
+#include <fastdds/dds/topic/qos/TopicQos.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/topic/qos/TopicQos.hpp>
-#include <fastdds/dds/topic/ContentFilteredTopic.hpp>
-#include <fastdds/dds/topic/IContentFilterFactory.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-
-#include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastrtps/types/TypesBase.h>
-
-#include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
+#include <fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -401,6 +400,14 @@ public:
     const ReturnCode_t get_topic_qos_from_profile(
             const std::string& profile_name,
             TopicQos& qos) const;
+
+    const ReturnCode_t get_replier_qos_from_profile(
+            const std::string& profile_name,
+            ReplierQos& qos) const;
+
+    const ReturnCode_t get_requester_qos_from_profile(
+            const std::string& profile_name,
+            RequesterQos& qos) const;
 
     /* TODO
        bool get_discovered_participants(

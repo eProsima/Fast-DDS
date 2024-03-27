@@ -17,36 +17,36 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <rtps/builtin/discovery/endpoint/EDP.h>
+
+#include <mutex>
+
+#include <foonathan/memory/container.hpp>
+#include <foonathan/memory/memory_pool.hpp>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/TopicAttributes.h>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/utils/StringMatching.h>
-
-#include <foonathan/memory/container.hpp>
-#include <foonathan/memory/memory_pool.hpp>
 
 #include <rtps/builtin/data/ProxyHashTables.hpp>
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/collections/node_size_helpers.hpp>
+#include <utils/StringMatching.hpp>
 #ifdef FASTDDS_STATISTICS
 #include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #endif //FASTDDS_STATISTICS
 
-#include <utils/collections/node_size_helpers.hpp>
-
-#include <mutex>
-
+using namespace eprosima::fastdds::rtps;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types;
 using eprosima::fastdds::dds::PublicationMatchedStatus;

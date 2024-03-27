@@ -15,7 +15,6 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/utils/TimeConversion.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"

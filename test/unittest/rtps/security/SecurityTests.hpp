@@ -18,7 +18,6 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -28,6 +27,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
+#include <rtps/builtin/discovery/participant/PDP.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/security/MockAuthenticationPlugin.h>
 #include <rtps/security/MockCryptographyPlugin.h>
