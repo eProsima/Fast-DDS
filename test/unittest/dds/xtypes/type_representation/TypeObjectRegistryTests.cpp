@@ -98,7 +98,9 @@ TEST(TypeObjectRegistryTests, get_type_objects)
     complete_alias_type.header().detail().type_name("alias_name");
     complete_alias_type.body().common().related_type(alias_type_id);
     TypeObject type_object;
-    type_object.complete().alias_type(complete_alias_type);
+    CompleteTypeObject complete_type_object;
+    complete_type_object.alias_type(complete_alias_type);
+    type_object.complete(complete_type_object);
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().register_type_object("test_name",
             type_object.complete()));
