@@ -62,12 +62,6 @@ jobs:
           update: false
           upgrade: false
 
-      - name: Install GTest
-        uses: eProsima/eProsima-CI/multiplatform/install_gtest@v0
-        with:
-          cmake_build_type: Release
-          version: release-1.11.0
-
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@v0
         with:
@@ -81,6 +75,13 @@ jobs:
         uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
         with:
           vcs_repos_file: ./src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
 
