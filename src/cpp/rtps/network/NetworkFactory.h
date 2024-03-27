@@ -85,6 +85,15 @@ public:
             const Locator_t& locator);
 
     /**
+     * Walk over the list of transports, opening every possible channel that can send through
+     * the locators contained in @param locator_selector_entry and returning a vector of Sender Resources associated with it.
+     * @param locator_selector_entry LocatorSelectorEntry containing metadata and the locators through which to send.
+     */
+    bool build_send_resources(
+            fastdds::rtps::SendResourceList&,
+            const LocatorSelectorEntry& locator_selector_entry);
+
+    /**
      * Walk over the list of transports, opening every possible channel that we can listen to
      * from the given locator, and returns a vector of Receiver Resources for this goal.
      * @param local Locator from which to listen.

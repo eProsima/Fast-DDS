@@ -245,6 +245,11 @@ private:
             const ParticipantProxyData& pdata);
 
     /**
+     * Check if the user transports of the RTPSParticipant requires logical ports (only TCP transport).
+     */
+    bool handle_logical_ports_required();
+
+    /**
      * TimedEvent for server synchronization:
      *   first stage: periodically resend the local RTPSParticipant information until
      *    all servers have acknowledge reception
