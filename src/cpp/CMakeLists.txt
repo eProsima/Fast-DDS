@@ -136,6 +136,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/network/NetworkInterfaceWithFilter.cpp
     rtps/transport/PortBasedTransportDescriptor.cpp
     rtps/transport/shared_mem/SharedMemTransportDescriptor.cpp
+    rtps/transport/SocketTransportInterface.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/TCPAcceptor.cpp

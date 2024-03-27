@@ -59,12 +59,6 @@ public:
             TransportReceiverInterface*,
             uint32_t) override;
 
-    LocatorList NormalizeLocator(
-            const Locator& locator) override;
-
-    bool is_local_locator(
-            const Locator& locator) const override;
-
     TransportDescriptorInterface* get_configuration() override
     {
         return &configuration_;
@@ -92,22 +86,14 @@ public:
 
 protected:
 
-    //! Constructor with no descriptor is necessary for implementations derived from this class.
-    UDPv4Transport();
     UDPv4TransportDescriptor configuration_;
 
-    bool compare_locator_ip(
-            const Locator& lh,
-            const Locator& rh) const override;
-    bool compare_locator_ip_and_port(
-            const Locator& lh,
-            const Locator& rh) const override;
+    //! Constructor with no descriptor is necessary for implementations derived from this class.
+    UDPv4Transport();
 
     void endpoint_to_locator(
             asio::ip::udp::endpoint& endpoint,
             Locator& locator) override;
-    void fill_local_ip(
-            Locator& loc) const override;
 
     asio::ip::udp::endpoint GenerateAnyAddressEndpoint(
             uint16_t port) override;
@@ -123,37 +109,10 @@ protected:
             const Locator& loc,
             uint16_t port) override;
     asio::ip::udp generate_protocol() const override;
-    bool get_ips(
-            std::vector<fastrtps::rtps::IPFinder::info_IP>& locNames,
-            bool return_loopback,
-            bool force_lookup) const override;
-    const std::string& localhost_name() override;
     eProsimaUDPSocket OpenAndBindInputSocket(
             const std::string& sIp,
             uint16_t port,
             bool is_multicast) override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const std::string& iface) const override;
-
-    /**
-     * Method to get a list of interfaces to bind the socket associated to the given locator.
-     * @return Vector of interfaces in string format.
-     */
-    std::vector<std::string> get_binding_interfaces_list() override;
-
-    //! Checks for whether locator is allowed.
-    bool is_locator_allowed(
-            const Locator&) const override;
-
-    //! Checks if the given interface is allowed by the white list.
-    bool is_interface_allowed(
-            const asio::ip::address_v4& ip) const;
-
-    //! Checks if the interfaces white list is empty.
-    bool is_interface_whitelist_empty() const override;
-    std::vector<asio::ip::address_v4> interface_whitelist_;
 
     void set_receive_buffer_size(
             uint32_t size) override;
