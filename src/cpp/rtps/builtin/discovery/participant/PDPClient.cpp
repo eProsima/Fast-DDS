@@ -463,33 +463,11 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
                 mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
             }
 
-#if HAVE_SECURITY
-            // TODO Carlos: remove for GUID_less ds
-            if (!mp_RTPSParticipant->is_secure() && it.guidPrefix != c_GuidPrefix_Unknown)
-            {
-                match_pdp_writer_nts_(it);
-                match_pdp_reader_nts_(it);
-            }
-            else if (!is_discovery_protected)
-            {
-                endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
-            }
-#else
             // If SECURITY is disabled, this condition is ALWAYS true
             if (!is_discovery_protected)
             {
-                if (it.guidPrefix != c_GuidPrefix_Unknown)
-                {
-                    // TODO Carlos: remove for GUID_less ds
-                    match_pdp_writer_nts_(it);
-                    match_pdp_reader_nts_(it);
-                }
-                else
-                {
-                    endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
-                }
+                endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
             }
-#endif // HAVE_SECURITY
         }
     }
 
@@ -507,38 +485,22 @@ void PDPClient::assignRemoteEndpoints(
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-            // Verify if this participant is a server
-            // TODO Carlos: remove for GUID_less ds
-            bool guid_less = true;
+            // Match and update server data
             for (auto& svr : mp_builtin->m_DiscoveryServers)
             {
-                if (data_matches_with_prefix(svr.guidPrefix, *pdata))
+                if (data_matches_with_locatorlist(svr.metatrafficUnicastLocatorList, *pdata))
                 {
                     svr.is_connected = true;
-                    guid_less = false;
-                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Server " << pdata->m_guid.guidPrefix << " connected with GUID.");
-                }
-            }
-            // If the received server GUID is not in the Remote server list it means that we only know its locators
-            // because the server was created with a random GUID.
-            if (guid_less)
-            {
-                for (auto& svr : mp_builtin->m_DiscoveryServers)
-                {
-                    if (data_matches_with_locatorlist(svr.metatrafficUnicastLocatorList, *pdata))
-                    {
-                        svr.is_connected = true;
-                        svr.guidPrefix = pdata->m_guid.guidPrefix;
-#if !HAVE_SECURITY
-                        if (!should_protect_discovery())
+                    svr.guidPrefix = pdata->m_guid.guidPrefix;
+#if HAVE_SECURITY
+                    if (!should_protect_discovery())
 #endif // HAVE_SECURITY
-                        {
-                            match_pdp_writer_nts_(svr);
-                            match_pdp_reader_nts_(svr);
-                        }
-                        EPROSIMA_LOG_INFO(RTPS_PDP,
-                                "Server [" << pdata->m_guid.guidPrefix << "] mathed and added to database.");
+                    {
+                        match_pdp_writer_nts_(svr);
+                        match_pdp_reader_nts_(svr);
                     }
+                    EPROSIMA_LOG_WARNING(RTPS_PDP,
+                            "Server [" << pdata->m_guid.guidPrefix << "] mathed and added to database.");
                 }
             }
         }
@@ -568,8 +530,8 @@ void PDPClient::notifyAboveRemoteEndpoints(
             {
                 if (!svr.is_connected && nullptr != get_participant_proxy_data(svr.guidPrefix))
                 {
-                    //! mark proxy as connected from an unmangled prefix in case
-                    //! it could not be done in assignRemoteEndpoints()
+                    //! Mark proxy as connected from an unmangled prefix in case.
+                    //! It could not be done in assignRemoteEndpoints()
                     svr.is_connected = true;
                 }
 
@@ -898,6 +860,7 @@ void PDPClient::update_remote_servers_list()
             if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
                     !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
             {
+                // TODO Carlos: should we create the resources in case of security?
                 if (set_logicals)
                 {
                     const RemoteLocatorsAllocationAttributes& rlaa =
@@ -911,23 +874,7 @@ void PDPClient::update_remote_servers_list()
             }
 
             // Need to set the reader to accept messages from unknown writers if the server has an unknown GUID
-            if (it.guidPrefix == c_GuidPrefix_Unknown)
-            {
-                endpoints->reader.reader_->enableMessagesFromUnkownWriters(true);
-            }
-            else
-            {
-                // TODO Carlos: remove for GUID_less ds
-                if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
-                {
-                    match_pdp_writer_nts_(it);
-                }
-
-                if (!endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
-                {
-                    match_pdp_reader_nts_(it);
-                }
-            }
+            endpoints->reader.reader_->enableMessagesFromUnkownWriters(true);
         }
     }
     mp_sync->restart_timer();
@@ -936,11 +883,7 @@ void PDPClient::update_remote_servers_list()
 void PDPClient::match_pdp_writer_nts_(
         const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
-    // TODO Carlos: remove for GUID_less ds
-    if (server_att.guidPrefix != c_GuidPrefix_Unknown)
-    {
-        match_pdp_writer_nts_(server_att, server_att.guidPrefix);
-    }
+    match_pdp_writer_nts_(server_att, server_att.guidPrefix);
 }
 
 void PDPClient::match_pdp_writer_nts_(
@@ -974,11 +917,7 @@ void PDPClient::match_pdp_writer_nts_(
 void PDPClient::match_pdp_reader_nts_(
         const eprosima::fastdds::rtps::RemoteServerAttributes& server_att)
 {
-    // TODO Carlos: remove for GUID_less ds
-    if (server_att.guidPrefix != c_GuidPrefix_Unknown)
-    {
-        match_pdp_reader_nts_(server_att, server_att.guidPrefix);
-    }
+    match_pdp_reader_nts_(server_att, server_att.guidPrefix);
 }
 
 void PDPClient::match_pdp_reader_nts_(

@@ -824,7 +824,7 @@ void DiscoveryDataBase::create_writers_from_change_(
             // The change could be newer and at the same time not being an update.
             // This happens with DATAs coming from servers, since they take their own DATAs in and out frequently,
             // so the sequence number in `write_params` changes.
-            // To account for that, we discard the DATA if the payload is exactly the same as what wee have.
+            // To account for that, we discard the DATA if the payload is exactly the same as what we have.
             if (!(ch->serializedPayload == writer_it->second.change()->serializedPayload))
             {
                 // Update the change related to the writer and return the old change to the pool
