@@ -226,7 +226,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     // Generate server's listening locator
     Locator_t locator_server_1;
     IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
-    uint32_t server_1_port = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR);
+    uint16_t server_1_port = static_cast<uint16_t>(stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR));
     IPLocator::setPhysicalPort(locator_server_1, server_1_port);
     locator_server_1.kind = LOCATOR_KIND_TCPv4;
     // Leave logical port as 0 to use TCP DS default logical port
@@ -252,7 +252,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     // Generate server's listening locator
     Locator_t locator_server_2;
     IPLocator::setIPv4(locator_server_2, 127, 0, 0, 1);
-    uint32_t server_2_port = stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR) + 1;
+    uint16_t server_2_port = server_1_port + 1;
     IPLocator::setPhysicalPort(locator_server_2, server_2_port);
     locator_server_2.kind = LOCATOR_KIND_TCPv4;
     // Leave logical port as 0 to use TCP DS default logical port
@@ -279,7 +279,8 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     server_1_att.metatrafficUnicastLocatorList.push_back(Locator_t(locator_server_1));
     client_qos_1.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
     auto descriptor_3 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-    descriptor_3->add_listener_port(server_1_port + 10);
+    uint16_t client_1_port = server_1_port + 10;
+    descriptor_3->add_listener_port(client_1_port);
     // Init client
     ASSERT_TRUE(client_1.wire_protocol(client_qos_1)
                     .disable_builtin_transport()
@@ -294,7 +295,8 @@ TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
     // Connect to first server
     client_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
     auto descriptor_4 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
-    descriptor_4->add_listener_port(server_1_port - 10);
+    uint16_t client_2_port = server_1_port - 10;
+    descriptor_4->add_listener_port(client_2_port);
     // Init client
     ASSERT_TRUE(client_2.wire_protocol(client_qos_2)
                     .disable_builtin_transport()
