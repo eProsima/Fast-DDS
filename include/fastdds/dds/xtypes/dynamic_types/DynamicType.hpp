@@ -60,6 +60,7 @@ public:
     /*!
      * Returns the member that corresponds to the specified name.
      * @param[inout] member @ref DynamicTypeMember reference used to return the reference to the member.
+     * @param[in] name Member name of the member being queried.
      * @return @ref ReturnCode_t
      * @retval RETCODE_OK when the member was found.
      * @retval RETCODE_BAD_PARAMETER when the member doesn't exist.
@@ -154,7 +155,7 @@ public:
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.8.4
-     * @param[in] other @DynamicType reference to compare to
+     * @param[in] other @ref DynamicType reference to compare to
      * @return \b bool `true` on equality
      */
     FASTDDS_EXPORTED_API virtual bool equals(

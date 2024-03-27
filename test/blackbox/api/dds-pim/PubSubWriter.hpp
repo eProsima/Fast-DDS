@@ -115,9 +115,10 @@ class PubSubWriter
 
 #endif // if HAVE_SECURITY
 
-        void on_subscriber_discovery(
+        void on_data_reader_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             if (info.status == eprosima::fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERED_READER)
             {
@@ -134,9 +135,10 @@ class PubSubWriter
             }
         }
 
-        void on_publisher_discovery(
+        void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant*,
-                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             if (info.status == eprosima::fastrtps::rtps::WriterDiscoveryInfo::DISCOVERED_WRITER)
             {

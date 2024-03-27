@@ -45,7 +45,7 @@ public:
 
     /*!
      * Modifies the underlying type reference.
-     * @param[in] @ref DynamicType reference.
+     * @param[in] type @ref DynamicType reference.
      */
     virtual void type(
             traits<DynamicType>::ref_type type) = 0;

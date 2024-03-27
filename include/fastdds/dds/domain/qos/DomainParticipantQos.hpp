@@ -86,6 +86,7 @@ public:
                (this->builtin_controllers_sender_thread_ == b.builtin_controllers_sender_thread()) &&
                (this->timed_events_thread_ == b.timed_events_thread()) &&
                (this->discovery_server_thread_ == b.discovery_server_thread()) &&
+               (this->typelookup_service_thread_ == b.typelookup_service_thread()) &&
 #if HAVE_SECURITY
                (this->security_log_thread_ == b.security_log_thread()) &&
 #endif // if HAVE_SECURITY
@@ -433,6 +434,37 @@ public:
         discovery_server_thread_ = value;
     }
 
+    /**
+     * Getter for TypeLookup service ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& typelookup_service_thread()
+    {
+        return typelookup_service_thread_;
+    }
+
+    /**
+     * Getter for TypeLookup service ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& typelookup_service_thread() const
+    {
+        return typelookup_service_thread_;
+    }
+
+    /**
+     * Setter for the TypeLookup service ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void typelookup_service_thread(
+            const rtps::ThreadSettings& value)
+    {
+        typelookup_service_thread_ = value;
+    }
+
 #if HAVE_SECURITY
     /**
      * Getter for security log ThreadSettings
@@ -504,6 +536,9 @@ private:
 
     //! Thread settings for the discovery server thread
     rtps::ThreadSettings discovery_server_thread_;
+
+    //! Thread settings for the builtin TypeLookup service requests and replies threads
+    rtps::ThreadSettings typelookup_service_thread_;
 
 #if HAVE_SECURITY
     //! Thread settings for the security log thread

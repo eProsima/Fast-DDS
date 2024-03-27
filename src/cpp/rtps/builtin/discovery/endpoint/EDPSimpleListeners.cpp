@@ -83,8 +83,8 @@ void EDPBasePUBListener::add_writer_from_change(
 
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
-                [reader, reader_history, change, edp, release_change, &network]
-                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr&& temp_writer_data)
+                [change, edp, release_change, &network]
+                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
                     auto copy_data_fun = [&temp_writer_data, &network](
@@ -115,11 +115,6 @@ void EDPBasePUBListener::add_writer_from_change(
                     // release temporary proxy
                     temp_writer_data.reset();
 
-                    reader_history->remove_change(reader_history->find_change(change), release_change);
-
-                    // At this point, we can release the reader lock because the change is not used
-                    reader->getMutex().unlock();
-
                     if (writer_data != nullptr)
                     {
                         edp->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
@@ -128,14 +123,30 @@ void EDPBasePUBListener::add_writer_from_change(
                     {
                         EPROSIMA_LOG_WARNING(RTPS_EDP, "Received message from UNKNOWN RTPSParticipant, removing");
                     }
-
-                    // Take the reader lock again if needed.
-                    reader->getMutex().lock();
                 };
 
-        edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
-            std::move(temp_writer_data),
-            after_typelookup_callback);
+        // Remove change from history.
+        reader_history->remove_change(reader_history->find_change(change), release_change);
+
+        // At this point, we can release the reader lock because the change is not used
+        reader->getMutex().unlock();
+
+        // Check if TypeInformation exists to start the typelookup service
+        if (temp_writer_data->type_information().assigned())
+        {
+            edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
+                temp_writer_data,
+                after_typelookup_callback);
+        }
+        // If TypeInformation does not exist, try fallback mechanism
+        else
+        {
+            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
+            after_typelookup_callback(temp_writer_data);
+        }
+
+        // Take the reader lock again if needed.
+        reader->getMutex().lock();
     }
 }
 
@@ -207,8 +218,8 @@ void EDPBaseSUBListener::add_reader_from_change(
 
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
-                [reader, reader_history, change, edp, release_change, &network]
-                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr&& temp_reader_data)
+                [change, edp, release_change, &network]
+                    (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_reader_data)
                 {
                     auto copy_data_fun = [&temp_reader_data, &network](
                         ReaderProxyData* data,
@@ -239,12 +250,6 @@ void EDPBaseSUBListener::add_reader_from_change(
                     // Release the temporary proxy
                     temp_reader_data.reset();
 
-                    // Remove change from history.
-                    reader_history->remove_change(reader_history->find_change(change), release_change);
-
-                    // At this point we can release reader lock, cause change is not used
-                    reader->getMutex().unlock();
-
                     if (reader_data != nullptr) //ADDED NEW DATA
                     {
                         edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
@@ -253,14 +258,30 @@ void EDPBaseSUBListener::add_reader_from_change(
                     {
                         EPROSIMA_LOG_WARNING(RTPS_EDP, "From UNKNOWN RTPSParticipant, removing");
                     }
-
-                    // Take again the reader lock.
-                    reader->getMutex().lock();
                 };
 
-        edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
-            std::move(temp_reader_data),
-            after_typelookup_callback);
+        // Remove change from history.
+        reader_history->remove_change(reader_history->find_change(change), release_change);
+
+        // At this point, we can release the reader lock because the change is not used
+        reader->getMutex().unlock();
+
+        // Check if TypeInformation exists to start the typelookup service
+        if (temp_reader_data->type_information().assigned())
+        {
+            edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
+                temp_reader_data,
+                after_typelookup_callback);
+        }
+        // If TypeInformation does not exist, try fallback mechanism
+        else
+        {
+            EPROSIMA_LOG_INFO(RTPS_EDP, "EDPBasePUBListener: No TypeInformation. Trying fallback mechanism");
+            after_typelookup_callback(temp_reader_data);
+        }
+
+        // Take the reader lock again if needed.
+        reader->getMutex().lock();
     }
 }
 
