@@ -23,6 +23,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <unordered_map>
 #include <utility>
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
@@ -66,7 +67,8 @@ public:
     using GUID_t = eprosima::fastrtps::rtps::GUID_t;
     using SequenceNumber_t = eprosima::fastrtps::rtps::SequenceNumber_t;
 
-    using InstanceCollection = std::map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>>;
+    using InstanceCollection = std::unordered_map<InstanceHandle_t, std::shared_ptr<DataReaderInstance>,
+                    fastrtps::rtps::hash_fastrtps_instancehandle>;
     using instance_info = InstanceCollection::iterator;
 
     /**
