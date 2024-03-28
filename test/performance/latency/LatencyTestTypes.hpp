@@ -157,6 +157,10 @@ public:
 
     // Name
     static const std::string type_name_;
+
+private:
+
+    using eprosima::fastrtps::TopicDataType::is_plain;
 };
 
 enum TESTCOMMAND : uint32_t

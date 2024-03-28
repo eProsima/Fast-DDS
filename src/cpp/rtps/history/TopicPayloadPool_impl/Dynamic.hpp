@@ -86,6 +86,10 @@ protected:
         return DYNAMIC_RESERVE_MEMORY_MODE;
     }
 
+private:
+
+    using TopicPayloadPool::get_payload;
+
 };
 
 }  // namespace rtps

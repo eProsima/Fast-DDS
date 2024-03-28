@@ -21,13 +21,20 @@ public:
                 void* data,
                 eprosima::fastrtps::rtps::SerializedPayload_t* payload));
 
+    MOCK_METHOD3(serialize, bool(
+                void* data,
+                eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                DataRepresentationId_t data_representation));
+
     MOCK_METHOD2(deserialize, bool(
                 eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                 void* data));
 
+    MOCK_METHOD2(getSerializedSizeProvider, std::function<uint32_t()> (
+                void* data, DataRepresentationId_t data_representation));
+
     MOCK_METHOD1(getSerializedSizeProvider, std::function<uint32_t()> (
                 void* data));
-
 
     MOCK_METHOD0(createData, void* ());
 

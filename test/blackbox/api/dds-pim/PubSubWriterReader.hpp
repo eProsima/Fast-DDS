@@ -168,6 +168,10 @@ class PubSubWriterReader
 
     private:
 
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_publisher_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_subscriber_discovery;
+
         //! Mutex guarding all info collections
         mutable std::mutex info_mutex_;
         //! The discovered participants excluding the participant this listener is listening to

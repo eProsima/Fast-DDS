@@ -662,6 +662,10 @@ protected:
             bool on_guard_;
         };
 
+        using fastrtps::rtps::RTPSParticipantListener::onParticipantDiscovery;
+        using fastrtps::rtps::RTPSParticipantListener::onReaderDiscovery;
+        using fastrtps::rtps::RTPSParticipantListener::onWriterDiscovery;
+
     public:
 
         MyRTPSParticipantListener(

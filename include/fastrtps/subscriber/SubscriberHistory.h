@@ -179,6 +179,10 @@ public:
 
 private:
 
+    using rtps::ReaderHistory::completed_change;
+    using rtps::ReaderHistory::received_change;
+    using rtps::ReaderHistory::remove_change_nts;
+
     using t_m_Inst_Caches = std::map<rtps::InstanceHandle_t, KeyedChanges>;
 
     //!Map where keys are instance handles and values vectors of cache changes

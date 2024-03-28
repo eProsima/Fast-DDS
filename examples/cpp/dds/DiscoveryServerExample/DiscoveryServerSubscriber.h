@@ -112,6 +112,8 @@ private:
 
     private:
 
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
+
         HelloWorld hello_;
 
         //! Number of DataWriters matched to the associated DataReader

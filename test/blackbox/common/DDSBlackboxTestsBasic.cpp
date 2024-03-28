@@ -477,8 +477,10 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 TEST(DDSBasic, IgnoreParticipant)
 {
 
-    struct IgnoringDomainParticipantListener : public DomainParticipantListener
+    class IgnoringDomainParticipantListener : public DomainParticipantListener
     {
+    public:
+
         std::atomic_int num_matched{0};
         std::atomic_int num_ignored{0};
 
@@ -505,6 +507,9 @@ TEST(DDSBasic, IgnoreParticipant)
             }
         }
 
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
     };
     // Set DomainParticipantFactory to create disabled entities
     DomainParticipantFactoryQos factory_qos;

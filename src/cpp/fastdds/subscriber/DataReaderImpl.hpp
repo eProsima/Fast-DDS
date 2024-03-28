@@ -451,6 +451,10 @@ protected:
 #endif //FASTDDS_STATISTICS
 
         DataReaderImpl* data_reader_;
+
+    private:
+
+        using fastrtps::rtps::ReaderListener::onReaderMatched;
     }
     reader_listener_;
 

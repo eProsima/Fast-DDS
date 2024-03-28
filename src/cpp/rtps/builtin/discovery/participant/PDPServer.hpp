@@ -317,6 +317,8 @@ protected:
 
 private:
 
+    using fastrtps::rtps::PDP::announceParticipantState;
+
 #if HAVE_SECURITY
     /**
      * Returns whether discovery should be secured

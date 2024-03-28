@@ -105,6 +105,8 @@ private:
 
     private:
 
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
+
         //! Number of DataReaders matched to the associated DataWriter
         std::atomic<std::uint32_t> matched_;
     }

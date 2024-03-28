@@ -70,7 +70,9 @@ protected:
 
     MonitorService* monitor_srv_;
 
+private:
 
+    using fastrtps::rtps::WriterListener::onWriterMatched;
 };
 
 #endif // FASTDDS_STATISTICS

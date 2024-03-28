@@ -65,6 +65,10 @@ public:
     static eprosima::fastcdr::EncodingAlgorithmFlag last_encoding;
 
     static DataRepresentationId_t last_data_representation;
+
+private:
+
+    using HelloWorldPubSubType::serialize;
 };
 
 eprosima::fastcdr::EncodingAlgorithmFlag

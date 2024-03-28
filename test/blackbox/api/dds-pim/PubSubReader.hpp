@@ -142,6 +142,9 @@ protected:
 
     private:
 
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_publisher_discovery;
+
         ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
         PubSubReader& reader_;

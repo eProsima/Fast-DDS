@@ -37,6 +37,8 @@ class UDPTransportInterface : public TransportInterface
 {
     friend class UDPSenderResource;
 
+    using TransportInterface::transform_remote_locator;
+
 public:
 
     ~UDPTransportInterface() override;

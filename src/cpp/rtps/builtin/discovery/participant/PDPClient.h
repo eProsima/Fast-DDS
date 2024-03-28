@@ -114,8 +114,8 @@ public:
      */
     void announceParticipantState(
             bool new_change,
-            bool dispose = false,
-            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) override;
+            bool dispose,
+            WriteParams& wparams) override;
 
     /**
      * These methods wouldn't be needed under perfect server operation
@@ -177,6 +177,8 @@ protected:
             const eprosima::fastdds::rtps::RemoteServerAttributes& server_att);
 
 private:
+
+    using fastrtps::rtps::PDP::announceParticipantState;
 
     /**
      * Manually match the local PDP reader with the PDP writer of a given server. The function is
