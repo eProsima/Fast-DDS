@@ -79,12 +79,12 @@ public:
         , topic_att_(topic_att)
         , unacknowledged_sample_removed_functor_(unack_sample_remove_functor)
     {
-        if (resource_limited_qos_.max_instances == 0)
+        if (resource_limited_qos_.max_instances <= 0)
         {
             resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
         }
 
-        if (resource_limited_qos_.max_samples_per_instance == 0)
+        if (resource_limited_qos_.max_samples_per_instance <= 0)
         {
             resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
         }
