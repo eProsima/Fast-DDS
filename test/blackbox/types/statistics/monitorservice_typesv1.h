@@ -212,8 +212,7 @@ namespace eprosima {
                  * @brief This function returns a constant reference to member announced_locators
                  * @return Constant reference to member announced_locators
                  */
-                eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& announced_locators()
-                const;
+                eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& announced_locators() const;
 
                 /*!
                  * @brief This function returns a reference to member announced_locators
@@ -1336,8 +1335,7 @@ namespace eprosima {
                  * @return Constant reference to member incompatible_qos_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& incompatible_qos_status()
-                const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& incompatible_qos_status() const;
 
                 /*!
                  * @brief This function returns a reference to member incompatible_qos_status
@@ -1366,8 +1364,7 @@ namespace eprosima {
                  * @return Constant reference to member inconsistent_topic_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::InconsistentTopicStatus_s& inconsistent_topic_status()
-                const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::InconsistentTopicStatus_s& inconsistent_topic_status() const;
 
                 /*!
                  * @brief This function returns a reference to member inconsistent_topic_status
@@ -1425,8 +1422,7 @@ namespace eprosima {
                  * @return Constant reference to member liveliness_changed_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessChangedStatus_s& liveliness_changed_status()
-                const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessChangedStatus_s& liveliness_changed_status() const;
 
                 /*!
                  * @brief This function returns a reference to member liveliness_changed_status
@@ -1756,8 +1752,8 @@ namespace eprosima {
 
             };
 
-}         // namespace statistics
-}     // namespace fastdds
+        } // namespace statistics
+    } // namespace fastdds
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_MONITORSERVICE_TYPES_H_

@@ -84,7 +84,6 @@ struct FindType {
 }
 
 #define eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize 852ULL;
-
 #define eprosima_fastdds_statistics_BaseStatus_s_max_cdr_typesize 8ULL;
 
 

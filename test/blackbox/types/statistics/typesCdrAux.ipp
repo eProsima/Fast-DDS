@@ -1473,6 +1473,40 @@ void serialize_key(
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 template<>
 eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
@@ -1495,51 +1529,51 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.writer_reader_data(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.locator2locator_data(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.entity_data(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                                 data.entity2locator_traffic(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                                 data.entity_count(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
                                 data.discovery_time(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                                 data.sample_identity_count(), current_alignment);
                     break;
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
                                 data.physical_data(), current_alignment);
                     break;
@@ -1571,44 +1605,44 @@ eProsima_user_DllExport void serialize(
 
     switch (data._d())
     {
-                case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+                case EventKind::HISTORY2HISTORY_LATENCY:
                     scdr << eprosima::fastcdr::MemberId(1) << data.writer_reader_data();
                     break;
 
-                case eprosima::fastdds::statistics::NETWORK_LATENCY:
+                case EventKind::NETWORK_LATENCY:
                     scdr << eprosima::fastcdr::MemberId(2) << data.locator2locator_data();
                     break;
 
-                case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-                case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+                case EventKind::PUBLICATION_THROUGHPUT:
+                case EventKind::SUBSCRIPTION_THROUGHPUT:
                     scdr << eprosima::fastcdr::MemberId(3) << data.entity_data();
                     break;
 
-                case eprosima::fastdds::statistics::RTPS_SENT:
-                case eprosima::fastdds::statistics::RTPS_LOST:
+                case EventKind::RTPS_SENT:
+                case EventKind::RTPS_LOST:
                     scdr << eprosima::fastcdr::MemberId(4) << data.entity2locator_traffic();
                     break;
 
-                case eprosima::fastdds::statistics::RESENT_DATAS:
-                case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-                case eprosima::fastdds::statistics::ACKNACK_COUNT:
-                case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-                case eprosima::fastdds::statistics::GAP_COUNT:
-                case eprosima::fastdds::statistics::DATA_COUNT:
-                case eprosima::fastdds::statistics::PDP_PACKETS:
-                case eprosima::fastdds::statistics::EDP_PACKETS:
+                case EventKind::RESENT_DATAS:
+                case EventKind::HEARTBEAT_COUNT:
+                case EventKind::ACKNACK_COUNT:
+                case EventKind::NACKFRAG_COUNT:
+                case EventKind::GAP_COUNT:
+                case EventKind::DATA_COUNT:
+                case EventKind::PDP_PACKETS:
+                case EventKind::EDP_PACKETS:
                     scdr << eprosima::fastcdr::MemberId(5) << data.entity_count();
                     break;
 
-                case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+                case EventKind::DISCOVERED_ENTITY:
                     scdr << eprosima::fastcdr::MemberId(6) << data.discovery_time();
                     break;
 
-                case eprosima::fastdds::statistics::SAMPLE_DATAS:
+                case EventKind::SAMPLE_DATAS:
                     scdr << eprosima::fastcdr::MemberId(7) << data.sample_identity_count();
                     break;
 
-                case eprosima::fastdds::statistics::PHYSICAL_DATA:
+                case EventKind::PHYSICAL_DATA:
                     scdr << eprosima::fastcdr::MemberId(8) << data.physical_data();
                     break;
 
@@ -1640,44 +1674,44 @@ eProsima_user_DllExport void deserialize(
                     default:
                         switch (data._d())
                         {
-                                                        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+                                                        case EventKind::HISTORY2HISTORY_LATENCY:
                                                             dcdr >> data.writer_reader_data();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+                                                        case EventKind::NETWORK_LATENCY:
                                                             dcdr >> data.locator2locator_data();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-                                                        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+                                                        case EventKind::PUBLICATION_THROUGHPUT:
+                                                        case EventKind::SUBSCRIPTION_THROUGHPUT:
                                                             dcdr >> data.entity_data();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::RTPS_SENT:
-                                                        case eprosima::fastdds::statistics::RTPS_LOST:
+                                                        case EventKind::RTPS_SENT:
+                                                        case EventKind::RTPS_LOST:
                                                             dcdr >> data.entity2locator_traffic();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::RESENT_DATAS:
-                                                        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-                                                        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-                                                        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-                                                        case eprosima::fastdds::statistics::GAP_COUNT:
-                                                        case eprosima::fastdds::statistics::DATA_COUNT:
-                                                        case eprosima::fastdds::statistics::PDP_PACKETS:
-                                                        case eprosima::fastdds::statistics::EDP_PACKETS:
+                                                        case EventKind::RESENT_DATAS:
+                                                        case EventKind::HEARTBEAT_COUNT:
+                                                        case EventKind::ACKNACK_COUNT:
+                                                        case EventKind::NACKFRAG_COUNT:
+                                                        case EventKind::GAP_COUNT:
+                                                        case EventKind::DATA_COUNT:
+                                                        case EventKind::PDP_PACKETS:
+                                                        case EventKind::EDP_PACKETS:
                                                             dcdr >> data.entity_count();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+                                                        case EventKind::DISCOVERED_ENTITY:
                                                             dcdr >> data.discovery_time();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+                                                        case EventKind::SAMPLE_DATAS:
                                                             dcdr >> data.sample_identity_count();
                                                             break;
 
-                                                        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+                                                        case EventKind::PHYSICAL_DATA:
                                                             dcdr >> data.physical_data();
                                                             break;
 
