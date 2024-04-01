@@ -340,6 +340,9 @@ protected:
     //! DataWriterListener
     DataWriterListener* listener_ = nullptr;
 
+    //! Mutex to protect listener_
+    std::mutex listener_mutex_;
+
     //!Listener to capture the events of the Writer
     class InnerDataWriterListener : public fastrtps::rtps::WriterListener
     {
