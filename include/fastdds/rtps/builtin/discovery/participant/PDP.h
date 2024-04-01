@@ -556,6 +556,16 @@ protected:
             const ParticipantProxyData& participant_data);
 
     /**
+     * Obtains the participant type based on a Parameters Properties list.
+     *
+     * @param properties Parameter Properties list to check
+     *
+     * @return struct of ParticipantType indicating the type.
+     */
+    std::string check_participant_type(
+        const eprosima::fastrtps::ParameterPropertyList_t properties);
+
+    /**
      * Gets the key of a participant proxy data.
      *
      * @param [in] participant_guid GUID of the participant to look for.
