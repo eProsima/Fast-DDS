@@ -33,6 +33,9 @@ class Application
 {
 public:
 
+    //! Virtual destructor
+    virtual ~Application() = default;
+
     //! Run application
     virtual void run() = 0;
 
