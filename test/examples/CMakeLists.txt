@@ -25,6 +25,8 @@ endif()
 set(FILE_EXTENSION "")
 set(DOCKER_IMAGE_NAME "")
 set(SHELL_EXECUTABLE "")
+set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "")
+set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH "")
 
 # Linux configurations
 if(UNIX AND NOT(APPLE) AND NOT(QNXNTO) AND NOT(ANDROID))
@@ -54,6 +56,13 @@ elseif(WIN32)
 # Unsupported platform
 else()
     message(FATAL_ERROR "Unsupported platform")
+endif()
+
+# Configure TinyXML2 library path if installed in user library path
+if(NOT (TINYXML2_FROM_SOURCE OR TINYXML2_FROM_THIRDPARTY))
+    get_filename_component(TINYXML2_LIB_DIR ${TINYXML2_LIBRARY} DIRECTORY)
+    set(TINYXML2_LIB_DIR_COMPOSE_VOLUME "- ${TINYXML2_LIB_DIR}:${TINYXML2_LIB_DIR}")
+    set(TINYXML2_LIB_DIR_COMPOSE_LD_LIBRARY_PATH ":${TINYXML2_LIB_DIR}")
 endif()
 
 # Find all docker compose yml files for testing
