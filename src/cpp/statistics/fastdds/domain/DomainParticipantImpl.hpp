@@ -246,7 +246,7 @@ protected:
     bool transform_and_check_topic_name(
             const std::string& topic_name_or_alias,
             std::string& topic_name,
-            EventKind& event_kind) noexcept;
+            uint32_t& event_kind) noexcept;
 
     /**
      * Auxiliary function to register the statistics type depending on the statistics topic name.
