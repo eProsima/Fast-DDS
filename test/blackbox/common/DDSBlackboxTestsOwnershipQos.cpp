@@ -721,29 +721,29 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_deadline)
 
     writer1.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer2.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer2.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer2.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
@@ -752,15 +752,15 @@ TEST_P(OwnershipQos, exclusive_kind_non_keyed_reliable_deadline)
 
     writer1.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     reader.block_for_seq({0, 7});
     ASSERT_EQ(denied_samples.size(), reader.data_not_received().size());
@@ -800,27 +800,13 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_deadline)
     data.pop_front();
     writer1.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer2.send_sample(data.front());
     data.pop_front();
     writer2.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-    writer1.send_sample(data.front());
-    denied_samples.push_back(data.front());
-    data.pop_front();
-    writer1.send_sample(data.front());
-    denied_samples.push_back(data.front());
-    data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-    writer2.send_sample(data.front());
-    data.pop_front();
-    writer2.send_sample(data.front());
-    data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
@@ -828,13 +814,13 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_deadline)
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer2.send_sample(data.front());
     data.pop_front();
     writer2.send_sample(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
@@ -842,18 +828,21 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_deadline)
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
 
-    writer1.send_sample(data.front());
+    writer2.send_sample(data.front());
     data.pop_front();
     writer2.send_sample(data.front());
     data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+
+    writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(110));
 
     writer1.send_sample(data.front());
     data.pop_front();
@@ -864,7 +853,18 @@ TEST_P(OwnershipQos, exclusive_kind_keyed_reliable_deadline)
     writer1.send_sample(data.front());
     denied_samples.push_back(data.front());
     data.pop_front();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(110));
+
+    writer1.send_sample(data.front());
+    data.pop_front();
+    writer2.send_sample(data.front());
+    data.pop_front();
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    writer1.send_sample(data.front());
+    denied_samples.push_back(data.front());
+    data.pop_front();
+    std::this_thread::sleep_for(std::chrono::milliseconds(110));
 
     writer1.send_sample(data.front());
     data.pop_front();
