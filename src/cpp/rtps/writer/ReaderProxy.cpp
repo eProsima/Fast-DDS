@@ -57,7 +57,7 @@ ReaderProxy::ReaderProxy(
     , nack_supression_event_(nullptr)
     , initial_heartbeat_event_(nullptr)
     , timers_enabled_(false)
-    , last_acknack_count_(0)
+    , next_expected_acknack_count_(0)
     , last_nackfrag_count_(0)
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
@@ -166,7 +166,7 @@ void ReaderProxy::stop()
     disable_timers();
 
     changes_for_reader_.clear();
-    last_acknack_count_ = 0;
+    next_expected_acknack_count_ = 0;
     last_nackfrag_count_ = 0;
     changes_low_mark_ = SequenceNumber_t();
 }
