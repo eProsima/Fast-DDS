@@ -554,6 +554,8 @@ TEST(TransportUDP, DatagramInjection)
 
     deliver_datagram_from_file(receivers, "datagrams/16784.bin");
     deliver_datagram_from_file(receivers, "datagrams/20140.bin");
+    deliver_datagram_from_file(receivers, "datagrams/20574.bin");
+    deliver_datagram_from_file(receivers, "datagrams/20660.bin");
 }
 
 TEST(TransportUDP, MaliciousManipulatedDataOctetsToNextHeaderIgnore)
