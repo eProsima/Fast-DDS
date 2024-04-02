@@ -46,7 +46,7 @@ inline bool is_statistics_builtin(
  * @param [out] entity_id The corresponding entity id.
  */
 inline void set_statistics_entity_id(
-        EventKind kind,
+        uint32_t kind,
         fastrtps::rtps::EntityId_t& entity_id)
 {
     entity_id.value[3] = 0x62;

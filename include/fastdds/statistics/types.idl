@@ -119,54 +119,53 @@ struct PhysicalData
     string process;
 };
 
-@bit_bound(32)
-bitmask EventKind
+module EventKind
 {
-    @position(0) HISTORY2HISTORY_LATENCY,
-    @position(1) NETWORK_LATENCY,
-    @position(2) PUBLICATION_THROUGHPUT,
-    @position(3) SUBSCRIPTION_THROUGHPUT,
-    @position(4) RTPS_SENT,
-    @position(5) RTPS_LOST,
-    @position(6) RESENT_DATAS,
-    @position(7) HEARTBEAT_COUNT,
-    @position(8) ACKNACK_COUNT,
-    @position(9) NACKFRAG_COUNT,
-    @position(10) GAP_COUNT,
-    @position(11) DATA_COUNT,
-    @position(12) PDP_PACKETS,
-    @position(13) EDP_PACKETS,
-    @position(14) DISCOVERED_ENTITY,
-    @position(15) SAMPLE_DATAS,
-    @position(16) PHYSICAL_DATA
+    const unsigned long HISTORY2HISTORY_LATENCY = 1;
+    const unsigned long NETWORK_LATENCY = 2;
+    const unsigned long PUBLICATION_THROUGHPUT = 4;
+    const unsigned long SUBSCRIPTION_THROUGHPUT = 8;
+    const unsigned long RTPS_SENT = 16;
+    const unsigned long RTPS_LOST = 32;
+    const unsigned long RESENT_DATAS = 64;
+    const unsigned long HEARTBEAT_COUNT = 128;
+    const unsigned long ACKNACK_COUNT = 256;
+    const unsigned long NACKFRAG_COUNT = 512;
+    const unsigned long GAP_COUNT = 1024;
+    const unsigned long DATA_COUNT = 2048;
+    const unsigned long PDP_PACKETS = 4096;
+    const unsigned long EDP_PACKETS = 8192;
+    const unsigned long DISCOVERED_ENTITY = 16384;
+    const unsigned long SAMPLE_DATAS = 32768;
+    const unsigned long PHYSICAL_DATA = 65536;
 };
 
-union Data switch(EventKind)
+union Data switch(unsigned long)
 {
-    case HISTORY2HISTORY_LATENCY:
+    case EventKind::HISTORY2HISTORY_LATENCY:
         WriterReaderData writer_reader_data;
-    case NETWORK_LATENCY:
+    case EventKind::NETWORK_LATENCY:
         Locator2LocatorData locator2locator_data;
-    case PUBLICATION_THROUGHPUT:
-    case SUBSCRIPTION_THROUGHPUT:
+    case EventKind::PUBLICATION_THROUGHPUT:
+    case EventKind::SUBSCRIPTION_THROUGHPUT:
         EntityData entity_data;
-    case RTPS_SENT:
-    case RTPS_LOST:
+    case EventKind::RTPS_SENT:
+    case EventKind::RTPS_LOST:
         Entity2LocatorTraffic entity2locator_traffic;
-    case RESENT_DATAS:
-    case HEARTBEAT_COUNT:
-    case ACKNACK_COUNT:
-    case NACKFRAG_COUNT:
-    case GAP_COUNT:
-    case DATA_COUNT:
-    case PDP_PACKETS:
-    case EDP_PACKETS:
+    case EventKind::RESENT_DATAS:
+    case EventKind::HEARTBEAT_COUNT:
+    case EventKind::ACKNACK_COUNT:
+    case EventKind::NACKFRAG_COUNT:
+    case EventKind::GAP_COUNT:
+    case EventKind::DATA_COUNT:
+    case EventKind::PDP_PACKETS:
+    case EventKind::EDP_PACKETS:
         EntityCount entity_count;
-    case DISCOVERED_ENTITY:
+    case EventKind::DISCOVERED_ENTITY:
         DiscoveryTime discovery_time;
-    case SAMPLE_DATAS:
+    case EventKind::SAMPLE_DATAS:
         SampleIdentityCount sample_identity_count;
-    case PHYSICAL_DATA:
+    case EventKind::PHYSICAL_DATA:
         PhysicalData physical_data;
 };
 

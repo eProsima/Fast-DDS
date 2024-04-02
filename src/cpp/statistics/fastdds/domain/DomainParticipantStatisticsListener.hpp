@@ -43,7 +43,7 @@ struct DomainParticipantStatisticsListener : public IListener
     using DataWriter = eprosima::fastdds::dds::DataWriter;
 
     void set_datawriter(
-            EventKind kind,
+            uint32_t kind,
             DataWriter* writer);
 
     void on_statistics_data(
@@ -54,7 +54,7 @@ struct DomainParticipantStatisticsListener : public IListener
 private:
 
     std::mutex mtx_;
-    std::map<EventKind, DataWriter*> writers_;
+    std::map<uint32_t, DataWriter*> writers_;
     std::atomic<uint32_t> enabled_writers_mask_{0};
 };
 

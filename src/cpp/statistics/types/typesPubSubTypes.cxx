@@ -2696,6 +2696,43 @@ namespace eprosima {
                 return true;
             }
 
+            namespace EventKind {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            } //End of namespace EventKind
 
 
 

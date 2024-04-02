@@ -2222,12 +2222,15 @@ std::string& PhysicalData::process()
 }
 
 
+namespace EventKind {
 
+
+} // namespace EventKind
 
 
 Data::Data()
 {
-    m__d = eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY;
+    m__d = EventKind::HISTORY2HISTORY_LATENCY;
 }
 
 Data::~Data()
@@ -2241,51 +2244,51 @@ Data::Data(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             m_writer_reader_data = x.m_writer_reader_data;
             break;
 
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             m_locator2locator_data = x.m_locator2locator_data;
             break;
 
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             m_entity_data = x.m_entity_data;
             break;
 
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             m_entity2locator_traffic = x.m_entity2locator_traffic;
             break;
 
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             m_entity_count = x.m_entity_count;
             break;
 
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             m_discovery_time = x.m_discovery_time;
             break;
 
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             m_sample_identity_count = x.m_sample_identity_count;
             break;
 
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             m_physical_data = x.m_physical_data;
             break;
 
@@ -2301,58 +2304,58 @@ Data::Data(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             m_writer_reader_data = std::move(x.m_writer_reader_data);
 
             break;
 
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             m_locator2locator_data = std::move(x.m_locator2locator_data);
 
             break;
 
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             m_entity_data = std::move(x.m_entity_data);
 
             break;
 
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             m_entity2locator_traffic = std::move(x.m_entity2locator_traffic);
 
             break;
 
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             m_entity_count = std::move(x.m_entity_count);
 
             break;
 
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             m_discovery_time = std::move(x.m_discovery_time);
 
             break;
 
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             m_sample_identity_count = std::move(x.m_sample_identity_count);
 
             break;
 
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             m_physical_data = std::move(x.m_physical_data);
 
             break;
@@ -2369,51 +2372,51 @@ Data& Data::operator =(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             m_writer_reader_data = x.m_writer_reader_data;
             break;
 
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             m_locator2locator_data = x.m_locator2locator_data;
             break;
 
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             m_entity_data = x.m_entity_data;
             break;
 
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             m_entity2locator_traffic = x.m_entity2locator_traffic;
             break;
 
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             m_entity_count = x.m_entity_count;
             break;
 
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             m_discovery_time = x.m_discovery_time;
             break;
 
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             m_sample_identity_count = x.m_sample_identity_count;
             break;
 
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             m_physical_data = x.m_physical_data;
             break;
 
@@ -2431,58 +2434,58 @@ Data& Data::operator =(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             m_writer_reader_data = std::move(x.m_writer_reader_data);
 
             break;
 
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             m_locator2locator_data = std::move(x.m_locator2locator_data);
 
             break;
 
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             m_entity_data = std::move(x.m_entity_data);
 
             break;
 
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             m_entity2locator_traffic = std::move(x.m_entity2locator_traffic);
 
             break;
 
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             m_entity_count = std::move(x.m_entity_count);
 
             break;
 
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             m_discovery_time = std::move(x.m_discovery_time);
 
             break;
 
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             m_sample_identity_count = std::move(x.m_sample_identity_count);
 
             break;
 
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             m_physical_data = std::move(x.m_physical_data);
 
             break;
@@ -2504,51 +2507,51 @@ bool Data::operator ==(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             return (m_writer_reader_data == x.m_writer_reader_data);
             break;
 
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             return (m_locator2locator_data == x.m_locator2locator_data);
             break;
 
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             return (m_entity_data == x.m_entity_data);
             break;
 
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             return (m_entity2locator_traffic == x.m_entity2locator_traffic);
             break;
 
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             return (m_entity_count == x.m_entity_count);
             break;
 
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             return (m_discovery_time == x.m_discovery_time);
             break;
 
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             return (m_sample_identity_count == x.m_sample_identity_count);
             break;
 
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             return (m_physical_data == x.m_physical_data);
             break;
 
@@ -2565,16 +2568,16 @@ bool Data::operator !=(
 }
 
 void Data::_d(
-        eprosima::fastdds::statistics::EventKind __d)
+        uint32_t __d)
 {
     bool b = false;
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+                case EventKind::HISTORY2HISTORY_LATENCY:
                     b = true;
                     break;
                 default:
@@ -2583,10 +2586,10 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::NETWORK_LATENCY:
+                case EventKind::NETWORK_LATENCY:
                     b = true;
                     break;
                 default:
@@ -2595,12 +2598,12 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-                case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+                case EventKind::PUBLICATION_THROUGHPUT:
+                case EventKind::SUBSCRIPTION_THROUGHPUT:
                     b = true;
                     break;
                 default:
@@ -2609,12 +2612,12 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::RTPS_SENT:
-                case eprosima::fastdds::statistics::RTPS_LOST:
+                case EventKind::RTPS_SENT:
+                case EventKind::RTPS_LOST:
                     b = true;
                     break;
                 default:
@@ -2623,24 +2626,24 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::RESENT_DATAS:
-                case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-                case eprosima::fastdds::statistics::ACKNACK_COUNT:
-                case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-                case eprosima::fastdds::statistics::GAP_COUNT:
-                case eprosima::fastdds::statistics::DATA_COUNT:
-                case eprosima::fastdds::statistics::PDP_PACKETS:
-                case eprosima::fastdds::statistics::EDP_PACKETS:
+                case EventKind::RESENT_DATAS:
+                case EventKind::HEARTBEAT_COUNT:
+                case EventKind::ACKNACK_COUNT:
+                case EventKind::NACKFRAG_COUNT:
+                case EventKind::GAP_COUNT:
+                case EventKind::DATA_COUNT:
+                case EventKind::PDP_PACKETS:
+                case EventKind::EDP_PACKETS:
                     b = true;
                     break;
                 default:
@@ -2649,10 +2652,10 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+                case EventKind::DISCOVERED_ENTITY:
                     b = true;
                     break;
                 default:
@@ -2661,10 +2664,10 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::SAMPLE_DATAS:
+                case EventKind::SAMPLE_DATAS:
                     b = true;
                     break;
                 default:
@@ -2673,10 +2676,10 @@ void Data::_d(
             break;
 
 
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             switch (__d)
             {
-                case eprosima::fastdds::statistics::PHYSICAL_DATA:
+                case EventKind::PHYSICAL_DATA:
                     b = true;
                     break;
                 default:
@@ -2696,12 +2699,12 @@ void Data::_d(
     m__d = __d;
 }
 
-eprosima::fastdds::statistics::EventKind Data::_d() const
+uint32_t Data::_d() const
 {
     return m__d;
 }
 
-eprosima::fastdds::statistics::EventKind& Data::_d()
+uint32_t& Data::_d()
 {
     return m__d;
 }
@@ -2710,7 +2713,7 @@ void Data::writer_reader_data(
         const eprosima::fastdds::statistics::WriterReaderData& _writer_reader_data)
 {
     m_writer_reader_data = _writer_reader_data;
-    m__d = eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY;
+    m__d = EventKind::HISTORY2HISTORY_LATENCY;
 
 }
 
@@ -2718,7 +2721,7 @@ void Data::writer_reader_data(
         eprosima::fastdds::statistics::WriterReaderData&& _writer_reader_data)
 {
     m_writer_reader_data = std::move(_writer_reader_data);
-    m__d = eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY;
+    m__d = EventKind::HISTORY2HISTORY_LATENCY;
 
 }
 
@@ -2728,7 +2731,7 @@ const eprosima::fastdds::statistics::WriterReaderData& Data::writer_reader_data(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             b = true;
             break;
         default:
@@ -2749,7 +2752,7 @@ eprosima::fastdds::statistics::WriterReaderData& Data::writer_reader_data()
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::HISTORY2HISTORY_LATENCY:
+        case EventKind::HISTORY2HISTORY_LATENCY:
             b = true;
             break;
         default:
@@ -2769,7 +2772,7 @@ void Data::locator2locator_data(
         const eprosima::fastdds::statistics::Locator2LocatorData& _locator2locator_data)
 {
     m_locator2locator_data = _locator2locator_data;
-    m__d = eprosima::fastdds::statistics::NETWORK_LATENCY;
+    m__d = EventKind::NETWORK_LATENCY;
 
 }
 
@@ -2777,7 +2780,7 @@ void Data::locator2locator_data(
         eprosima::fastdds::statistics::Locator2LocatorData&& _locator2locator_data)
 {
     m_locator2locator_data = std::move(_locator2locator_data);
-    m__d = eprosima::fastdds::statistics::NETWORK_LATENCY;
+    m__d = EventKind::NETWORK_LATENCY;
 
 }
 
@@ -2787,7 +2790,7 @@ const eprosima::fastdds::statistics::Locator2LocatorData& Data::locator2locator_
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             b = true;
             break;
         default:
@@ -2808,7 +2811,7 @@ eprosima::fastdds::statistics::Locator2LocatorData& Data::locator2locator_data()
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::NETWORK_LATENCY:
+        case EventKind::NETWORK_LATENCY:
             b = true;
             break;
         default:
@@ -2828,7 +2831,7 @@ void Data::entity_data(
         const eprosima::fastdds::statistics::EntityData& _entity_data)
 {
     m_entity_data = _entity_data;
-    m__d = eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT;
+    m__d = EventKind::PUBLICATION_THROUGHPUT;
 
 }
 
@@ -2836,7 +2839,7 @@ void Data::entity_data(
         eprosima::fastdds::statistics::EntityData&& _entity_data)
 {
     m_entity_data = std::move(_entity_data);
-    m__d = eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT;
+    m__d = EventKind::PUBLICATION_THROUGHPUT;
 
 }
 
@@ -2846,8 +2849,8 @@ const eprosima::fastdds::statistics::EntityData& Data::entity_data() const
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             b = true;
             break;
         default:
@@ -2868,8 +2871,8 @@ eprosima::fastdds::statistics::EntityData& Data::entity_data()
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::PUBLICATION_THROUGHPUT:
-        case eprosima::fastdds::statistics::SUBSCRIPTION_THROUGHPUT:
+        case EventKind::PUBLICATION_THROUGHPUT:
+        case EventKind::SUBSCRIPTION_THROUGHPUT:
             b = true;
             break;
         default:
@@ -2889,7 +2892,7 @@ void Data::entity2locator_traffic(
         const eprosima::fastdds::statistics::Entity2LocatorTraffic& _entity2locator_traffic)
 {
     m_entity2locator_traffic = _entity2locator_traffic;
-    m__d = eprosima::fastdds::statistics::RTPS_SENT;
+    m__d = EventKind::RTPS_SENT;
 
 }
 
@@ -2897,7 +2900,7 @@ void Data::entity2locator_traffic(
         eprosima::fastdds::statistics::Entity2LocatorTraffic&& _entity2locator_traffic)
 {
     m_entity2locator_traffic = std::move(_entity2locator_traffic);
-    m__d = eprosima::fastdds::statistics::RTPS_SENT;
+    m__d = EventKind::RTPS_SENT;
 
 }
 
@@ -2907,8 +2910,8 @@ const eprosima::fastdds::statistics::Entity2LocatorTraffic& Data::entity2locator
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             b = true;
             break;
         default:
@@ -2929,8 +2932,8 @@ eprosima::fastdds::statistics::Entity2LocatorTraffic& Data::entity2locator_traff
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::RTPS_SENT:
-        case eprosima::fastdds::statistics::RTPS_LOST:
+        case EventKind::RTPS_SENT:
+        case EventKind::RTPS_LOST:
             b = true;
             break;
         default:
@@ -2950,7 +2953,7 @@ void Data::entity_count(
         const eprosima::fastdds::statistics::EntityCount& _entity_count)
 {
     m_entity_count = _entity_count;
-    m__d = eprosima::fastdds::statistics::RESENT_DATAS;
+    m__d = EventKind::RESENT_DATAS;
 
 }
 
@@ -2958,7 +2961,7 @@ void Data::entity_count(
         eprosima::fastdds::statistics::EntityCount&& _entity_count)
 {
     m_entity_count = std::move(_entity_count);
-    m__d = eprosima::fastdds::statistics::RESENT_DATAS;
+    m__d = EventKind::RESENT_DATAS;
 
 }
 
@@ -2968,14 +2971,14 @@ const eprosima::fastdds::statistics::EntityCount& Data::entity_count() const
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             b = true;
             break;
         default:
@@ -2996,14 +2999,14 @@ eprosima::fastdds::statistics::EntityCount& Data::entity_count()
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::RESENT_DATAS:
-        case eprosima::fastdds::statistics::HEARTBEAT_COUNT:
-        case eprosima::fastdds::statistics::ACKNACK_COUNT:
-        case eprosima::fastdds::statistics::NACKFRAG_COUNT:
-        case eprosima::fastdds::statistics::GAP_COUNT:
-        case eprosima::fastdds::statistics::DATA_COUNT:
-        case eprosima::fastdds::statistics::PDP_PACKETS:
-        case eprosima::fastdds::statistics::EDP_PACKETS:
+        case EventKind::RESENT_DATAS:
+        case EventKind::HEARTBEAT_COUNT:
+        case EventKind::ACKNACK_COUNT:
+        case EventKind::NACKFRAG_COUNT:
+        case EventKind::GAP_COUNT:
+        case EventKind::DATA_COUNT:
+        case EventKind::PDP_PACKETS:
+        case EventKind::EDP_PACKETS:
             b = true;
             break;
         default:
@@ -3023,7 +3026,7 @@ void Data::discovery_time(
         const eprosima::fastdds::statistics::DiscoveryTime& _discovery_time)
 {
     m_discovery_time = _discovery_time;
-    m__d = eprosima::fastdds::statistics::DISCOVERED_ENTITY;
+    m__d = EventKind::DISCOVERED_ENTITY;
 
 }
 
@@ -3031,7 +3034,7 @@ void Data::discovery_time(
         eprosima::fastdds::statistics::DiscoveryTime&& _discovery_time)
 {
     m_discovery_time = std::move(_discovery_time);
-    m__d = eprosima::fastdds::statistics::DISCOVERED_ENTITY;
+    m__d = EventKind::DISCOVERED_ENTITY;
 
 }
 
@@ -3041,7 +3044,7 @@ const eprosima::fastdds::statistics::DiscoveryTime& Data::discovery_time() const
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             b = true;
             break;
         default:
@@ -3062,7 +3065,7 @@ eprosima::fastdds::statistics::DiscoveryTime& Data::discovery_time()
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::DISCOVERED_ENTITY:
+        case EventKind::DISCOVERED_ENTITY:
             b = true;
             break;
         default:
@@ -3082,7 +3085,7 @@ void Data::sample_identity_count(
         const eprosima::fastdds::statistics::SampleIdentityCount& _sample_identity_count)
 {
     m_sample_identity_count = _sample_identity_count;
-    m__d = eprosima::fastdds::statistics::SAMPLE_DATAS;
+    m__d = EventKind::SAMPLE_DATAS;
 
 }
 
@@ -3090,7 +3093,7 @@ void Data::sample_identity_count(
         eprosima::fastdds::statistics::SampleIdentityCount&& _sample_identity_count)
 {
     m_sample_identity_count = std::move(_sample_identity_count);
-    m__d = eprosima::fastdds::statistics::SAMPLE_DATAS;
+    m__d = EventKind::SAMPLE_DATAS;
 
 }
 
@@ -3100,7 +3103,7 @@ const eprosima::fastdds::statistics::SampleIdentityCount& Data::sample_identity_
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             b = true;
             break;
         default:
@@ -3121,7 +3124,7 @@ eprosima::fastdds::statistics::SampleIdentityCount& Data::sample_identity_count(
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::SAMPLE_DATAS:
+        case EventKind::SAMPLE_DATAS:
             b = true;
             break;
         default:
@@ -3141,7 +3144,7 @@ void Data::physical_data(
         const eprosima::fastdds::statistics::PhysicalData& _physical_data)
 {
     m_physical_data = _physical_data;
-    m__d = eprosima::fastdds::statistics::PHYSICAL_DATA;
+    m__d = EventKind::PHYSICAL_DATA;
 
 }
 
@@ -3149,7 +3152,7 @@ void Data::physical_data(
         eprosima::fastdds::statistics::PhysicalData&& _physical_data)
 {
     m_physical_data = std::move(_physical_data);
-    m__d = eprosima::fastdds::statistics::PHYSICAL_DATA;
+    m__d = EventKind::PHYSICAL_DATA;
 
 }
 
@@ -3159,7 +3162,7 @@ const eprosima::fastdds::statistics::PhysicalData& Data::physical_data() const
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             b = true;
             break;
         default:
@@ -3180,7 +3183,7 @@ eprosima::fastdds::statistics::PhysicalData& Data::physical_data()
 
     switch (m__d)
     {
-        case eprosima::fastdds::statistics::PHYSICAL_DATA:
+        case EventKind::PHYSICAL_DATA:
             b = true;
             break;
         default:

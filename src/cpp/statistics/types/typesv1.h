@@ -2699,31 +2699,42 @@ namespace eprosima {
 
             };
 
-            /*!
-             * @brief This class represents the bitmask EventKind defined by the user in the IDL file.
-             * @ingroup types
-             */
-            enum EventKindBits : uint32_t
-            {
-                HISTORY2HISTORY_LATENCY = 0x01ull << 0,
-                NETWORK_LATENCY = 0x01ull << 1,
-                PUBLICATION_THROUGHPUT = 0x01ull << 2,
-                SUBSCRIPTION_THROUGHPUT = 0x01ull << 3,
-                RTPS_SENT = 0x01ull << 4,
-                RTPS_LOST = 0x01ull << 5,
-                RESENT_DATAS = 0x01ull << 6,
-                HEARTBEAT_COUNT = 0x01ull << 7,
-                ACKNACK_COUNT = 0x01ull << 8,
-                NACKFRAG_COUNT = 0x01ull << 9,
-                GAP_COUNT = 0x01ull << 10,
-                DATA_COUNT = 0x01ull << 11,
-                PDP_PACKETS = 0x01ull << 12,
-                EDP_PACKETS = 0x01ull << 13,
-                DISCOVERED_ENTITY = 0x01ull << 14,
-                SAMPLE_DATAS = 0x01ull << 15,
-                PHYSICAL_DATA = 0x01ull << 16
-            };
-            typedef uint32_t EventKind;
+            namespace EventKind {
+                const uint32_t HISTORY2HISTORY_LATENCY = 1;
+
+                const uint32_t NETWORK_LATENCY = 2;
+
+                const uint32_t PUBLICATION_THROUGHPUT = 4;
+
+                const uint32_t SUBSCRIPTION_THROUGHPUT = 8;
+
+                const uint32_t RTPS_SENT = 16;
+
+                const uint32_t RTPS_LOST = 32;
+
+                const uint32_t RESENT_DATAS = 64;
+
+                const uint32_t HEARTBEAT_COUNT = 128;
+
+                const uint32_t ACKNACK_COUNT = 256;
+
+                const uint32_t NACKFRAG_COUNT = 512;
+
+                const uint32_t GAP_COUNT = 1024;
+
+                const uint32_t DATA_COUNT = 2048;
+
+                const uint32_t PDP_PACKETS = 4096;
+
+                const uint32_t EDP_PACKETS = 8192;
+
+                const uint32_t DISCOVERED_ENTITY = 16384;
+
+                const uint32_t SAMPLE_DATAS = 32768;
+
+                const uint32_t PHYSICAL_DATA = 65536;
+
+            } // namespace EventKind
 
 
             /*!
@@ -2792,19 +2803,19 @@ namespace eprosima {
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
                  */
                 eProsima_user_DllExport void _d(
-                        eprosima::fastdds::statistics::EventKind __d);
+                        uint32_t __d);
 
                 /*!
                  * @brief This function returns the value of the discriminator.
                  * @return Value of the discriminator
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::EventKind _d() const;
+                eProsima_user_DllExport uint32_t _d() const;
 
                 /*!
                  * @brief This function returns a reference to the discriminator.
                  * @return Reference to the discriminator.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::EventKind& _d();
+                eProsima_user_DllExport uint32_t& _d();
 
                 /*!
                  * @brief This function copies the value in member writer_reader_data
@@ -3070,7 +3081,7 @@ namespace eprosima {
 
             private:
 
-                eprosima::fastdds::statistics::EventKind m__d;
+                uint32_t m__d;
 
                 eprosima::fastdds::statistics::WriterReaderData m_writer_reader_data;
                 eprosima::fastdds::statistics::Locator2LocatorData m_locator2locator_data;
