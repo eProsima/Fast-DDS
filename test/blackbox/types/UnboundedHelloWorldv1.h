@@ -27,8 +27,6 @@
 #define _FAST_DDS_GENERATED_UNBOUNDEDHELLOWORLD_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
-
 #include <array>
 #include <bitset>
 #include <cstdint>
@@ -36,6 +34,8 @@
 #include <stdint.h>
 #include <string>
 #include <vector>
+
+#include <fastcdr/cdr/fixed_size_string.hpp>
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)

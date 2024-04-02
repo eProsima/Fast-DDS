@@ -79,36 +79,36 @@ constexpr const char* PHYSICAL_DATA_TOPIC_ALIAS = "PHYSICAL_DATA_TOPIC";
 constexpr const char* MONITOR_SERVICE_TOPIC_ALIAS = "MONITOR_SERVICE_TOPIC";
 
 static constexpr uint32_t participant_statistics_mask =
-        EventKindBits::RTPS_SENT | EventKindBits::RTPS_LOST | EventKindBits::NETWORK_LATENCY |
-        EventKindBits::EDP_PACKETS | EventKindBits::PDP_PACKETS |
-        EventKindBits::PHYSICAL_DATA | EventKindBits::DISCOVERED_ENTITY;
+        EventKind::RTPS_SENT | EventKind::RTPS_LOST | EventKind::NETWORK_LATENCY |
+        EventKind::EDP_PACKETS | EventKind::PDP_PACKETS |
+        EventKind::PHYSICAL_DATA | EventKind::DISCOVERED_ENTITY;
 
 struct ValidEntry
 {
     const char* alias;
     const char* name;
-    EventKind event_kind;
+    uint32_t event_kind;
 };
 
 static const ValidEntry valid_entries[] =
 {
-    {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         HISTORY2HISTORY_LATENCY},
-    {NETWORK_LATENCY_TOPIC_ALIAS,         NETWORK_LATENCY_TOPIC,         NETWORK_LATENCY},
-    {PUBLICATION_THROUGHPUT_TOPIC_ALIAS,  PUBLICATION_THROUGHPUT_TOPIC,  PUBLICATION_THROUGHPUT},
-    {SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS, SUBSCRIPTION_THROUGHPUT_TOPIC, SUBSCRIPTION_THROUGHPUT},
-    {RTPS_SENT_TOPIC_ALIAS,               RTPS_SENT_TOPIC,               RTPS_SENT},
-    {RTPS_LOST_TOPIC_ALIAS,               RTPS_LOST_TOPIC,               RTPS_LOST},
-    {RESENT_DATAS_TOPIC_ALIAS,            RESENT_DATAS_TOPIC,            RESENT_DATAS},
-    {HEARTBEAT_COUNT_TOPIC_ALIAS,         HEARTBEAT_COUNT_TOPIC,         HEARTBEAT_COUNT},
-    {ACKNACK_COUNT_TOPIC_ALIAS,           ACKNACK_COUNT_TOPIC,           ACKNACK_COUNT},
-    {NACKFRAG_COUNT_TOPIC_ALIAS,          NACKFRAG_COUNT_TOPIC,          NACKFRAG_COUNT},
-    {GAP_COUNT_TOPIC_ALIAS,               GAP_COUNT_TOPIC,               GAP_COUNT},
-    {DATA_COUNT_TOPIC_ALIAS,              DATA_COUNT_TOPIC,              DATA_COUNT},
-    {PDP_PACKETS_TOPIC_ALIAS,             PDP_PACKETS_TOPIC,             PDP_PACKETS},
-    {EDP_PACKETS_TOPIC_ALIAS,             EDP_PACKETS_TOPIC,             EDP_PACKETS},
-    {DISCOVERY_TOPIC_ALIAS,               DISCOVERY_TOPIC,               DISCOVERED_ENTITY},
-    {SAMPLE_DATAS_TOPIC_ALIAS,            SAMPLE_DATAS_TOPIC,            SAMPLE_DATAS},
-    {PHYSICAL_DATA_TOPIC_ALIAS,           PHYSICAL_DATA_TOPIC,           PHYSICAL_DATA}
+    {HISTORY_LATENCY_TOPIC_ALIAS,         HISTORY_LATENCY_TOPIC,         EventKind::HISTORY2HISTORY_LATENCY},
+    {NETWORK_LATENCY_TOPIC_ALIAS,         NETWORK_LATENCY_TOPIC,         EventKind::NETWORK_LATENCY},
+    {PUBLICATION_THROUGHPUT_TOPIC_ALIAS,  PUBLICATION_THROUGHPUT_TOPIC,  EventKind::PUBLICATION_THROUGHPUT},
+    {SUBSCRIPTION_THROUGHPUT_TOPIC_ALIAS, SUBSCRIPTION_THROUGHPUT_TOPIC, EventKind::SUBSCRIPTION_THROUGHPUT},
+    {RTPS_SENT_TOPIC_ALIAS,               RTPS_SENT_TOPIC,               EventKind::RTPS_SENT},
+    {RTPS_LOST_TOPIC_ALIAS,               RTPS_LOST_TOPIC,               EventKind::RTPS_LOST},
+    {RESENT_DATAS_TOPIC_ALIAS,            RESENT_DATAS_TOPIC,            EventKind::RESENT_DATAS},
+    {HEARTBEAT_COUNT_TOPIC_ALIAS,         HEARTBEAT_COUNT_TOPIC,         EventKind::HEARTBEAT_COUNT},
+    {ACKNACK_COUNT_TOPIC_ALIAS,           ACKNACK_COUNT_TOPIC,           EventKind::ACKNACK_COUNT},
+    {NACKFRAG_COUNT_TOPIC_ALIAS,          NACKFRAG_COUNT_TOPIC,          EventKind::NACKFRAG_COUNT},
+    {GAP_COUNT_TOPIC_ALIAS,               GAP_COUNT_TOPIC,               EventKind::GAP_COUNT},
+    {DATA_COUNT_TOPIC_ALIAS,              DATA_COUNT_TOPIC,              EventKind::DATA_COUNT},
+    {PDP_PACKETS_TOPIC_ALIAS,             PDP_PACKETS_TOPIC,             EventKind::PDP_PACKETS},
+    {EDP_PACKETS_TOPIC_ALIAS,             EDP_PACKETS_TOPIC,             EventKind::EDP_PACKETS},
+    {DISCOVERY_TOPIC_ALIAS,               DISCOVERY_TOPIC,               EventKind::DISCOVERED_ENTITY},
+    {SAMPLE_DATAS_TOPIC_ALIAS,            SAMPLE_DATAS_TOPIC,            EventKind::SAMPLE_DATAS},
+    {PHYSICAL_DATA_TOPIC_ALIAS,           PHYSICAL_DATA_TOPIC,           EventKind::PHYSICAL_DATA}
 };
 
 ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
@@ -116,7 +116,7 @@ ReturnCode_t DomainParticipantImpl::enable_statistics_datawriter(
         const efd::DataWriterQos& dwqos)
 {
     std::string use_topic_name;
-    EventKind event_kind;
+    uint32_t event_kind;
     if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -215,7 +215,7 @@ ReturnCode_t DomainParticipantImpl::disable_statistics_datawriter(
 {
     ReturnCode_t ret = ReturnCode_t::RETCODE_OK;
     std::string use_topic_name;
-    EventKind event_kind;
+    uint32_t event_kind;
     if (!transform_and_check_topic_name(topic_name, use_topic_name, event_kind))
     {
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -499,7 +499,7 @@ bool DomainParticipantImpl::is_statistics_topic_name(
 bool DomainParticipantImpl::transform_and_check_topic_name(
         const std::string& topic_name_or_alias,
         std::string& topic_name,
-        EventKind& event_kind) noexcept
+        uint32_t& event_kind) noexcept
 {
     for (const ValidEntry& entry : valid_entries)
     {

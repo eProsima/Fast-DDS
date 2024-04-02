@@ -29,7 +29,7 @@ namespace statistics {
 namespace dds {
 
 void DomainParticipantStatisticsListener::set_datawriter(
-        EventKind kind,
+        uint32_t kind,
         DataWriter* writer)
 {
     std::lock_guard<std::mutex> guard(mtx_);
@@ -51,7 +51,7 @@ void DomainParticipantStatisticsListener::on_statistics_data(
         const Data& statistics_data)
 {
     DataWriter* writer = nullptr;
-    EventKind data_kind = statistics_data._d();
+    uint32_t data_kind = statistics_data._d();
 
     // Find corresponding writer
     {
@@ -69,44 +69,44 @@ void DomainParticipantStatisticsListener::on_statistics_data(
 
         switch (data_kind)
         {
-            case EventKindBits::HISTORY2HISTORY_LATENCY:
+            case EventKind::HISTORY2HISTORY_LATENCY:
                 data_sample = &statistics_data.writer_reader_data();
                 break;
 
-            case EventKindBits::NETWORK_LATENCY:
+            case EventKind::NETWORK_LATENCY:
                 data_sample = &statistics_data.locator2locator_data();
                 break;
 
-            case EventKindBits::PUBLICATION_THROUGHPUT:
-            case EventKindBits::SUBSCRIPTION_THROUGHPUT:
+            case EventKind::PUBLICATION_THROUGHPUT:
+            case EventKind::SUBSCRIPTION_THROUGHPUT:
                 data_sample = &statistics_data.entity_data();
                 break;
 
-            case EventKindBits::RTPS_SENT:
-            case EventKindBits::RTPS_LOST:
+            case EventKind::RTPS_SENT:
+            case EventKind::RTPS_LOST:
                 data_sample = &statistics_data.entity2locator_traffic();
                 break;
 
-            case EventKindBits::RESENT_DATAS:
-            case EventKindBits::HEARTBEAT_COUNT:
-            case EventKindBits::ACKNACK_COUNT:
-            case EventKindBits::NACKFRAG_COUNT:
-            case EventKindBits::GAP_COUNT:
-            case EventKindBits::DATA_COUNT:
-            case EventKindBits::PDP_PACKETS:
-            case EventKindBits::EDP_PACKETS:
+            case EventKind::RESENT_DATAS:
+            case EventKind::HEARTBEAT_COUNT:
+            case EventKind::ACKNACK_COUNT:
+            case EventKind::NACKFRAG_COUNT:
+            case EventKind::GAP_COUNT:
+            case EventKind::DATA_COUNT:
+            case EventKind::PDP_PACKETS:
+            case EventKind::EDP_PACKETS:
                 data_sample = &statistics_data.entity_count();
                 break;
 
-            case EventKindBits::DISCOVERED_ENTITY:
+            case EventKind::DISCOVERED_ENTITY:
                 data_sample = &statistics_data.discovery_time();
                 break;
 
-            case EventKindBits::SAMPLE_DATAS:
+            case EventKind::SAMPLE_DATAS:
                 data_sample = &statistics_data.sample_identity_count();
                 break;
 
-            case EventKindBits::PHYSICAL_DATA:
+            case EventKind::PHYSICAL_DATA:
                 data_sample = &statistics_data.physical_data();
                 break;
         }
