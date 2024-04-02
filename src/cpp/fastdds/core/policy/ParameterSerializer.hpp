@@ -1039,7 +1039,7 @@ inline bool ParameterSerializer<ParameterToken_t>::read_content_from_cdr_message
 
     parameter.length = parameter_length;
     uint32_t pos_ref = cdr_message->pos;
-    bool valid =  fastrtps::rtps::CDRMessage::readDataHolder(cdr_message, parameter.token);
+    bool valid =  fastrtps::rtps::CDRMessage::readDataHolder(cdr_message, parameter.token, parameter_length);
     uint32_t length_diff = cdr_message->pos - pos_ref;
     valid &= (parameter_length == length_diff);
     return valid;
