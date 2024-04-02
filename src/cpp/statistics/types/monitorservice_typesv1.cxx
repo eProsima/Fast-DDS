@@ -92,7 +92,7 @@ struct FindType {
 
 
 
-#define eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize 24ULL;
+#define eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize 28ULL;
 #define eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize 8ULL;
 #define eprosima_fastdds_statistics_QosPolicyCount_s_max_cdr_typesize 12ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize 12ULL;
@@ -1301,6 +1301,8 @@ DeadlineMissedStatus_s::DeadlineMissedStatus_s()
 {
     // unsigned long m_total_count
     m_total_count = 0;
+    // unsigned long m_total_count_change
+    m_total_count_change = 0;
     // octet m_last_instance_handle
     memset(&m_last_instance_handle, 0, ((16)) * 1);
 
@@ -1316,6 +1318,9 @@ DeadlineMissedStatus_s::DeadlineMissedStatus_s(
     m_total_count = x.m_total_count;
 
 
+    m_total_count_change = x.m_total_count_change;
+
+
     m_last_instance_handle = x.m_last_instance_handle;
 
 }
@@ -1324,6 +1329,9 @@ DeadlineMissedStatus_s::DeadlineMissedStatus_s(
         DeadlineMissedStatus_s&& x) noexcept
 {
     m_total_count = x.m_total_count;
+
+
+    m_total_count_change = x.m_total_count_change;
 
 
     m_last_instance_handle = std::move(x.m_last_instance_handle);
@@ -1336,6 +1344,9 @@ DeadlineMissedStatus_s& DeadlineMissedStatus_s::operator =(
     m_total_count = x.m_total_count;
 
 
+    m_total_count_change = x.m_total_count_change;
+
+
     m_last_instance_handle = x.m_last_instance_handle;
 
     return *this;
@@ -1347,6 +1358,9 @@ DeadlineMissedStatus_s& DeadlineMissedStatus_s::operator =(
     m_total_count = x.m_total_count;
 
 
+    m_total_count_change = x.m_total_count_change;
+
+
     m_last_instance_handle = std::move(x.m_last_instance_handle);
 
     return *this;
@@ -1356,6 +1370,7 @@ bool DeadlineMissedStatus_s::operator ==(
         const DeadlineMissedStatus_s& x) const
 {
     return (m_total_count == x.m_total_count &&
+           m_total_count_change == x.m_total_count_change &&
            m_last_instance_handle == x.m_last_instance_handle);
 }
 
@@ -1382,6 +1397,9 @@ size_t DeadlineMissedStatus_s::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+
     current_alignment += (((16)) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
 
@@ -1395,6 +1413,8 @@ void DeadlineMissedStatus_s::serialize(
 {
     scdr << m_total_count;
 
+    scdr << m_total_count_change;
+
     scdr << m_last_instance_handle;
 
 
@@ -1404,6 +1424,10 @@ void DeadlineMissedStatus_s::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_total_count;
+
+
+
+    dcdr >> m_total_count_change;
 
 
 
@@ -1450,6 +1474,35 @@ uint32_t DeadlineMissedStatus_s::total_count() const
 uint32_t& DeadlineMissedStatus_s::total_count()
 {
     return m_total_count;
+}
+
+
+/*!
+ * @brief This function sets a value in member total_count_change
+ * @param _total_count_change New value for member total_count_change
+ */
+void DeadlineMissedStatus_s::total_count_change(
+        uint32_t _total_count_change)
+{
+    m_total_count_change = _total_count_change;
+}
+
+/*!
+ * @brief This function returns the value of member total_count_change
+ * @return Value of member total_count_change
+ */
+uint32_t DeadlineMissedStatus_s::total_count_change() const
+{
+    return m_total_count_change;
+}
+
+/*!
+ * @brief This function returns a reference to member total_count_change
+ * @return Reference to member total_count_change
+ */
+uint32_t& DeadlineMissedStatus_s::total_count_change()
+{
+    return m_total_count_change;
 }
 
 

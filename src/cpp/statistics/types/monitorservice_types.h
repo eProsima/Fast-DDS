@@ -812,6 +812,26 @@ public:
 
 
     /*!
+     * @brief This function sets a value in member total_count_change
+     * @param _total_count_change New value for member total_count_change
+     */
+    eProsima_user_DllExport void total_count_change(
+            uint32_t _total_count_change);
+
+    /*!
+     * @brief This function returns the value of member total_count_change
+     * @return Value of member total_count_change
+     */
+    eProsima_user_DllExport uint32_t total_count_change() const;
+
+    /*!
+     * @brief This function returns a reference to member total_count_change
+     * @return Reference to member total_count_change
+     */
+    eProsima_user_DllExport uint32_t& total_count_change();
+
+
+    /*!
      * @brief This function copies the value in member last_instance_handle
      * @param _last_instance_handle New value to be copied in member last_instance_handle
      */
@@ -840,6 +860,7 @@ public:
 private:
 
     uint32_t m_total_count{0};
+    uint32_t m_total_count_change{0};
     std::array<uint8_t, 16> m_last_instance_handle{0};
 
 };

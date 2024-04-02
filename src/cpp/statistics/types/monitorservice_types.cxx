@@ -781,6 +781,7 @@ DeadlineMissedStatus_s::DeadlineMissedStatus_s(
         const DeadlineMissedStatus_s& x)
 {
     m_total_count = x.m_total_count;
+    m_total_count_change = x.m_total_count_change;
     m_last_instance_handle = x.m_last_instance_handle;
 }
 
@@ -788,6 +789,7 @@ DeadlineMissedStatus_s::DeadlineMissedStatus_s(
         DeadlineMissedStatus_s&& x) noexcept
 {
     m_total_count = x.m_total_count;
+    m_total_count_change = x.m_total_count_change;
     m_last_instance_handle = std::move(x.m_last_instance_handle);
 }
 
@@ -796,6 +798,7 @@ DeadlineMissedStatus_s& DeadlineMissedStatus_s::operator =(
 {
 
     m_total_count = x.m_total_count;
+    m_total_count_change = x.m_total_count_change;
     m_last_instance_handle = x.m_last_instance_handle;
     return *this;
 }
@@ -805,6 +808,7 @@ DeadlineMissedStatus_s& DeadlineMissedStatus_s::operator =(
 {
 
     m_total_count = x.m_total_count;
+    m_total_count_change = x.m_total_count_change;
     m_last_instance_handle = std::move(x.m_last_instance_handle);
     return *this;
 }
@@ -813,6 +817,7 @@ bool DeadlineMissedStatus_s::operator ==(
         const DeadlineMissedStatus_s& x) const
 {
     return (m_total_count == x.m_total_count &&
+           m_total_count_change == x.m_total_count_change &&
            m_last_instance_handle == x.m_last_instance_handle);
 }
 
@@ -848,6 +853,35 @@ uint32_t DeadlineMissedStatus_s::total_count() const
 uint32_t& DeadlineMissedStatus_s::total_count()
 {
     return m_total_count;
+}
+
+
+/*!
+ * @brief This function sets a value in member total_count_change
+ * @param _total_count_change New value for member total_count_change
+ */
+void DeadlineMissedStatus_s::total_count_change(
+        uint32_t _total_count_change)
+{
+    m_total_count_change = _total_count_change;
+}
+
+/*!
+ * @brief This function returns the value of member total_count_change
+ * @return Value of member total_count_change
+ */
+uint32_t DeadlineMissedStatus_s::total_count_change() const
+{
+    return m_total_count_change;
+}
+
+/*!
+ * @brief This function returns a reference to member total_count_change
+ * @return Reference to member total_count_change
+ */
+uint32_t& DeadlineMissedStatus_s::total_count_change()
+{
+    return m_total_count_change;
 }
 
 

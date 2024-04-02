@@ -67,6 +67,7 @@ module statistics {
 	struct DeadlineMissedStatus_s
 	{
 		unsigned long total_count;
+		unsigned long total_count_change;
 		octet last_instance_handle[16];
 	};
 

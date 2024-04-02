@@ -33,7 +33,7 @@ constexpr uint32_t eprosima_fastdds_statistics_BaseStatus_s_max_key_cdr_typesize
 
 
 
-constexpr uint32_t eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize {24UL};
+constexpr uint32_t eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize {28UL};
 constexpr uint32_t eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_key_cdr_typesize {0UL};
 
 
