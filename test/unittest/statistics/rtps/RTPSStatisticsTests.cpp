@@ -85,52 +85,52 @@ struct MockListener : IListener
         auto kind = data._d();
         switch (kind)
         {
-            case HISTORY2HISTORY_LATENCY:
+            case EventKind::HISTORY2HISTORY_LATENCY:
                 on_history_latency(data.writer_reader_data());
                 break;
-            case RTPS_SENT:
+            case EventKind::RTPS_SENT:
                 on_rtps_sent(data.entity2locator_traffic());
                 break;
-            case RTPS_LOST:
+            case EventKind::RTPS_LOST:
                 on_rtps_lost(data.entity2locator_traffic());
                 break;
-            case NETWORK_LATENCY:
+            case EventKind::NETWORK_LATENCY:
                 on_network_latency(data.locator2locator_data());
                 break;
-            case HEARTBEAT_COUNT:
+            case EventKind::HEARTBEAT_COUNT:
                 on_heartbeat_count(data.entity_count());
                 break;
-            case ACKNACK_COUNT:
+            case EventKind::ACKNACK_COUNT:
                 on_acknack_count(data.entity_count());
                 break;
-            case DATA_COUNT:
+            case EventKind::DATA_COUNT:
                 on_data_count(data.entity_count());
                 break;
-            case RESENT_DATAS:
+            case EventKind::RESENT_DATAS:
                 on_resent_count(data.entity_count());
                 break;
-            case GAP_COUNT:
+            case EventKind::GAP_COUNT:
                 on_gap_count(data.entity_count());
                 break;
-            case NACKFRAG_COUNT:
+            case EventKind::NACKFRAG_COUNT:
                 on_nackfrag_count(data.entity_count());
                 break;
-            case DISCOVERED_ENTITY:
+            case EventKind::DISCOVERED_ENTITY:
                 on_entity_discovery(data.discovery_time());
                 break;
-            case PDP_PACKETS:
+            case EventKind::PDP_PACKETS:
                 on_pdp_packets(data.entity_count());
                 break;
-            case EDP_PACKETS:
+            case EventKind::EDP_PACKETS:
                 on_edp_packets(data.entity_count());
                 break;
-            case SAMPLE_DATAS:
+            case EventKind::SAMPLE_DATAS:
                 on_sample_datas(data.sample_identity_count());
                 break;
-            case PUBLICATION_THROUGHPUT:
+            case EventKind::PUBLICATION_THROUGHPUT:
                 on_publisher_throughput(data.entity_data());
                 break;
-            case SUBSCRIPTION_THROUGHPUT:
+            case EventKind::SUBSCRIPTION_THROUGHPUT:
                 on_subscriber_throughput(data.entity_data());
                 break;
             default:
@@ -155,7 +155,7 @@ struct MockListener : IListener
     MOCK_METHOD1(on_sample_datas, void(const eprosima::fastdds::statistics::SampleIdentityCount&));
     MOCK_METHOD1(on_publisher_throughput, void(const eprosima::fastdds::statistics::EntityData&));
     MOCK_METHOD1(on_subscriber_throughput, void(const eprosima::fastdds::statistics::EntityData&));
-    MOCK_METHOD1(on_unexpected_kind, void(eprosima::fastdds::statistics::EventKind));
+    MOCK_METHOD1(on_unexpected_kind, void(uint32_t));
 };
 
 class RTPSStatisticsTestsImpl
@@ -500,9 +500,9 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_management)
     auto nolistener = listener1;
     nolistener.reset();
 
-    EventKind kind = EventKindBits::PUBLICATION_THROUGHPUT;
-    EventKind another_kind = EventKindBits::SUBSCRIPTION_THROUGHPUT;
-    EventKind yet_another_kind = EventKindBits::NETWORK_LATENCY;
+    uint32_t kind = EventKind::PUBLICATION_THROUGHPUT;
+    uint32_t another_kind = EventKind::SUBSCRIPTION_THROUGHPUT;
+    uint32_t yet_another_kind = EventKind::NETWORK_LATENCY;
 
     // test the participant apis
     // + fails to remove an empty listener
@@ -632,13 +632,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
                 // participant specific callbacks
                 auto participant_listener = make_shared<MockListener>();
                 ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
-                        EventKindBits::RTPS_SENT | EventKindBits::NETWORK_LATENCY | EventKindBits::RTPS_LOST));
+                        EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY | EventKind::RTPS_LOST));
 
                 // writer callbacks through participant listener
                 auto participant_writer_listener = make_shared<MockListener>();
                 ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
-                        EventKindBits::DATA_COUNT | EventKindBits::RESENT_DATAS |
-                        EventKindBits::PUBLICATION_THROUGHPUT | EventKindBits::SAMPLE_DATAS));
+                        EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
+                        EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
 
                 // writer specific callbacks
                 auto writer_listener = make_shared<MockListener>();
@@ -647,8 +647,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
                 // reader callbacks through participant listener
                 auto participant_reader_listener = make_shared<MockListener>();
                 ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener,
-                        EventKindBits::ACKNACK_COUNT | EventKindBits::HISTORY2HISTORY_LATENCY |
-                        EventKindBits::SUBSCRIPTION_THROUGHPUT));
+                        EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY |
+                        EventKind::SUBSCRIPTION_THROUGHPUT));
 
                 // reader specific callbacks
                 auto reader_listener = make_shared<MockListener>();
@@ -723,28 +723,28 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks)
                 EXPECT_TRUE(reader_->remove_statistics_listener(reader_listener));
 
                 EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener,
-                        EventKindBits::RTPS_SENT | EventKindBits::NETWORK_LATENCY | EventKindBits::RTPS_LOST));
+                        EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY | EventKind::RTPS_LOST));
                 EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
-                        EventKindBits::DATA_COUNT | EventKindBits::RESENT_DATAS |
-                        EventKindBits::PUBLICATION_THROUGHPUT | EventKindBits::SAMPLE_DATAS));
+                        EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
+                        EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
                 EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener,
-                        EventKindBits::ACKNACK_COUNT | EventKindBits::HISTORY2HISTORY_LATENCY |
-                        EventKindBits::SUBSCRIPTION_THROUGHPUT));
+                        EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY |
+                        EventKind::SUBSCRIPTION_THROUGHPUT));
             };
 
     // Check that setting the mask after creating the endpoints work
     uint32_t enable_writers_mask =
-            EventKindBits::HISTORY2HISTORY_LATENCY |
-            EventKindBits::NETWORK_LATENCY |
-            EventKindBits::PUBLICATION_THROUGHPUT |
-            EventKindBits::SUBSCRIPTION_THROUGHPUT |
-            EventKindBits::RTPS_SENT |
-            EventKindBits::RTPS_LOST |
-            EventKindBits::RESENT_DATAS |
-            EventKindBits::HEARTBEAT_COUNT |
-            EventKindBits::ACKNACK_COUNT |
-            EventKindBits::DATA_COUNT |
-            EventKindBits::SAMPLE_DATAS;
+            EventKind::HISTORY2HISTORY_LATENCY |
+            EventKind::NETWORK_LATENCY |
+            EventKind::PUBLICATION_THROUGHPUT |
+            EventKind::SUBSCRIPTION_THROUGHPUT |
+            EventKind::RTPS_SENT |
+            EventKind::RTPS_LOST |
+            EventKind::RESENT_DATAS |
+            EventKind::HEARTBEAT_COUNT |
+            EventKind::ACKNACK_COUNT |
+            EventKind::DATA_COUNT |
+            EventKind::SAMPLE_DATAS;
     create_endpoints(length, RELIABLE);
     participant_->set_enabled_statistics_writers_mask(enable_writers_mask);
     test_execution();
@@ -800,16 +800,16 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_fragmented)
         });
 
     uint32_t enable_writers_mask =
-            EventKindBits::HISTORY2HISTORY_LATENCY |
-            EventKindBits::HEARTBEAT_COUNT |
-            EventKindBits::ACKNACK_COUNT |
-            EventKindBits::NACKFRAG_COUNT |
-            EventKindBits::DATA_COUNT;
+            EventKind::HISTORY2HISTORY_LATENCY |
+            EventKind::HEARTBEAT_COUNT |
+            EventKind::ACKNACK_COUNT |
+            EventKind::NACKFRAG_COUNT |
+            EventKind::DATA_COUNT;
 
     // writer callbacks through participant listener
     auto participant_listener = make_shared<MockListener>();
-    uint32_t mask = EventKindBits::DATA_COUNT | EventKindBits::HEARTBEAT_COUNT
-            | EventKindBits::ACKNACK_COUNT | EventKindBits::NACKFRAG_COUNT | EventKindBits::HISTORY2HISTORY_LATENCY;
+    uint32_t mask = EventKind::DATA_COUNT | EventKind::HEARTBEAT_COUNT
+            | EventKind::ACKNACK_COUNT | EventKind::NACKFRAG_COUNT | EventKind::HISTORY2HISTORY_LATENCY;
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, mask));
     participant_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
@@ -910,13 +910,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
     // participant specific callbacks
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
-            EventKindBits::RTPS_SENT | EventKindBits::NETWORK_LATENCY | EventKindBits::RTPS_LOST));
+            EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY | EventKind::RTPS_LOST));
 
     // writer callbacks through participant listener
     auto participant_writer_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener,
-            EventKindBits::DATA_COUNT | EventKindBits::RESENT_DATAS |
-            EventKindBits::PUBLICATION_THROUGHPUT | EventKindBits::SAMPLE_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
+            EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
 
     // writer specific callbacks
     auto writer_listener = make_shared<MockListener>();
@@ -925,8 +925,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
     // reader callbacks through participant listener
     auto participant_reader_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_reader_listener,
-            EventKindBits::ACKNACK_COUNT | EventKindBits::HISTORY2HISTORY_LATENCY |
-            EventKindBits::SUBSCRIPTION_THROUGHPUT));
+            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY |
+            EventKind::SUBSCRIPTION_THROUGHPUT));
 
     // reader specific callbacks
     auto reader_listener = make_shared<MockListener>();
@@ -1001,13 +1001,13 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_callbacks_no_enabled_writer
     EXPECT_TRUE(reader_->remove_statistics_listener(reader_listener));
 
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener,
-            EventKindBits::RTPS_SENT | EventKindBits::NETWORK_LATENCY | EventKindBits::RTPS_LOST));
+            EventKind::RTPS_SENT | EventKind::NETWORK_LATENCY | EventKind::RTPS_LOST));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener,
-            EventKindBits::DATA_COUNT | EventKindBits::RESENT_DATAS |
-            EventKindBits::PUBLICATION_THROUGHPUT | EventKindBits::SAMPLE_DATAS));
+            EventKind::DATA_COUNT | EventKind::RESENT_DATAS |
+            EventKind::PUBLICATION_THROUGHPUT | EventKind::SAMPLE_DATAS));
     EXPECT_TRUE(participant_->remove_statistics_listener(participant_reader_listener,
-            EventKindBits::ACKNACK_COUNT | EventKindBits::HISTORY2HISTORY_LATENCY |
-            EventKindBits::SUBSCRIPTION_THROUGHPUT));
+            EventKind::ACKNACK_COUNT | EventKind::HISTORY2HISTORY_LATENCY |
+            EventKind::SUBSCRIPTION_THROUGHPUT));
 }
 
 /*
@@ -1021,14 +1021,14 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     using namespace std;
 
     uint32_t enable_writers_mask =
-            EventKindBits::PUBLICATION_THROUGHPUT |
-            EventKindBits::RESENT_DATAS |
-            EventKindBits::HEARTBEAT_COUNT |
-            EventKindBits::ACKNACK_COUNT |
-            EventKindBits::NACKFRAG_COUNT |
-            EventKindBits::GAP_COUNT |
-            EventKindBits::DATA_COUNT |
-            EventKindBits::SAMPLE_DATAS;
+            EventKind::PUBLICATION_THROUGHPUT |
+            EventKind::RESENT_DATAS |
+            EventKind::HEARTBEAT_COUNT |
+            EventKind::ACKNACK_COUNT |
+            EventKind::NACKFRAG_COUNT |
+            EventKind::GAP_COUNT |
+            EventKind::DATA_COUNT |
+            EventKind::SAMPLE_DATAS;
 
     // create the listeners and set expectations
     auto participant_writer_listener = make_shared<MockListener>();
@@ -1057,7 +1057,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
     writer_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // writer callback through participant listener
-    ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener, EventKindBits::GAP_COUNT));
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_writer_listener, EventKind::GAP_COUNT));
 
     // writer specific callbacks
     ASSERT_TRUE(writer_->add_statistics_listener(writer_listener));
@@ -1088,7 +1088,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_gap_callback)
 
     // release the listeners
     EXPECT_TRUE(writer_->remove_statistics_listener(writer_listener));
-    EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKindBits::GAP_COUNT));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_writer_listener, EventKind::GAP_COUNT));
 }
 
 /*
@@ -1102,14 +1102,14 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
     using namespace std;
 
     uint32_t enable_writers_mask =
-            EventKindBits::PDP_PACKETS |
-            EventKindBits::EDP_PACKETS |
-            EventKindBits::DISCOVERED_ENTITY;
+            EventKind::PDP_PACKETS |
+            EventKind::EDP_PACKETS |
+            EventKind::DISCOVERED_ENTITY;
 
     // create the listener and set expectations
     auto participant_listener = make_shared<MockListener>();
     ASSERT_TRUE(participant_->add_statistics_listener(participant_listener,
-            EventKindBits::DISCOVERED_ENTITY | EventKindBits::PDP_PACKETS | EventKindBits::EDP_PACKETS));
+            EventKind::DISCOVERED_ENTITY | EventKind::PDP_PACKETS | EventKind::EDP_PACKETS));
     participant_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // check callbacks on data exchange
@@ -1154,7 +1154,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_listener_discovery_callbacks)
     }
 
     // release the listener
-    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKindBits::DISCOVERED_ENTITY));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::DISCOVERED_ENTITY));
 }
 
 /*
@@ -1238,11 +1238,11 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_avoid_empty_resent_callbacks)
     uint16_t length = 255;
     create_lazy_writer(length, RELIABLE, TRANSIENT_LOCAL);
     uint32_t enable_writers_mask =
-            EventKindBits::HEARTBEAT_COUNT |
-            EventKindBits::DATA_COUNT |
-            EventKindBits::SAMPLE_DATAS |
-            EventKindBits::PUBLICATION_THROUGHPUT |
-            EventKindBits::RESENT_DATAS;
+            EventKind::HEARTBEAT_COUNT |
+            EventKind::DATA_COUNT |
+            EventKind::SAMPLE_DATAS |
+            EventKind::PUBLICATION_THROUGHPUT |
+            EventKind::RESENT_DATAS;
     writer_->set_enabled_statistics_writers_mask(enable_writers_mask);
 
     // writer specific callbacks
@@ -1345,8 +1345,8 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
 
     // create the listener and set expectations
     auto participant_listener = make_shared<MockListener>();
-    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKindBits::RTPS_LOST));
-    participant_->set_enabled_statistics_writers_mask(EventKindBits::RTPS_LOST);
+    ASSERT_TRUE(participant_->add_statistics_listener(participant_listener, EventKind::RTPS_LOST));
+    participant_->set_enabled_statistics_writers_mask(EventKind::RTPS_LOST);
 
     std::vector<Entity2LocatorTraffic> lost_callback_data;
     auto callback_action = [&lost_callback_data](const Entity2LocatorTraffic& data) -> void
@@ -1383,7 +1383,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     // release the listener
-    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKindBits::RTPS_LOST));
+    EXPECT_TRUE(participant_->remove_statistics_listener(participant_listener, EventKind::RTPS_LOST));
 
     // Check reported callbacks
     EXPECT_EQ(sizeof(lost_count_notified) / sizeof(lost_count_notified[0]), lost_callback_data.size());

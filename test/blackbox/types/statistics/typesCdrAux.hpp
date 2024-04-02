@@ -30,7 +30,6 @@ constexpr uint32_t eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesiz
 constexpr uint32_t eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize {812UL};
 constexpr uint32_t eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize {28UL};
 
-
 constexpr uint32_t eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize {28UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize {0UL};
 
@@ -159,6 +158,40 @@ eProsima_user_DllExport void serialize_key(
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::PhysicalData& data);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

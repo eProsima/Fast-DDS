@@ -210,12 +210,12 @@ bool StatisticsParticipantImpl::are_writers_involved(
 {
     using namespace fastdds::statistics;
 
-    constexpr uint32_t writers_maks = PUBLICATION_THROUGHPUT \
-            | RESENT_DATAS \
-            | HEARTBEAT_COUNT \
-            | GAP_COUNT \
-            | DATA_COUNT \
-            | SAMPLE_DATAS;
+    constexpr uint32_t writers_maks = EventKind::PUBLICATION_THROUGHPUT \
+            | EventKind::RESENT_DATAS \
+            | EventKind::HEARTBEAT_COUNT \
+            | EventKind::GAP_COUNT \
+            | EventKind::DATA_COUNT \
+            | EventKind::SAMPLE_DATAS;
 
     return writers_maks & mask;
 }
@@ -225,10 +225,10 @@ bool StatisticsParticipantImpl::are_readers_involved(
 {
     using namespace fastdds::statistics;
 
-    constexpr uint32_t readers_maks = HISTORY2HISTORY_LATENCY \
-            | SUBSCRIPTION_THROUGHPUT \
-            | ACKNACK_COUNT \
-            | NACKFRAG_COUNT;
+    constexpr uint32_t readers_maks = EventKind::HISTORY2HISTORY_LATENCY \
+            | EventKind::SUBSCRIPTION_THROUGHPUT \
+            | EventKind::ACKNACK_COUNT \
+            | EventKind::NACKFRAG_COUNT;
 
     return readers_maks & mask;
 }
@@ -394,7 +394,7 @@ void StatisticsParticipantImpl::process_network_timestamp(
 {
     using namespace eprosima::fastrtps::rtps;
 
-    if (!are_statistics_writers_enabled(EventKindBits::NETWORK_LATENCY))
+    if (!are_statistics_writers_enabled(EventKind::NETWORK_LATENCY))
     {
         return;
     }
@@ -432,7 +432,7 @@ void StatisticsParticipantImpl::process_network_sequence(
         const rtps::StatisticsSubmessageData::Sequence& seq,
         uint64_t datagram_size)
 {
-    if (!are_statistics_writers_enabled(EventKindBits::RTPS_LOST))
+    if (!are_statistics_writers_enabled(EventKind::RTPS_LOST))
     {
         return;
     }
@@ -490,7 +490,7 @@ void StatisticsParticipantImpl::process_network_sequence(
         Data data;
         // note that the setter sets RTPS_SENT by default
         data.entity2locator_traffic(notification);
-        data._d(EventKindBits::RTPS_LOST);
+        data._d(EventKind::RTPS_LOST);
 
         for_each_listener([&data](const Key& listener)
                 {
@@ -506,7 +506,7 @@ void StatisticsParticipantImpl::on_rtps_sent(
     using namespace std;
     using eprosima::fastrtps::rtps::RTPSParticipantImpl;
 
-    if (!are_statistics_writers_enabled(EventKindBits::RTPS_SENT))
+    if (!are_statistics_writers_enabled(EventKind::RTPS_SENT))
     {
         return;
     }
@@ -542,7 +542,7 @@ void StatisticsParticipantImpl::on_entity_discovery(
 {
     using namespace fastrtps;
 
-    if (!are_statistics_writers_enabled(EventKindBits::DISCOVERED_ENTITY))
+    if (!are_statistics_writers_enabled(EventKind::DISCOVERED_ENTITY))
     {
         return;
     }
@@ -601,7 +601,7 @@ void StatisticsParticipantImpl::on_entity_discovery(
 void StatisticsParticipantImpl::on_pdp_packet(
         const uint32_t packages)
 {
-    if (!are_statistics_writers_enabled(EventKindBits::PDP_PACKETS))
+    if (!are_statistics_writers_enabled(EventKind::PDP_PACKETS))
     {
         return;
     }
@@ -619,7 +619,7 @@ void StatisticsParticipantImpl::on_pdp_packet(
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(notification);
-    data._d(EventKindBits::PDP_PACKETS);
+    data._d(EventKind::PDP_PACKETS);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
@@ -630,7 +630,7 @@ void StatisticsParticipantImpl::on_pdp_packet(
 void StatisticsParticipantImpl::on_edp_packet(
         const uint32_t packages)
 {
-    if (!are_statistics_writers_enabled(EventKindBits::EDP_PACKETS))
+    if (!are_statistics_writers_enabled(EventKind::EDP_PACKETS))
     {
         return;
     }
@@ -648,7 +648,7 @@ void StatisticsParticipantImpl::on_edp_packet(
     Data data;
     // note that the setter sets RESENT_DATAS by default
     data.entity_count(notification);
-    data._d(EventKindBits::EDP_PACKETS);
+    data._d(EventKind::EDP_PACKETS);
 
     for_each_listener([&data](const std::shared_ptr<IListener>& listener)
             {
