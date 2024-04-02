@@ -26,7 +26,9 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <vector>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
@@ -35,8 +37,8 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-
-#include <rtps/builtin/BuiltinProtocols.h>
+#include <fastrtps/utils/shared_mutex.hpp>
+#include <fastrtps/utils/TimeConversion.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
@@ -47,7 +49,6 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
-#include <utils/TimeConversion.hpp>
 
 using namespace eprosima::fastrtps;
 
@@ -575,6 +576,8 @@ void PDPClient::perform_builtin_endpoints_matching(
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
+
+    mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
 }
 
 void PDPClient::removeRemoteEndpoints(

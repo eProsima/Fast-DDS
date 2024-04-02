@@ -78,40 +78,24 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
     change->writer_info.previous = nullptr;
     change->writer_info.num_sent_submessages = 0;
 
-    // String to store the topic of the writer
-    std::string topic_name = "";
 
     // DATA(w) case: new writer or updated information about an existing writer
     if (change->kind == ALIVE)
     {
+        EndpointAddedCallback writer_added_callback =
+                std::bind(&EDPServerPUBListener::continue_with_writer, this, reader, change);
+
         // Note: add_writer_from_change() removes the change from the EDP publications' reader history, but it does not
         // return it to the pool
-        add_writer_from_change(reader, reader_history, change, sedp_, false);
+        add_writer_from_change(reader, reader_history, change, sedp_, false, writer_added_callback);
 
-        // Retrieve the topic after creating the WriterProxyData (in add_writer_from_change()). This way, not matter
-        // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
-        auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
-        if (get_pdp()->lookupWriterProxyData(auxGUID, *temp_writer_data))
-        {
-            topic_name = temp_writer_data->topicName().to_string();
-        }
+        // Stop and wait for callback in case of TypeLookupService needed time to process the types
+        return;
     }
     // DATA(Uw) case
     else
     {
         EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Disposed Remote Writer, removing...");
-
-        // Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
-        auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
-        if (get_pdp()->lookupWriterProxyData(auxGUID, *temp_writer_data))
-        {
-            topic_name = temp_writer_data->topicName().to_string();
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
-        }
-
 
         // Remove WriterProxy data information
         get_pdp()->removeWriterProxyData(auxGUID);
@@ -119,6 +103,31 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         // Removing change from history, not returning the change to the pool, since the ownership will be yielded to
         // the database
         reader_history->remove_change(reader_history->find_change(change), false);
+
+        // Continue without waiting
+        continue_with_writer(reader, change);
+    }
+}
+
+void EDPServerPUBListener::continue_with_writer(
+        RTPSReader* reader,
+        CacheChange_t* change)
+{
+    GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
+    // String to store the topic of the writer
+    std::string topic_name = "";
+
+    // DATA(w) case: Retrieve the topic after creating the WriterProxyData (in add_writer_from_change()). This way, not matter
+    // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
+    // DATA(Uw) case: Retrieve the topic before removing the WriterProxyData. We need it to add the DATA(Uw) to the database
+    auto temp_writer_data = get_pdp()->get_temporary_writer_proxies_pool().get();
+    if (get_pdp()->lookupWriterProxyData(auxGUID, *temp_writer_data))
+    {
+        topic_name = temp_writer_data->topicName().to_string();
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
     }
 
     // Notify the DiscoveryDataBase if it is enabled already
@@ -140,6 +149,7 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
             reader->releaseCache(change);
         }
     }
+
     EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER,
             "-------------------- " << sedp_->mp_RTPSParticipant->getGuid() << " --------------------");
     EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "------------------ EDP PUB SERVER LISTENER END ------------------");
@@ -192,27 +202,20 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
     GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
     ReaderHistory* reader_history = reader->getHistory();
 
-    // String to store the topic of the reader
-    std::string topic_name = "";
+
 
     // DATA(r) case: new reader or updated information about an existing reader
     if (change->kind == ALIVE)
     {
+        EndpointAddedCallback reader_added_callback =
+                std::bind(&EDPServerSUBListener::continue_with_reader, this, reader, change);
+
         // Note: add_reader_from_change() removes the change from the EDP subscriptions' reader history, but it does not
         // return it to the pool
-        add_reader_from_change(reader, reader_history, change, sedp_, false);
+        add_reader_from_change(reader, reader_history, change, sedp_, false, reader_added_callback);
 
-        // Retrieve the topic after creating the ReaderProxyData (in add_reader_from_change()). This way, not matter
-        // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
-        auto temp_reader_data = get_pdp()->get_temporary_reader_proxies_pool().get();
-        if (get_pdp()->lookupReaderProxyData(auxGUID, *temp_reader_data))
-        {
-            topic_name = temp_reader_data->topicName().to_string();
-        }
-        else
-        {
-            EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Reader Proxy Data missing for change " << auxGUID);
-        }
+        // Stop and wait for callback in case of TypeLookupService needed time to process the types
+        return;
     }
     // DATA(Ur) case
     else
@@ -220,19 +223,37 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         //REMOVE WRITER FROM OUR READERS:
         EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Disposed Remote Reader, removing...");
 
-        // Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
-        auto temp_reader_data = get_pdp()->get_temporary_reader_proxies_pool().get();
-        if (get_pdp()->lookupReaderProxyData(auxGUID, *temp_reader_data))
-        {
-            topic_name = temp_reader_data->topicName().to_string();
-        }
-
         // Remove ReaderProxy data information
         get_pdp()->removeReaderProxyData(auxGUID);
 
         // Removing change from history, not returning the change to the pool, since the ownership will be yielded to
         // the database
         reader_history->remove_change(reader_history->find_change(change), false);
+
+        // Continue without waiting
+        continue_with_reader(reader, change);
+    }
+}
+
+void EDPServerSUBListener::continue_with_reader(
+        RTPSReader* reader,
+        CacheChange_t* change)
+{
+    GUID_t auxGUID = iHandle2GUID(change->instanceHandle);
+    // String to store the topic of the reader
+    std::string topic_name = "";
+
+    // DATA(w) case: Retrieve the topic after creating the ReaderProxyData (in add_reader_from_change()). This way, not matter
+    // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
+    // DATA(Uw) case: Retrieve the topic before removing the ReaderProxyData. We need it to add the DATA(Ur) to the database
+    auto temp_reader_data = get_pdp()->get_temporary_reader_proxies_pool().get();
+    if (get_pdp()->lookupReaderProxyData(auxGUID, *temp_reader_data))
+    {
+        topic_name = temp_reader_data->topicName().to_string();
+    }
+    else
+    {
+        EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Reader Proxy Data missing for change " << auxGUID);
     }
 
     // Notify the DiscoveryDataBase if it is enabled already

@@ -39,6 +39,7 @@
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
+
 // Release reader lock to avoid ABBA lock. PDP mutex should always be first.
 // Keep change information on local variables to check consistency later
 #define PREVENT_PDP_DEADLOCK(reader, change, pdp)                         \
@@ -65,7 +66,8 @@ void EDPBasePUBListener::add_writer_from_change(
         ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp,
-        bool release_change /*=true*/)
+        bool release_change /*= true*/,
+        const EndpointAddedCallback& writer_added_callback /* = nullptr*/)
 {
     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
@@ -83,7 +85,7 @@ void EDPBasePUBListener::add_writer_from_change(
 
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeWriterCallback after_typelookup_callback =
-                [change, edp, release_change, &network]
+                [reader, change, edp, &network, writer_added_callback]
                     (eprosima::ProxyPool<eprosima::fastrtps::rtps::WriterProxyData>::smart_ptr& temp_writer_data)
                 {
                     //LOAD INFORMATION IN DESTINATION WRITER PROXY DATA
@@ -118,6 +120,10 @@ void EDPBasePUBListener::add_writer_from_change(
                     if (writer_data != nullptr)
                     {
                         edp->pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+                        if (nullptr != writer_added_callback)
+                        {
+                            writer_added_callback(reader, change);
+                        }
                     }
                     else
                     {
@@ -200,7 +206,8 @@ void EDPBaseSUBListener::add_reader_from_change(
         ReaderHistory* reader_history,
         CacheChange_t* change,
         EDP* edp,
-        bool release_change /*=true*/)
+        bool release_change /*= true*/,
+        const EndpointAddedCallback& reader_added_callback /* = nullptr*/)
 {
     //LOAD INFORMATION IN TEMPORAL READER PROXY DATA
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
@@ -218,7 +225,7 @@ void EDPBaseSUBListener::add_reader_from_change(
 
         // Callback function to continue after typelookup is complete
         fastdds::dds::builtin::AsyncGetTypeReaderCallback after_typelookup_callback =
-                [change, edp, release_change, &network]
+                [reader, change, edp, &network, reader_added_callback]
                     (eprosima::ProxyPool<eprosima::fastrtps::rtps::ReaderProxyData>::smart_ptr& temp_reader_data)
                 {
                     auto copy_data_fun = [&temp_reader_data, &network](
@@ -253,6 +260,10 @@ void EDPBaseSUBListener::add_reader_from_change(
                     if (reader_data != nullptr) //ADDED NEW DATA
                     {
                         edp->pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+                        if (nullptr != reader_added_callback)
+                        {
+                            reader_added_callback(reader, change);
+                        }
                     }
                     else
                     {

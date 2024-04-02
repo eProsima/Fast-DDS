@@ -72,6 +72,10 @@ public:
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 
+    void continue_with_writer(
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::CacheChange_t* change);
+
 private:
 
     //!Pointer to the EDPServer
@@ -105,6 +109,10 @@ public:
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
+
+    void continue_with_reader(
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::CacheChange_t* change);
 
 private:
 

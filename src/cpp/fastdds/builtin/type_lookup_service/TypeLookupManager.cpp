@@ -381,6 +381,7 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
 void TypeLookupManager::notify_callbacks(
         xtypes::TypeIdentfierWithSize type_identifier_with_size)
 {
+    bool removed = false;
     // Check that type is pending to be resolved
     auto writer_callbacks_it = async_get_type_writer_callbacks_.find(type_identifier_with_size);
     if (writer_callbacks_it != async_get_type_writer_callbacks_.end())
@@ -389,8 +390,7 @@ void TypeLookupManager::notify_callbacks(
         {
             proxy_callback_pair.second(proxy_callback_pair.first);
         }
-        //Erase the solved TypeIdentfierWithSize
-        remove_async_get_type_callback(type_identifier_with_size);
+        removed = true;
     }
 
     auto reader_callbacks_it = async_get_type_reader_callbacks_.find(type_identifier_with_size);
@@ -400,6 +400,11 @@ void TypeLookupManager::notify_callbacks(
         {
             proxy_callback_pair.second(proxy_callback_pair.first);
         }
+        removed = true;
+    }
+
+    if (removed)
+    {
         // Erase the solved TypeIdentfierWithSize
         remove_async_get_type_callback(type_identifier_with_size);
     }
@@ -421,6 +426,7 @@ bool TypeLookupManager::add_async_get_type_request(
                 "Error in TypeLookupManager::add_async_get_type_request: " << e.what());
         return false;
     }
+
 }
 
 bool TypeLookupManager::remove_async_get_type_callback(
@@ -461,6 +467,7 @@ bool TypeLookupManager::remove_async_get_type_callback(
                 "Error in TypeLookupManager::remove_async_get_type_callback: " << e.what());
         return false;
     }
+
 }
 
 bool TypeLookupManager::remove_async_get_type_request(
@@ -803,11 +810,11 @@ std::string TypeLookupManager::get_instance_name(
     ss << std::hex;
     for (const auto& elem : guid.guidPrefix.value)
     {
-        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(elem);
+        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(static_cast<unsigned char>(elem));
     }
     for (const auto& elem : guid.entityId.value)
     {
-        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(elem);
+        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(static_cast<unsigned char>(elem));
     }
 
     std::string str = ss.str();
