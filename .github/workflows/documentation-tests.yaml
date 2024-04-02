@@ -97,7 +97,7 @@ jobs:
         with:
           repository: eProsima/Fast-DDS-python
           path: src/fastdds-python
-          ref: ${{ steps.deduce_branch.outputs.deduced_branch }}
+          ref: ${{ steps.get_fastdds_python_branch.outputs.deduced_branch }}
 
       - name: Get Fast DDS Docs branch
         id: get_fastdds_docs_branch
@@ -111,7 +111,7 @@ jobs:
         with:
           repository: eProsima/Fast-DDS-docs
           path: src/fastdds-docs
-          ref: ${{ steps.deduce_branch.outputs.deduced_branch }}
+          ref: ${{ steps.get_fastdds_docs_branch.outputs.deduced_branch }}
 
       - name: Install Fast DDS Docs required python packages
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
