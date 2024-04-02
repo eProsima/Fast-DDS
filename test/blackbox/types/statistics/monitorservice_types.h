@@ -219,8 +219,7 @@ public:
      * @brief This function returns a constant reference to member announced_locators
      * @return Constant reference to member announced_locators
      */
-    eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& announced_locators()
-    const;
+    eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& announced_locators() const;
 
     /*!
      * @brief This function returns a reference to member announced_locators
@@ -1025,8 +1024,7 @@ public:
      * @return Constant reference to member incompatible_qos_status
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& incompatible_qos_status()
-    const;
+    eProsima_user_DllExport const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& incompatible_qos_status() const;
 
     /*!
      * @brief This function returns a reference to member incompatible_qos_status
@@ -1055,8 +1053,7 @@ public:
      * @return Constant reference to member inconsistent_topic_status
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport const eprosima::fastdds::statistics::InconsistentTopicStatus_s& inconsistent_topic_status()
-    const;
+    eProsima_user_DllExport const eprosima::fastdds::statistics::InconsistentTopicStatus_s& inconsistent_topic_status() const;
 
     /*!
      * @brief This function returns a reference to member inconsistent_topic_status
@@ -1114,8 +1111,7 @@ public:
      * @return Constant reference to member liveliness_changed_status
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
-    eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessChangedStatus_s& liveliness_changed_status()
-    const;
+    eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessChangedStatus_s& liveliness_changed_status() const;
 
     /*!
      * @brief This function returns a reference to member liveliness_changed_status
