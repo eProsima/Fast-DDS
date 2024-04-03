@@ -103,10 +103,6 @@
 // Statistics
 #cmakedefine FASTDDS_STATISTICS
 
-#ifndef __has_cpp_attribute
-#    define __has_cpp_attribute(x) 0
-#endif // ifndef __has_cpp_attribute
-
 // Deprecated macro
 #if __cplusplus >= 201402L
 #define FASTDDS_DEPRECATED(msg) [[ deprecated(msg) ]]
