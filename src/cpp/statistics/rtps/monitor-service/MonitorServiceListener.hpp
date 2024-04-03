@@ -21,7 +21,8 @@
 
 
 #include <fastdds/rtps/writer/WriterListener.h>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
+
+#include "Interfaces.hpp"
 
 namespace eprosima {
 namespace fastdds {

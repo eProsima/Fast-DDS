@@ -34,7 +34,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 
 #ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
@@ -202,8 +202,7 @@ public:
 
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
-            const uint32_t& status_id,
-            statistics::rtps::DDSEntityStatus*& status,
+            statistics::MonitorServiceData& status,
             const fastrtps::rtps::GUID_t& entity_guid);
 #endif //FASTDDS_STATISTICS
 

@@ -34,10 +34,10 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IProxyQueryable.hpp>
 #include <utils/ProxyPool.hpp>
 
 namespace eprosima {

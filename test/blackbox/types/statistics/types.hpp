@@ -2927,23 +2927,23 @@ private:
 };
 namespace EventKind {
 
-const uint32_t HISTORY2HISTORY_LATENCY = 1;
-const uint32_t NETWORK_LATENCY = 2;
-const uint32_t PUBLICATION_THROUGHPUT = 4;
-const uint32_t SUBSCRIPTION_THROUGHPUT = 8;
-const uint32_t RTPS_SENT = 16;
-const uint32_t RTPS_LOST = 32;
-const uint32_t RESENT_DATAS = 64;
-const uint32_t HEARTBEAT_COUNT = 128;
-const uint32_t ACKNACK_COUNT = 256;
-const uint32_t NACKFRAG_COUNT = 512;
-const uint32_t GAP_COUNT = 1024;
-const uint32_t DATA_COUNT = 2048;
-const uint32_t PDP_PACKETS = 4096;
-const uint32_t EDP_PACKETS = 8192;
-const uint32_t DISCOVERED_ENTITY = 16384;
-const uint32_t SAMPLE_DATAS = 32768;
-const uint32_t PHYSICAL_DATA = 65536;
+const uint32_t HISTORY2HISTORY_LATENCY = 0x1;
+const uint32_t NETWORK_LATENCY = 0x2;
+const uint32_t PUBLICATION_THROUGHPUT = 0x4;
+const uint32_t SUBSCRIPTION_THROUGHPUT = 0x8;
+const uint32_t RTPS_SENT = 0x10;
+const uint32_t RTPS_LOST = 0x20;
+const uint32_t RESENT_DATAS = 0x40;
+const uint32_t HEARTBEAT_COUNT = 0x80;
+const uint32_t ACKNACK_COUNT = 0x100;
+const uint32_t NACKFRAG_COUNT = 0x200;
+const uint32_t GAP_COUNT = 0x400;
+const uint32_t DATA_COUNT = 0x800;
+const uint32_t PDP_PACKETS = 0x1000;
+const uint32_t EDP_PACKETS = 0x2000;
+const uint32_t DISCOVERED_ENTITY = 0x4000;
+const uint32_t SAMPLE_DATAS = 0x8000;
+const uint32_t PHYSICAL_DATA = 0x10000;
 
 } // namespace EventKind
 /*!

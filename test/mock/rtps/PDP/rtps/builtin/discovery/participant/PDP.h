@@ -29,7 +29,7 @@
 #include <utils/ProxyPool.hpp>
 
 #ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {

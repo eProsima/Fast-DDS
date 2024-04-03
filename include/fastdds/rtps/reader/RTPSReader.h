@@ -30,10 +30,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
-#endif // ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 #include <fastdds/utils/TimedConditionVariable.hpp>
 

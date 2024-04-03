@@ -32,9 +32,9 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 
 #include <rtps/history/ITopicPayloadPool.h>
+#include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 #include <statistics/types/monitorservice_types.hpp>
 #include <statistics/types/monitorservice_typesPubSubTypes.h>

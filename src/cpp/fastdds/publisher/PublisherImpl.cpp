@@ -664,8 +664,7 @@ PublisherListener* PublisherImpl::get_listener_for(
 
 #ifdef FASTDDS_STATISTICS
 bool PublisherImpl::get_monitoring_status(
-        const uint32_t& status_id,
-        statistics::rtps::DDSEntityStatus*& status,
+        statistics::MonitorServiceData& status,
         const fastrtps::rtps::GUID_t& entity_guid)
 {
     bool ret = false;
@@ -676,11 +675,21 @@ bool PublisherImpl::get_monitoring_status(
         {
             if (writer->guid() == entity_guid)
             {
-                switch (status_id)
+                switch (status._d())
                 {
                     case statistics::StatusKind::INCOMPATIBLE_QOS:
                     {
-                        writer->get_offered_incompatible_qos_status(*static_cast<OfferedIncompatibleQosStatus*>(status));
+                        OfferedIncompatibleQosStatus incompatible_qos_status;
+                        writer->get_offered_incompatible_qos_status(incompatible_qos_status);
+                        status.incompatible_qos_status().total_count(incompatible_qos_status.total_count);
+                        status.incompatible_qos_status().last_policy_id(incompatible_qos_status.last_policy_id);
+                        for (auto& qos : incompatible_qos_status.policies)
+                        {
+                            statistics::QosPolicyCount_s count;
+                            count.count(qos.count);
+                            count.policy_id(qos.policy_id);
+                            status.incompatible_qos_status().policies().push_back(count);
+                        }
                         ret = true;
                         break;
                     }
@@ -693,19 +702,27 @@ bool PublisherImpl::get_monitoring_status(
                        }*/
                     case statistics::StatusKind::LIVELINESS_LOST:
                     {
-                        writer->get_liveliness_lost_status(*static_cast<LivelinessLostStatus*>(status));
+                        LivelinessLostStatus liveliness_lost_status;
+                        writer->get_liveliness_lost_status(liveliness_lost_status);
+                        status.liveliness_lost_status().total_count(liveliness_lost_status.total_count);
                         ret = true;
                         break;
                     }
                     case statistics::StatusKind::DEADLINE_MISSED:
                     {
-                        writer->get_offered_deadline_missed_status(*static_cast<DeadlineMissedStatus*>(status));
+                        DeadlineMissedStatus deadline_missed_status;
+                        writer->get_offered_deadline_missed_status(deadline_missed_status);
+                        status.deadline_missed_status().total_count(deadline_missed_status.total_count);
+                        std::memcpy(
+                            status.deadline_missed_status().last_instance_handle().data(),
+                            deadline_missed_status.last_instance_handle.value,
+                            16);
                         ret = true;
                         break;
                     }
                     default:
                     {
-                        EPROSIMA_LOG_ERROR(PUBLISHER, "Queried status not available for this entity " << status_id);
+                        EPROSIMA_LOG_ERROR(PUBLISHER, "Queried status not available for this entity " << status._d());
                         break;
                     }
                 }
