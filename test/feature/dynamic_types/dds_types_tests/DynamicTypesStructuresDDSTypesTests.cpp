@@ -69,7 +69,6 @@ constexpr const char* var_alias_name = "var_alias";
 constexpr const char* var_array_name = "var_array_short";
 constexpr const char* var_seq_name = "var_sequence";
 constexpr const char* var_map_name = "var_map";
-constexpr const char* var_union_name = "var_union";
 constexpr const char* var_struct_name = "var_structure";
 constexpr const char* var_bitset_name = "var_bitset";
 

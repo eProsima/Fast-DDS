@@ -23,6 +23,7 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     DynamicTypesDDSTypesTest.cpp
     dds_types_tests/DynamicTypesAliasesDDSTypesTests.cpp
     dds_types_tests/DynamicTypesAnnotationsDDSTypesTests.cpp
+    dds_types_tests/DynamicTypesAppendableDDSTypesTests.cpp
     dds_types_tests/DynamicTypesArraysDDSTypesTests.cpp
     dds_types_tests/DynamicTypesBitsetsDDSTypesTests.cpp
     dds_types_tests/DynamicTypesEnumerationsDDSTypesTests.cpp
@@ -37,8 +38,14 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/aliasesTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/annotationsPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/annotationsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendablePubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendableTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/arraysTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsTypeObjectSupport.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
+    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/helpers/basic_inner_typesTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/inheritancePubSubTypes.cxx
@@ -55,15 +62,9 @@ set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/structuresTypeObjectSupport.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsPubSubTypes.cxx
     ${PROJECT_SOURCE_DIR}/test/dds-types-test/unionsTypeObjectSupport.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendablePubSubTypes.cxx
-    # ${PROJECT_SOURCE_DIR}/test/dds-types-test/appendableTypeObjectSupport.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/bitsetsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/constantsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/declarationsPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsPubSubTypes.cxx
-    ${PROJECT_SOURCE_DIR}/test/dds-types-test/enumerationsTypeObjectSupport.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/externalPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalPubSubTypes.cxx
     # ${PROJECT_SOURCE_DIR}/test/dds-types-test/finalTypeObjectSupport.cxx

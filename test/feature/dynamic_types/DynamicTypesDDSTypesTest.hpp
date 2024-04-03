@@ -85,6 +85,7 @@ constexpr const char* var_bool_name = "var_boolean";
 constexpr const char* var_byte_name = "var_octet";
 constexpr const char* var_char_name = "var_char8";
 constexpr const char* var_wchar_name = "var_char16";
+constexpr const char* var_union_name = "var_union";
 
 class DynamicTypesDDSTypesTest : public ::testing::Test
 {
