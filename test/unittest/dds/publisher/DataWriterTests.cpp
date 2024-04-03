@@ -2000,7 +2000,7 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
     // Updated to check negative values (Redmine ticket #20722)
-    qos2.resource_limits().max_samples = 1;
+    qos2.resource_limits().max_samples = -1;
     qos2.resource_limits().max_instances = -1;
     qos2.resource_limits().max_samples_per_instance = -1;
 
