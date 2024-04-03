@@ -597,7 +597,7 @@ TEST_F(DataReaderTests, get_guid)
 
     private:
 
-        using DomainParticipantListener::on_subscriber_discovery;
+        using DomainParticipantListener::on_data_reader_discovery;
     }
     discovery_listener;
 

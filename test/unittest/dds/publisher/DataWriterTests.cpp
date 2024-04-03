@@ -391,7 +391,7 @@ TEST(DataWriterTests, get_guid)
 
     private:
 
-        using DomainParticipantListener::on_publisher_discovery;
+        using DomainParticipantListener::on_data_writer_discovery;
     }
     discovery_listener;
 

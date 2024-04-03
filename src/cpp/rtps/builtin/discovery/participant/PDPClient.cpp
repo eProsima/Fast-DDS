@@ -26,7 +26,6 @@
 #include <string>
 #include <tuple>
 #include <vector>
-#include <vector>
 
 #include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -37,8 +36,8 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastrtps/utils/shared_mutex.hpp>
-#include <fastrtps/utils/TimeConversion.h>
+
+#include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/builtin/discovery/participant/DS/FakeWriter.hpp>
@@ -49,6 +48,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <utils/shared_mutex.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/TimeConversion.hpp>
 
 using namespace eprosima::fastrtps;
 
