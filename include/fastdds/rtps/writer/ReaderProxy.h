@@ -300,9 +300,11 @@ public:
     }
 
     /**
-     * Called when an ACKNACK is received to set a new value for the count of the last received ACKNACK.
+     * Called when an ACKNACK is received to set a new value for the minimum count accepted for following received
+     * ACKNACKs.
+     *
      * @param acknack_count The count of the received ACKNACK.
-     * @return true if internal count changed (i.e. new ACKNACK is accepted)
+     * @return true if internal count changed (i.e. received ACKNACK is accepted)
      */
     bool check_and_set_acknack_count(
             uint32_t acknack_count)
