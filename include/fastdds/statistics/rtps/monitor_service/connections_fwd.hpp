@@ -20,8 +20,6 @@
 #ifndef _FASTDDS_STATISTICS_MONITOR_SERVICE_CONNECTION_FWD_HPP_
 #define _FASTDDS_STATISTICS_MONITOR_SERVICE_CONNECTION_FWD_HPP_
 
-#ifdef FASTDDS_STATISTICS
-
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
@@ -36,7 +34,5 @@ using ConnectionList = std::vector<eprosima::fastdds::statistics::Connection>;
 } // statistics
 } // fastdds
 } // eprosima
-
-#endif // ifdef FASTDDS_STATISTICS
 
 #endif // _FASTDDS_STATISTICS_MONITOR_SERVICE_CONNECTION_FWD_HPP_
