@@ -810,18 +810,18 @@ std::string TypeLookupManager::get_instance_name(
     ss << std::hex;
     for (const auto& elem : guid.guidPrefix.value)
     {
-        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(static_cast<unsigned char>(elem));
+        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(elem);
     }
     for (const auto& elem : guid.entityId.value)
     {
-        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(static_cast<unsigned char>(elem));
+        ss << std::setw(2) << std::setfill('0') << static_cast<unsigned int>(elem);
     }
 
     std::string str = ss.str();
     std::transform(str.begin(), str.end(), str.begin(),
             [](unsigned char c)
             {
-                return std::tolower(c);
+                return static_cast<char>(std::tolower(c));
             });
     return "dds.builtin.TOS." + str;
 }
