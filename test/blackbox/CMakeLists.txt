@@ -160,7 +160,8 @@ macro(add_blackbox_gtest)
 
         # add filtering statement if required
         if(GTEST_IGNORE)
-            set(gtest_filter "--gtest_filter=${GTEST_IGNORE}")
+            list(JOIN GTEST_IGNORE ":" gtest_filter)
+            string(PREPEND gtest_filter "--gtest_filter=-")
         endif()
 
         add_test(NAME ${test} COMMAND ${command} ${gtest_filter})
@@ -232,12 +233,16 @@ if(NOT LibP11_FOUND)
     if(GTEST_INDIVIDUAL)
         set(pkcs_filter "[Pp][Kk][Cc][Ss]")
     else()
-        set(pkcs_filter "-*pkcs*")
+        set(pkcs_filter "*pkcs*")
     endif() # GTEST_INDIVIDUAL
 endif() # LibP11_FOUND
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    set(dns_filter "-*ServerClientEnvironmentSetUpDNS*")
+    if(GTEST_INDIVIDUAL)
+        set(dns_filter "ServerClientEnvironmentSetUpDNS")
+    else()
+        set(dns_filter "*ServerClientEnvironmentSetUpDNS*")
+    endif() # GTEST_INDIVIDUAL
 endif()
 
 if(SECURITY)
