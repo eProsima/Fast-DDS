@@ -22,7 +22,6 @@
 #include <fastdds/statistics/topic_names.hpp>
 #include <gtest/gtest.h>
 
-#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include "../types/statistics/types.hpp"
 #include "../types/statistics/typesPubSubTypes.h"
 #include "BlackboxTests.hpp"

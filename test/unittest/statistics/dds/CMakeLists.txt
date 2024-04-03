@@ -606,11 +606,10 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
         ${THIRDPARTY_BOOST_INCLUDE_DIR})
     target_link_libraries(StatisticsDomainParticipantStatusQueryableTests ${PRIVACY}
         fastcdr
-        fastdds::xtypes::dynamic-types::impl
-        foonathan_memory
         fastdds::log
         fastdds::xtypes::dynamic-types::impl
         fastdds::xtypes::type-representation
+        foonathan_memory
         GTest::gmock
         ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
