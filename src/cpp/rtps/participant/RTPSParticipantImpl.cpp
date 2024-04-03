@@ -239,9 +239,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                                 m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
                                 {
                                     // TCP DS default logical port is the same as the physical one
-                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
                                     {
-                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                        if (IPLocator::getLogicalPort(locator) == 0)
+                                        {
+                                            IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                        }
                                     }
                                 });
                     }
@@ -265,13 +268,16 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     }
                     for (fastdds::rtps::RemoteServerAttributes& it : m_att.builtin.discovery_config.m_DiscoveryServers)
                     {
-                        // TCP DS default logical port is the same as the physical one
                         std::for_each(it.metatrafficUnicastLocatorList.begin(),
                                 it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
                                 {
-                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    // TCP DS default logical port is the same as the physical one
+                                    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
                                     {
-                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                        if (IPLocator::getLogicalPort(locator) == 0)
+                                        {
+                                            IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                        }
                                     }
                                 });
                     }
@@ -1374,13 +1380,16 @@ void RTPSParticipantImpl::update_attributes(
             {
                 for (fastdds::rtps::RemoteServerAttributes& it : converted_discovery_servers)
                 {
-                    // TCP DS default logical port is the same as the physical one
                     std::for_each(it.metatrafficUnicastLocatorList.begin(),
                             it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
                             {
-                                if (IPLocator::getLogicalPort(locator) == 0)
+                                // TCP DS default logical port is the same as the physical one
+                                if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
                                 {
-                                    IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                    if (IPLocator::getLogicalPort(locator) == 0)
+                                    {
+                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                                    }
                                 }
                             });
                 }
@@ -2565,6 +2574,10 @@ bool RTPSParticipantImpl::did_mutation_took_place_on_meta(
                     break;
                 case LOCATOR_KIND_TCPv6:
                     IPLocator::setPhysicalPort(ret, Tcp6ListeningPort());
+                    if (IPLocator::getLogicalPort(ret) == 0)
+                    {
+                        IPLocator::setLogicalPort(ret, IPLocator::getPhysicalPort(ret));
+                    }
                     break;
             }
             return ret;
