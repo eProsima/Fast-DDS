@@ -23,7 +23,7 @@
 
 #include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.h>
 
 namespace eprosima {
 namespace fastrtps {

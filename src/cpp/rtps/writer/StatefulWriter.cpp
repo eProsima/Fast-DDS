@@ -26,7 +26,7 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>

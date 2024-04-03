@@ -22,7 +22,7 @@
 #include <algorithm>
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 

@@ -21,7 +21,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.h>
 
 using namespace eprosima::fastrtps;
 using ParameterList = eprosima::fastdds::dds::ParameterList;

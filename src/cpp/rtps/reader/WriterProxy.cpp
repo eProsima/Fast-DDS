@@ -21,7 +21,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>

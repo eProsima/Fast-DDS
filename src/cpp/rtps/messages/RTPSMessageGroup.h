@@ -22,7 +22,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
 #include <fastdds/rtps/messages/RTPSMessageSenderInterface.hpp>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/common/FragmentNumber.h>
 
 #include <vector>
