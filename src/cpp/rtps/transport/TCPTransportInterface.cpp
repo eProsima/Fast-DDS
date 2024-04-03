@@ -732,7 +732,7 @@ bool TCPTransportInterface::OpenOutputChannel(
     uint16_t logical_port = IPLocator::getLogicalPort(locator);
     if (0 == logical_port)
     {
-        // During builtin endpoints setup, a logical port eqqual to 0 indicates that the locator belongs
+        // During builtin endpoints setup, a logical port equal to 0 indicates that the locator belongs
         // to discovery server remote server. A connect channel is always needed.
         // Should only be called once to avoid adding a logical port equal to 0.
         always_connect = true;
@@ -850,7 +850,7 @@ bool TCPTransportInterface::OpenOutputChannel(
         // If the remote physical port is lower than our listening port, only the locator needs to be added to the send_resource_list.
         // If the ports are equal, the CONNECT channel is created if the local interface is lower.
         // If this locator belong to a DS server, a CONNECT channel is always needed.
-        if (IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface || always_connect)
+        if (always_connect || IPLocator::getPhysicalPort(physical_locator) > listening_port || local_lower_interface)
         {
             // Client side (either Server-Client or LARGE_DATA)
             EPROSIMA_LOG_INFO(OpenOutputChannel, "OpenOutputChannel: [CONNECT] (physical: "

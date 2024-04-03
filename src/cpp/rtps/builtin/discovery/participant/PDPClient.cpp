@@ -461,7 +461,6 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            // TODO (Carlos): is this multicast locator list needed?
             mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
             mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
 
