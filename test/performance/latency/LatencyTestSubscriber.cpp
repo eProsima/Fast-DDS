@@ -600,7 +600,10 @@ void LatencyTestSubscriber::LatencyDataReaderListener::on_data_available(
             if (sub->echo_)
             {
                 // no bounce overload recorded
-                reinterpret_cast<LatencyType*>(data)->bounce = 0;
+                if (!sub->dynamic_types_)
+                {
+                    reinterpret_cast<LatencyType*>(data)->bounce = 0;
+                }
 
                 if (!sub->data_writer_->write(data))
                 {
