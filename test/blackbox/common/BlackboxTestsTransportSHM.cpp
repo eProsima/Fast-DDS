@@ -16,6 +16,7 @@
 
 #include "BlackboxTests.hpp"
 
+#include "PubSubParticipant.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
@@ -32,6 +33,8 @@ using namespace eprosima::fastrtps;
 
 using SharedMemTransportDescriptor = eprosima::fastdds::rtps::SharedMemTransportDescriptor;
 using test_SharedMemTransportDescriptor = eprosima::fastdds::rtps::test_SharedMemTransportDescriptor;
+using Locator = eprosima::fastdds::rtps::Locator;
+using LocatorList = eprosima::fastdds::rtps::LocatorList;
 
 TEST(SHM, TransportPubSub)
 {
@@ -72,6 +75,58 @@ TEST(SHM, TransportPubSub)
 
     // Check that reader receives the unmatched.
     reader.wait_participant_undiscovery();
+}
+
+/* Regression test for redmine issue #20701
+ *
+ * This test checks that the SHM transport will not listen on the same port
+ * in unicast and multicast at the same time.
+ * It does so by specifying custom default locators on a DataReader and then
+ * checking that the port mutation took place, thus producing a different port.
+ */
+TEST(SHM, SamePortUnicastMulticast)
+{
+    PubSubReader<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
+
+    Locator locator;
+    locator.kind = LOCATOR_KIND_SHM;
+    locator.port = global_port;
+
+    LocatorList unicast_list;
+    LocatorList multicast_list;
+
+    // Note: this is using knowledge of the SHM locator address format since
+    // SHMLocator is not exposed to the user.
+    locator.address[0] = 'U';
+    unicast_list.push_back(locator);
+
+    // Note: this is using knowledge of the SHM locator address format since
+    // SHMLocator is not exposed to the user.
+    locator.address[0] = 'M';
+    multicast_list.push_back(locator);
+
+    // Create the reader with the custom transport and locators
+    auto testTransport = std::make_shared<SharedMemTransportDescriptor>();
+    participant
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(testTransport)
+            .set_default_unicast_locators(unicast_list)
+            .set_default_multicast_locators(multicast_list)
+            .init();
+
+    ASSERT_TRUE(participant.isInitialized());
+
+    // Retrieve the listening locators and check that one port is different
+    LocatorList reader_locators;
+    participant.get_native_reader().get_listening_locators(reader_locators);
+
+    ASSERT_EQ(reader_locators.size(), 2u);
+    auto it = reader_locators.begin();
+    auto first_port = it->port;
+    ++it;
+    auto second_port = it->port;
+    EXPECT_NE(first_port, second_port);
+    EXPECT_TRUE(first_port == global_port || second_port == global_port);
 }
 
 // Regression test for redmine #19500
