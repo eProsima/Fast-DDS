@@ -2324,6 +2324,38 @@ fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manage
     return mp_builtinProtocols->tlm_;
 }
 
+bool RTPSParticipantImpl::has_tcp_transports()
+{
+    const RTPSParticipantAttributes& pattr = getRTPSParticipantAttributes();
+    bool has_tcp_transports = false;
+    for (auto& transportDescriptor : pattr.userTransports)
+    {
+        TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
+        if (pT)
+        {
+            has_tcp_transports = true;
+            break;
+        }
+    }
+
+    return has_tcp_transports;
+}
+
+void RTPSParticipantImpl::create_tcp_connections(
+        const LocatorList_t& locators)
+{
+    for (const Locator_t& loc : locators)
+    {
+        if (loc.kind == LOCATOR_KIND_TCPv4 || loc.kind == LOCATOR_KIND_TCPv6)
+        {
+            // Set logical port to 0 and call createSenderResources to allow opening a TCP CONNECT channel in the transport
+            Locator_t loc_with_logical_zero = loc;
+            IPLocator::setLogicalPort(loc_with_logical_zero, 0);
+            createSenderResources(loc_with_logical_zero);
+        }
+    }
+}
+
 IPersistenceService* RTPSParticipantImpl::get_persistence_service(
         const EndpointAttributes& param)
 {

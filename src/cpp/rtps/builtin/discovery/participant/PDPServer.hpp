@@ -367,11 +367,6 @@ private:
     void match_reliable_pdp_endpoints(
             const fastrtps::rtps::ParticipantProxyData& pdata);
 
-    /**
-     * Check if the user transports of the RTPSParticipant requires logical ports (only TCP transport).
-     */
-    bool handle_logical_ports_required();
-
     //! Server thread
     eprosima::fastrtps::rtps::ResourceEvent resource_event_thread_;
 
