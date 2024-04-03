@@ -516,7 +516,7 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        bool set_logicals = handle_logical_ports_required();
+        bool set_logicals = mp_RTPSParticipant->has_tcp_transports();
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
@@ -1201,7 +1201,7 @@ void PDPServer::update_remote_servers_list()
 
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-    bool set_logicals = handle_logical_ports_required();
+    bool set_logicals = mp_RTPSParticipant->has_tcp_transports();
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
@@ -2087,23 +2087,6 @@ void PDPServer::release_change_from_writer(
 {
     auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
     endpoints->writer.writer_->release_change(change);
-}
-
-bool PDPServer::handle_logical_ports_required()
-{
-    const RTPSParticipantAttributes& pattr = mp_RTPSParticipant->getRTPSParticipantAttributes();
-    bool set_logicals = false;
-    for (auto& transportDescriptor : pattr.userTransports)
-    {
-        TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-        if (pT)
-        {
-            set_logicals = true;
-            break;
-        }
-    }
-
-    return set_logicals;
 }
 
 } // namespace rtps

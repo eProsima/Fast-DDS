@@ -461,6 +461,9 @@ public:
         return has_shm_transport_;
     }
 
+    //! Check if the participant has at least one TCP transport
+    bool has_tcp_transports();
+
     uint32_t get_min_network_send_buffer_size()
     {
         return m_network_Factory.get_min_send_buffer_size();
