@@ -107,7 +107,8 @@ macro(add_gtest)
 
         # add filtering statement if required
         if(GTEST_IGNORE)
-            set(gtest_filter "--gtest_filter=${GTEST_IGNORE}")
+            list(JOIN GTEST_IGNORE ":" gtest_filter)
+            string(PREPEND gtest_filter "--gtest_filter=-")
         endif()
 
         add_test(NAME ${test} COMMAND ${command} ${gtest_filter})
