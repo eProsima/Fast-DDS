@@ -38,6 +38,7 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+class RTPSMessageGroup;
 
 /**
  * Class StatelessWriter, specialization of RTPSWriter that manages writers that don't keep state of the matched readers.
@@ -46,7 +47,8 @@ namespace rtps {
 class StatelessWriter : public RTPSWriter
 {
     friend class RTPSParticipantImpl;
-
+    friend class RTPSMessageGroup;
+    
 protected:
 
     StatelessWriter(

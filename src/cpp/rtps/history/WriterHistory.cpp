@@ -18,12 +18,13 @@
 
 #include <fastdds/rtps/history/WriterHistory.h>
 
+#include <mutex>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/common/WriteParams.h>
 #include <fastdds/core/policy//ParameterSerializer.hpp>
-
-#include <mutex>
+#include <rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
 namespace fastrtps {

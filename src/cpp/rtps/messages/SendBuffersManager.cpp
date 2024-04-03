@@ -17,8 +17,9 @@
  */
 
 #include "SendBuffersManager.hpp"
+
+#include "RTPSMessageGroup.h"
 #include "../participant/RTPSParticipantImpl.h"
-#include <fastdds/rtps/messages/RTPSMessageGroup.h>
 
 namespace eprosima {
 namespace fastrtps {

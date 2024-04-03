@@ -22,20 +22,18 @@
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
-
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
 
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
 #include <rtps/DataSharing/WriterPool.hpp>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
+#include <rtps/messages/RTPSMessageCreator.h>
+#include <rtps/messages/RTPSMessageGroup.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
-
 #include "../flowcontrol/FlowController.hpp"
 
 namespace eprosima {

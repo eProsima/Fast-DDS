@@ -24,7 +24,6 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 
@@ -33,6 +32,7 @@
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <rtps/DataSharing/ReaderPool.hpp>
 #include <rtps/history/HistoryAttributesExtension.hpp>
+#include <rtps/messages/RTPSMessageGroup.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/reader/WriterProxy.h>
 #include <rtps/writer/LivelinessManager.hpp>
