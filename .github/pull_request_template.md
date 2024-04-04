@@ -10,6 +10,7 @@
 -->
 
 ## Description
+
 <!--
     Describe changes in detail.
     This includes depicting the context, use case or current behavior and describe the proposed changes.
@@ -29,19 +30,27 @@
 <!-- This PR depends on #(PR) and must be merged after that one. -->
 
 ## Contributor Checklist
+
+<!--
+    - If any of the elements of the following checklist is not applicable, substitute the checkbox [ ] by _N/A_
+    - If any of the elements of the following checklist is not fulfilled on purpose, please provide a reason and substitute the checkbox with ❌ or __NO__.
+-->
+
 - [ ] Commit messages follow the project guidelines. <!-- External contributors should sign the DCO. Fast DDS developers must also refer to the internal Redmine task. -->
 - [ ] The code follows the style guidelines of this project. <!-- Please refer to the [Quality Declaration](https://github.com/eProsima/Fast-DDS/blob/master/QUALITY.md#linters-and-static-analysis-4v) for more information. -->
 - [ ] Tests that thoroughly check the new feature have been added/Regression tests checking the bug and its fix have been added; the added tests pass locally <!-- Blackbox tests checking the new functionality are required. Changes that add/modify public API must include unit tests covering all possible cases. In case that no tests are provided, please justify why. -->
 - [ ] Any new/modified methods have been properly documented using Doxygen. <!-- Even internal classes, and private methods and members should be documented, not only the public API. -->
+- [ ] Any new configuration API has an equivalent XML API (with the corresponding XSD extension) <!-- C++ configurable parameters should also be configurable using XML files. -->
 - [ ] Changes are ABI compatible. <!-- Bug fixes should be ABI compatible if possible so a backport to previous affected releases can be made. -->
 - [ ] Changes are API compatible. <!-- Public API must not be broken within the same major release. -->
 - [ ] New feature has been added to the `versions.md` file (if applicable).
 - [ ] New feature has been documented/Current behavior is correctly described in the documentation. <!-- Please uncomment following line with the corresponding PR to the documentation project: -->
-    <!-- Related documentation PR: eProsima/Fast-DDS-docs# (PR) -->
+    <!-- - Related documentation PR: eProsima/Fast-DDS-docs#(PR) -->
 - [ ] Applicable backports have been included in the description.
 
 
 ## Reviewer Checklist
+
 - [ ] The PR has a milestone assigned.
 - [ ] The title and description correctly express the PR's purpose.
 - [ ] Check contributor checklist is correct.
