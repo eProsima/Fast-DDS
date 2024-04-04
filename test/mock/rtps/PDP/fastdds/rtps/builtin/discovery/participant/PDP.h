@@ -27,11 +27,18 @@
 
 #include <gmock/gmock.h>
 
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
-#endif // ifdef FASTDDS_STATISTICS
-
 namespace eprosima {
+
+namespace fastdds {
+namespace statistics {
+namespace rtps {
+
+struct IProxyObserver;
+
+} // namespace rtps
+} // namespace statistics
+} // namespace fastdds
+
 namespace fastrtps {
 namespace rtps {
 
