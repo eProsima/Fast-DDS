@@ -1587,9 +1587,11 @@ TEST(DataWriterTests, history_depth_max_samples_per_instance_warning)
     ASSERT_EQ(wait_for_log_entries(expected_entries, retries, wait_ms), expected_entries);
 
     /* Tear down */
-    participant->delete_contained_entities();
-    DomainParticipantFactory::get_instance()->delete_participant(participant);
-    Log::KillThread();
+    ASSERT_EQ(publisher->delete_datawriter(datawriter_1), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(publisher->delete_datawriter(datawriter_2), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_publisher(publisher), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 } // namespace dds
