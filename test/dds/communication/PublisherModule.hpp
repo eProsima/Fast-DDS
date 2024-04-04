@@ -85,6 +85,8 @@ public:
 
 private:
 
+    using DomainParticipantListener::on_participant_discovery;
+
     std::mutex mutex_;
     std::condition_variable cv_;
     unsigned int matched_ = 0;

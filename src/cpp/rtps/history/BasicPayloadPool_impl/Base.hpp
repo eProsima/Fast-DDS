@@ -18,6 +18,8 @@
 
 class BaseImpl : public IPayloadPool
 {
+public:
+
     bool get_payload(
             uint32_t size,
             CacheChange_t& cache_change) override

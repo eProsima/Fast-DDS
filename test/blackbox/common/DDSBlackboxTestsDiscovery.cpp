@@ -451,6 +451,8 @@ TEST(DDSDiscovery, ParticipantProxyPhysicalData)
 
     private:
 
+        using DomainParticipantListener::on_participant_discovery;
+
         std::condition_variable* cv_;
 
         std::mutex* mtx_;
@@ -616,6 +618,9 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
             }
         }
 
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
     };
 
     DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
@@ -1664,6 +1669,10 @@ TEST(DDSDiscovery, DataracePDP)
 
         std::promise<void> undiscovery_promise;
         std::future<void> undiscovery_future;
+
+    private:
+
+        using DomainParticipantListener::on_participant_discovery;
     };
 
     // Disable intraprocess

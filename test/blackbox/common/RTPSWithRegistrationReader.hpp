@@ -110,6 +110,8 @@ private:
 
     private:
 
+        using eprosima::fastrtps::rtps::ReaderListener::onReaderMatched;
+
         Listener& operator =(
                 const Listener&) = delete;
 

@@ -49,8 +49,10 @@ class DDSFindTopicTest : public testing::Test
     /**
      * A dummy type support class.
      */
-    struct TestType : public TopicDataType
+    class TestType : public TopicDataType
     {
+    public:
+
         TestType()
             : TopicDataType()
         {

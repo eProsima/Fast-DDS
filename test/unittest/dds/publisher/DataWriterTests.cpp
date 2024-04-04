@@ -346,6 +346,10 @@ TEST(DataWriterTests, get_guid)
         fastrtps::rtps::GUID_t guid;
         std::mutex mutex;
         std::condition_variable cv;
+
+    private:
+
+        using DomainParticipantListener::on_publisher_discovery;
     }
     discovery_listener;
 

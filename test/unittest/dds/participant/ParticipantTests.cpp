@@ -2403,6 +2403,8 @@ class CustomListener2 : public DomainParticipantListener
 {
 public:
 
+    using DomainParticipantListener::on_participant_discovery;
+
     CustomListener2()
         : future_(promise_.get_future())
     {

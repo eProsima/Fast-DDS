@@ -717,6 +717,11 @@ protected:
         DomainParticipantImpl* participant_;
         int callback_counter_ = 0;
 
+    private:
+
+        using fastrtps::rtps::RTPSParticipantListener::onParticipantDiscovery;
+        using fastrtps::rtps::RTPSParticipantListener::onReaderDiscovery;
+        using fastrtps::rtps::RTPSParticipantListener::onWriterDiscovery;
     }
     rtps_listener_;
 

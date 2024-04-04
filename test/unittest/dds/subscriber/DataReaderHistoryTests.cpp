@@ -28,7 +28,6 @@ public:
     MOCK_METHOD1(getSerializedSizeProvider, std::function<uint32_t()> (
                 void* data));
 
-
     MOCK_METHOD0(createData, void* ());
 
     MOCK_METHOD1(deleteData, void(
