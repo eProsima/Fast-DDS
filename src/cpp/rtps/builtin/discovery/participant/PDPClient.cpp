@@ -37,7 +37,6 @@
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/rtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/shared_mutex.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
