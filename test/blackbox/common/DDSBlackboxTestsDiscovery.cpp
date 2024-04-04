@@ -89,7 +89,7 @@ TEST(DDSDiscovery, IgnoreParticipantFlags)
  *    2. Then, connect the client to the other server and check discovery again.
  *    3. Finally connect the two servers by adding one of them to the others list
  */
-TEST(DDSDiscovery, AddDiscoveryServerToList)
+TEST(DDSDiscovery, AddDiscoveryServerToListUDP)
 {
     using namespace eprosima;
     using namespace eprosima::fastdds::dds;
@@ -171,7 +171,7 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     // Update client's servers list
     ASSERT_TRUE(client.update_wire_protocol(client_qos));
 
-    /* Check that the servers only know about the client, and that the client known about both servers */
+    /* Check that the servers only know about the client and that the client knows about both servers */
     server_1.wait_discovery(std::chrono::seconds::zero(), 1, true);
     client.wait_discovery(std::chrono::seconds::zero(), 2, true);
     server_2.wait_discovery(std::chrono::seconds::zero(), 1, true);
@@ -184,6 +184,144 @@ TEST(DDSDiscovery, AddDiscoveryServerToList)
     server_1.wait_discovery(std::chrono::seconds::zero(), 2, true);
     client.wait_discovery(std::chrono::seconds::zero(), 2, true);
     server_2.wait_discovery(std::chrono::seconds::zero(), 2, true);
+}
+
+/**
+ * This test checks that adding servers to the Discovery Server list results in discovering those participants.
+ * It does so by:
+ *    1. Creating two servers and two clients that are only connected to the first server. Discovery is checked
+ *       at this state.
+ *    2. Then, connect client_1 to the second server and check discovery again.
+ *    3. Finally connect the two servers by adding one of them to the others list and check disvoery again.
+ */
+TEST(DDSDiscovery, AddDiscoveryServerToListTCP)
+{
+    using namespace eprosima;
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastrtps::rtps;
+
+    // TCP default DS port
+    std::string W_UNICAST_PORT_RANDOM_NUMBER_STR = "42100";
+
+    /* Create first server */
+    PubSubParticipant<HelloWorldPubSubType> server_1(0u, 0u, 0u, 0u);
+    // Set participant as server
+    WireProtocolConfigQos server_1_qos;
+    server_1_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+    // Generate random GUID prefix
+    srand(static_cast<unsigned>(time(nullptr)));
+    GuidPrefix_t server_1_prefix;
+    for (auto i = 0; i < 12; i++)
+    {
+        server_1_prefix.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
+    }
+    server_1_qos.prefix = server_1_prefix;
+    // Generate server's listening locator
+    Locator_t locator_server_1;
+    IPLocator::setIPv4(locator_server_1, 127, 0, 0, 1);
+    uint16_t server_1_port = static_cast<uint16_t>(stoi(W_UNICAST_PORT_RANDOM_NUMBER_STR));
+    IPLocator::setPhysicalPort(locator_server_1, server_1_port);
+    locator_server_1.kind = LOCATOR_KIND_TCPv4;
+    // Leave logical port as 0 to use TCP DS default logical port
+    server_1_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_1);
+    // Add TCP transport
+    auto descriptor_1 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    descriptor_1->add_listener_port(server_1_port);
+    // Init server
+    ASSERT_TRUE(server_1.wire_protocol(server_1_qos)
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_1)
+                    .init_participant());
+
+    /* Create second server */
+    PubSubParticipant<HelloWorldPubSubType> server_2(0u, 0u, 0u, 0u);
+    // Set participant as server
+    WireProtocolConfigQos server_2_qos;
+    server_2_qos.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::SERVER;
+    // Generate random GUID prefix
+    GuidPrefix_t server_2_prefix = server_1_prefix;
+    server_2_prefix.value[11]++;
+    server_2_qos.prefix = server_2_prefix;
+    // Generate server's listening locator
+    Locator_t locator_server_2;
+    IPLocator::setIPv4(locator_server_2, 127, 0, 0, 1);
+    uint16_t server_2_port = server_1_port + 1;
+    IPLocator::setPhysicalPort(locator_server_2, server_2_port);
+    locator_server_2.kind = LOCATOR_KIND_TCPv4;
+    // Leave logical port as 0 to use TCP DS default logical port
+    server_2_qos.builtin.metatrafficUnicastLocatorList.push_back(locator_server_2);
+    // Add TCP transport
+    auto descriptor_2 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    descriptor_2->add_listener_port(server_2_port);
+
+    // Init server
+    ASSERT_TRUE(server_2.wire_protocol(server_2_qos)
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_2)
+                    .init_participant());
+
+
+    /* Create a client that connects to the first server from the beginning with higher listening_port*/
+    PubSubParticipant<HelloWorldPubSubType> client_1(0u, 0u, 0u, 0u);
+    // Set participant as client
+    WireProtocolConfigQos client_qos_1;
+    client_qos_1.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    // Connect to first server
+    RemoteServerAttributes server_1_att;
+    server_1_att.guidPrefix = server_1_prefix;
+    server_1_att.metatrafficUnicastLocatorList.push_back(Locator_t(locator_server_1));
+    client_qos_1.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
+    auto descriptor_3 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    uint16_t client_1_port = server_1_port + 10;
+    descriptor_3->add_listener_port(client_1_port);
+    // Init client
+    ASSERT_TRUE(client_1.wire_protocol(client_qos_1)
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_3)
+                    .init_participant());
+
+    /* Create a client that connects to the first server from the beginning with lower listening_port*/
+    PubSubParticipant<HelloWorldPubSubType> client_2(0u, 0u, 0u, 0u);
+    // Set participant as client
+    WireProtocolConfigQos client_qos_2;
+    client_qos_2.builtin.discovery_config.discoveryProtocol = DiscoveryProtocol_t::CLIENT;
+    // Connect to first server
+    client_qos_2.builtin.discovery_config.m_DiscoveryServers.push_back(server_1_att);
+    auto descriptor_4 = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+    uint16_t client_2_port = server_1_port - 10;
+    descriptor_4->add_listener_port(client_2_port);
+    // Init client
+    ASSERT_TRUE(client_2.wire_protocol(client_qos_2)
+                    .disable_builtin_transport()
+                    .add_user_transport_to_pparams(descriptor_4)
+                    .init_participant());
+
+    server_1.wait_discovery(std::chrono::seconds::zero(), 2, true); // Knows client1 and client2
+    client_1.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1
+    client_2.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1
+    server_2.wait_discovery(std::chrono::seconds::zero(), 0, true); // Knows no one
+
+    /* Add server_2 to client */
+    RemoteServerAttributes server_2_att;
+    server_2_att.guidPrefix = server_2_prefix;
+    server_2_att.metatrafficUnicastLocatorList.push_back(Locator_t(locator_server_2));
+    client_qos_1.builtin.discovery_config.m_DiscoveryServers.push_back(server_2_att);
+    // Update client_1's servers list
+    ASSERT_TRUE(client_1.update_wire_protocol(client_qos_1));
+
+    server_1.wait_discovery(std::chrono::seconds::zero(), 2, true); // Knows client1 and client2
+    client_1.wait_discovery(std::chrono::seconds::zero(), 2, true); // Knows server1 and server2
+    client_2.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1
+    server_2.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows client1
+
+    /* Add server_2 to server_1 */
+    server_1_qos.builtin.discovery_config.m_DiscoveryServers.push_back(server_2_att);
+    ASSERT_TRUE(server_1.update_wire_protocol(server_1_qos));
+
+    server_1.wait_discovery(std::chrono::seconds::zero(), 3, true); // Knows client1, client2 and server2
+    client_1.wait_discovery(std::chrono::seconds::zero(), 2, true); // Knows server1 and server2
+    client_2.wait_discovery(std::chrono::seconds::zero(), 1, true); // Knows server1
+    server_2.wait_discovery(std::chrono::seconds::zero(), 2, true); // Knows client1 and server1
 }
 
 /**
