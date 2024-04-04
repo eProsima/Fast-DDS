@@ -505,8 +505,8 @@ def test_fast_discovery_no_prefix(fast_discovery_tool):
     XML_file_path = "test_xml_discovery_server_profile.xml"
     command = [fast_discovery_tool, '-x', 'UDP_no_prefix@' + XML_file_path]
     output, err, exit_code = send_command(command)
-    msg = "Using random GUID because no server ID was specified (-i option) or defined in the XML file."
-    exit_code = check_output(output, err, msg, False)
+    EXPECTED_OUTPUT = "UDPv4:[127.0.0.5]:11817"
+    exit_code = check_output(output, err, EXPECTED_OUTPUT, False)
     sys.exit(exit_code)
 
 

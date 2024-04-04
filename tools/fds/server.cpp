@@ -21,7 +21,6 @@
 #include <regex>
 #include <sstream>
 #include <stdlib.h>
-#include <string>
 #include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -78,6 +77,13 @@ int fastdds_discovery_server(
         return 1;
     }
 
+    for (option::Option* opt = options[UNKNOWN]; opt; opt = opt->next())
+    {
+        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << opt->name);
+        option::printUsage(std::cout, usage);
+        return 1;
+    }
+
     // No arguments beyond options
     int noopts = parse.nonOptionsCount();
     if (noopts)
@@ -96,9 +102,10 @@ int fastdds_discovery_server(
     }
 
     // Show help if asked to
-    if (options[HELP] || argc == 0)
+    if (options[HELP])
     {
         option::printUsage(std::cout, usage);
+        std::cout << EXAMPLES << std::endl;
         return 0;
     }
 
@@ -168,17 +175,15 @@ int fastdds_discovery_server(
     // Retrieve server ID: is optional and only specified once
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
-    int server_id = 0;
+    int server_id = -1;
+    std::stringstream is;
 
     if (nullptr == pOp)
     {
         fastdds::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().prefix == prefix_cero)
         {
-            std::cout << "Using random GUID because no server ID was specified (-i option) or defined in the XML file." <<
-                std::endl;
-            pOp = new option::Option();
-            pOp->arg = "-1";
+            eprosima::fastdds::rtps::set_server_client_random_guidPrefix(participantQos.wire_protocol().prefix);
         }
         else if (!(participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol ==
                 eprosima::fastdds::rtps::DiscoveryProtocol::SERVER ||
@@ -195,21 +200,13 @@ int fastdds_discovery_server(
         std::cout << "Only one server can be created, thus, only one server id can be specified." << std::endl;
         return 1;
     }
-
-    std::stringstream is;
-
-    // Name the server according with the identifier
-    if (pOp != nullptr)
+    else
     {
         // Cast of option to int has already been checked
         is << pOp->arg;
         is >> server_id;
-        if (server_id == -1)
-        {
-            eprosima::fastdds::rtps::set_server_client_random_guidPrefix(participantQos.wire_protocol().prefix);
-        }
-        else if(!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
-            participantQos.wire_protocol().prefix))
+        if (!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
+                participantQos.wire_protocol().prefix))
         {
             std::cout << "Failed to set the GUID with the server identifier provided." << std::endl;
             return 1;
@@ -221,7 +218,8 @@ int fastdds_discovery_server(
     is.str("");
 
     // Set Participant Name
-    is << "eProsima Default Server number " << server_id;
+    std::string server_name = (server_id == -1) ? "eProsima Guidless Server" : "eProsima Default Server" + std::to_string(server_id);
+    is << server_name;
     participantQos.name(is.str().c_str());
 
     // Choose the kind of server to create
@@ -283,7 +281,15 @@ int fastdds_discovery_server(
 
     // Retrieve first IP address
     pOp = options[UDPADDRESS];
+    if (pOp != nullptr && pOp->arg == nullptr)
+    {
+        pOp->arg = "0.0.0.0";
+    }
     option::Option* pO_tcp = options[TCPADDRESS];
+    if (pO_tcp != nullptr && pO_tcp->arg == nullptr)
+    {
+        pO_tcp->arg = "0.0.0.0";
+    }
     // Retrieve first TCP port
     option::Option* pO_tcp_port = options[TCP_PORT];
 
@@ -386,7 +392,7 @@ int fastdds_discovery_server(
             else
             {
                 std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                          << "         addresses provided. Locators share its port number." << std::endl;
+                          << "         addresses provided. Locators share their port number." << std::endl;
             }
         }
 
@@ -438,8 +444,11 @@ int fastdds_discovery_server(
         if (nullptr == pO_tcp)
         {
             // Only the TCP port has been specified. Use localhost as default interface for TCP
-            IPLocator::setIPv4(locator_tcp_4, "127.0.0.1");
+            IPLocator::setIPv4(locator_tcp_4, "0.0.0.0");
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator_tcp_4);
+            auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+            tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_4.port));
+            participantQos.transport().user_transports.push_back(tcp_descriptor);
         }
         else if (nullptr != pO_tcp)
         {
@@ -578,13 +587,11 @@ int fastdds_discovery_server(
         }
 
         // Print running server attributes
-        std::string print_server_id = (server_id == -1) ? "Default" : std::to_string(server_id);
         std::cout << "### Server is running ###" << std::endl;
         std::cout << "  Participant Type:   " <<
             participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol <<
             std::endl;
         std::cout << "  Security:           " << (has_security ? "YES" : "NO") << std::endl;
-        std::cout << "  Server ID:          " << print_server_id << std::endl;
         std::cout << "  Server GUID prefix: " <<
             (has_security ? participantQos.wire_protocol().prefix : pServer->guid().guidPrefix) <<
             std::endl;
@@ -641,7 +648,7 @@ option::ArgStatus Arg::check_server_id(
 
         if (is >> id
                 && is.eof()
-                && id >= -1
+                && id >= 0
                 && id <  256 )
         {
             return option::ARG_OK;
@@ -650,9 +657,8 @@ option::ArgStatus Arg::check_server_id(
 
     if (msg)
     {
-        std::cout << "Option '" << option.name
-                  << "' is optional. Should be a key identifier between 0 and 255"
-                  << " or -1 (default) to use a random GUID." << std::endl;
+        std::cout << "\nOption '" << option.name
+                  << "' is optional. Should be a key identifier between 0 and 255." << std::endl;
     }
 
     return option::ARG_ILLEGAL;
@@ -670,7 +676,7 @@ option::ArgStatus Arg::required(
 
     if (msg)
     {
-        std::cout << "Option '" << option << "' requires an argument" << std::endl;
+        std::cout << "\nOption '" << option.desc->longopt << "' requires an argument." << std::endl;
     }
     return option::ARG_ILLEGAL;
 }
@@ -699,7 +705,7 @@ option::ArgStatus Arg::check_udp_port(
 
     if (msg)
     {
-        std::cout << "Option '" << option.name
+        std::cout << "\nOption '" << option.name
                   << "' value should be an UDP port between 1025 and 65535." << std::endl;
     }
 
@@ -729,7 +735,7 @@ option::ArgStatus Arg::check_tcp_port(
 
     if (msg)
     {
-        std::cout << "Option '" << option.name
+        std::cout << "\nOption '" << option.name
                   << "' value should be an TCP port between 1025 and 65535." << std::endl;
     }
 
