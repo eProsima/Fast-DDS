@@ -46,6 +46,9 @@
 #include <rtps/builtin/data/ProxyHashTables.hpp>
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#ifdef FASTDDS_STATISTICS
+#include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
+#endif //FASTDDS_STATISTICS
 
 #include <utils/collections/node_size_helpers.hpp>
 

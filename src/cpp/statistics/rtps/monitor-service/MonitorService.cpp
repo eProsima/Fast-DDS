@@ -32,31 +32,6 @@ using namespace eprosima::fastrtps::rtps;
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
-
-dds::IncompatibleQosStatus* to_fastdds_type(
-        IncompatibleQoSStatus_s& incompatible_qos)
-{
-    return reinterpret_cast<dds::IncompatibleQosStatus*>(&incompatible_qos);
-}
-
-dds::LivelinessChangedStatus* to_fastdds_type(
-        LivelinessChangedStatus_s& liv_changed)
-{
-    return reinterpret_cast<dds::LivelinessChangedStatus*>(&liv_changed);
-}
-
-dds::LivelinessLostStatus* to_fastdds_type(
-        LivelinessLostStatus_s& liv_lost)
-{
-    return reinterpret_cast<dds::LivelinessLostStatus*>(&liv_lost);
-}
-
-dds::DeadlineMissedStatus* to_fastdds_type(
-        DeadlineMissedStatus_s& deadline_missed)
-{
-    return reinterpret_cast<dds::DeadlineMissedStatus*>(&deadline_missed);
-}
-
 namespace rtps {
 
 MonitorService::MonitorService(
@@ -325,24 +300,14 @@ bool MonitorService::write_status(
                     }
                     case INCOMPATIBLE_QOS:
                     {
-                        rtps::DDSEntityStatus* dds_entity_status = new rtps::DDSEntityStatus;
-                        status_queryable_.get_monitoring_status(local_entity_guid, INCOMPATIBLE_QOS, dds_entity_status);
-
-                        assert(nullptr != dds_entity_status);
-
-                        IncompatibleQoSStatus_s incompatible_qos_status;
-                        incompatible_qos_status.policies().resize(dds_entity_status->policies.size());
-                        dds::QosPolicyCountSeq* qos_policy_countseq = &dds_entity_status->policies;
-                        incompatible_qos_status.policies() =
-                                *reinterpret_cast<QosPolicyCountSeq_s*>(qos_policy_countseq);
-                        incompatible_qos_status.last_policy_id() = dds_entity_status->last_policy_id;
-                        incompatible_qos_status.total_count() =
-                                static_cast<dds::OfferedIncompatibleQosStatus*>(dds_entity_status)->
-                                        total_count;
-
-                        data.incompatible_qos_status(std::move(incompatible_qos_status));
-                        delete dds_entity_status;
-
+                        data.incompatible_qos_status(IncompatibleQoSStatus_s{});
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
+                        {
+                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
+                                    "Could not retrieve the incompatible qos entity status ");
+                            status_retrieved = false;
+                            assert(false);
+                        }
                         break;
                     }
                     //Not triggered for the moment
@@ -354,12 +319,8 @@ bool MonitorService::write_status(
                     }
                     case LIVELINESS_LOST:
                     {
-                        data.liveliness_lost_status(LivelinessLostStatus_s());
-                        DDSEntityStatus* liv_lost_status =
-                                static_cast<DDSEntityStatus*>(to_fastdds_type(
-                                    data.liveliness_lost_status()));
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, LIVELINESS_LOST,
-                                liv_lost_status))
+                        data.liveliness_lost_status(LivelinessLostStatus_s{});
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
                                     "Could not retrieve the liveliness lost entity status ");
@@ -371,12 +332,8 @@ bool MonitorService::write_status(
                     }
                     case LIVELINESS_CHANGED:
                     {
-                        data.liveliness_changed_status(LivelinessChangedStatus_s());
-                        DDSEntityStatus* liv_changed_status =
-                                static_cast<DDSEntityStatus*>(to_fastdds_type(
-                                    data.liveliness_changed_status()));
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, LIVELINESS_CHANGED,
-                                liv_changed_status))
+                        data.liveliness_changed_status(LivelinessChangedStatus_s{});
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
                                     "Could not retrieve the liveliness changed entity status");
@@ -388,12 +345,8 @@ bool MonitorService::write_status(
                     }
                     case DEADLINE_MISSED:
                     {
-                        data.deadline_missed_status(DeadlineMissedStatus_s());
-                        DDSEntityStatus* deadline_missed_status =
-                                static_cast<DDSEntityStatus*>(to_fastdds_type(
-                                    data.deadline_missed_status()));
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, DEADLINE_MISSED,
-                                deadline_missed_status))
+                        data.deadline_missed_status(DeadlineMissedStatus_s{});
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the deadline missed entity status");
                             status_retrieved = false;
@@ -403,11 +356,8 @@ bool MonitorService::write_status(
                     }
                     case SAMPLE_LOST:
                     {
-                        data.sample_lost_status(SampleLostStatus_s());
-                        DDSEntityStatus* sample_lost_status =
-                                static_cast<DDSEntityStatus*>(to_fastdds_type(data.sample_lost_status()));
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, SAMPLE_LOST,
-                                sample_lost_status))
+                        data.sample_lost_status(SampleLostStatus_s{});
+                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
                         {
                             EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the sample lost entity status");
                             status_retrieved = false;
