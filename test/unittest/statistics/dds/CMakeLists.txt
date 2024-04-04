@@ -101,6 +101,7 @@ if (FASTDDS_STATISTICS)
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
         )
     target_include_directories(DomainParticipantStatisticsListenerTests PRIVATE
+        ${Asio_INCLUDE_DIR}
         DomainParticipantStatisticsListenerTests/mock
         ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/

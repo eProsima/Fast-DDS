@@ -104,11 +104,23 @@ void test_big_message_corner_case(
     auto participant = fastdds::DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
 
+    fastdds::TypeDescriptor::_ref_type type_descriptor {fastdds::traits<fastdds::TypeDescriptor>::make_shared()};
+    type_descriptor->name(name);
+    type_descriptor->kind(fastdds::TK_STRUCTURE);
+    fastdds::DynamicTypeBuilder::_ref_type builder = fastdds::DynamicTypeBuilderFactory::get_instance()->create_type(
+        type_descriptor);
+
     fastdds::BoundSeq lengths = { array_length };
-    fastdds::DynamicTypeBuilder::_ref_type builder =
-            fastdds::DynamicTypeBuilderFactory::get_instance()->create_array_type(
-        fastdds::DynamicTypeBuilderFactory::get_instance()->get_primitive_type(fastdds::TK_CHAR8), lengths);
+    fastdds::MemberDescriptor::_ref_type array_descriptor {fastdds::traits<fastdds::MemberDescriptor>::make_shared()};
+    array_descriptor->name("secure_array");
+    array_descriptor->type(
+        fastdds::DynamicTypeBuilderFactory::get_instance()->create_array_type(
+            fastdds::DynamicTypeBuilderFactory::get_instance()->get_primitive_type(fastdds::TK_CHAR8),
+            lengths)->build());
+
+    builder->add_member(array_descriptor);
     fastdds::DynamicType::_ref_type array_type = builder->build();
+
 
     fastdds::TypeSupport type_support(new fastdds::DynamicPubSubType(array_type));
     type_support.get()->auto_fill_type_information(false);
