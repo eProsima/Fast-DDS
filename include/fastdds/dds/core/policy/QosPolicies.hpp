@@ -1726,19 +1726,21 @@ public:
      * @brief Specifies the maximum number of data-samples the DataWriter (or DataReader) can manage across all the
      * instances associated with it. Represents the maximum samples the middleware can store for any one DataWriter
      * (or DataReader). <br>
-     * By default, 5000.
+     * Value less or equal to 0 means infinite resources. By default, 5000.
      *
      * @warning It is inconsistent for this value to be less than max_samples_per_instance.
      */
     int32_t max_samples;
     /**
      * @brief Represents the maximum number of instances DataWriter (or DataReader) can manage. <br>
-     * By default, 10.
+     * Value less or equal to 0 means infinite resources. By default, 10.
+     *
+     * @warning It is inconsistent if `(max_instances * max_samples_per_instance) > max_samples`.
      */
     int32_t max_instances;
     /**
      * @brief Represents the maximum number of samples of any one instance a DataWriter(or DataReader) can manage. <br>
-     * By default, 400.
+     * Value less or equal to 0 means infinite resources. By default, 400.
      *
      * @warning It is inconsistent for this value to be greater than max_samples.
      */

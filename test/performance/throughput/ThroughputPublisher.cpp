@@ -525,7 +525,7 @@ void ThroughputPublisher::run(
         else
         {
             // Ensure that the max samples is at least the demand
-            if (dw_qos.resource_limits().max_samples < 0 ||
+            if (dw_qos.resource_limits().max_samples <= 0 ||
                     static_cast<uint32_t>(dw_qos.resource_limits().max_samples) < max_demand)
             {
                 logWarning(THROUGHPUTPUBLISHER, "Setting resource limit max samples to " << max_demand);
