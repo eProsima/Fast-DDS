@@ -47,8 +47,8 @@ target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
     ${CMAKE_DL_LIBS})
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
-    message(STATUS "Ignoring 'ParticipantTests.SimpleParticipantRemoteServerListConfigurationDNS'")
     set(dns_filter "ParticipantTests.SimpleParticipantRemoteServerListConfigurationDNS")
+    message(STATUS "Ignoring tests: '${dns_filter}'")
 endif()
 
 add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE} IGNORE ${dns_filter})

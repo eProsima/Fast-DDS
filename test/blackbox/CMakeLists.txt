@@ -235,6 +235,7 @@ if(NOT LibP11_FOUND)
     else()
         set(pkcs_filter "*pkcs*")
     endif() # GTEST_INDIVIDUAL
+    message(STATUS "Ignoring tests: '${pkcs_filter}'")
 endif() # LibP11_FOUND
 
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
@@ -243,6 +244,7 @@ if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     else()
         set(dns_filter "*ServerClientEnvironmentSetUpDNS*")
     endif() # GTEST_INDIVIDUAL
+    message(STATUS "Ignoring tests: '${dns_filter}'")
 endif()
 
 if(SECURITY)
