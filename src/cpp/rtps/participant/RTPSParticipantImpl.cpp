@@ -2481,23 +2481,6 @@ fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manage
     return mp_builtinProtocols->tlm_;
 }
 
-bool RTPSParticipantImpl::has_tcp_transports()
-{
-    const RTPSParticipantAttributes& pattr = getRTPSParticipantAttributes();
-    bool has_tcp_transports = false;
-    for (auto& transportDescriptor : pattr.userTransports)
-    {
-        TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
-        if (pT)
-        {
-            has_tcp_transports = true;
-            break;
-        }
-    }
-
-    return has_tcp_transports;
-}
-
 IPersistenceService* RTPSParticipantImpl::get_persistence_service(
         const EndpointAttributes& param)
 {

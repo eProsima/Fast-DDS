@@ -1188,19 +1188,14 @@ void PDPServer::update_remote_servers_list()
 
     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-    bool set_logicals = mp_RTPSParticipant->has_tcp_transports();
-
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
         if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
                 !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
         {
-            if (set_logicals)
-            {
-                auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                    it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-                mp_RTPSParticipant->createSenderResources(entry);
-            }
+            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(entry);
         }
 
         if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
