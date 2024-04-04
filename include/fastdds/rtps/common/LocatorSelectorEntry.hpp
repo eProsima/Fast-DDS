@@ -77,7 +77,6 @@ struct LocatorSelectorEntry
         , state(max_unicast_locators, max_multicast_locators)
         , enabled(false)
         , transport_should_process(false)
-        , is_initial_peer_or_ds(false)
     {
     }
 
@@ -101,24 +100,26 @@ struct LocatorSelectorEntry
         state.multicast.clear();
     }
 
-    void fill_unicast(
-            const LocatorList_t& locators)
+    static LocatorSelectorEntry create_fully_selected_entry(
+            const LocatorList_t& unicast_locators,
+            const LocatorList_t& multicast_locators)
     {
-        for (const Locator_t& locator : locators)
+        // Create an entry with space for all locators
+        LocatorSelectorEntry entry(unicast_locators.size(), multicast_locators.size());
+        // Add and select unicast locators
+        for (const Locator_t& locator : unicast_locators)
         {
-            state.unicast.push_back(unicast.size());
-            unicast.push_back(locator);
+            entry.state.unicast.push_back(entry.unicast.size());
+            entry.unicast.push_back(locator);
         }
-    }
-
-    void fill_multicast(
-            const LocatorList_t& locators)
-    {
-        for (const Locator_t& locator : locators)
+        // Add and select multicast locators
+        for (const Locator_t& locator : multicast_locators)
         {
-            state.multicast.push_back(multicast.size());
-            multicast.push_back(locator);
+            entry.state.multicast.push_back(entry.multicast.size());
+            entry.multicast.push_back(locator);
         }
+        // Return created entry
+        return entry;
     }
 
     //! GUID of the remote entity.
@@ -133,8 +134,6 @@ struct LocatorSelectorEntry
     bool enabled;
     //! A temporary value for each transport to help optimizing some use cases.
     bool transport_should_process;
-    //! True if the locator is an initial peer or DS connection. False otherwise.
-    bool is_initial_peer_or_ds;
 };
 
 } /* namespace rtps */

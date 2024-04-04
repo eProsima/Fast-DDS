@@ -444,24 +444,11 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        bool set_logicals = mp_RTPSParticipant->has_tcp_transports();
-
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            if (set_logicals)
-            {
-                LocatorSelectorEntry entry(pattr.allocation.locators.max_unicast_locators,
-                        pattr.allocation.locators.max_multicast_locators);
-                entry.is_initial_peer_or_ds = true;
-                entry.fill_multicast(it.metatrafficMulticastLocatorList);
-                entry.fill_unicast(it.metatrafficUnicastLocatorList);
-                mp_RTPSParticipant->createSenderResources(entry);
-            }
-            else
-            {
-                mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
-                mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
-            }
+            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(entry);
 
 #if HAVE_SECURITY
             if (!mp_RTPSParticipant->is_secure())
@@ -865,12 +852,8 @@ void PDPClient::update_remote_servers_list()
             {
                 if (set_logicals)
                 {
-                    const RemoteLocatorsAllocationAttributes& rlaa =
-                            mp_RTPSParticipant->getRTPSParticipantAttributes().allocation.locators;
-                    LocatorSelectorEntry entry(rlaa.max_unicast_locators, rlaa.max_multicast_locators);
-                    entry.is_initial_peer_or_ds = true;
-                    entry.fill_multicast(it.metatrafficMulticastLocatorList);
-                    entry.fill_unicast(it.metatrafficUnicastLocatorList);
+                    auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                        it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
                     mp_RTPSParticipant->createSenderResources(entry);
                 }
             }

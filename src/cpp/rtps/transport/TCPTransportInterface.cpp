@@ -874,14 +874,9 @@ bool TCPTransportInterface::OpenOutputChannels(
         const LocatorSelectorEntry& locator_selector_entry)
 {
     bool success = false;
-    if (locator_selector_entry.is_initial_peer_or_ds)
+    if (locator_selector_entry.remote_guid == fastrtps::rtps::c_Guid_Unknown)
     {
-        for (size_t i = 0; i < locator_selector_entry.state.multicast.size(); ++i)
-        {
-            // TODO Carlos: is multicast needed when is initial_peer_or_ds? Or is always zero?
-            size_t index = locator_selector_entry.state.multicast[i];
-            success |= CreateInitialConnect(send_resource_list, locator_selector_entry.multicast[index]);
-        }
+        // Only unicast is used in TCP
         for (size_t i = 0; i < locator_selector_entry.state.unicast.size(); ++i)
         {
             size_t index = locator_selector_entry.state.unicast[i];
@@ -890,11 +885,6 @@ bool TCPTransportInterface::OpenOutputChannels(
     }
     else
     {
-        for (size_t i = 0; i < locator_selector_entry.state.multicast.size(); ++i)
-        {
-            size_t index = locator_selector_entry.state.multicast[i];
-            success |= OpenOutputChannel(send_resource_list, locator_selector_entry.multicast[index]);
-        }
         for (size_t i = 0; i < locator_selector_entry.state.unicast.size(); ++i)
         {
             size_t index = locator_selector_entry.state.unicast[i];
@@ -922,8 +912,6 @@ bool TCPTransportInterface::CreateInitialConnect(
     Locator physical_locator = IPLocator::toPhysicalLocator(locator);
 
     std::lock_guard<std::mutex> socketsLock(sockets_map_mutex_);
-
-    // TODO Carlos: verify if it is needed to check the SenderResource
 
     // We try to find a SenderResource that has this locator.
     // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport

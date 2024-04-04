@@ -88,6 +88,7 @@ public:
      * Walk over the list of transports, opening every possible channel that can send through
      * the locators contained in @param locator_selector_entry and returning a vector of Sender Resources associated with it.
      * @param locator_selector_entry LocatorSelectorEntry containing metadata and the locators through which to send.
+     * @return true if at least one send resource was created, false otherwise.
      */
     bool build_send_resources(
             fastdds::rtps::SendResourceList&,
