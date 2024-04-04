@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <thread>
+#include <unordered_map>
 
 #if defined(_WIN32) || defined(__unix__)
 #include <FileWatch.hpp>
@@ -146,6 +147,31 @@ public:
     static void file_watch_callback();
 
     static FileWatchHandle file_watch_handle_;
+
+    /**
+     * @brief Get Id to create a RTPSParticipant.
+     *
+     * This function assumes m_mutex is already locked by the caller.
+     *
+     * @return Different ID for each call.
+     */
+    static uint32_t getNewId();
+
+    static bool prepare_participant_id(
+            int32_t input_id,
+            uint32_t& participant_id);
+
+    static uint32_t get_id_for_prefix(
+            uint32_t participant_id);
+
+    struct ParticipantIDState
+    {
+        uint32_t counter = 0;
+        bool reserved = false;
+        bool used = false;
+    };
+
+    static std::unordered_map<uint32_t, ParticipantIDState> m_RTPSParticipantIDs;
 };
 
 } // namespace rtps
