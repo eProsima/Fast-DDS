@@ -382,6 +382,38 @@ TEST(ReaderProxyTests, has_been_delivered_test)
     expect_result({0, 3}, false, false);
 }
 
+// Test expectations regarding acknack count.
+// Serves as a regression test for redmine issue #20729.
+TEST(ReaderProxyTests, acknack_count)
+{
+    StatefulWriter writer_mock;
+    WriterTimes w_times;
+    RemoteLocatorsAllocationAttributes alloc;
+    ReaderProxy rproxy(w_times, alloc, &writer_mock);
+
+    ReaderProxyData reader_attributes(0, 0);
+    reader_attributes.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+    rproxy.start(reader_attributes);
+
+    // Check that the initial acknack count is 0.
+    EXPECT_TRUE(rproxy.check_and_set_acknack_count(0u));
+    // Check that it is not accepted twice.
+    EXPECT_FALSE(rproxy.check_and_set_acknack_count(0u));
+    // Check that it is accepted if it is incremented.
+    EXPECT_TRUE(rproxy.check_and_set_acknack_count(1u));
+    // Check that it is not accepted twice.
+    EXPECT_FALSE(rproxy.check_and_set_acknack_count(1u));
+    // Check that it is not accepted if it is decremented.
+    EXPECT_FALSE(rproxy.check_and_set_acknack_count(0u));
+    // Check that it is accepted if it has a big increment.
+    EXPECT_TRUE(rproxy.check_and_set_acknack_count(100u));
+    // Check that previous values are rejected.
+    for (uint32_t i = 0; i <= 100u; ++i)
+    {
+        EXPECT_FALSE(rproxy.check_and_set_acknack_count(i));
+    }
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
