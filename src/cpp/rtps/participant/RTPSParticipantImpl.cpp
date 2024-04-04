@@ -560,13 +560,13 @@ void RTPSParticipantImpl::setup_meta_traffic()
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, false, false, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false, true);
-
     if (is_intraprocess_only())
     {
         m_att.builtin.metatrafficUnicastLocatorList.clear();
     }
+
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, false, false, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false, true);
 
     // Check metatraffic multicast port
     if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
