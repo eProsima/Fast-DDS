@@ -585,7 +585,7 @@ int ThroughputSubscriber::process_message()
                         else
                         {
                             // Ensure that the max samples is at least the demand
-                            if (dr_qos.resource_limits().max_samples < 0 ||
+                            if (dr_qos.resource_limits().max_samples <= 0 ||
                                     static_cast<uint32_t>(dr_qos.resource_limits().max_samples) < max_demand)
                             {
                                 EPROSIMA_LOG_WARNING(THROUGHPUTSUBSCRIBER,
