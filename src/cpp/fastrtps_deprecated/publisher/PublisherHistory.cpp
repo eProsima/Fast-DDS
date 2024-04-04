@@ -66,12 +66,17 @@ PublisherHistory::PublisherHistory(
     , resource_limited_qos_(topic_att.resourceLimitsQos)
     , topic_att_(topic_att)
 {
-    if (resource_limited_qos_.max_instances == 0)
+    if (resource_limited_qos_.max_samples <= 0)
+    {
+        resource_limited_qos_.max_samples = std::numeric_limits<int32_t>::max();
+    }
+
+    if (resource_limited_qos_.max_instances <= 0)
     {
         resource_limited_qos_.max_instances = std::numeric_limits<int32_t>::max();
     }
 
-    if (resource_limited_qos_.max_samples_per_instance == 0)
+    if (resource_limited_qos_.max_samples_per_instance <= 0)
     {
         resource_limited_qos_.max_samples_per_instance = std::numeric_limits<int32_t>::max();
     }
