@@ -300,16 +300,19 @@ public:
     }
 
     /**
-     * Called when an ACKNACK is received to set a new value for the count of the last received ACKNACK.
+     * Called when an ACKNACK is received to set a new value for the minimum count accepted for following received
+     * ACKNACKs.
+     *
      * @param acknack_count The count of the received ACKNACK.
-     * @return true if internal count changed (i.e. new ACKNACK is accepted)
+     * @return true if internal count changed (i.e. received ACKNACK is accepted)
      */
     bool check_and_set_acknack_count(
             uint32_t acknack_count)
     {
-        if (last_acknack_count_ < acknack_count)
+        if (acknack_count >= next_expected_acknack_count_)
         {
-            last_acknack_count_ = acknack_count;
+            next_expected_acknack_count_ = acknack_count;
+            ++next_expected_acknack_count_;
             return true;
         }
 
@@ -442,8 +445,8 @@ private:
     TimedEvent* initial_heartbeat_event_;
     //! Are timed events enabled?
     std::atomic_bool timers_enabled_;
-    //! Last ack/nack count
-    uint32_t last_acknack_count_;
+    //! Next expected ack/nack count
+    uint32_t next_expected_acknack_count_;
     //! Last  NACKFRAG count.
     uint32_t last_nackfrag_count_;
 
