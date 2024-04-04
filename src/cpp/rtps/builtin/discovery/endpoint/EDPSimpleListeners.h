@@ -34,7 +34,7 @@ namespace fastrtps {
 namespace rtps {
 
 using EndpointAddedCallback = std::function<
-    void (RTPSReader* reader, const CacheChange_t* const change)>;
+    void (RTPSReader* reader, const CacheChange_t* change)>;
 
 class RTPSReader;
 struct CacheChange_t;
