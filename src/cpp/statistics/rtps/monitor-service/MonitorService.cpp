@@ -262,7 +262,6 @@ bool MonitorService::write_status(
                 status_data.local_entity(to_statistics_type({local_participant_guid_.guidPrefix, entity_id}));
                 GUID_t local_entity_guid = {local_participant_guid_.guidPrefix, entity_id};
 
-                bool status_retrieved = true;
                 switch (i)
                 {
                     case PROXY:
@@ -270,44 +269,21 @@ bool MonitorService::write_status(
                         CDRMessage_t msg;
                         //! Depending on the entity type [Participant, Writer, Reader]
                         //! the size will be accordingly calculated
-
-                        if (!proxy_queryable_->get_serialized_proxy(local_entity_guid, &msg))
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the serialized entity");
-                            status_retrieved = false;
-                            assert(false);
-                        }
-
+                        assert(proxy_queryable_->get_serialized_proxy(local_entity_guid, &msg));
                         data.entity_proxy().assign(msg.buffer, msg.buffer + msg.length);
-
                         break;
                     }
                     case CONNECTION_LIST:
                     {
                         std::vector<statistics::Connection> conns;
-                        if (conns_queryable_->get_entity_connections(local_entity_guid, conns))
-                        {
-                            data.connection_list(conns);
-                        }
-                        else
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
-                                    "Could not get entity connections list for " << local_entity_guid);
-                            assert(false);
-                        }
-
+                        assert(conns_queryable_->get_entity_connections(local_entity_guid, conns));
+                        data.connection_list(conns);
                         break;
                     }
                     case INCOMPATIBLE_QOS:
                     {
                         data.incompatible_qos_status(IncompatibleQoSStatus_s{});
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
-                                    "Could not retrieve the incompatible qos entity status ");
-                            status_retrieved = false;
-                            assert(false);
-                        }
+                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
                         break;
                     }
                     //Not triggered for the moment
@@ -320,66 +296,39 @@ bool MonitorService::write_status(
                     case LIVELINESS_LOST:
                     {
                         data.liveliness_lost_status(LivelinessLostStatus_s{});
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
-                                    "Could not retrieve the liveliness lost entity status ");
-                            status_retrieved = false;
-                            assert(false);
-                        }
-
+                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
                         break;
                     }
                     case LIVELINESS_CHANGED:
                     {
                         data.liveliness_changed_status(LivelinessChangedStatus_s{});
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE,
-                                    "Could not retrieve the liveliness changed entity status");
-                            status_retrieved = false;
-                            assert(false);
-                        }
-
+                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
                         break;
                     }
                     case DEADLINE_MISSED:
                     {
                         data.deadline_missed_status(DeadlineMissedStatus_s{});
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the deadline missed entity status");
-                            status_retrieved = false;
-                            assert(false);
-                        }
+                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
                         break;
                     }
                     case SAMPLE_LOST:
                     {
                         data.sample_lost_status(SampleLostStatus_s{});
-                        if (!status_queryable_.get_monitoring_status(local_entity_guid, data))
-                        {
-                            EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the sample lost entity status");
-                            status_retrieved = false;
-                            assert(false);
-                        }
+                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
                         break;
                     }
                     default:
                     {
                         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Referring to an unknown status");
-                        status_retrieved = false;
                         assert(false);
                         break;
                     }
                 }
 
-                if (status_retrieved)
-                {
-                    status_data.status_kind((StatusKind)i);
-                    status_data.value(data);
-                    add_change(status_data, false);
-                }
+                status_data.status_kind((StatusKind)i);
+                status_data.value(data);
+                add_change(status_data, false);
+
             }
         }
     }
