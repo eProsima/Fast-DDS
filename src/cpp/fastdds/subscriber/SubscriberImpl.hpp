@@ -23,16 +23,16 @@
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
+#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
 
-#include <mutex>
 #include <map>
+#include <mutex>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 

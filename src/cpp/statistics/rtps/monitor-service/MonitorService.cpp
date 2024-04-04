@@ -262,6 +262,7 @@ bool MonitorService::write_status(
                 status_data.local_entity(to_statistics_type({local_participant_guid_.guidPrefix, entity_id}));
                 GUID_t local_entity_guid = {local_participant_guid_.guidPrefix, entity_id};
 
+                bool status_retrieved = true;
                 switch (i)
                 {
                     case PROXY:
@@ -269,66 +270,69 @@ bool MonitorService::write_status(
                         CDRMessage_t msg;
                         //! Depending on the entity type [Participant, Writer, Reader]
                         //! the size will be accordingly calculated
-                        assert(proxy_queryable_->get_serialized_proxy(local_entity_guid, &msg));
+                        status_retrieved = proxy_queryable_->get_serialized_proxy(local_entity_guid,&msg);
                         data.entity_proxy().assign(msg.buffer, msg.buffer + msg.length);
                         break;
                     }
                     case CONNECTION_LIST:
                     {
                         std::vector<statistics::Connection> conns;
-                        assert(conns_queryable_->get_entity_connections(local_entity_guid, conns));
+                        status_retrieved = conns_queryable_->get_entity_connections(local_entity_guid,conns);
                         data.connection_list(conns);
                         break;
                     }
                     case INCOMPATIBLE_QOS:
                     {
                         data.incompatible_qos_status(IncompatibleQoSStatus_s{});
-                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
+                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
                         break;
                     }
                     //Not triggered for the moment
                     case INCONSISTENT_TOPIC:
                     {
                         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Inconsistent topic status not supported yet");
-                        assert(false);
+                        (void)local_entity_guid;
                         break;
                     }
                     case LIVELINESS_LOST:
                     {
                         data.liveliness_lost_status(LivelinessLostStatus_s{});
-                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
+                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
                         break;
                     }
                     case LIVELINESS_CHANGED:
                     {
                         data.liveliness_changed_status(LivelinessChangedStatus_s{});
-                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
+                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
                         break;
                     }
                     case DEADLINE_MISSED:
                     {
                         data.deadline_missed_status(DeadlineMissedStatus_s{});
-                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
+                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
                         break;
                     }
                     case SAMPLE_LOST:
                     {
                         data.sample_lost_status(SampleLostStatus_s{});
-                        assert(status_queryable_.get_monitoring_status(local_entity_guid, data));
+                        status_retrieved = status_queryable_.get_monitoring_status(local_entity_guid, data);
                         break;
                     }
                     default:
                     {
                         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Referring to an unknown status");
-                        assert(false);
+                        (void)local_entity_guid;
                         break;
                     }
                 }
 
-                status_data.status_kind((StatusKind)i);
-                status_data.value(data);
-                add_change(status_data, false);
-
+                assert(status_retrieved);
+                if (status_retrieved)
+                {
+                    status_data.status_kind((StatusKind)i);
+                    status_data.value(data);
+                    add_change(status_data, false);
+                }
             }
         }
     }
