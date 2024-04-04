@@ -48,7 +48,7 @@ class StatelessWriter : public RTPSWriter
 {
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
-    
+
 protected:
 
     StatelessWriter(

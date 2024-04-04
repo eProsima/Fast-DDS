@@ -15,9 +15,11 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /**
- * @file CDRMessage.hpp
+ * @file CDRMessage.cpp
  *
  */
+
+#include "CDRMessage.h"
 
 #include <cassert>
 #include <cstring>

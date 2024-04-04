@@ -20,7 +20,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CdrSerialization.hpp>
-#include <fastdds/rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.h>
 
 #include <openssl/aes.h>
 #include <openssl/evp.h>

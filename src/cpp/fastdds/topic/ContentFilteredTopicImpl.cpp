@@ -25,11 +25,11 @@
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/topic/ContentFilterUtils.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/utils/md5.h>
+#include <rtps/messages/CDRMessage.h>
 
 namespace eprosima {
 namespace fastdds {

@@ -23,7 +23,7 @@
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 

@@ -29,8 +29,8 @@
 #include <fastdds/rtps/common/SequenceNumber.h>
 #include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
-#include <fastdds/rtps/messages/CDRMessage.h>
 
+#include <rtps/messages/CDRMessage.h>
 #include <rtps/network/NetworkFactory.h>
 
 namespace eprosima {

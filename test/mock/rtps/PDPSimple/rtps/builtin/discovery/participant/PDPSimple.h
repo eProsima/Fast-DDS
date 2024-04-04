@@ -22,10 +22,10 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
 
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDP.h>
+#include <rtps/messages/CDRMessage.h>
 
 namespace eprosima {
 namespace fastrtps {

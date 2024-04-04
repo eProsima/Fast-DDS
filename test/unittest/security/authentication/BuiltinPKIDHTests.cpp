@@ -20,7 +20,7 @@
 #include <openssl/opensslv.h>
 #include <openssl/pem.h>
 
-#include <fastdds/rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.h>
 
 #include "AuthenticationPluginTests.hpp"
 #include <security/authentication/PKIHandshakeHandle.h>

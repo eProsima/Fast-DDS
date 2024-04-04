@@ -53,116 +53,116 @@ namespace CDRMessage {
  * @return True if correct.
  */
 /// @{
-inline bool readEntityId(
+bool readEntityId(
         CDRMessage_t* msg,
         EntityId_t* id);
 
-inline bool readData(
+bool readData(
         CDRMessage_t* msg,
         octet* o,
         uint32_t length);
 
-inline bool read_array_with_max_size(
+bool read_array_with_max_size(
         CDRMessage_t* msg,
         octet* arr,
         size_t max_size);
 
-inline bool readDataReversed(
+bool readDataReversed(
         CDRMessage_t* msg,
         octet* o,
         uint32_t length);
 
-inline bool readInt32(
+bool readInt32(
         CDRMessage_t* msg,
         int32_t* lo);
 
-inline bool readUInt32(
+bool readUInt32(
         CDRMessage_t* msg,
         uint32_t* ulo);
 
-inline bool readInt64(
+bool readInt64(
         CDRMessage_t* msg,
         int64_t* lolo);
 
-inline bool readUInt64(
+bool readUInt64(
         CDRMessage_t* msg,
         uint64_t* lolo);
 
-inline bool readSequenceNumber(
+bool readSequenceNumber(
         CDRMessage_t* msg,
         SequenceNumber_t* sn);
 
-inline bool readInt16(
+bool readInt16(
         CDRMessage_t* msg,
         int16_t* i16);
 
-inline bool readUInt16(
+bool readUInt16(
         CDRMessage_t* msg,
         uint16_t* i16);
 
-inline bool readLocator(
+bool readLocator(
         CDRMessage_t* msg,
         Locator_t* loc);
 
-inline bool readOctet(
+bool readOctet(
         CDRMessage_t* msg,
         octet* o);
 
-inline SequenceNumberSet_t readSequenceNumberSet(
+SequenceNumberSet_t readSequenceNumberSet(
         CDRMessage_t* msg);
 
-inline bool readFragmentNumberSet(
+bool readFragmentNumberSet(
         CDRMessage_t* msg,
         FragmentNumberSet_t* snset);
 
-inline bool readTimestamp(
+bool readTimestamp(
         CDRMessage_t* msg,
         Time_t* ts);
 
-inline bool readString(
+bool readString(
         CDRMessage_t* msg,
         std::string* p_str);
 
-inline bool readString(
+bool readString(
         CDRMessage_t* msg,
         fastcdr::string_255* stri);
 
-inline bool readOctetVector(
+bool readOctetVector(
         CDRMessage_t* msg,
         std::vector<octet>* ocvec);
 
-inline bool readProperty(
+bool readProperty(
         CDRMessage_t* msg,
         Property& property);
 
-inline bool readBinaryProperty(
+bool readBinaryProperty(
         CDRMessage_t* msg,
         BinaryProperty& binary_property);
 
-inline bool readPropertySeq(
+bool readPropertySeq(
         CDRMessage_t* msg,
         PropertySeq& properties,
         const uint32_t parameter_length);
 
-inline bool readBinaryPropertySeq(
+bool readBinaryPropertySeq(
         CDRMessage_t* msg,
         BinaryPropertySeq& binary_properties,
         const uint32_t parameter_length);
 
-inline bool readDataHolder(
+bool readDataHolder(
         CDRMessage_t* msg,
         DataHolder& data_holder,
         const uint32_t parameter_length);
 
-inline bool readDataHolderSeq(
+bool readDataHolderSeq(
         CDRMessage_t* msg,
         DataHolderSeq& data_holders);
 
-inline bool readMessageIdentity(
+bool readMessageIdentity(
         CDRMessage_t* msg,
         security::MessageIdentity& message_identity);
 
-inline bool readParticipantGenericMessage(
+bool readParticipantGenericMessage(
         CDRMessage_t* msg,
         security::ParticipantGenericMessage& message);
 ///@}
@@ -174,11 +174,11 @@ inline bool readParticipantGenericMessage(
  * @param data_size Size of the data the message is suppose to carry
  * @return True if correct.
  */
-inline bool initCDRMsg(
+bool initCDRMsg(
         CDRMessage_t* msg,
         uint32_t data_size = RTPSMESSAGE_COMMON_DATA_PAYLOAD_SIZE);
 
-inline bool wrapVector(
+bool wrapVector(
         CDRMessage_t* msg,
         std::vector<octet>& vectorToWrap);
 
@@ -188,7 +188,7 @@ inline bool wrapVector(
  * @param[in] second Pointer to second message.
  ** @return True if correct.
  */
-inline bool appendMsg(
+bool appendMsg(
         CDRMessage_t* first,
         CDRMessage_t* second);
 
@@ -205,127 +205,127 @@ inline bool appendMsg(
 /// @{
 
 template<typename T>
-inline bool addPrimitive(
+bool addPrimitive(
         CDRMessage_t* msg,
         T value);
 
-inline bool hasSpace(
+bool hasSpace(
         CDRMessage_t* msg,
         const uint32_t length);
 
-inline void copyToBuffer(
+void copyToBuffer(
         CDRMessage_t* msg,
         const octet* data,
         const uint32_t length,
         bool reverse = false);
 
-inline bool addData(
+bool addData(
         CDRMessage_t*,
         const octet*,
         const uint32_t number_bytes);
-inline bool addDataReversed(
+bool addDataReversed(
         CDRMessage_t*,
         const octet*,
         const uint32_t byte_number);
 
-inline bool addOctet(
+bool addOctet(
         CDRMessage_t* msg,
         octet o);
 
-inline bool addUInt16(
+bool addUInt16(
         CDRMessage_t* msg,
         uint16_t us);
 
-inline bool addInt32(
+bool addInt32(
         CDRMessage_t* msg,
         int32_t lo);
 
-inline bool addUInt32(
+bool addUInt32(
         CDRMessage_t* msg,
         uint32_t lo);
 
-inline bool addInt64(
+bool addInt64(
         CDRMessage_t* msg,
         int64_t lo);
 
-inline bool addUInt64(
+bool addUInt64(
         CDRMessage_t* msg,
         uint64_t lo);
 
-inline bool addEntityId(
+bool addEntityId(
         CDRMessage_t* msg,
         const EntityId_t* id);
 
-inline bool addSequenceNumber(
+bool addSequenceNumber(
         CDRMessage_t* msg,
         const SequenceNumber_t* sn);
 
-inline bool addSequenceNumberSet(
+bool addSequenceNumberSet(
         CDRMessage_t* msg,
         const SequenceNumberSet_t* sns);
 
-inline bool addFragmentNumberSet(
+bool addFragmentNumberSet(
         CDRMessage_t* msg,
         FragmentNumberSet_t* fns);
 
-inline bool addLocator(
+bool addLocator(
         CDRMessage_t* msg,
         const Locator_t& loc);
 
-inline bool add_string(
+bool add_string(
         CDRMessage_t* msg,
         const char* in_str);
 
-inline bool add_string(
+bool add_string(
         CDRMessage_t* msg,
         const std::string& in_str);
 
-inline bool add_string(
+bool add_string(
         CDRMessage_t* msg,
         const fastcdr::string_255& in_str);
 
-inline bool addOctetVector(
+bool addOctetVector(
         CDRMessage_t* msg,
         const std::vector<octet>* ocvec,
         bool add_final_padding = true);
 
-inline bool addProperty(
+bool addProperty(
         CDRMessage_t* msg,
         const Property& property);
 
-inline bool addBinaryProperty(
+bool addBinaryProperty(
         CDRMessage_t* msg,
         const BinaryProperty& binary_property,
         bool add_final_padding = true);
 
-inline bool addPropertySeq(
+bool addPropertySeq(
         CDRMessage_t* msg,
         const PropertySeq& properties);
 
-inline bool addBinaryPropertySeq(
+bool addBinaryPropertySeq(
         CDRMessage_t* msg,
         const BinaryPropertySeq& binary_properties,
         bool add_final_padding);
 
-inline bool addBinaryPropertySeq(
+bool addBinaryPropertySeq(
         CDRMessage_t* msg,
         const BinaryPropertySeq& binary_properties,
         const std::string& name_start,
         bool add_final_padding);
 
-inline bool addDataHolder(
+bool addDataHolder(
         CDRMessage_t* msg,
         const DataHolder& data_holder);
 
-inline bool addDataHolderSeq(
+bool addDataHolderSeq(
         CDRMessage_t* msg,
         const DataHolderSeq& data_holders);
 
-inline bool addMessageIdentity(
+bool addMessageIdentity(
         CDRMessage_t* msg,
         const security::MessageIdentity& message_identity);
 
-inline bool addParticipantGenericMessage(
+bool addParticipantGenericMessage(
         CDRMessage_t* msg,
         const security::ParticipantGenericMessage& message);
 
@@ -338,7 +338,7 @@ inline bool addParticipantGenericMessage(
  * @param length The number of bytes to skip
  * @return true if skipped, false otherwise
  */
-inline bool skip(
+bool skip(
         CDRMessage_t* msg,
         uint32_t length);
 
@@ -350,7 +350,7 @@ inline bool skip(
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <fastdds/rtps/messages/CDRMessage.hpp>
+#include "CDRMessage.cpp"
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

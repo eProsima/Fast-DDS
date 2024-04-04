@@ -26,7 +26,7 @@
 #include <vector>
 
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 
 namespace eprosima {
 namespace fastrtps {

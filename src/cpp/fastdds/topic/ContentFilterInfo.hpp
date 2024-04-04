@@ -26,7 +26,7 @@
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/messages/CDRMessage.h>
+#include <rtps/messages/CDRMessage.h>
 
 namespace eprosima {
 namespace fastdds {
