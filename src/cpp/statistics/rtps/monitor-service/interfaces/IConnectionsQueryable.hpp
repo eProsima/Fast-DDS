@@ -13,37 +13,38 @@
 // limitations under the License.
 
 /**
- * @file IConnectionsObserver.hpp
+ * @file IConnectionsQueryable.hpp
  *
  */
 
-#ifndef _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ICONNECTIONSOBSERVER_HPP_
-#define _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ICONNECTIONSOBSERVER_HPP_
+#ifndef _STATISTICS_MONITOR_SERVICE_INTERFACES_ICONNECTIONSQUERYABLE_HPP_
+#define _STATISTICS_MONITOR_SERVICE_INTERFACES_ICONNECTIONSQUERYABLE_HPP_
 
 #include <vector>
 
 #include <fastdds/rtps/common/Guid.h>
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
+
 namespace rtps {
 
-using namespace eprosima::fastdds::statistics;
-
-class Connection;
-
-struct IConnectionsObserver
+struct IConnectionsQueryable
 {
     /**
-     * @brief Interface use to notify any connection change
-     * in an entity
+     * @brief Interface for retrieving a list of Connections
+     * (announced locators, used_locators and mode)
+     * of a given entity, by guid
      *
-     * @param guid The GUID_t identifying the target entity
-     * @return Whether the implementor has been properly notified
+     * @param [in] guid The GUID_t identifying the target entity
+     * @param [out] conns_list The output connection list
+     * @return Whether the list of connnections could be retrieved
      */
-    virtual bool on_local_entity_connections_change(
-            const fastrtps::rtps::GUID_t& guid) const = 0;
+    virtual bool get_entity_connections(
+            const fastrtps::rtps::GUID_t& guid,
+            ConnectionList& conns_list) = 0;
 };
 
 } // rtps
@@ -51,5 +52,4 @@ struct IConnectionsObserver
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ICONNECTIONSOBSERVER_HPP_
-
+#endif // _STATISTICS_MONITOR_SERVICE_INTERFACES_ICONNECTIONSQUERYABLE_HPP_
