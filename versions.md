@@ -1,8 +1,6 @@
 Forthcoming
 -----------
 
-* Added authentication handshake properties.
-
 Version 2.13.0
 --------------
 
@@ -15,6 +13,7 @@ Version 2.13.0
 * Added the possibility to define interfaces in the whitelist by interface name.
 * Added configuration of builtin transports through DomainParticipantQos, environment variable and XML.
 * Enable support for DataRepresentationQos to select the CDR encoding.
+* Added authentication handshake properties.
 
 Version 2.12.0
 --------------
