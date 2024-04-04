@@ -1018,15 +1018,11 @@ bool load_environment_server_info(
             };
 
     // Add new server
-    auto add_server2qos = [](int id, std::forward_list<Locator>&& locators, RemoteServerList_t& attributes)
+    auto add_server2qos = [](std::forward_list<Locator>&& locators, RemoteServerList_t& attributes)
             {
                 RemoteServerAttributes server_att;
 
-                // Add the server to the list
-                if (!get_server_client_default_guidPrefix(id, server_att.guidPrefix))
-                {
-                    throw std::invalid_argument("The maximum number of default discovery servers has been reached");
-                }
+                // To set the GUID is no necessary
 
                 // Split multi and unicast locators
                 auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
@@ -1052,7 +1048,6 @@ bool load_environment_server_info(
     {
         // Do the parsing and populate the list
         Locator_t server_locator(LOCATOR_KIND_UDPv4, DEFAULT_ROS2_SERVER_PORT);
-        int server_id = 0;
 
         std::sregex_iterator server_it(
             list.begin(),
@@ -1112,7 +1107,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
+                    add_server2qos(std::forward_list<Locator>{server_locator}, attributes);
                 }
                 // Try IPv6 next
                 else if (std::regex_match(locator, mr, ROS2_IPV6_ADDRESSPORT_PATTERN,
@@ -1151,7 +1146,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(server_id, std::forward_list<Locator>{server_locator}, attributes);
+                    add_server2qos(std::forward_list<Locator>{server_locator}, attributes);
                 }
                 // Try resolve DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
@@ -1242,7 +1237,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(server_id, std::move(flist), attributes);
+                    add_server2qos(std::move(flist), attributes);
                 }
                 // Try resolve TCP DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN_TCP,
@@ -1336,7 +1331,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(server_id, std::move(flist), attributes);
+                    add_server2qos(std::move(flist), attributes);
                 }
                 else
                 {
@@ -1347,7 +1342,6 @@ bool load_environment_server_info(
             }
 
             // Advance to the next server if any
-            ++server_id;
             ++server_it;
         }
 
