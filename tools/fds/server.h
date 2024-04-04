@@ -17,6 +17,7 @@
 
 // Parsing setup
 #include <optionparser.hpp>
+#include <string>
 
 namespace option = eprosima::option;
 
@@ -43,6 +44,10 @@ struct Arg : public option::Arg
             const option::Option& option,
             bool msg);
 
+    // static option::ArgStatus optional_ip(
+    //     const option::Option& option,
+    //     bool msg);
+
     static option::ArgStatus check_udp_port(
             const option::Option& option,
             bool msg);
@@ -65,21 +70,21 @@ const option::Descriptor usage[] = {
       "  -i \t--server-id   Unique server identifier. Specifies zero based server\n"
       "\t              position in ROS_DISCOVERY_SERVER environment variable.\n" },
 
-    { UDPADDRESS, 0, "l", "udp-address",   Arg::required,
+    { UDPADDRESS, 0, "l", "udp-address",   Arg::OptionalAny,
       "  -l \t--udp-address IPv4/IPv6 address chosen to listen the clients. Defaults\n"
       "\t              to any (0.0.0.0/::0). Instead of an address, a name can\n"
       "\t              be specified.\n"},
 
     { UDP_PORT,  0, "p",  "udp-port",       Arg::check_udp_port,
-      "  -p  \t--udp-port    UDP port chosen to listen the clients. Defaults to 11811\n" },
+      "  -p  \t--udp-port    UDP port chosen to listen the clients. Defaults to 11811.\n" },
 
-    { TCPADDRESS, 0, "t", "tcp-address",   Arg::required,
+    { TCPADDRESS, 0, "t", "tcp-address",   Arg::OptionalAny,
       "  -t \t--tcp-address IPv4/IPv6 address chosen to listen the clients using\n"
       "\t              TCP transport. Defaults to any (0.0.0.0/::0). Instead of an \n"
       "\t              address, a name can be specified.\n"},
 
     { TCP_PORT,  0, "q",  "tcp-port",         Arg::check_tcp_port,
-      "  -q  \t--tcp-port    TCP port chosen to listen the clients. Defaults to 42100\n" },
+      "  -q  \t--tcp-port    TCP port chosen to listen the clients. Defaults to 42100.\n" },
 
     { BACKUP,    0, "b",  "backup",       Arg::None,
       "  -b  \t--backup      Creates a server with a backup file associated.\n" },
@@ -91,7 +96,11 @@ const option::Descriptor usage[] = {
       "\t              the profile with \"is_default_profile=\"true\"\" unless \n"
       "\t              another profile using uri with \"@\" character is defined.\n"},
 
-    { UNKNOWN,   0, "",  "",              Arg::None,
+    { 0, 0, 0, 0, 0, 0 }
+};
+
+const std::string EXAMPLES =
+
       "Examples:\n"
 
       "\t1.  Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
@@ -112,7 +121,8 @@ const option::Descriptor usage[] = {
       "\t    listening on Wi-Fi (192.163.6.34) and Ethernet (172.20.96.1) local\n"
       "\t    interfaces with UDP ports 8783 and 51083 respectively\n"
       "\t    (addresses and ports are made up for the example).\n\n"
-      "\t    $ " FAST_SERVER_BINARY " -i 2 -l 192.163.6.34 -p 8783 -l 172.20.96.1 -p 51083\n\n"
+      "\t    $ " FAST_SERVER_BINARY " -i 2 -l 192.163.6.34 -p 8783 -l\n"
+      "\t    172.20.96.1 -p 51083\n\n"
 
       "\t5.  Launch a default server with id 3 (fourth on ROS_DISCOVERY_SERVER)\n"
       "\t    listening on 172.31.44.1 with UDP port 12345 and provided with a\n"
@@ -140,9 +150,7 @@ const option::Descriptor usage[] = {
       "\t10. Launch a server with id 0 (first on ROS_DISCOVERY_SERVER) listening\n"
       "\t    on localhost and Wi-Fi (192.163.6.34). Two TCP ports need to be\n"
       "\t    specified because TCP Transports cannot share ports.\n\n"
-      "\t    $ " FAST_SERVER_BINARY " -i 0 -t 127.0.0.1 -q 42100 -t 192.163.6.34 -q 42101"},
-
-    { 0, 0, 0, 0, 0, 0 }
-};
+      "\t    $ " FAST_SERVER_BINARY " -i 0 -t 127.0.0.1 -q 42100 -t\n"
+      "\t    192.163.6.34 -q 42101";
 
 #endif // FASTDDS_SERVER_SERVER_H_

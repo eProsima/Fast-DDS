@@ -21,7 +21,6 @@
 #include <regex>
 #include <sstream>
 #include <stdlib.h>
-#include <string>
 #include <vector>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -79,6 +78,13 @@ int fastdds_discovery_server(
         return 1;
     }
 
+    for (option::Option* opt = options[UNKNOWN]; opt; opt = opt->next())
+    {
+        EPROSIMA_LOG_ERROR(CLI, "Unknown option: " << opt->name);
+        option::printUsage(std::cout, usage);
+        return 1;
+    }
+
     // No arguments beyond options
     int noopts = parse.nonOptionsCount();
     if (noopts)
@@ -97,9 +103,10 @@ int fastdds_discovery_server(
     }
 
     // Show help if asked to
-    if (options[HELP] || argc == 0)
+    if (options[HELP])
     {
         option::printUsage(std::cout, usage);
+        std::cout << EXAMPLES << std::endl;
         return 0;
     }
 
@@ -176,8 +183,8 @@ int fastdds_discovery_server(
         fastrtps::rtps::GuidPrefix_t prefix_cero;
         if (participantQos.wire_protocol().prefix == prefix_cero)
         {
-            std::cout << "Using random GUID because no server ID was specified (-i option) or defined in the XML file." <<
-                std::endl;
+            std::cout << "\nUsing random GUID because no server ID was specified "
+                      << "(-i option)\nnor defined in the XML file.\n" << std::endl;
             pOp = new option::Option();
             pOp->arg = "-1";
         }
@@ -222,7 +229,8 @@ int fastdds_discovery_server(
     is.str("");
 
     // Set Participant Name
-    is << "eProsima Default Server number " << server_id;
+    std::string server_name = (server_id == -1) ? "eProsima Guidless Server" : "eProsima Default Server" + std::to_string(server_id);
+    is << server_name;
     participantQos.name(is.str().c_str());
 
     // Choose the kind of server to create
@@ -284,7 +292,15 @@ int fastdds_discovery_server(
 
     // Retrieve first IP address
     pOp = options[UDPADDRESS];
+    if (pOp != nullptr && pOp->arg == nullptr)
+    {
+        pOp->arg = "0.0.0.0";
+    }
     option::Option* pO_tcp = options[TCPADDRESS];
+    if (pO_tcp != nullptr && pO_tcp->arg == nullptr)
+    {
+        pO_tcp->arg = "0.0.0.0";
+    }
     // Retrieve first TCP port
     option::Option* pO_tcp_port = options[TCP_PORT];
 
@@ -387,7 +403,7 @@ int fastdds_discovery_server(
             else
             {
                 std::cout << "Warning: the number of specified ports doesn't match the ip" << std::endl
-                          << "         addresses provided. Locators share its port number." << std::endl;
+                          << "         addresses provided. Locators share their port number." << std::endl;
             }
         }
 
@@ -439,8 +455,11 @@ int fastdds_discovery_server(
         if (nullptr == pO_tcp)
         {
             // Only the TCP port has been specified. Use localhost as default interface for TCP
-            IPLocator::setIPv4(locator_tcp_4, "127.0.0.1");
+            IPLocator::setIPv4(locator_tcp_4, "0.0.0.0");
             participantQos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(locator_tcp_4);
+            auto tcp_descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+            tcp_descriptor->add_listener_port(static_cast<uint16_t>(locator_tcp_4.port));
+            participantQos.transport().user_transports.push_back(tcp_descriptor);
         }
         else if (nullptr != pO_tcp)
         {
@@ -651,9 +670,9 @@ option::ArgStatus Arg::check_server_id(
 
     if (msg)
     {
-        std::cout << "Option '" << option.name
-                  << "' is optional. Should be a key identifier between 0 and 255"
-                  << " or -1 (default) to use a random GUID." << std::endl;
+        std::cout << "\nOption '" << option.name
+                  << "' is optional. Should be a key identifier between 0 and 255\n"
+                  << "or -1 (default) to use a random GUID." << std::endl;
     }
 
     return option::ARG_ILLEGAL;
@@ -671,7 +690,7 @@ option::ArgStatus Arg::required(
 
     if (msg)
     {
-        std::cout << "Option '" << option << "' requires an argument" << std::endl;
+        std::cout << "\nOption '" << option.desc->longopt << "' requires an argument." << std::endl;
     }
     return option::ARG_ILLEGAL;
 }
@@ -700,7 +719,7 @@ option::ArgStatus Arg::check_udp_port(
 
     if (msg)
     {
-        std::cout << "Option '" << option.name
+        std::cout << "\nOption '" << option.name
                   << "' value should be an UDP port between 1025 and 65535." << std::endl;
     }
 
@@ -730,7 +749,7 @@ option::ArgStatus Arg::check_tcp_port(
 
     if (msg)
     {
-        std::cout << "Option '" << option.name
+        std::cout << "\nOption '" << option.name
                   << "' value should be an TCP port between 1025 and 65535." << std::endl;
     }
 
