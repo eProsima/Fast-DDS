@@ -291,7 +291,7 @@ bool MonitorService::write_status(
                     case INCONSISTENT_TOPIC:
                     {
                         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Inconsistent topic status not supported yet");
-                        (void)local_entity_guid;
+                        static_cast<void>(local_entity_guid);
                         break;
                     }
                     case LIVELINESS_LOST:
@@ -321,7 +321,7 @@ bool MonitorService::write_status(
                     default:
                     {
                         EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Referring to an unknown status");
-                        (void)local_entity_guid;
+                        static_cast<void>(local_entity_guid);
                         break;
                     }
                 }
@@ -332,6 +332,11 @@ bool MonitorService::write_status(
                     status_data.status_kind((StatusKind)i);
                     status_data.value(data);
                     add_change(status_data, false);
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(MONITOR_SERVICE, "Could not retrieve the status data for " << i << " of " <<
+                            local_entity_guid);
                 }
             }
         }
