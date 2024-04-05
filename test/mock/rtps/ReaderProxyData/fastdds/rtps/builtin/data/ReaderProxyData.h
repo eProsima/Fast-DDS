@@ -50,8 +50,6 @@ public:
         , m_expectsInlineQos(false)
         , topic_kind_(NO_KEY)
         , is_alive_(true)
-        , type_id_()
-        , type_()
         , type_info_()
         , m_userDefinedId(0)
         , content_filter_({})
@@ -67,8 +65,6 @@ public:
         , m_expectsInlineQos(false)
         , topic_kind_(NO_KEY)
         , is_alive_(true)
-        , type_id_()
-        , type_()
         , type_info_()
         , m_userDefinedId(0)
         , content_filter_(filter_allocation)
@@ -217,65 +213,23 @@ public:
         return is_alive_;
     }
 
-    bool has_type_id () const
-    {
-        return false;
-    }
-
-    void type_id(
-            const fastdds::dds::TypeIdV1& other_type_id)
-    {
-        type_id_ = other_type_id;
-    }
-
-    const fastdds::dds::TypeIdV1& type_id() const
-    {
-        return type_id_;
-    }
-
-    fastdds::dds::TypeIdV1& type_id()
-    {
-        return type_id_;
-    }
-
-    bool has_type () const
-    {
-        return false;
-    }
-
-    void type(
-            const fastdds::dds::TypeObjectV1& other_type)
-    {
-        type_ = other_type;
-    }
-
-    const fastdds::dds::TypeObjectV1& type() const
-    {
-        return type_;
-    }
-
-    fastdds::dds::TypeObjectV1& type()
-    {
-        return type_;
-    }
-
     bool has_type_information () const
     {
         return false;
     }
 
     void type_information(
-            const fastdds::dds::xtypes::TypeInformation& other_type_info)
+            const fastdds::dds::xtypes::TypeInformationParameter& other_type_info)
     {
         type_info_ = other_type_info;
     }
 
-    const fastdds::dds::xtypes::TypeInformation& type_information() const
+    const fastdds::dds::xtypes::TypeInformationParameter& type_information() const
     {
         return type_info_;
     }
 
-    fastdds::dds::xtypes::TypeInformation& type_information()
+    fastdds::dds::xtypes::TypeInformationParameter& type_information()
     {
         return type_info_;
     }
@@ -390,9 +344,7 @@ private:
     fastcdr::string_255 type_name_;
     TopicKind_t topic_kind_;
     bool is_alive_;
-    fastdds::dds::TypeIdV1 type_id_;
-    fastdds::dds::TypeObjectV1 type_;
-    fastdds::dds::xtypes::TypeInformation type_info_;
+    fastdds::dds::xtypes::TypeInformationParameter type_info_;
     InstanceHandle_t m_key;
     InstanceHandle_t m_RTPSParticipantKey;
     uint16_t m_userDefinedId;

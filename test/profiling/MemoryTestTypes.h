@@ -20,7 +20,11 @@
 #ifndef MEMORYTESTTYPES_H_
 #define MEMORYTESTTYPES_H_
 
-#include "fastrtps/fastrtps_all.h"
+#include <cstddef>
+#include <cstdint>
+#include <vector>
+
+#include <fastdds/dds/topic/TopicDataType.hpp>
 
 class MemoryType
 {
@@ -87,12 +91,19 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     bool deserialize(
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data);
+            void* data) override;
     std::function<uint32_t()> getSerializedSizeProvider(
-            void* data);
+            void* data) override;
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     void* createData();
     void deleteData(
             void* data);
@@ -149,12 +160,19 @@ public:
 
     bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload);
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+    bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     bool deserialize(
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data);
+            void* data) override;
     std::function<uint32_t()> getSerializedSizeProvider(
-            void* data);
+            void* data) override;
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
     void* createData();
     void deleteData(
             void* data);

@@ -32,11 +32,11 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 
+#include "Interfaces.hpp"
 #include <rtps/history/ITopicPayloadPool.h>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #include <statistics/types/monitorservice_typesPubSubTypes.h>
 
 namespace eprosima {
@@ -59,8 +59,7 @@ public:
 
     inline bool get_monitoring_status(
             const fastrtps::rtps::GUID_t&,
-            const uint32_t&,
-            rtps::DDSEntityStatus*&) override
+            MonitorServiceData&) override
     {
         return true;
     }
@@ -171,7 +170,7 @@ private:
      */
     bool write_status(
             const fastrtps::rtps::EntityId_t& entity_id,
-            const std::bitset<STATUSES_SIZE>& changed_statuses,
+            const std::bitset<StatusKind::STATUSES_SIZE>& changed_statuses,
             const bool& entity_disposed);
 
     /**
@@ -237,7 +236,7 @@ private:
     //! inserted twice.
     std::map<fastrtps::rtps::EntityId_t,
             std::pair<
-                std::bitset<statistics::STATUSES_SIZE>, bool>> local_entities_;
+                std::bitset<StatusKind::STATUSES_SIZE>, bool>> local_entities_;
 
     std::unique_ptr<fastrtps::rtps::TimedEvent> event_;
 

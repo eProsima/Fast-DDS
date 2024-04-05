@@ -21,6 +21,7 @@
 #include <algorithm>
 
 #include <fastdds/core/policy/ParameterList.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -29,8 +30,6 @@
 #include <fastdds/topic/ContentFilterUtils.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/utils/md5.h>
-#include <fastrtps/types/TypesBase.h>
-
 
 namespace eprosima {
 namespace fastdds {
@@ -70,7 +69,7 @@ ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
         EPROSIMA_LOG_ERROR(CONTENT_FILTERED_TOPIC, "Number of expression parameters exceeds maximum allocation limit: "
                 << new_expression_parameters.size() << " > "
                 << pqos.allocation().content_filter.expression_parameters.maximum);
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     LoanableSequence<const char*>::size_type n_params;
@@ -88,7 +87,7 @@ ReturnCode_t ContentFilteredTopicImpl::set_expression_parameters(
         related_topic->get_type_name().c_str(),
         type.get(), new_expression, filter_parameters, filter_instance);
 
-    if (ReturnCode_t::RETCODE_OK == ret)
+    if (RETCODE_OK == ret)
     {
         filter_property.expression_parameters.assign(new_expression_parameters.begin(),
                 new_expression_parameters.end());

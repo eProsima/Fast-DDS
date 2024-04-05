@@ -26,7 +26,7 @@
 
 #include <fastdds/config.h>
 
-#include <statistics/types/types.h>
+#include <statistics/types/types.hpp>
 
 namespace eprosima {
 namespace fastdds {

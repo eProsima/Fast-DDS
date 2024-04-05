@@ -16,15 +16,12 @@ if(WIN32)
     add_definitions(
         -D_WIN32_WINNT=0x0601
         -D_CRT_SECURE_NO_WARNINGS
+        -DNOMINMAX
         )
 endif()
 
 set(COMMON_SOURCES_ACCESS_CONTROL_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/core/policy/ParameterList.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -101,6 +98,7 @@ target_link_libraries(AccessControlTests
     GTest::gmock
     ${OPENSSL_LIBRARIES}
     fastcdr
+    fastdds::log
     foonathan_memory
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
@@ -128,12 +126,6 @@ set(
 add_executable(
     ${DISTINGUISHEDNAME_TEST_NAME}
 
-    # Log related files
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
-
     # src files
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -145,6 +137,7 @@ add_executable(
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/DistinguishedName.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
+    # Log related files
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
 
     # test files
@@ -169,9 +162,9 @@ target_include_directories(
         ${PROJECT_SOURCE_DIR}/src/cpp
 )
 
-target_link_libraries(
-    ${DISTINGUISHEDNAME_TEST_NAME}
+target_link_libraries(${DISTINGUISHEDNAME_TEST_NAME}
     fastcdr
+    fastdds::log
     GTest::gtest
 )
 

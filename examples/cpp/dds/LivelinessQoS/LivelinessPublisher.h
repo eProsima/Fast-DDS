@@ -28,8 +28,8 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 
-#include "Topic.h"
 #include "TopicPubSubTypes.h"
+#include "Topic.hpp"
 
 class LivelinessPublisher
 {

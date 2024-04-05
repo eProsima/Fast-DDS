@@ -30,7 +30,6 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
@@ -59,12 +58,6 @@ RTPSParticipant* RTPSDomain::participant_ = nullptr;
 
 namespace fastdds {
 namespace dds {
-
-namespace builtin {
-
-const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
-
-} // namespace builtin
 
 class RTPSParticipantMock : public eprosima::fastrtps::rtps::RTPSParticipant
 {
@@ -588,15 +581,15 @@ protected:
 
     void TearDown() override
     {
-        ASSERT_EQ(publisher_->delete_datawriter(datawriter_), ReturnCode_t::RETCODE_OK);
-        ASSERT_EQ(participant_->delete_publisher(publisher_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(publisher_->delete_datawriter(datawriter_), RETCODE_OK);
+        ASSERT_EQ(participant_->delete_publisher(publisher_), RETCODE_OK);
 
-        ASSERT_EQ(subscriber_->delete_datareader(datareader_), ReturnCode_t::RETCODE_OK);
-        ASSERT_EQ(participant_->delete_subscriber(subscriber_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(subscriber_->delete_datareader(datareader_), RETCODE_OK);
+        ASSERT_EQ(participant_->delete_subscriber(subscriber_), RETCODE_OK);
 
-        ASSERT_EQ(participant_->delete_topic(topic_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(participant_->delete_topic(topic_), RETCODE_OK);
 
-        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant_), RETCODE_OK);
     }
 
     // RTPS entity mocks are nice, we don't want to track all calls

@@ -20,10 +20,9 @@
 #include <string>
 
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/LibrarySettings.hpp>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
@@ -217,12 +216,11 @@ public:
     //!Add a new dynamic type instance along with its name.
     static bool insertDynamicTypeByName(
             const std::string& type_name,
-            p_dynamictypebuilder_t type);
+            const fastdds::dds::DynamicType::_ref_type& type);
 
-    //!Retrieves a transport instance by its name.
-    static p_dynamictypebuilder_t getDynamicTypeByName(
+    static XMLP_ret getDynamicTypeByName(
+            fastdds::dds::DynamicType::_ref_type& dynamic_type,
             const std::string& type_name);
-
 
     /**
      * Search for the profile specified and fill the structure.
@@ -260,6 +258,7 @@ public:
         topic_profiles_.clear();
         xml_files_.clear();
         transport_profiles_.clear();
+        dynamic_types_.clear();
     }
 
     /**
@@ -267,12 +266,12 @@ public:
      * Any instance retrieve by calling this method must be deleted calling the
      * XMLProfileManager::DeleteDynamicPubSubType method.
      */
-    static types::DynamicPubSubType* CreateDynamicPubSubType(
+    static eprosima::fastdds::dds::DynamicPubSubType* CreateDynamicPubSubType(
             const std::string& type_name)
     {
         if (dynamic_types_.find(type_name) != dynamic_types_.end())
         {
-            return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
+            return new eprosima::fastdds::dds::DynamicPubSubType(dynamic_types_[type_name]);
         }
         return nullptr;
     }
@@ -282,7 +281,7 @@ public:
      * XMLProfileManager::CreateDynamicPubSubType method.
      */
     static void DeleteDynamicPubSubType(
-            types::DynamicPubSubType* type)
+            eprosima::fastdds::dds::DynamicPubSubType* type)
     {
         delete type;
     }

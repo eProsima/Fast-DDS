@@ -36,10 +36,7 @@
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
-#ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#endif // ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {

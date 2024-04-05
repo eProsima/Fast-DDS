@@ -18,10 +18,6 @@ endif()
 
 set(STRINGMATCHINGTESTS_SOURCE
     StringMatchingTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -42,10 +38,6 @@ set(RESOURCELIMITEDVECTORTESTS_SOURCE
 
 set(LOCATORTESTS_SOURCE
     LocatorTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -62,10 +54,6 @@ set(FIXEDSIZEQUEUETESTS_SOURCE
 
 set(SYSTEMINFOTESTS_SOURCE
     SystemInfoTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -90,7 +78,12 @@ target_include_directories(StringMatchingTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StringMatchingTests fastcdr GTest::gtest ${MOCKS})
+target_link_libraries(StringMatchingTests
+    fastcdr
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
+    )
 if(MSVC OR MSVC_IDE)
     target_link_libraries(StringMatchingTests ${PRIVACY} iphlpapi Shlwapi
         )
@@ -129,7 +122,12 @@ target_compile_definitions(LocatorTests PRIVATE
 target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LocatorTests fastcdr GTest::gtest ${MOCKS})
+target_link_libraries(LocatorTests
+    fastcdr
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
+    )
 if(QNX)
     target_link_libraries(LocatorTests socket)
 endif()
@@ -156,7 +154,11 @@ target_compile_definitions(SystemInfoTests PRIVATE
 target_include_directories(SystemInfoTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp ${PROJECT_BINARY_DIR}/include)
-target_link_libraries(SystemInfoTests fastcdr GTest::gtest)
+target_link_libraries(SystemInfoTests
+    fastcdr
+    fastdds::log
+    GTest::gtest
+    )
 gtest_discover_tests(SystemInfoTests)
 
 add_executable(SharedMutexTests shared_mutex_tests.cpp)

@@ -38,11 +38,17 @@
 #define MATCH_FAILURE_REASON_COUNT size_t(16)
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
+namespace dds {
+namespace xtypes {
 
-namespace types {
 class TypeIdentifier;
-} // namespace types
+
+} // namespace xtypes
+} // namespace dds
+} // namespace fastdds
+
+namespace fastrtps {
 
 class TopicAttributes;
 
@@ -389,26 +395,6 @@ private:
             const WriterProxyData& wdata);
 
     bool checkDataRepresentationQos(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool checkTypeValidation(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool checkTypeIdentifier(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool hasTypeIdentifier(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool checkTypeObject(
-            const WriterProxyData* wdata,
-            const ReaderProxyData* rdata) const;
-
-    bool hasTypeObject(
             const WriterProxyData* wdata,
             const ReaderProxyData* rdata) const;
 

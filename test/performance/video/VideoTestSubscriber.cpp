@@ -188,8 +188,8 @@ void VideoTestSubscriber::init(
     TypeSupport command_type;
     video_type.reset(new VideoDataType());
     command_type.reset(new TestCommandDataType());
-    ASSERT_EQ(mp_participant->register_type(video_type), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(mp_participant->register_type(command_type), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(mp_participant->register_type(video_type), RETCODE_OK);
+    ASSERT_EQ(mp_participant->register_type(command_type), RETCODE_OK);
 
     // Create Data Subscriber
     std::string profile_name = "subscriber_profile";
@@ -367,7 +367,7 @@ void VideoTestSubscriber::CommandSubListener::on_data_available(
 {
     SampleInfo info;
     TestCommandType command;
-    if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&command, &info))
+    if (RETCODE_OK == datareader->take_next_sample((void*)&command, &info))
     {
         if (info.valid_data)
         {

@@ -660,25 +660,28 @@ sp_transport_t XMLProfileManager::getTransportById(
 
 bool XMLProfileManager::insertDynamicTypeByName(
         const std::string& type_name,
-        p_dynamictypebuilder_t type)
+        const eprosima::fastdds::dds::DynamicType::_ref_type& type)
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {
-        dynamic_types_[type_name] = type;
+        dynamic_types_.emplace(std::make_pair(type_name, type));
         return true;
     }
     EPROSIMA_LOG_ERROR(XMLPARSER, "Error adding the type " << type_name << ". There is other type with the same name.");
     return false;
 }
 
-p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(
+XMLP_ret XMLProfileManager::getDynamicTypeByName(
+        eprosima::fastdds::dds::DynamicType::_ref_type& dynamic_type,
         const std::string& type_name)
 {
     if (dynamic_types_.find(type_name) != dynamic_types_.end())
     {
-        return dynamic_types_[type_name];
+        dynamic_type = dynamic_types_[type_name];
+        return XMLP_ret::XML_OK;
     }
-    return nullptr;
+
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLProfileManager::extractTopicProfile(

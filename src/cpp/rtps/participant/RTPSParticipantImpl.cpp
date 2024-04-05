@@ -25,6 +25,7 @@
 #include <mutex>
 #include <sstream>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/BuiltinTransports.hpp>
@@ -97,7 +98,7 @@ static void set_builtin_transports_from_env_var(
 
     BuiltinTransports ret_val = BuiltinTransports::DEFAULT;
     std::string env_value;
-    if (SystemInfo::get_env(env_var_name, env_value) == ReturnCode_t::RETCODE_OK)
+    if (SystemInfo::get_env(env_var_name, env_value) == fastdds::dds::RETCODE_OK)
     {
         std::regex COMMON_REGEX(R"((\w+))");
         std::regex OPTIONS_REGEX(
@@ -2477,7 +2478,7 @@ WLP* RTPSParticipantImpl::wlp()
 
 fastdds::dds::builtin::TypeLookupManager* RTPSParticipantImpl::typelookup_manager() const
 {
-    return mp_builtinProtocols->tlm_;
+    return mp_builtinProtocols->typelookup_manager_;
 }
 
 IPersistenceService* RTPSParticipantImpl::get_persistence_service(
@@ -3136,7 +3137,7 @@ RTPSParticipantImpl::get_entity_connections(
         {
             fastdds::statistics::Connection connection;
             connection.guid(fastdds::statistics::to_statistics_type((*pit)->m_guid));
-            connection.mode(fastdds::statistics::TRANSPORT);
+            connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
 
             std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;
             statistic_locators.reserve((*pit)->metatraffic_locators.multicast.size() +

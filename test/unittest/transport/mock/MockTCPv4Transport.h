@@ -20,12 +20,10 @@
 #include <rtps/transport/TCPv4Transport.h>
 
 namespace eprosima {
-namespace fastrtps {
+namespace fastdds {
 namespace rtps {
 
-using TCPv4Transport = eprosima::fastdds::rtps::TCPv4Transport;
-using TCPChannelResource = eprosima::fastdds::rtps::TCPChannelResource;
-using TCPChannelResourceBasic = eprosima::fastdds::rtps::TCPChannelResourceBasic;
+using Locator_t = eprosima::fastrtps::rtps::Locator_t;
 
 class MockTCPv4Transport : public TCPv4Transport
 {

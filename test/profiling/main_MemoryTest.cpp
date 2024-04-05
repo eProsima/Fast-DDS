@@ -20,8 +20,9 @@
 #include <string>
 #include <thread>
 
-#include <fastdds/dds/log/Log.hpp>
 #include <optionparser.hpp>
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include "MemoryTestPublisher.h"
 #include "MemoryTestSubscriber.h"
@@ -33,9 +34,6 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-
-using std::cout;
-using std::endl;
 
 #if FASTDDS_IS_BIG_ENDIAN_TARGET
 const Endianness_t DEFAULT_ENDIAN = BIGEND;
@@ -435,13 +433,13 @@ int main(
     // Load an XML file with predefined profiles for publisher and subscriber
     if (sXMLConfigFile.length() > 0)
     {
-        // TODO(jlbueno): Migrate DomainParticipantFactory::load_XML_profiles_file
-        xmlparser::XMLProfileManager::loadXMLFile(sXMLConfigFile);
+        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_file(sXMLConfigFile);
     }
 
     if (pub_sub)
     {
-        cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" << endl;
+        std::cout << "Performing test with " << sub_number << " subscribers and " << n_samples << " samples" <<
+            std::endl;
         MemoryTestPublisher memoryPub;
         memoryPub.init(sub_number, n_samples, reliable, seed, hostname, export_csv, export_prefix,
                 pub_part_property_policy, pub_property_policy, sXMLConfigFile, data_size, dynamic_types);
@@ -457,7 +455,7 @@ int main(
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    cout << "EVERYTHING STOPPED FINE" << endl;
+    std::cout << "EVERYTHING STOPPED FINE" << std::endl;
 
     return 0;
 }

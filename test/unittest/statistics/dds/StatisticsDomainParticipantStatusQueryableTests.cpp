@@ -22,14 +22,11 @@
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/types/TypesBase.h>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/fastdds/publisher/PublisherImpl.hpp>
 #include <statistics/types/typesPubSubTypes.h>
 
 #include "../../logging/mock/MockConsumer.h"
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 constexpr const char* TEST_TOPIC = "test_topic";
 
@@ -131,10 +128,9 @@ public:
 
     bool monitoring_status(
             fastrtps::rtps::GUID_t guid,
-            uint32_t status_id,
-            fastdds::statistics::rtps::DDSEntityStatus*& status)
+            statistics::MonitorServiceData& status)
     {
-        return get_monitoring_status(guid, status_id, status);
+        return get_monitoring_status(guid, status);
     }
 
 };
@@ -188,17 +184,20 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
     statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::RELIABILITY_QOS_POLICY_ID);
 
-    fastdds::statistics::rtps::DDSEntityStatus* incomp_qos_status_dw_1, * incomp_qos_status_dw_2;
-    incomp_qos_status_dw_1 = new fastdds::statistics::rtps::DDSEntityStatus;
-    incomp_qos_status_dw_2 = new fastdds::statistics::rtps::DDSEntityStatus;
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), 2, incomp_qos_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), 2, incomp_qos_status_dw_2));
+    MonitorServiceData incomp_qos_status_dw_1;
+    incomp_qos_status_dw_1.incompatible_qos_status(IncompatibleQoSStatus_s{});
+    MonitorServiceData incomp_qos_status_dw_2;
+    incomp_qos_status_dw_2.incompatible_qos_status(IncompatibleQoSStatus_s{});
+    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), incomp_qos_status_dw_1));
+    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), incomp_qos_status_dw_2));
 
     //! Expect incompatibilities
-    ASSERT_EQ(1u, static_cast<fastdds::dds::IncompatibleQosStatus*>(incomp_qos_status_dw_1)->total_count);
-    ASSERT_EQ(1u, static_cast<fastdds::dds::IncompatibleQosStatus*>(incomp_qos_status_dw_2)->total_count);
-    ASSERT_EQ(1u, incomp_qos_status_dw_1->policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
-    ASSERT_EQ(1u, incomp_qos_status_dw_2->policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
+    ASSERT_EQ(1u, incomp_qos_status_dw_1.incompatible_qos_status().total_count());
+    ASSERT_EQ(1u, incomp_qos_status_dw_2.incompatible_qos_status().total_count());
+    ASSERT_EQ(1u,
+            incomp_qos_status_dw_1.incompatible_qos_status().policies()[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count());
+    ASSERT_EQ(1u,
+            incomp_qos_status_dw_2.incompatible_qos_status().policies()[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count());
 
     statistics_pub_impl->delete_datawriters();
     topic->get_impl()->dereference();
@@ -206,9 +205,6 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
     statistics_participant->delete_topic(topic);
     statistics_participant->delete_publisher(publisher);
     statistics_participant->delete_contained_entities();
-
-    delete incomp_qos_status_dw_1;
-    delete incomp_qos_status_dw_2;
 
 #endif // FASTDDS_STATISTICS
 }
@@ -251,15 +247,16 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
     statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::LIVELINESS_QOS_POLICY_ID);
 
-    rtps::DDSEntityStatus* liv_lost_status_dw_1, * liv_lost_status_dw_2;
-    liv_lost_status_dw_1 = new fastdds::statistics::rtps::DDSEntityStatus;
-    liv_lost_status_dw_2 = new fastdds::statistics::rtps::DDSEntityStatus;
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), 4, liv_lost_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), 4, liv_lost_status_dw_2));
+    MonitorServiceData liv_lost_status_dw_1;
+    liv_lost_status_dw_1.liveliness_lost_status(LivelinessLostStatus_s{});
+    MonitorServiceData liv_lost_status_dw_2;
+    liv_lost_status_dw_2.liveliness_lost_status(LivelinessLostStatus_s{});
+    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), liv_lost_status_dw_1));
+    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), liv_lost_status_dw_2));
 
     //! Expect incompatibilities
-    ASSERT_EQ(1, static_cast<fastdds::dds::LivelinessLostStatus*>(liv_lost_status_dw_1)->total_count);
-    ASSERT_EQ(1, static_cast<fastdds::dds::LivelinessLostStatus*>(liv_lost_status_dw_2)->total_count);
+    ASSERT_EQ(1u, liv_lost_status_dw_1.liveliness_lost_status().total_count());
+    ASSERT_EQ(1u, liv_lost_status_dw_2.liveliness_lost_status().total_count());
 
     statistics_pub_impl->delete_datawriters();
     topic->get_impl()->dereference();
@@ -267,9 +264,6 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
     statistics_participant->delete_topic(topic);
     statistics_participant->delete_publisher(publisher);
     statistics_participant->delete_contained_entities();
-
-    delete liv_lost_status_dw_1;
-    delete liv_lost_status_dw_2;
 
 #endif // FASTDDS_STATISTICS
 }
@@ -312,15 +306,16 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
     statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::DEADLINE_QOS_POLICY_ID);
     statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::DEADLINE_QOS_POLICY_ID);
 
-    rtps::DDSEntityStatus* deadline_missed_status_dw_1, * deadline_missed_status_dw_2;
-    deadline_missed_status_dw_1 = new rtps::DDSEntityStatus;
-    deadline_missed_status_dw_2 = new rtps::DDSEntityStatus;
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), 6, deadline_missed_status_dw_1));
-    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), 6, deadline_missed_status_dw_2));
+    MonitorServiceData deadline_missed_status_dw_1;
+    deadline_missed_status_dw_1.deadline_missed_status(DeadlineMissedStatus_s{});
+    MonitorServiceData deadline_missed_status_dw_2;
+    deadline_missed_status_dw_2.deadline_missed_status(DeadlineMissedStatus_s{});
+    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), deadline_missed_status_dw_1));
+    ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw2->guid(), deadline_missed_status_dw_2));
 
     //! Expect incompatibilities
-    ASSERT_EQ(1u, static_cast<fastdds::dds::DeadlineMissedStatus*>(deadline_missed_status_dw_1)->total_count);
-    ASSERT_EQ(1u, static_cast<fastdds::dds::DeadlineMissedStatus*>(deadline_missed_status_dw_2)->total_count);
+    ASSERT_EQ(1u, deadline_missed_status_dw_1.deadline_missed_status().total_count());
+    ASSERT_EQ(1u, deadline_missed_status_dw_2.deadline_missed_status().total_count());
 
     statistics_pub_impl->delete_datawriters();
     topic->get_impl()->dereference();
@@ -328,9 +323,6 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
     statistics_participant->delete_topic(topic);
     statistics_participant->delete_publisher(publisher);
     statistics_participant->delete_contained_entities();
-
-    delete deadline_missed_status_dw_1;
-    delete deadline_missed_status_dw_2;
 
 #endif // FASTDDS_STATISTICS
 }

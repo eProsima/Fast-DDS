@@ -28,6 +28,7 @@
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/ReplierQos.hpp>
@@ -40,10 +41,6 @@
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace dds {
 namespace domain {
@@ -56,11 +53,6 @@ namespace fastrtps {
 namespace rtps {
 class ResourceEvent;
 } // namespace rtps
-
-namespace types {
-class TypeInformation;
-} // namespace types
-
 } //namespace fastrtps
 
 namespace fastdds {
@@ -846,49 +838,6 @@ public:
      * @return A reference to the resource event
      */
     FASTDDS_EXPORTED_API fastrtps::rtps::ResourceEvent& get_resource_event() const;
-
-    /**
-     * When a DomainParticipant receives an incomplete list of TypeIdentifiers in a
-     * PublicationBuiltinTopicData or SubscriptionBuiltinTopicData, it may request the additional type
-     * dependencies by invoking the getTypeDependencies operation.
-     *
-     * @param in TypeIdentifier sequence
-     * @return SampleIdentity
-     */
-    FASTDDS_EXPORTED_API fastrtps::rtps::SampleIdentity get_type_dependencies(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    /**
-     * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
-     * list of TypeIdentifiers.
-     *
-     * @param in TypeIdentifier sequence
-     * @return SampleIdentity
-     */
-    FASTDDS_EXPORTED_API fastrtps::rtps::SampleIdentity get_types(
-            const fastrtps::types::TypeIdentifierSeq& in) const;
-
-    /**
-     * Helps the user to solve all dependencies calling internally to the type lookup service and
-     * registers the resulting dynamic type.
-     * The registration may be perform asynchronously, case in which the user will be notified
-     * through the given callback, which receives the type_name as unique argument.
-     *
-     * @param type_information
-     * @param type_name
-     * @param callback
-     * @return RETCODE_OK If the given type_information is enough to build the type without using
-     *         the typelookup service (callback will not be called).
-     * @return RETCODE_OK if the given type is already available (callback will not be called).
-     * @return RETCODE_NO_DATA if type is not available yet (the callback will be called if
-     *         negotiation is success, and ignored in other case).
-     * @return RETCODE_NOT_ENABLED if the DomainParticipant is not enabled.
-     * @return RETCODE_PRECONDITION_NOT_MET if the DomainParticipant type lookup service is disabled.
-     */
-    FASTDDS_EXPORTED_API ReturnCode_t register_remote_type(
-            const fastrtps::types::TypeInformation& type_information,
-            const std::string& type_name,
-            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
 
     /**
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.

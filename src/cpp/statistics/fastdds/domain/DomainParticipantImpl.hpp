@@ -25,6 +25,7 @@
 
 #include <string>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -34,16 +35,13 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include "DomainParticipantStatisticsListener.hpp"
+#include <statistics/rtps/monitor-service/Interfaces.hpp>
 
 namespace efd = eprosima::fastdds::dds;
-
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {
@@ -70,7 +68,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    ReturnCode_t enable_statistics_datawriter(
+    efd::ReturnCode_t enable_statistics_datawriter(
             const std::string& topic_name,
             const efd::DataWriterQos& dwqos);
 
@@ -84,7 +82,7 @@ public:
      * RETCODE_OK if the DataWriter has been created or if it has been created previously,
      * and RETCODE_ERROR otherwise
      */
-    ReturnCode_t enable_statistics_datawriter_with_profile(
+    efd::ReturnCode_t enable_statistics_datawriter_with_profile(
             const std::string& profile_name,
             const std::string& topic_name);
 
@@ -97,7 +95,7 @@ public:
      * RETCODE_OK if the DataWriter has been correctly deleted or does not exist,
      * and RETCODE_ERROR otherwise
      */
-    ReturnCode_t disable_statistics_datawriter(
+    efd::ReturnCode_t disable_statistics_datawriter(
             const std::string& topic_name);
 
     /**
@@ -105,7 +103,7 @@ public:
      *
      * @return RETCODE_OK if successful
      */
-    ReturnCode_t enable() override;
+    efd::ReturnCode_t enable() override;
 
     void disable() override;
 
@@ -122,7 +120,7 @@ public:
      *
      * @return RETCODE_OK if successful
      */
-    ReturnCode_t delete_contained_entities() override;
+    efd::ReturnCode_t delete_contained_entities() override;
 
     /**
      * Enables the monitor service in this DomainParticipant.
@@ -132,7 +130,7 @@ public:
      * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
      *
      */
-    ReturnCode_t enable_monitor_service();
+    efd::ReturnCode_t enable_monitor_service();
 
     /**
      * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
@@ -143,7 +141,7 @@ public:
      * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
      *
      */
-    ReturnCode_t disable_monitor_service();
+    efd::ReturnCode_t disable_monitor_service();
 
     /**
      * fills in the ParticipantProxyData from a MonitorService Message
@@ -154,7 +152,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    ReturnCode_t fill_discovery_data_from_cdr_message(
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
@@ -167,7 +165,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    ReturnCode_t fill_discovery_data_from_cdr_message(
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
@@ -180,7 +178,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    ReturnCode_t fill_discovery_data_from_cdr_message(
+    efd::ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
@@ -290,8 +288,7 @@ protected:
      */
     bool get_monitoring_status(
             const fastrtps::rtps::GUID_t& entity_guid,
-            const uint32_t& status_id,
-            eprosima::fastdds::statistics::rtps::DDSEntityStatus*&) override;
+            eprosima::fastdds::statistics::MonitorServiceData&) override;
 
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;
