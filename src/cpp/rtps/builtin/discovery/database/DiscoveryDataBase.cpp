@@ -619,6 +619,45 @@ void DiscoveryDataBase::match_new_server_(
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
 
+    // To obtain a mesh topology, we need to:
+    // - Make all known servers relevant to the new server
+    // - Make the new server relevant to all known servers
+    // - Send DATA(p) of all known servers to the new server
+    // - Send Data(p) of the new server to all other servers
+    for (auto& part : participants_)
+    {
+        if (part.first != server_guid_prefix_ && !part.second.is_client())
+        {
+            if (part.first == participant_prefix)
+            {
+                bool resend_new_pdp = false;
+                for (auto& server: servers_)
+                {
+                    if (server != participant_prefix)
+                    {
+                        // Make all known servers relevant to the new server, but not matched
+                        part.second.add_or_update_ack_participant(server, false);
+                        resend_new_pdp = true;
+                    }
+                }
+                if (resend_new_pdp)
+                {
+                    // Send DATA(p) of the new server to all other servers.
+                    add_pdp_to_send_(part.second.change());
+                }
+            }
+            else
+            {
+                // Make the new server relevant to all known servers
+                part.second.add_or_update_ack_participant(participant_prefix, false);
+                // Send DATA(p) of all known servers to the new participant
+                add_pdp_to_send_(part.second.change());
+            }
+        }
+    }
+    // The resources needed for TCP new connections are created during the matching process when the
+    // DATA(p) is receieved by each server.
+
     // Create virtual endpoints
     create_virtual_endpoints_(participant_prefix);
 }

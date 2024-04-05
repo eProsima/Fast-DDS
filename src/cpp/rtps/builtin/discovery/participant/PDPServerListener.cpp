@@ -248,8 +248,8 @@ void PDPServerListener::on_new_cache_change_added(
                 lock.unlock();
 
                 // All local builtins are connected, the database will avoid any EDP DATA to be send before having PDP
-                // DATA acknowledgement
-                if (pdata && is_local)
+                // DATA acknowledgement. Non-local SERVERs will also be connected
+                if ( pdata && (is_local || !is_client))
                 {
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
