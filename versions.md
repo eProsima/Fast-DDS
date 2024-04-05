@@ -22,8 +22,14 @@ Forthcoming
   * shared_mutex
   * StringMatching
   * TimeConversion
+  * TypeLookupService
   * DBQueue
 * Added create participant methods that use environment XML profile for participant configuration.
+* XML Parser API no longer public.
+* New TypeObjectRegistry class to register/query TypeObjects/TypeIdentifiers.
+* New TypeObjectUtils class providing API to build and register TypeObjects/TypeIdentifiers.
+* Refactor Dynamic Language Binding API according to OMG XTypes v1.3 specification.
+* Refactor ReturnCode complying with OMG DDS specification.
 
 Version 2.14.0
 --------------

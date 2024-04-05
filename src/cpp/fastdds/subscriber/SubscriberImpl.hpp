@@ -24,6 +24,7 @@
 #include <map>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
@@ -31,8 +32,6 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 #include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -146,7 +145,7 @@ public:
 
     DataReaderQos& get_default_datareader_qos();
 
-    const ReturnCode_t get_datareader_qos_from_profile(
+    ReturnCode_t get_datareader_qos_from_profile(
             const std::string& profile_name,
             DataReaderQos& qos) const;
 

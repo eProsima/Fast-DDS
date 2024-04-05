@@ -21,11 +21,10 @@
 
 #include <fastdds/fastdds_dll.hpp>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace dds {
 namespace topic {

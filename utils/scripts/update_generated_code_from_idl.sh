@@ -1,30 +1,27 @@
 #!/usr/bin/env bash
 
 files_to_exclude=(
-    './include/fastrtps/types/*'
     )
 
-files_needing_typeobject=(
-    './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
-    './test/blackbox/types/HelloWorld.idl'
-    './test/blackbox/types/TestIncludeRegression3361.idl'
-    './test/blackbox/types/TestRegression3361.idl'
-    './test/unittest/dds/topic/DDSSQLFilter/data_types/ContentFilterTestType.idl'
-    './test/unittest/dynamic_types/idl/Basic.idl'
-    './test/unittest/dynamic_types/idl/new_features_4_2.idl'
-    './test/unittest/dynamic_types/idl/Test.idl'
-    './test/unittest/xtypes/idl/Types.idl'
-    './test/unittest/xtypes/idl/WideEnum.idl'
-    './test/xtypes/idl/Types.idl'
+files_not_needing_typeobject=(
+    './include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.idl'
+    './src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.idl'
+    './src/cpp/fastdds/builtin/type_lookup_service/detail/rpc_types.idl'
     )
 
 files_needing_case_sensitive=(
-    './test/unittest/dynamic_types/idl/new_features_4_2.idl'
     )
 
 files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
     './include/fastdds/statistics/monitorservice_types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
+    './include/fastdds/dds/xtypes/type_representation/dds-xtypes_typeobject.idl|./detail'
+    )
+
+files_needing_no_typesupport=(
+    './include/fastdds/dds/core/detail/DDSReturnCode.idl'
+    './include/fastdds/dds/core/detail/DDSSecurityReturnCode.idl'
+    './include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.idl'
     )
 
 red='\E[1;31m'
@@ -63,10 +60,12 @@ for idl_file in "${idl_files[@]}"; do
     cd "${idl_dir}"
 
     # Detect if needs type_object.
-    [[ ${files_needing_typeobject[*]} =~ $idl_file ]] && to_arg='-typeobject' || to_arg=''
+    [[ ${files_not_needing_typeobject[*]} =~ $idl_file ]] && to_arg='-no-typeobjectsupport' || to_arg=''
 
     # Detect if needs case sensitive.
     [[ ${files_needing_case_sensitive[*]} =~ $idl_file ]] && cs_arg='-cs' || cs_arg=''
+
+    [[ ${files_needing_no_typesupport[*]} =~ $idl_file ]] && nosupport_arg='-no-typesupport' || nosupport_arg=''
 
     # Detect if needs output directories.
     not_processed=true
@@ -76,14 +75,14 @@ for idl_file in "${idl_files[@]}"; do
             od_entry_split=(${od_entry//\|/ })
             for od_entry_split_element in ${od_entry_split[@]:1}; do
                 od_arg="-d ${od_entry_split_element}"
-                fastddsgen -cdr both -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+                fastddsgen -replace -genapi $to_arg $cs_arg $od_arg "$file_from_gen" -no-dependencies
             done
             break
         fi
     done
 
     if $not_processed ; then
-        fastddsgen -cdr both -replace $to_arg $cs_arg "$file_from_gen"
+        fastddsgen -replace -genapi $to_arg $cs_arg $nosupport_arg "$file_from_gen" -no-dependencies
     fi
 
     if [[ $? != 0 ]]; then
@@ -92,5 +91,19 @@ for idl_file in "${idl_files[@]}"; do
 
     cd -
 done
+
+# Move source files to src/cpp
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.ipp ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+mv ./include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.cxx ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+
+sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectCdrAux.ipp
+sed -i 's+"dds_xtypes_typeobjectCdrAux.hpp"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+sed -i 's+"dds_xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.h>+' ./src/cpp/fastdds/xtypes/type_representation/dds_xtypes_typeobjectPubSubTypes.cxx
+
+sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobject.hpp"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
+sed -i 's+"../../../../../../include/fastdds/dds/core/detail/DDSReturnCode.hpp"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp
+
+sed -i 's+"../../../../../../include/fastdds/dds/xtypes/type_representation/detail/dds-xtypes_typeobjectPubSubTypes.h"+<fastdds/dds/xtypes/type_representation/TypeObject.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
+sed -i 's+"../../../../../../include/fastdds/dds/core/detail/DDSReturnCodePubSubTypes.h"+<fastdds/dds/core/ReturnCode.hpp>+' ./src/cpp/fastdds/builtin/type_lookup_service/detail/TypeLookupTypesPubSubTypes.h
 
 exit $ret_value

@@ -23,11 +23,9 @@
 #include <mutex>
 
 #include <fastdds/dds/core/condition/Condition.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/types/TypesBase.h>
 #include <utils/collections/unordered_vector.hpp>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {

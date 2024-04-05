@@ -39,7 +39,6 @@ add_subdirectory(SampleConfig_Controller)
 add_subdirectory(SampleConfig_Events)
 add_subdirectory(SampleConfig_Multimedia)
 add_subdirectory(StaticHelloWorldExample)
-add_subdirectory(TypeLookupService)
 add_subdirectory(WriterLoansExample)
 add_subdirectory(ZeroCopyExample)
 

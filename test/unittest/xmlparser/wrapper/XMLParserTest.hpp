@@ -150,7 +150,7 @@ public:
 
     static XMLP_ret getXMLTransports_wrapper(
             tinyxml2::XMLElement* elem,
-            std::vector<std::shared_ptr<TransportDescriptorInterface>>& transports,
+            std::vector<std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>>& transports,
             uint8_t ident)
     {
         return getXMLTransports(elem, transports, ident);
@@ -243,14 +243,6 @@ public:
             uint8_t ident)
     {
         return getXMLBuiltinAttributes(elem, builtin, ident);
-    }
-
-    static XMLP_ret getXMLTypeLookupSettings_wrapper(
-            tinyxml2::XMLElement* elem,
-            TypeLookupSettings& settings,
-            uint8_t ident)
-    {
-        return getXMLTypeLookupSettings(elem, settings, ident);
     }
 
     static XMLP_ret getXMLThroughputController_wrapper(

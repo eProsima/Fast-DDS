@@ -146,11 +146,11 @@ void TCPReqRepHelloWorldRequester::init(
     std::shared_ptr<TCPTransportDescriptor> descriptor;
     if (use_ipv6)
     {
-        descriptor = std::make_shared<TCPv6TransportDescriptor>();
+        descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
     }
     else
     {
-        descriptor = std::make_shared<TCPv4TransportDescriptor>();
+        descriptor = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
     }
 
     if (maxInitialPeer > 0)
@@ -160,8 +160,8 @@ void TCPReqRepHelloWorldRequester::init(
 
     if (certs_folder != nullptr)
     {
-        using TLSOptions = TCPTransportDescriptor::TLSConfig::TLSOptions;
-        using TLSVerifyMode = TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
+        using TLSOptions = eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSOptions;
+        using TLSVerifyMode = eprosima::fastdds::rtps::TCPTransportDescriptor::TLSConfig::TLSVerifyMode;
         descriptor->apply_security = true;
         //descriptor->tls_config.password = "testkey";
         descriptor->tls_config.verify_file = std::string(certs_folder) + "/maincacert.pem";
@@ -185,7 +185,7 @@ void TCPReqRepHelloWorldRequester::init(
 
     // Register type
     type_.reset(new HelloWorldPubSubType());
-    ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant_->register_type(type_), RETCODE_OK);
 
     //Create subscriber
     reply_subscriber_ = participant_->create_subscriber(eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT);
@@ -307,7 +307,7 @@ void TCPReqRepHelloWorldRequester::ReplyListener::on_data_available(
     HelloWorld hello;
     eprosima::fastdds::dds::SampleInfo info;
 
-    if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
+    if (RETCODE_OK == datareader->take_next_sample((void*)&hello, &info))
     {
         if (info.valid_data)
         {

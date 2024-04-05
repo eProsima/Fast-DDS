@@ -35,6 +35,7 @@
 #include <fastdds/dds/core/condition/StatusCondition.hpp>
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/UserAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
@@ -53,11 +54,12 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastdds/utils/IPLocator.h>
 
-using DomainParticipantFactory = eprosima::fastdds::dds::DomainParticipantFactory;
-using eprosima::fastrtps::rtps::IPLocator;
+using eprosima::fastdds::dds::DomainParticipantFactory;
+using eprosima::fastdds::dds::ReturnCode_t;
 using eprosima::fastdds::rtps::UDPTransportDescriptor;
 using eprosima::fastdds::rtps::UDPv4TransportDescriptor;
 using eprosima::fastdds::rtps::UDPv6TransportDescriptor;
+using eprosima::fastrtps::rtps::IPLocator;
 
 using SampleLostStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleLostStatus&)>;
 using SampleRejectedStatusFunctor = std::function<void (const eprosima::fastdds::dds::SampleRejectedStatus&)>;
@@ -401,7 +403,7 @@ public:
             type_.reset(new type_support());
 
             // Register type
-            ASSERT_EQ(participant_->register_type(type_), ReturnCode_t::RETCODE_OK);
+            ASSERT_EQ(participant_->register_type(type_), eprosima::fastdds::dds::RETCODE_OK);
 
             // Create topic
             topic_ =
@@ -456,7 +458,7 @@ public:
 
     bool delete_datareader()
     {
-        ReturnCode_t ret(ReturnCode_t::RETCODE_ERROR);
+        ReturnCode_t ret(eprosima::fastdds::dds::RETCODE_ERROR);
 
         if (subscriber_ && datareader_)
         {
@@ -464,7 +466,7 @@ public:
             datareader_ = nullptr;
         }
 
-        return (ReturnCode_t::RETCODE_OK == ret);
+        return (eprosima::fastdds::dds::RETCODE_OK == ret);
     }
 
     virtual void destroy()
@@ -617,7 +619,7 @@ public:
                         eprosima::fastdds::dds::ANY_VIEW_STATE,
                         eprosima::fastdds::dds::ANY_INSTANCE_STATE);
 
-        if (ReturnCode_t::RETCODE_OK == success)
+        if (eprosima::fastdds::dds::RETCODE_OK == success)
         {
             for (eprosima::fastdds::dds::LoanableCollection::size_type n = 0; n < info_seq.length(); ++n)
             {
@@ -905,7 +907,7 @@ public:
         datareader_->get_qos(datareader_qos);
         datareader_qos.deadline().period = deadline_period;
 
-        return (datareader_->set_qos(datareader_qos) == ReturnCode_t::RETCODE_OK);
+        return (datareader_->set_qos(datareader_qos) == eprosima::fastdds::dds::RETCODE_OK);
     }
 
     PubSubReader& liveliness_kind(
@@ -1599,13 +1601,13 @@ public:
     {
         subscriber_qos_.partition().clear();
         subscriber_qos_.partition().push_back(partition.c_str());
-        return (ReturnCode_t::RETCODE_OK == subscriber_->set_qos(subscriber_qos_));
+        return (eprosima::fastdds::dds::RETCODE_OK == subscriber_->set_qos(subscriber_qos_));
     }
 
     bool clear_partitions()
     {
         subscriber_qos_.partition().clear();
-        return (ReturnCode_t::RETCODE_OK == subscriber_->set_qos(subscriber_qos_));
+        return (eprosima::fastdds::dds::RETCODE_OK == subscriber_->set_qos(subscriber_qos_));
     }
 
     /*** Function for discovery callback ***/
@@ -1646,7 +1648,7 @@ public:
         collection data_seq(buf, 1);
         info_seq_type info_seq(1);
 
-        if (ReturnCode_t::RETCODE_OK == datareader_->take(data_seq, info_seq))
+        if (eprosima::fastdds::dds::RETCODE_OK == datareader_->take(data_seq, info_seq))
         {
             current_processed_count_++;
             return true;
@@ -1658,7 +1660,7 @@ public:
             void* data)
     {
         eprosima::fastdds::dds::SampleInfo dds_info;
-        if (datareader_->take_next_sample(data, &dds_info) == ReturnCode_t::RETCODE_OK)
+        if (datareader_->take_next_sample(data, &dds_info) == eprosima::fastdds::dds::RETCODE_OK)
         {
             current_processed_count_++;
             return true;
@@ -1860,7 +1862,7 @@ protected:
         ReturnCode_t success = take_ ?
                 datareader->take_next_sample((void*)&data, &info) :
                 datareader->read_next_sample((void*)&data, &info);
-        if (ReturnCode_t::RETCODE_OK == success)
+        if (eprosima::fastdds::dds::RETCODE_OK == success)
         {
             returnedValue = true;
 
@@ -1896,7 +1898,7 @@ protected:
                 datareader->take(datas, infos) :
                 datareader->read(datas, infos);
 
-        if (!success)
+        if (eprosima::fastdds::dds::RETCODE_OK != success)
         {
             returnedValue = false;
             return;
@@ -2148,7 +2150,7 @@ protected:
             {
                 lock.unlock();
                 auto wait_result = waitset_.wait(active_conditions_, timeout_);
-                if (wait_result == ReturnCode_t::RETCODE_TIMEOUT)
+                if (wait_result == eprosima::fastdds::dds::RETCODE_TIMEOUT)
                 {
                     reader_.on_waitset_timeout();
                 }
@@ -2240,14 +2242,14 @@ protected:
             if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::sample_lost()))
             {
                 eprosima::fastdds::dds::SampleLostStatus status;
-                ASSERT_EQ(ReturnCode_t::RETCODE_OK, reader_.datareader_->get_sample_lost_status(status));
+                ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, reader_.datareader_->get_sample_lost_status(status));
                 reader_.set_sample_lost_status(status);
             }
 
             if (triggered_statuses.is_active(eprosima::fastdds::dds::StatusMask::sample_rejected()))
             {
                 eprosima::fastdds::dds::SampleRejectedStatus status;
-                ASSERT_EQ(ReturnCode_t::RETCODE_OK, reader_.datareader_->get_sample_rejected_status(status));
+                ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, reader_.datareader_->get_sample_rejected_status(status));
                 reader_.set_sample_rejected_status(status);
             }
 

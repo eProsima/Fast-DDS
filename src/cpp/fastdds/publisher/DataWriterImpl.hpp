@@ -21,6 +21,7 @@
 
 #include <memory>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
@@ -37,15 +38,12 @@
 #include <fastdds/rtps/history/IPayloadPool.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/writer/WriterListener.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/publisher/DataWriterHistory.hpp>
 #include <fastdds/publisher/filtering/ReaderFilterCollection.hpp>
 #include <rtps/common/PayloadInfo_t.hpp>
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/ITopicPayloadPool.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -122,9 +120,9 @@ public:
      * Enable this object.
      * The required lower layer entities will be created.
      *
-     * @pre This method has not previously returned ReturnCode_t::RETCODE_OK
+     * @pre This method has not previously returned RETCODE_OK
      *
-     * @return ReturnCode_t::RETCODE_OK if all the lower layer entities have been correctly created.
+     * @return RETCODE_OK if all the lower layer entities have been correctly created.
      * @return Other standard return codes on error.
      */
     virtual ReturnCode_t enable();
@@ -132,8 +130,8 @@ public:
     /**
      * Check if the preconditions to delete this object are met.
      *
-     * @return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET if the preconditions to delete this object are not met.
-     * @return ReturnCode_t::RETCODE_OK if it is safe to delete this object.
+     * @return RETCODE_PRECONDITION_NOT_MET if the preconditions to delete this object are not met.
+     * @return RETCODE_OK if it is safe to delete this object.
      */
     ReturnCode_t check_delete_preconditions();
 
@@ -143,9 +141,9 @@ public:
      * @param [out] sample          Pointer to the sample on the internal pool.
      * @param [in]  initialization  How to initialize the loaned sample.
      *
-     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
-     * @return ReturnCode_t::RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
-     * @return ReturnCode_t::RETCODE_OK if a pointer to a sample is successfully obtained.
+     * @return RETCODE_ILLEGAL_OPERATION when the type does not support loans.
+     * @return RETCODE_OUT_OF_RESOURCES if the pool has been exhausted.
+     * @return RETCODE_OK if a pointer to a sample is successfully obtained.
      */
     ReturnCode_t loan_sample(
             void*& sample,
@@ -156,9 +154,9 @@ public:
      *
      * @param [in,out] sample  Pointer to the previously loaned sample.
      *
-     * @return ReturnCode_t::RETCODE_ILLEGAL_OPERATION when the type does not support loans.
-     * @return ReturnCode_t::RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
-     * @return ReturnCode_t::RETCODE_OK if the loan is successfully discarded.
+     * @return RETCODE_ILLEGAL_OPERATION when the type does not support loans.
+     * @return RETCODE_BAD_PARAMETER if the pointer does not correspond to a loaned sample.
+     * @return RETCODE_OK if the loan is successfully discarded.
      */
     ReturnCode_t discard_loan(
             void*& sample);
@@ -254,7 +252,7 @@ public:
      *                      If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
      *
      * @return Returns the operation's result.
-     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     * If the operation finishes successfully, RETCODE_OK is returned.
      */
     ReturnCode_t unregister_instance(
             void* instance,
@@ -275,7 +273,7 @@ public:
      *                      If `dispose` is `true`, a CacheChange_t with kind set to NOT_ALIVE_DISPOSED is sent.
      *
      * @return Returns the operation's result.
-     * If the operation finishes successfully, ReturnCode_t::RETCODE_OK is returned.
+     * If the operation finishes successfully, RETCODE_OK is returned.
      */
     ReturnCode_t unregister_instance_w_timestamp(
             void* instance,
@@ -360,7 +358,7 @@ public:
     /**
      * Removes all changes from the History.
      * @param[out] removed Number of removed elements
-     * @return ReturnCode_t::RETCODE_OK if correct, ReturnCode_t::RETCODE_ERROR if not.
+     * @return RETCODE_OK if correct, RETCODE_ERROR if not.
      */
     ReturnCode_t clear_history(
             size_t* removed);

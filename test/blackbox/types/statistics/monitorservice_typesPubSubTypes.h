@@ -29,7 +29,7 @@
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/utils/md5.h>
 
-#include "monitorservice_types.h"
+#include "monitorservice_types.hpp"
 
 #include "typesPubSubTypes.h"
 
@@ -44,10 +44,6 @@ namespace eprosima
     {
         namespace statistics
         {
-
-
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type Connection defined by the user in the IDL file.
@@ -99,6 +95,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -136,8 +135,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type QosPolicyCount_s defined by the user in the IDL file.
@@ -189,6 +186,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -226,8 +226,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type BaseStatus_s defined by the user in the IDL file.
@@ -279,6 +277,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -316,11 +317,7 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
             typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_s> QosPolicyCountSeq_s;
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type IncompatibleQoSStatus_s defined by the user in the IDL file.
@@ -372,6 +369,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -409,8 +409,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type LivelinessChangedStatus_s defined by the user in the IDL file.
@@ -462,6 +460,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -499,8 +500,6 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-
-
 
             /*!
              * @brief This class represents the TopicDataType of the type DeadlineMissedStatus_s defined by the user in the IDL file.
@@ -552,6 +551,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -592,12 +594,19 @@ namespace eprosima
             typedef eprosima::fastdds::statistics::BaseStatus_s LivelinessLostStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s InconsistentTopicStatus_s;
             typedef eprosima::fastdds::statistics::BaseStatus_s SampleLostStatus_s;
+            namespace StatusKind
+            {
+                typedef uint32_t StatusKind;
 
 
 
 
 
 
+
+
+
+            } // namespace StatusKind
 
 
             /*!
@@ -650,6 +659,9 @@ namespace eprosima
                 eProsima_user_DllExport void deleteData(
                         void* data) override;
 
+                //Register TypeObject representation in Fast DDS TypeObjectRegistry
+                eProsima_user_DllExport void register_type_object_representation() const override;
+
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
                 eProsima_user_DllExport inline bool is_bounded() const override
                 {
@@ -687,9 +699,9 @@ namespace eprosima
                 unsigned char* m_keyBuffer;
 
             };
-        }
-    }
-}
+        } // namespace statistics
+    } // namespace fastdds
+} // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_MONITORSERVICE_TYPES_PUBSUBTYPES_H_
 

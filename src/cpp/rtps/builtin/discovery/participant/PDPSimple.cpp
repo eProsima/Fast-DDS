@@ -20,7 +20,6 @@
 
 #include <mutex>
 
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/data/NetworkConfiguration.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
@@ -34,6 +33,7 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <fastdds/utils/IPLocator.h>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPSimple.h>
@@ -726,10 +726,7 @@ void PDPSimple::assign_low_level_remote_endpoints(
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, notify_secure_endpoints);
     }
 
-    if (mp_builtin->tlm_ != nullptr)
-    {
-        mp_builtin->tlm_->assign_remote_endpoints(pdata);
-    }
+    mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
 }
 
 #if HAVE_SECURITY

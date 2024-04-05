@@ -43,7 +43,6 @@ public:
         : topicKind(rtps::NO_KEY)
         , topicName("UNDEF")
         , topicDataType("UNDEF")
-        , auto_fill_type_object(true)
         , auto_fill_type_information(true)
     {
     }
@@ -57,7 +56,6 @@ public:
         topicKind = tKind;
         topicName = name;
         topicDataType = dataType;
-        auto_fill_type_object = true;
         auto_fill_type_information = true;
     }
 
@@ -116,9 +114,7 @@ public:
     //!Type Object XTYPES 1.1
     TypeObjectV1 type;
     //!XTYPES 1.2
-    xtypes::TypeInformation type_information;
-    //!Tries to complete type identifier and type object (TypeObjectV1)
-    bool auto_fill_type_object;
+    xtypes::TypeInformationParameter type_information;
     //!Tries to complete type information (TypeObjectV2)
     bool auto_fill_type_information;
 

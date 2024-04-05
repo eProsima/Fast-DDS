@@ -14,10 +14,6 @@
 
 # ReaderProxy
 set(WRITERPROXYTESTS_SOURCE ReaderProxyTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
@@ -65,6 +61,7 @@ target_include_directories(ReaderProxyTests PRIVATE
     )
 target_link_libraries(ReaderProxyTests
     fastcdr
+    fastdds::log
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS}
@@ -72,10 +69,6 @@ target_link_libraries(ReaderProxyTests
 gtest_discover_tests(ReaderProxyTests)
 
 set(LIVELINESSMANAGERTESTS_SOURCE LivelinessManagerTests.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -107,7 +100,9 @@ target_include_directories(LivelinessManagerTests PRIVATE
     )
 target_link_libraries(LivelinessManagerTests PRIVATE
     fastcdr
-    GTest::gmock)
+    fastdds::log
+    GTest::gmock
+    )
 gtest_discover_tests(LivelinessManagerTests)
 
 if(NOT QNX)

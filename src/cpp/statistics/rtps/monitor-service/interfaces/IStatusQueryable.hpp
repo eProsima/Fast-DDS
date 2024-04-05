@@ -26,7 +26,7 @@
 #include <fastdds/dds/core/status/LivelinessChangedStatus.hpp>
 #include <fastdds/rtps/common/Guid.h>
 
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 
 namespace eprosima {
 namespace fastdds {

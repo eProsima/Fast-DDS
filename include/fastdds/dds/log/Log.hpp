@@ -123,9 +123,15 @@ public:
     FASTDDS_EXPORTED_API static void SetCategoryFilter(
             const std::regex&);
 
+    //! Returns a copy of the current category filter or an empty object otherwise
+    FASTDDS_EXPORTED_API static std::regex GetCategoryFilter();
+
     //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
     FASTDDS_EXPORTED_API static void SetFilenameFilter(
             const std::regex&);
+
+    //! Returns a copy of the current filename filter or an empty object otherwise
+    FASTDDS_EXPORTED_API static std::regex GetFilenameFilter();
 
     //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
     FASTDDS_EXPORTED_API static void SetErrorStringFilter(
@@ -134,6 +140,9 @@ public:
     //! Sets thread configuration for the logging thread.
     FASTDDS_EXPORTED_API static void SetThreadConfig(
             const rtps::ThreadSettings&);
+
+    //! Returns a copy of the current error string filter or an empty object otherwise
+    FASTDDS_EXPORTED_API static std::regex GetErrorStringFilter();
 
     //! Returns the logging engine to configuration defaults.
     FASTDDS_EXPORTED_API static void Reset();

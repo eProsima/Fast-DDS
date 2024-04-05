@@ -20,6 +20,7 @@
 
 #include <thread>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
@@ -27,16 +28,14 @@
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
 namespace fastdds = ::eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
 
 void set_authentication_config(
         rtps::PropertySeq& props)
@@ -105,17 +104,27 @@ void test_big_message_corner_case(
     auto participant = fastdds::DomainParticipantFactory::get_instance()->create_participant(0, qos);
     ASSERT_NE(nullptr, participant);
 
-    std::vector<uint32_t> lengths = { array_length };
-    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_char8_type();
-    DynamicTypeBuilder_ptr builder =
-            DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type, lengths);
-    builder->set_name(name);
-    DynamicType_ptr array_type = builder->build();
+    fastdds::TypeDescriptor::_ref_type type_descriptor {fastdds::traits<fastdds::TypeDescriptor>::make_shared()};
+    type_descriptor->name(name);
+    type_descriptor->kind(fastdds::TK_STRUCTURE);
+    fastdds::DynamicTypeBuilder::_ref_type builder = fastdds::DynamicTypeBuilderFactory::get_instance()->create_type(
+        type_descriptor);
 
-    fastdds::TypeSupport type_support(new eprosima::fastrtps::types::DynamicPubSubType(array_type));
+    fastdds::BoundSeq lengths = { array_length };
+    fastdds::MemberDescriptor::_ref_type array_descriptor {fastdds::traits<fastdds::MemberDescriptor>::make_shared()};
+    array_descriptor->name("secure_array");
+    array_descriptor->type(
+        fastdds::DynamicTypeBuilderFactory::get_instance()->create_array_type(
+            fastdds::DynamicTypeBuilderFactory::get_instance()->get_primitive_type(fastdds::TK_CHAR8),
+            lengths)->build());
+
+    builder->add_member(array_descriptor);
+    fastdds::DynamicType::_ref_type array_type = builder->build();
+
+
+    fastdds::TypeSupport type_support(new fastdds::DynamicPubSubType(array_type));
     type_support.get()->auto_fill_type_information(false);
-    type_support.get()->auto_fill_type_object(false);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->register_type(type_support));
+    EXPECT_EQ(fastdds::RETCODE_OK, participant->register_type(type_support));
 
     auto topic = participant->create_topic(name, name, fastdds::TOPIC_QOS_DEFAULT);
     ASSERT_NE(nullptr, topic);
@@ -138,14 +147,14 @@ void test_big_message_corner_case(
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    auto data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(array_type);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, writer->write(data, fastdds::HANDLE_NIL));
+    auto data = fastdds::DynamicDataFactory::get_instance()->create_data(array_type);
+    EXPECT_EQ(fastdds::RETCODE_OK, writer->write(&data, fastdds::HANDLE_NIL));
 
     fastdds::SampleInfo info{};
     bool taken = false;
     for (size_t n_tries = 0; n_tries < 6u; ++n_tries)
     {
-        if (ReturnCode_t::RETCODE_OK == reader->take_next_sample(data, &info))
+        if (fastdds::RETCODE_OK == reader->take_next_sample(&data, &info))
         {
             taken = true;
             break;
@@ -154,7 +163,7 @@ void test_big_message_corner_case(
     }
 
     EXPECT_TRUE(taken);
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_contained_entities());
+    EXPECT_EQ(fastdds::RETCODE_OK, participant->delete_contained_entities());
     fastdds::DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 

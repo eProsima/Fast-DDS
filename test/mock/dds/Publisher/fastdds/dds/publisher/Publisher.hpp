@@ -20,16 +20,14 @@
 
 #include <gmock/gmock.h>
 #include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/publisher/PublisherImpl.hpp>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {
@@ -76,7 +74,7 @@ public:
 
     ReturnCode_t enable() override
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     const PublisherQos& get_qos() const
@@ -87,7 +85,7 @@ public:
     ReturnCode_t set_listener(
             PublisherListener* /*listener*/)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     DataWriter* create_datawriter(
@@ -108,7 +106,7 @@ public:
     {
         if (delete_datawriter_mock())
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
         return impl_->delete_datawriter(writer);
     }

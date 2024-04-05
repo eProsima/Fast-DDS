@@ -29,7 +29,6 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "BlackboxTests.hpp"
 #include "PubSubParticipant.hpp"
@@ -210,7 +209,7 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     eprosima::fastdds::dds::DataReader& reader = pubsub_reader.get_native_reader();
     eprosima::fastdds::dds::SampleInfo info;
 
-    EXPECT_EQ(ReturnCode_t::RETCODE_NO_DATA, reader.get_first_untaken_info(&info));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_NO_DATA, reader.get_first_untaken_info(&info));
 
     // Wait for discovery.
     pubsub_reader.wait_discovery();
@@ -231,7 +230,7 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     //! Checks whether total_unread_ is consistent with
     //! the number of unread changes in history
     //! This API call should NOT modify the history
-    EXPECT_EQ(ReturnCode_t::RETCODE_OK, reader.get_first_untaken_info(&info));
+    EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, reader.get_first_untaken_info(&info));
 
     HelloWorld msg;
     eprosima::fastdds::dds::SampleInfo sinfo;
@@ -240,7 +239,7 @@ TEST_P(DDSDataReader, ConsistentTotalUnreadAfterGetFirstUntakenInfo)
     auto result = reader.take_next_sample((void*)&msg, &sinfo);
 
     //! Assert last operation
-    ASSERT_EQ(result, ReturnCode_t::RETCODE_OK) << "Reader's unread count is: " << reader.get_unread_count();
+    ASSERT_EQ(result, eprosima::fastdds::dds::RETCODE_OK) << "Reader's unread count is: " << reader.get_unread_count();
 }
 
 //! Regression test for #20706
@@ -327,7 +326,7 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
     eprosima::fastdds::dds::SampleInfo info;
     for (size_t i = 0; i < 3; i++)
     {
-        ASSERT_NE(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK, reader.get_native_reader().get_first_untaken_info(
+        ASSERT_NE(eprosima::fastdds::dds::RETCODE_OK, reader.get_native_reader().get_first_untaken_info(
                     &info));
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
@@ -338,12 +337,12 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
     reader.block_for_unread_count_of(3);
 
     // get_first_untaken_info() must return OK now
-    ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             reader.get_native_reader().get_first_untaken_info(&info));
     eprosima::fastdds::dds::StackAllocatedSequence<HelloWorld, 1> data_values;
     eprosima::fastdds::dds::SampleInfoSeq sample_infos{1};
     // As get_first_untaken_info() returns OK, take() must return OK too
-    ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             reader.get_native_reader().take(data_values, sample_infos));
 }
 
@@ -365,7 +364,7 @@ TEST(DDSDataReader, ConsistentReliabilityWhenIntraprocess)
         eprosima::fastdds::dds::StatusMask::none());
 
     eprosima::fastdds::dds::TypeSupport t_type{ new HelloWorldPubSubType() };
-    ASSERT_TRUE(t_type.register_type( participant ) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(t_type.register_type( participant ) == eprosima::fastdds::dds::RETCODE_OK);
 
     auto topic = participant->create_topic( TEST_TOPIC_NAME, t_type.get_type_name(),
                     participant->get_default_topic_qos());

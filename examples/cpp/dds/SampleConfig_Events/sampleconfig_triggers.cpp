@@ -156,7 +156,7 @@ void triggers()
 
     //Read the contents of both histories:
     std::cout << "The Subscriber holds: " << std::endl;
-    while (myReader->take_next_sample(&my_sample, &sample_info) == ReturnCode_t::RETCODE_OK)
+    while (myReader->take_next_sample(&my_sample, &sample_info) == RETCODE_OK)
     {
         std::cout << std::to_string(my_sample.index()) << " ";
     }
