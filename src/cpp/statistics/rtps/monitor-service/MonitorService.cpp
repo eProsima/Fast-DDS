@@ -270,14 +270,14 @@ bool MonitorService::write_status(
                         CDRMessage_t msg;
                         //! Depending on the entity type [Participant, Writer, Reader]
                         //! the size will be accordingly calculated
-                        status_retrieved = proxy_queryable_->get_serialized_proxy(local_entity_guid,&msg);
+                        status_retrieved = proxy_queryable_->get_serialized_proxy(local_entity_guid, &msg);
                         data.entity_proxy().assign(msg.buffer, msg.buffer + msg.length);
                         break;
                     }
                     case CONNECTION_LIST:
                     {
                         std::vector<statistics::Connection> conns;
-                        status_retrieved = conns_queryable_->get_entity_connections(local_entity_guid,conns);
+                        status_retrieved = conns_queryable_->get_entity_connections(local_entity_guid, conns);
                         data.connection_list(conns);
                         break;
                     }
