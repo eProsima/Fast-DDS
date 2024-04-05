@@ -1148,9 +1148,9 @@ void DiscoveryDataBase::match_writer_reader_(
     {
         // Writer virtual
 
-        // If reader is virtual do not exchange info
-        // If not, writer needs all the info from this endpoint
-        if (!reader_info.is_virtual())
+        // If reader is virtual OR not local, do not exchange info. Servers do not redirect Data(p) of remote clients.
+        // Otherwise, writer needs all the info from this endpoint
+        if (!reader_info.is_virtual() && reader_participant_info.is_local())
         {
             // Only if they do not have the info yet
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
@@ -1158,7 +1158,9 @@ void DiscoveryDataBase::match_writer_reader_(
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
 
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
+            // Only match EDP if the reader is pure client OR from this participant. This will allow to only redirect Data(p) of
+            // our remote clients or subscribers in the same participant, but avoid redirecting Data(p) of other servers' readers.
+            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && (reader_participant_info.is_client() || reader_guid.guidPrefix == server_guid_prefix_))
             {
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
@@ -1178,7 +1180,9 @@ void DiscoveryDataBase::match_writer_reader_(
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
 
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
+            // Only match EDP if the writer is pure client OR from this participant. This will allow to only redirect Data(p) of
+            // our remote clients or publishers in the same participant, but avoid redirecting Data(p) of other servers' writers.
+            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && (writer_participant_info.is_client() || writer_guid.guidPrefix == server_guid_prefix_))
             {
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
@@ -1193,7 +1197,9 @@ void DiscoveryDataBase::match_writer_reader_(
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
 
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
+            // Only match EDP if the writer is pure client OR from this participant. This will allow to only redirect Data(p) of
+            // our remote clients or publishers in the same participant, but avoid redirecting Data(p) of other servers' writers.
+            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && (reader_participant_info.is_client() || writer_guid.guidPrefix == server_guid_prefix_))
             {
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
@@ -1203,7 +1209,9 @@ void DiscoveryDataBase::match_writer_reader_(
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
 
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
+            // Only match EDP if the reader is pure client OR from this participant. This will allow to only redirect Data(p) of
+            // our remote clients or subscribers in the same participant, but avoid redirecting Data(p) of other servers' readers.
+            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && (writer_participant_info.is_client() || reader_guid.guidPrefix == server_guid_prefix_))
             {
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
@@ -1228,9 +1236,9 @@ void DiscoveryDataBase::match_writer_reader_(
     {
         // Writer external
 
-        // if reader is external do not exchange info
-        // if not, reader needs all the info from this endpoint
-        if (reader_participant_info.is_local())
+        // If reader is external OR virtual, do not exchange info. Servers do not redirect Data(p) of remote clients.
+        // Otherwise, reader needs all the info from this endpoint
+        if (reader_participant_info.is_local() && !reader_info.is_virtual())
         {
             // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
