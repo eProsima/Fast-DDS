@@ -152,6 +152,12 @@ public:
      */
     void update_remote_servers_list();
 
+    /**
+     * Get the list of remote servers to which the client is already connected.
+     * @return A reference to the list of RemoteServerAttributes
+     */
+    const std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& connected_servers();
+
 protected:
 
     void update_builtin_locators() override;
@@ -253,6 +259,9 @@ private:
 
     //! flag to know this client must use super client participant type
     bool _super_client;
+
+    //! List of real connected servers
+    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> connected_servers_;
 };
 
 } /* namespace rtps */

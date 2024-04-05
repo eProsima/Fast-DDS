@@ -56,7 +56,6 @@ public:
         guidPrefix = fastdds::rtps::GuidPrefix_t::unknown();
         metatrafficUnicastLocatorList.clear();
         metatrafficMulticastLocatorList.clear();
-        is_connected = false;
     }
 
     FASTDDS_EXPORTED_API fastdds::rtps::GUID_t GetParticipant() const;
@@ -77,9 +76,6 @@ public:
 
     //!Guid prefix
     fastdds::rtps::GuidPrefix_t guidPrefix;
-
-    // Whether connection has been established
-    bool is_connected = false;
 
     // Check if there are specific transport locators associated
     // the template parameter is the locator kind (e.g. LOCATOR_KIND_UDPv4)
