@@ -189,17 +189,10 @@ ParticipantProxyData* PDPClient::createParticipantProxyData(
 
     // Verify if this participant is a server
     bool is_server = false;
-
+    std::string part_type = check_participant_type(participant_data.m_properties);
+    if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
     {
-        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
-        {
-            if (data_matches_with_prefix(svr.guidPrefix, participant_data))
-            {
-                is_server = true;
-            }
-        }
+        is_server = true;
     }
 
     ParticipantProxyData* pdata = add_participant_proxy_data(participant_data.m_guid, is_server, &participant_data);
@@ -439,8 +432,7 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
         return false;
     }
 
-    // Perform matching with remote servers and ensure output channels are open in the transport for the corresponding
-    // locators
+    // Ensure output channels are open in the transport for the corresponding locators
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
@@ -450,23 +442,11 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
                 it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
             mp_RTPSParticipant->createSenderResources(entry);
 
-#if HAVE_SECURITY
-            if (!mp_RTPSParticipant->is_secure())
-            {
-                match_pdp_writer_nts_(it);
-                match_pdp_reader_nts_(it);
-            }
-            else if (!is_discovery_protected)
+            // If SECURITY is disabled, this condition is ALWAYS true
+            if (!is_discovery_protected)
             {
                 endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
             }
-#else
-            if (!is_discovery_protected)
-            {
-                match_pdp_writer_nts_(it);
-                match_pdp_reader_nts_(it);
-            }
-#endif // HAVE_SECURITY
         }
     }
 
@@ -484,12 +464,30 @@ void PDPClient::assignRemoteEndpoints(
         {
             eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-            // Verify if this participant is a server
-            for (auto& svr : mp_builtin->m_DiscoveryServers)
+            std::string part_type = check_participant_type(pdata->m_properties);
+            if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
             {
-                if (data_matches_with_prefix(svr.guidPrefix, *pdata))
+                // Add new servers to the connected list
+                EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Server [" << pdata->m_guid.guidPrefix << "] matched.");
+                RemoteServerAttributes server;
+                server.guidPrefix = pdata->m_guid.guidPrefix;
+                for (const Locator_t& locator : pdata->metatraffic_locators.multicast)
                 {
-                    svr.is_connected = true;
+                    server.metatrafficMulticastLocatorList.push_back(locator);
+                }
+                for (const Locator_t& locator : pdata->metatraffic_locators.unicast)
+                {
+                    server.metatrafficUnicastLocatorList.push_back(locator);
+                }
+                connected_servers_.push_back(server);
+
+                // Match incoming server
+#if HAVE_SECURITY
+                if (!should_protect_discovery())
+#endif // HAVE_SECURITY
+                {
+                    match_pdp_writer_nts_(server);
+                    match_pdp_reader_nts_(server);
                 }
             }
         }
@@ -500,6 +498,10 @@ void PDPClient::assignRemoteEndpoints(
         {
             perform_builtin_endpoints_matching(*pdata);
         }
+    }
+    else
+    {
+        EPROSIMA_LOG_INFO(RTPS_PDP, "Ignoring new participant " << pdata->m_guid);
     }
 }
 
@@ -591,12 +593,12 @@ void PDPClient::removeRemoteEndpoints(
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        for (auto it = connected_servers_.begin(); it != connected_servers_.end(); ++it)
         {
-            if (svr.guidPrefix == pdata->m_guid.guidPrefix)
+            if (it->guidPrefix == pdata->m_guid.guidPrefix)
             {
                 std::unique_lock<std::recursive_mutex> lock(*getMutex());
-                svr.is_connected = false;
+                it = connected_servers_.erase(it);
                 is_server = true;
                 mp_sync->restart_timer(); // enable announcement and sync mechanism till this server reappears
             }
@@ -765,15 +767,11 @@ void PDPClient::announceParticipantState(
                     // Temporary workaround
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-                    for (auto& svr : mp_builtin->m_DiscoveryServers)
+                    for (auto& svr: connected_servers_)
                     {
-                        // If we are matched to a server report demise
-                        if (svr.is_connected)
-                        {
-                            locators.push_back(svr.metatrafficUnicastLocatorList);
-                            remote_readers.emplace_back(svr.guidPrefix,
-                                    endpoints->reader.reader_->getGuid().entityId);
-                        }
+                        locators.push_back(svr.metatrafficUnicastLocatorList);
+                        remote_readers.emplace_back(svr.guidPrefix,
+                                endpoints->reader.reader_->getGuid().entityId);
                     }
                 }
 
@@ -800,11 +798,24 @@ void PDPClient::announceParticipantState(
 
                     eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-                    for (auto& svr : mp_builtin->m_DiscoveryServers)
+                    // An already connected server will be pinged again if there exists a non-connected server (2 or more servers scenario).
+                    // This is because we no longer use the GUID to match servers, so we cannot discern which servers are connected
+                    // and which are not. We cannot map servers in m_DiscoveryServers to connected_servers_.
+
+                    // Ping not-connected servers
+                    if (connected_servers_.size() < mp_builtin->m_DiscoveryServers.size())
                     {
-                        // Non-pinging announcements like lease duration ones must be
-                        // broadcast to all servers
-                        if (!svr.is_connected || !_serverPing)
+                        for (auto& svr : mp_builtin->m_DiscoveryServers)
+                        {
+                            locators.push_back(svr.metatrafficMulticastLocatorList);
+                            locators.push_back(svr.metatrafficUnicastLocatorList);
+                        }
+                    }
+
+                    // Announce liveliness (lease duration) to all servers
+                    if (!_serverPing)
+                    {
+                        for (auto& svr : connected_servers_)
                         {
                             locators.push_back(svr.metatrafficMulticastLocatorList);
                             locators.push_back(svr.metatrafficUnicastLocatorList);
@@ -852,15 +863,7 @@ void PDPClient::update_remote_servers_list()
                 mp_RTPSParticipant->createSenderResources(entry);
             }
 
-            if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
-            {
-                match_pdp_writer_nts_(it);
-            }
-
-            if (!endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
-            {
-                match_pdp_reader_nts_(it);
-            }
+            endpoints->reader.reader_->enableMessagesFromUnkownWriters(true);
         }
     }
     mp_sync->restart_timer();
@@ -1430,6 +1433,11 @@ bool PDPClient::remove_remote_participant(
     update_remote_servers_list();
 
     return false;
+}
+
+const std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDPClient::connected_servers()
+{
+    return connected_servers_;
 }
 
 } /* namespace rtps */
