@@ -25,7 +25,8 @@
 #include <asio.hpp>
 
 #include <fastdds/core/policy/QosPolicyUtils.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -36,8 +37,8 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/IContentFilterFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/publisher/DataWriterImpl.hpp>
-#include <fastdds/publisher/PublisherImpl.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Guid.h>
@@ -47,19 +48,16 @@
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
+#include <fastdds/publisher/DataWriterImpl.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 #include <fastdds/topic/TopicProxyFactory.hpp>
 #include <fastdds/utils/QosConverters.hpp>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/TypesBase.h>
-
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/RTPSDomainImpl.hpp>
 #include <utils/SystemInfo.hpp>
@@ -88,7 +86,6 @@ using fastrtps::rtps::ParticipantAuthenticationInfo;
 #endif // if HAVE_SECURITY
 using eprosima::fastdds::dds::Log;
 using fastrtps::rtps::EndpointKind_t;
-using fastrtps::rtps::GUID_t;
 using fastrtps::rtps::ReaderDiscoveryInfo;
 using fastrtps::rtps::ReaderProxyData;
 using fastrtps::rtps::ResourceEvent;
@@ -147,7 +144,7 @@ DomainParticipantImpl::DomainParticipantImpl(
     if (nullptr != property_value && property_value->empty())
     {
         std::string username = "unknown";
-        if (ReturnCode_t::RETCODE_OK == SystemInfo::get_username(username))
+        if (RETCODE_OK == SystemInfo::get_username(username))
         {
             property_value->assign(username);
         }
@@ -260,7 +257,7 @@ ReturnCode_t DomainParticipantImpl::enable()
     // Should not have been previously enabled
     assert(get_rtps_participant() == nullptr);
     // Should not have failed assigning the GUID
-    assert (guid_ != GUID_t::unknown());
+    assert (guid_ != fastrtps::rtps::GUID_t::unknown());
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     utils::set_attributes_from_qos(rtps_attr, qos_);
@@ -281,7 +278,7 @@ ReturnCode_t DomainParticipantImpl::enable()
         if (part == nullptr)
         {
             EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Problem creating RTPSParticipant");
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
 
@@ -335,7 +332,7 @@ ReturnCode_t DomainParticipantImpl::enable()
 
     part->enable();
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::set_qos(
@@ -357,7 +354,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         if (&qos != &PARTICIPANT_QOS_DEFAULT)
         {
             ReturnCode_t ret_val = check_qos(qos_to_set);
-            if (!ret_val)
+            if (RETCODE_OK != ret_val)
             {
                 return ret_val;
             }
@@ -365,7 +362,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
 
         if (enabled && !can_qos_be_updated(qos_, qos_to_set))
         {
-            return ReturnCode_t::RETCODE_IMMUTABLE_POLICY;
+            return RETCODE_IMMUTABLE_POLICY;
         }
 
         qos_should_be_updated = set_qos(qos_, qos_to_set, !enabled);
@@ -389,7 +386,7 @@ ReturnCode_t DomainParticipantImpl::set_qos(
         rtps_participant->update_attributes(patt);
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::get_qos(
@@ -397,7 +394,7 @@ ReturnCode_t DomainParticipantImpl::get_qos(
 {
     std::lock_guard<std::mutex> _(mtx_gs_);
     qos = qos_;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 const DomainParticipantQos& DomainParticipantImpl::get_qos() const
@@ -411,7 +408,7 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
 {
     if (get_participant() != pub->get_participant())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     auto pit = publishers_.find(const_cast<Publisher*>(pub));
@@ -422,16 +419,16 @@ ReturnCode_t DomainParticipantImpl::delete_publisher(
                 && "The publisher instance handle does not match the publisher implementation instance handle");
         if (pub->has_datawriters())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
         pit->second->set_listener(nullptr);
         publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
         delete pit->second;
         publishers_.erase(pit);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 ReturnCode_t DomainParticipantImpl::delete_subscriber(
@@ -439,7 +436,7 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
 {
     if (get_participant() != sub->get_participant())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
     std::lock_guard<std::mutex> lock(mtx_subs_);
     auto sit = subscribers_.find(const_cast<Subscriber*>(sub));
@@ -450,16 +447,16 @@ ReturnCode_t DomainParticipantImpl::delete_subscriber(
                 && "The subscriber instance handle does not match the subscriber implementation instance handle");
         if (sub->has_datareaders())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
         sit->second->set_listener(nullptr);
         subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
         delete sit->second;
         subscribers_.erase(sit);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 Topic* DomainParticipantImpl::find_topic(
@@ -514,7 +511,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
 {
     if (topic == nullptr)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
@@ -532,7 +529,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         TopicProxy* proxy = dynamic_cast<TopicProxy*>(topic->get_impl());
         assert(nullptr != proxy);
         auto ret_code = it->second->delete_topic(proxy);
-        if (ReturnCode_t::RETCODE_OK == ret_code)
+        if (RETCODE_OK == ret_code)
         {
             topics_by_handle_.erase(handle);
 
@@ -546,7 +543,7 @@ ReturnCode_t DomainParticipantImpl::delete_topic(
         return ret_code;
     }
 
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
@@ -615,7 +612,7 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
 
     // Tell filter factory to compile the expression
     IContentFilter* filter_instance = nullptr;
-    if (ReturnCode_t::RETCODE_OK !=
+    if (RETCODE_OK !=
             filter_factory->create_content_filter(filter_class_name, related_topic->get_type_name().c_str(),
             type.get(), filter_expression.c_str(), filter_parameters, filter_instance))
     {
@@ -643,7 +640,7 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
 {
     if (topic == nullptr)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
@@ -653,13 +650,13 @@ ReturnCode_t DomainParticipantImpl::delete_contentfilteredtopic(
     {
         if (it->second->get_impl()->is_referenced())
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
         filtered_topics_.erase(it);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
@@ -668,18 +665,18 @@ ReturnCode_t DomainParticipantImpl::register_content_filter_factory(
 {
     if (nullptr == filter_factory || nullptr == filter_class_name || strlen(filter_class_name) > 255)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto it = filter_factories_.find(filter_class_name);
     if ((it != filter_factories_.end()) || (0 == strcmp(filter_class_name, FASTDDS_SQLFILTER_NAME)))
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     filter_factories_[filter_class_name] = filter_factory;
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 IContentFilterFactory* DomainParticipantImpl::lookup_content_filter_factory(
@@ -704,21 +701,21 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
 {
     if (nullptr == filter_class_name)
     {
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     std::lock_guard<std::mutex> lock(mtx_topics_);
     auto it = filter_factories_.find(filter_class_name);
     if ((it == filter_factories_.end()) || (it->first == FASTDDS_SQLFILTER_NAME))
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     for (auto& topic : filtered_topics_)
     {
         if (topic.second->impl_->filter_property.filter_class_name == filter_class_name)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
 
@@ -735,7 +732,7 @@ ReturnCode_t DomainParticipantImpl::unregister_content_filter_factory(
 
     filter_factories_.erase(it);
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 IContentFilterFactory* DomainParticipantImpl::find_content_filter_factory(
@@ -760,7 +757,7 @@ const InstanceHandle_t& DomainParticipantImpl::get_instance_handle() const
     return static_cast<const InstanceHandle_t&>(guid_);
 }
 
-const GUID_t& DomainParticipantImpl::guid() const
+const fastrtps::rtps::GUID_t& DomainParticipantImpl::guid() const
 {
     return guid_;
 }
@@ -779,9 +776,9 @@ Publisher* DomainParticipantImpl::create_publisher(
         PublisherListener* listener,
         const StatusMask& mask)
 {
-    if (!PublisherImpl::check_qos(qos))
+    if (RETCODE_OK != PublisherImpl::check_qos(qos))
     {
-        // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The PublisherImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // EPROSIMA_LOG_ERROR(PARTICIPANT, "PublisherQos inconsistent or not supported");
         // return nullptr;
@@ -808,7 +805,7 @@ Publisher* DomainParticipantImpl::create_publisher(
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         ReturnCode_t ret_publisher_enable = pub->enable();
-        assert(ReturnCode_t::RETCODE_OK == ret_publisher_enable);
+        assert(RETCODE_OK == ret_publisher_enable);
         (void)ret_publisher_enable;
     }
 
@@ -855,9 +852,9 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
 ReturnCode_t DomainParticipantImpl::ignore_participant(
         const InstanceHandle_t& handle)
 {
-    return (nullptr == rtps_participant_) ? ReturnCode_t::RETCODE_NOT_ENABLED :
-           rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? ReturnCode_t::RETCODE_OK :
-           ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return (nullptr == rtps_participant_) ? RETCODE_NOT_ENABLED :
+           rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? RETCODE_OK :
+           RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -902,7 +899,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         can_be_deleted = subscriber.second->can_be_deleted();
         if (!can_be_deleted)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
 
@@ -915,18 +912,18 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         can_be_deleted = publisher.second->can_be_deleted();
         if (!can_be_deleted)
         {
-            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+            return RETCODE_PRECONDITION_NOT_MET;
         }
     }
 
-    ReturnCode_t ret_code = ReturnCode_t::RETCODE_OK;
+    ReturnCode_t ret_code = RETCODE_OK;
 
     for (auto& subscriber : subscribers_)
     {
         ret_code = subscriber.first->delete_contained_entities();
-        if (!ret_code)
+        if (RETCODE_OK != ret_code)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
 
@@ -942,9 +939,9 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     for (auto& publisher : publishers_)
     {
         ret_code = publisher.first->delete_contained_entities();
-        if (!ret_code)
+        if (RETCODE_OK != ret_code)
         {
-            return ReturnCode_t::RETCODE_ERROR;
+            return RETCODE_ERROR;
         }
     }
 
@@ -969,7 +966,7 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
         it_topics = topics_.erase(it_topics);
     }
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::assert_liveliness()
@@ -977,21 +974,21 @@ ReturnCode_t DomainParticipantImpl::assert_liveliness()
     fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
     if (rtps_participant == nullptr)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
+        return RETCODE_NOT_ENABLED;
     }
 
     if (rtps_participant->wlp() != nullptr)
     {
         if (rtps_participant->wlp()->assert_liveliness_manual_by_participant())
         {
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Invalid WLP, cannot assert liveliness of participant");
     }
-    return ReturnCode_t::RETCODE_ERROR;
+    return RETCODE_ERROR;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
@@ -1000,18 +997,18 @@ ReturnCode_t DomainParticipantImpl::set_default_publisher_qos(
     if (&qos == &PUBLISHER_QOS_DEFAULT)
     {
         reset_default_publisher_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = PublisherImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
-        // The PublisherImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The PublisherImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // return ret_val;
     }
     PublisherImpl::set_qos(default_pub_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::reset_default_publisher_qos()
@@ -1028,7 +1025,7 @@ const PublisherQos& DomainParticipantImpl::get_default_publisher_qos() const
     return default_pub_qos_;
 }
 
-const ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
+ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
         const std::string& profile_name,
         PublisherQos& qos) const
 {
@@ -1037,10 +1034,10 @@ const ReturnCode_t DomainParticipantImpl::get_publisher_qos_from_profile(
     {
         qos = default_pub_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
@@ -1049,17 +1046,17 @@ ReturnCode_t DomainParticipantImpl::set_default_subscriber_qos(
     if (&qos == &SUBSCRIBER_QOS_DEFAULT)
     {
         reset_default_subscriber_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
     ReturnCode_t check_result = SubscriberImpl::check_qos(qos);
-    if (!check_result)
+    if (RETCODE_OK != check_result)
     {
-        // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The SubscriberImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // return check_result;
     }
     SubscriberImpl::set_qos(default_sub_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::reset_default_subscriber_qos()
@@ -1076,7 +1073,7 @@ const SubscriberQos& DomainParticipantImpl::get_default_subscriber_qos() const
     return default_sub_qos_;
 }
 
-const ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
+ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
         const std::string& profile_name,
         SubscriberQos& qos) const
 {
@@ -1085,10 +1082,10 @@ const ReturnCode_t DomainParticipantImpl::get_subscriber_qos_from_profile(
     {
         qos = default_sub_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
@@ -1097,17 +1094,17 @@ ReturnCode_t DomainParticipantImpl::set_default_topic_qos(
     if (&qos == &TOPIC_QOS_DEFAULT)
     {
         reset_default_topic_qos();
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     ReturnCode_t ret_val = TopicImpl::check_qos(qos);
-    if (!ret_val)
+    if (RETCODE_OK != ret_val)
     {
         return ret_val;
     }
 
     TopicImpl::set_qos(default_topic_qos_, qos, true);
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::reset_default_topic_qos()
@@ -1124,7 +1121,7 @@ const TopicQos& DomainParticipantImpl::get_default_topic_qos() const
     return default_topic_qos_;
 }
 
-const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
+ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
         const std::string& profile_name,
         TopicQos& qos) const
 {
@@ -1133,13 +1130,13 @@ const ReturnCode_t DomainParticipantImpl::get_topic_qos_from_profile(
     {
         qos = default_topic_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
-const ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
+ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
         const std::string& profile_name,
         ReplierQos& qos) const
 {
@@ -1147,13 +1144,13 @@ const ReturnCode_t DomainParticipantImpl::get_replier_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillReplierAttributes(profile_name, attr))
     {
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
-const ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
+ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
         const std::string& profile_name,
         RequesterQos& qos) const
 {
@@ -1161,10 +1158,10 @@ const ReturnCode_t DomainParticipantImpl::get_requester_qos_from_profile(
     if (XMLP_ret::XML_OK == XMLProfileManager::fillRequesterAttributes(profile_name, attr))
     {
         utils::set_qos_from_attributes(qos, attr);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    return RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -1260,7 +1257,7 @@ ReturnCode_t DomainParticipantImpl::get_current_time(
     current_time.seconds = static_cast<int32_t>(seconds.count());
     current_time.nanosec = static_cast<uint32_t>(nanos.count());
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 std::vector<std::string> DomainParticipantImpl::get_participant_names() const
@@ -1277,9 +1274,9 @@ Subscriber* DomainParticipantImpl::create_subscriber(
         SubscriberListener* listener,
         const StatusMask& mask)
 {
-    if (!SubscriberImpl::check_qos(qos))
+    if (RETCODE_OK != SubscriberImpl::check_qos(qos))
     {
-        // The SubscriberImpl::check_qos() function is not yet implemented and always returns ReturnCode_t::RETCODE_OK.
+        // The SubscriberImpl::check_qos() function is not yet implemented and always returns RETCODE_OK.
         // It will be implemented in future releases of Fast DDS.
         // EPROSIMA_LOG_ERROR(PARTICIPANT, "SubscriberQos inconsistent or not supported");
         // return nullptr;
@@ -1308,7 +1305,7 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         ReturnCode_t ret_subscriber_enable = sub->enable();
-        assert(ReturnCode_t::RETCODE_OK == ret_subscriber_enable);
+        assert(RETCODE_OK == ret_subscriber_enable);
         (void)ret_subscriber_enable;
     }
 
@@ -1354,7 +1351,7 @@ Topic* DomainParticipantImpl::create_topic(
         return nullptr;
     }
 
-    if (!TopicImpl::check_qos_including_resource_limits(qos, type_support))
+    if (RETCODE_OK != TopicImpl::check_qos_including_resource_limits(qos, type_support))
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "TopicQos inconsistent or not supported");
         return nullptr;
@@ -1388,7 +1385,7 @@ Topic* DomainParticipantImpl::create_topic(
     if (enabled && qos_.entity_factory().autoenable_created_entities)
     {
         ReturnCode_t ret_topic_enable = topic->enable();
-        assert(ReturnCode_t::RETCODE_OK == ret_topic_enable);
+        assert(RETCODE_OK == ret_topic_enable);
         (void)ret_topic_enable;
     }
 
@@ -1458,7 +1455,7 @@ ReturnCode_t DomainParticipantImpl::register_type(
     if (type_name.size() <= 0)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Type must have a name");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     TypeSupport t = find_type(type_name);
@@ -1467,68 +1464,20 @@ ReturnCode_t DomainParticipantImpl::register_type(
     {
         if (t == type)
         {
-            return ReturnCode_t::RETCODE_OK;
+            return RETCODE_OK;
         }
 
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     EPROSIMA_LOG_INFO(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
 
-    if (type->auto_fill_type_object() || type->auto_fill_type_information())
-    {
-        register_dynamic_type_to_factories(type);
-    }
+    type.get()->register_type_object_representation();
 
-    return ReturnCode_t::RETCODE_OK;
-}
-
-bool DomainParticipantImpl::register_dynamic_type_to_factories(
-        const TypeSupport& type) const
-{
-    using namespace  eprosima::fastrtps::types;
-    DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
-    if (dpst != nullptr) // Registering a dynamic type.
-    {
-        TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
-        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
-        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
-        if (id == nullptr)
-        {
-            std::map<MemberId, DynamicTypeMember*> membersMap;
-            dpst->GetDynamicType()->get_all_members(membersMap);
-            std::vector<const MemberDescriptor*> members;
-            for (auto it : membersMap)
-            {
-                members.push_back(it.second->get_descriptor());
-            }
-            TypeObject typeObj;
-            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
-            // Minimal too
-            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
-            const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
-            const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
-            if (type_id2 == nullptr)
-            {
-                EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
-            }
-            else
-            {
-                objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
-
-                // Complete, just to make sure it is generated
-                const TypeIdentifier* type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
-                const TypeObject* type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
-                objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
-                return true;
-            }
-        }
-    }
-
-    return false; // Isn't a registered dynamic type.
+    return RETCODE_OK;
 }
 
 ReturnCode_t DomainParticipantImpl::unregister_type(
@@ -1537,14 +1486,14 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     if (type_name.size() <= 0)
     {
         EPROSIMA_LOG_ERROR(PARTICIPANT, "Registered Type must have a name");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        return RETCODE_BAD_PARAMETER;
     }
 
     TypeSupport t = find_type(type_name);
 
     if (t.empty())
     {
-        return ReturnCode_t::RETCODE_OK; // Not registered, so unregistering complete.
+        return RETCODE_OK; // Not registered, so unregistering complete.
     }
 
     {
@@ -1555,7 +1504,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (sit.second->type_in_use(type_name))
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
+                return RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -1568,7 +1517,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
         {
             if (pit.second->type_in_use(type_name))
             {
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET; // Is in use
+                return RETCODE_PRECONDITION_NOT_MET; // Is in use
             }
         }
     }
@@ -1576,7 +1525,7 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.erase(type_name);
 
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
@@ -1629,64 +1578,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     }
 }
 
-void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
-        RTPSParticipant*,
-        const fastrtps::rtps::SampleIdentity& request_sample_id,
-        const fastcdr::string_255& topic,
-        const fastrtps::types::TypeIdentifier* identifier,
-        const fastrtps::types::TypeObject* object,
-        fastrtps::types::DynamicType_ptr dyn_type)
-{
-    Sentry sentinel(this);
-    if (sentinel)
-    {
-        participant_->listener_->on_type_discovery(
-            participant_->participant_,
-            request_sample_id,
-            topic,
-            identifier,
-            object,
-            dyn_type);
-
-        participant_->check_get_type_request(request_sample_id, identifier, object, dyn_type);
-    }
-}
-
-void DomainParticipantImpl::MyRTPSParticipantListener::on_type_dependencies_reply(
-        RTPSParticipant*,
-        const fastrtps::rtps::SampleIdentity& request_sample_id,
-        const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
-{
-    Sentry sentinel(this);
-    if (sentinel)
-    {
-        participant_->listener_->on_type_dependencies_reply(
-            participant_->participant_, request_sample_id, dependencies);
-
-        participant_->check_get_dependencies_request(request_sample_id, dependencies);
-    }
-}
-
-void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_received(
-        RTPSParticipant*,
-        const fastcdr::string_255& topic_name,
-        const fastcdr::string_255& type_name,
-        const fastrtps::types::TypeInformation& type_information)
-{
-    Sentry sentinel(this);
-    if (sentinel)
-    {
-        if (type_information.complete().typeid_with_size().type_id()._d() > 0
-                || type_information.minimal().typeid_with_size().type_id()._d() > 0)
-        {
-            participant_->listener_->on_type_information_received(
-                participant_->participant_, topic_name, type_name, type_information);
-        }
-    }
-}
-
 bool DomainParticipantImpl::new_remote_endpoint_discovered(
-        const GUID_t& partguid,
+        const fastrtps::rtps::GUID_t& partguid,
         uint16_t endpointId,
         EndpointKind_t kind)
 {
@@ -1711,441 +1604,11 @@ ResourceEvent& DomainParticipantImpl::get_resource_event() const
     return get_rtps_participant()->get_resource_event();
 }
 
-fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_type_dependencies(
-        const fastrtps::types::TypeIdentifierSeq& in) const
-{
-    const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
-    return nullptr != rtps_participant ?
-           rtps_participant->typelookup_manager()->get_type_dependencies(in) :
-           builtin::INVALID_SAMPLE_IDENTITY;
-}
-
-fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
-        const fastrtps::types::TypeIdentifierSeq& in) const
-{
-    const fastrtps::rtps::RTPSParticipant* rtps_participant = get_rtps_participant();
-    return nullptr != rtps_participant ?
-           rtps_participant->typelookup_manager()->get_types(in) :
-           builtin::INVALID_SAMPLE_IDENTITY;
-}
-
-ReturnCode_t DomainParticipantImpl::register_remote_type(
-        const fastrtps::types::TypeInformation& type_information,
-        const std::string& type_name,
-        std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
-{
-    using namespace fastrtps::types;
-
-    if (get_rtps_participant() == nullptr)
-    {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
-
-    TypeObjectFactory* factory = TypeObjectFactory::get_instance();
-    // Check if plain
-    if (type_information.complete().typeid_with_size().type_id()._d() < EK_MINIMAL)
-    {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
-            type_name,
-            &type_information.minimal().typeid_with_size().type_id());
-
-        if (nullptr != dyn)
-        {
-            //callback(type_name, dyn); // For plain types, don't call the callback
-            return register_dynamic_type(dyn);
-        }
-        // If cannot create the dynamic type, probably is because it depend on unknown types.
-        // We must continue.
-    }
-
-    // Check if already available
-    TypeObject obj;
-    factory->typelookup_get_type(
-        type_information.complete().typeid_with_size().type_id(),
-        obj);
-
-    if (obj._d() != 0)
-    {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
-            type_name,
-            &type_information.complete().typeid_with_size().type_id(),
-            &obj);
-
-        if (nullptr != dyn)
-        {
-            //callback(type_name, dyn); // If the type is already registered, don't call the callback.
-            return register_dynamic_type(dyn);
-        }
-    }
-    else if (get_rtps_participant()->typelookup_manager() != nullptr)
-    {
-        TypeIdentifierSeq dependencies;
-        TypeIdentifierSeq retrieve_objects;
-
-        fill_pending_dependencies(type_information.complete().dependent_typeids(), dependencies, retrieve_objects);
-
-        fastrtps::rtps::SampleIdentity request_dependencies;
-        fastrtps::rtps::SampleIdentity request_objects;
-
-        // Lock now, we don't want to process the reply before we add the requests' ID to the maps.
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
-
-        // If any pending dependency exists, retrieve it.
-        if (!dependencies.empty())
-        {
-            request_dependencies = get_type_dependencies(dependencies);
-        }
-
-        // If any pending TypeObject exists, retrieve it
-        if (!retrieve_objects.empty())
-        {
-            request_objects = get_types(retrieve_objects);
-        }
-
-        // If no more dependencies but failed to create, probably we only need the TypeObject
-        dependencies.clear(); // Reuse the same vector.
-        dependencies.push_back(type_information.complete().typeid_with_size().type_id());
-        fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
-
-        // Add everything to maps
-        register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
-        std::vector<fastrtps::rtps::SampleIdentity> vector;
-        vector.push_back(requestId); // Add itself
-
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
-        {
-            vector.push_back(request_dependencies);
-            child_requests_.emplace(std::make_pair(request_dependencies, requestId));
-        }
-
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
-        {
-            vector.push_back(request_objects);
-            child_requests_.emplace(std::make_pair(request_objects, requestId));
-        }
-
-        // Move the filled vector to the map
-        parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-}
-
-bool DomainParticipantImpl::check_get_type_request(
-        const fastrtps::rtps::SampleIdentity& requestId,
-        const fastrtps::types::TypeIdentifier* identifier,
-        const fastrtps::types::TypeObject* object,
-        fastrtps::types::DynamicType_ptr dyn_type)
-{
-    // Maybe we have a pending request?
-    if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
-    {
-        // First level request?
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
-
-        auto cb_it = register_callbacks_.find(requestId);
-
-        if (cb_it != register_callbacks_.end())
-        {
-            const std::string& name = cb_it->second.first;
-            const auto& callback = cb_it->second.second;
-
-            if (nullptr != dyn_type)
-            {
-                dyn_type->set_name(name);
-                if (register_dynamic_type(dyn_type) == ReturnCode_t::RETCODE_OK)
-                {
-                    callback(name, dyn_type);
-                    remove_parent_request(requestId);
-                    return true;
-                }
-            }
-
-            // Exists the request, but the provided dyn_type isn't valid.
-            // Register the received TypeObject into factory and recreate the DynamicType.
-            fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(name, identifier, object);
-
-            auto pending = parent_requests_.find(requestId);
-            if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
-            {
-                fastrtps::types::DynamicType_ptr dynamic =
-                        fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier,
-                                object);
-
-                if (nullptr != dynamic)
-                {
-                    if (register_dynamic_type(dynamic) == ReturnCode_t::RETCODE_OK)
-                    {
-                        callback(name, dynamic);
-                        remove_parent_request(requestId);
-                        return true;
-                    }
-                }
-            }
-            // Failed, cannot register the type yet, probably child request still pending.
-            return false;
-        }
-
-        // Child request?
-        auto child_it = child_requests_.find(requestId);
-
-        if (child_it != child_requests_.end())
-        {
-            // Register received TypeObject into factory, remove the iterator from the map and check our parent.
-            fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
-                get_inner_type_name(requestId), identifier, object);
-            remove_child_request(requestId);
-        }
-    }
-    return false;
-}
-
-void DomainParticipantImpl::fill_pending_dependencies(
-        const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies,
-        fastrtps::types::TypeIdentifierSeq& pending_identifiers,
-        fastrtps::types::TypeIdentifierSeq& pending_objects) const
-{
-    using namespace fastrtps::types;
-    for (const TypeIdentifierWithSize& tiws : dependencies)
-    {
-        // Check that we don't know that dependency
-        if (!TypeObjectFactory::get_instance()->typelookup_check_type_identifier(tiws.type_id()))
-        {
-            pending_identifiers.push_back(tiws.type_id());
-        }
-        // Check if we need to retrieve the TypeObject
-        if (tiws.type_id()._d() >= EK_MINIMAL)
-        {
-            TypeObject obj;
-            TypeObjectFactory::get_instance()->typelookup_get_type(tiws.type_id(), obj);
-            if (obj._d() == 0)
-            {
-                // Failed, so we must retrieve it.
-                pending_objects.push_back(tiws.type_id());
-            }
-        }
-    }
-}
-
-bool DomainParticipantImpl::check_get_dependencies_request(
-        const fastrtps::rtps::SampleIdentity& requestId,
-        const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
-{
-    using namespace fastrtps::types;
-
-    // Maybe we have a pending request?
-    if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
-    {
-        TypeIdentifierSeq next_dependencies;
-        TypeIdentifierSeq retrieve_objects;
-
-        // First level request?
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
-
-        auto cb_it = register_callbacks_.find(requestId);
-
-        if (cb_it != register_callbacks_.end())
-        {
-            fill_pending_dependencies(dependencies, next_dependencies, retrieve_objects);
-
-            // If any pending dependency exists, retrieve it
-            if (!next_dependencies.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
-
-            // Add received dependencies to the factory
-            for (const TypeIdentifierWithSize& tiws : dependencies)
-            {
-                if (tiws.type_id()._d() >= EK_MINIMAL)
-                {
-                    // This dependency needs a TypeObject
-                    retrieve_objects.push_back(tiws.type_id());
-                }
-                else
-                {
-                    TypeObjectFactory::get_instance()->add_type_identifier(
-                        get_inner_type_name(requestId), &tiws.type_id());
-                }
-            }
-
-            // If any pending TypeObject exists, retrieve it
-            if (!retrieve_objects.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
-
-            if (next_dependencies.empty() && retrieve_objects.empty())
-            {
-                // Finished?
-                on_child_requests_finished(requestId);
-                return true;
-            }
-
-            return false;
-        }
-
-        // Child request?
-        auto child_it = child_requests_.find(requestId);
-
-        if (child_it != child_requests_.end())
-        {
-            fill_pending_dependencies(dependencies, next_dependencies, retrieve_objects);
-
-            // If any pending dependency exists, retrieve it
-            if (!next_dependencies.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
-
-            // Add received dependencies to the factory
-            for (const TypeIdentifierWithSize& tiws : dependencies)
-            {
-                if (tiws.type_id()._d() >= EK_MINIMAL)
-                {
-                    // This dependency needs a TypeObject
-                    retrieve_objects.push_back(tiws.type_id());
-                }
-                else
-                {
-                    TypeObjectFactory::get_instance()->add_type_identifier(
-                        get_inner_type_name(requestId), &tiws.type_id());
-                }
-            }
-
-            // If any pending TypeObject exists, retrieve it
-            if (!retrieve_objects.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
-
-            if (next_dependencies.empty() && retrieve_objects.empty())
-            {
-                remove_child_request(requestId);
-                return true;
-            }
-
-            return false;
-        }
-    }
-    return false;
-}
-
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
-        fastrtps::types::DynamicType_ptr dyn_type)
+        DynamicType::_ref_type dyn_type)
 {
-    TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     return get_participant()->register_type(type);
-}
-
-void DomainParticipantImpl::remove_parent_request(
-        const fastrtps::rtps::SampleIdentity& request)
-{
-    // If a parent request if going to be deleted, delete all its children too.
-    auto cb_it = register_callbacks_.find(request);
-    auto parent_it = parent_requests_.find(request);
-
-    if (parent_requests_.end() != parent_it)
-    {
-        for (const fastrtps::rtps::SampleIdentity& child_id : parent_it->second)
-        {
-            auto child_it = child_requests_.find(child_id);
-            if (child_requests_.end() != child_it)
-            {
-                child_requests_.erase(child_it);
-            }
-        }
-        parent_requests_.erase(parent_it);
-    }
-
-    if (register_callbacks_.end() != cb_it)
-    {
-        register_callbacks_.erase(cb_it);
-    }
-}
-
-void DomainParticipantImpl::remove_child_request(
-        const fastrtps::rtps::SampleIdentity& request)
-{
-    auto child_it = child_requests_.find(request);
-    if (child_requests_.end() != child_it)
-    {
-        fastrtps::rtps::SampleIdentity parent_request = child_it->second;
-        child_requests_.erase(child_it);
-
-        auto parent_it = parent_requests_.find(parent_request);
-        if (parent_requests_.end() != parent_it)
-        {
-            std::vector<fastrtps::rtps::SampleIdentity>& pending = parent_it->second;
-            pending.erase(std::find(pending.begin(), pending.end(), request));
-            if (pending.empty())
-            {
-                parent_requests_.erase(parent_it);
-            }
-        }
-
-        on_child_requests_finished(parent_request);
-    }
-}
-
-void DomainParticipantImpl::on_child_requests_finished(
-        const fastrtps::rtps::SampleIdentity& parent)
-{
-    auto pending_requests_it = parent_requests_.find(parent);
-    // Do I have no more pending childs?
-    if (parent_requests_.end() == pending_requests_it || pending_requests_it->second.empty())
-    {
-        // Am I a children?
-        auto child_it = child_requests_.find(parent);
-        if (child_requests_.end() != child_it)
-        {
-            remove_child_request(parent);
-        }
-        else
-        {
-            // Or a top-level request?
-            auto cb_it = register_callbacks_.find(parent);
-            if (pending_requests_it->second.size() < 2)
-            {
-                parent_requests_.erase(pending_requests_it);
-            }
-            cb_it->second.second(cb_it->second.first, fastrtps::types::DynamicType_ptr(nullptr)); // Everything should be already registered
-            register_callbacks_.erase(cb_it);
-        }
-    }
-}
-
-std::string DomainParticipantImpl::get_inner_type_name(
-        const fastrtps::rtps::SampleIdentity& id) const
-{
-    std::stringstream ss;
-    ss << "type_" << id.writer_guid() << "_" << id.sequence_number();
-    std::string str = ss.str();
-    std::transform(str.begin(), str.end(), str.begin(),
-            [](unsigned char c)
-            {
-                return static_cast<char>(std::tolower(c));
-            });
-    str.erase(std::remove(str.begin(), str.end(), '.'), str.end());
-    std::replace(str.begin(), str.end(), '|', '_');
-    return str;
 }
 
 bool DomainParticipantImpl::has_active_entities()
@@ -2214,15 +1677,15 @@ bool DomainParticipantImpl::set_qos(
     return qos_should_be_updated;
 }
 
-fastrtps::types::ReturnCode_t DomainParticipantImpl::check_qos(
+ReturnCode_t DomainParticipantImpl::check_qos(
         const DomainParticipantQos& qos)
 {
     if (qos.allocation().data_limits.max_user_data == 0 ||
             qos.allocation().data_limits.max_user_data > qos.user_data().getValue().size())
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
-    return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+    return RETCODE_INCONSISTENT_POLICY;
 }
 
 bool DomainParticipantImpl::can_qos_be_updated(
@@ -2262,10 +1725,6 @@ bool DomainParticipantImpl::can_qos_be_updated(
                 from.wire_protocol().ignore_non_matching_locators) ||
                 !(to.wire_protocol().builtin.use_WriterLivelinessProtocol ==
                 from.wire_protocol().builtin.use_WriterLivelinessProtocol) ||
-                !(to.wire_protocol().builtin.typelookup_config.use_client ==
-                from.wire_protocol().builtin.typelookup_config.use_client) ||
-                !(to.wire_protocol().builtin.typelookup_config.use_server ==
-                from.wire_protocol().builtin.typelookup_config.use_server) ||
                 !(to.wire_protocol().builtin.network_configuration ==
                 from.wire_protocol().builtin.network_configuration) ||
                 !(to.wire_protocol().builtin.metatrafficUnicastLocatorList ==

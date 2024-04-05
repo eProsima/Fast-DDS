@@ -22,12 +22,12 @@
 #ifndef _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPECDRAUX_HPP_
 #define _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPECDRAUX_HPP_
 
-#include "ContentFilterTestType.h"
+#include "ContentFilterTestType.hpp"
 
 constexpr uint32_t StructType_max_cdr_typesize {344UL};
 constexpr uint32_t StructType_max_key_cdr_typesize {0UL};
 
-constexpr uint32_t ContentFilterTestType_max_cdr_typesize {73360UL};
+constexpr uint32_t ContentFilterTestType_max_cdr_typesize {6248UL};
 constexpr uint32_t ContentFilterTestType_max_key_cdr_typesize {0UL};
 
 
@@ -39,17 +39,9 @@ namespace fastcdr {
 class Cdr;
 class CdrSizeCalculator;
 
-
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructType& data);
-
-
-
-
-
-
 
 
 

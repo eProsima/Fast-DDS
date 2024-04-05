@@ -22,7 +22,6 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -48,17 +47,6 @@
 #endif // if defined(_WIN32)
 
 namespace eprosima {
-
-namespace fastdds {
-namespace dds {
-namespace builtin {
-
-const fastrtps::rtps::SampleIdentity INVALID_SAMPLE_IDENTITY;
-
-} // namespace builtin
-} // namespace dds
-} // namespace fastdds
-
 namespace fastrtps {
 namespace rtps {
 

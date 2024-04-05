@@ -19,10 +19,6 @@ if(WIN32)
 endif()
 
 set(LOG_COMMON_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/Log.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/OStreamConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/utils/netmask_filter.cpp
@@ -57,7 +53,11 @@ target_include_directories(LogTests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(LogTests fastcdr GTest::gtest ${MOCKS}
+target_link_libraries(LogTests
+    fastcdr
+    fastdds::log
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     )
 gtest_discover_tests(LogTests)
@@ -67,8 +67,8 @@ set(LOGFILETESTS_TEST_SOURCE LogFileTests.cpp)
 
 set(LOGFILETESTS_SOURCE
     ${LOG_COMMON_SOURCE}
-    ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
-    ${LOGFILETESTS_TEST_SOURCE})
+    ${LOGFILETESTS_TEST_SOURCE}
+    )
 
 # External sources
 if(TINYXML2_SOURCE_DIR)
@@ -97,5 +97,6 @@ target_link_libraries(LogFileTests GTest::gtest ${MOCKS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${TINYXML2_LIBRARY}
     fastcdr
+    fastdds::log
     )
 gtest_discover_tests(LogFileTests)

@@ -20,9 +20,12 @@
 #ifndef _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 #define _FASTDDS_DDS_QOS_QOSPOLICIES_HPP_
 
+#include <bitset>
 #include <vector>
 
 #include <fastdds/dds/core/policy/ParameterTypes.hpp>
+#include <fastdds/dds/core/Types.hpp>
+#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 #include <fastdds/rtps/attributes/ExternalLocators.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
@@ -35,7 +38,6 @@
 #include <fastdds/rtps/resources/ResourceManagement.h>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 
-#include <fastrtps/types/TypeObject.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
 namespace eprosima {
@@ -1712,9 +1714,6 @@ public:
     int32_t depth;
 };
 
-//! A special value indicating an unlimited quantity
-constexpr int32_t LENGTH_UNLIMITED = -1;
-
 /**
  * Specifies the resources that the Service can consume in order to meet the requested QoS
  *
@@ -2292,7 +2291,7 @@ class TypeIdV1 : public Parameter_t, public QosPolicy
 public:
 
     //!Type Identifier
-    fastrtps::types::TypeIdentifier m_type_identifier;
+    xtypes::TypeIdentifier m_type_identifier;
 
 
     /**
@@ -2324,7 +2323,7 @@ public:
      * @param identifier TypeIdentifier to be set
      */
     FASTDDS_EXPORTED_API TypeIdV1(
-            const fastrtps::types::TypeIdentifier& identifier)
+            const xtypes::TypeIdentifier& identifier)
         : Parameter_t(PID_TYPE_IDV1, 0)
         , QosPolicy(false)
         , m_type_identifier(identifier)
@@ -2379,7 +2378,7 @@ public:
     }
 
     FASTDDS_EXPORTED_API TypeIdV1& operator =(
-            const fastrtps::types::TypeIdentifier& type_id)
+            const xtypes::TypeIdentifier& type_id)
     {
         m_type_identifier = type_id;
         return *this;
@@ -2390,7 +2389,7 @@ public:
      *
      * @return TypeIdentifier reference
      */
-    FASTDDS_EXPORTED_API const fastrtps::types::TypeIdentifier& get() const
+    FASTDDS_EXPORTED_API const xtypes::TypeIdentifier& get() const
     {
         return m_type_identifier;
     }
@@ -2405,7 +2404,7 @@ class TypeObjectV1 : public Parameter_t, public QosPolicy
 public:
 
     //!Type Object
-    fastrtps::types::TypeObject m_type_object;
+    xtypes::TypeObject m_type_object;
 
     /**
      * @brief Constructor
@@ -2436,7 +2435,7 @@ public:
      * @param type TypeObject to be set
      */
     FASTDDS_EXPORTED_API TypeObjectV1(
-            const fastrtps::types::TypeObject& type)
+            const xtypes::TypeObject& type)
         : Parameter_t(PID_TYPE_OBJECTV1, 0)
         , QosPolicy(false)
         , m_type_object(type)
@@ -2491,7 +2490,7 @@ public:
     }
 
     FASTDDS_EXPORTED_API TypeObjectV1& operator =(
-            const fastrtps::types::TypeObject& type_object)
+            const xtypes::TypeObject& type_object)
     {
         m_type_object = type_object;
         return *this;
@@ -2502,7 +2501,7 @@ public:
      *
      * @return TypeObject reference
      */
-    FASTDDS_EXPORTED_API const fastrtps::types::TypeObject& get() const
+    FASTDDS_EXPORTED_API const xtypes::TypeObject& get() const
     {
         return m_type_object;
     }
@@ -2512,19 +2511,19 @@ public:
 namespace xtypes {
 
 /**
- * Class xtypes::TypeInformation
+ * Class xtypes::TypeInformationParameter
  */
-class TypeInformation : public Parameter_t, public QosPolicy
+class TypeInformationParameter : public Parameter_t, public QosPolicy
 {
 public:
 
     //!Type Information
-    fastrtps::types::TypeInformation type_information;
+    eprosima::fastdds::dds::xtypes::TypeInformation type_information;
 
     /**
      * @brief Constructor
      */
-    FASTDDS_EXPORTED_API TypeInformation()
+    FASTDDS_EXPORTED_API TypeInformationParameter()
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
         , type_information()
@@ -2535,10 +2534,10 @@ public:
     /**
      * @brief Copy constructor
      *
-     * @param type Another instance of TypeInformation
+     * @param type Another instance of TypeInformationParameter
      */
-    FASTDDS_EXPORTED_API TypeInformation(
-            const TypeInformation& type)
+    FASTDDS_EXPORTED_API TypeInformationParameter(
+            const TypeInformationParameter& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.send_always_)
         , type_information(type.type_information)
@@ -2547,12 +2546,12 @@ public:
     }
 
     /**
-     * @brief Constructor using a fastrtps::types::TypeInformation
+     * @brief Constructor using a TypeInformation
      *
-     * @param info fastrtps::types::TypeInformation to be set
+     * @param info TypeInformation to be set
      */
-    FASTDDS_EXPORTED_API TypeInformation(
-            const fastrtps::types::TypeInformation& info)
+    FASTDDS_EXPORTED_API TypeInformationParameter(
+            const eprosima::fastdds::dds::xtypes::TypeInformation& info)
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
         , type_information(info)
@@ -2563,10 +2562,10 @@ public:
     /**
      * @brief Move Constructor
      *
-     * @param type Another instance of TypeInformation
+     * @param type Another instance of TypeInformationParameter
      */
-    FASTDDS_EXPORTED_API TypeInformation(
-            TypeInformation&& type)
+    FASTDDS_EXPORTED_API TypeInformationParameter(
+            TypeInformationParameter&& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.send_always_)
         , type_information(std::move(type.type_information))
@@ -2574,8 +2573,8 @@ public:
     {
     }
 
-    FASTDDS_EXPORTED_API TypeInformation& operator =(
-            const TypeInformation& type)
+    FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
+            const TypeInformationParameter& type)
     {
         Pid = type.Pid;
         length = type.length;
@@ -2587,8 +2586,8 @@ public:
         return *this;
     }
 
-    FASTDDS_EXPORTED_API TypeInformation& operator =(
-            TypeInformation&& type)
+    FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
+            TypeInformationParameter&& type)
     {
         Pid = type.Pid;
         length = type.length;
@@ -2603,11 +2602,11 @@ public:
     /**
      * @brief Destructor
      */
-    virtual FASTDDS_EXPORTED_API ~TypeInformation() override = default;
+    virtual FASTDDS_EXPORTED_API ~TypeInformationParameter() override = default;
 
     inline void clear() override
     {
-        *this = TypeInformation();
+        *this = TypeInformationParameter();
     }
 
     /**
@@ -2631,8 +2630,8 @@ public:
         assigned_ = value;
     }
 
-    FASTDDS_EXPORTED_API TypeInformation& operator =(
-            const fastrtps::types::TypeInformation& type_info)
+    FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
+            const TypeInformation& type_info)
     {
         type_information = type_info;
         assigned_ = true;
@@ -2641,7 +2640,7 @@ public:
 
 private:
 
-    //!Boolean that states if the TypeInformation has been asigned manually or not.
+    //!Boolean that states if the TypeInformationParameter has been asigned manually or not.
     bool assigned_;
 };
 

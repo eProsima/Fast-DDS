@@ -116,7 +116,7 @@ public:
         return retcode;
     }
 
-    ReturnCode_t delete_datawriters()
+    efd::ReturnCode_t delete_datawriters()
     {
         std::unique_lock<std::mutex> lock(mtx_writers_);
 
@@ -131,7 +131,7 @@ public:
 
         writers_.clear();
 
-        return ReturnCode_t::RETCODE_OK;
+        return efd::RETCODE_OK;
     }
 
 private:

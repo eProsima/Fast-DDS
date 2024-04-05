@@ -19,14 +19,15 @@
 #ifndef _FASTDDS_TYPE_SUPPORT_HPP_
 #define _FASTDDS_TYPE_SUPPORT_HPP_
 
-#include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastdds/dds/common/InstanceHandle.hpp>
-#include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/TypesBase.h>
-
 #include <string>
 #include <functional>
 #include <memory>
+
+#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/topic/TopicDataType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/fastdds_dll.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -42,13 +43,11 @@ class DomainParticipant;
  * where Serialize and deserialize methods MUST be implemented.
  * @ingroup FASTDDS_MODULE
  */
-class TypeSupport : public std::shared_ptr<fastdds::dds::TopicDataType>
+class TypeSupport : public std::shared_ptr<TopicDataType>
 {
 public:
 
-    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
-
-    using Base = std::shared_ptr<fastdds::dds::TopicDataType>;
+    using Base = std::shared_ptr<TopicDataType>;
 
     /**
      * @brief Constructor
@@ -95,8 +94,8 @@ public:
      * @param ptr
      */
     FASTDDS_EXPORTED_API explicit TypeSupport(
-            fastdds::dds::TopicDataType* ptr)
-        : std::shared_ptr<fastdds::dds::TopicDataType>(ptr)
+            TopicDataType* ptr)
+        : std::shared_ptr<TopicDataType>(ptr)
     {
     }
 
@@ -107,9 +106,8 @@ public:
      * @param ptr
      */
     FASTDDS_EXPORTED_API TypeSupport(
-            fastrtps::types::DynamicPubSubType ptr)
-        : std::shared_ptr<fastdds::dds::TopicDataType>(std::make_shared<fastrtps::types::DynamicPubSubType>(std::move(
-                    ptr)))
+            DynamicPubSubType ptr)
+        : std::shared_ptr<TopicDataType>(std::make_shared<DynamicPubSubType>(std::move(ptr)))
     {
     }
 

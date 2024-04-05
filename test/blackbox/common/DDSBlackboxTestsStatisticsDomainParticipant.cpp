@@ -20,10 +20,9 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
 #include <fastdds/statistics/topic_names.hpp>
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
 
-#include "../types/statistics/types.h"
+#include "../types/statistics/types.hpp"
 #include "../types/statistics/typesPubSubTypes.h"
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
@@ -414,7 +413,7 @@ TEST(StatisticsDomainParticipant, CreateParticipant)
     physical_data_reader.destroy();
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant),
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
+            eprosima::fastdds::dds::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
 }
 
@@ -583,6 +582,6 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
     sample_datas_reader.destroy();
 
     EXPECT_EQ(eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant),
-            eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
+            eprosima::fastdds::dds::RETCODE_OK);
 #endif // FASTDDS_STATISTICS
 }

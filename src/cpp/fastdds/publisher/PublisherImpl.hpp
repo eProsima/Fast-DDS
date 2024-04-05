@@ -25,19 +25,17 @@
 #include <map>
 #include <mutex>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/core/status/DeadlineMissedStatus.hpp>
 #include <fastdds/dds/core/status/IncompatibleQosStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastrtps/types/TypesBase.h>
 
 #ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IStatusQueryable.hpp>
 #endif // ifdef FASTDDS_STATISTICS
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastrtps {
@@ -167,7 +165,7 @@ public:
 
     const DataWriterQos& get_default_datawriter_qos() const;
 
-    const ReturnCode_t get_datawriter_qos_from_profile(
+    ReturnCode_t get_datawriter_qos_from_profile(
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
@@ -204,8 +202,7 @@ public:
 
 #ifdef FASTDDS_STATISTICS
     bool get_monitoring_status(
-            const uint32_t& status_id,
-            statistics::rtps::DDSEntityStatus*& status,
+            statistics::MonitorServiceData& status,
             const fastrtps::rtps::GUID_t& entity_guid);
 #endif //FASTDDS_STATISTICS
 

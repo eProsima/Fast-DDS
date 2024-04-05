@@ -19,13 +19,15 @@
 
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/xtypes/type_representation/TypeObjectRegistry.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-class RTPSWriter;
 class IChangePool;
+class RTPSReader;
+class RTPSWriter;
 
 /**
  * @brief Class RTPSDomainImpl, contains the private implementation of the RTPSDomain
@@ -116,6 +118,25 @@ public:
     {
         return true;
     }
+
+    static fastdds::dds::xtypes::ITypeObjectRegistry& type_object_registry()
+    {
+        return get_instance()->type_object_registry_;
+    }
+
+    static fastdds::dds::xtypes::TypeObjectRegistry& type_object_registry_observer()
+    {
+        return get_instance()->type_object_registry_;
+    }
+
+    static RTPSReader* find_local_reader(
+            const GUID_t& reader_guid)
+    {
+        static_cast<void>(reader_guid);
+        return nullptr;
+    }
+
+    eprosima::fastdds::dds::xtypes::TypeObjectRegistry type_object_registry_;
 
 };
 

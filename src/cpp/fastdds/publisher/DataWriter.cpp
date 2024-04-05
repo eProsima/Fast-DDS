@@ -52,16 +52,16 @@ ReturnCode_t DataWriter::enable()
 {
     if (enable_)
     {
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     if (false == impl_->get_publisher()->is_enabled())
     {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     ReturnCode_t ret_code = impl_->enable();
-    enable_ = ReturnCode_t::RETCODE_OK == ret_code;
+    enable_ = RETCODE_OK == ret_code;
     return ret_code;
 }
 
@@ -194,7 +194,7 @@ ReturnCode_t DataWriter::get_qos(
         DataWriterQos& qos) const
 {
     qos = impl_->get_qos();
-    return ReturnCode_t::RETCODE_OK;
+    return RETCODE_OK;
 }
 
 ReturnCode_t DataWriter::set_listener(
@@ -208,7 +208,7 @@ ReturnCode_t DataWriter::set_listener(
         const StatusMask& mask)
 {
     ReturnCode_t ret_val = impl_->set_listener(listener);
-    if (ret_val == ReturnCode_t::RETCODE_OK)
+    if (ret_val == RETCODE_OK)
     {
         status_mask_ = mask;
     }
@@ -272,7 +272,7 @@ ReturnCode_t DataWriter::get_matched_subscription_data(
 {
     static_cast<void> (subscription_data);
     static_cast<void> (subscription_handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->get_matched_subscription_data(subscription_data, subscription_handle);
      */
@@ -282,7 +282,7 @@ ReturnCode_t DataWriter::get_matched_subscriptions(
         std::vector<InstanceHandle_t>& subscription_handles) const
 {
     static_cast<void> (subscription_handles);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return RETCODE_UNSUPPORTED;
     /*
        return impl_->get_matched_subscription_data(subscription_handles);
      */

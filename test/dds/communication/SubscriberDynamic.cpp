@@ -23,6 +23,8 @@
 #include <utility>
 
 #include <asio.hpp>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
@@ -32,11 +34,15 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds::xtypes;
 using namespace eprosima::fastrtps::rtps;
 
 class ParListener : public DomainParticipantListener
@@ -55,80 +61,37 @@ public:
      */
     void on_participant_discovery(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantDiscoveryInfo&& info,
+            ParticipantDiscoveryInfo&& info,
             bool& /*should_be_ignored*/) override
     {
-        if (info.status == rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " discovered participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::CHANGED_QOS_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " detected changes on participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " removed participant " << info.info.m_guid << std::endl;
         }
-        else if (info.status == rtps::ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
+        else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT)
         {
             std::cout << "Subscriber participant " << //participant->getGuid() <<
                 " dropped participant " << info.info.m_guid << std::endl;
         }
     }
 
-    void on_type_information_received(
-            eprosima::fastdds::dds::DomainParticipant* participant,
-            const eprosima::fastcdr::string_255 topic_name,
-            const eprosima::fastcdr::string_255 type_name,
-            const eprosima::fastrtps::types::TypeInformation& type_information) override
-    {
-        using callback_type = std::function<void (const std::string& name,
-                        const eprosima::fastrtps::types::DynamicType_ptr type)>;
-
-        // once it is registered do ...
-        callback_type callback = [this, topic_name, type_name](
-            const std::string&,
-            const types::DynamicType_ptr)
-                {
-                    try
-                    {
-                        is_worth_a_type_.set_value(std::make_pair(topic_name.to_string(), type_name.to_string()));
-                    }
-                    catch (std::future_error&)
-                    {
-                        // Ignore if multiple callbacks are done for the same type
-                    }
-                };
-
-        // Check if the type is already registered
-        auto name = type_name.to_string();
-        types::DynamicType_ptr dummy;
-
-        if (participant->find_type(name))
-        {
-            // signal now
-            callback(name, dummy);
-        }
-        else
-        {
-            // signal on reception
-            participant->register_remote_type(
-                type_information,
-                type_name.to_string(),
-                callback);
-        }
-    }
-
 #if HAVE_SECURITY
     void onParticipantAuthentication(
             DomainParticipant* /*participant*/,
-            rtps::ParticipantAuthenticationInfo&& info) override
+            ParticipantAuthenticationInfo&& info) override
     {
-        if (rtps::ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
+        if (ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT == info.status)
         {
             std::cout << "Subscriber participant " << //participant->guid() <<
                 " authorized participant " << info.guid << std::endl;
@@ -268,7 +231,6 @@ int main(
     {
 
         DomainParticipantQos participant_qos;
-        participant_qos.wire_protocol().builtin.typelookup_config.use_client = true;
         StatusMask participant_mask = StatusMask::none();
         participant =
                 DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,
@@ -297,25 +259,23 @@ int main(
         auto& topic_name = remote_names.first;
         auto& type_name = remote_names.second;
 
-        types::DynamicType_ptr type;
+        DynamicType::_ref_type type;
 
         {
-            const types::TypeIdentifier* ident =
-                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(type_name);
+            TypeObjectPair type_objects;
+            if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_objects(
+                        type_name, type_objects))
 
-            if (ident == nullptr)
             {
-                std::cout << "ERROR: TypeIdentifier cannot be retrieved for type: "
+                std::cout << "ERROR: TypeObject cannot be retrieved for type: "
                           << type_name << std::endl;
                 throw 1;
             }
 
-            const types::TypeObject* obj =
-                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
+            type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
+                type_objects.complete_type_object)->build();
 
-            type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
-
-            if (type == nullptr)
+            if (!type)
             {
                 std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
                 throw 1;
@@ -354,11 +314,11 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            types::DynamicPubSubType pst(type);
-            types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
+            DynamicPubSubType pst(type);
+            DynamicData* sample {static_cast<DynamicData*>(pst.createData())};
             eprosima::fastdds::dds::SampleInfo info;
 
-            if (!!reader->take_next_sample(sample.get(), &info))
+            if (RETCODE_OK == reader->take_next_sample(sample, &info))
             {
                 if (info.valid_data)
                 {
@@ -371,7 +331,7 @@ int main(
                     sample->get_string_value(message, 0);
                     sample->get_uint32_value(index, 1);
 
-                    types::DynamicData* inner = sample->loan_value(2);
+                    DynamicData::_ref_type inner {sample->loan_value(2)};
                     inner->get_byte_value(count, 0);
                     sample->return_loaned_value(inner);
 
@@ -388,7 +348,7 @@ int main(
 
     if (participant != nullptr)
     {
-        if (!participant->delete_contained_entities() && !result)
+        if (RETCODE_OK != participant->delete_contained_entities() && !result)
         {
             std::cout << "ERROR: precondition not met on participant entities removal" << std::endl;
             result = 1;

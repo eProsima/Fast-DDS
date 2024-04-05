@@ -37,7 +37,6 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
-#include <fastrtps/types/TypesBase.h>
 
 // TODO(jlbueno): remove private headers
 #include <rtps/transport/test_UDPv4Transport.h>
@@ -48,7 +47,7 @@
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldRequester.hpp"
 #include "../api/dds-pim/ReqRepAsReliableHelloWorldReplier.hpp"
-#include "../types/FixedSized.h"
+#include "../types/FixedSized.hpp"
 #include "../types/FixedSizedPubSubTypes.h"
 #include "../types/HelloWorldPubSubTypes.h"
 

@@ -209,8 +209,8 @@ void VideoTestPublisher::init(
     TypeSupport type_command;
     type_video.reset(new VideoDataType());
     type_command.reset(new TestCommandDataType());
-    ASSERT_EQ(mp_participant->register_type(type_video), ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(mp_participant->register_type(type_command), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(mp_participant->register_type(type_video), RETCODE_OK);
+    ASSERT_EQ(mp_participant->register_type(type_command), RETCODE_OK);
 
     // Create Data Publisher
     std::string profile_name = "publisher_profile";
@@ -413,7 +413,7 @@ void VideoTestPublisher::CommandSubListener::on_data_available(
 
     TestCommandType command;
     eprosima::fastdds::dds::SampleInfo info;
-    if (ReturnCode_t::RETCODE_OK == datareader->take_next_sample((void*)&command, &info))
+    if (RETCODE_OK == datareader->take_next_sample((void*)&command, &info))
     {
         if (info.valid_data)
         {

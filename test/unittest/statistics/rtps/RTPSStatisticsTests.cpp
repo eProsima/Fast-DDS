@@ -42,13 +42,12 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
-#include <statistics/types/monitorservice_types.h>
-#include <statistics/types/types.h>
-#include <statistics/types/types.h>
+#include <statistics/rtps/monitor-service/Interfaces.hpp>
+#include <statistics/types/monitorservice_types.hpp>
+#include <statistics/types/types.hpp>
 #include <utils/SystemInfo.hpp>
 #include <xmlparser/XMLProfileManager.h>
 
