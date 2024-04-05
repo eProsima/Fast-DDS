@@ -124,7 +124,7 @@ void deadlinepayloadSubscriber::SubListener::on_data_available(
 {
     SampleInfo info;
     HelloMsg st;
-    if (reader->take_next_sample(&st, &info) == ReturnCode_t::RETCODE_OK)
+    if (reader->take_next_sample(&st, &info) == RETCODE_OK)
     {
         if (info.valid_data)
         {

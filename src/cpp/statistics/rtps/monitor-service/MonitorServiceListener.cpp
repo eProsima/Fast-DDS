@@ -47,7 +47,7 @@ bool MonitorServiceListener::on_local_entity_change(
 
     if (is_alive)
     {
-        ret = monitor_srv_->push_entity_update(guid.entityId, PROXY);
+        ret = monitor_srv_->push_entity_update(guid.entityId, StatusKind::PROXY);
     }
     else
     {
@@ -60,7 +60,7 @@ bool MonitorServiceListener::on_local_entity_change(
 bool MonitorServiceListener::on_local_entity_connections_change(
         const fastrtps::rtps::GUID_t& guid) const
 {
-    return monitor_srv_->push_entity_update(guid.entityId, CONNECTION_LIST);
+    return monitor_srv_->push_entity_update(guid.entityId, StatusKind::CONNECTION_LIST);
 }
 
 void MonitorServiceListener::onWriterMatched(

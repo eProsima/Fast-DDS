@@ -22,16 +22,9 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/common/Locator.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
+
 namespace eprosima {
-namespace fastdds {
-namespace dds {
-namespace builtin {
-
-class TypeLookupManager;
-
-} // namespace builtin
-} // namespace dds
-} // namespace fastdds
 namespace fastrtps {
 namespace rtps {
 
@@ -42,17 +35,9 @@ class BuiltinProtocols
 {
 public:
 
-    BuiltinProtocols()
-        : mp_participantImpl(nullptr)
-        , mp_PDP(nullptr)
-        , mp_WLP(nullptr)
-        , tlm_(nullptr)
-    {
-    }
+    BuiltinProtocols() = default;
 
-    virtual ~BuiltinProtocols()
-    {
-    }
+    virtual ~BuiltinProtocols() = default;
 
     //!Locator list for metatraffic
     LocatorList_t m_metatrafficMulticastLocatorList;
@@ -68,16 +53,16 @@ public:
     std::list<eprosima::fastdds::rtps::RemoteServerAttributes> m_DiscoveryServers;
 
     //!Pointer to the RTPSParticipantImpl.
-    RTPSParticipantImpl* mp_participantImpl;
+    RTPSParticipantImpl* mp_participantImpl {nullptr};
 
     //!Pointer to the PDPSimple.
-    PDP* mp_PDP;
+    PDP* mp_PDP {nullptr};
 
     //!Pointer to the WLP
-    WLP* mp_WLP;
+    WLP* mp_WLP {nullptr};
 
     //!Pointer to the TypeLookupManager
-    fastdds::dds::builtin::TypeLookupManager* tlm_;
+    fastdds::dds::builtin::TypeLookupManager* typelookup_manager_ {nullptr};
 
 };
 

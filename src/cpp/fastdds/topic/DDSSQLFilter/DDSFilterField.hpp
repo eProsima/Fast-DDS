@@ -23,10 +23,10 @@
 #include <unordered_set>
 #include <vector>
 
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
@@ -64,7 +64,7 @@ public:
      * @param[in]  data_kind     Kind of data the field represents.
      */
     DDSFilterField(
-            const eprosima::fastrtps::types::TypeIdentifier* type_id,
+            const std::shared_ptr<xtypes::TypeIdentifier>& type_id,
             const std::vector<FieldAccessor>& access_path,
             ValueKind data_kind)
         : DDSFilterValue(data_kind)
@@ -104,7 +104,7 @@ public:
      * @post Method @c has_value returns true.
      */
     inline bool set_value(
-            eprosima::fastrtps::types::DynamicData& data_value)
+            DynamicData::_ref_type data_value)
     {
         return set_value(data_value, 0);
     }
@@ -120,7 +120,7 @@ public:
      * @post Method @c has_value returns true.
      */
     bool set_value(
-            eprosima::fastrtps::types::DynamicData& data,
+            DynamicData::_ref_type data,
             size_t n);
 
 protected:
@@ -134,13 +134,13 @@ protected:
 
 private:
 
-    bool set_value(
-            const eprosima::fastrtps::types::DynamicData* data,
-            eprosima::fastrtps::types::MemberId member_id);
+    bool set_value_using_member_id(
+            DynamicData::_ref_type data,
+            MemberId member_id);
 
     bool has_value_ = false;
     std::vector<FieldAccessor> access_path_;
-    const eprosima::fastrtps::types::TypeIdentifier* type_id_ = nullptr;
+    const std::shared_ptr<xtypes::TypeIdentifier> type_id_;
     std::unordered_set<DDSFilterPredicate*> parents_;
 };
 

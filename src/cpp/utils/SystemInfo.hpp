@@ -27,8 +27,8 @@
 #include <string>
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/utils/IPFinder.h>
-#include <fastrtps/types/TypesBase.h>
 #include <utils/Host.hpp>
 
 #if defined(_WIN32) || defined(__unix__)
@@ -37,7 +37,7 @@
 
 namespace eprosima {
 
-using ReturnCode_t = fastrtps::types::ReturnCode_t;
+using ReturnCode_t = eprosima::fastdds::dds::ReturnCode_t;
 #if defined(_WIN32) || defined(__unix__)
 using FileWatchHandle = std::unique_ptr<filewatch::FileWatch<std::string>>;
 #else

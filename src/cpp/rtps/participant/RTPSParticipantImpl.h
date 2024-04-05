@@ -55,7 +55,7 @@
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
 #include <statistics/rtps/monitor-service/interfaces/IConnectionsQueryable.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
-#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/monitorservice_types.hpp>
 #include <utils/shared_mutex.hpp>
 #include <utils/Semaphore.hpp>
 

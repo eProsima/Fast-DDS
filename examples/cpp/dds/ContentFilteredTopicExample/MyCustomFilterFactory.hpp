@@ -22,11 +22,11 @@ public:
      * @param filter_parameters Parameters required by the filter
      * @param filter_instance Instance of the filter to be evaluated
      *
-     * @return eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER if the requirements for creating the
+     * @return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER if the requirements for creating the
      *         ContentFilteredTopic using this factory are not met
-     *         eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK if the ContentFilteredTopic is correctly created
+     *         eprosima::fastdds::dds::RETCODE_OK if the ContentFilteredTopic is correctly created
      */
-    eprosima::fastrtps::types::ReturnCode_t create_content_filter(
+    eprosima::fastdds::dds::ReturnCode_t create_content_filter(
             const char* filter_class_name, // My custom filter class name is 'MY_CUSTOM_FILTER'.
             const char* type_name, // This custom filter only supports one type: 'HelloWorld'.
             const eprosima::fastdds::dds::TopicDataType* /*data_type*/, // Not used in this implementation.
@@ -41,7 +41,7 @@ public:
                 // Check that the two mandatory filter parameters were set.
                 2 != filter_parameters.length())
         {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
 
         // If there is an update, delete previous instance.
@@ -53,7 +53,7 @@ public:
         // Instantiation of the Custom Filter.
         filter_instance = new MyCustomFilter(std::stoi(filter_parameters[0]), std::stoi(filter_parameters[1]));
 
-        return ReturnCode_t::RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
 
     /**
@@ -62,11 +62,11 @@ public:
      * @param filter_class_name Custom filter name
      * @param filter_instance Instance of the filter to be deleted.
      *                        After returning, the passed pointer becomes invalid.
-     * @return eprosima::fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER if the instance was created with another
+     * @return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER if the instance was created with another
      *         factory
-     *         eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK if correctly deleted
+     *         eprosima::fastdds::dds::RETCODE_OK if correctly deleted
      */
-    eprosima::fastrtps::types::ReturnCode_t delete_content_filter(
+    eprosima::fastdds::dds::ReturnCode_t delete_content_filter(
             const char* filter_class_name,
             eprosima::fastdds::dds::IContentFilter* filter_instance) override
     {
@@ -75,7 +75,7 @@ public:
                 // Check the filter instance is valid
                 nullptr != filter_instance)
         {
-            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            return eprosima::fastdds::dds::RETCODE_BAD_PARAMETER;
         }
 
         // Deletion of the Custom Filter.
@@ -84,7 +84,7 @@ public:
             delete(dynamic_cast<MyCustomFilter*>(filter_instance));
         }
 
-        return ReturnCode_t::RETCODE_OK;
+        return eprosima::fastdds::dds::RETCODE_OK;
     }
 
 };

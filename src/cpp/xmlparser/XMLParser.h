@@ -23,12 +23,13 @@
 
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/SocketTransportDescriptor.h>
-#include <fastrtps/transport/TransportDescriptorInterface.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 
 #include <xmlparser/attributes/ParticipantAttributes.hpp>
 #include <xmlparser/attributes/PublisherAttributes.hpp>
@@ -57,8 +58,7 @@ typedef node_att_map_t::const_iterator node_att_map_cit_t;
 
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
-typedef types::DynamicTypeBuilder*             p_dynamictypebuilder_t;
-typedef std::map<std::string, p_dynamictypebuilder_t> p_dynamictype_map_t;
+typedef std::map<std::string, fastdds::dds::DynamicType::_ref_type> p_dynamictype_map_t;
 
 typedef std::unique_ptr<fastdds::dds::DomainParticipantFactoryQos> up_participantfactory_t;
 typedef DataNode<fastdds::dds::DomainParticipantFactoryQos>        node_participantfactory_t;
@@ -302,26 +302,28 @@ protected:
     static XMLP_ret parseXMLBitmaskDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    static p_dynamictypebuilder_t parseXMLBitfieldDynamicType(
+    static XMLP_ret parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId,
-            uint16_t& position);
+            fastdds::dds::DynamicTypeBuilder::_ref_type builder,
+            fastdds::dds::MemberId& position);
 
     static XMLP_ret parseXMLBitvalueDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
+            fastdds::dds::DynamicTypeBuilder::_ref_type builder,
             uint16_t& position);
 
-    static p_dynamictypebuilder_t parseXMLMemberDynamicType(
-            tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId);
+    static fastdds::dds::DynamicType::_ref_type parseXMLMemberDynamicType(
+            tinyxml2::XMLElement* p_root);
 
-    static p_dynamictypebuilder_t parseXMLMemberDynamicType(
+    static fastdds::dds::DynamicType::_ref_type parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId,
+            fastdds::dds::DynamicTypeBuilder::_ref_type& builder,
+            fastdds::dds::MemberId mId);
+
+    static fastdds::dds::DynamicType::_ref_type parseXMLMemberDynamicType(
+            tinyxml2::XMLElement* p_root,
+            fastdds::dds::DynamicTypeBuilder::_ref_type& builder,
+            fastdds::dds::MemberId mId,
             const std::string& values);
 
     static XMLP_ret fillDataNode(
@@ -560,11 +562,6 @@ protected:
     static XMLP_ret getXMLDiscoverySettings(
             tinyxml2::XMLElement* elem,
             rtps::DiscoverySettings& settings,
-            uint8_t ident);
-
-    static XMLP_ret getXMLTypeLookupSettings(
-            tinyxml2::XMLElement* elem,
-            rtps::TypeLookupSettings& settings,
             uint8_t ident);
 
     static XMLP_ret getXMLInitialAnnouncementsConfig(

@@ -120,6 +120,9 @@ void RTPSDomainImpl::stopAll()
         instance->removeRTPSParticipant_nts(participant);
         lock.lock();
     }
+
+    xmlparser::XMLProfileManager::DeleteInstance();
+
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
@@ -922,6 +925,16 @@ bool RTPSDomainImpl::get_topic_attributes_from_profile(
         return true;
     }
     return false;
+}
+
+fastdds::dds::xtypes::ITypeObjectRegistry& RTPSDomainImpl::type_object_registry()
+{
+    return get_instance()->type_object_registry_;
+}
+
+fastdds::dds::xtypes::TypeObjectRegistry& RTPSDomainImpl::type_object_registry_observer()
+{
+    return get_instance()->type_object_registry_;
 }
 
 } // namespace rtps

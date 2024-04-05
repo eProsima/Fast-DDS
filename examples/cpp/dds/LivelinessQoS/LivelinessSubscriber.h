@@ -29,7 +29,7 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
 #include "TopicPubSubTypes.h"
-#include "Topic.h"
+#include "Topic.hpp"
 
 class LivelinessSubscriber
 {

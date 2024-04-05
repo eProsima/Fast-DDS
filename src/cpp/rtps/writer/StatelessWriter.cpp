@@ -17,6 +17,8 @@
  *
  */
 
+#include <fastdds/rtps/writer/StatelessWriter.h>
+
 #include <algorithm>
 #include <mutex>
 #include <set>
@@ -24,9 +26,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/writer/StatelessWriter.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/WriterListener.h>
 
+#include "../flowcontrol/FlowController.hpp"
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/liveliness/WLP.h>
 #include <rtps/DataSharing/DataSharingNotifier.hpp>
@@ -38,8 +41,6 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
-
-#include "../flowcontrol/FlowController.hpp"
 
 namespace eprosima {
 namespace fastrtps {
@@ -930,7 +931,7 @@ bool StatelessWriter::get_connections(
         for_matched_readers(matched_local_readers_, [&connection, &connection_list](ReaderLocator& reader)
                 {
                     connection.guid(fastdds::statistics::to_statistics_type(reader.local_reader()->getGuid()));
-                    connection.mode(fastdds::statistics::INTRAPROCESS);
+                    connection.mode(fastdds::statistics::ConnectionMode::INTRAPROCESS);
                     connection_list.push_back(connection);
 
                     return false;
@@ -944,7 +945,7 @@ bool StatelessWriter::get_connections(
         for_matched_readers(matched_datasharing_readers_, [&connection, &connection_list](ReaderLocator& reader)
                 {
                     connection.guid(fastdds::statistics::to_statistics_type(reader.remote_guid()));
-                    connection.mode(fastdds::statistics::DATA_SHARING);
+                    connection.mode(fastdds::statistics::ConnectionMode::DATA_SHARING);
                     connection_list.push_back(connection);
 
                     return false;
@@ -978,7 +979,7 @@ bool StatelessWriter::get_connections(
                     });
 
                     connection.guid(fastdds::statistics::to_statistics_type(reader.remote_guid()));
-                    connection.mode(fastdds::statistics::TRANSPORT);
+                    connection.mode(fastdds::statistics::ConnectionMode::TRANSPORT);
                     connection.announced_locators(statistics_locators);
                     connection.used_locators(statistics_locators);
                     connection_list.push_back(connection);

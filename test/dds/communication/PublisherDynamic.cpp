@@ -32,7 +32,9 @@
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
-#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
@@ -231,7 +233,6 @@ int main(
     DomainParticipantFactory::get_instance()->load_XML_profiles_file("example_type_profile.xml");
 
     DomainParticipantQos participant_qos;
-    participant_qos.wire_protocol().builtin.typelookup_config.use_server = true;
     ParListener participant_listener(exit_on_lost_liveliness);
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(seed % 230, participant_qos,
@@ -243,17 +244,16 @@ int main(
         return 1;
     }
 
-    types::DynamicTypeBuilder* dyn_type_builder = nullptr;
-    if (ReturnCode_t::RETCODE_OK !=
+    DynamicType::_ref_type dyn_type;
+    if (RETCODE_OK !=
             DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
-            dyn_type_builder))
+            dyn_type))
     {
         std::cout << "Error getting dynamic type from XML file" << std::endl;
         return 1;
     }
 
-    types::DynamicType_ptr dyn_type = dyn_type_builder->build();
-    TypeSupport type(new types::DynamicPubSubType(dyn_type));
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     type.register_type(participant);
 
     PubListener listener;
@@ -303,16 +303,15 @@ int main(
                 });
     }
 
-    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
-    data->set_string_value("Hello DDS Dynamic World", 0);
+    DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(dyn_type)};
+    data->set_string_value(0, "Hello DDS Dynamic World");
     data->set_uint32_value(1, 1);
-    types::DynamicData* inner = data->loan_value(2);
-    inner->set_byte_value(10, 0);
-    data->return_loaned_value(inner);
+    DynamicData::_ref_type inner {data->loan_value(2)};
+    inner->set_byte_value(0, 10);
 
     while (run)
     {
-        writer->write(data.get());
+        writer->write(&data);
 
         uint32_t index;
         data->get_uint32_value(index, 1);
@@ -323,14 +322,13 @@ int main(
         }
         else
         {
-            data->set_uint32_value(index + 1, 1);
+            data->set_uint32_value(1, index + 1);
         }
 
         inner = data->loan_value(2);
         octet inner_count;
         inner->get_byte_value(inner_count, 0);
-        inner->set_byte_value(inner_count + 1, 0);
-        data->return_loaned_value(inner);
+        inner->set_byte_value(0, inner_count + 1);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }

@@ -29,7 +29,6 @@
 #include <utils/ProxyPool.hpp>
 
 namespace eprosima {
-
 namespace fastdds {
 namespace statistics {
 namespace rtps {

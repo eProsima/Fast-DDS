@@ -121,23 +121,23 @@ struct PhysicalData
 
 module EventKind
 {
-    const unsigned long HISTORY2HISTORY_LATENCY = 1;
-    const unsigned long NETWORK_LATENCY = 2;
-    const unsigned long PUBLICATION_THROUGHPUT = 4;
-    const unsigned long SUBSCRIPTION_THROUGHPUT = 8;
-    const unsigned long RTPS_SENT = 16;
-    const unsigned long RTPS_LOST = 32;
-    const unsigned long RESENT_DATAS = 64;
-    const unsigned long HEARTBEAT_COUNT = 128;
-    const unsigned long ACKNACK_COUNT = 256;
-    const unsigned long NACKFRAG_COUNT = 512;
-    const unsigned long GAP_COUNT = 1024;
-    const unsigned long DATA_COUNT = 2048;
-    const unsigned long PDP_PACKETS = 4096;
-    const unsigned long EDP_PACKETS = 8192;
-    const unsigned long DISCOVERED_ENTITY = 16384;
-    const unsigned long SAMPLE_DATAS = 32768;
-    const unsigned long PHYSICAL_DATA = 65536;
+    const unsigned long HISTORY2HISTORY_LATENCY = 0x1;
+    const unsigned long NETWORK_LATENCY = 0x2;
+    const unsigned long PUBLICATION_THROUGHPUT = 0x4;
+    const unsigned long SUBSCRIPTION_THROUGHPUT = 0x8;
+    const unsigned long RTPS_SENT = 0x10;
+    const unsigned long RTPS_LOST = 0x20;
+    const unsigned long RESENT_DATAS = 0x40;
+    const unsigned long HEARTBEAT_COUNT = 0x80;
+    const unsigned long ACKNACK_COUNT = 0x100;
+    const unsigned long NACKFRAG_COUNT = 0x200;
+    const unsigned long GAP_COUNT = 0x400;
+    const unsigned long DATA_COUNT = 0x800;
+    const unsigned long PDP_PACKETS = 0x1000;
+    const unsigned long EDP_PACKETS = 0x2000;
+    const unsigned long DISCOVERED_ENTITY = 0x4000;
+    const unsigned long SAMPLE_DATAS = 0x8000;
+    const unsigned long PHYSICAL_DATA = 0x10000;
 };
 
 union Data switch(unsigned long)
