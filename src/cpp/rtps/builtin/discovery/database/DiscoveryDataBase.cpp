@@ -37,11 +37,9 @@ namespace rtps {
 namespace ddb {
 
 DiscoveryDataBase::DiscoveryDataBase(
-        fastrtps::rtps::GuidPrefix_t server_guid_prefix,
-        std::vector<fastrtps::rtps::GuidPrefix_t> servers)
+        fastrtps::rtps::GuidPrefix_t server_guid_prefix)
     : server_guid_prefix_(server_guid_prefix)
-    , server_acked_by_all_(servers.size() == 0)
-    , servers_(servers)
+    , server_acked_by_all_(true)
     , enabled_(true)
     , new_updates_(0)
     , processing_backup_(false)
@@ -69,6 +67,21 @@ void DiscoveryDataBase::add_server(
     if (std::find(servers_.begin(), servers_.end(), server) == servers_.end())
     {
         servers_.push_back(server);
+    }
+}
+
+void DiscoveryDataBase::remove_server(
+        fastrtps::rtps::GuidPrefix_t server)
+{
+    auto remove_it = std::find(servers_.begin(), servers_.end(), server);
+    if (remove_it != servers_.end())
+    {
+        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Removing server " << server);
+        servers_.erase(remove_it);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Tried to remove " << server << " but it was not found");
     }
 }
 

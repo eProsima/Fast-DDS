@@ -118,8 +118,7 @@ public:
     friend class AckedFunctor;
 
     DiscoveryDataBase(
-            fastrtps::rtps::GuidPrefix_t server_guid_prefix,
-            std::vector<fastrtps::rtps::GuidPrefix_t> servers);
+            fastrtps::rtps::GuidPrefix_t server_guid_prefix);
 
     ~DiscoveryDataBase();
 
@@ -348,6 +347,10 @@ public:
     void add_server(
             fastrtps::rtps::GuidPrefix_t server);
 
+    //! Remove a server from the list of remote servers
+    void remove_server(
+            fastrtps::rtps::GuidPrefix_t server);
+
     // Removes all the changes whose original sender was entity_guid_prefix from writer_history
     void remove_related_alive_from_history_nts(
             fastrtps::rtps::WriterHistory* writer_history,
@@ -568,7 +571,7 @@ protected:
     //! Is own server DATA(p) acked by all other clients
     std::atomic<bool> server_acked_by_all_;
 
-    //! List of GUID prefixes of the remote servers
+    //! List of GUID prefixes of the connected remote servers
     std::vector<fastrtps::rtps::GuidPrefix_t> servers_;
 
     // The virtual topic associated with virtual writers and readers
