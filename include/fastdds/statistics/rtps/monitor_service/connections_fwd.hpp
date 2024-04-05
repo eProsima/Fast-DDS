@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file connection_fwd.hpp
+ * @file connections_fwd.hpp
  *
  */
 

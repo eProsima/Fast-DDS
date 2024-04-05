@@ -141,6 +141,7 @@ TEST(BuiltinDataSerializationTests, ok_with_defaults)
 }
 
 // Regression test for redmine issue #10547
+// After XTypes1.3 readFromCDRMessage is expected to return false when reading fails
 TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
 {
     // DATA(w)
@@ -189,7 +190,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
         msg.length = msg.max_size;
 
         WriterProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, true)));
+        EXPECT_NO_THROW(EXPECT_FALSE(out.readFromCDRMessage(&msg, network, false, true)));
     }
 
     // DATA(r)
@@ -241,7 +242,7 @@ TEST(BuiltinDataSerializationTests, ignore_unsupported_type_info)
         msg.length = msg.max_size;
 
         ReaderProxyData out(max_unicast_locators, max_multicast_locators);
-        EXPECT_NO_THROW(EXPECT_TRUE(out.readFromCDRMessage(&msg, network, false, true)));
+        EXPECT_NO_THROW(EXPECT_FALSE(out.readFromCDRMessage(&msg, network, false, true)));
     }
 }
 
