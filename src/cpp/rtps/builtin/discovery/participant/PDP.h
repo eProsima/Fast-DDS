@@ -34,9 +34,10 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
 
+#include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IProxyQueryable.hpp>
 #include <utils/ProxyPool.hpp>
 
 namespace eprosima {
@@ -50,6 +51,15 @@ struct IProxyObserver;
 } // namespace rtps
 } // namespace statistics
 
+namespace dds {
+namespace xtypes {
+
+class TypeObject;
+class TypeIdentifier;
+
+} // namespace xtypes
+} // namespace dds
+
 namespace rtps {
 
 class PDPServerListener;
@@ -59,12 +69,6 @@ class PDPEndpoints;
 } // namespace fastdds
 
 namespace fastrtps {
-namespace types {
-
-class TypeObject;
-class TypeIdentifier;
-
-} // namespace types
 namespace rtps {
 
 class RTPSWriter;
@@ -608,22 +612,6 @@ private:
 
     void check_remote_participant_liveliness(
             ParticipantProxyData* remote_participant);
-
-    void check_and_notify_type_discovery(
-            RTPSParticipantListener* listener,
-            const WriterProxyData& wdata) const;
-
-    void check_and_notify_type_discovery(
-            RTPSParticipantListener* listener,
-            const ReaderProxyData& rdata) const;
-
-    void check_and_notify_type_discovery(
-            RTPSParticipantListener* listener,
-            const fastcdr::string_255& topic_name,
-            const fastcdr::string_255& type_name,
-            const types::TypeIdentifier* type_id,
-            const types::TypeObject* type_obj,
-            const xtypes::TypeInformation* type_info) const;
 
     /**
      * Calculates the next announcement interval

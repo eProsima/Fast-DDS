@@ -34,9 +34,9 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
-#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/rtps/writer/DeliveryRetCode.hpp>
 #include <fastdds/rtps/writer/LocatorSelectorSender.hpp>
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
 #include <fastdds/statistics/rtps/StatisticsCommon.hpp>
 
 namespace eprosima {

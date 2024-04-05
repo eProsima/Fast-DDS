@@ -21,11 +21,13 @@
 #include <memory>
 #include <mutex>
 
-#include <fastdds/core/condition/ConditionNotifier.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/subscriber/InstanceState.hpp>
 #include <fastdds/dds/subscriber/ReadCondition.hpp>
 #include <fastdds/dds/subscriber/SampleState.hpp>
 #include <fastdds/dds/subscriber/ViewState.hpp>
+
+#include <fastdds/core/condition/ConditionNotifier.hpp>
 #include <fastdds/subscriber/DataReaderImpl.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
 
@@ -37,8 +39,6 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 namespace detail {
-
-using fastrtps::types::ReturnCode_t;
 
 class ReadConditionImpl : public std::enable_shared_from_this<ReadConditionImpl>
 {
@@ -149,7 +149,7 @@ public:
             else if ( *it == pRC )
             {
                 // already there
-                return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+                return RETCODE_PRECONDITION_NOT_MET;
             }
             else
             {
@@ -163,7 +163,7 @@ public:
         // associate
         pRC->impl_ = shared_from_this();
 
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
     /**
@@ -191,7 +191,7 @@ public:
             {
                 conditions_.erase_after(pit);
 
-                return ReturnCode_t::RETCODE_OK;
+                return RETCODE_OK;
             }
             else
             {
@@ -199,7 +199,7 @@ public:
             }
         }
 
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        return RETCODE_PRECONDITION_NOT_MET;
     }
 
     void set_trigger_value(

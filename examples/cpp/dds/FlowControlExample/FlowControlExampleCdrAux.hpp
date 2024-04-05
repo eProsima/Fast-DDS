@@ -22,7 +22,7 @@
 #ifndef _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLECDRAUX_HPP_
 #define _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLECDRAUX_HPP_
 
-#include "FlowControlExample.h"
+#include "FlowControlExample.hpp"
 
 constexpr uint32_t FlowControlExample_max_cdr_typesize {600005UL};
 constexpr uint32_t FlowControlExample_max_key_cdr_typesize {0UL};
@@ -33,8 +33,6 @@ namespace fastcdr {
 
 class Cdr;
 class CdrSizeCalculator;
-
-
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,

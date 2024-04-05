@@ -1180,6 +1180,9 @@ typedef enum DataRepresentationId : int16_t
     XCDR2_DATA_REPRESENTATION   //!<
 } DataRepresentationId_t;
 
+//! Default @ref DataRepresentationId used in Fast DDS.
+constexpr DataRepresentationId_t DEFAULT_DATA_REPRESENTATION {DataRepresentationId_t::XCDR_DATA_REPRESENTATION};
+
 /**
  * Class DataRepresentationQosPolicy,
  */
@@ -1538,55 +1541,55 @@ public:
 
 };
 
-namespace types {
+namespace xtypes {
 class TypeInformation;
 } // namespace types
 
 namespace xtypes {
 
-class TypeInformation : public Parameter_t, public QosPolicy
+class TypeInformationParameter : public Parameter_t, public QosPolicy
 {
 public:
 
-    FASTDDS_EXPORTED_API TypeInformation()
+    FASTDDS_EXPORTED_API TypeInformationParameter()
         : Parameter_t(PID_TYPE_INFORMATION, 0)
         , QosPolicy(false)
     {
     }
 
-    FASTDDS_EXPORTED_API TypeInformation(
-            const TypeInformation& type)
+    FASTDDS_EXPORTED_API TypeInformationParameter(
+            const TypeInformationParameter& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.m_sendAlways)
     {
     }
 
-    FASTDDS_EXPORTED_API TypeInformation(
-            TypeInformation&& type)
+    FASTDDS_EXPORTED_API TypeInformationParameter(
+            TypeInformationParameter&& type)
         : Parameter_t(type.Pid, type.length)
         , QosPolicy(type.m_sendAlways)
     {
     }
 
-    FASTDDS_EXPORTED_API TypeInformation& operator =(
-            const TypeInformation&)
+    FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
+            const TypeInformationParameter&)
     {
         return *this;
     }
 
-    FASTDDS_EXPORTED_API TypeInformation& operator =(
-            TypeInformation&&)
+    FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
+            TypeInformationParameter&&)
     {
         return *this;
     }
 
-    virtual FASTDDS_EXPORTED_API ~TypeInformation() override
+    virtual FASTDDS_EXPORTED_API ~TypeInformationParameter() override
     {
     }
 
     inline void clear() override
     {
-        TypeInformation reset = TypeInformation();
+        TypeInformationParameter reset = TypeInformationParameter();
         std::swap(*this, reset);
     }
 
@@ -1595,13 +1598,13 @@ public:
         return true;
     }
 
-    FASTDDS_EXPORTED_API TypeInformation& operator =(
-            const types::TypeInformation&)
+    FASTDDS_EXPORTED_API TypeInformationParameter& operator =(
+            const xtypes::TypeInformation&)
     {
         return *this;
     }
 
-    FASTDDS_EXPORTED_API const types::TypeInformation* get() const
+    FASTDDS_EXPORTED_API const xtypes::TypeInformation* get() const
     {
         return nullptr;
     }

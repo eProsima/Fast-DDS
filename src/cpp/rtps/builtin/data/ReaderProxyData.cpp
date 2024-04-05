@@ -288,18 +288,19 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += fastdds::dds::QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::cdr_serialized_size(
             m_qos.m_disablePositiveACKs);
     }
-    if (m_type_id && m_type_id->m_type_identifier._d() != 0)
+    if (m_type_id && m_type_id->m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(*m_type_id);
     }
-    if (m_type && m_type->m_type_object._d() != 0)
+    if (m_type && m_type->m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(*m_type);
     }
     if (m_type_information && m_type_information->assigned())
     {
         ret_val +=
-                fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(*m_type_information);
+                fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::cdr_serialized_size(
+            *m_type_information);
     }
     if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
     {
@@ -550,7 +551,7 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
 
-    if (m_type_id && m_type_id->m_type_identifier._d() != 0)
+    if (m_type_id && m_type_id->m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(*m_type_id, msg))
         {
@@ -558,7 +559,7 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
 
-    if (m_type && m_type->m_type_object._d() != 0)
+    if (m_type && m_type->m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(*m_type, msg))
         {
@@ -616,7 +617,8 @@ bool ReaderProxyData::writeToCDRMessage(
 
     if (m_type_information && m_type_information->assigned())
     {
-        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(*m_type_information, msg))
+        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(*
+                m_type_information, msg))
         {
             return false;
         }
@@ -990,7 +992,8 @@ bool ReaderProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::read_from_cdr_message(
+                        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::
+                                read_from_cdr_message(
                                     type_information(), msg, plength))
                         {
                             return false;
@@ -1166,7 +1169,7 @@ void ReaderProxyData::clear()
     }
     if (m_type_information)
     {
-        *m_type_information = xtypes::TypeInformation();
+        *m_type_information = xtypes::TypeInformationParameter();
     }
 }
 

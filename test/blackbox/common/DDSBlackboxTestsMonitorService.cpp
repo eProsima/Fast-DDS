@@ -49,7 +49,7 @@ struct SampleValidator;
 void validator_selector(
         statistics::dds::DomainParticipant* participant,
         SampleValidator*& validator,
-        const statistics::StatusKind status_kind,
+        const statistics::StatusKind::StatusKind status_kind,
         SampleInfo& info,
         MonitorServiceType::type& data,
         std::list<MonitorServiceType::type>& total_msgs,
@@ -227,7 +227,7 @@ public:
     {
         if (!writers_.empty())
         {
-            return (ReturnCode_t::RETCODE_OK == publisher_->delete_datawriter(writers_.back()));
+            return (eprosima::fastdds::dds::RETCODE_OK == publisher_->delete_datawriter(writers_.back()));
         }
 
         return false;
@@ -237,7 +237,7 @@ public:
     {
         if (!readers_.empty())
         {
-            return (ReturnCode_t::RETCODE_OK == subscriber_->delete_datareader(readers_.back()));
+            return (eprosima::fastdds::dds::RETCODE_OK == subscriber_->delete_datareader(readers_.back()));
         }
 
         return false;
@@ -285,8 +285,8 @@ public:
 
     void reset()
     {
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK, statistics_part_->delete_contained_entities());
-        ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, statistics_part_->delete_contained_entities());
+        ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
                 DomainParticipantFactory::get_instance()->delete_participant(statistics_part_));
         statistics_part_ = nullptr;
     }
@@ -474,14 +474,14 @@ struct SampleValidator
     }
 
     SampleValidator(
-            std::bitset<statistics::STATUSES_SIZE>& val_mask)
+            std::bitset<statistics::StatusKind::STATUSES_SIZE>& val_mask)
         : validation_mask(val_mask)
         , assert_on_non_expected_msgs_(true)
     {
     }
 
     SampleValidator(
-            std::bitset<statistics::STATUSES_SIZE>& val_mask,
+            std::bitset<statistics::StatusKind::STATUSES_SIZE>& val_mask,
             bool assert_on_non_expected_msgs)
         : validation_mask(val_mask)
         , assert_on_non_expected_msgs_(assert_on_non_expected_msgs)
@@ -500,7 +500,7 @@ struct SampleValidator
     {
     }
 
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
     bool assert_on_non_expected_msgs_;
 
 };
@@ -519,7 +519,7 @@ public:
     }
 
     MonitorServiceConsumer(
-            std::bitset<statistics::STATUSES_SIZE>& val_mask)
+            std::bitset<statistics::StatusKind::STATUSES_SIZE>& val_mask)
         : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
         , sample_validator_( new SampleValidator(val_mask))
         , reader_history_kind_(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS)
@@ -528,7 +528,7 @@ public:
     }
 
     MonitorServiceConsumer(
-            std::bitset<statistics::STATUSES_SIZE>& val_mask,
+            std::bitset<statistics::StatusKind::STATUSES_SIZE>& val_mask,
             bool assert_on_non_expected_msgs)
         : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
         , sample_validator_( new SampleValidator(val_mask, assert_on_non_expected_msgs))
@@ -633,7 +633,7 @@ protected:
 
         ReturnCode_t success = datareader->take_next_sample((void*)&data, &info);
 
-        if (ReturnCode_t::RETCODE_OK == success)
+        if (eprosima::fastdds::dds::RETCODE_OK == success)
         {
             returnedValue = true;
 
@@ -674,7 +674,7 @@ struct ProxySampleValidator : public SampleValidator
             std::condition_variable& cv,
             statistics::dds::DomainParticipant* participant = nullptr)
     {
-        if (validation_mask[statistics::PROXY]
+        if (validation_mask[statistics::StatusKind::PROXY]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -706,7 +706,9 @@ struct ProxySampleValidator : public SampleValidator
                     RTPSParticipantAllocationAttributes att;
                     ParticipantProxyData pdata(att);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
 
                     auto part_names = participant->get_participant_names();
                     auto it_names =
@@ -717,14 +719,18 @@ struct ProxySampleValidator : public SampleValidator
                 {
                     ReaderProxyData rdata(4, 4);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata, data), ReturnCode_t::RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
 
                 }
                 else if (guid.entityId.is_writer())
                 {
                     WriterProxyData wdata(4, 4);
 
-                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata, data), ReturnCode_t::RETCODE_OK);
+                    ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata,
+                            data),
+                            eprosima::fastdds::dds::RETCODE_OK);
                 }
                 else
                 {
@@ -745,7 +751,7 @@ struct ProxySampleValidator : public SampleValidator
                 cv.notify_one();
             }
         }
-        else if (validation_mask[statistics::PROXY])
+        else if (validation_mask[statistics::StatusKind::PROXY])
         {
             auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
                             [&](const MonitorServiceType::type& elem)
@@ -778,7 +784,7 @@ struct ConnectionListSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (validation_mask[statistics::CONNECTION_LIST]
+        if (validation_mask[statistics::StatusKind::CONNECTION_LIST]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -787,7 +793,7 @@ struct ConnectionListSampleValidator : public SampleValidator
 
             for (auto& connection : data.value().connection_list())
             {
-                std::cout << "Received Connection: \n\tMode: " << connection.mode() <<
+                std::cout << "Received Connection: \n\tMode: " << static_cast<uint32_t>(connection.mode()) <<
                     "\n\tGuid " << statistics::to_fastdds_type(connection.guid()) << "\n\t"
                           << "Announced Locators: ";
                 for (auto& locator : connection.used_locators())
@@ -890,7 +896,7 @@ struct IncompatibleQoSSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (validation_mask[statistics::INCOMPATIBLE_QOS]
+        if (validation_mask[statistics::StatusKind::INCOMPATIBLE_QOS]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -929,7 +935,7 @@ struct LivelinessLostSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (validation_mask[statistics::LIVELINESS_LOST]
+        if (validation_mask[statistics::StatusKind::LIVELINESS_LOST]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -968,7 +974,7 @@ struct LivelinessChangedSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (validation_mask[statistics::LIVELINESS_CHANGED]
+        if (validation_mask[statistics::StatusKind::LIVELINESS_CHANGED]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -1012,7 +1018,7 @@ struct DeadlineMissedSampleValidator : public SampleValidator
                   << "\n\tTotal Count: " << data.value().deadline_missed_status().total_count()
                   << std::endl;
 
-        if (validation_mask[statistics::DEADLINE_MISSED]
+        if (validation_mask[statistics::StatusKind::DEADLINE_MISSED]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -1051,7 +1057,7 @@ struct SampleLostSampleValidator : public SampleValidator
             std::atomic<size_t>& processed_count,
             std::condition_variable& cv)
     {
-        if (validation_mask[statistics::SAMPLE_LOST]
+        if (validation_mask[statistics::StatusKind::SAMPLE_LOST]
                 && info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
@@ -1084,7 +1090,7 @@ struct SampleLostSampleValidator : public SampleValidator
 void validator_selector(
         statistics::dds::DomainParticipant* participant,
         SampleValidator*& validator,
-        const statistics::StatusKind status_kind,
+        const statistics::StatusKind::StatusKind status_kind,
         SampleInfo& info,
         MonitorServiceType::type& data,
         std::list<MonitorServiceType::type>& total_msgs,
@@ -1176,10 +1182,10 @@ TEST(DDSMonitorServiceTest, monitor_service_enable_disable_api)
     MSP.setup();
 
     //! Assertions
-    ASSERT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, MSP.enable_monitor_service());
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, MSP.disable_monitor_service());
-    ASSERT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.enable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_NOT_ENABLED, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1200,13 +1206,13 @@ TEST(DDSMonitorServiceTest, monitor_service_property)
 
     //! Procedure
     MSP.setup(xml_file, participant_profile_names.first);
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 
     MSP.reset();
     MSP.setup(xml_file, participant_profile_names.second);
 
     //! Assertions
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1236,7 +1242,7 @@ TEST(DDSMonitorServiceTest, monitor_service_environment_variable)
     MSP.setup();
 
     //! Assertions
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1258,7 +1264,7 @@ TEST(DDSMonitorServiceTest, monitor_service_properties_cpp_api)
     MSP.setup(pqos);
 
     //! Assertions
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, MSP.disable_monitor_service());
+    ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK, MSP.disable_monitor_service());
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1273,8 +1279,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate PROXY samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::PROXY] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::PROXY] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1290,14 +1296,14 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
 
     MonitorServiceType::type participant_proxy_msg, writer_proxy_msg;
 
-    participant_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    participant_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     participant_proxy_msg.local_entity(MSP.get_participant_guid());
 
     expected_msgs.push_back(participant_proxy_msg);
 
     MSP.create_and_add_writer();
 
-    writer_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    writer_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     StatisticsGUIDList guids = MSP.get_writer_guids();
 
     ASSERT_EQ(guids.size(), 1u);
@@ -1328,8 +1334,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 {
 #ifdef FASTDDS_STATISTICS
     //! Validate CONNECTION_LIST samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::CONNECTION_LIST] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::CONNECTION_LIST] = true;
 
     //! Setup
     MonitorServiceParticipant MSP1, MSP2;
@@ -1354,7 +1360,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 
     MonitorServiceType::type participant_connection_msg, endpoint_connections_msg;
 
-    participant_connection_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
+    participant_connection_msg.status_kind(eprosima::fastdds::statistics::StatusKind::CONNECTION_LIST);
     participant_connection_msg.local_entity(MSP1.get_participant_guid());
 
     std::vector<statistics::detail::Locator_s> locators;
@@ -1398,7 +1404,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 
     expected_msgs.push_back(participant_connection_msg);
 
-    participant_connection_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
+    participant_connection_msg.status_kind(eprosima::fastdds::statistics::StatusKind::CONNECTION_LIST);
     participant_connection_msg.local_entity(MSP2.get_participant_guid());
 
     ASSERT_FALSE(participant_connection_msg.value().connection_list().empty());
@@ -1417,7 +1423,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     MSP2.create_and_add_reader(dr_qos);
 
     StatisticsGUIDList w_guids, r_guids;
-    endpoint_connections_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
+    endpoint_connections_msg.status_kind(eprosima::fastdds::statistics::StatusKind::CONNECTION_LIST);
     w_guids = MSP1.get_writer_guids();
     ASSERT_EQ(w_guids.size(), 1);
     r_guids = MSP2.get_reader_guids();
@@ -1463,8 +1469,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 {
 #ifdef FASTDDS_STATISTICS
     //! Validate INCOMPATIBLE_QOS samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::INCOMPATIBLE_QOS] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::INCOMPATIBLE_QOS] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1490,7 +1496,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
     MonitorServiceType::type endpoint_qos_msg;
     StatisticsGUIDList w_guids, r_guids;
 
-    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     w_guids = MSP.get_writer_guids();
     ASSERT_EQ(w_guids.size(), 1);
     endpoint_qos_msg.local_entity(w_guids.back());
@@ -1503,7 +1509,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
     endpoint_qos_msg.value().incompatible_qos_status().last_policy_id() = RELIABILITY_QOS_POLICY_ID;
     expected_msgs.push_back(endpoint_qos_msg);
 
-    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     r_guids = MSP.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
     endpoint_qos_msg.local_entity(r_guids.back());
@@ -1537,8 +1543,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
 {
 #ifdef FASTDDS_STATISTICS
     //! Validate LIVELINESS_LOST samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::LIVELINESS_LOST] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::LIVELINESS_LOST] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1563,7 +1569,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
     MonitorServiceType::type endpoint_liveliness_msg;
     StatisticsGUIDList w_guids;
 
-    endpoint_liveliness_msg.status_kind(eprosima::fastdds::statistics::LIVELINESS_LOST);
+    endpoint_liveliness_msg.status_kind(eprosima::fastdds::statistics::StatusKind::LIVELINESS_LOST);
     w_guids = MSP.get_writer_guids();
     ASSERT_EQ(w_guids.size(), 1);
     endpoint_liveliness_msg.local_entity(w_guids.back());
@@ -1593,8 +1599,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
 {
 #ifdef FASTDDS_STATISTICS
     //! Validate LIVELINESS_CHANGED samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::LIVELINESS_CHANGED] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::LIVELINESS_CHANGED] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1627,7 +1633,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
     MonitorServiceType::type endpoint_liveliness_msg;
     StatisticsGUIDList r_guids;
 
-    endpoint_liveliness_msg.status_kind(eprosima::fastdds::statistics::LIVELINESS_CHANGED);
+    endpoint_liveliness_msg.status_kind(eprosima::fastdds::statistics::StatusKind::LIVELINESS_CHANGED);
     r_guids = MSP.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
     endpoint_liveliness_msg.local_entity(r_guids.back());
@@ -1657,8 +1663,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate DEADLINE_MISSED samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::DEADLINE_MISSED] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::DEADLINE_MISSED] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1683,7 +1689,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
     MonitorServiceType::type endpoint_deadline_msg;
     StatisticsGUIDList r_guids, w_guids;
 
-    endpoint_deadline_msg.status_kind(eprosima::fastdds::statistics::DEADLINE_MISSED);
+    endpoint_deadline_msg.status_kind(eprosima::fastdds::statistics::StatusKind::DEADLINE_MISSED);
     r_guids = MSP.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
     endpoint_deadline_msg.local_entity(r_guids.back());
@@ -1725,8 +1731,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate SAMPLE_LOST samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::SAMPLE_LOST] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::SAMPLE_LOST] = true;
 
     //! Setup
     MonitorServiceParticipant MSP1, MSP2;
@@ -1790,7 +1796,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
     MonitorServiceType::type endpoint_sample_lost_msg;
     StatisticsGUIDList r_guids;
 
-    endpoint_sample_lost_msg.status_kind(eprosima::fastdds::statistics::SAMPLE_LOST);
+    endpoint_sample_lost_msg.status_kind(eprosima::fastdds::statistics::StatusKind::SAMPLE_LOST);
     r_guids = MSP2.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
     endpoint_sample_lost_msg.local_entity(r_guids.back());
@@ -1821,8 +1827,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_instance_disposals)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate PROXY samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::PROXY] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::PROXY] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1851,7 +1857,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_instance_disposals)
     expected_msgs.push_back(proxy_msg);
 
     //! Expect one unregister for each of the statuses
-    for (uint32_t i = 0; i < statistics::STATUSES_SIZE; i++)
+    for (uint32_t i = 0; i < statistics::StatusKind::STATUSES_SIZE; i++)
     {
         proxy_msg.local_entity() = statistics::to_statistics_type(c_Guid_Unknown);
         expected_msgs.push_back(proxy_msg);
@@ -1883,8 +1889,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate PROXY samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::PROXY] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::PROXY] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1899,7 +1905,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
 
     MonitorServiceType::type participant_proxy_msg, entity_proxy_msg;
 
-    participant_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    participant_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     participant_proxy_msg.local_entity(MSP.get_participant_guid());
 
     expected_msgs.push_back(participant_proxy_msg);
@@ -1907,7 +1913,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
     MSP.create_and_add_writer();
     MSP.create_and_add_reader();
 
-    entity_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    entity_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     StatisticsGUIDList w_guids = MSP.get_writer_guids();
 
     ASSERT_EQ(w_guids.size(), 1);
@@ -1915,7 +1921,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
 
     expected_msgs.push_back(entity_proxy_msg);
 
-    entity_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    entity_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
     ASSERT_EQ(r_guids.size(), 1);
@@ -1946,8 +1952,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_enable_disable_enable)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate PROXY samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::PROXY] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::PROXY] = true;
 
     //! Setup
     MonitorServiceParticipant MSP;
@@ -1969,12 +1975,12 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_enable_disable_enable)
 
     MonitorServiceType::type participant_proxy_msg, entity_proxy_msg;
 
-    participant_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    participant_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     participant_proxy_msg.local_entity(MSP.get_participant_guid());
 
     expected_msgs.push_back(participant_proxy_msg);
 
-    entity_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+    entity_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
     StatisticsGUIDList w_guids = MSP.get_writer_guids();
     StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
@@ -2010,8 +2016,8 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
 {
 #ifdef FASTDDS_STATISTICS
     //! Validate PROXY samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::PROXY] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::PROXY] = true;
 
     //! Setup
     size_t n_participants = 3;
@@ -2039,12 +2045,12 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
 
         MonitorServiceType::type participant_proxy_msg, entity_proxy_msg;
 
-        participant_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+        participant_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
         participant_proxy_msg.local_entity(MSP.get_participant_guid());
 
         expected_msgs.push_back(participant_proxy_msg);
 
-        entity_proxy_msg.status_kind(eprosima::fastdds::statistics::PROXY);
+        entity_proxy_msg.status_kind(eprosima::fastdds::statistics::StatusKind::PROXY);
         StatisticsGUIDList w_guids = MSP.get_writer_guids();
         StatisticsGUIDList r_guids = MSP.get_reader_guids();
 
@@ -2081,8 +2087,8 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
     MSPs.resize(n_participants);
 
     //! Validate PROXY samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::PROXY] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::PROXY] = true;
 
     MonitorServiceConsumer MSC (validation_mask);
 
@@ -2127,7 +2133,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
     }
 
     //! Plus 48 instance disposals (8 per instance)
-    for (uint32_t i = 0; i < 6 * statistics::STATUSES_SIZE; i++)
+    for (uint32_t i = 0; i < 6 * statistics::StatusKind::STATUSES_SIZE; i++)
     {
         expected_msgs.push_back(MonitorServiceType::type());
     }
@@ -2162,8 +2168,8 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 #ifdef FASTDDS_STATISTICS
 
     //! Validate INCOMPATIBLE_QOS samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::INCOMPATIBLE_QOS] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::INCOMPATIBLE_QOS] = true;
 
     //! Setup
     size_t n_participants = 3;
@@ -2195,7 +2201,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
         MonitorServiceType::type endpoint_qos_msg;
         StatisticsGUIDList w_guids, r_guids;
 
-        endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+        endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
         w_guids = MSP.get_writer_guids();
         ASSERT_EQ(w_guids.size(), 1);
         endpoint_qos_msg.local_entity(w_guids.back());
@@ -2206,7 +2212,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 
         expected_msgs.push_back(endpoint_qos_msg);
 
-        endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+        endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
         r_guids = MSP.get_reader_guids();
         ASSERT_EQ(r_guids.size(), 1);
         endpoint_qos_msg.local_entity(r_guids.back());
@@ -2254,7 +2260,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     MonitorServiceType::type endpoint_qos_msg;
     StatisticsGUIDList w_guids, r_guids;
 
-    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     w_guids = MSP.get_writer_guids();
     ASSERT_EQ(w_guids.size(), 1);
     endpoint_qos_msg.local_entity(w_guids.back());
@@ -2265,7 +2271,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
 
     expected_msgs.push_back(endpoint_qos_msg);
 
-    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::StatusKind::INCOMPATIBLE_QOS);
     r_guids = MSP.get_reader_guids();
     ASSERT_EQ(r_guids.size(), 1);
     endpoint_qos_msg.local_entity(r_guids.back());
@@ -2277,8 +2283,8 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     for (size_t i = 0; i < n_participants; i++)
     {
         //! Validate INCOMPATIBLE_QOS samples only
-        std::bitset<statistics::STATUSES_SIZE> validation_mask;
-        validation_mask[statistics::INCOMPATIBLE_QOS] = true;
+        std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+        validation_mask[statistics::StatusKind::INCOMPATIBLE_QOS] = true;
 
         MonitorServiceConsumer MSC(validation_mask);
 
@@ -2304,7 +2310,7 @@ TEST(DDSMonitorServiceTest,  monitor_service_properly_handles_topic_instances)
 #ifdef FASTDDS_STATISTICS
 
     // In this test we do not need to enforce the validation of samples
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
 
     // Setup consumer participant
     MonitorServiceConsumer MSC(validation_mask);
@@ -2374,8 +2380,8 @@ TEST(DDSMonitorServiceTest,  monitor_service_late_joiner_consumer_receives_only_
 #ifdef FASTDDS_STATISTICS
 
     // In this test we enforce validating DeadlineMissed samples only
-    std::bitset<statistics::STATUSES_SIZE> validation_mask;
-    validation_mask[statistics::DEADLINE_MISSED] = true;
+    std::bitset<statistics::StatusKind::STATUSES_SIZE> validation_mask;
+    validation_mask[statistics::StatusKind::DEADLINE_MISSED] = true;
 
     // Setup
     MonitorServiceConsumer MSC(validation_mask, false);

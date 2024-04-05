@@ -21,9 +21,17 @@
 
 #include <gmock/gmock.h>
 
+#include <fastdds/dds/core/Entity.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
+#include <fastdds/dds/core/status/StatusMask.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+
+class DataWriterImpl;
+class Publisher;
+class Topic;
 
 class DataWriter
 {

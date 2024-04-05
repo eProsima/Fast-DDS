@@ -20,7 +20,6 @@ file(GLOB DDSSQLFILTER_SOURCES
     )
 
 file(GLOB DDSSQLFILTER_LIB_SOURCES
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/*.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/topic/TopicDataType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/LocatorWithMask.cpp
@@ -55,11 +54,18 @@ target_compile_definitions(DDSSQLFilterTests PRIVATE
     )
 target_include_directories(DDSSQLFilterTests PRIVATE
     ${Asio_INCLUDE_DIR}
+    ${PROJECT_SOURCE_DIR}/test/mock/dds/DomainParticipantFactory/
+    ${PROJECT_SOURCE_DIR}/test/mock/rtps/RTPSDomainImpl/
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/thirdparty/taocpp-pegtl
     )
-target_link_libraries(DDSSQLFilterTests fastcdr foonathan_memory
+target_link_libraries(DDSSQLFilterTests
+    fastcdr
+    fastdds::xtypes::dynamic-types::impl
+    fastdds::xtypes::type-representation
+    foonathan_memory
     GTest::gmock
-    ${CMAKE_DL_LIBS})
+    ${CMAKE_DL_LIBS}
+    )
 gtest_discover_tests(DDSSQLFilterTests)

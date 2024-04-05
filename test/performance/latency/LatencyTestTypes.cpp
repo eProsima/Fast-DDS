@@ -38,7 +38,7 @@ bool LatencyDataType::compare_data(
         return false;
     }
 
-    // bouncing time is ignored on comparisson
+    // bouncing time is ignored on comparison
 
     return 0 == memcmp(lt1.data, lt2.data, buffer_size_);
 }

@@ -22,7 +22,6 @@
 #include <fastdds/dds/core/condition/WaitSet.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Time_t.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "../../../logging/mock/MockConsumer.h"
 #include "mock/MockEntity.hpp"
@@ -106,7 +105,7 @@ TEST_F(EntityTests, entity_enable)
     Entity entity;
 
     ASSERT_FALSE(entity.is_enabled());
-    ASSERT_EQ(entity.enable(), eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(entity.enable(), RETCODE_OK);
     ASSERT_TRUE(entity.is_enabled());
     entity.close();
     ASSERT_FALSE(entity.is_enabled());

@@ -29,9 +29,8 @@
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/rtps/common/Types.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypeObject.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
 
 class HelloWorldSubscriber
 {
@@ -62,9 +61,9 @@ private:
 
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::Topic*> topics_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::DynamicType::_ref_type> readers_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::DynamicData::_ref_type> datas_;
 
     eprosima::fastdds::dds::DataReaderQos qos_;
 
@@ -94,14 +93,6 @@ public:
                 eprosima::fastdds::dds::DataReader* reader,
                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-        void on_type_discovery(
-                eprosima::fastdds::dds::DomainParticipant* participant,
-                const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
-                const eprosima::fastcdr::string_255& topic,
-                const eprosima::fastrtps::types::TypeIdentifier* identifier,
-                const eprosima::fastrtps::types::TypeObject* object,
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
-
         int n_matched;
 
         uint32_t n_samples;
@@ -110,7 +101,7 @@ public:
 
         std::condition_variable types_cv_;
 
-        eprosima::fastrtps::types::DynamicType_ptr received_type_;
+        eprosima::fastdds::dds::DynamicType::_ref_type received_type_;
 
         std::atomic<bool> reception_flag_{false};
 

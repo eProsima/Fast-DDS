@@ -20,8 +20,8 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
+#include "Lifespan.hpp"
 #include "LifespanPubSubTypes.h"
-#include "Lifespan.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>

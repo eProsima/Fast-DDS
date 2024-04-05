@@ -19,13 +19,12 @@
 #ifndef _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
 #define _FASTDDS_DDS_TOPIC_CONTENTFILTEREDTOPIC_HPP_
 
-#include <fastdds/fastdds_dll.hpp>
+#include <fastdds/dds/core/ReturnCode.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/fastdds_dll.hpp>
 
 #define FASTDDS_SQLFILTER_NAME eprosima::fastdds::dds::sqlfilter_name
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {

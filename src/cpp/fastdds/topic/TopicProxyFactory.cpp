@@ -43,10 +43,10 @@ ReturnCode_t TopicProxyFactory::delete_topic(
     if (it != proxies_.end() && !proxy->is_referenced())
     {
         proxies_.erase(it);
-        return ReturnCode_t::RETCODE_OK;
+        return RETCODE_OK;
     }
 
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return RETCODE_PRECONDITION_NOT_MET;
 }
 
 TopicProxy* TopicProxyFactory::get_topic()
