@@ -11,6 +11,10 @@ on:
         description: 'Run Addess Sanitizer job for Fast DDS'
         required: false
         type: boolean
+      run_asan_discovery_server:
+        description: 'Run Addess Sanitizer job for Discovery Server'
+        required: false
+        type: boolean
       colcon_meta:
         description: 'Optional Path of the colcon meta file'
         required: false
@@ -34,6 +38,11 @@ on:
       fastdds_ref:
         description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
         required: true
+      discovery_server_ref:
+        description: >
+          Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
+          Required only if the Discovery Server job is requested
+        required: false
 
   pull_request:
     paths-ignore:
@@ -57,12 +66,16 @@ env:
   run_asan_fastdds: ${{ inputs.run_asan_fastdds ||
       github.event_name == 'schedule' ||
       github.event_name == 'pull_request' }}
+  run_asan_discovery_server: ${{ inputs.run_asan_discovery_server ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'pull_request' }}
   asan_colcon_meta: ${{ inputs.colcon_meta || '' }}
   colcon_build_args: ${{ inputs.colcon_build_args || '' }}
   colcon_test_args: ${{ inputs.colcon_test_args || '' }}
   cmake_args: ${{ inputs.cmake_args || '' }}
   ctest_args: ${{ inputs.ctest_args || '' }}
   fastdds_ref: ${{ inputs.fastdds_ref || github.ref || 'master' }}
+  discovery_server_ref: ${{ inputs.discovery_server_ref }}
 
 jobs:
   asan_fastdds_build:
@@ -237,3 +250,109 @@ jobs:
             --specific-error-file _tmp_specific_error_file.log \
             --output-file $GITHUB_STEP_SUMMARY  \
             --sanitizer asan
+
+  asan_discovery_server_test:
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
+          (
+            (inputs.run_asan_discovery_server == true) ||
+            contains(fromJSON('["schedule", "pull_request"]'), github.event_name)
+          )
+        ) }}
+    needs: asan_fastdds_build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download build artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: build_artifacts_fastdds_asan_${{ env.label }}
+          path: ${{ github.workspace }}
+
+        # https://github.com/actions/runner-images/issues/9491
+      - name: Fix kernel mmap rnd bits
+        run: sudo sysctl vm.mmap_rnd_bits=28
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Get Discovery Server branch
+        id: get_discovery_server_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Discovery-Server
+          fallback_branch: ${{ env.discovery_server_ref || 'master' }}
+
+      - name: Download Discovery Server repo
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Discovery-Server
+          path: src/discovery-server
+          ref: ${{ steps.get_discovery_server_branch.outputs.deduced_branch }}
+
+      - name: Select .meta file
+        id: select_meta
+        if: ${{ env.asan_colcon_meta == '' }}
+        run: |
+          echo "asan_colcon_meta=${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta" >> $GITHUB_ENV
+          cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ env.asan_colcon_meta }}
+          colcon_build_args: ${{ env.colcon_build_args }}
+          cmake_args: ${{ env.cmake_args }}
+          cmake_args_default: ''
+          cmake_build_type: 'Debug'
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+
+      - name: Colcon test
+        if: ${{ env.run_asan_fastdds }}
+        id: test
+        continue-on-error: true
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ${{ env.colcon_test_args }}
+          colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
+          ctest_args: ${{ env.ctest_args }}
+          ctest_args_default: ''
+          packages_names: discovery-server
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}_{1}', env.label, github.job) }}
+
+      - name: Report sanitizer errors
+        if: ${{ env.run_asan_discovery_server }}
+        run: |
+          bash src/fastrtps/.github/workflows/utils/specific_errors_filter.sh \
+            "==ERROR:" \
+            log/latest_test/discovery-server/stdout_stderr.log \
+            _tmp_specific_error_file.log
+
+          python3 src/fastrtps/.github/workflows/utils/log_parser.py \
+            --log-file log/latest_test/discovery-server/stdout_stderr.log \
+            --specific-error-file _tmp_specific_error_file.log \
+            --output-file $GITHUB_STEP_SUMMARY \
+            --sanitizer=asan
