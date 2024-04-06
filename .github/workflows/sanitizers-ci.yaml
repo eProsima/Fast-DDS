@@ -19,10 +19,6 @@ on:
         description: 'Run Thread Sanitizer job for Fast DDS'
         required: false
         type: boolean
-      colcon_meta:
-        description: 'Optional Path of the colcon meta file'
-        required: false
-        type: string
       colcon_build_args:
         description: 'Optional colcon build arguments'
         required: false
@@ -76,8 +72,6 @@ env:
   run_tsan_fastdds: ${{ inputs.run_tsan_fastdds ||
       github.event_name == 'schedule' ||
       github.event_name == 'pull_request' }}
-  asan_colcon_meta: ${{ inputs.colcon_meta || '' }}
-  tsan_colcon_meta: ${{ inputs.colcon_meta || '' }}
   colcon_build_args: ${{ inputs.colcon_build_args || '' }}
   colcon_test_args: ${{ inputs.colcon_test_args || '' }}
   cmake_args: ${{ inputs.cmake_args || '' }}
@@ -151,18 +145,16 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
-      - name: Select .meta file
-        id: select_meta
-        if: ${{ env.asan_colcon_meta == '' }}
+      - name: Show .meta file
+        id: show_meta
         run: |
-          echo "asan_colcon_meta=${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta" >> $GITHUB_ENV
           cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ env.asan_colcon_meta }}
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon_build_args: ${{ env.colcon_build_args }}
           cmake_args: ${{ env.cmake_args }}
           cmake_args_default: ''
@@ -211,18 +203,16 @@ jobs:
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
 
-      - name: Select .meta file
-        id: select_meta
-        if: ${{ env.asan_colcon_meta == '' }}
+      - name: Show .meta file
+        id: show_meta
         run: |
-          echo "asan_colcon_meta=${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta" >> $GITHUB_ENV
           cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ env.asan_colcon_meta }}
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon_build_args: ${{ env.colcon_build_args }}
           cmake_args: ${{ env.cmake_args }}
           cmake_args_default: -DEPROSIMA_BUILD_TESTS=ON -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON -DPERFORMANCE_TESTS=ON
@@ -317,18 +307,16 @@ jobs:
           path: src/discovery-server
           ref: ${{ steps.get_discovery_server_branch.outputs.deduced_branch }}
 
-      - name: Select .meta file
-        id: select_meta
-        if: ${{ env.asan_colcon_meta == '' }}
+      - name: Show .meta file
+        id: show_meta
         run: |
-          echo "asan_colcon_meta=${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta" >> $GITHUB_ENV
           cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ env.asan_colcon_meta }}
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon_build_args: ${{ env.colcon_build_args }}
           cmake_args: ${{ env.cmake_args }}
           cmake_args_default: ''
@@ -436,18 +424,16 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
-      - name: Select .meta file
-        id: select_meta
-        if: ${{ env.tsan_colcon_meta == '' }}
+      - name: Show .meta file
+        id: show_meta
         run: |
-          echo "tsan_colcon_meta=${{ github.workspace }}/src/fastrtps/.github/workflows/config/tsan_colcon.meta" >> $GITHUB_ENV
           cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/tsan_colcon.meta
 
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ env.tsan_colcon_meta }}
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/tsan_colcon.meta
           colcon_build_args: ${{ env.colcon_build_args }}
           cmake_args: ${{ env.cmake_args }}
           cmake_args_default: ''
