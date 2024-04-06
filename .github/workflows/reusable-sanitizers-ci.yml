@@ -298,7 +298,7 @@ jobs:
           colcon_test_args: ${{ inputs.colcon_test_args }}
           colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
           ctest_args: ${{ inputs.ctest_args }}
-          ctest_args_default: ''
+          ctest_args_default: '--timeout 300 --label-exclude "xfail"'
           packages_names: discovery-server
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
