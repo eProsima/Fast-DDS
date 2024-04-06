@@ -61,7 +61,7 @@ jobs:
               !contains(github.event.pull_request.labels.*.name, 'no-test') &&
               !contains(github.event.pull_request.labels.*.name, 'conflicts')
             ) }}
-    uses: ./.github/workflows/reusable-sanitizers-ci.yaml
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
     with:
       label: ${{ inputs.label || 'fastdds-sanitizers-ci' }}
       run_asan_fastdds: ${{ inputs.run_asan_fastdds || github.event_name == 'pull_request' }}
