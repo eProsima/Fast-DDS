@@ -107,6 +107,7 @@ target_compile_definitions(LocatorTests PRIVATE
 target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR})
 target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
+<<<<<<< HEAD
 add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE})
 # Skip DNS related tests when not running on our CI
 if(NOT(EPROSIMA_BUILD))
@@ -116,6 +117,17 @@ if(NOT(EPROSIMA_BUILD))
         LocatorDNSTests
         )
 endif()
+=======
+if(QNX)
+    target_link_libraries(LocatorTests socket)
+endif()
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    set(IGNORE_COMMAND LocatorDNSTests)
+    message(STATUS "Ignoring tests: '${IGNORE_COMMAND}'")
+endif()
+add_gtest(LocatorTests SOURCES ${LOCATORTESTS_SOURCE} IGNORE ${IGNORE_COMMAND})
+unset(IGNORE_COMMAND)
+>>>>>>> 7a77988a3 (Fix test filtering in CMake files (#4650))
 
 
 add_executable(FixedSizeQueueTests ${FIXEDSIZEQUEUETESTS_SOURCE})

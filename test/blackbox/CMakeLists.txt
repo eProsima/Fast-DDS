@@ -160,7 +160,12 @@ macro(add_blackbox_gtest)
 
         # add filtering statement if required
         if(GTEST_IGNORE)
+<<<<<<< HEAD
             set(command "${command} --gtest_filter=${GTEST_IGNORE}")
+=======
+            list(JOIN GTEST_IGNORE ":" gtest_filter)
+            string(PREPEND gtest_filter "--gtest_filter=-")
+>>>>>>> 7a77988a3 (Fix test filtering in CMake files (#4650))
         endif()
 
         add_test(NAME ${test} COMMAND ${command})
@@ -230,10 +235,23 @@ if(NOT LibP11_FOUND)
     if(GTEST_INDIVIDUAL)
         set(pkcs_filter "[Pp][Kk][Cc][Ss]")
     else()
-        set(pkcs_filter "-*pkcs*")
+        set(pkcs_filter "*pkcs*")
     endif() # GTEST_INDIVIDUAL
+    message(STATUS "Ignoring tests: '${pkcs_filter}'")
 endif() # LibP11_FOUND
 
+<<<<<<< HEAD
+=======
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    if(GTEST_INDIVIDUAL)
+        set(dns_filter "ServerClientEnvironmentSetUpDNS")
+    else()
+        set(dns_filter "*ServerClientEnvironmentSetUpDNS*")
+    endif() # GTEST_INDIVIDUAL
+    message(STATUS "Ignoring tests: '${dns_filter}'")
+endif()
+
+>>>>>>> 7a77988a3 (Fix test filtering in CMake files (#4650))
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)

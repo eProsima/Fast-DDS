@@ -25,6 +25,24 @@ endif()
 file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE_TMP)
 set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FILEPATH "Valgrind suppresions file")
 
+<<<<<<< HEAD
+=======
+# Check if /etc/hosts file has been modified to add dummy host test subjects
+if(WIN32)
+    execute_process(COMMAND powershell -C Resolve-DNSName -Name www.acme.com.test -CacheOnly
+        RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
+elseif(APPLE)
+	execute_process(
+        COMMAND dscacheutil -q host -a name www.acme.com.test
+        COMMAND grep www.acme.com.test
+        RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
+else()
+    execute_process(COMMAND getent hosts www.acme.com.test
+        RESULT_VARIABLE EPROSIMA_TEST_DNS_NOT_SET_UP OUTPUT_QUIET ERROR_QUIET)
+endif()
+message(STATUS "EPROSIMA_TEST_DNS_NOT_SET_UP: '${EPROSIMA_TEST_DNS_NOT_SET_UP}'")
+
+>>>>>>> 7a77988a3 (Fix test filtering in CMake files (#4650))
 ###############################################################################
 # Testing
 ###############################################################################

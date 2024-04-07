@@ -93,7 +93,18 @@ macro(add_gtest)
             endforeach()
         endforeach()
     else()
+<<<<<<< HEAD
         add_test(NAME ${test} COMMAND ${command})
+=======
+
+        # add filtering statement if required
+        if(GTEST_IGNORE)
+            list(JOIN GTEST_IGNORE ":" gtest_filter)
+            string(PREPEND gtest_filter "--gtest_filter=-")
+        endif()
+
+        add_test(NAME ${test} COMMAND ${command} ${gtest_filter})
+>>>>>>> 7a77988a3 (Fix test filtering in CMake files (#4650))
 
         # Add environment
         set(GTEST_ENVIRONMENT "")

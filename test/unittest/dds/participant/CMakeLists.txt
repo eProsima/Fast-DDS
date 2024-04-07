@@ -37,4 +37,20 @@ target_include_directories(ParticipantTests PRIVATE
 target_link_libraries(ParticipantTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+<<<<<<< HEAD
 add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE})
+=======
+
+if(EPROSIMA_TEST_DNS_NOT_SET_UP)
+    set(dns_filter "ParticipantTests.SimpleParticipantRemoteServerListConfigurationDNS")
+    message(STATUS "Ignoring tests: '${dns_filter}'")
+endif()
+
+add_gtest(ParticipantTests SOURCES ${PARTICIPANTTESTS_SOURCE} IGNORE ${dns_filter})
+
+unset(dns_filter)
+
+if(ANDROID)
+    set_property(TARGET ParticipantTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
+>>>>>>> 7a77988a3 (Fix test filtering in CMake files (#4650))
