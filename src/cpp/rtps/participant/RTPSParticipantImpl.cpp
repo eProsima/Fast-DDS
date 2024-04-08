@@ -1572,8 +1572,6 @@ void RTPSParticipantImpl::update_attributes(
             || local_interfaces_changed)
     {
         update_pdp = true;
-        std::vector<GUID_t> modified_servers;
-        LocatorList_t modified_locators;
 
         // Update RTPSParticipantAttributes members
         m_att.userData = patt.userData;
@@ -1596,47 +1594,6 @@ void RTPSParticipantImpl::update_attributes(
             {
                 set_listening_locators(m_att.default_external_unicast_locators,
                         m_att.defaultUnicastLocatorList);
-            }
-        }
-
-        // Check that the remote servers list is consistent: all the already known remote servers must be included in
-        // the list and either new remote servers are added or remote server listening locator is modified.
-        for (auto existing_server : m_att.builtin.discovery_config.m_DiscoveryServers)
-        {
-            bool contained = false;
-            for (auto incoming_server : converted_discovery_servers)
-            {
-                if (existing_server.guidPrefix == incoming_server.guidPrefix)
-                {
-                    for (auto incoming_locator : incoming_server.metatrafficUnicastLocatorList)
-                    {
-                        bool locator_contained = false;
-                        for (auto existing_locator : existing_server.metatrafficUnicastLocatorList)
-                        {
-                            if (incoming_locator == existing_locator)
-                            {
-                                locator_contained = true;
-                                break;
-                            }
-                        }
-                        if (!locator_contained)
-                        {
-                            modified_servers.emplace_back(incoming_server.GetParticipant());
-                            modified_locators.push_back(incoming_locator);
-                            EPROSIMA_LOG_INFO(RTPS_QOS_CHECK,
-                                    "DS Server: " << incoming_server.guidPrefix << " has modified its locators: "
-                                                  << incoming_locator << " being added");
-                        }
-                    }
-                    contained = true;
-                    break;
-                }
-            }
-            if (!contained)
-            {
-                EPROSIMA_LOG_ERROR(RTPS_QOS_CHECK,
-                        "Discovery Servers cannot be removed from the list; they can only be added");
-                return;
             }
         }
 
@@ -1669,10 +1626,6 @@ void RTPSParticipantImpl::update_attributes(
                 createSenderResources(m_att.builtin.metatrafficUnicastLocatorList);
                 createSenderResources(m_att.defaultUnicastLocatorList);
             }
-            if (!modified_locators.empty())
-            {
-                createSenderResources(modified_locators);
-            }
 
             // Update remote servers list
             if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
@@ -1680,33 +1633,11 @@ void RTPSParticipantImpl::update_attributes(
                     m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::SERVER ||
                     m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::BACKUP)
             {
-                // Add incoming servers if we don't know about them already or the listening locator has been modified
-                for (auto incoming_server : converted_discovery_servers)
-                {
-                    eprosima::fastdds::rtps::RemoteServerList_t::iterator server_it;
-                    for (server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
-                            server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
-                    {
-                        if (server_it->guidPrefix == incoming_server.guidPrefix)
-                        {
-                            // Check if the listening locators have been modified
-                            for (auto guid : modified_servers)
-                            {
-                                if (guid == incoming_server.GetParticipant())
-                                {
-                                    server_it->metatrafficUnicastLocatorList =
-                                            incoming_server.metatrafficUnicastLocatorList;
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                    if (server_it == m_att.builtin.discovery_config.m_DiscoveryServers.end())
-                    {
-                        m_att.builtin.discovery_config.m_DiscoveryServers.push_back(incoming_server);
-                    }
-                }
+                // Update list of Discovery Servers. The participant will remain connected to the servers of the
+                // previous list but will cease pinging servers that are not included in the new list.
+                // Liveliness will be maintained until the old server is removed from the participant, ensuring
+                // that existing connections are unaffected by the list update.
+                m_att.builtin.discovery_config.m_DiscoveryServers = converted_discovery_servers;
 
                 // Update the servers list in builtin protocols
                 {
@@ -1720,11 +1651,6 @@ void RTPSParticipantImpl::update_attributes(
                 {
                     fastdds::rtps::PDPServer* pdp_server = static_cast<fastdds::rtps::PDPServer*>(pdp);
                     pdp_server->update_remote_servers_list();
-                    for (auto remote_server : modified_servers)
-                    {
-                        pdp_server->remove_remote_participant(remote_server,
-                                ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
-                    }
                 }
                 // Notify PDPClient
                 else if (m_att.builtin.discovery_config.discoveryProtocol == DiscoveryProtocol::CLIENT ||
@@ -1732,11 +1658,6 @@ void RTPSParticipantImpl::update_attributes(
                 {
                     fastdds::rtps::PDPClient* pdp_client = static_cast<fastdds::rtps::PDPClient*>(pdp);
                     pdp_client->update_remote_servers_list();
-                    for (auto remote_server : modified_servers)
-                    {
-                        pdp_client->remove_remote_participant(remote_server,
-                                ParticipantDiscoveryInfo::DISCOVERY_STATUS::DROPPED_PARTICIPANT);
-                    }
                 }
             }
         }
