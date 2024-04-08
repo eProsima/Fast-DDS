@@ -516,22 +516,26 @@ void PDPClient::notifyAboveRemoteEndpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        // Verify if this participant is a server
-        for (auto& svr : mp_builtin->m_DiscoveryServers)
+        std::string part_type = check_participant_type(pdata.m_properties);
+        if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
         {
-            if (data_matches_with_prefix(svr.guidPrefix, pdata))
+            // Add new servers to the connected list
+            EPROSIMA_LOG_INFO(RTPS_PDP_CLIENT, "Secure Server [" << pdata.m_guid.guidPrefix << "] matched.");
+            RemoteServerAttributes server;
+            server.guidPrefix = pdata.m_guid.guidPrefix;
+            for (const Locator_t& locator : pdata.metatraffic_locators.multicast)
             {
-                if (!svr.is_connected && nullptr != get_participant_proxy_data(svr.guidPrefix))
-                {
-                    //! mark proxy as connected from an unmangled prefix in case
-                    //! it could not be done in assignRemoteEndpoints()
-                    svr.is_connected = true;
-                }
-
-                match_pdp_reader_nts_(svr, pdata.m_guid.guidPrefix);
-                match_pdp_writer_nts_(svr, pdata.m_guid.guidPrefix);
-                break;
+                server.metatrafficMulticastLocatorList.push_back(locator);
             }
+            for (const Locator_t& locator : pdata.metatraffic_locators.unicast)
+            {
+                server.metatrafficUnicastLocatorList.push_back(locator);
+            }
+            connected_servers_.push_back(server);
+
+            // Match incoming server
+            match_pdp_writer_nts_(server);
+            match_pdp_reader_nts_(server);
         }
     }
 #endif // HAVE_SECURITY
