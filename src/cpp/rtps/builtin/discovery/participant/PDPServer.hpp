@@ -127,7 +127,7 @@ public:
             bool dispose = false,
             fastdds::rtps::WriteParams& wparams = fastdds::rtps::WriteParams::WRITE_PARAM_DEFAULT) override;
 
-    // Force the sending of our DATA(p) to those servers that has not acked yet
+    // Force the sending of our DATA(p) to those servers in the initial server list
     void ping_remote_servers();
 
     // send a specific Data to specific locators
@@ -178,15 +178,6 @@ public:
      */
     void awake_routine_thread(
             double interval_ms = 0);
-
-    void awake_server_thread();
-
-    /**
-     * Check if all servers have acknowledge this server PDP data
-     * This method must be called from a mutex protected context.
-     * @return True if all can reach the client
-     */
-    bool all_servers_acknowledge_pdp();
 
     /* The server's main routine. This includes all the discovery related tasks that the server needs to run
      * periodically to keep the discovery graph updated.
@@ -379,11 +370,6 @@ private:
      * TimedEvent for server routine
      */
     DServerRoutineEvent* routine_;
-
-    /**
-     * TimedEvent for server ping to other servers
-     */
-    DServerPingEvent* ping_;
 
     //! Discovery database
     fastdds::rtps::ddb::DiscoveryDataBase discovery_db_;

@@ -60,7 +60,6 @@ PDPServer::PDPServer(
         DurabilityKind_t durability_kind /* TRANSIENT_LOCAL */)
     : PDP(builtin, allocation)
     , routine_(nullptr)
-    , ping_(nullptr)
     , discovery_db_(builtin->mp_participantImpl->getGuid().guidPrefix)
     , durability_ (durability_kind)
 {
@@ -87,14 +86,12 @@ PDPServer::~PDPServer()
 {
     // Stop timed events
     routine_->cancel_timer();
-    ping_->cancel_timer();
 
     // Disable database
     discovery_db_.disable();
 
     // Delete timed events
     delete(routine_);
-    delete(ping_);
 
     // Clear ddb and release its changes
     process_changes_release_(discovery_db_.clear());
@@ -135,15 +132,6 @@ bool PDPServer::init(
     routine_ = new DServerRoutineEvent(this,
                     TimeConv::Duration_t2MilliSecondsDouble(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
-
-    /*
-        Given the fact that a participant is either a client or a server the
-        discoveryServer_client_syncperiod parameter has a context defined meaning.
-     */
-    ping_ = new DServerPingEvent(this,
-                    TimeConv::Duration_t2MilliSecondsDouble(
-                        m_discovery.discovery_config.discoveryServer_client_syncperiod));
-    ping_->restart_timer();
 
     return true;
 }
@@ -953,6 +941,9 @@ void PDPServer::announceParticipantState(
                     return;
                 }
             }
+
+            // Ping remote servers. It is done separately to avoid setting wrong remote_readers
+            ping_remote_servers();
         }
         else
         {
@@ -1089,8 +1080,8 @@ bool PDPServer::remove_remote_participant(
         }
     }
 
-    // Check if is a server who has been disposed
-    awake_server_thread();
+    // Resend participant announcements to try to reconnect faster
+    resend_ininitial_announcements();
 
     // Delegate into the base class for inherited proxy database removal
     return PDP::remove_remote_participant(partGUID, reason);
@@ -1109,11 +1100,6 @@ void PDPServer::awake_routine_thread(
     routine_->update_interval_millisec(interval_ms);
     routine_->cancel_timer();
     routine_->restart_timer();
-}
-
-void PDPServer::awake_server_thread()
-{
-    ping_->restart_timer();
 }
 
 bool PDPServer::server_update_routine()
@@ -1195,9 +1181,8 @@ void PDPServer::update_remote_servers_list()
         }
     }
 
-    // TODO Carlos (PINGS): right now this is never shut down. ¿Enter into ping with high frequency loop?
     // Need to reactivate the server thread to send the DATA(p) to the new servers
-    awake_server_thread();
+    resend_ininitial_announcements();
 }
 
 bool PDPServer::process_writers_acknowledgements()
@@ -1581,41 +1566,28 @@ eprosima::fastdds::rtps::ResourceEvent& PDPServer::get_resource_event_thread()
     return resource_event_thread_;
 }
 
-bool PDPServer::all_servers_acknowledge_pdp()
-{
-    // Check if already initialized
-    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
-    static_cast<void>(endpoints);
-    assert(endpoints->writer.history_ && endpoints->writer.writer_);
-
-    return discovery_db_.server_acked_by_my_servers();
-}
-
 void PDPServer::ping_remote_servers()
 {
-    // Get the servers that have not ACKed this server's DATA(p)
-    std::vector<GuidPrefix_t> ack_pending_servers = discovery_db_.ack_pending_servers();
+    LocatorList locators_ping;
     std::vector<GUID_t> remote_readers;
-    LocatorList locators;
 
     // Iterate over the list of servers
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
         for (auto& server : mp_builtin->m_DiscoveryServers)
         {
-
-            // If the server is the the ack_pending list, then add its GUID and locator to send the announcement
-            auto server_it = std::find(ack_pending_servers.begin(), ack_pending_servers.end(), server.guidPrefix);
-            if (server_it != ack_pending_servers.end())
-            {
-                // Get the info to send to this already known locators
-                locators.push_back(server.metatrafficUnicastLocatorList);
-            }
+            // Get the info to send to this already known locators
+            locators_ping.push_back(server.metatrafficUnicastLocatorList);
         }
     }
-    send_announcement(discovery_db().cache_change_own_participant(), remote_readers, locators);
+
+    if (!locators_ping.empty())
+    {
+        EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                "Server " << getRTPSParticipant()->getGuid() << " PDP announcement");
+        send_announcement(discovery_db().cache_change_own_participant(), remote_readers, locators_ping);
+    }
 }
 
 void PDPServer::send_announcement(

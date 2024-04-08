@@ -1686,48 +1686,6 @@ const std::vector<fastdds::rtps::GuidPrefix_t> DiscoveryDataBase::direct_clients
     return direct_clients_and_servers;
 }
 
-bool DiscoveryDataBase::server_acked_by_my_servers()
-{
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
-
-    if (servers_.size() == 0)
-    {
-        return true;
-    }
-
-    // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
-    auto this_server = participants_.find(server_guid_prefix_);
-    // check it is always there
-
-    assert(this_server != participants_.end());
-
-    for (const auto prefix : servers_)
-    {
-        if (!this_server->second.is_matched(prefix))
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
-std::vector<fastdds::rtps::GuidPrefix_t> DiscoveryDataBase::ack_pending_servers()
-{
-    std::lock_guard<std::recursive_mutex> guard(mutex_);
-
-    std::vector<fastdds::rtps::GuidPrefix_t> ack_pending_servers;
-    // Find the server's participant and check whether all its servers have ACKed the server's DATA(p)
-    auto this_server = participants_.find(server_guid_prefix_);
-    for (const auto prefix : servers_)
-    {
-        if (!this_server->second.is_matched(prefix))
-        {
-            ack_pending_servers.push_back(prefix);
-        }
-    }
-    return ack_pending_servers;
-}
-
 LocatorList DiscoveryDataBase::participant_metatraffic_locators(
         fastdds::rtps::GuidPrefix_t participant_guid_prefix)
 {

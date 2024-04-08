@@ -616,6 +616,11 @@ protected:
             ParticipantProxyData* pdata,
             bool& should_be_ignored);
 
+    /**
+     * Restores the `initial_announcements_` configuration to resend the initial announcements again.
+     */
+    void resend_ininitial_announcements();
+
 #ifdef FASTDDS_STATISTICS
 
     std::atomic<const fastdds::statistics::rtps::IProxyObserver*> proxy_observer_;
