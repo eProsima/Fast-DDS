@@ -239,6 +239,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
                 <xs:element name="calculate_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="tcp_negotiation_timeout" type="uint32_t" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
@@ -498,6 +499,7 @@ XMLP_ret XMLParser::parseXMLCommonTransportData(
                 strcmp(name, LOGICAL_PORT_INCREMENT) == 0 || strcmp(name, LISTENING_PORTS) == 0 ||
                 strcmp(name, CALCULATE_CRC) == 0 || strcmp(name, CHECK_CRC) == 0 ||
                 strcmp(name, ENABLE_TCP_NODELAY) == 0 || strcmp(name, TLS) == 0 ||
+                strcmp(name, TCP_NEGOTIATION_TIMEOUT) == 0 ||
                 strcmp(name, NON_BLOCKING_SEND) == 0  ||
                 strcmp(name, SEGMENT_SIZE) == 0 || strcmp(name, PORT_QUEUE_CAPACITY) == 0 ||
                 strcmp(name, PORT_OVERFLOW_POLICY) == 0 || strcmp(name, SEGMENT_OVERFLOW_POLICY) == 0 ||
@@ -652,6 +654,16 @@ XMLP_ret XMLParser::parseXMLCommonTCPTransportData(
                     strcmp(name, WHITE_LIST) == 0)
             {
                 // Parsed Outside of this method
+            }
+            else if (strcmp(name, TCP_NEGOTIATION_TIMEOUT) == 0)
+            {
+                // tcp_negotiation_timeout - uint32Type
+                int iTimeout(0);
+                if (XMLP_ret::XML_OK != getXMLInt(p_aux0, &iTimeout, 0))
+                {
+                    return XMLP_ret::XML_ERROR;
+                }
+                pTCPDesc->tcp_negotiation_timeout = static_cast<uint32_t>(iTimeout);
             }
             else
             {

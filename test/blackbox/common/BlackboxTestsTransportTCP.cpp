@@ -774,6 +774,111 @@ TEST_P(TransportTCP, large_data_topology)
     writers.clear();
 }
 
+// Test TCP transport on large message with best effort reliability
+TEST_P(TransportTCP, large_message_send_receive)
+{
+    // Prepare data to be sent before participants discovery so it is ready to be sent as soon as possible.
+    std::list<Data1mb> data;
+    data = default_data300kb_data_generator(1);
+
+    uint16_t writer_port = global_port;
+
+    /* Test configuration */
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::shared_ptr<TCPTransportDescriptor> writer_transport;
+    std::shared_ptr<TCPTransportDescriptor> reader_transport;
+    Locator_t initialPeerLocator;
+    if (use_ipv6)
+    {
+        reader_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+        writer_transport = std::make_shared<eprosima::fastdds::rtps::TCPv6TransportDescriptor>();
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv6;
+        IPLocator::setIPv6(initialPeerLocator, "::1");
+    }
+    else
+    {
+        reader_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+        writer_transport = std::make_shared<eprosima::fastdds::rtps::TCPv4TransportDescriptor>();
+        initialPeerLocator.kind = LOCATOR_KIND_TCPv4;
+        IPLocator::setIPv4(initialPeerLocator, 127, 0, 0, 1);
+    }
+    writer_transport->tcp_negotiation_timeout = 100;
+    reader_transport->tcp_negotiation_timeout = 100;
+
+    // Add listener port to server
+    writer_transport->add_listener_port(writer_port);
+
+    // Add initial peer to client
+    initialPeerLocator.port = writer_port;
+    LocatorList_t initial_peer_list;
+    initial_peer_list.push_back(initialPeerLocator);
+
+    // Setup participants
+    writer.disable_builtin_transport()
+            .add_user_transport_to_pparams(writer_transport);
+
+    reader.disable_builtin_transport()
+            .initial_peers(initial_peer_list)
+            .add_user_transport_to_pparams(reader_transport);
+
+    // Init participants
+    writer.init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery(1, std::chrono::seconds(0));
+    reader.wait_discovery(std::chrono::seconds(0), 1);
+
+    // Send and receive data
+    reader.startReception(data);
+
+    writer.send(data);
+    EXPECT_TRUE(data.empty());
+
+    reader.block_for_all();
+}
+
+// Test TCP transport on large message with best effort reliability and LARGE_DATA mode
+TEST_P(TransportTCP, large_message_large_data_send_receive)
+{
+    // Prepare data to be sent. before participants discovery so it is ready to be sent as soon as possible.
+    // The writer might try to send the data before the reader has negotiated the connection.
+    // If the negotiation timeout is too short, the writer will fail to send the data and the reader will not receive it.
+    // LARGE_DATA participant discovery is tipically faster than tcp negotiation.
+    std::list<Data1mb> data;
+    data = default_data300kb_data_generator(1);
+
+    /* Test configuration */
+    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
+
+    uint32_t tcp_negotiation_timeout = 100;
+    writer.setup_large_data_tcp(use_ipv6, 0, tcp_negotiation_timeout);
+    reader.setup_large_data_tcp(use_ipv6, 0, tcp_negotiation_timeout);
+
+    // Init participants
+    writer.init();
+    reader.init();
+    ASSERT_TRUE(writer.isInitialized());
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery(1, std::chrono::seconds(0));
+    reader.wait_discovery(std::chrono::seconds(0), 1);
+
+    // Send and receive data
+    reader.startReception(data);
+
+    writer.send(data);
+    EXPECT_TRUE(data.empty());
+
+    reader.block_for_all();
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
