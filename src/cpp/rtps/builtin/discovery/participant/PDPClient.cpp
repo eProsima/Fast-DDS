@@ -1433,7 +1433,8 @@ bool PDPClient::remove_remote_participant(
     rguid.entityId = endpoints->reader.reader_->getGuid().entityId;
     endpoints->writer.writer_->matched_reader_remove(rguid);
 
-    update_remote_servers_list();
+    // Reactivate ping routine
+    mp_sync->restart_timer();
 
     return false;
 }
