@@ -60,29 +60,6 @@ public:
     double server_routine_period_;
 };
 
-class DServerPingEvent : public fastrtps::rtps::TimedEvent
-{
-public:
-
-    /**
-     * Constructor.
-     * @param pdp Pointer to the PDPServer.
-     * @param interval Interval in ms.
-     */
-    DServerPingEvent(
-            PDPServer* pdp,
-            double interval);
-    ~DServerPingEvent();
-
-    /**
-     * Method invoked when the server routine event occurs.
-     */
-    bool server_ping_event();
-
-    //!Pointer to the PDPServer object.
-    PDPServer* pdp_;
-};
-
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima

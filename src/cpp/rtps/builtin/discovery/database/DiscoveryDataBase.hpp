@@ -289,10 +289,6 @@ public:
         server_acked_by_all_.store(s);
     }
 
-    bool server_acked_by_my_servers();
-
-    std::vector<fastrtps::rtps::GuidPrefix_t> ack_pending_servers();
-
     ////////////
     // Data structures utils
 

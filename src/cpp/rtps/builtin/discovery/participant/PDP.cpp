@@ -1536,6 +1536,16 @@ void PDP::set_initial_announcement_interval()
     set_next_announcement_interval();
 }
 
+void PDP::resend_ininitial_announcements()
+{
+    if (enabled_)
+    {
+        initial_announcements_ = m_discovery.discovery_config.initial_announcements;
+        set_next_announcement_interval();
+        resetParticipantAnnouncement();
+    }
+}
+
 void PDP::set_external_participant_properties_(
         ParticipantProxyData* participant_data)
 {

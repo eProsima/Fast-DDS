@@ -62,41 +62,6 @@ bool DServerRoutineEvent::server_routine_event()
     return pending_work;
 }
 
-DServerPingEvent::DServerPingEvent(
-        PDPServer* pdp,
-        double interval)
-    : TimedEvent(pdp->getRTPSParticipant()->getEventResource(),
-            [this]()
-            {
-                return server_ping_event();
-            }, interval)
-    , pdp_(pdp)
-{
-
-}
-
-DServerPingEvent::~DServerPingEvent()
-{
-}
-
-bool DServerPingEvent::server_ping_event()
-{
-    // Check if all servers received my discovery data
-    if (!pdp_->all_servers_acknowledge_pdp())
-    {
-        // Not all servers have yet received our DATA(p) thus resend
-        pdp_->ping_remote_servers();
-        EPROSIMA_LOG_INFO(SERVER_PING_THREAD,
-                "Server " << pdp_->getRTPSParticipant()->getGuid() << " PDP announcement");
-
-        // restart
-        return true;
-    }
-
-    // do not restart
-    return false;
-}
-
 } // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
