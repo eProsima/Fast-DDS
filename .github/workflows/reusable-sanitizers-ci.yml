@@ -68,10 +68,6 @@ jobs:
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
 
-      # https://github.com/actions/runner-images/issues/9491
-      - name: Fix kernel mmap rnd bits
-        run: sudo sysctl vm.mmap_rnd_bits=28
-
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
@@ -145,10 +141,6 @@ jobs:
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
-
-        # https://github.com/actions/runner-images/issues/9491
-      - name: Fix kernel mmap rnd bits
-        run: sudo sysctl vm.mmap_rnd_bits=28
 
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
@@ -232,10 +224,6 @@ jobs:
         with:
           name: build_artifacts_fastdds_asan_${{ inputs.label }}
           path: ${{ github.workspace }}
-
-        # https://github.com/actions/runner-images/issues/9491
-      - name: Fix kernel mmap rnd bits
-        run: sudo sysctl vm.mmap_rnd_bits=28
 
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
@@ -340,10 +328,6 @@ jobs:
           labels: ci-pending
           number: ${{ github.event.number }}
           repo: eProsima/Fast-DDS
-
-      # https://github.com/actions/runner-images/issues/9491
-      - name: Fix kernel mmap rnd bits
-        run: sudo sysctl vm.mmap_rnd_bits=28
 
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0

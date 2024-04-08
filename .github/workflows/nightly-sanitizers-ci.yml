@@ -32,7 +32,7 @@ jobs:
         cmake_args: ''
         ctest_args: ''
         fastdds_ref: '2.13.x'
-        discovery_server_ref: 'master'
+        discovery_server_ref: 'v1.2.2'
 
   nightly-sanitizers-ci-2_10_x:
     uses: ./.github/workflows/reusable-sanitizers-ci.yml
