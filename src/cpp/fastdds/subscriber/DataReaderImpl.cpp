@@ -217,6 +217,11 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
+    // Set Datareader's DataRepresentationId taking into account the QoS.
+    data_representation_ = qos_.type_consistency().representation.m_value.empty()
+            || XCDR_DATA_REPRESENTATION == qos_.type_consistency().representation.m_value.at(0)
+                    ? XCDR_DATA_REPRESENTATION : XCDR2_DATA_REPRESENTATION;
+
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
@@ -1789,7 +1794,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
     // grow, we translate the policy into bare PREALLOCATED
     if (PREALLOCATED_WITH_REALLOC_MEMORY_MODE == history_.m_att.memoryPolicy &&
-            (type_->is_bounded() || type_->is_plain()))
+            (type_->is_bounded() || type_->is_plain(data_representation_)))
     {
         history_.m_att.memoryPolicy = PREALLOCATED_MEMORY_MODE;
     }
