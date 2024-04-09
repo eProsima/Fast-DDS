@@ -517,8 +517,9 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
+            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(entry);
 
             if (!secure)
             {
@@ -1188,6 +1189,14 @@ void PDPServer::update_remote_servers_list()
 
     for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
+        if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
+                !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
+        {
+            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(entry);
+        }
+
         if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
         {
             match_pdp_writer_nts_(it);
@@ -1203,6 +1212,9 @@ void PDPServer::update_remote_servers_list()
     {
         discovery_db_.add_server(server.guidPrefix);
     }
+
+    // Need to reactivate the server thread to send the DATA(p) to the new servers
+    awake_server_thread();
 }
 
 bool PDPServer::process_writers_acknowledgements()

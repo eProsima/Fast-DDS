@@ -445,8 +445,9 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
-            mp_RTPSParticipant->createSenderResources(it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(it.metatrafficUnicastLocatorList);
+            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
+            mp_RTPSParticipant->createSenderResources(entry);
 
 #if HAVE_SECURITY
             if (!mp_RTPSParticipant->is_secure())
@@ -843,6 +844,14 @@ void PDPClient::update_remote_servers_list()
 
         for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
         {
+            if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
+                    !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
+            {
+                auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+                    it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
+                mp_RTPSParticipant->createSenderResources(entry);
+            }
+
             if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()))
             {
                 match_pdp_writer_nts_(it);

@@ -1040,6 +1040,15 @@ public:
     void createSenderResources(
             const Locator_t& locator);
 
+    /**
+     * Creates sender resources for the given locator selector entry by calling the NetworkFactory's
+     * build_send_resources method.
+     *
+     * @param locator_selector The locator selector entry for which sender resources need to be created.
+     */
+    void createSenderResources(
+            const LocatorSelectorEntry& locator_selector);
+
     bool networkFactoryHasRegisteredTransports() const;
 
     /**

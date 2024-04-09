@@ -100,6 +100,28 @@ struct LocatorSelectorEntry
         state.multicast.clear();
     }
 
+    static LocatorSelectorEntry create_fully_selected_entry(
+            const LocatorList_t& unicast_locators,
+            const LocatorList_t& multicast_locators)
+    {
+        // Create an entry with space for all locators
+        LocatorSelectorEntry entry(unicast_locators.size(), multicast_locators.size());
+        // Add and select unicast locators
+        for (const Locator_t& locator : unicast_locators)
+        {
+            entry.state.unicast.push_back(entry.unicast.size());
+            entry.unicast.push_back(locator);
+        }
+        // Add and select multicast locators
+        for (const Locator_t& locator : multicast_locators)
+        {
+            entry.state.multicast.push_back(entry.multicast.size());
+            entry.multicast.push_back(locator);
+        }
+        // Return created entry
+        return entry;
+    }
+
     //! GUID of the remote entity.
     GUID_t remote_guid;
     //! List of unicast locators to send data to the remote entity.
