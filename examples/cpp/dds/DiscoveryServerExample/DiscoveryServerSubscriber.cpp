@@ -69,7 +69,6 @@ bool HelloWorldSubscriber::init(
         uint32_t max_messages,
         const std::string& server_address,
         unsigned short server_port,
-        unsigned short server_id,
         TransportKind transport)
 {
     DomainParticipantQos pqos;
@@ -147,7 +146,14 @@ bool HelloWorldSubscriber::init(
 
             server_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastrtps::rtps::IPLocator::setLogicalPort(server_locator, server_port);
-            eprosima::fastrtps::rtps::IPLocator::setIPv4(server_locator, ip_server_address);
+            if (eprosima::fastrtps::rtps::IPLocator::isIPv6(ip_server_address))
+            {
+                eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, ip_server_address);
+            }
+            else
+            {
+                eprosima::fastrtps::rtps::IPLocator::setIPv6(server_locator, "::1");
+            }
             break;
         }
 
@@ -159,15 +165,8 @@ bool HelloWorldSubscriber::init(
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
             eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
 
-    // Set SERVER's GUID prefix
-    RemoteServerAttributes remote_server_att;
-    remote_server_att.guidPrefix = get_discovery_server_guid_from_id(server_id);
-
-    // Set SERVER's listening locator for PDP
-    remote_server_att.metatrafficUnicastLocatorList.push_back(server_locator);
-
     // Add remote SERVER to CLIENT's list of SERVERs
-    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+    pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_locator);
 
     // Add descriptor
     pqos.transport().user_transports.push_back(descriptor);
@@ -185,7 +184,6 @@ bool HelloWorldSubscriber::init(
         "Subscriber Participant " << pqos.name() <<
         " created with GUID " << participant_->guid() <<
         " connecting to server <" << server_locator  << "> " <<
-        " with Guid: <" << remote_server_att.guidPrefix << "> " <<
         std::endl;
 
     // REGISTER THE TYPE
