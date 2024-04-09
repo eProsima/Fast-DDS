@@ -26,10 +26,9 @@
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/fastdds_dll.hpp>
-
+#include <rtps/reader/StatefulReader.h>
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 
 namespace eprosima {

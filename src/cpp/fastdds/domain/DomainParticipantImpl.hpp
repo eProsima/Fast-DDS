@@ -39,11 +39,9 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
-
+#include <rtps/reader/StatefulReader.h>
 
 namespace eprosima {
 namespace fastrtps {

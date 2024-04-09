@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file StatefulReader.h
+ * @file .h
  */
 
 #ifndef _FASTDDS_RTPS_READER_STATEFULREADER_H_

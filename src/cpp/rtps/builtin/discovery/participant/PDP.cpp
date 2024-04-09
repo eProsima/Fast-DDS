@@ -33,7 +33,6 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
@@ -50,6 +49,7 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/resources/TimedEvent.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/reader/StatefulReader.h>
 #include <utils/shared_mutex.hpp>
 #include <utils/TimeConversion.hpp>
 

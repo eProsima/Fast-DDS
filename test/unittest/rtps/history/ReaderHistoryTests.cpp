@@ -20,10 +20,9 @@
 #include <gmock/gmock.h>
 
 #include <fastdds/rtps/history/ReaderHistory.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/utils/TimedMutex.hpp>
-
 #include <rtps/common/ChangeComparison.hpp>
+#include <rtps/reader/StatefulReader.h>
 
 
 using namespace eprosima::fastrtps;
