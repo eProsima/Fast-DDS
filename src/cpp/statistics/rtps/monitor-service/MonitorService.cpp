@@ -326,7 +326,6 @@ bool MonitorService::write_status(
                     }
                 }
 
-                assert(status_retrieved);
                 if (status_retrieved)
                 {
                     status_data.status_kind((StatusKind)i);
