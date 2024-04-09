@@ -57,12 +57,10 @@ void DiscoveryServer::stop()
 bool DiscoveryServer::init(
         const std::string& server_address,
         unsigned short server_port,
-        unsigned short server_id,
         TransportKind transport,
         bool has_connection_server,
         const std::string& connection_server_address,
-        unsigned short connection_server_port,
-        unsigned short connection_server_id)
+        unsigned short connection_server_port)
 {
     DomainParticipantQos pqos;
     pqos.name("DS-Server");
@@ -163,7 +161,14 @@ bool DiscoveryServer::init(
 
             listening_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastdds::rtps::IPLocator::setLogicalPort(listening_locator, server_port);
-            eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            if (eprosima::fastdds::rtps::IPLocator::isIPv6(ip_listening_address))
+            {
+                eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, ip_listening_address);
+            }
+            else
+            {
+                eprosima::fastdds::rtps::IPLocator::setIPv6(listening_locator, "::1");
+            }
             connection_locator.kind = LOCATOR_KIND_TCPv6;
             eprosima::fastdds::rtps::IPLocator::setIPv6(connection_locator, ip_connection_address);
             eprosima::fastdds::rtps::IPLocator::setLogicalPort(connection_locator, connection_server_port);
@@ -182,7 +187,7 @@ bool DiscoveryServer::init(
             eprosima::fastdds::rtps::DiscoveryProtocol::SERVER;
 
     // Set SERVER's GUID prefix
-    pqos.wire_protocol().prefix = get_discovery_server_guid_from_id(server_id);
+    set_server_client_random_guidPrefix(pqos.wire_protocol().prefix);
 
     // Set SERVER's listening locator for PDP
     pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(listening_locator);
@@ -191,17 +196,10 @@ bool DiscoveryServer::init(
     // Configure Connection address
     ///////////////////////////////
 
-    RemoteServerAttributes remote_server_att;
     if (has_connection_server)
     {
-        // Set SERVER's GUID prefix
-        remote_server_att.guidPrefix = get_discovery_server_guid_from_id(connection_server_id);
-
-        // Set SERVER's listening locator for PDP
-        remote_server_att.metatrafficUnicastLocatorList.push_back(connection_locator);
-
         // Add remote SERVER to CLIENT's list of SERVERs
-        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(remote_server_att);
+        pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(connection_locator);
     }
 
 
@@ -224,8 +222,7 @@ bool DiscoveryServer::init(
             "Server Participant " << pqos.name() <<
             " created with GUID " << participant_->guid() <<
             " listening in address <" << listening_locator  << "> " <<
-            " connecting with Discovery Server <" << remote_server_att.guidPrefix << "> "
-            " with address <" << connection_locator  << "> " <<
+            " connecting with Discovery Server <" << connection_locator  << "> " <<
             std::endl;
     }
     else

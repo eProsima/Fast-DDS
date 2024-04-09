@@ -35,9 +35,6 @@ Publisher options:
                     Server listening port (Default port: 16166).
                   --transport=<udpv4|udpv6|tcpv4|tcpv6>
                     Use Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (Default: udpv4).
-  -d <num>        --connection-discovery-server-id <num>
-                    Id of the Discovery Server to connect with. GUID will be
-                    calculated from id (Default: 0).
 
 Subscriber options:
   -t <topic_name> --topic=<topic_name>
@@ -51,16 +48,10 @@ Subscriber options:
                     Server listening port (Default port: 16166).
                   --transport=<udpv4|udpv6|tcpv4|tcpv6>
                     Use Transport Protocol [udpv4|udpv6|tcpv4|tcpv6] (Default: udpv4).
-  -d <num>        --connection-discovery-server-id <num>
-                    Id of the Discovery Server to connect with. GUID will be
-                    calculated from id (Default: 0).
 
 DiscoveryServer options:
                   --listening-address=<IPaddress>
                     Server address (Default address: 127.0.0.1).
-                  --id=<num>
-                    Id of this Discovery Server.
-                    GUID will be calculated from id (Default: 0).
                   --listening-port=<num>
                     Server listening port (Default port: 16166).
                   --transport=<udpv4|udpv6|tcpv4|tcpv6>
@@ -69,10 +60,6 @@ DiscoveryServer options:
                     Server address (Default address: 127.0.0.1).
   -p <num>        --connection-port=<num>
                     Server listening port (Default port: 16166).
-  -d <num>        --connection-discovery-server-id <num>
-                    Id of the Discovery Server to connect with. GUID will be
-                    calculated from id (if not set, this DS will not connect
-                    to other server).
   -z <num>        --timeout <num>
                     Number of seconds before finish the process (Default: 0 = till ^C).
 ```
