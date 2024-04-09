@@ -36,7 +36,6 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.h>
@@ -64,6 +63,7 @@
 #include <rtps/reader/StatefulPersistentReader.h>
 #include <rtps/reader/StatelessPersistentReader.h>
 #include <rtps/reader/StatefulReader.h>
+#include <rtps/reader/StatelessReader.h>
 #include <statistics/rtps/GuidUtils.hpp>
 #include <utils/Semaphore.hpp>
 #include <utils/string_utilities.hpp>

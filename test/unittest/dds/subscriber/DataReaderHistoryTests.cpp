@@ -3,7 +3,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/utils/TimedMutex.hpp>
-#include <fastdds/rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatelessReader.h>
 
 
 #include <gmock/gmock.h>

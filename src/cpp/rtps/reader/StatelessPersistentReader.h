@@ -21,7 +21,7 @@
 #define _FASTDDS_RTPS_STATELESSPERSISTENTREADER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/reader/StatelessReader.h>
+#include <rtps/reader/StatelessReader.h>
 
 namespace eprosima {
 namespace fastrtps {
