@@ -142,3 +142,14 @@ jobs:
           echo "Test 2" >> fake_log.xml
           echo "Test 3" >> fake_log.xml
         shell: bash
+
+      - uses: actions/checkout@master
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true
+          file: ./fake_log.xml
+          name: codecov-prova
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
