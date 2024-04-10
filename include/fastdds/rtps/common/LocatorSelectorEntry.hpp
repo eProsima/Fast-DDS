@@ -123,6 +123,21 @@ struct LocatorSelectorEntry
         return entry;
     }
 
+    static LocatorSelectorEntry create_fully_selected_entry(
+            const LocatorList_t& unicast_locators)
+    {
+        // Create an entry with space for all locators
+        LocatorSelectorEntry entry(unicast_locators.size(), 0);
+        // Add and select unicast locators
+        for (const Locator_t& locator : unicast_locators)
+        {
+            entry.state.unicast.push_back(entry.unicast.size());
+            entry.unicast.push_back(locator);
+        }
+        // Return created entry
+        return entry;
+    }
+
     //! GUID of the remote entity.
     GUID_t remote_guid;
     //! List of unicast locators to send data to the remote entity.

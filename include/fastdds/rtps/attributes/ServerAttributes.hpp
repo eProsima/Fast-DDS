@@ -165,30 +165,28 @@ const char* const ROS_SUPER_CLIENT = "ROS_SUPER_CLIENT";
 
 /**
  * Retrieves a semicolon-separated list of locators from a string, and
- * populates a RemoteServerList_t mapping list position to default guid.
+ * populates a LocatorList_t.
  * @param[in] list servers listening locator list.
- * @param[out] attributes reference to a RemoteServerList_t to populate.
+ * @param[out] servers_list reference to a LocatorList_t to populate.
  * @return true if parsing succeeds, false otherwise (or if the list is empty)
  */
 FASTDDS_EXPORTED_API bool load_environment_server_info(
         const std::string& list,
-        RemoteServerList_t& attributes);
+        LocatorList& servers_list);
 
 /**
  * Retrieves a semicolon-separated list of locators from DEFAULT_ROS2_MASTER_URI environment variable, and
- * populates a RemoteServerList_t mapping list position to default guid.
+ * populates a LocatorList_t.
  *
  * The environment variable can be read from an environment file (which allows runtime modification of the remote
  * servers list) or directly from the environment.
  * The value contained in the file takes precedence over the environment value (if both are set).
- * This is to avoid conflicts because only new servers can be added to the list (containing thus all the previously
- * known servers).
  *
- * @param[out] attributes reference to a RemoteServerList_t to populate.
+ * @param[out] servers_list reference to a LocatorList_t to populate.
  * @return true if parsing succeeds, false otherwise
  */
 FASTDDS_EXPORTED_API bool load_environment_server_info(
-        RemoteServerList_t& attributes);
+        LocatorList& servers_list);
 
 /**
  * Get the value of environment variable DEFAULT_ROS2_MASTER_URI

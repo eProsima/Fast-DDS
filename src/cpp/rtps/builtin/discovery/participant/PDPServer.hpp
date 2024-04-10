@@ -193,12 +193,12 @@ public:
     fastdds::rtps::ddb::DiscoveryDataBase& discovery_db();
 
     /**
-     * Access to the remote servers list
+     * Access to the remote servers locators list
      * This method is not thread safe.
      * The return reference may be invalidated if the user modifies simultaneously the remote server list.
-     * @return constant reference to the remote servers list
+     * @return constant reference to the remote servers locators list
      */
-    const RemoteServerList_t& servers();
+    const LocatorList& servers();
 
 protected:
 
