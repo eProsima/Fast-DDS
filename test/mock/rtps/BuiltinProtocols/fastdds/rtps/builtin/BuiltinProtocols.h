@@ -65,7 +65,7 @@ public:
     BuiltinAttributes m_att;
 
     //! Known discovery and backup server container
-    std::list<eprosima::fastdds::rtps::RemoteServerAttributes> m_DiscoveryServers;
+    LocatorList_t m_DiscoveryServers;
 
     //!Pointer to the RTPSParticipantImpl.
     RTPSParticipantImpl* mp_participantImpl;

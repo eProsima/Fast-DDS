@@ -724,54 +724,39 @@ void helper_wait_for_at_least_entries(
 }
 
 void expected_remote_server_list_output(
-        rtps::RemoteServerList_t& output)
+        rtps::LocatorList& output)
 {
-    rtps::RemoteServerAttributes server;
     fastrtps::rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
     locator.port = 8888;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(0, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
 
-    server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 1234;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(2, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
 
     std::istringstream("UDPv6:[2a02:ec80:600:ed1a::3]:8783") >> locator;
-    server.clear();
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(3, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
 }
 
 void set_participant_qos(
         DomainParticipantQos& qos,
-        rtps::RemoteServerList_t& output)
+        rtps::LocatorList& output)
 {
-    rtps::RemoteServerAttributes server;
     fastrtps::rtps::Locator_t locator;
-    server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.00");
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
-    output.push_back(server);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
+    output.push_back(locator);
 }
 
 void set_server_qos(
         DomainParticipantQos& qos)
 {
-    rtps::RemoteServerAttributes server;
     fastrtps::rtps::Locator_t locator;
-    server.ReadguidPrefix(rtps::DEFAULT_ROS2_SERVER_GUIDPREFIX);
     fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
     locator.port = 4321;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 5432;
@@ -817,10 +802,8 @@ void set_and_check_with_environment_file(
 {
     const static std::regex ROS2_IPV4_PATTERN(R"(^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:?(?:(\d+))?$)");
 
-    rtps::RemoteServerList_t output;
-    rtps::RemoteServerAttributes server;
+    rtps::LocatorList output;
     fastrtps::rtps::Locator_t locator;
-    int id = 0;
 
     std::ofstream file(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": ";
@@ -844,14 +827,7 @@ void set_and_check_with_environment_file(
         int port = stoi((++it)->str());
         fastrtps::rtps::IPLocator::setPhysicalPort(locator, static_cast<uint16_t>(port));
 
-        // add the server to the list
-        server.clear();
-        server.metatrafficUnicastLocatorList.push_back(locator);
-        if (!get_server_client_default_guidPrefix(id++, server.guidPrefix))
-        {
-            throw std::invalid_argument("The maximum number of default discovery servers has been reached");
-        }
-        output.push_back(server);
+        output.push_back(locator);
         file << l;
     }
     file << "\"}";
@@ -874,8 +850,8 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfiguration)
 {
     set_environment_variable();
 
-    rtps::RemoteServerList_t output;
-    rtps::RemoteServerList_t qos_output;
+    rtps::LocatorList output;
+    rtps::LocatorList qos_output;
     expected_remote_server_list_output(output);
 
     DomainParticipantQos qos;
@@ -927,8 +903,8 @@ TEST(ParticipantTests, TransformSimpleParticipantToSuperclientByEnvVariable)
     ASSERT_EQ(0, setenv(rtps::ROS_SUPER_CLIENT, "false", 1));
 #endif // _WIN32
 
-    rtps::RemoteServerList_t output;
-    rtps::RemoteServerList_t qos_output;
+    rtps::LocatorList output;
+    rtps::LocatorList qos_output;
     expected_remote_server_list_output(output);
 
     DomainParticipantQos qos;
@@ -1014,16 +990,13 @@ TEST(ParticipantTests, SimpleParticipantRemoteServerListConfigurationDNS)
     set_environment_variable("www.acme.com.test");
 
     // fill in expected result
-    rtps::RemoteServerAttributes server;
     fastrtps::rtps::Locator_t locator4(11811), locator6(LOCATOR_KIND_UDPv6, 11811);
     fastrtps::rtps::IPLocator::setIPv4(locator4, "216.58.215.164");
     fastrtps::rtps::IPLocator::setIPv6(locator6, "2a00:1450:400e:803::2004");
-    server.metatrafficUnicastLocatorList.push_back(locator4);
-    server.metatrafficUnicastLocatorList.push_back(locator6);
-    get_server_client_default_guidPrefix(0, server.guidPrefix);
 
-    rtps::RemoteServerList_t output;
-    output.push_back(server);
+    rtps::LocatorList output;
+    output.push_back(locator4);
+    output.push_back(locator6);
 
     // Create the participant
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
@@ -1062,8 +1035,8 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
     set_environment_variable();
     set_environment_file(filename);
 
-    rtps::RemoteServerList_t output;
-    rtps::RemoteServerList_t qos_output;
+    rtps::LocatorList output;
+    rtps::LocatorList qos_output;
     expected_remote_server_list_output(output);
 
     DomainParticipantQos qos;
@@ -1086,17 +1059,14 @@ TEST(ParticipantTests, SimpleParticipantDynamicAdditionRemoteServers)
         "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;UDPv4:[localhost]:1234;[2a02:ec80:600:ed1a::3]:8783\"}";
     file.close();
 
-    // Wait long enought for the file watch callback
+    // Wait long enough for the file watch callback
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     get_rtps_attributes(participant, attributes);
 
-    rtps::RemoteServerAttributes server;
     fastrtps::rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(1, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
 
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
@@ -1114,7 +1084,7 @@ TEST(ParticipantTests, ClientParticipantRemoteServerListConfiguration)
     set_environment_variable();
 
     DomainParticipantQos qos;
-    rtps::RemoteServerList_t qos_output;
+    rtps::LocatorList qos_output;
     set_participant_qos(qos, qos_output);
 
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::CLIENT;
@@ -1168,7 +1138,7 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
     set_environment_variable();
 
     DomainParticipantQos qos;
-    rtps::RemoteServerList_t qos_output;
+    rtps::LocatorList qos_output;
     fastrtps::rtps::Locator_t locator;
     set_participant_qos(qos, qos_output);
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
@@ -1196,8 +1166,6 @@ TEST(ParticipantTests, ServerParticipantRemoteServerListConfiguration)
 TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguration)
 {
     Log::ClearConsumers();
-    MockConsumer* mockConsumer = new MockConsumer("RTPS_QOS_CHECK");
-    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(mockConsumer));
     Log::SetVerbosity(Log::Warning);
 
     auto filename = get_environment_filename();
@@ -1208,9 +1176,17 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
     file.close();
 
     DomainParticipantQos qos;
-    rtps::RemoteServerList_t qos_output;
+    rtps::LocatorList qos_output;
     fastrtps::rtps::Locator_t locator;
+    // Servers of the filename will overwrite the one set by QoS
     set_participant_qos(qos, qos_output);
+    qos_output.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
+    locator.port = 8888;
+    qos_output.push_back(locator);
+    fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
+    locator.port = 1234;
+    qos_output.push_back(locator);
     qos.wire_protocol().builtin.discovery_config.discoveryProtocol = fastrtps::rtps::DiscoveryProtocol::SERVER;
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 5432;
@@ -1230,13 +1206,13 @@ TEST(ParticipantTests, ServerParticipantInconsistentRemoteServerListConfiguratio
     file.open(filename);
     file << "{\"ROS_DISCOVERY_SERVER\": \"84.22.253.128:8888;192.168.1.133:64863;localhost:1234\"}";
     file.close();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
+    locator.port = 64863;
+    qos_output.push_back(locator);
+
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, qos_output);
-    // Capture log warning
-#ifndef __APPLE__
-    helper_wait_for_at_least_entries(mockConsumer, 1);
-#endif // APPLE
     DomainParticipantQos result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->delete_participant(participant));
@@ -1257,21 +1233,14 @@ TEST(ParticipantTests, ServerParticipantInconsistentLocatorsRemoteServerListConf
     DomainParticipantQos qos;
     set_server_qos(qos);
 
-    rtps::RemoteServerList_t output;
-    rtps::RemoteServerAttributes server;
+    rtps::LocatorList output;
     fastrtps::rtps::Locator_t locator;
-    server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
     locator.port = 4321;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(0, server.guidPrefix);
-    output.push_back(server);
-    server.clear();
+    output.push_back(locator);
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(1, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
 
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
@@ -1334,14 +1303,12 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     DomainParticipantQos qos;
     set_server_qos(qos);
 
-    rtps::RemoteServerList_t output;
-    rtps::RemoteServerAttributes server;
+    rtps::LocatorList output;
     fastrtps::rtps::Locator_t locator;
-    fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
-    locator.port = 4321;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(0, server.guidPrefix);
-    output.push_back(server);
+    fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
+    locator.port = 1234;
+    // Server of the filename will overwrite the one set by QoS
+    output.push_back(locator);
 
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(
         (uint32_t)GET_PID() % 230, qos);
@@ -1359,12 +1326,13 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;;192.168.1.133:64863\"}";
     file.close();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    server.clear();
+    output.clear();
+    fastrtps::rtps::IPLocator::setIPv4(locator, "172.17.0.5");
+    locator.port = 4321;
+    output.push_back(locator);
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(2, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     // Try to be consistent: add already known server
@@ -1373,34 +1341,25 @@ TEST(ParticipantTests, ServerParticipantCorrectRemoteServerListConfiguration)
     file << "{\"ROS_DISCOVERY_SERVER\": \"172.17.0.5:4321;UDPv4:[localhost]:1234;192.168.1.133:64863\"}";
     file.close();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "127.0.0.1");
     locator.port = 1234;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(1, server.guidPrefix);
-    output.push_back(server);
+    output.push_back(locator);
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
     result_qos = participant->get_qos();
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
     // Add new server using API
-    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
     // RTPS layer issues a Warning because a server has been removed. However, DDS layer returns OK
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    server.clear();
     fastrtps::rtps::IPLocator::setIPv4(locator, "192.168.1.133");
     locator.port = 64863;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(2, server.guidPrefix);
-    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
-    server.clear();
+    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
     fastrtps::rtps::IPLocator::setIPv4(locator, "84.22.253.128");
     locator.port = 8888;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    get_server_client_default_guidPrefix(3, server.guidPrefix);
-    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    result_qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, participant->set_qos(result_qos));
-    output.push_back(server);
+    output.push_back(locator);
     get_rtps_attributes(participant, attributes);
     EXPECT_EQ(attributes.builtin.discovery_config.m_DiscoveryServers, output);
 #endif // APPLE
@@ -1427,39 +1386,34 @@ TEST(ParticipantTests, ChangeWireProtocolQos)
     check_equivalent_qos(qos, PARTICIPANT_QOS_DEFAULT);
 
     // Check that just adding two servers is OK
-    rtps::RemoteServerAttributes server;
-    server.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.41");
     fastrtps::rtps::Locator_t locator;
     fastrtps::rtps::IPLocator::setIPv4(locator, 192, 168, 1, 133);
     locator.port = 64863;
-    server.metatrafficUnicastLocatorList.push_back(locator);
-    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator);
 
-    rtps::RemoteServerAttributes server_2;
-    server_2.ReadguidPrefix("44.53.00.5f.45.50.52.4f.53.49.4d.42");
     fastrtps::rtps::Locator_t locator_2;
     fastrtps::rtps::IPLocator::setIPv4(locator_2, 192, 168, 1, 134);
     locator_2.port = 64862;
-    server_2.metatrafficUnicastLocatorList.push_back(locator_2);
-    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_2);
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(locator_2);
 
     ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     DomainParticipantQos set_qos;
     participant->get_qos(set_qos);
     ASSERT_EQ(set_qos, qos);
 
-    // Check that removing one server is NOT OK
-    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.pop_front();
-    ASSERT_FALSE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    // Check that removing one server is OK
+    auto front_server = qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.begin();
+    qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.erase(*front_server);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
+    ASSERT_TRUE(set_qos == qos);
 
-    // Check that removing all servers is NOT OK
-    fastdds::rtps::RemoteServerList_t servers;
+    // Check that removing all servers is OK
+    fastdds::rtps::LocatorList servers;
     qos.wire_protocol().builtin.discovery_config.m_DiscoveryServers = servers;
-    ASSERT_FALSE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(participant->set_qos(qos) == ReturnCode_t::RETCODE_OK);
     participant->get_qos(set_qos);
-    ASSERT_FALSE(set_qos == qos);
+    ASSERT_TRUE(set_qos == qos);
 
     // Check changing wire_protocol().prefix is NOT OK
     participant->get_qos(qos);
