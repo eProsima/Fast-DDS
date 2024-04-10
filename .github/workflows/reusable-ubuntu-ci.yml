@@ -98,6 +98,21 @@ jobs:
           destination_workspace: src
           skip_existing: 'true'
 
+      # Get Shapes Demo to make sure it keeps compiling
+      - name: Get Shapes Demo branch
+        id: get_shapes_demo_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/ShapesDemo
+          fallback_branch: ${{ inputs.fastdds-branch || 'master' }}
+
+      - name: Download Shapes Demo repo
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/ShapesDemo
+          path: src/shapes-demo
+          ref: ${{ steps.get_shapes_demo_branch.outputs.deduced_branch }}
+
       - name: Colcon build
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
