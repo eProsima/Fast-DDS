@@ -36,6 +36,7 @@
 #include <fastdds/rtps/writer/ReaderProxy.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/endpoint/EDPClient.h>
 #include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
@@ -576,6 +577,8 @@ void PDPClient::perform_builtin_endpoints_matching(
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
+
+    mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
 }
 
 void PDPClient::removeRemoteEndpoints(

@@ -57,7 +57,7 @@ public:
 
     /**
      * Resets the internal reference if it is cached.
-     * @param[in] type @ref DynamicData reference whose internal cached reference to reset.
+     * @param[in] data @ref DynamicData reference whose internal cached reference to reset.
      * @return standard ReturnCode_t
      * @retval RETCODE_BAD_PARAMETER if reference is nil.
      * @retval RETCODE_OK is otherwise returned.

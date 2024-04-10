@@ -108,9 +108,10 @@ class PubSubWriterReader
             }
         }
 
-        void on_subscriber_discovery(
+        void on_data_reader_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::ReaderDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             (void)participant;
 
@@ -129,9 +130,10 @@ class PubSubWriterReader
             }
         }
 
-        void on_publisher_discovery(
+        void on_data_writer_discovery(
                 eprosima::fastdds::dds::DomainParticipant* participant,
-                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info) override
+                eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             (void)participant;
 
@@ -171,8 +173,8 @@ class PubSubWriterReader
     private:
 
         using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
-        using eprosima::fastdds::dds::DomainParticipantListener::on_publisher_discovery;
-        using eprosima::fastdds::dds::DomainParticipantListener::on_subscriber_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_data_writer_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_data_reader_discovery;
 
         //! Mutex guarding all info collections
         mutable std::mutex info_mutex_;

@@ -216,7 +216,7 @@ const PlainCollectionHeader TypeObjectUtils::build_plain_collection_header(
 
 const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
         const PlainCollectionHeader& header,
-        SBound bound,
+        SBound s_bound,
         const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
@@ -226,25 +226,25 @@ const PlainSequenceSElemDefn TypeObjectUtils::build_plain_sequence_s_elem_defn(
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceSElemDefn plain_sequence_s_elem_defn;
     plain_sequence_s_elem_defn.header(header);
-    plain_sequence_s_elem_defn.bound(bound);
+    plain_sequence_s_elem_defn.bound(s_bound);
     plain_sequence_s_elem_defn.element_identifier(element_identifier);
     return plain_sequence_s_elem_defn;
 }
 
 const PlainSequenceLElemDefn TypeObjectUtils::build_plain_sequence_l_elem_defn(
         const PlainCollectionHeader& header,
-        LBound bound,
+        LBound l_bound,
         const eprosima::fastcdr::external<TypeIdentifier>& element_identifier)
 {
 #if !defined(NDEBUG)
     plain_collection_header_consistency(header);
     type_identifier_consistency(*element_identifier);
 #endif // !defined(NDEBUG)
-    l_bound_consistency(bound);
+    l_bound_consistency(l_bound);
     plain_collection_type_identifier_header_consistency(header, *element_identifier);
     PlainSequenceLElemDefn plain_sequence_l_elem_defn;
     plain_sequence_l_elem_defn.header(header);
-    plain_sequence_l_elem_defn.bound(bound);
+    plain_sequence_l_elem_defn.bound(l_bound);
     plain_sequence_l_elem_defn.element_identifier(element_identifier);
     return plain_sequence_l_elem_defn;
 }
@@ -1815,6 +1815,22 @@ const NameHash TypeObjectUtils::name_hash(
         name_hashed[i] = hash.digest[i];
     }
     return name_hashed;
+}
+
+void TypeObjectUtils::type_object_consistency(
+        const TypeObject& type_object)
+{
+    switch (type_object._d())
+    {
+        case EK_COMPLETE:
+            complete_type_object_consistency(type_object.complete());
+            break;
+        case EK_MINIMAL:
+            minimal_type_object_consistency(type_object.minimal());
+            break;
+        default:
+            throw InvalidArgumentError("Inconsistent TypeObject");
+    }
 }
 
 void TypeObjectUtils::set_try_construct_behavior(
@@ -3541,22 +3557,6 @@ void TypeObjectUtils::minimal_type_object_consistency(
             break;
         case TK_BITMASK:
             minimal_bitmask_type_consistency(minimal_type_object.bitmask_type());
-            break;
-        default:
-            throw InvalidArgumentError("Inconsistent TypeObject");
-    }
-}
-
-void TypeObjectUtils::type_object_consistency(
-        const TypeObject& type_object)
-{
-    switch (type_object._d())
-    {
-        case EK_COMPLETE:
-            complete_type_object_consistency(type_object.complete());
-            break;
-        case EK_MINIMAL:
-            minimal_type_object_consistency(type_object.minimal());
             break;
         default:
             throw InvalidArgumentError("Inconsistent TypeObject");

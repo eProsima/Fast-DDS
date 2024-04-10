@@ -73,7 +73,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
     auto type_ids_result = local_type_identifiers_.insert({type_name, type_ids});
     auto min_entry_result = type_registry_entries_.insert({type_ids.type_identifier1(), minimal_entry});
     auto max_entry_result = type_registry_entries_.insert({type_ids.type_identifier2(), complete_entry});
-    if (!type_ids_result.second || !min_entry_result.second || !max_entry_result.second)
+    if (!type_ids_result.second || !max_entry_result.second)
     {
         if (local_type_identifiers_[type_name] != type_ids ||
                 type_registry_entries_[type_ids.type_identifier1()] != minimal_entry ||
@@ -128,7 +128,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                 type_identifiers.type_identifier2(type_identifier);
                 type_identifiers.type_identifier1().seq_sdefn().header().equiv_kind(EK_MINIMAL);
                 type_identifiers.type_identifier1().seq_sdefn().element_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().seq_sdefn().element_identifier())));
             }
             break;
@@ -138,7 +138,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                 type_identifiers.type_identifier2(type_identifier);
                 type_identifiers.type_identifier1().seq_ldefn().header().equiv_kind(EK_MINIMAL);
                 type_identifiers.type_identifier1().seq_ldefn().element_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().seq_ldefn().element_identifier())));
             }
             break;
@@ -148,7 +148,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                 type_identifiers.type_identifier2(type_identifier);
                 type_identifiers.type_identifier1().array_sdefn().header().equiv_kind(EK_MINIMAL);
                 type_identifiers.type_identifier1().array_sdefn().element_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().array_sdefn().element_identifier())));
             }
             break;
@@ -158,7 +158,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                 type_identifiers.type_identifier2(type_identifier);
                 type_identifiers.type_identifier1().array_ldefn().header().equiv_kind(EK_MINIMAL);
                 type_identifiers.type_identifier1().array_ldefn().element_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().array_ldefn().element_identifier())));
             }
             break;
@@ -168,7 +168,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                 type_identifiers.type_identifier2(type_identifier);
                 type_identifiers.type_identifier1().map_sdefn().header().equiv_kind(EK_MINIMAL);
                 type_identifiers.type_identifier1().map_sdefn().element_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().map_sdefn().element_identifier())));
             }
             if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_sdefn().key_identifier()))
@@ -178,7 +178,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                     type_identifiers.type_identifier2(type_identifier);
                 }
                 type_identifiers.type_identifier1().map_sdefn().key_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().map_sdefn().key_identifier())));
             }
             break;
@@ -188,7 +188,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                 type_identifiers.type_identifier2(type_identifier);
                 type_identifiers.type_identifier1().map_ldefn().header().equiv_kind(EK_MINIMAL);
                 type_identifiers.type_identifier1().map_ldefn().element_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().map_ldefn().element_identifier())));
             }
             if (TypeObjectUtils::is_direct_hash_type_identifier(*type_identifier.map_ldefn().key_identifier()))
@@ -198,7 +198,7 @@ ReturnCode_t TypeObjectRegistry::register_type_identifier(
                     type_identifiers.type_identifier2(type_identifier);
                 }
                 type_identifiers.type_identifier1().map_ldefn().key_identifier(new TypeIdentifier(
-                            minimal_from_complete_type_identifier(
+                            get_complementary_type_identifier(
                                 *type_identifiers.type_identifier2().map_ldefn().key_identifier())));
             }
             break;
@@ -438,15 +438,6 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
         const TypeObject& type_object)
 {
     uint32_t type_object_serialized_size = 0;
-    try
-    {
-        TypeObjectUtils::type_object_consistency(type_object);
-    }
-    catch (const InvalidArgumentError& exception)
-    {
-        EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Inconsistent CompleteTypeObject: " << exception.what());
-        return eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET;
-    }
     if (type_identifier._d() != type_object._d() ||
             type_identifier != calculate_type_identifier(type_object, type_object_serialized_size))
     {
@@ -694,6 +685,31 @@ ReturnCode_t TypeObjectRegistry::get_dependencies_from_type_object(
             break;
     }
     return ret_code;
+}
+
+const TypeIdentifier TypeObjectRegistry::get_complementary_type_identifier(
+        const TypeIdentifier& type_id)
+{
+    std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
+    for (const auto& it : local_type_identifiers_)
+    {
+        if (it.second.type_identifier1() == type_id)
+        {
+            if (TK_NONE != it.second.type_identifier2()._d())
+            {
+                return it.second.type_identifier2();
+            }
+            else
+            {
+                return it.second.type_identifier1();
+            }
+        }
+        else if (it.second.type_identifier2() == type_id)
+        {
+            return it.second.type_identifier1();
+        }
+    }
+    return type_id;
 }
 
 ReturnCode_t TypeObjectRegistry::get_type_dependencies_impl(

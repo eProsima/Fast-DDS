@@ -3159,6 +3159,11 @@ TEST(ParticipantTests, UpdatableDomainParticipantQos)
     pqos.discovery_server_thread().affinity = 1;
     ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
 
+    // Check that the typelookup_service_thread can not be changed in an enabled participant
+    participant->get_qos(pqos);
+    pqos.typelookup_service_thread().affinity = 1;
+    ASSERT_EQ(participant->set_qos(pqos), RETCODE_IMMUTABLE_POLICY);
+
 #if HAVE_SECURITY
     // Check that the security_log_thread can not be changed in an enabled participant
     participant->get_qos(pqos);
