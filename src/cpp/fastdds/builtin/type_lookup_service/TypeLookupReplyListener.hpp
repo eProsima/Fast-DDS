@@ -17,12 +17,22 @@
  *
  */
 
-#ifndef TYPELOOKUP_REPLY_LISTENER_HPP_
-#define TYPELOOKUP_REPLY_LISTENER_HPP_
-#ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+#ifndef _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REPLY_LISTENER_HPP_
+#define _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REPLY_LISTENER_HPP_
 
-#include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/writer/WriterListener.h>
+#include <condition_variable>
+#include <mutex>
+#include <queue>
+#include <unordered_map>
+#include <unordered_set>
+
+#include <fastrtps/rtps/reader/ReaderListener.h>
+#include <fastrtps/rtps/writer/WriterListener.h>
+
+#include <fastdds/builtin/type_lookup_service/detail/TypeLookupTypes.hpp>
+#include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
+#include <utils/thread.hpp>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -40,6 +50,12 @@ namespace builtin {
 
 class TypeLookupManager;
 
+struct ReplyWithServerGUID
+{
+    TypeLookup_Reply reply;
+    fastrtps::rtps::GUID_t type_server;
+};
+
 /**
  * Class TypeLookupReplyListener that receives the typelookup request messages of remote endpoints.
  * @ingroup TYPES_MODULE
@@ -50,7 +66,7 @@ public:
 
     /**
      * @brief Constructor
-     * @param manager Pointer to the TypeLookupManager
+     * @param manager Pointer to the TypeLookupManager.
      */
     TypeLookupReplyListener(
             TypeLookupManager* manager);
@@ -60,33 +76,81 @@ public:
      */
     virtual ~TypeLookupReplyListener() override;
 
+protected:
+
     /**
-     * @brief Method call when this class is notified of a new cache change
-     * @param reader The reader receiving the cache change
-     * @param change The cache change
+     * @brief Starts the thread that process the received replies.
+     */
+    void start_reply_processor_thread();
+
+    /**
+     * @brief Stops the thread that process the received replies.
+     */
+    void stop_reply_processor_thread();
+
+    /**
+     * @brief Process the replies in the queue.
+     */
+    void process_reply();
+
+    /**
+     * @brief Registers TypeIdentifier and TypeObject in TypeObjectRegistry.
+     * This method also notifies all type related callbacks and removes the current SampleIdentity from the pending request list.
+     * @param request_id[in] The SampleIdentity of the request.
+     * @param reply[in] The reply data.
+     * @param related_request[in] The request that this reply answers.
+     */
+    void check_get_types_reply(
+            const SampleIdentity& request_id,
+            const TypeLookup_getTypes_Out& reply,
+            SampleIdentity related_request);
+
+    /**
+     * @brief Checks if all dependencies are solved.
+     * If they are not, sends next request and adds it to the list.
+     * If they are, sends get_types request and adds it to the list.
+     * Also removes the current SampleIdentity from the list.
+     * @param request_id[in] The SampleIdentity of the request.
+     * @param type_server[in] GUID corresponding to the remote participant which TypeInformation is being solved.
+     * @param reply[in] The reply data.
+     */
+    void check_get_type_dependencies_reply(
+            const SampleIdentity& request_id,
+            const fastrtps::rtps::GUID_t type_server,
+            const TypeLookup_getTypeDependencies_Out& reply);
+
+    /**
+     * @brief Method called when this class is notified of a new cache change.
+     * @param reader The reader receiving the cache change.
+     * @param change The cache change.
      */
     void onNewCacheChangeAdded(
             fastrtps::rtps::RTPSReader* reader,
             const fastrtps::rtps::CacheChange_t* const change) override;
 
-    /**
-     * @brief This method is called when all the readers matched with this Writer acknowledge that a cache
-     * change has been received.
-     * @param change The cache change
-     */
     void onWriterChangeReceivedByAll(
             fastrtps::rtps::RTPSWriter*,
             fastrtps::rtps::CacheChange_t* change) override;
 
-private:
-
-    //! A pointer to the typelookup manager
+    //! A pointer to the typelookup manager.
     TypeLookupManager* typelookup_manager_;
+
+    //! Mutex to protect access to replies_with_continuation_.
+    std::mutex replies_with_continuation_mutex_;
+
+    //! Collection of the replies that needed continuation points.
+    std::vector<SampleIdentity> replies_with_continuation_;
+
+    eprosima::thread replies_processor_thread;
+    std::queue<ReplyWithServerGUID> replies_queue_;
+    std::mutex replies_processor_cv_mutex_;
+    std::condition_variable replies_processor_cv_;
+    bool processing_ = false;
+    rtps::ThreadSettings replies_processor_thread_settings_;
 };
 
 } /* namespace builtin */
 } /* namespace dds */
 } /* namespace fastdds */
 } /* namespace eprosima */
-#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
-#endif /* TYPELOOKUP_REPLY_LISTENER_HPP_*/
+#endif /* _FASTDDS_BUILTIN_TYPE_LOOKUP_SERVICE_TYPE_LOOKUP_REPLY_LISTENER_HPP_*/
