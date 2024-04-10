@@ -1392,22 +1392,18 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     using namespace std;
     using namespace eprosima::fastdds::rtps;
 
-    RemoteServerList_t output, standard;
-    RemoteServerAttributes att;
+    LocatorList_t output, standard;
     Locator_t loc, loc6(LOCATOR_KIND_UDPv6, 0);
 
     // We are going to use several test string and check they are properly parsed and turn into RemoteServerList_t
     // 1. Single server address without specific port provided
     string text = "192.168.36.34";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc, text);
     IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1415,14 +1411,11 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     // 2. Single server IPv6 address without specific port provided
     text = "2a02:26f0:dd:499::356e";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc6, text);
     IPLocator::setPhysicalPort(loc6, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1430,14 +1423,11 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     // 3. Single server address specifying a custom listening port
     text = "192.168.36.34:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc, text);
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1445,14 +1435,11 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     // 4. Single server IPv6 address specifying a custom listening port
     text = "[2001:470:142:5::116]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc6, "2001:470:142:5::116");
     IPLocator::setPhysicalPort(loc6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1460,21 +1447,15 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     // 5. Check any locator is turned into localhost
     text = "0.0.0.0:14520;[::]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc, "127.0.0.1");
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv6(loc6, "::1");
     IPLocator::setPhysicalPort(loc6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1486,7 +1467,7 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_TRUE(output.empty());
 
-    // 7. Check at least one server be present scenario is hadled
+    // 7. Check at least one server be present scenario is handled
     text = ";;;;";
     output.clear();
 
@@ -1498,26 +1479,17 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, string("192.168.36.34"));
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.29.55.77"));
     IPLocator::setPhysicalPort(loc, 8783);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.30.80.1"));
     IPLocator::setPhysicalPort(loc, 31090);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(2, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1528,26 +1500,17 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, "192.168.36.34");
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv6(loc6, "2a02:ec80:600:ed1a::3");
     IPLocator::setPhysicalPort(loc6, 8783);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.30.80.1"));
     IPLocator::setPhysicalPort(loc, 31090);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(2, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1558,19 +1521,13 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, "239.255.0.1");
     IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficMulticastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv6(loc6, "ff1e::ffff:efff:1");
     IPLocator::setPhysicalPort(loc6, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficMulticastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1581,86 +1538,57 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, string("192.168.36.34"));
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.29.55.77"));
     IPLocator::setPhysicalPort(loc, 8783);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(3, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.30.80.1"));
     IPLocator::setPhysicalPort(loc, 31090);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(4, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 12. Check that env var cannot specify more than 256 servers
-    text = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
-            ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;"
-            ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;192.168.36.34:14520";
-    output.clear();
-
-    ASSERT_FALSE(load_environment_server_info(text, output));
-
-    // 13. Check addresses as dns name (test domain urls are checked on a specific test)
+    // 12. Check addresses as dns name (test domain urls are checked on a specific test)
     text = "localhost:12345";
 
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, "127.0.0.1");
     IPLocator::setPhysicalPort(loc, 12345);
-    att.metatrafficUnicastLocatorList.push_back(loc);
+    standard.push_back(loc);
     IPLocator::setIPv6(loc6, "::1");
     IPLocator::setPhysicalPort(loc6, 12345);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 14. Check mixed scenario with addresses and dns
+    // 13. Check mixed scenario with addresses and dns
     text = "192.168.36.34:14520;localhost:12345;172.30.80.1:31090;";
 
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, string("192.168.36.34"));
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("127.0.0.1"));
     IPLocator::setPhysicalPort(loc, 12345);
-    att.metatrafficUnicastLocatorList.push_back(loc);
+    standard.push_back(loc);
     IPLocator::setIPv6(loc6, string("::1"));
     IPLocator::setPhysicalPort(loc6, 12345);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.30.80.1"));
     IPLocator::setPhysicalPort(loc, 31090);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(2, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1670,70 +1598,58 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     Locator_t loc_tcp(LOCATOR_KIND_TCPv4, 0);
     Locator_t loc_tcp_6(LOCATOR_KIND_TCPv6, 0);
 
-    // 15. Single TCPv4 address without specifying a custom listening port
+    // 14. Single TCPv4 address without specifying a custom listening port
 
     text = "TCPv4:[192.168.36.34]";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc_tcp, "192.168.36.34");
     IPLocator::setPhysicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
     IPLocator::setLogicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 16. Single TCPv6 address without specifying a custom listening port
+    // 15. Single TCPv6 address without specifying a custom listening port
 
     text = "TCPv6:[2a02:26f0:dd:499::356e]";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc_tcp_6, "2a02:26f0:dd:499::356e");
     IPLocator::setPhysicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
     IPLocator::setLogicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp_6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 17. Single TCPv4 address specifying a custom listening port
+    // 16. Single TCPv4 address specifying a custom listening port
 
     text = "TCPv4:[192.168.36.34]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc_tcp, "192.168.36.34");
     IPLocator::setPhysicalPort(loc_tcp, 14520);
     IPLocator::setLogicalPort(loc_tcp, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
 
-    // 18. Single TCPv6 address specifying a custom listening port
+    // 17. Single TCPv6 address specifying a custom listening port
 
     text = "TCPv6:[2a02:26f0:dd:499::356e]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc_tcp_6, "2a02:26f0:dd:499::356e");
     IPLocator::setPhysicalPort(loc_tcp_6, 14520);
     IPLocator::setLogicalPort(loc_tcp_6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp_6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1745,8 +1661,7 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     using namespace std;
     using namespace eprosima::fastdds::rtps;
 
-    RemoteServerList_t output, standard;
-    RemoteServerAttributes att;
+    LocatorList_t output, standard;
     Locator_t loc, loc6(LOCATOR_KIND_UDPv6, 0);
 
     Locator_t loc_tcp(LOCATOR_KIND_TCPv4, 0);
@@ -1755,17 +1670,14 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // 1. single server DNS address resolution without specific port provided
     std::string text = "www.acme.com.test";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc6, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
+    standard.push_back(loc6);
     IPLocator::setIPv4(loc, "216.58.215.164");
     IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1773,17 +1685,14 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // 2. single server DNS address specifying a custom listening port
     text = "www.acme.com.test:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
+    standard.push_back(loc6);
     IPLocator::setIPv4(loc, "216.58.215.164");
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1792,14 +1701,11 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // UDPv4
     text = "UDPv4:[www.acme.com.test]";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc, "216.58.215.164");
     IPLocator::setPhysicalPort(loc, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1807,14 +1713,11 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // UDPv6
     text = "UDPv6:[www.acme.com.test]";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc6, DEFAULT_ROS2_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1822,15 +1725,12 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // TCPv4
     text = "TCPv4:[www.acme.com.test]";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc_tcp, "216.58.215.164");
     IPLocator::setPhysicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
     IPLocator::setLogicalPort(loc_tcp, DEFAULT_TCP_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1838,15 +1738,12 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // TCPv6
     text = "TCPv6:[www.acme.com.test]";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc_tcp_6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
     IPLocator::setLogicalPort(loc_tcp_6, DEFAULT_TCP_SERVER_PORT);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp_6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1855,14 +1752,11 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // UDPv4
     text = "UDPv4:[www.acme.com.test]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc, "216.58.215.164");
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1870,14 +1764,11 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // UDPv6
     text = "UDPv6:[www.acme.com.test]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1885,15 +1776,12 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // TCPv4
     text = "TCPv4:[www.acme.com.test]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv4(loc_tcp, "216.58.215.164");
     IPLocator::setPhysicalPort(loc_tcp, 14520);
     IPLocator::setLogicalPort(loc_tcp, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1901,15 +1789,12 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     // TCPv6
     text = "TCPv6:[www.acme.com.test]:14520";
 
-    att.clear();
     output.clear();
     standard.clear();
     IPLocator::setIPv6(loc_tcp_6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc_tcp_6, 14520);
     IPLocator::setLogicalPort(loc_tcp_6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc_tcp_6);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc_tcp_6);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
@@ -1926,26 +1811,17 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
     output.clear();
     standard.clear();
 
-    att.clear();
     IPLocator::setIPv4(loc, string("192.168.36.34"));
     IPLocator::setPhysicalPort(loc, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(0, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
-    att.clear();
     IPLocator::setIPv6(loc6, "2a00:1450:400e:803::2004");
     IPLocator::setPhysicalPort(loc6, 14520);
-    att.metatrafficUnicastLocatorList.push_back(loc6);
-    get_server_client_default_guidPrefix(1, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc6);
 
-    att.clear();
     IPLocator::setIPv4(loc, string("172.30.80.1"));
     IPLocator::setPhysicalPort(loc, 31090);
-    att.metatrafficUnicastLocatorList.push_back(loc);
-    get_server_client_default_guidPrefix(2, att.guidPrefix);
-    standard.push_back(att);
+    standard.push_back(loc);
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
