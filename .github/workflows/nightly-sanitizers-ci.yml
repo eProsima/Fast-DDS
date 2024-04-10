@@ -1,0 +1,77 @@
+name: Fast DDS Sanitizers CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  nightly-sanitizers-ci-master:
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    with:
+      label: 'nightly-sec-sanitizers-ci-master'
+      run_asan_fastdds: true
+      run_asan_discovery_server: true
+      run_tsan_fastdds: true
+      colcon_build_args: ''
+      colcon_test_args: ''
+      cmake_args: ''
+      ctest_args: ''
+      fastdds_ref: 'master'
+      discovery_server_ref: 'master'
+
+  nightly-sanitizers-ci-2_13_x:
+      uses: ./.github/workflows/reusable-sanitizers-ci.yml
+      with:
+        label: 'nightly-sec-sanitizers-ci-2.13.x'
+        run_asan_fastdds: true
+        run_asan_discovery_server: true
+        run_tsan_fastdds: true
+        colcon_build_args: ''
+        colcon_test_args: ''
+        cmake_args: ''
+        ctest_args: ''
+        fastdds_ref: '2.13.x'
+        discovery_server_ref: 'v1.2.2'
+
+  nightly-sanitizers-ci-2_10_x:
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    with:
+      label: 'nightly-sec-sanitizers-ci-2.10.x'
+      run_asan_fastdds: true
+      run_asan_discovery_server: true
+      run_tsan_fastdds: true
+      colcon_build_args: ''
+      colcon_test_args: ''
+      cmake_args: ''
+      ctest_args: ''
+      fastdds_ref: '2.10.x'
+      discovery_server_ref: 'v1.2.1'
+
+  nightly-sanitizers-ci-2_6_x:
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    with:
+      label: 'nightly-sec-sanitizers-ci-2.6.x'
+      run_asan_fastdds: true
+      run_asan_discovery_server: true
+      run_tsan_fastdds: true
+      colcon_build_args: ''
+      colcon_test_args: ''
+      cmake_args: ''
+      ctest_args: ''
+      fastdds_ref: '2.6.x'
+      discovery_server_ref: 'v1.2.1'
+
+  nightly-sanitizers-ci-3_0_x-devel:
+    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    with:
+      label: 'nightly-sec-sanitizers-ci-3.0.x-devel'
+      run_asan_fastdds: true
+      run_asan_discovery_server: true
+      run_tsan_fastdds: true
+      colcon_build_args: ''
+      colcon_test_args: ''
+      cmake_args: ''
+      ctest_args: ''
+      fastdds_ref: '3.0.x-devel'
+      discovery_server_ref: '3.0.x-devel'
