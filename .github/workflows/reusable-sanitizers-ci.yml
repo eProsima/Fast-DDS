@@ -1,0 +1,464 @@
+name: Fast DDS Sanitizers reusable workflow
+
+on:
+  workflow_call:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: true
+        type: string
+      run_asan_fastdds:
+        description: 'Run Addess Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
+      run_asan_discovery_server:
+        description: 'Run Addess Sanitizer job for Discovery Server'
+        required: false
+        type: boolean
+      run_tsan_fastdds:
+        description: 'Run Thread Sanitizer job for Fast DDS'
+        required: false
+        type: boolean
+      colcon_build_args:
+        description: 'Optional colcon build arguments'
+        required: false
+        type: string
+      colcon_test_args:
+        description: 'Optional colcon test arguments'
+        required: false
+        type: string
+      cmake_args:
+        description: 'Optional CMake Compilation Flags'
+        required: false
+        type: string
+      ctest_args:
+        description: 'Optional CTest Testing Flags'
+        required: false
+        type: string
+      fastdds_ref:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        type: string
+      discovery_server_ref:
+        description: >
+          Branch or tag of Discovery Server repository (https://github.com/eProsima/Discovery-Server)
+          Required only if the Discovery Server job is requested
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  asan_fastdds_build:
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
+          (inputs.run_asan_fastdds == true)
+        ) }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/add_labels@v0
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastrtps
+          ref: ${{ inputs.fastdds_ref }}
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool xmlschema
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Show .meta file
+        id: show_meta
+        run: |
+          cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+          colcon_build_args: ${{ inputs.colcon_build_args }}
+          cmake_args: ${{ inputs.cmake_args }}
+          cmake_args_default: ''
+          cmake_build_type: 'Debug'
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+
+      - name: Upload build artifacts
+        uses: eProsima/eProsima-CI/external/upload-artifact@v0
+        with:
+          name: build_artifacts_fastdds_asan_${{ inputs.label }}
+          path: ${{ github.workspace }}
+
+  asan_fastdds_test:
+    needs: asan_fastdds_build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download build artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: build_artifacts_fastdds_asan_${{ inputs.label }}
+          path: ${{ github.workspace }}
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Show .meta file
+        id: show_meta
+        run: |
+          cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+          colcon_build_args: ${{ inputs.colcon_build_args }}
+          cmake_args: ${{ inputs.cmake_args }}
+          cmake_args_default: -DEPROSIMA_BUILD_TESTS=ON -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON -DPERFORMANCE_TESTS=ON
+          cmake_build_type: 'Debug'
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+
+      - name: Colcon test
+        if: ${{ inputs.run_asan_fastdds }}
+        id: test
+        continue-on-error: true
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ${{ inputs.colcon_test_args }}
+          colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
+          ctest_args: ${{ inputs.ctest_args }}
+          ctest_args_default: '--timeout 300 --label-exclude "xfail"'
+          packages_names: fastrtps
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
+
+      - name: Report sanitizer errors
+        if: ${{ inputs.run_asan_fastdds }}
+        run: |
+          bash src/fastrtps/.github/workflows/utils/specific_errors_filter.sh \
+            "==ERROR:" \
+            log/latest_test/fastrtps/stdout_stderr.log \
+            _tmp_specific_error_file.log
+
+          python3 src/fastrtps/.github/workflows/utils/log_parser.py \
+            --log-file log/latest_test/fastrtps/stdout_stderr.log \
+            --specific-error-file _tmp_specific_error_file.log \
+            --output-file $GITHUB_STEP_SUMMARY  \
+            --sanitizer asan
+
+  asan_discovery_server_test:
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
+          (inputs.run_asan_discovery_server == true)
+        ) }}
+    needs: asan_fastdds_build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download build artifacts
+        uses: eProsima/eProsima-CI/external/download-artifact@v0
+        with:
+          name: build_artifacts_fastdds_asan_${{ inputs.label }}
+          path: ${{ github.workspace }}
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Get Discovery Server branch
+        id: get_discovery_server_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@v0
+        with:
+          remote_repository: eProsima/Discovery-Server
+          fallback_branch: ${{ inputs.discovery_server_ref }}
+
+      - name: Download Discovery Server repo
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          repository: eProsima/Discovery-Server
+          path: src/discovery-server
+          ref: ${{ steps.get_discovery_server_branch.outputs.deduced_branch }}
+
+      - name: Show .meta file
+        id: show_meta
+        run: |
+          cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
+          colcon_build_args: ${{ inputs.colcon_build_args }}
+          cmake_args: ${{ inputs.cmake_args }}
+          cmake_args_default: ''
+          cmake_build_type: 'Debug'
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+
+      - name: Colcon test
+        if: ${{ inputs.run_asan_fastdds }}
+        id: test
+        continue-on-error: true
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ${{ inputs.colcon_test_args }}
+          colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
+          ctest_args: ${{ inputs.ctest_args }}
+          ctest_args_default: '--timeout 300 --label-exclude "xfail"'
+          packages_names: discovery-server
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
+
+      - name: Report sanitizer errors
+        if: ${{ inputs.run_asan_discovery_server }}
+        run: |
+          bash src/fastrtps/.github/workflows/utils/specific_errors_filter.sh \
+            "==ERROR:" \
+            log/latest_test/discovery-server/stdout_stderr.log \
+            _tmp_specific_error_file.log
+
+          python3 src/fastrtps/.github/workflows/utils/log_parser.py \
+            --log-file log/latest_test/discovery-server/stdout_stderr.log \
+            --specific-error-file _tmp_specific_error_file.log \
+            --output-file $GITHUB_STEP_SUMMARY \
+            --sanitizer=asan
+
+  tsan_fastdds_test:
+    if: ${{ (
+          !contains(github.event.pull_request.labels.*.name, 'skip-ci') &&
+          !contains(github.event.pull_request.labels.*.name, 'no-test') &&
+          !contains(github.event.pull_request.labels.*.name, 'conflicts') &&
+          (inputs.run_tsan_fastdds == true)
+        ) }}
+    runs-on: ubuntu-22.04
+    env:
+      TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
+      # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
+      # These issues were fixed in GCC 12 so we upgrade to that version.
+      CC: gcc-12
+      CXX: g++-12
+    steps:
+      - name: Add ci-pending label if PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: eProsima/eProsima-CI/external/add_labels@v0
+        with:
+          labels: ci-pending
+          number: ${{ github.event.number }}
+          repo: eProsima/Fast-DDS
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastrtps
+          ref: ${{ inputs.fastdds_ref }}
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool setuptools gcovr tomark xmltodict jsondiff pandas
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch Fast DDS CI dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Show .meta file
+        id: show_meta
+        run: |
+          cat ${{ github.workspace }}/src/fastrtps/.github/workflows/config/tsan_colcon.meta
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/tsan_colcon.meta
+          colcon_build_args: ${{ inputs.colcon_build_args }}
+          cmake_args: ${{ inputs.cmake_args }}
+          cmake_args_default: ''
+          cmake_build_type: 'Debug'
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+
+      - name: Colcon test
+        if: ${{ inputs.run_asan_fastdds }}
+        id: test
+        continue-on-error: true
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@v0
+        with:
+          colcon_test_args: ${{ inputs.colcon_test_args }}
+          colcon_test_args_default: '--event-handlers=console_direct+ --return-code-on-test-failure'
+          ctest_args: ${{ inputs.ctest_args }}
+          ctest_args_default: '--timeout 300 --label-exclude "xfail" -V -E DDSSQLFilterValueTests'
+          packages_names: fastrtps
+          workspace: ${{ github.workspace }}
+          workspace_dependencies: ''
+          test_report_artifact: ${{ format('test_report_{0}_{1}', inputs.label, github.job) }}
+
+      - name: Process sanitizer reports
+        id: report_summary
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          # Create a dir for the exports
+          $exports = New-Item -ItemType Directory -Path ./exports
+          # Move to the reports dir
+          pushd ./log/latest_test/fastrtps
+          # Install the report parser module
+          Find-Module -Repository PSGallery -Name SanReportParser | Install-Module -Scope CurrentUser -Force
+          # Parse the report files
+          $rp = Show-Tsan -Path ./stdout_stderr.log
+          # filter duplicates
+          $rp = $rp | group md5hash | % { $_.group[0] }
+          # Export raw data
+          $rp | Export-CliXML (Join-Path $exports all_reports.xml)
+          # Group the reports by issue
+          $g = $rp | group fuzzhash
+          # Split up deadlocks and race reports
+          $gd = $rp | ? type -match dead | group fuzzhash
+          $gr = $rp | ? type -match race | group fuzzhash
+          # Simplified deadlock summary (only one representative report and tests associated)
+          $sd = $gd | Sort-Object count -desc | select @{l="fuzzhash";e="name"}, count, `
+              @{l="échantillon";e={$_.group[0].report}}, @{l="tests"; `
+                  e={$_.group.file | sls "(.*)\.\d+$" | % { $_.Matches.Groups[1].Value } | Sort-Object | get-unique}}
+          # Simplified race summary (only one representative report and tests associated)
+          $sr = $gr | Sort-Object count -desc | select @{l="fuzzhash";e="name"}, count, `
+              @{l="échantillon";e={$_.group[0].report}}, @{l="tests"; `
+                  e={$_.group.file | sls "(.*)\.\d+$" | % { $_.Matches.Groups[1].Value } | Sort-Object | get-unique}}
+          # Export simplified summaries
+          $sd, $sr | Export-Clixml (Join-Path $exports summary_data.xml)
+          # Export CSV summary of frequencies
+          $sd | select fuzzhash, count | Export-CSV -Path (Join-Path $exports deadlocks.csv)
+          $sr | select fuzzhash, count | Export-CSV -Path (Join-Path $exports races.csv)
+          # Export test mappings
+          & {$sd; $sr} | Sort-Object { [int]$_.fuzzhash} | % { $fuzzy=$_.fuzzhash;$_.tests |
+            select @{l="fuzzhash";e={$fuzzy}}, @{l="test";e={$_}}} |
+            Export-Csv (Join-Path $exports issue_test_map.csv)
+          # Keep a file per issue
+          $dir = New-Item -ItemType Directory -Path (Join-Path $exports reports)
+          & {$sd; $sr} | % { $_.échantillon | Out-File (Join-Path $dir "$($_.fuzzhash).tsan") }
+          # Create a summary table
+          @{Type="Deadlock";Failed=$sd.count;Hashes=$sd.fuzzhash},
+          @{Type="Data race";Failed=$sr.count;Hashes=$sr.fuzzhash} |
+            % { $_.Summary = $_.Hashes | select -First 5  | Join-String -Separator ", "
+                if ($_.Hashes.count -gt 5 ) {
+                    $_.Summary += ", ..." }; $_ } |
+              % { [PSCustomObject]$_} |
+              New-MDTable -Columns ([ordered]@{Failed=$null;Type=$null;Summary=$null}) |
+              Out-File $Env:GITHUB_STEP_SUMMARY
+          # The step fails on new deadlocks
+          $LASTEXITCODE=$sd.count
+
+      - name: Check on failures
+        if: ${{ steps.report_summary.outcome == 'failure' }}
+        shell: pwsh
+        run: |
+          Write-Host ${{ steps.report_summary.outcome }}
+          exit 1
