@@ -156,6 +156,10 @@ class PubSubWriter
 
     private:
 
+        using eprosima::fastdds::dds::DomainParticipantListener::on_participant_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_publisher_discovery;
+        using eprosima::fastdds::dds::DomainParticipantListener::on_subscriber_discovery;
+
         ParticipantListener& operator =(
                 const ParticipantListener&) = delete;
 
