@@ -436,17 +436,14 @@ bool PDPClient::create_ds_pdp_reliable_endpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-        {
-            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(entry);
+        auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+            mp_builtin->m_DiscoveryServers);
+        mp_RTPSParticipant->createSenderResources(entry);
 
-            // If SECURITY is disabled, this condition is ALWAYS true
-            if (!is_discovery_protected)
-            {
-                endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
-            }
+        // If SECURITY is disabled, this condition is ALWAYS true
+        if (!is_discovery_protected)
+        {
+            endpoints.reader.reader_->enableMessagesFromUnkownWriters(true);
         }
     }
 
@@ -809,11 +806,7 @@ void PDPClient::announceParticipantState(
                     // Ping not-connected servers
                     if (connected_servers_.size() < mp_builtin->m_DiscoveryServers.size())
                     {
-                        for (auto& svr : mp_builtin->m_DiscoveryServers)
-                        {
-                            locators.push_back(svr.metatrafficMulticastLocatorList);
-                            locators.push_back(svr.metatrafficUnicastLocatorList);
-                        }
+                        locators = mp_builtin->m_DiscoveryServers;
                     }
 
                     // Announce liveliness (lease duration) to all servers
@@ -857,18 +850,13 @@ void PDPClient::update_remote_servers_list()
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-        {
-            if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
-                    !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
-            {
-                auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                    it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-                mp_RTPSParticipant->createSenderResources(entry);
-            }
+        // Create resources for remote servers. If a sender resource is already created, this step will be skipped for
+        // that locator.
+        auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+            mp_builtin->m_DiscoveryServers);
+        mp_RTPSParticipant->createSenderResources(entry);
 
-            endpoints->reader.reader_->enableMessagesFromUnkownWriters(true);
-        }
+        endpoints->reader.reader_->enableMessagesFromUnkownWriters(true);
     }
     mp_sync->restart_timer();
 }
@@ -976,16 +964,16 @@ const std::string& ros_discovery_server_env()
 }
 
 bool load_environment_server_info(
-        RemoteServerList_t& attributes)
+        LocatorList_t& servers_list)
 {
-    return load_environment_server_info(ros_discovery_server_env(), attributes);
+    return load_environment_server_info(ros_discovery_server_env(), servers_list);
 }
 
 bool load_environment_server_info(
         const std::string& list,
-        RemoteServerList_t& attributes)
+        LocatorList_t& servers_list)
 {
-    attributes.clear();
+    servers_list.clear();
     if (list.empty())
     {
         return true;
@@ -1022,30 +1010,12 @@ bool load_environment_server_info(
             };
 
     // Add new server
-    auto add_server2qos = [](std::forward_list<Locator>&& locators, RemoteServerList_t& attributes)
+    auto add_server2qos = [](std::forward_list<Locator>&& locators, LocatorList_t& servers_list)
             {
-                RemoteServerAttributes server_att;
-
-                // To set the GUID is no necessary
-
-                // Split multi and unicast locators
-                auto unicast = std::partition(locators.begin(), locators.end(), IPLocator::isMulticast);
-
-                LocatorList mlist;
-                std::copy(locators.begin(), unicast, std::back_inserter(mlist));
-                if (!mlist.empty())
+                for (auto& server_address : locators)
                 {
-                    server_att.metatrafficMulticastLocatorList.push_back(std::move(mlist));
+                    servers_list.push_back(std::move(server_address));
                 }
-
-                LocatorList ulist;
-                std::copy(unicast, locators.end(), std::back_inserter(ulist));
-                if (!ulist.empty())
-                {
-                    server_att.metatrafficUnicastLocatorList.push_back(std::move(ulist));
-                }
-
-                attributes.push_back(std::move(server_att));
             };
 
     try
@@ -1111,7 +1081,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(std::forward_list<Locator>{server_locator}, attributes);
+                    add_server2qos(std::forward_list<Locator>{server_locator}, servers_list);
                 }
                 // Try IPv6 next
                 else if (std::regex_match(locator, mr, ROS2_IPV6_ADDRESSPORT_PATTERN,
@@ -1150,7 +1120,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(std::forward_list<Locator>{server_locator}, attributes);
+                    add_server2qos(std::forward_list<Locator>{server_locator}, servers_list);
                 }
                 // Try resolve DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN,
@@ -1241,7 +1211,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(std::move(flist), attributes);
+                    add_server2qos(std::move(flist), servers_list);
                 }
                 // Try resolve TCP DNS
                 else if (std::regex_match(locator, mr, ROS2_DNS_DOMAINPORT_PATTERN_TCP,
@@ -1335,7 +1305,7 @@ bool load_environment_server_info(
                     }
 
                     // Add server to the list
-                    add_server2qos(std::move(flist), attributes);
+                    add_server2qos(std::move(flist), servers_list);
                 }
                 else
                 {
@@ -1350,7 +1320,7 @@ bool load_environment_server_info(
         }
 
         // Check for server info
-        if (attributes.empty())
+        if (servers_list.empty())
         {
             throw std::invalid_argument("No default server locators were provided.");
         }
@@ -1358,7 +1328,7 @@ bool load_environment_server_info(
     catch (std::exception& e)
     {
         EPROSIMA_LOG_ERROR(SERVER_CLIENT_DISCOVERY, e.what());
-        attributes.clear();
+        servers_list.clear();
         return false;
     }
 

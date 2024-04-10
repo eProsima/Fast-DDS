@@ -166,6 +166,13 @@ public:
         return false;
     }
 
+    /// Not equal to operator
+    RTPS_DllAPI bool operator !=(
+            const LocatorList& locator_list) const
+    {
+        return !(*this == locator_list);
+    }
+
     /**
      * @brief Return an iterator to the beginning.
      *

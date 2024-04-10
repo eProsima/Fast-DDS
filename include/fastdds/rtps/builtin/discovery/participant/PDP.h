@@ -415,10 +415,10 @@ public:
             const GuidPrefix_t& guid_prefix);
 
     /**
-     * Get the list of remote servers to which the client should connect
-     * @return A reference to the list of RemoteServerAttributes
+     * Get the list of remote servers' locators to which the client should connect
+     * @return A reference to the LocatorList
      */
-    std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& remote_server_attributes();
+    fastdds::rtps::LocatorList& remote_server_locators();
 
     /**
      * Access the temporary proxy pool for reader proxies

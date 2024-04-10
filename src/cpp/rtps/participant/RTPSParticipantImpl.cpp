@@ -350,21 +350,18 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                                 " tries to create a TCP client for discovery server without providing a proper listening port." <<
                                 " No TCP participants will be able to connect to this participant, but it will be able make connections.");
                     }
-                    for (fastdds::rtps::RemoteServerAttributes& it : m_att.builtin.discovery_config.m_DiscoveryServers)
-                    {
-                        std::for_each(it.metatrafficUnicastLocatorList.begin(),
-                                it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                    std::for_each(m_att.builtin.discovery_config.m_DiscoveryServers.begin(),
+                            m_att.builtin.discovery_config.m_DiscoveryServers.end(), [&](Locator_t& locator)
+                            {
+                                // TCP DS default logical port is the same as the physical one
+                                if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
                                 {
-                                    // TCP DS default logical port is the same as the physical one
-                                    if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
+                                    if (IPLocator::getLogicalPort(locator) == 0)
                                     {
-                                        if (IPLocator::getLogicalPort(locator) == 0)
-                                        {
-                                            IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
-                                        }
+                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
                                     }
-                                });
-                    }
+                                }
+                            });
                 }
             }
         default:
@@ -1538,30 +1535,24 @@ void RTPSParticipantImpl::update_attributes(
     bool update_pdp = false;
 
     // Check if discovery servers need to be updated
-    eprosima::fastdds::rtps::RemoteServerList_t converted_discovery_servers =
+    eprosima::fastdds::rtps::LocatorList_t converted_discovery_servers =
             patt.builtin.discovery_config.m_DiscoveryServers;
-    if (patt.builtin.discovery_config.m_DiscoveryServers != m_att.builtin.discovery_config.m_DiscoveryServers)
+    if (converted_discovery_servers != m_att.builtin.discovery_config.m_DiscoveryServers)
     {
         for (auto& transportDescriptor : m_att.userTransports)
         {
             TCPTransportDescriptor* pT = dynamic_cast<TCPTransportDescriptor*>(transportDescriptor.get());
             if (pT)
             {
-                for (fastdds::rtps::RemoteServerAttributes& it : converted_discovery_servers)
-                {
-                    std::for_each(it.metatrafficUnicastLocatorList.begin(),
-                            it.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                // TCP DS default logical port is the same as the physical one
+                std::for_each(converted_discovery_servers.begin(),
+                        converted_discovery_servers.end(), [&](Locator_t& locator)
+                        {
+                            if (IPLocator::getLogicalPort(locator) == 0)
                             {
-                                // TCP DS default logical port is the same as the physical one
-                                if (locator.kind == LOCATOR_KIND_TCPv4 || locator.kind == LOCATOR_KIND_TCPv6)
-                                {
-                                    if (IPLocator::getLogicalPort(locator) == 0)
-                                    {
-                                        IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
-                                    }
-                                }
-                            });
-                }
+                                IPLocator::setLogicalPort(locator, IPLocator::getPhysicalPort(locator));
+                            }
+                        });
             }
         }
     }
@@ -2784,19 +2775,6 @@ bool RTPSParticipantImpl::ignore_participant(
     {
         EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "A participant is unable to ignore itself");
         return false;
-    }
-    {
-        shared_lock<eprosima::shared_mutex> _(mp_builtinProtocols->getDiscoveryMutex());
-
-        for (auto server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
-                server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
-        {
-            if (server_it->guidPrefix == participant_guid)
-            {
-                EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Cannot ignore one of this participant Discovery Servers");
-                return false;
-            }
-        }
     }
     {
         std::unique_lock<shared_mutex> _(ignored_mtx_);

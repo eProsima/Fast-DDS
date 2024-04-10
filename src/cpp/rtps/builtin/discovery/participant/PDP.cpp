@@ -1406,7 +1406,7 @@ ParticipantProxyData* PDP::get_participant_proxy_data(
     return nullptr;
 }
 
-std::list<eprosima::fastdds::rtps::RemoteServerAttributes>& PDP::remote_server_attributes()
+fastdds::rtps::LocatorList& PDP::remote_server_locators()
 {
     return mp_builtin->m_DiscoveryServers;
 }

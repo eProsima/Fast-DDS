@@ -277,7 +277,7 @@ public:
     Duration_t discoveryServer_client_syncperiod = { 0, 450 * 1000000}; // 450 milliseconds
 
     //! Discovery Server initial connections, needed if `discoveryProtocol` = CLIENT | SUPER_CLIENT | SERVER | BACKUP
-    eprosima::fastdds::rtps::RemoteServerList_t m_DiscoveryServers;
+    eprosima::fastdds::rtps::LocatorList m_DiscoveryServers;
 
     //! Filtering participants out depending on location
     ParticipantFilteringFlags_t ignoreParticipantFlags = ParticipantFilteringFlags::NO_FILTER;

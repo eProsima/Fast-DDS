@@ -83,7 +83,7 @@ bool DSClientEvent::event()
         }
     }
 
-    if (mp_PDP->connected_servers().size() < mp_PDP->remote_server_attributes().size())
+    if (mp_PDP->connected_servers().size() < mp_PDP->remote_server_locators().size())
     {
         // If there are pending servers, we need to run the event again
         restart = true;

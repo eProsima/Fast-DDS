@@ -70,7 +70,7 @@ PDPServer::PDPServer(
     , durability_ (durability_kind)
 {
     // Add remote servers from environment variable
-    RemoteServerList_t env_servers;
+    LocatorList_t env_servers;
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
@@ -487,12 +487,9 @@ bool PDPServer::create_ds_pdp_reliable_endpoints(
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
-        for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
-        {
-            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(entry);
-        }
+        auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+            mp_builtin->m_DiscoveryServers);
+        mp_RTPSParticipant->createSenderResources(entry);
     }
 
     return true;
@@ -1180,17 +1177,14 @@ void PDPServer::update_remote_servers_list()
 
     std::lock_guard<std::recursive_mutex> lock(*getMutex());
 
-    eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-
-    for (const eprosima::fastdds::rtps::RemoteServerAttributes& it : mp_builtin->m_DiscoveryServers)
     {
-        if (!endpoints->reader.reader_->matched_writer_is_matched(it.GetPDPWriter()) ||
-                !endpoints->writer.writer_->matched_reader_is_matched(it.GetPDPReader()))
-        {
-            auto entry = LocatorSelectorEntry::create_fully_selected_entry(
-                it.metatrafficUnicastLocatorList, it.metatrafficMulticastLocatorList);
-            mp_RTPSParticipant->createSenderResources(entry);
-        }
+        eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
+
+        // Create resources for remote servers. If a sender resource is already created, this step will be skipped for
+        // that locator.
+        auto entry = LocatorSelectorEntry::create_fully_selected_entry(
+            mp_builtin->m_DiscoveryServers);
+        mp_RTPSParticipant->createSenderResources(entry);
     }
 
     // Need to reactivate the server thread to send the DATA(p) to the new servers
@@ -1456,7 +1450,7 @@ fastdds::rtps::ddb::DiscoveryDataBase& PDPServer::discovery_db()
     return discovery_db_;
 }
 
-const RemoteServerList_t& PDPServer::servers()
+const LocatorList_t& PDPServer::servers()
 {
     return mp_builtin->m_DiscoveryServers;
 }
@@ -1587,11 +1581,8 @@ void PDPServer::ping_remote_servers()
     {
         std::lock_guard<std::recursive_mutex> lock(*getMutex());
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
-        for (auto& server : mp_builtin->m_DiscoveryServers)
-        {
-            // Get the info to send to this already known locators
-            locators_ping.push_back(server.metatrafficUnicastLocatorList);
-        }
+        // Get the info to send to this already known locators
+        locators_ping = mp_builtin->m_DiscoveryServers;
     }
 
     if (!locators_ping.empty())
