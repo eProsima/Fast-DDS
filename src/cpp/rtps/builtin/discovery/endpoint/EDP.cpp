@@ -163,7 +163,7 @@ bool EDP::newLocalReaderProxyData(
 #endif // if HAVE_SECURITY
                 if (att.auto_fill_type_information)
                 {
-                    // TypeInformation, TypeObject and TypeIdentifier
+                    // TypeInformation
                     if (!att.type_information.assigned())
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
@@ -171,8 +171,7 @@ bool EDP::newLocalReaderProxyData(
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
                                         .get_type_information(rpd->typeName().c_str(), type_info))
                         {
-                            // TODO (adelcampo) Change to xtypes
-                            // rpd->type_information() = type_info;
+                            rpd->type_information() = type_info;
                         }
                     }
                 }
@@ -271,7 +270,7 @@ bool EDP::newLocalWriterProxyData(
 
                 if (att.auto_fill_type_information)
                 {
-                    // TypeInformation, TypeObject and TypeIdentifier
+                    // TypeInformation
                     if (!att.type_information.assigned())
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
@@ -279,8 +278,7 @@ bool EDP::newLocalWriterProxyData(
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
                                         .get_type_information(wpd->typeName().c_str(), type_info))
                         {
-                            // TODO (adelcampo) Change to xtypes
-                            // wpd->type_information() = type_info;
+                            wpd->type_information() = type_info;
                         }
                     }
                 }
@@ -366,7 +364,7 @@ bool EDP::updatedLocalReader(
 
                 if (att.auto_fill_type_information)
                 {
-                    // TypeInformation, TypeObject and TypeIdentifier
+                    // TypeInformation
                     if (!rdata->type_information().assigned())
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
@@ -374,8 +372,7 @@ bool EDP::updatedLocalReader(
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
                                         .get_type_information(rdata->typeName().c_str(), type_info))
                         {
-                            // TODO (adelcampo) Change to xtypes
-                            // rdata->type_information() = type_info;
+                            rdata->type_information() = type_info;
                         }
                     }
                 }
@@ -434,7 +431,7 @@ bool EDP::updatedLocalWriter(
 
                 if (att.auto_fill_type_information)
                 {
-                    // TypeInformation, TypeObject and TypeIdentifier
+                    // TypeInformation
                     if (!wdata->type_information().assigned())
                     {
                         fastdds::dds::xtypes::TypeInformation type_info;
@@ -442,8 +439,7 @@ bool EDP::updatedLocalWriter(
                                 eprosima::fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer()
                                         .get_type_information(wdata->typeName().c_str(), type_info))
                         {
-                            // TODO (adelcampo) Change to xtypes
-                            // wdata->type_information() = *type_info;
+                            wdata->type_information() = type_info;
                         }
                     }
                 }
@@ -577,6 +573,24 @@ bool EDP::valid_matching(
     {
         reason.set(MatchingFailureMask::different_topic);
         return false;
+    }
+
+    if ((wdata->has_type_information() && wdata->type_information().assigned()) &&
+            (rdata->has_type_information() && rdata->type_information().assigned()))
+    {
+        if (wdata->type_information().type_information != rdata->type_information().type_information)
+        {
+            reason.set(MatchingFailureMask::different_typeinfo);
+            return false;
+        }
+    }
+    else
+    {
+        if (wdata->typeName() != rdata->typeName())
+        {
+            reason.set(MatchingFailureMask::inconsistent_topic);
+            return false;
+        }
     }
 
     if (wdata->topicKind() != rdata->topicKind())

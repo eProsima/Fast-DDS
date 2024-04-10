@@ -578,9 +578,10 @@ TEST_F(DataReaderTests, get_guid)
     {
     public:
 
-        void on_subscriber_discovery(
+        void on_data_reader_discovery(
                 DomainParticipant*,
-                ReaderDiscoveryInfo&& info)
+                ReaderDiscoveryInfo&& info,
+                bool& /*should_be_ignored*/) override
         {
             std::unique_lock<std::mutex> lock(mutex);
             if (ReaderDiscoveryInfo::DISCOVERED_READER == info.status)
@@ -596,7 +597,7 @@ TEST_F(DataReaderTests, get_guid)
 
     private:
 
-        using DomainParticipantListener::on_subscriber_discovery;
+        using DomainParticipantListener::on_data_reader_discovery;
     }
     discovery_listener;
 

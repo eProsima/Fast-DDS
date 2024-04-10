@@ -52,6 +52,9 @@ BuiltinProtocols::BuiltinProtocols()
 
 BuiltinProtocols::~BuiltinProtocols()
 {
+    // This needs to be done first because of the WriterProxydata and ReaderProxyData smart_ptr
+    delete typelookup_manager_;
+
     // Send participant is disposed
     if (mp_PDP != nullptr)
     {
@@ -61,7 +64,7 @@ BuiltinProtocols::~BuiltinProtocols()
     // TODO Auto-generated destructor stub
     delete mp_WLP;
     delete mp_PDP;
-    delete typelookup_manager_;
+
 }
 
 bool BuiltinProtocols::initBuiltinProtocols(
