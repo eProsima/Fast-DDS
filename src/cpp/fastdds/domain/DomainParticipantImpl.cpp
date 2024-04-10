@@ -1563,7 +1563,9 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onReaderDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_subscriber_discovery(participant_->participant_, std::move(info));
+        bool should_be_ignored = false;
+        participant_->listener_->on_data_reader_discovery(participant_->participant_, std::move(info),
+                should_be_ignored);
     }
 }
 
@@ -1574,7 +1576,9 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onWriterDiscovery(
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_publisher_discovery(participant_->participant_, std::move(info));
+        bool should_be_ignored = false;
+        participant_->listener_->on_data_writer_discovery(participant_->participant_, std::move(info),
+                should_be_ignored);
     }
 }
 
@@ -1824,6 +1828,12 @@ bool DomainParticipantImpl::can_qos_be_updated(
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Participant discovery_server_thread cannot be changed after the participant is enabled");
+    }
+    if (!(to.typelookup_service_thread() == from.typelookup_service_thread()))
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Participant typelookup_service_thread cannot be changed after the participant is enabled");
     }
 #if HAVE_SECURITY
     if (!(to.security_log_thread() == from.security_log_thread()))

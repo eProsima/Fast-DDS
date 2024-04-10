@@ -296,14 +296,6 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<GroupDataQosPolicy>::cdr_serialized_size(m_qos.m_groupData);
     }
-    if (m_type_id && m_type_id->m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
-    {
-        ret_val += fastdds::dds::QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(*m_type_id);
-    }
-    if (m_type && m_type->m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
-    {
-        ret_val += fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(*m_type);
-    }
     if (m_type_information && m_type_information->assigned())
     {
         ret_val +=
@@ -564,23 +556,14 @@ bool WriterProxyData::writeToCDRMessage(
             return false;
         }
     }
-
-    if (m_type_id && m_type_id->m_type_identifier._d() != fastdds::dds::xtypes::TK_NONE)
+    if (m_type_information && m_type_information->assigned())
     {
-        if (!fastdds::dds::QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(*m_type_id, msg))
+        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(*
+                m_type_information, msg))
         {
             return false;
         }
     }
-
-    if (m_type && m_type->m_type_object._d() != fastdds::dds::xtypes::TK_NONE)
-    {
-        if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(*m_type, msg))
-        {
-            return false;
-        }
-    }
-
     if (m_properties.size() > 0)
     {
         if (!fastdds::dds::ParameterSerializer<ParameterPropertyList_t>::add_to_cdr_message(m_properties, msg))
@@ -611,14 +594,7 @@ bool WriterProxyData::writeToCDRMessage(
         }
     }
 
-    if (m_type_information && m_type_information->assigned())
-    {
-        if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::add_to_cdr_message(*
-                m_type_information, msg))
-        {
-            return false;
-        }
-    }
+
 
     return fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(msg);
 }
@@ -963,27 +939,20 @@ bool WriterProxyData::readFromCDRMessage(
                     }
                     case fastdds::dds::PID_TYPE_IDV1:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<TypeIdV1>::read_from_cdr_message(type_id(), msg,
-                                plength))
-                        {
-                            return false;
-                        }
+                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA,
+                                "Reception of TypeIdentifiers is not supported. They will be ignored");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_OBJECTV1:
                     {
-                        if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::read_from_cdr_message(type(), msg,
-                                plength))
-                        {
-                            return false;
-                        }
+                        EPROSIMA_LOG_WARNING(RTPS_PROXY_DATA,
+                                "Reception of TypeObjects is not supported. They will be ignored");
                         break;
                     }
                     case fastdds::dds::PID_TYPE_INFORMATION:
                     {
                         if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformationParameter>::
-                                read_from_cdr_message(
-                                    type_information(), msg, plength))
+                                read_from_cdr_message(type_information(), msg, plength))
                         {
                             return false;
                         }

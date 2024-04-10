@@ -74,6 +74,18 @@ public:
 
 private:
 
+    std::string get_writer_proxy_topic_name(
+            fastrtps::rtps::GUID_t auxGUID);
+
+    void notify_discoverydatabase(
+            std::string topic_name,
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::CacheChange_t* change);
+
+    void continue_with_writer(
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::CacheChange_t* change);
+
     //!Pointer to the EDPServer
     EDPServer* sedp_;
 };
@@ -107,6 +119,18 @@ public:
             const fastrtps::rtps::CacheChange_t* const change) override;
 
 private:
+
+    std::string get_reader_proxy_topic_name(
+            fastrtps::rtps::GUID_t auxGUID);
+
+    void notify_discoverydatabase(
+            std::string topic_name,
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::CacheChange_t* change);
+
+    void continue_with_reader(
+            fastrtps::rtps::RTPSReader* reader,
+            fastrtps::rtps::CacheChange_t* change);
 
     //!Pointer to the EDPServer
     EDPServer* sedp_;
