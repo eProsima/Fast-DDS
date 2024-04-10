@@ -969,6 +969,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
                     <calculate_crc>false</calculate_crc>\
                     <check_crc>false</check_crc>\
                     <enable_tcp_nodelay>false</enable_tcp_nodelay>\
+                    <tcp_negotiation_timeout>100</tcp_negotiation_timeout>\
                     <tls><!-- TLS Section --></tls>\
                 </transport_descriptor>\
                 ";
@@ -1002,6 +1003,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv4Desc->logical_port_increment, 2u);
         EXPECT_EQ(pTCPv4Desc->listening_ports[0], 5100u);
         EXPECT_EQ(pTCPv4Desc->listening_ports[1], 5200u);
+        EXPECT_EQ(pTCPv4Desc->tcp_negotiation_timeout, 100u);
         xmlparser::XMLProfileManager::DeleteInstance();
 
         // TCPv6
@@ -1027,6 +1029,7 @@ TEST_F(XMLParserTests, parseXMLTransportData)
         EXPECT_EQ(pTCPv6Desc->logical_port_increment, 2u);
         EXPECT_EQ(pTCPv6Desc->listening_ports[0], 5100u);
         EXPECT_EQ(pTCPv6Desc->listening_ports[1], 5200u);
+        EXPECT_EQ(pTCPv6Desc->tcp_negotiation_timeout, 100u);
         xmlparser::XMLProfileManager::DeleteInstance();
     }
 
@@ -1113,6 +1116,7 @@ TEST_F(XMLParserTests, parseXMLTransportData_NegativeClauses)
         "check_crc",
         "enable_tcp_nodelay",
         "tls",
+        "tcp_negotiation_timeout",
         "bad_element"
     };
 

@@ -59,6 +59,7 @@ const char* METADATA_LOGICAL_PORT = "metadata_logical_port";
 const char* LISTENING_PORTS = "listening_ports";
 const char* CALCULATE_CRC = "calculate_crc";
 const char* CHECK_CRC = "check_crc";
+const char* TCP_NEGOTIATION_TIMEOUT = "tcp_negotiation_timeout";
 const char* SEGMENT_SIZE = "segment_size";
 const char* PORT_QUEUE_CAPACITY = "port_queue_capacity";
 const char* PORT_OVERFLOW_POLICY = "port_overflow_policy";
