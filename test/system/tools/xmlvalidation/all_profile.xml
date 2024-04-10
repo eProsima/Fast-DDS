@@ -110,16 +110,12 @@
                         <discoveryProtocol>CLIENT</discoveryProtocol>
 
                         <discoveryServersList>
-                            <RemoteServer prefix="72.61.73.70.66.61.72.6d.74.65.73.74">
-                                <metatrafficUnicastLocatorList>
-                                    <locator>
-                                        <udpv4>
-                                            <address>192.168.10.57</address>
-                                            <port>56542</port>
-                                        </udpv4>
-                                    </locator>
-                                </metatrafficUnicastLocatorList>
-                            </RemoteServer>
+                            <locator>
+                                <udpv4>
+                                    <address>192.168.10.57</address>
+                                    <port>56542</port>
+                                </udpv4>
+                            </locator>
                         </discoveryServersList>
 
                         <ignoreParticipantFlags>FILTER_DIFFERENT_HOST</ignoreParticipantFlags>

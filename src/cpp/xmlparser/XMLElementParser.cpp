@@ -538,8 +538,8 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
         }
         else if (strcmp(name, SERVER_LIST) == 0)
         {
-            // discoverServersList - DiscoveryServerList
-            if (XMLP_ret::XML_OK != getXMLList(p_aux0, settings.m_DiscoveryServers, ident))
+            // discoverServersList - locatorListType
+            if (XMLP_ret::XML_OK != getXMLLocatorList(p_aux0, settings.m_DiscoveryServers, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
