@@ -32,6 +32,7 @@
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <fastdds/utils/TimedMutex.hpp>
 
+#include <fastdds/builtin/type_lookup_service/TypeLookupManager.hpp>
 #include <rtps/builtin/BuiltinProtocols.h>
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 #include <rtps/builtin/discovery/endpoint/EDPServer.hpp>
@@ -721,6 +722,8 @@ void PDPServer::perform_builtin_endpoints_matching(
     {
         mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
+
+    mp_builtin->typelookup_manager_->assign_remote_endpoints(pdata);
 }
 
 void PDPServer::removeRemoteEndpoints(

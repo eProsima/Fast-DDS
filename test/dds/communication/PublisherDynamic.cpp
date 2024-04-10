@@ -245,9 +245,8 @@ int main(
     }
 
     DynamicType::_ref_type dyn_type;
-    if (RETCODE_OK !=
-            DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name("TypeLookup",
-            dyn_type))
+    if (RETCODE_OK != DomainParticipantFactory::get_instance()->
+                    get_dynamic_type_builder_from_xml_by_name("TypeLookup", dyn_type))
     {
         std::cout << "Error getting dynamic type from XML file" << std::endl;
         return 1;
@@ -308,6 +307,7 @@ int main(
     data->set_uint32_value(1, 1);
     DynamicData::_ref_type inner {data->loan_value(2)};
     inner->set_byte_value(0, 10);
+    data->return_loaned_value(inner);
 
     while (run)
     {
@@ -329,6 +329,7 @@ int main(
         octet inner_count;
         inner->get_byte_value(inner_count, 0);
         inner->set_byte_value(0, inner_count + 1);
+        data->return_loaned_value(inner);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }

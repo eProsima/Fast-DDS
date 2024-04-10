@@ -33,6 +33,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
+using EndpointAddedCallback = std::function<
+    void (RTPSReader* reader, const CacheChange_t* change)>;
+
 class RTPSReader;
 struct CacheChange_t;
 
@@ -77,7 +80,9 @@ protected:
             ReaderHistory* reader_history,
             CacheChange_t* change,
             EDP* edp,
-            bool release_change = true);
+            bool release_change = true,
+            const EndpointAddedCallback& writer_added_callback = nullptr
+            );
 };
 
 /**
@@ -99,7 +104,9 @@ protected:
             ReaderHistory* reader_history,
             CacheChange_t* change,
             EDP* edp,
-            bool release_change = true);
+            bool release_change = true,
+            const EndpointAddedCallback& reader_added_callback = nullptr
+            );
 };
 
 /*!

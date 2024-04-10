@@ -133,6 +133,8 @@ protected:
     void set_incompatible_type()
     {
         rdata->typeName("AnotherTypeName");
+        rdata->type_information().assigned(false);
+        wdata->type_information().assigned(false);
     }
 
     void check_expectations(

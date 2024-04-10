@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /*!
- * @file
+ * @file common.hpp
  * This file contains common definitions for the different XTypes modules.
  */
 
@@ -43,8 +43,8 @@ enum class TryConstructKind : uint32_t
     TRIM
 };
 
-/**
- * @brief PlacementKind values (@verbatim annotation)
+/*!
+ * @brief PlacementKind values (verbatim annotation)
  */
 enum class PlacementKind : uint32_t
 {
