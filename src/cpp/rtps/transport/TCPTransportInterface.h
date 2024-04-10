@@ -511,12 +511,13 @@ public:
      *
      * @param send_resource_list List of send resources associated to the local participant.
      * @param remote_participant_locators Set of locators associated to the remote participant.
-     * @param participant_initial_peers List of locators associated to the initial peers of the local participant.
+     * @param participant_initial_peers_and_ds List of locators associated to the initial peers and direct servers
+     * of the local participant.
      */
     void cleanup_sender_resources(
             SendResourceList& send_resource_list,
             const LocatorList& remote_participant_locators,
-            const LocatorList& participant_initial_peers) const;
+            const LocatorList& participant_initial_peers_and_ds) const;
 
     /**
      * Method to add the logical ports associated to a channel that was not available

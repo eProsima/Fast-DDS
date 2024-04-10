@@ -3177,10 +3177,15 @@ void RTPSParticipantImpl::update_removed_participant(
     if (!remote_participant_locators.empty())
     {
         std::lock_guard<std::timed_mutex> guard(m_send_resources_mutex_);
+        LocatorList_t initial_peers_and_ds = m_att.builtin.discovery_config.m_DiscoveryServers;
+        for (const Locator_t& locator : m_att.builtin.initialPeersList)
+        {
+            initial_peers_and_ds.push_back(locator);
+        }
         m_network_Factory.remove_participant_associated_send_resources(
             send_resource_list_,
             remote_participant_locators,
-            m_att.builtin.initialPeersList);
+            initial_peers_and_ds);
     }
 }
 

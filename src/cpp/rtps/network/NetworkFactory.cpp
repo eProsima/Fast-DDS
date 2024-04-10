@@ -530,7 +530,7 @@ void NetworkFactory::update_network_interfaces()
 void NetworkFactory::remove_participant_associated_send_resources(
         SendResourceList& send_resource_list,
         const LocatorList_t& remote_participant_locators,
-        const LocatorList_t& participant_initial_peers) const
+        const LocatorList_t& participant_initial_peers_and_ds) const
 {
     // TODO(eduponz): Call the overload of CloseOutputChannel that takes a LocatorSelectorEntry for
     // all transports and let them decide what to do.
@@ -542,7 +542,7 @@ void NetworkFactory::remove_participant_associated_send_resources(
             tcp_transport->cleanup_sender_resources(
                 send_resource_list,
                 remote_participant_locators,
-                participant_initial_peers);
+                participant_initial_peers_and_ds);
         }
     }
 }
