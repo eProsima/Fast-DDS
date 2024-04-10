@@ -3451,5 +3451,7 @@ int main(
         char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    int ret_value = RUN_ALL_TESTS();
+    eprosima::fastdds::dds::Log::KillThread();
+    return ret_value;
 }
