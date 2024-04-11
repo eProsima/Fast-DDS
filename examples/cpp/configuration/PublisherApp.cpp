@@ -132,13 +132,13 @@ PublisherApp::PublisherApp(
         writer_qos.resource_limits().max_instances = config.max_instances;
         writer_qos.resource_limits().max_samples_per_instance = config.max_samples_per_instance;
         writer_qos.ownership().kind = config.ownership;
-        if (config.strength > 0
+        if (config.ownership_strength > 0
                 && config.ownership != OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS)
         {
             throw std::runtime_error(
                       "DataWriter initialization failed: ownership strength is only valid with exclusive ownership");
         }
-        writer_qos.ownership_strength().value = config.strength;
+        writer_qos.ownership_strength().value = config.ownership_strength;
         writer_qos.deadline().period = eprosima::fastrtps::Duration_t(config.deadline * 1e-3);
         writer_qos.reliable_writer_qos().disable_positive_acks.enabled = config.disable_positive_ack;
         writer_qos.reliable_writer_qos().disable_positive_acks.duration = eprosima::fastrtps::Duration_t(

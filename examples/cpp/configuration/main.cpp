@@ -70,34 +70,38 @@ int main(
         ret = EXIT_FAILURE;
     }
 
-    std::thread thread(&Application::run, app);
-
-    if (samples == 0)
+    if (EXIT_FAILURE != ret)
     {
-        std::cout << app_name << " running. Please press Ctrl+C to stop the "
-                  << app_name << " at any time." << std::endl;
-    }
-    else
-    {
-        std::cout << app_name << " running for " << samples << " samples. Please press Ctrl+C to stop the "
-                  << app_name << " at any time." << std::endl;
-    }
+        std::thread thread(&Application::run, app);
 
-    stop_app_handler = [&](int signum)
-            {
-                std::cout << "\n" << CLIParser::parse_signal(signum) << " received, stopping " << app_name
-                          << " execution." << std::endl;
-                app->stop();
-            };
+        if (samples == 0)
+        {
+            std::cout << app_name << " running. Please press Ctrl+C to stop the "
+                    << app_name << " at any time." << std::endl;
+        }
+        else
+        {
+            std::cout << app_name << " running for " << samples << " samples. Please press Ctrl+C to stop the "
+                    << app_name << " at any time." << std::endl;
+        }
 
-    signal(SIGINT, signal_handler);
-    signal(SIGTERM, signal_handler);
+        stop_app_handler = [&](int signum)
+                {
+                    std::cout << "\n" << CLIParser::parse_signal(signum) << " received, stopping " << app_name
+                            << " execution." << std::endl;
+                    app->stop();
+                };
+
+        signal(SIGINT, signal_handler);
+        signal(SIGTERM, signal_handler);
 #ifndef _WIN32
-    signal(SIGQUIT, signal_handler);
-    signal(SIGHUP, signal_handler);
+        signal(SIGQUIT, signal_handler);
+        signal(SIGHUP, signal_handler);
 #endif // _WIN32
 
-    thread.join();
+        thread.join();
+    }
+    
     Log::Reset();
     return ret;
 }

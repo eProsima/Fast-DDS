@@ -21,7 +21,7 @@ config_test_cases = [
     ('--keep-last 10 --liveliness-kind MANUAL_BY_TOPIC', '--keep-last 10 --liveliness-kind MANUAL_BY_TOPIC'),
     ('--keep-last 10 --liveliness-assert 500', '--keep-last 10 --liveliness-assert 500'),
     ('--keep-last 10 --ownership', '--keep-last 10 --ownership'),                           # Ownership QoS
-    ('--keep-last 10 --ownership --strength 10', '--keep-last 10 --ownership'),
+    ('--keep-last 10 --ownership --ownership-strength 10', '--keep-last 10 --ownership'),
     ('--keep-last 10 --partition configuration_example_partition', '--keep-last 10 --partition configuration_example_partition'), # Partition QoS
     ('--keep-last 10 --partition \'configuration_example_partition\'', '--keep-last 10 --partition \'configuration_example_partition\''),
     ('--keep-last 10 --partition "configuration_example_partition"', '--keep-last 10 --partition "configuration_example_partition"'),
@@ -38,8 +38,8 @@ def test_configuration(pub_args, sub_args):
     """."""
     ret = False
     out = ''
-    pub_requirements = '-d 113 --reliable --transient-local'
-    sub_requirements = '-d 113 --reliable --transient-local'
+    pub_requirements = '--reliable --transient-local'
+    sub_requirements = '--reliable --transient-local'
 
     command_prerequisites = 'PUB_ARGS="' + pub_requirements + ' ' + pub_args + '" SUB_ARGS="' + sub_requirements + ' ' + sub_args + '" '
     try:
@@ -69,8 +69,6 @@ def test_configuration(pub_args, sub_args):
 
     except subprocess.CalledProcessError as e:
         print (e.output)
-        #for l in e.output.split('\n'):
-        #    print(l)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
         print(out)
@@ -78,18 +76,18 @@ def test_configuration(pub_args, sub_args):
     assert(ret)
 
 timeout_test_cases = [
-    ('--transport SHM', '--transport UDPv4'),                                     # Builtin transports
-    ('--deadline 300', '--deadline 100'),                                         # Deadline QoS
-    ('', '--disable-positive-ack'),                                                # Disable positive ACKs QoS
-    ('', '--transient-local'),                                                     # Durability QoS
+    ('--transport SHM', '--transport UDPv4'),                                       # Builtin transports
+    ('--deadline 300', '--deadline 100'),                                           # Deadline QoS
+    ('', '--disable-positive-ack'),                                                 # Disable positive ACKs QoS
+    ('', '--transient-local'),                                                      # Durability QoS
     #('--keep-last 10 --max-samples-per-instance 1', ''), # this one only displays warning from now on
-    ('--liveliness-kind AUTOMATIC', '--liveliness-kind MANUAL_BY_PARTICIPANT'),   # Liveliness QoS
+    ('--liveliness-kind AUTOMATIC', '--liveliness-kind MANUAL_BY_PARTICIPANT'),     # Liveliness QoS
     ('--liveliness-kind AUTOMATIC', '--liveliness-kind MANUAL_BY_TOPIC'),
     ('--liveliness-kind MANUAL_BY_PARTICIPANT', '--liveliness-kind MANUAL_BY_TOPIC'),
-    ('--ownership', ''),                                                           # Ownership QoS
+    ('--ownership', ''),                                                            # Ownership QoS
     ('', '--ownership'),
     ('--partition configuration_example_partition', '--partition other_partition'), # Partition QoS
-    ('', '--reliable'),                                                          # Reliability QoS
+    ('', '--reliable'),                                                             # Reliability QoS
 ]
 
 @pytest.mark.parametrize("pub_args, sub_args", timeout_test_cases)
@@ -120,6 +118,8 @@ def test_configuration_timeout(pub_args, sub_args):
 expected_output_test_cases = [
     ('--deadline 80', '--deadline 80', 'Deadline missed!', '10'),               # 10 = n samples sent
     ('--deadline 80', '--deadline 80', 'Requested deadline missed!', '15'),     # 20 = n samples received (10 x 2) (flaky)
+    ('--liveliness 80 --liveliness-assert 70', '--liveliness 80 --liveliness-assert 70', 'Liveliness changed!', '1'),
+    ('--liveliness-kind MANUAL_BY_TOPIC --liveliness 50 --liveliness-assert 40', '--liveliness-kind MANUAL_BY_TOPIC --liveliness 50 --liveliness-assert 40', 'Liveliness lost!', '10'),
 ]
 
 @pytest.mark.parametrize("pub_args, sub_args, expected_message, n_messages", expected_output_test_cases)
@@ -148,11 +148,11 @@ def test_configuration_expected_output(pub_args, sub_args, expected_message, n_m
         if count >= int(n_messages):
             ret = True
         else:
-            print ('ERROR: expected: 10 "' + expected_message + '" messages, but received ' + str(count))
-            raise subprocess.CalledProcessError(1, out.decode())
+            print ('ERROR: expected at least: ' + n_messages +' "' + expected_message + '" messages, but received ' + str(count))
+            raise subprocess.CalledProcessError(1, render_out)
 
     except subprocess.CalledProcessError as e:
-        print (e.output)
+        print (render_out)
     except subprocess.TimeoutExpired:
         print('TIMEOUT')
         print(out)

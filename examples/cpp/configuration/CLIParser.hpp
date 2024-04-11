@@ -1,4 +1,3 @@
-
 // Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,10 +34,37 @@ using dds::Log;
 
 class CLIParser
 {
+    //! Entity configuration structure (shared for both publisher and subscriber applications)
+    struct entity_config
+    {
+        bool disable_positive_ack = false;
+        uint8_t ttl = 1;
+        uint16_t samples = 0;
+        uint32_t domain = 0;
+        int32_t history_depth = 1;
+        int32_t max_samples = 5000;
+        int32_t max_instances = 10;
+        int32_t max_samples_per_instance = 400;
+        uint32_t deadline = fastrtps::Duration_t::INFINITE_SECONDS;
+        uint32_t lifespan = fastrtps::Duration_t::INFINITE_SECONDS;
+        uint32_t liveliness_lease = fastrtps::Duration_t::INFINITE_SECONDS;
+        uint32_t liveliness_assert = fastrtps::Duration_t::INFINITE_SECONDS - 1;
+        std::string partitions = "";
+        std::string profile_participant = "";
+        std::string topic_name = "configuration_topic";
+        eprosima::fastdds::rtps::BuiltinTransports transport = eprosima::fastdds::rtps::BuiltinTransports::DEFAULT;
+        DurabilityQosPolicyKind durability = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
+        HistoryQosPolicyKind history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
+        LivelinessQosPolicyKind liveliness = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
+        OwnershipQosPolicyKind ownership = OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
+        ReliabilityQosPolicyKind reliability = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
+    };
+
 public:
 
     CLIParser() = delete;
 
+    //! Entity kind enumeration
     enum class EntityKind : uint8_t
     {
         PUBLISHER,
@@ -46,51 +72,25 @@ public:
         UNDEFINED
     };
 
-private:
-
-    struct entity_config
-    {
-        uint16_t samples = 0;
-        uint32_t domain = 0;
-        eprosima::fastdds::rtps::BuiltinTransports transport = eprosima::fastdds::rtps::BuiltinTransports::DEFAULT;
-        uint8_t ttl = 1;
-        std::string topic_name = "configuration_topic";
-        std::string profile_participant = "";
-        ReliabilityQosPolicyKind reliability = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
-        DurabilityQosPolicyKind durability = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
-        HistoryQosPolicyKind history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
-        int32_t history_depth = 1;
-        int32_t max_samples = 5000;
-        int32_t max_instances = 10;
-        int32_t max_samples_per_instance = 400;
-        bool disable_positive_ack = false;
-        uint32_t deadline = fastrtps::Duration_t::INFINITE_SECONDS;
-        uint32_t lifespan = fastrtps::Duration_t::INFINITE_SECONDS;
-        LivelinessQosPolicyKind liveliness = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
-        uint32_t liveliness_lease = fastrtps::Duration_t::INFINITE_SECONDS;
-        uint32_t liveliness_assert = fastrtps::Duration_t::INFINITE_SECONDS - 1;
-        OwnershipQosPolicyKind ownership = OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
-        std::string partitions = "";
-    };
-
-public:
-
+    //! Publisher application configuration structure
     struct publisher_config : public entity_config
     {
         uint16_t wait = 0;
-        uint32_t msg_size = 10;
-        uint32_t interval = 100;
         uint32_t ack_keep_duration = fastrtps::Duration_t::INFINITE_SECONDS;
-        uint32_t strength = 0;
+        uint32_t interval = 100;
+        uint32_t msg_size = 10;
+        uint32_t ownership_strength = 0;
         std::string profile_writer = "";
         PublishModeQosPolicyKind publish_mode = PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
     };
 
+    //! Subscriber application configuration structure
     struct subscriber_config : public entity_config
     {
         std::string profile_reader = "";
     };
 
+    //! Configuration structure for the application
     struct configuration_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
@@ -98,6 +98,13 @@ public:
         subscriber_config sub_config;
     };
 
+    /**
+     * @brief Print usage help message and exit with the given return code
+     *
+     * @param return_code return code to exit with
+     *
+     * @warning This method finishes the execution of the program with the input return code
+     */
     static void print_help(
             uint8_t return_code)
     {
@@ -118,13 +125,13 @@ public:
         std::cout << "  -h, --help                          Print this help message"                    << std::endl;
         std::cout << "      --keep-all                      Set History QoS as keep all"                << std::endl;
         std::cout << "                                      (Default: keep last 1)"                     << std::endl;
-        std::cout << "  -k, --keep-last <num>               Set History QoS as keep last <num>"         << std::endl;
+        std::cout << "  -k <num>, --keep-last <num>         Set History QoS as keep last <num>"         << std::endl;
         std::cout << "                                      [1 <= <num> <= 2147483647]"                 << std::endl;
         std::cout << "                                      (Default: keep last 1)"                     << std::endl;
         std::cout << "      --lifespan <num>                Set Lifespan QoS as <num> milliseconds"     << std::endl;
         std::cout << "                                      [1 <= <num> <= 4294967]"                    << std::endl;
         std::cout << "                                      (Default: unlimited)"                       << std::endl;
-        std::cout << "  -l, --liveliness <num>              Set liveliness lease duration in "          << std::endl;
+        std::cout << "  -l <num>, --liveliness <num>        Set liveliness lease duration in "          << std::endl;
         std::cout << "                                      milliseconds"                               << std::endl;
         std::cout << "                                      [1 <= <num> <= 4294967]"                    << std::endl;
         std::cout << "                                      (Default: unlimited)"                       << std::endl;
@@ -158,10 +165,6 @@ public:
         std::cout << "                                      (Default: '')"                              << std::endl;
         std::cout << "      --profile-participant <str>     Profile name from already exported"         << std::endl;
         std::cout << "                                      XML file to configure DomainParticipant"    << std::endl;
-        std::cout << "      --profile-reader <str>          Profile name from already exported"         << std::endl;
-        std::cout << "                                      XML file to configure DataReader"           << std::endl;
-        std::cout << "      --profile-writer <str>          Profile name from already exported"         << std::endl;
-        std::cout << "                                      XML file to configure DataWriter"           << std::endl;
         std::cout << "  -r, --reliable                      Set Reliability QoS as reliable"            << std::endl;
         std::cout << "                                      (Default: best effort)"                     << std::endl;
         std::cout << "  -s <num>, --samples <num>           Number of samples to send or receive"       << std::endl;
@@ -177,7 +180,7 @@ public:
         std::cout << "                                         (refer to Fast DDS documentation)"       << std::endl;
         std::cout << "                                      (Default: DEFAULT)"                         << std::endl;
         std::cout << "      --ttl <num>                     Number of multicast discovery Time To Live" << std::endl;
-        std::cout << "                                      hops  [1 <= <num> <= 255]"                  << std::endl;
+        std::cout << "                                      hops  [0 <= <num> <= 255]"                  << std::endl;
         std::cout << "                                      (Default: 1)"                               << std::endl;
         std::cout << ""                                                                                 << std::endl;
         std::cout << "Publisher options:"                                                               << std::endl;
@@ -192,18 +195,33 @@ public:
         std::cout << "                                      (Default: 100)"                             << std::endl;
         std::cout << "  -m <num>, --msg-size <num>          Size in bytes of the data to be sent"       << std::endl;
         std::cout << "                                      (Default: 10)"                              << std::endl;
-        std::cout << "      --strength <num>                Set <num> as publisher ownership strength." << std::endl;
+        std::cout << "      --ownership-strength <num>      Set <num> as publisher ownership strength." << std::endl;
         std::cout << "                                      This flag forces the exclusive ownership"   << std::endl;
         std::cout << "                                      configuration in the publisher ('-o' flag)" << std::endl;
         std::cout << "                                      [0 <= <num> <= 4294967295]"                 << std::endl;
         std::cout << "                                      (Default: 0 [unused, shared ownership])"    << std::endl;
+        std::cout << "      --profile-writer <str>          Profile name from already exported"         << std::endl;
+        std::cout << "                                      XML file to configure DataWriter"           << std::endl;
         std::cout << "  -w <num>, --wait <num>              Number of matched subscribers required to"  << std::endl;
         std::cout << "                                      start publishing"                           << std::endl;
         std::cout << "                                      [0 <= <num> <= 4294967]"                    << std::endl;
         std::cout << "                                      (Default: 0 [does not wait])"               << std::endl;
+        std::cout << ""                                                                                 << std::endl;
+        std::cout << "Subscriber options:"                                                              << std::endl;
+        std::cout << "      --profile-reader <str>          Profile name from already exported"         << std::endl;
+        std::cout << "                                      XML file to configure DataReader"           << std::endl;
         std::exit(return_code);
     }
 
+    /**
+     * @brief Parse the command line options and return the configuration_config object
+     *
+     * @param argc number of arguments
+     * @param argv array of arguments
+     * @return configuration_config object with the parsed options
+     *
+     * @warning This method finishes the execution of the program if the input arguments are invalid
+     */
     static configuration_config parse_cli_options(
             int argc,
             char* argv[])
@@ -321,10 +339,10 @@ public:
                     try
                     {
                         int input = std::stoi(argv[i]);
-                        if (input < 1 || input > 255)
+                        if (input < 0 || input > 255)
                         {
                             throw std::out_of_range("domain argument " + std::string(
-                                              argv[i]) + " out of range [1, 255].");
+                                              argv[i]) + " out of range [0, 255].");
                         }
                         else
                         {
@@ -876,19 +894,18 @@ public:
                                     static_cast<long>(input) >
                                     static_cast<long>(std::numeric_limits<uint32_t>::max()))
                             {
-                                throw std::out_of_range("strength argument " + std::string(
+                                throw std::out_of_range("msg-size argument " + std::string(
                                                   argv[i]) + " out of range [1, " +
                                               std::to_string(std::numeric_limits<uint32_t>::max()) + "].");
                             }
                             else
                             {
-                                config.pub_config.ownership = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
-                                config.pub_config.strength = static_cast<uint32_t>(input);
+                                config.pub_config.msg_size = static_cast<uint32_t>(input);
                             }
                         }
                         catch (const std::invalid_argument& e)
                         {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid strength argument " + std::string(
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid msg-size argument " + std::string(
                                         argv[i]) + ": " + std::string(e.what()));
                             print_help(EXIT_FAILURE);
                         }
@@ -1011,7 +1028,7 @@ public:
                     print_help(EXIT_FAILURE);
                 }
             }
-            else if (arg == "--strength")
+            else if (arg == "--ownership-strength")
             {
                 if (config.entity == CLIParser::EntityKind::PUBLISHER)
                 {
@@ -1023,19 +1040,19 @@ public:
                             if (static_cast<long>(input) < static_cast<long>(std::numeric_limits<uint32_t>::min()) ||
                                     static_cast<long>(input) > static_cast<long>(std::numeric_limits<uint32_t>::max()))
                             {
-                                throw std::out_of_range("strength argument " + std::string(
+                                throw std::out_of_range("ownership strength argument " + std::string(
                                                   argv[i]) + " out of range [0, " +
                                               std::to_string(std::numeric_limits<uint32_t>::max()) + "].");
                             }
                             else
                             {
                                 config.pub_config.ownership = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
-                                config.pub_config.strength = static_cast<uint32_t>(input);
+                                config.pub_config.ownership_strength = static_cast<uint32_t>(input);
                             }
                         }
                         catch (const std::invalid_argument& e)
                         {
-                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid strength argument " + std::string(
+                            EPROSIMA_LOG_ERROR(CLI_PARSER, "invalid ownership strength argument " + std::string(
                                         argv[i]) + ": " + std::string(e.what()));
                             print_help(EXIT_FAILURE);
                         }
@@ -1047,13 +1064,13 @@ public:
                     }
                     else
                     {
-                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing strength argument");
+                        EPROSIMA_LOG_ERROR(CLI_PARSER, "parsing ownership strength argument");
                         print_help(EXIT_FAILURE);
                     }
                 }
                 else
                 {
-                    EPROSIMA_LOG_ERROR(CLI_PARSER, "strength argument is only valid for publisher entity");
+                    EPROSIMA_LOG_ERROR(CLI_PARSER, "ownership strength argument is only valid for publisher entity");
                     print_help(EXIT_FAILURE);
                 }
             }
@@ -1066,6 +1083,12 @@ public:
         return config;
     }
 
+    /**
+     * @brief Parse the signal number into the signal name
+     *
+     * @param signum signal number
+     * @return std::string signal name
+     */
     static std::string parse_signal(
             const int& signum)
     {
@@ -1084,6 +1107,12 @@ public:
         }
     }
 
+    /**
+     * @brief Parse the entity kind into std::string
+     *
+     * @param entity entity kind
+     * @return std::string entity kind
+     */
     static std::string parse_entity_kind(
             const EntityKind& entity)
     {

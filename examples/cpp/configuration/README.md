@@ -123,6 +123,9 @@ Using argument **``-t``** ``<transport>`` or **``--transport``** ``<transport>``
 * **``LARGE_DATA``** option instantiates UDPv4, TCPv4, and SHM transports.
   However, UDPv4 will only be used for multicast announcements during the participant discovery phase (PDP), while the participant liveliness and the application data delivery occurs over TCPv4 or SHM.
 
+Argument **``--ttl``** ``<num>`` configures the number of multicast discovery Time To Live (TTL) hops.
+It can be necessary to update this argument if the connection is deployed in different subnets.
+
 ## Deadline QoS
 
 Using argument **``--deadline``** ``<period>`` will configure the corresponding endpoint to trigger a callback when the frequency of sending / receiving new samples falls below the given threshold.
@@ -133,7 +136,7 @@ Moreover, there is a compatibility rule between data readers and data writers, w
 Otherwise, the entities are considered incompatible (and they will not match).
 
 The argument **``-i``** ``<period>`` or **``--interval``** ``<period>`` configures the **publisher** application with the sending samples period (in milliseconds).
-It should be always higher than the deadline period, otherwise ``on_offered_deadline_missed`` will be triggered any time a sample is sent.
+It should be always **greater** than the deadline period, otherwise ``on_offered_deadline_missed`` will be triggered any time a sample is sent.
 
 ## Disable positive ACKs QoS
 
@@ -217,28 +220,32 @@ The maximum number of samples to keep and deliver is defined by the depth, which
 
 ## Lifespan QoS
 
-Using argument **``--lifespan``** ``<period>`` will configure the corresponding endpoint to remove samples from their history after a certain period of time.
+Using argument **``--lifespan``** ``<period>`` will configure the corresponding endpoint to remove samples from their history after a certain period of time (in  milliseconds).
 That period is infinite by default, so the samples are not removed unless this policy is modified.
 
 ## Liveliness QoS
 
 Using argument **``-l``** ``<duration>``  or **``--liveliness``** ``<duration>`` will configure the corresponding endpoint to wait that lease duration before considering that a data writer is no longer alive.
 
-Also, the argument **``--liveliness-kind``** ``<kind>`` establishes how a data writer is considered alive:
+Also, the argument **``--liveliness-assert``** ``<period>`` configures the period between consecutive liveliness messages sent by the participant.
 
-* **``AUTOMATIC``**: as long as the local process where the participant is running and the link connecting it to remote participants exists, the entities within the remote participant will be considered alive.
+Finally, the argument **``--liveliness-kind``** ``<kind>`` establishes how a data writer is considered alive:
 
-The two Manual modes require that the application on the publishing side asserts the liveliness periodically before the lease duration timer expires.
+* **``AUTOMATIC``**: the entities within the remote participant are considered alive as long as the local process where the participant is running, and the link connecting it to remote participants, exist.
+
+The two Manual modes require that the **publisher** application asserts the liveliness periodically before the lease duration timer expires.
 Publishing any new data value implicitly asserts the data writer's liveliness, but it can be done explicitly too.
 
 * **``MANUAL_BY_PARTICIPANT``**: If one of the entities in the publishing side asserts its liveliness, the service deduces that all other entities within the same DomainParticipant are also alive.
 
 * **``MANUAL_BY_TOPIC``**: requires at least one instance within the data writer is asserted to consider it alive.
 
-Finally, the argument **``--liveliness-assert``** ``<period>`` configures the period between consecutive liveliness messages sent by the data writer.
-It is only taken into account when the liveliness QoS kind is **``AUTOMATIC``** or **``MANUAL_BY_PARTICIPANT``**, and this period is **lower** than the liveliness lease duration.
+**Note**: The **``--liveliness-assert``** ``<period>`` configuration is only taken into account when the liveliness QoS kind is **``AUTOMATIC``** or **``MANUAL_BY_PARTICIPANT``**.
+Also, this ``<period>`` must be **lower** than the liveliness lease duration.
 
-Moreover, there is a compatibility rule between data readers and data writers, where the liveliness kind is checked to ensure the expected behavior.
+The lease duration of the **publisher** application must be **greater** than the lease duration of the **subscriber** application, otherwise the endpoints are considered incompatible.
+
+Moreover, there is a *liveliness kind* compatibility rule between data readers and data writers, where the kind is checked to ensure the expected behavior.
 The following table represents the compatibility matrix (compatible ✔️ vs incompatible ✖️):
 
 <table>
@@ -273,17 +280,17 @@ The following table represents the compatibility matrix (compatible ✔️ vs in
 </table><br>
 
 The argument **``-i``** ``<period>`` or **``--interval``** ``<period>`` configures the **publisher** application with the sending samples period (in milliseconds).
-It should be always lower than the liveliness lease duration, otherwise liveliness will be lost after sending each sample and recovered when sending the next sample.
+It should be always **lower** than the liveliness lease duration, otherwise liveliness will be lost after sending each sample and recovered when sending the next sample.
 
 ## Ownership QoS
 
-Using argument **``-o``** or **``--ownership``** will configure the corresponding endpoint with **``EXCLUSIVE``** ownership QoS kind.
+Using argument **``-o``** or **``--ownership``** will configure the corresponding endpoint with **``EXCLUSIVE``** [ownership QoS kind](https://fast-dds.docs.eprosima.com/en/latest/fastdds/dds_layer/core/policy/standardQosPolicies.html#ownershipqospolicykind).
 If the argument is not provided, by default is configured as **``SHARED``**.
 
 Whereas **``SHARED``** allows multiple data writer to update the same instance of data, **``EXCLUSIVE``** forces each instance of data to be updated only by one data writer.
-The owner can be changed dynamically according to the highest ownership QoS strength between the alive data writer, which has not violated the deadline contract concerning the data instances.
+The owner can be changed dynamically according to the highest ownership QoS strength between the alive data writers.
 
-That strength can be changed only in the **publisher** application using the argument **``--strength``** ``<number>``.
+That strength can be changed only in the **publisher** application using the argument **``--ownership-strength``** ``<number>``.
 
 Moreover, there is a compatibility rule between data readers and data writers, where the ownership QoS kind is checked to ensure the expected behavior.
 The following table represents the compatibility matrix (compatible ✔️ vs incompatible ✖️):
