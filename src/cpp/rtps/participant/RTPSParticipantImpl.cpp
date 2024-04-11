@@ -1849,7 +1849,8 @@ bool RTPSParticipantImpl::createAndAssociateReceiverswithEndpoint(
             }
 
             // Try creating receiver resources
-            if (createReceiverResources(attributes.unicastLocatorList, false, true, false))
+            LocatorList_t aux_locator_list = attributes.unicastLocatorList;
+            if (createReceiverResources(aux_locator_list, false, true, false))
             {
                 break;
             }
@@ -1966,8 +1967,11 @@ bool RTPSParticipantImpl::createReceiverResources(
         bool RegisterReceiver,
         bool log_when_creation_fails)
 {
+    auto input_list = Locator_list;
+    Locator_list.clear();
+
     std::vector<std::shared_ptr<ReceiverResource>> newItemsBuffer;
-    bool ret_val = Locator_list.empty();
+    bool ret_val = input_list.empty();
 
 #if HAVE_SECURITY
     // An auxilary buffer is needed in the ReceiverResource to to decrypt the message,
@@ -1978,7 +1982,7 @@ bool RTPSParticipantImpl::createReceiverResources(
     uint32_t max_receiver_buffer_size = (std::numeric_limits<uint32_t>::max)();
 #endif // if HAVE_SECURITY
 
-    for (auto it_loc = Locator_list.begin(); it_loc != Locator_list.end(); ++it_loc)
+    for (auto it_loc = input_list.begin(); it_loc != input_list.end(); ++it_loc)
     {
         Locator_t loc = *it_loc;
         bool ret = m_network_Factory.BuildReceiverResources(loc, newItemsBuffer, max_receiver_buffer_size);
@@ -1995,7 +1999,7 @@ bool RTPSParticipantImpl::createReceiverResources(
 
         if (ret)
         {
-            *it_loc = loc;
+            Locator_list.push_back(loc);
         }
         else if (log_when_creation_fails)
         {
