@@ -3731,6 +3731,169 @@ TEST_F(DataReaderTests, history_depth_max_samples_per_instance_warning)
     Log::KillThread();
 }
 
+struct LoanableType
+{
+    static constexpr uint32_t initialization_value()
+    {
+        return 27u;
+    }
+
+    uint32_t index = initialization_value();
+};
+
+class DataRepresentationTestsTypeSupport : public TopicDataType
+{
+public:
+
+    typedef LoanableType type;
+
+    DataRepresentationTestsTypeSupport()
+        : TopicDataType()
+    {
+        m_typeSize = 4u + sizeof(LoanableType);
+        setName("LoanableType");
+    }
+
+    bool serialize(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/) override
+    {
+        return true;
+    }
+
+    bool serialize(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            DataRepresentationId_t /*data_representation*/) override
+    {
+        return true;
+    }
+
+    bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* /*payload*/,
+            void* /*data*/) override
+    {
+        return true;
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/) override
+    {
+        return [this]()
+               {
+                   return m_typeSize;
+               };
+    }
+
+    std::function<uint32_t()> getSerializedSizeProvider(
+            void* /*data*/,
+            DataRepresentationId_t /*data_representation*/) override
+    {
+        return [this]()
+               {
+                   return m_typeSize;
+               };
+    }
+
+    void* createData() override
+    {
+        return nullptr;
+    }
+
+    void deleteData(
+            void* /*data*/) override
+    {
+    }
+
+    bool getKey(
+            void* /*data*/,
+            eprosima::fastrtps::rtps::InstanceHandle_t* /*ihandle*/,
+            bool /*force_md5*/) override
+    {
+        return true;
+    }
+
+    bool is_bounded() const override
+    {
+        return true;
+    }
+
+    MOCK_CONST_METHOD1(custom_is_plain, bool(DataRepresentationId_t data_representation_id));
+
+    bool is_plain(
+            DataRepresentationId_t data_representation_id) const override
+    {
+        return custom_is_plain(data_representation_id);
+    }
+
+    bool is_plain() const override
+    {
+        return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION); // default XCDR1
+    }
+
+    bool construct_sample(
+            void* sample) const override
+    {
+        new (sample) LoanableType();
+        return true;
+    }
+
+};
+
+TEST_F(DataReaderTests, data_type_is_plain_data_representation)
+{
+    /* Create a participant, topic, and a subscriber */
+    DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,
+                    PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    DataRepresentationTestsTypeSupport* type = new DataRepresentationTestsTypeSupport();
+    TypeSupport ts (type);
+    ts.register_type(participant);
+
+    Topic* topic = participant->create_topic("plain_topic", "LoanableType", TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    /* Define XCDR1 only data representation QoS to force "is_plain" call */
+    DataReaderQos qos_xcdr = DATAREADER_QOS_DEFAULT;
+    qos_xcdr.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos_xcdr.type_consistency().representation.m_value.clear();
+    qos_xcdr.type_consistency().representation.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+
+    /* Expect the "is_plain" method called with default data representation (XCDR1) */
+    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
+            testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
+
+    /* Create a datareader will trigger the "is_plain" call */
+    DataReader* datareader_xcdr = subscriber->create_datareader(topic, qos_xcdr);
+    ASSERT_NE(datareader_xcdr, nullptr);
+
+    testing::Mock::VerifyAndClearExpectations(&type);
+
+    /* Define XCDR2 data representation QoS to force "is_plain" call */
+    DataReaderQos qos_xcdr2 = DATAREADER_QOS_DEFAULT;
+    qos_xcdr2.endpoint().history_memory_policy = PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+    qos_xcdr2.type_consistency().representation.m_value.clear();
+    qos_xcdr2.type_consistency().representation.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    /* Expect the "is_plain" method called with XCDR2 data representation */
+    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
+    EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
+            testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+
+    /* Create a datareader will trigger the "is_plain" call */
+    DataReader* datareader_xcdr2 = subscriber->create_datareader(topic, qos_xcdr2);
+    ASSERT_NE(datareader_xcdr2, nullptr);
+
+    /* Tear down */
+    participant->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
+}
+
 int main(
         int argc,
         char** argv)
