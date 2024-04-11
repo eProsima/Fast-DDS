@@ -73,8 +73,6 @@ TEST(SHM, TransportPubSub)
     reader.wait_participant_undiscovery();
 }
 
-<<<<<<< HEAD
-=======
 /* Regression test for redmine issue #20701
  *
  * This test checks that the SHM transport will not listen on the same port
@@ -127,94 +125,6 @@ TEST(SHM, SamePortUnicastMulticast)
     EXPECT_TRUE(first_port == global_port || second_port == global_port);
 }
 
-// Regression test for redmine #19500
-TEST(SHM, IgnoreNonExistentSegment)
-{
-    using namespace eprosima::fastdds::dds;
-
-    // Set up log
-    BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
-    Log::ClearConsumers();  // Remove default consumers
-    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
-    // Filter specific message
-    Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
-    Log::SetCategoryFilter(std::regex("RTPS_TRANSPORT_SHM"));
-    Log::SetErrorStringFilter(std::regex("Error receiving data.*"));
-
-    PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<Data1mbPubSubType> writer(TEST_TOPIC_NAME);
-
-    writer
-            .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .disable_builtin_transport()
-            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
-            .init();
-    ASSERT_TRUE(writer.isInitialized());
-
-    reader
-            .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-            .durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS)
-            .history_kind(eprosima::fastrtps::KEEP_ALL_HISTORY_QOS)
-            .disable_builtin_transport()
-            .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
-            .init();
-
-    ASSERT_TRUE(reader.isInitialized());
-
-    reader.wait_discovery();
-
-    // Create and quickly destroy several participants in several threads
-#ifdef _WIN32
-    constexpr size_t num_threads = 1;
-#else
-    constexpr size_t num_threads = 10;
-#endif  // _WIN32
-    std::vector<std::thread> threads;
-    for (size_t i = 0; i < num_threads; i++)
-    {
-        threads.push_back(std::thread([]()
-                {
-#ifdef _WIN32
-                    constexpr size_t num_parts = 2;
-#else
-                    constexpr size_t num_parts = 10;
-#endif  // _WIN32
-                    for (size_t i = 0; i < num_parts; ++i)
-                    {
-                        PubSubWriter<Data1mbPubSubType> late_writer(TEST_TOPIC_NAME);
-                        late_writer
-                                .asynchronously(eprosima::fastrtps::SYNCHRONOUS_PUBLISH_MODE)
-                                .reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
-                                .disable_builtin_transport()
-                                .add_user_transport_to_pparams(std::make_shared<SharedMemTransportDescriptor>())
-                                .init();
-                        ASSERT_TRUE(late_writer.isInitialized());
-                    }
-                }));
-    }
-
-    // Destroy the writer participant.
-    writer.destroy();
-
-    // Check that reader receives the unmatched.
-    reader.wait_participant_undiscovery();
-
-    for (auto& thread : threads)
-    {
-        thread.join();
-    }
-    // Check logs
-    Log::Flush();
-    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 0u);
-
-    // Clean-up
-    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
-}
-
->>>>>>> 3d159dc8c (Enforce SHM ports open mode exclusions (#4635))
 TEST(SHM, Test300KFragmentation)
 {
     PubSubReader<Data1mbPubSubType> reader(TEST_TOPIC_NAME);
