@@ -48,7 +48,7 @@ namespace const_module1 {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_const_module1_ModuleConstsLiteralsStruct_type_identifier();
+eProsima_user_DllExport void register_const_module1_ModuleConstsLiteralsStruct_type_identifier();
 
 } // namespace const_module1
 namespace const_module2 {
@@ -58,7 +58,7 @@ namespace const_module2 {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_const_module2_Module2ConstsLiteralsStruct_type_identifier();
+eProsima_user_DllExport void register_const_module2_Module2ConstsLiteralsStruct_type_identifier();
 
 } // namespace const_module2
 /**
@@ -67,7 +67,7 @@ void register_const_module2_Module2ConstsLiteralsStruct_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_ConstsLiteralsStruct_type_identifier();
+eProsima_user_DllExport void register_ConstsLiteralsStruct_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

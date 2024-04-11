@@ -47,133 +47,133 @@ eProsima_user_DllExport void register_final_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalShortStruct_type_identifier();
+eProsima_user_DllExport void register_FinalShortStruct_type_identifier();
 /**
  * @brief Register FinalUShortStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalUShortStruct_type_identifier();
+eProsima_user_DllExport void register_FinalUShortStruct_type_identifier();
 /**
  * @brief Register FinalLongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalLongStruct_type_identifier();
+eProsima_user_DllExport void register_FinalLongStruct_type_identifier();
 /**
  * @brief Register FinalULongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalULongStruct_type_identifier();
+eProsima_user_DllExport void register_FinalULongStruct_type_identifier();
 /**
  * @brief Register FinalLongLongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalLongLongStruct_type_identifier();
+eProsima_user_DllExport void register_FinalLongLongStruct_type_identifier();
 /**
  * @brief Register FinalULongLongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalULongLongStruct_type_identifier();
+eProsima_user_DllExport void register_FinalULongLongStruct_type_identifier();
 /**
  * @brief Register FinalFloatStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalFloatStruct_type_identifier();
+eProsima_user_DllExport void register_FinalFloatStruct_type_identifier();
 /**
  * @brief Register FinalDoubleStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalDoubleStruct_type_identifier();
+eProsima_user_DllExport void register_FinalDoubleStruct_type_identifier();
 /**
  * @brief Register FinalLongDoubleStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalLongDoubleStruct_type_identifier();
+eProsima_user_DllExport void register_FinalLongDoubleStruct_type_identifier();
 /**
  * @brief Register FinalBooleanStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalBooleanStruct_type_identifier();
+eProsima_user_DllExport void register_FinalBooleanStruct_type_identifier();
 /**
  * @brief Register FinalOctetStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalOctetStruct_type_identifier();
+eProsima_user_DllExport void register_FinalOctetStruct_type_identifier();
 /**
  * @brief Register FinalCharStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalCharStruct_type_identifier();
+eProsima_user_DllExport void register_FinalCharStruct_type_identifier();
 /**
  * @brief Register FinalWCharStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalWCharStruct_type_identifier();
+eProsima_user_DllExport void register_FinalWCharStruct_type_identifier();
 /**
  * @brief Register FinalUnionStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalUnionStruct_type_identifier();
+eProsima_user_DllExport void register_FinalUnionStruct_type_identifier();
 /**
  * @brief Register FinalEmptyStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalEmptyStruct_type_identifier();
+eProsima_user_DllExport void register_FinalEmptyStruct_type_identifier();
 /**
  * @brief Register FinalEmptyInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalEmptyInheritanceStruct_type_identifier();
+eProsima_user_DllExport void register_FinalEmptyInheritanceStruct_type_identifier();
 /**
  * @brief Register FinalInheritanceStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalInheritanceStruct_type_identifier();
+eProsima_user_DllExport void register_FinalInheritanceStruct_type_identifier();
 /**
  * @brief Register InheritanceEmptyStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_InheritanceEmptyStruct_type_identifier();
+eProsima_user_DllExport void register_InheritanceEmptyStruct_type_identifier();
 /**
  * @brief Register FinalExtensibilityInheritance related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FinalExtensibilityInheritance_type_identifier();
+eProsima_user_DllExport void register_FinalExtensibilityInheritance_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

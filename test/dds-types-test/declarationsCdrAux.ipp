@@ -154,12 +154,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 0:
+                case 0:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.case_zero(), current_alignment);
                     break;
 
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.case_one(), current_alignment);
                     break;
@@ -215,27 +215,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 0:
-                                                            dcdr >> data.case_zero();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 1:
-                                                            dcdr >> data.case_one();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 0:
+                                                    {
+                                                        int32_t case_zero_value{0};
+                                                        data.case_zero(std::move(case_zero_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 1:
+                                                    {
+                                                        int32_t case_one_value{0};
+                                                        data.case_one(std::move(case_one_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 0:
+                                                    dcdr >> data.case_zero();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.case_one();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -624,12 +647,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case long_const:
+                case long_const:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.case_zero(), current_alignment);
                     break;
 
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.case_one(), current_alignment);
                     break;
@@ -689,27 +712,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case long_const:
-                                                            dcdr >> data.case_zero();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 1:
-                                                            dcdr >> data.case_one();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case long_const:
+                                                    {
+                                                        int32_t case_zero_value{0};
+                                                        data.case_zero(std::move(case_zero_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 1:
+                                                    {
+                                                        int32_t case_one_value{0};
+                                                        data.case_one(std::move(case_one_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case long_const:
+                                                    dcdr >> data.case_zero();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.case_one();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });

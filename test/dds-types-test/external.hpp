@@ -24,6 +24,7 @@
 
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <string>
 #include <utility>
@@ -3341,7 +3342,6 @@ public:
      */
     eProsima_user_DllExport recursive_union()
     {
-        m__d = 1;
     }
 
     /*!
@@ -3349,6 +3349,10 @@ public:
      */
     eProsima_user_DllExport ~recursive_union()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -3360,24 +3364,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
+                        case 0x00000002:
+                            c_() = x.m_c;
+                            break;
 
-            case 2:
-                m_c = x.m_c;
-                break;
+                        case 0x00000003:
+                            s_() = x.m_s;
+                            break;
 
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -3390,25 +3390,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
+                        case 0x00000002:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            case 2:
-                m_c = std::move(x.m_c);
+                        case 0x00000003:
+                            s_() = std::move(x.m_s);
+                            break;
 
-                break;
-
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -3421,24 +3416,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
+                        case 0x00000002:
+                            c_() = x.m_c;
+                            break;
 
-            case 2:
-                m_c = x.m_c;
-                break;
+                        case 0x00000003:
+                            s_() = x.m_s;
+                            break;
 
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -3453,25 +3444,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
+                        case 0x00000002:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            case 2:
-                m_c = std::move(x.m_c);
+                        case 0x00000003:
+                            s_() = std::move(x.m_s);
+                            break;
 
-                break;
-
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -3484,31 +3470,29 @@ public:
     eProsima_user_DllExport bool operator ==(
             const recursive_union& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_l == x.m_l);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_s == x.m_s);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_l == x.m_l);
-                break;
-
-
-            case 2:
-                return (m_c == x.m_c);
-                break;
-
-
-            case 3:
-                return (m_s == x.m_s);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -3529,50 +3513,34 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 3:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-
-            case 3:
-                switch (__d)
-                {
-                    case 3:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -3590,24 +3558,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member l
      * @param _l New value for member l
      */
     eProsima_user_DllExport void l(
             int32_t _l)
     {
-        m_l = _l;
+        l_() = _l;
         m__d = 1;
-
     }
 
     /*!
@@ -3617,18 +3575,7 @@ public:
      */
     eProsima_user_DllExport int32_t l() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3643,18 +3590,7 @@ public:
      */
     eProsima_user_DllExport int32_t& l()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3670,9 +3606,8 @@ public:
     eProsima_user_DllExport void c(
             const recursive_union_container& _c)
     {
-        m_c = _c;
+        c_() = _c;
         m__d = 2;
-
     }
 
     /*!
@@ -3682,9 +3617,8 @@ public:
     eProsima_user_DllExport void c(
             recursive_union_container&& _c)
     {
-        m_c = std::move(_c);
+        c_() = _c;
         m__d = 2;
-
     }
 
     /*!
@@ -3694,18 +3628,7 @@ public:
      */
     eProsima_user_DllExport const recursive_union_container& c() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3720,18 +3643,7 @@ public:
      */
     eProsima_user_DllExport recursive_union_container& c()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3747,9 +3659,8 @@ public:
     eProsima_user_DllExport void s(
             int16_t _s)
     {
-        m_s = _s;
+        s_() = _s;
         m__d = 3;
-
     }
 
     /*!
@@ -3759,18 +3670,7 @@ public:
      */
     eProsima_user_DllExport int16_t s() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 3:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3785,18 +3685,7 @@ public:
      */
     eProsima_user_DllExport int16_t& s()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 3:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3805,14 +3694,86 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint8_t m__d;
+            int32_t& l_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_l{0};
-    recursive_union_container m_c;
-    int16_t m_s{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_l = {0};
+    ;
+                }
+
+                return m_l;
+            }
+
+            recursive_union_container& c_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_c.~recursive_union_container();};
+                    new(&m_c) recursive_union_container();
+    ;
+                }
+
+                return m_c;
+            }
+
+            int16_t& s_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_s = {0};
+    ;
+                }
+
+                return m_s;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        int32_t m_l;
+        recursive_union_container m_c;
+        int16_t m_s;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure recursive_test_1 defined by the user in the IDL file.
@@ -3999,7 +3960,6 @@ public:
      */
     eProsima_user_DllExport recursive_structure_container()
     {
-        m__d = 1;
     }
 
     /*!
@@ -4007,6 +3967,10 @@ public:
      */
     eProsima_user_DllExport ~recursive_structure_container()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -4018,24 +3982,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
+                        case 0x00000002:
+                            ext_() = x.m_ext;
+                            break;
 
-            case 2:
-                m_ext = x.m_ext;
-                break;
+                        case 0x00000003:
+                            s_() = x.m_s;
+                            break;
 
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -4048,25 +4008,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
+                        case 0x00000002:
+                            ext_() = std::move(x.m_ext);
+                            break;
 
-            case 2:
-                m_ext = std::move(x.m_ext);
+                        case 0x00000003:
+                            s_() = std::move(x.m_s);
+                            break;
 
-                break;
-
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -4079,24 +4034,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
+                        case 0x00000002:
+                            ext_() = x.m_ext;
+                            break;
 
-            case 2:
-                m_ext = x.m_ext;
-                break;
+                        case 0x00000003:
+                            s_() = x.m_s;
+                            break;
 
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -4111,25 +4062,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
+                        case 0x00000002:
+                            ext_() = std::move(x.m_ext);
+                            break;
 
-            case 2:
-                m_ext = std::move(x.m_ext);
+                        case 0x00000003:
+                            s_() = std::move(x.m_s);
+                            break;
 
-                break;
-
-
-            case 3:
-                m_s = x.m_s;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -4142,31 +4088,29 @@ public:
     eProsima_user_DllExport bool operator ==(
             const recursive_structure_container& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_l == x.m_l);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_ext == x.m_ext);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_s == x.m_s);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_l == x.m_l);
-                break;
-
-
-            case 2:
-                return (m_ext == x.m_ext);
-                break;
-
-
-            case 3:
-                return (m_s == x.m_s);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -4187,50 +4131,34 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 3:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-
-            case 3:
-                switch (__d)
-                {
-                    case 3:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -4248,24 +4176,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member l
      * @param _l New value for member l
      */
     eProsima_user_DllExport void l(
             int32_t _l)
     {
-        m_l = _l;
+        l_() = _l;
         m__d = 1;
-
     }
 
     /*!
@@ -4275,18 +4193,7 @@ public:
      */
     eProsima_user_DllExport int32_t l() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4301,18 +4208,7 @@ public:
      */
     eProsima_user_DllExport int32_t& l()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4328,9 +4224,8 @@ public:
     eProsima_user_DllExport void ext(
             const eprosima::fastcdr::external<recursive_structure>& _ext)
     {
-        m_ext = _ext;
+        ext_() = _ext;
         m__d = 2;
-
     }
 
     /*!
@@ -4340,9 +4235,8 @@ public:
     eProsima_user_DllExport void ext(
             eprosima::fastcdr::external<recursive_structure>&& _ext)
     {
-        m_ext = std::move(_ext);
+        ext_() = _ext;
         m__d = 2;
-
     }
 
     /*!
@@ -4352,18 +4246,7 @@ public:
      */
     eProsima_user_DllExport const eprosima::fastcdr::external<recursive_structure>& ext() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4378,18 +4261,7 @@ public:
      */
     eProsima_user_DllExport eprosima::fastcdr::external<recursive_structure>& ext()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4405,9 +4277,8 @@ public:
     eProsima_user_DllExport void s(
             int16_t _s)
     {
-        m_s = _s;
+        s_() = _s;
         m__d = 3;
-
     }
 
     /*!
@@ -4417,18 +4288,7 @@ public:
      */
     eProsima_user_DllExport int16_t s() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 3:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4443,18 +4303,7 @@ public:
      */
     eProsima_user_DllExport int16_t& s()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 3:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4463,14 +4312,86 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint8_t m__d;
+            int32_t& l_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_l{0};
-    eprosima::fastcdr::external<recursive_structure> m_ext;
-    int16_t m_s{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_l = {0};
+    ;
+                }
+
+                return m_l;
+            }
+
+            eprosima::fastcdr::external<recursive_structure>& ext_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = [&]() {m_ext.~external();};
+                    new(&m_ext) eprosima::fastcdr::external<recursive_structure>();
+    ;
+                }
+
+                return m_ext;
+            }
+
+            int16_t& s_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_s = {0};
+    ;
+                }
+
+                return m_s;
+            }
+
+
+    uint8_t m__d {0};
+
+    union
+    {
+        int32_t m_l;
+        eprosima::fastcdr::external<recursive_structure> m_ext;
+        int16_t m_s;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure recursive_structure defined by the user in the IDL file.

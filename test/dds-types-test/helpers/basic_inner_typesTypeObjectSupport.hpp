@@ -46,21 +46,21 @@ eProsima_user_DllExport void register_basic_inner_types_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_InnerStructureHelper_type_identifier();
+eProsima_user_DllExport void register_InnerStructureHelper_type_identifier();
 /**
  * @brief Register InnerEmptyStructureHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_InnerEmptyStructureHelper_type_identifier();
+eProsima_user_DllExport void register_InnerEmptyStructureHelper_type_identifier();
 /**
  * @brief Register InnerUnionHelper related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_InnerUnionHelper_type_identifier();
+eProsima_user_DllExport void register_InnerUnionHelper_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

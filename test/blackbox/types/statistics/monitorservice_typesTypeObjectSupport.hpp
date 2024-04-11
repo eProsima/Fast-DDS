@@ -50,7 +50,7 @@ namespace statistics {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_Connection_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_Connection_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_QosPolicyCount_s related TypeIdentifier.
@@ -58,7 +58,7 @@ void register_eprosima_fastdds_statistics_Connection_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_QosPolicyCount_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_QosPolicyCount_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_BaseStatus_s related TypeIdentifier.
@@ -66,7 +66,7 @@ void register_eprosima_fastdds_statistics_QosPolicyCount_s_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_BaseStatus_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_BaseStatus_s_type_identifier();
 
 
 /**
@@ -75,7 +75,7 @@ void register_eprosima_fastdds_statistics_BaseStatus_s_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_LivelinessChangedStatus_s related TypeIdentifier.
@@ -83,7 +83,7 @@ void register_eprosima_fastdds_statistics_IncompatibleQoSStatus_s_type_identifie
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_LivelinessChangedStatus_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_LivelinessChangedStatus_s_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_DeadlineMissedStatus_s related TypeIdentifier.
@@ -91,7 +91,7 @@ void register_eprosima_fastdds_statistics_LivelinessChangedStatus_s_type_identif
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_DeadlineMissedStatus_s_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_DeadlineMissedStatus_s_type_identifier();
 
 
 
@@ -105,7 +105,7 @@ namespace StatusKind {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier();
 
 /**
  * @brief Register eprosima_fastdds_statistics_MonitorServiceStatusData related TypeIdentifier.
@@ -113,7 +113,7 @@ void register_eprosima_fastdds_statistics_MonitorServiceData_type_identifier();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifier();
+eProsima_user_DllExport void register_eprosima_fastdds_statistics_MonitorServiceStatusData_type_identifier();
 
 } // namespace statistics
 

@@ -1895,17 +1895,17 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.l(), current_alignment);
                     break;
 
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.c(), current_alignment);
                     break;
 
-        case 3:
+                case 3:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.s(), current_alignment);
                     break;
@@ -1965,31 +1965,62 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.l();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 2:
-                                                            dcdr >> data.c();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t l_value{0};
+                                                        data.l(std::move(l_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case 3:
-                                                            dcdr >> data.s();
-                                                            break;
+                                                case 2:
+                                                    {
+                                                        recursive_union_container c_value;
+                                                        data.c(std::move(c_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 3:
+                                                    {
+                                                        int16_t s_value{0};
+                                                        data.s(std::move(s_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.l();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.c();
+                                                    break;
+
+                                                case 3:
+                                                    dcdr >> data.s();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2100,17 +2131,17 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.l(), current_alignment);
                     break;
 
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.ext(), current_alignment);
                     break;
 
-        case 3:
+                case 3:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
                                 data.s(), current_alignment);
                     break;
@@ -2170,31 +2201,62 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.l();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 2:
-                                                            dcdr >> data.ext();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t l_value{0};
+                                                        data.l(std::move(l_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        case 3:
-                                                            dcdr >> data.s();
-                                                            break;
+                                                case 2:
+                                                    {
+                                                        eprosima::fastcdr::external<recursive_structure> ext_value;
+                                                        data.ext(std::move(ext_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 3:
+                                                    {
+                                                        int16_t s_value{0};
+                                                        data.s(std::move(s_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.l();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.ext();
+                                                    break;
+
+                                                case 3:
+                                                    dcdr >> data.s();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });

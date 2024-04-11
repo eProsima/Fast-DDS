@@ -25,6 +25,7 @@
 #include <array>
 #include <bitset>
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <string>
 #include <utility>
@@ -362,7 +363,7 @@ public:
      */
     eProsima_user_DllExport InnerUnionHelper()
     {
-        m__d = 2;
+        shortValue_();
     }
 
     /*!
@@ -370,6 +371,10 @@ public:
      */
     eProsima_user_DllExport ~InnerUnionHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -381,22 +386,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_longValue = x.m_longValue;
-                break;
+                        case 0x00000001:
+                            longValue_() = x.m_longValue;
+                            break;
 
+                        case 0x00000002:
+                            floatValue_() = x.m_floatValue;
+                            break;
 
-            case 1:
-                m_floatValue = x.m_floatValue;
-                break;
+                        case 0x00000003:
+                            shortValue_() = x.m_shortValue;
+                            break;
 
-
-            default:
-                m_shortValue = x.m_shortValue;
-
-                break;
         }
     }
 
@@ -409,21 +412,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_longValue = x.m_longValue;
-                break;
+                        case 0x00000001:
+                            longValue_() = std::move(x.m_longValue);
+                            break;
 
+                        case 0x00000002:
+                            floatValue_() = std::move(x.m_floatValue);
+                            break;
 
-            case 1:
-                m_floatValue = x.m_floatValue;
-                break;
+                        case 0x00000003:
+                            shortValue_() = std::move(x.m_shortValue);
+                            break;
 
-
-            default:
-                m_shortValue = x.m_shortValue;
-                break;
         }
     }
 
@@ -436,22 +438,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_longValue = x.m_longValue;
-                break;
+                        case 0x00000001:
+                            longValue_() = x.m_longValue;
+                            break;
 
+                        case 0x00000002:
+                            floatValue_() = x.m_floatValue;
+                            break;
 
-            case 1:
-                m_floatValue = x.m_floatValue;
-                break;
+                        case 0x00000003:
+                            shortValue_() = x.m_shortValue;
+                            break;
 
-
-            default:
-                m_shortValue = x.m_shortValue;
-
-                break;
         }
 
         return *this;
@@ -466,21 +466,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_longValue = x.m_longValue;
-                break;
+                        case 0x00000001:
+                            longValue_() = std::move(x.m_longValue);
+                            break;
 
+                        case 0x00000002:
+                            floatValue_() = std::move(x.m_floatValue);
+                            break;
 
-            case 1:
-                m_floatValue = x.m_floatValue;
-                break;
+                        case 0x00000003:
+                            shortValue_() = std::move(x.m_shortValue);
+                            break;
 
-
-            default:
-                m_shortValue = x.m_shortValue;
-                break;
         }
 
         return *this;
@@ -493,28 +492,29 @@ public:
     eProsima_user_DllExport bool operator ==(
             const InnerUnionHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_longValue == x.m_longValue);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_floatValue == x.m_floatValue);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_shortValue == x.m_shortValue);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 0:
-                return (m_longValue == x.m_longValue);
-                break;
-
-
-            case 1:
-                return (m_floatValue == x.m_floatValue);
-                break;
-
-
-            default:
-                return m_shortValue == x.m_shortValue;
-
-                break;
-        }
+        return ret_value;
     }
 
     /*!
@@ -535,50 +535,34 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 0:
-                switch (__d)
-                {
-                    case 0:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            default:
-                b = true;
-                switch (__d)
-                {
-                    case 0:
-                    case 1:
-                        b = false;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -596,24 +580,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member longValue
      * @param _longValue New value for member longValue
      */
     eProsima_user_DllExport void longValue(
             int32_t _longValue)
     {
-        m_longValue = _longValue;
+        longValue_() = _longValue;
         m__d = 0;
-
     }
 
     /*!
@@ -623,18 +597,7 @@ public:
      */
     eProsima_user_DllExport int32_t longValue() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -649,18 +612,7 @@ public:
      */
     eProsima_user_DllExport int32_t& longValue()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -676,9 +628,8 @@ public:
     eProsima_user_DllExport void floatValue(
             float _floatValue)
     {
-        m_floatValue = _floatValue;
+        floatValue_() = _floatValue;
         m__d = 1;
-
     }
 
     /*!
@@ -688,18 +639,7 @@ public:
      */
     eProsima_user_DllExport float floatValue() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -714,18 +654,7 @@ public:
      */
     eProsima_user_DllExport float& floatValue()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -741,9 +670,8 @@ public:
     eProsima_user_DllExport void shortValue(
             int16_t _shortValue)
     {
-        m_shortValue = _shortValue;
+        shortValue_() = _shortValue;
         m__d = 2;
-
     }
 
     /*!
@@ -753,18 +681,7 @@ public:
      */
     eProsima_user_DllExport int16_t shortValue() const
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case 0:
-            case 1:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -779,18 +696,7 @@ public:
      */
     eProsima_user_DllExport int16_t& shortValue()
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case 0:
-            case 1:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -802,11 +708,73 @@ public:
 
 private:
 
-    int32_t m__d;
+            int32_t& longValue_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_longValue{0};
-    float m_floatValue{0.0};
-    int16_t m_shortValue{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_longValue = {0};
+    ;
+                }
+
+                return m_longValue;
+            }
+
+            float& floatValue_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_floatValue = {0.0};
+    ;
+                }
+
+                return m_floatValue;
+            }
+
+            int16_t& shortValue_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_shortValue = {0};
+    ;
+                }
+
+                return m_shortValue;
+            }
+
+
+    int32_t m__d {2};
+
+    union
+    {
+        int32_t m_longValue;
+        float m_floatValue;
+        int16_t m_shortValue;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure InnerBitsetHelper defined by the user in the IDL file.

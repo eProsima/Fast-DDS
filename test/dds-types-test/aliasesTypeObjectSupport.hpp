@@ -47,175 +47,175 @@ eProsima_user_DllExport void register_aliases_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasInt16_type_identifier();
+eProsima_user_DllExport void register_AliasInt16_type_identifier();
 /**
  * @brief Register AliasUint16 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasUint16_type_identifier();
+eProsima_user_DllExport void register_AliasUint16_type_identifier();
 /**
  * @brief Register AliasInt32 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasInt32_type_identifier();
+eProsima_user_DllExport void register_AliasInt32_type_identifier();
 /**
  * @brief Register AliasUInt32 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasUInt32_type_identifier();
+eProsima_user_DllExport void register_AliasUInt32_type_identifier();
 /**
  * @brief Register AliasInt64 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasInt64_type_identifier();
+eProsima_user_DllExport void register_AliasInt64_type_identifier();
 /**
  * @brief Register AliasUInt64 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasUInt64_type_identifier();
+eProsima_user_DllExport void register_AliasUInt64_type_identifier();
 /**
  * @brief Register AliasFloat32 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasFloat32_type_identifier();
+eProsima_user_DllExport void register_AliasFloat32_type_identifier();
 /**
  * @brief Register AliasFloat64 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasFloat64_type_identifier();
+eProsima_user_DllExport void register_AliasFloat64_type_identifier();
 /**
  * @brief Register AliasFloat128 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasFloat128_type_identifier();
+eProsima_user_DllExport void register_AliasFloat128_type_identifier();
 /**
  * @brief Register AliasBool related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasBool_type_identifier();
+eProsima_user_DllExport void register_AliasBool_type_identifier();
 /**
  * @brief Register AliasOctet related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasOctet_type_identifier();
+eProsima_user_DllExport void register_AliasOctet_type_identifier();
 /**
  * @brief Register AliasChar8 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasChar8_type_identifier();
+eProsima_user_DllExport void register_AliasChar8_type_identifier();
 /**
  * @brief Register AliasChar16 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasChar16_type_identifier();
+eProsima_user_DllExport void register_AliasChar16_type_identifier();
 /**
  * @brief Register AliasString8 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasString8_type_identifier();
+eProsima_user_DllExport void register_AliasString8_type_identifier();
 /**
  * @brief Register AliasString16 related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasString16_type_identifier();
+eProsima_user_DllExport void register_AliasString16_type_identifier();
 /**
  * @brief Register AliasEnum related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasEnum_type_identifier();
+eProsima_user_DllExport void register_AliasEnum_type_identifier();
 /**
  * @brief Register AliasBitmask related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasBitmask_type_identifier();
+eProsima_user_DllExport void register_AliasBitmask_type_identifier();
 /**
  * @brief Register AliasAlias related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasAlias_type_identifier();
+eProsima_user_DllExport void register_AliasAlias_type_identifier();
 /**
  * @brief Register AliasArray related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasArray_type_identifier();
+eProsima_user_DllExport void register_AliasArray_type_identifier();
 /**
  * @brief Register AliasMultiArray related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasMultiArray_type_identifier();
+eProsima_user_DllExport void register_AliasMultiArray_type_identifier();
 /**
  * @brief Register AliasSequence related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasSequence_type_identifier();
+eProsima_user_DllExport void register_AliasSequence_type_identifier();
 /**
  * @brief Register AliasMap related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasMap_type_identifier();
+eProsima_user_DllExport void register_AliasMap_type_identifier();
 /**
  * @brief Register AliasUnion related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasUnion_type_identifier();
+eProsima_user_DllExport void register_AliasUnion_type_identifier();
 /**
  * @brief Register AliasStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasStruct_type_identifier();
+eProsima_user_DllExport void register_AliasStruct_type_identifier();
 /**
  * @brief Register AliasBitset related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AliasBitset_type_identifier();
+eProsima_user_DllExport void register_AliasBitset_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

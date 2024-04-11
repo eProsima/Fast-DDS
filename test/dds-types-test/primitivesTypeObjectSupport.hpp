@@ -46,147 +46,147 @@ eProsima_user_DllExport void register_primitives_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_ShortStruct_type_identifier();
+eProsima_user_DllExport void register_ShortStruct_type_identifier();
 /**
  * @brief Register UShortStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_UShortStruct_type_identifier();
+eProsima_user_DllExport void register_UShortStruct_type_identifier();
 /**
  * @brief Register LongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_LongStruct_type_identifier();
+eProsima_user_DllExport void register_LongStruct_type_identifier();
 /**
  * @brief Register ULongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_ULongStruct_type_identifier();
+eProsima_user_DllExport void register_ULongStruct_type_identifier();
 /**
  * @brief Register LongLongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_LongLongStruct_type_identifier();
+eProsima_user_DllExport void register_LongLongStruct_type_identifier();
 /**
  * @brief Register ULongLongStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_ULongLongStruct_type_identifier();
+eProsima_user_DllExport void register_ULongLongStruct_type_identifier();
 /**
  * @brief Register FloatStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_FloatStruct_type_identifier();
+eProsima_user_DllExport void register_FloatStruct_type_identifier();
 /**
  * @brief Register DoubleStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_DoubleStruct_type_identifier();
+eProsima_user_DllExport void register_DoubleStruct_type_identifier();
 /**
  * @brief Register LongDoubleStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_LongDoubleStruct_type_identifier();
+eProsima_user_DllExport void register_LongDoubleStruct_type_identifier();
 /**
  * @brief Register BooleanStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_BooleanStruct_type_identifier();
+eProsima_user_DllExport void register_BooleanStruct_type_identifier();
 /**
  * @brief Register OctetStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_OctetStruct_type_identifier();
+eProsima_user_DllExport void register_OctetStruct_type_identifier();
 /**
  * @brief Register CharStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_CharStruct_type_identifier();
+eProsima_user_DllExport void register_CharStruct_type_identifier();
 /**
  * @brief Register WCharStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_WCharStruct_type_identifier();
+eProsima_user_DllExport void register_WCharStruct_type_identifier();
 /**
  * @brief Register Int8Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Int8Struct_type_identifier();
+eProsima_user_DllExport void register_Int8Struct_type_identifier();
 /**
  * @brief Register Uint8Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Uint8Struct_type_identifier();
+eProsima_user_DllExport void register_Uint8Struct_type_identifier();
 /**
  * @brief Register Int16Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Int16Struct_type_identifier();
+eProsima_user_DllExport void register_Int16Struct_type_identifier();
 /**
  * @brief Register Uint16Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Uint16Struct_type_identifier();
+eProsima_user_DllExport void register_Uint16Struct_type_identifier();
 /**
  * @brief Register Int32Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Int32Struct_type_identifier();
+eProsima_user_DllExport void register_Int32Struct_type_identifier();
 /**
  * @brief Register Uint32Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Uint32Struct_type_identifier();
+eProsima_user_DllExport void register_Uint32Struct_type_identifier();
 /**
  * @brief Register Int64Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Int64Struct_type_identifier();
+eProsima_user_DllExport void register_Int64Struct_type_identifier();
 /**
  * @brief Register Uint64Struct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_Uint64Struct_type_identifier();
+eProsima_user_DllExport void register_Uint64Struct_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

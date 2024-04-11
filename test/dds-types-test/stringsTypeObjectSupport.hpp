@@ -46,42 +46,42 @@ eProsima_user_DllExport void register_strings_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_StringStruct_type_identifier();
+eProsima_user_DllExport void register_StringStruct_type_identifier();
 /**
  * @brief Register WStringStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_WStringStruct_type_identifier();
+eProsima_user_DllExport void register_WStringStruct_type_identifier();
 /**
  * @brief Register SmallStringStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_SmallStringStruct_type_identifier();
+eProsima_user_DllExport void register_SmallStringStruct_type_identifier();
 /**
  * @brief Register SmallWStringStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_SmallWStringStruct_type_identifier();
+eProsima_user_DllExport void register_SmallWStringStruct_type_identifier();
 /**
  * @brief Register LargeStringStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_LargeStringStruct_type_identifier();
+eProsima_user_DllExport void register_LargeStringStruct_type_identifier();
 /**
  * @brief Register LargeWStringStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_LargeWStringStruct_type_identifier();
+eProsima_user_DllExport void register_LargeWStringStruct_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

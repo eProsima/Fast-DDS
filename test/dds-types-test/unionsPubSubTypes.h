@@ -27,7 +27,7 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/utils/md5.h>
+#include <fastdds/utils/md5.h>
 
 #include "unions.hpp"
 
@@ -1642,7 +1642,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return false;
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED

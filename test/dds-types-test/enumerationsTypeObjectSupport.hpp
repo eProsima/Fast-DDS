@@ -49,21 +49,21 @@ namespace Test {
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_EnumStructure_type_identifier();
+eProsima_user_DllExport void register_EnumStructure_type_identifier();
 /**
  * @brief Register BitMaskStructure related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_BitMaskStructure_type_identifier();
+eProsima_user_DllExport void register_BitMaskStructure_type_identifier();
 /**
  * @brief Register BoundedBitMaskStructure related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_BoundedBitMaskStructure_type_identifier();
+eProsima_user_DllExport void register_BoundedBitMaskStructure_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

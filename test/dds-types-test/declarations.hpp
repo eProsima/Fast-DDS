@@ -23,6 +23,7 @@
 #define _FAST_DDS_GENERATED_DECLARATIONS_HPP_
 
 #include <cstdint>
+#include <functional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -355,7 +356,6 @@ public:
      */
     eProsima_user_DllExport ForwardUnion()
     {
-        m__d = 0;
     }
 
     /*!
@@ -363,6 +363,10 @@ public:
      */
     eProsima_user_DllExport ~ForwardUnion()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -374,19 +378,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = x.m_case_zero;
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = x.m_case_one;
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -399,19 +400,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = std::move(x.m_case_zero);
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = std::move(x.m_case_one);
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -424,19 +422,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = x.m_case_zero;
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = x.m_case_one;
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -451,19 +446,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = std::move(x.m_case_zero);
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = std::move(x.m_case_one);
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -476,26 +468,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const ForwardUnion& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_case_zero == x.m_case_zero);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_case_one == x.m_case_one);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 0:
-                return (m_case_zero == x.m_case_zero);
-                break;
-
-
-            case 1:
-                return (m_case_one == x.m_case_one);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -516,38 +507,27 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 0:
-                switch (__d)
-                {
-                    case 0:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -565,24 +545,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member case_zero
      * @param _case_zero New value for member case_zero
      */
     eProsima_user_DllExport void case_zero(
             int32_t _case_zero)
     {
-        m_case_zero = _case_zero;
+        case_zero_() = _case_zero;
         m__d = 0;
-
     }
 
     /*!
@@ -592,18 +562,7 @@ public:
      */
     eProsima_user_DllExport int32_t case_zero() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -618,18 +577,7 @@ public:
      */
     eProsima_user_DllExport int32_t& case_zero()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -645,9 +593,8 @@ public:
     eProsima_user_DllExport void case_one(
             int32_t _case_one)
     {
-        m_case_one = _case_one;
+        case_one_() = _case_one;
         m__d = 1;
-
     }
 
     /*!
@@ -657,18 +604,7 @@ public:
      */
     eProsima_user_DllExport int32_t case_one() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -683,18 +619,7 @@ public:
      */
     eProsima_user_DllExport int32_t& case_one()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -703,13 +628,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            int32_t& case_zero_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_case_zero{0};
-    int32_t m_case_one{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_case_zero = {0};
+    ;
+                }
+
+                return m_case_zero;
+            }
+
+            int32_t& case_one_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_case_one = {0};
+    ;
+                }
+
+                return m_case_one;
+            }
+
+
+    int32_t m__d {2};
+
+    union
+    {
+        int32_t m_case_zero;
+        int32_t m_case_one;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure ForwardStruct defined by the user in the IDL file.
@@ -1460,7 +1439,6 @@ public:
      */
     eProsima_user_DllExport ModuledForwardUnion()
     {
-        m__d = long_const;
     }
 
     /*!
@@ -1468,6 +1446,10 @@ public:
      */
     eProsima_user_DllExport ~ModuledForwardUnion()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1479,19 +1461,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case long_const:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = x.m_case_zero;
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = x.m_case_one;
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1504,19 +1483,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case long_const:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = std::move(x.m_case_zero);
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = std::move(x.m_case_one);
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -1529,19 +1505,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case long_const:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = x.m_case_zero;
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = x.m_case_one;
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -1556,19 +1529,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case long_const:
-                m_case_zero = x.m_case_zero;
-                break;
+                        case 0x00000001:
+                            case_zero_() = std::move(x.m_case_zero);
+                            break;
 
+                        case 0x00000002:
+                            case_one_() = std::move(x.m_case_one);
+                            break;
 
-            case 1:
-                m_case_one = x.m_case_one;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -1581,26 +1551,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const ModuledForwardUnion& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_case_zero == x.m_case_zero);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_case_one == x.m_case_one);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case long_const:
-                return (m_case_zero == x.m_case_zero);
-                break;
-
-
-            case 1:
-                return (m_case_one == x.m_case_one);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1621,38 +1590,27 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case long_const:
-                switch (__d)
-                {
-                    case long_const:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case long_const:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1670,24 +1628,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member case_zero
      * @param _case_zero New value for member case_zero
      */
     eProsima_user_DllExport void case_zero(
             int32_t _case_zero)
     {
-        m_case_zero = _case_zero;
+        case_zero_() = _case_zero;
         m__d = long_const;
-
     }
 
     /*!
@@ -1697,18 +1645,7 @@ public:
      */
     eProsima_user_DllExport int32_t case_zero() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case long_const:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1723,18 +1660,7 @@ public:
      */
     eProsima_user_DllExport int32_t& case_zero()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case long_const:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1750,9 +1676,8 @@ public:
     eProsima_user_DllExport void case_one(
             int32_t _case_one)
     {
-        m_case_one = _case_one;
+        case_one_() = _case_one;
         m__d = 1;
-
     }
 
     /*!
@@ -1762,18 +1687,7 @@ public:
      */
     eProsima_user_DllExport int32_t case_one() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1788,18 +1702,7 @@ public:
      */
     eProsima_user_DllExport int32_t& case_one()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1808,13 +1711,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            int32_t& case_zero_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_case_zero{0};
-    int32_t m_case_one{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_case_zero = {0};
+    ;
+                }
+
+                return m_case_zero;
+            }
+
+            int32_t& case_one_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_case_one = {0};
+    ;
+                }
+
+                return m_case_one;
+            }
+
+
+    int32_t m__d {2};
+
+    union
+    {
+        int32_t m_case_zero;
+        int32_t m_case_one;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 
 } // namespace declarations_module

@@ -54,7 +54,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 0:
+                case 0:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.a(), current_alignment);
                     break;
@@ -106,23 +106,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 0:
-                                                            dcdr >> data.a();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 0:
+                                                    {
+                                                        int16_t a_value{0};
+                                                        data.a(std::move(a_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 0:
+                                                    dcdr >> data.a();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -148,7 +163,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.b(), current_alignment);
                     break;
@@ -200,23 +215,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.b();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        uint16_t b_value{0};
+                                                        data.b(std::move(b_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.b();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -242,7 +272,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.c(), current_alignment);
                     break;
@@ -294,23 +324,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 2:
-                                                            dcdr >> data.c();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 2:
+                                                    {
+                                                        int32_t c_value{0};
+                                                        data.c(std::move(c_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 2:
+                                                    dcdr >> data.c();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -336,7 +381,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 3:
+                case 3:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.d(), current_alignment);
                     break;
@@ -388,23 +433,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 3:
-                                                            dcdr >> data.d();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 3:
+                                                    {
+                                                        uint32_t d_value{0};
+                                                        data.d(std::move(d_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 3:
+                                                    dcdr >> data.d();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -430,7 +490,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 4:
+                case 4:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.e(), current_alignment);
                     break;
@@ -482,23 +542,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 4:
-                                                            dcdr >> data.e();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 4:
+                                                    {
+                                                        int64_t e_value{0};
+                                                        data.e(std::move(e_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 4:
+                                                    dcdr >> data.e();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -524,7 +599,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 5:
+                case 5:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.f(), current_alignment);
                     break;
@@ -576,23 +651,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 5:
-                                                            dcdr >> data.f();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 5:
+                                                    {
+                                                        uint64_t f_value{0};
+                                                        data.f(std::move(f_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 5:
+                                                    dcdr >> data.f();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -618,7 +708,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 6:
+                case 6:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.g(), current_alignment);
                     break;
@@ -670,23 +760,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 6:
-                                                            dcdr >> data.g();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 6:
+                                                    {
+                                                        float g_value{0.0};
+                                                        data.g(std::move(g_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 6:
+                                                    dcdr >> data.g();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -712,7 +817,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 7:
+                case 7:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.h(), current_alignment);
                     break;
@@ -764,23 +869,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 7:
-                                                            dcdr >> data.h();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 7:
+                                                    {
+                                                        double h_value{0.0};
+                                                        data.h(std::move(h_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 7:
+                                                    dcdr >> data.h();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -806,7 +926,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 8:
+                case 8:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.i(), current_alignment);
                     break;
@@ -858,23 +978,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 8:
-                                                            dcdr >> data.i();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 8:
+                                                    {
+                                                        long double i_value{0.0};
+                                                        data.i(std::move(i_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 8:
+                                                    dcdr >> data.i();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -900,7 +1035,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 9:
+                case 9:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.j(), current_alignment);
                     break;
@@ -952,23 +1087,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 9:
-                                                            dcdr >> data.j();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 9:
+                                                    {
+                                                        bool j_value{false};
+                                                        data.j(std::move(j_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 9:
+                                                    dcdr >> data.j();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -994,7 +1144,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 10:
+                case 10:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.k(), current_alignment);
                     break;
@@ -1046,23 +1196,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 10:
-                                                            dcdr >> data.k();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 10:
+                                                    {
+                                                        uint8_t k_value{0};
+                                                        data.k(std::move(k_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 10:
+                                                    dcdr >> data.k();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1088,7 +1253,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 11:
+                case 11:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.l(), current_alignment);
                     break;
@@ -1140,23 +1305,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 11:
-                                                            dcdr >> data.l();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 11:
+                                                    {
+                                                        char l_value{0};
+                                                        data.l(std::move(l_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 11:
+                                                    dcdr >> data.l();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1182,7 +1362,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 12:
+                case 12:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.m(), current_alignment);
                     break;
@@ -1234,23 +1414,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 12:
-                                                            dcdr >> data.m();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 12:
+                                                    {
+                                                        wchar_t m_value{0};
+                                                        data.m(std::move(m_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 12:
+                                                    dcdr >> data.m();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1276,7 +1471,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 13:
+                case 13:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.n(), current_alignment);
                     break;
@@ -1328,23 +1523,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 13:
-                                                            dcdr >> data.n();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 13:
+                                                    {
+                                                        std::string n_value;
+                                                        data.n(std::move(n_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 13:
+                                                    dcdr >> data.n();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1370,7 +1580,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 14:
+                case 14:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.o(), current_alignment);
                     break;
@@ -1422,23 +1632,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 14:
-                                                            dcdr >> data.o();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 14:
+                                                    {
+                                                        std::wstring o_value;
+                                                        data.o(std::move(o_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 14:
+                                                    dcdr >> data.o();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1464,7 +1689,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 13:
+                case 13:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.bn(), current_alignment);
                     break;
@@ -1516,23 +1741,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 13:
-                                                            dcdr >> data.bn();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 13:
+                                                    {
+                                                        Inner_alias_bounded_string_helper bn_value;
+                                                        data.bn(std::move(bn_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 13:
+                                                    dcdr >> data.bn();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1558,7 +1798,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 14:
+                case 14:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.bo(), current_alignment);
                     break;
@@ -1610,23 +1850,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 14:
-                                                            dcdr >> data.bo();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 14:
+                                                    {
+                                                        Inner_alias_bounded_wstring_helper bo_value;
+                                                        data.bo(std::move(bo_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 14:
+                                                    dcdr >> data.bo();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1652,7 +1907,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 15:
+                case 15:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.p(), current_alignment);
                     break;
@@ -1704,23 +1959,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 15:
-                                                            dcdr >> data.p();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 15:
+                                                    {
+                                                        InnerEnumHelper p_value{InnerEnumHelper::ENUM_VALUE_1};
+                                                        data.p(std::move(p_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 15:
+                                                    dcdr >> data.p();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1746,7 +2016,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 16:
+                case 16:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.q(), current_alignment);
                     break;
@@ -1798,23 +2068,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 16:
-                                                            dcdr >> data.q();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 16:
+                                                    {
+                                                        InnerBitMaskHelper q_value{0};
+                                                        data.q(std::move(q_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 16:
+                                                    dcdr >> data.q();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1840,7 +2125,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 17:
+                case 17:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.r(), current_alignment);
                     break;
@@ -1892,23 +2177,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 17:
-                                                            dcdr >> data.r();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 17:
+                                                    {
+                                                        InnerAliasHelper r_value{0};
+                                                        data.r(std::move(r_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 17:
+                                                    dcdr >> data.r();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -1934,7 +2234,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 18:
+                case 18:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.s(), current_alignment);
                     break;
@@ -1986,23 +2286,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 18:
-                                                            dcdr >> data.s();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 18:
+                                                    {
+                                                        Inner_alias_array_helper s_value{0};
+                                                        data.s(std::move(s_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 18:
+                                                    dcdr >> data.s();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2028,7 +2343,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 19:
+                case 19:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.t(), current_alignment);
                     break;
@@ -2080,23 +2395,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 19:
-                                                            dcdr >> data.t();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 19:
+                                                    {
+                                                        std::vector<int16_t> t_value;
+                                                        data.t(std::move(t_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 19:
+                                                    dcdr >> data.t();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2122,7 +2452,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 20:
+                case 20:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.u(), current_alignment);
                     break;
@@ -2174,23 +2504,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 20:
-                                                            dcdr >> data.u();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 20:
+                                                    {
+                                                        std::map<int32_t, int32_t> u_value;
+                                                        data.u(std::move(u_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 20:
+                                                    dcdr >> data.u();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2216,7 +2561,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 21:
+                case 21:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.v(), current_alignment);
                     break;
@@ -2268,23 +2613,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 21:
-                                                            dcdr >> data.v();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 21:
+                                                    {
+                                                        InnerUnionHelper v_value;
+                                                        data.v(std::move(v_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 21:
+                                                    dcdr >> data.v();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2310,7 +2670,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 22:
+                case 22:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.w(), current_alignment);
                     break;
@@ -2362,23 +2722,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 22:
-                                                            dcdr >> data.w();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 22:
+                                                    {
+                                                        InnerStructureHelper w_value;
+                                                        data.w(std::move(w_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 22:
+                                                    dcdr >> data.w();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2404,7 +2779,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 23:
+                case 23:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.x(), current_alignment);
                     break;
@@ -2456,23 +2831,38 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 23:
-                                                            dcdr >> data.x();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                    switch (discriminator)
+                    {
+                                                case 23:
+                                                    {
+                                                        InnerBitsetHelper x_value;
+                                                        data.x(std::move(x_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 23:
+                                                    dcdr >> data.x();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2498,12 +2888,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case -2:
+                case -2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -2559,27 +2949,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    int16_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case -2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case -2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case -2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2605,12 +3018,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -2666,27 +3079,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    uint16_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2712,12 +3148,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case -2:
+                case -2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -2773,27 +3209,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case -2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case -2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case -2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2819,12 +3278,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -2880,27 +3339,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    uint32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -2926,12 +3408,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case -2:
+                case -2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -2987,27 +3469,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    int64_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case -2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case -2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case -2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3033,12 +3538,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3094,27 +3599,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 2:
-                                                            dcdr >> data.first();
-                                                            break;
+                    uint64_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 1:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 2:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 1:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 2:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3140,12 +3668,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case true:
+                case true:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case false:
+                case false:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3201,27 +3729,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case true:
-                                                            dcdr >> data.first();
-                                                            break;
+                    bool discriminator;
+                    dcdr >> discriminator;
 
-                                                        case false:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case true:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case false:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case true:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case false:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3247,12 +3798,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 0:
+                case 0:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3308,27 +3859,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 0:
-                                                            dcdr >> data.first();
-                                                            break;
+                    uint8_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 1:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 0:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 1:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 0:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3354,12 +3928,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 'a':
+                case 'a':
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case 'b':
+                case 'b':
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3415,27 +3989,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 'a':
-                                                            dcdr >> data.first();
-                                                            break;
+                    char discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 'b':
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 'a':
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 'b':
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 'a':
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case 'b':
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3461,12 +4058,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case L'a':
+                case L'a':
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case L'b':
+                case L'b':
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3522,27 +4119,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case L'a':
-                                                            dcdr >> data.first();
-                                                            break;
+                    wchar_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case L'b':
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case L'a':
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case L'b':
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case L'a':
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case L'b':
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3568,12 +4188,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case InnerEnumHelper::ENUM_VALUE_1:
+                case InnerEnumHelper::ENUM_VALUE_1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case InnerEnumHelper::ENUM_VALUE_2:
+                case InnerEnumHelper::ENUM_VALUE_2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3634,29 +4254,57 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case InnerEnumHelper::ENUM_VALUE_1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    InnerEnumHelper discriminator;
+                    dcdr >> discriminator;
 
-                                                        case InnerEnumHelper::ENUM_VALUE_2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case InnerEnumHelper::ENUM_VALUE_1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        default:
-                                                            dcdr >> data.third();
-                                                            break;
+                                                case InnerEnumHelper::ENUM_VALUE_2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                        }
-                        ret_value = false;
-                        break;
+                                                default:
+                                                    {
+                                                        uint8_t third_value{0};
+                                                        data.third(std::move(third_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case InnerEnumHelper::ENUM_VALUE_1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case InnerEnumHelper::ENUM_VALUE_2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.third();
+                                                    break;
+
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3682,13 +4330,13 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case InnerEnumHelper::ENUM_VALUE_3:
-        case InnerEnumHelper::ENUM_VALUE_1:
+                case InnerEnumHelper::ENUM_VALUE_3:
+                case InnerEnumHelper::ENUM_VALUE_1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case InnerEnumHelper::ENUM_VALUE_2:
+                case InnerEnumHelper::ENUM_VALUE_2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3745,28 +4393,52 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case InnerEnumHelper::ENUM_VALUE_3:
-                                                        case InnerEnumHelper::ENUM_VALUE_1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    InnerEnumHelper discriminator;
+                    dcdr >> discriminator;
 
-                                                        case InnerEnumHelper::ENUM_VALUE_2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case InnerEnumHelper::ENUM_VALUE_3:
+                                                case InnerEnumHelper::ENUM_VALUE_1:
+                                                    {
+                                                        int16_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case InnerEnumHelper::ENUM_VALUE_2:
+                                                    {
+                                                        int16_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case InnerEnumHelper::ENUM_VALUE_3:
+                                                case InnerEnumHelper::ENUM_VALUE_1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case InnerEnumHelper::ENUM_VALUE_2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });
@@ -3792,12 +4464,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.first(), current_alignment);
                     break;
 
-        case 2:
+                case 2:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.second(), current_alignment);
                     break;
@@ -3853,27 +4525,50 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 1:
-                                                            dcdr >> data.first();
-                                                            break;
+                    InnerAliasHelper discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 2:
-                                                            dcdr >> data.second();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 1:
+                                                    {
+                                                        int32_t first_value{0};
+                                                        data.first(std::move(first_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                            default:
-                                break;
-                        }
-                        ret_value = false;
-                        break;
+                                                case 2:
+                                                    {
+                                                        int64_t second_value{0};
+                                                        data.second(std::move(second_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                        default:
+                            data._default();
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 1:
+                                                    dcdr >> data.first();
+                                                    break;
+
+                                                case 2:
+                                                    dcdr >> data.second();
+                                                    break;
+
+                        default:
+                            break;
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });

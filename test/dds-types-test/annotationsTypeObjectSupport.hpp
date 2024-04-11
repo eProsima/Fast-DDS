@@ -47,28 +47,28 @@ eProsima_user_DllExport void register_annotations_type_objects();
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AnnotationTest_type_identifier();
+eProsima_user_DllExport void register_AnnotationTest_type_identifier();
 /**
  * @brief Register EmptyAnnotationTest related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_EmptyAnnotationTest_type_identifier();
+eProsima_user_DllExport void register_EmptyAnnotationTest_type_identifier();
 /**
  * @brief Register AnnotatedStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_AnnotatedStruct_type_identifier();
+eProsima_user_DllExport void register_AnnotatedStruct_type_identifier();
 /**
  * @brief Register EmptyAnnotatedStruct related TypeIdentifier.
  *        Fully-descriptive TypeIdentifiers are directly registered.
  *        Hash TypeIdentifiers require to fill the TypeObject information and hash it, consequently, the TypeObject is
  *        indirectly registered as well.
  */
-void register_EmptyAnnotatedStruct_type_identifier();
+eProsima_user_DllExport void register_EmptyAnnotatedStruct_type_identifier();
 
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS_PUBLIC

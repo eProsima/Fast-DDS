@@ -202,12 +202,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
     switch (data._d())
     {
-        case 0:
+                case 0:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
                                 data.longValue(), current_alignment);
                     break;
 
-        case 1:
+                case 1:
                     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
                                 data.floatValue(), current_alignment);
                     break;
@@ -268,29 +268,57 @@ eProsima_user_DllExport void deserialize(
             [&data](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
             {
                 bool ret_value = true;
-                switch (mid.id)
+                if (0 == mid.id)
                 {
-                    case 0:
-                        dcdr >> data._d();
-                        break;
-                    default:
-                        switch (data._d())
-                        {
-                                                        case 0:
-                                                            dcdr >> data.longValue();
-                                                            break;
+                    int32_t discriminator;
+                    dcdr >> discriminator;
 
-                                                        case 1:
-                                                            dcdr >> data.floatValue();
-                                                            break;
+                    switch (discriminator)
+                    {
+                                                case 0:
+                                                    {
+                                                        int32_t longValue_value{0};
+                                                        data.longValue(std::move(longValue_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                                                        default:
-                                                            dcdr >> data.shortValue();
-                                                            break;
+                                                case 1:
+                                                    {
+                                                        float floatValue_value{0.0};
+                                                        data.floatValue(std::move(floatValue_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
 
-                        }
-                        ret_value = false;
-                        break;
+                                                default:
+                                                    {
+                                                        int16_t shortValue_value{0};
+                                                        data.shortValue(std::move(shortValue_value));
+                                                        data._d(discriminator);
+                                                        break;
+                                                    }
+
+                    }
+                }
+                else
+                {
+                    switch (data._d())
+                    {
+                                                case 0:
+                                                    dcdr >> data.longValue();
+                                                    break;
+
+                                                case 1:
+                                                    dcdr >> data.floatValue();
+                                                    break;
+
+                                                default:
+                                                    dcdr >> data.shortValue();
+                                                    break;
+
+                    }
+                    ret_value = false;
                 }
                 return ret_value;
             });

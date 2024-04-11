@@ -23,6 +23,7 @@
 #define _FAST_DDS_GENERATED_UNIONS_HPP_
 
 #include <cstdint>
+#include <functional>
 #include <map>
 #include <string>
 #include <utility>
@@ -70,7 +71,6 @@ public:
      */
     eProsima_user_DllExport Union_Short()
     {
-        m__d = 0;
     }
 
     /*!
@@ -78,6 +78,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Short()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -89,14 +93,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_a = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -109,14 +111,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_a = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -129,14 +129,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_a = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = x.m_a;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -151,14 +149,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_a = x.m_a;
-                break;
+                        case 0x00000001:
+                            a_() = std::move(x.m_a);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -171,21 +167,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Short& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_a == x.m_a);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 0:
-                return (m_a == x.m_a);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -206,26 +202,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 0:
-                switch (__d)
-                {
-                    case 0:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -243,24 +233,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member a
      * @param _a New value for member a
      */
     eProsima_user_DllExport void a(
             int16_t _a)
     {
-        m_a = _a;
+        a_() = _a;
         m__d = 0;
-
     }
 
     /*!
@@ -270,18 +250,7 @@ public:
      */
     eProsima_user_DllExport int16_t a() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -296,18 +265,7 @@ public:
      */
     eProsima_user_DllExport int16_t& a()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -316,12 +274,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            int16_t& a_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int16_t m_a{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_a = {0};
+    ;
+                }
+
+                return m_a;
+            }
+
+
+    int32_t m__d {1};
+
+    union
+    {
+        int16_t m_a;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_UShort defined by the user in the IDL file.
@@ -336,7 +330,6 @@ public:
      */
     eProsima_user_DllExport Union_UShort()
     {
-        m__d = 1;
     }
 
     /*!
@@ -344,6 +337,10 @@ public:
      */
     eProsima_user_DllExport ~Union_UShort()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -355,14 +352,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_b = x.m_b;
-                break;
+                        case 0x00000001:
+                            b_() = x.m_b;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -375,14 +370,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_b = x.m_b;
-                break;
+                        case 0x00000001:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -395,14 +388,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_b = x.m_b;
-                break;
+                        case 0x00000001:
+                            b_() = x.m_b;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -417,14 +408,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_b = x.m_b;
-                break;
+                        case 0x00000001:
+                            b_() = std::move(x.m_b);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -437,21 +426,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_UShort& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_b == x.m_b);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_b == x.m_b);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -472,26 +461,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -509,24 +492,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member b
      * @param _b New value for member b
      */
     eProsima_user_DllExport void b(
             uint16_t _b)
     {
-        m_b = _b;
+        b_() = _b;
         m__d = 1;
-
     }
 
     /*!
@@ -536,18 +509,7 @@ public:
      */
     eProsima_user_DllExport uint16_t b() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -562,18 +524,7 @@ public:
      */
     eProsima_user_DllExport uint16_t& b()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -582,12 +533,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            uint16_t& b_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    uint16_t m_b{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_b = {0};
+    ;
+                }
+
+                return m_b;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        uint16_t m_b;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Long defined by the user in the IDL file.
@@ -602,7 +589,6 @@ public:
      */
     eProsima_user_DllExport Union_Long()
     {
-        m__d = 2;
     }
 
     /*!
@@ -610,6 +596,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Long()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -621,14 +611,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_c = x.m_c;
-                break;
+                        case 0x00000001:
+                            c_() = x.m_c;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -641,14 +629,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_c = x.m_c;
-                break;
+                        case 0x00000001:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -661,14 +647,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_c = x.m_c;
-                break;
+                        case 0x00000001:
+                            c_() = x.m_c;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -683,14 +667,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_c = x.m_c;
-                break;
+                        case 0x00000001:
+                            c_() = std::move(x.m_c);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -703,21 +685,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Long& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_c == x.m_c);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 2:
-                return (m_c == x.m_c);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -738,26 +720,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 2:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -775,24 +751,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member c
      * @param _c New value for member c
      */
     eProsima_user_DllExport void c(
             int32_t _c)
     {
-        m_c = _c;
+        c_() = _c;
         m__d = 2;
-
     }
 
     /*!
@@ -802,18 +768,7 @@ public:
      */
     eProsima_user_DllExport int32_t c() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -828,18 +783,7 @@ public:
      */
     eProsima_user_DllExport int32_t& c()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -848,12 +792,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            int32_t& c_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_c{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_c = {0};
+    ;
+                }
+
+                return m_c;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        int32_t m_c;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_ULong defined by the user in the IDL file.
@@ -868,7 +848,6 @@ public:
      */
     eProsima_user_DllExport Union_ULong()
     {
-        m__d = 3;
     }
 
     /*!
@@ -876,6 +855,10 @@ public:
      */
     eProsima_user_DllExport ~Union_ULong()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -887,14 +870,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 3:
-                m_d = x.m_d;
-                break;
+                        case 0x00000001:
+                            d_() = x.m_d;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -907,14 +888,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 3:
-                m_d = x.m_d;
-                break;
+                        case 0x00000001:
+                            d_() = std::move(x.m_d);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -927,14 +906,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 3:
-                m_d = x.m_d;
-                break;
+                        case 0x00000001:
+                            d_() = x.m_d;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -949,14 +926,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 3:
-                m_d = x.m_d;
-                break;
+                        case 0x00000001:
+                            d_() = std::move(x.m_d);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -969,21 +944,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_ULong& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_d == x.m_d);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 3:
-                return (m_d == x.m_d);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1004,26 +979,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 3:
-                switch (__d)
-                {
-                    case 3:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 3:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1041,24 +1010,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member d
      * @param _d New value for member d
      */
     eProsima_user_DllExport void d(
             uint32_t _d)
     {
-        m_d = _d;
+        d_() = _d;
         m__d = 3;
-
     }
 
     /*!
@@ -1068,18 +1027,7 @@ public:
      */
     eProsima_user_DllExport uint32_t d() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 3:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1094,18 +1042,7 @@ public:
      */
     eProsima_user_DllExport uint32_t& d()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 3:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1114,12 +1051,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            uint32_t& d_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    uint32_t m_d{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_d = {0};
+    ;
+                }
+
+                return m_d;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        uint32_t m_d;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_LongLong defined by the user in the IDL file.
@@ -1134,7 +1107,6 @@ public:
      */
     eProsima_user_DllExport Union_LongLong()
     {
-        m__d = 4;
     }
 
     /*!
@@ -1142,6 +1114,10 @@ public:
      */
     eProsima_user_DllExport ~Union_LongLong()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1153,14 +1129,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 4:
-                m_e = x.m_e;
-                break;
+                        case 0x00000001:
+                            e_() = x.m_e;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1173,14 +1147,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 4:
-                m_e = x.m_e;
-                break;
+                        case 0x00000001:
+                            e_() = std::move(x.m_e);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1193,14 +1165,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 4:
-                m_e = x.m_e;
-                break;
+                        case 0x00000001:
+                            e_() = x.m_e;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1215,14 +1185,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 4:
-                m_e = x.m_e;
-                break;
+                        case 0x00000001:
+                            e_() = std::move(x.m_e);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1235,21 +1203,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_LongLong& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_e == x.m_e);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 4:
-                return (m_e == x.m_e);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1270,26 +1238,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 4:
-                switch (__d)
-                {
-                    case 4:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 4:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1307,24 +1269,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member e
      * @param _e New value for member e
      */
     eProsima_user_DllExport void e(
             int64_t _e)
     {
-        m_e = _e;
+        e_() = _e;
         m__d = 4;
-
     }
 
     /*!
@@ -1334,18 +1286,7 @@ public:
      */
     eProsima_user_DllExport int64_t e() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 4:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1360,18 +1301,7 @@ public:
      */
     eProsima_user_DllExport int64_t& e()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 4:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1380,12 +1310,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            int64_t& e_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int64_t m_e{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_e = {0};
+    ;
+                }
+
+                return m_e;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        int64_t m_e;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_ULongLOng defined by the user in the IDL file.
@@ -1400,7 +1366,6 @@ public:
      */
     eProsima_user_DllExport Union_ULongLOng()
     {
-        m__d = 5;
     }
 
     /*!
@@ -1408,6 +1373,10 @@ public:
      */
     eProsima_user_DllExport ~Union_ULongLOng()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1419,14 +1388,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 5:
-                m_f = x.m_f;
-                break;
+                        case 0x00000001:
+                            f_() = x.m_f;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1439,14 +1406,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 5:
-                m_f = x.m_f;
-                break;
+                        case 0x00000001:
+                            f_() = std::move(x.m_f);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1459,14 +1424,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 5:
-                m_f = x.m_f;
-                break;
+                        case 0x00000001:
+                            f_() = x.m_f;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1481,14 +1444,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 5:
-                m_f = x.m_f;
-                break;
+                        case 0x00000001:
+                            f_() = std::move(x.m_f);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1501,21 +1462,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_ULongLOng& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_f == x.m_f);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 5:
-                return (m_f == x.m_f);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1536,26 +1497,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 5:
-                switch (__d)
-                {
-                    case 5:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 5:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1573,24 +1528,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member f
      * @param _f New value for member f
      */
     eProsima_user_DllExport void f(
             uint64_t _f)
     {
-        m_f = _f;
+        f_() = _f;
         m__d = 5;
-
     }
 
     /*!
@@ -1600,18 +1545,7 @@ public:
      */
     eProsima_user_DllExport uint64_t f() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 5:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1626,18 +1560,7 @@ public:
      */
     eProsima_user_DllExport uint64_t& f()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 5:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1646,12 +1569,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            uint64_t& f_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    uint64_t m_f{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_f = {0};
+    ;
+                }
+
+                return m_f;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        uint64_t m_f;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Float defined by the user in the IDL file.
@@ -1666,7 +1625,6 @@ public:
      */
     eProsima_user_DllExport Union_Float()
     {
-        m__d = 6;
     }
 
     /*!
@@ -1674,6 +1632,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Float()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1685,14 +1647,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 6:
-                m_g = x.m_g;
-                break;
+                        case 0x00000001:
+                            g_() = x.m_g;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1705,14 +1665,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 6:
-                m_g = x.m_g;
-                break;
+                        case 0x00000001:
+                            g_() = std::move(x.m_g);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1725,14 +1683,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 6:
-                m_g = x.m_g;
-                break;
+                        case 0x00000001:
+                            g_() = x.m_g;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1747,14 +1703,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 6:
-                m_g = x.m_g;
-                break;
+                        case 0x00000001:
+                            g_() = std::move(x.m_g);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -1767,21 +1721,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Float& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_g == x.m_g);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 6:
-                return (m_g == x.m_g);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -1802,26 +1756,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 6:
-                switch (__d)
-                {
-                    case 6:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 6:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -1839,24 +1787,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member g
      * @param _g New value for member g
      */
     eProsima_user_DllExport void g(
             float _g)
     {
-        m_g = _g;
+        g_() = _g;
         m__d = 6;
-
     }
 
     /*!
@@ -1866,18 +1804,7 @@ public:
      */
     eProsima_user_DllExport float g() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 6:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1892,18 +1819,7 @@ public:
      */
     eProsima_user_DllExport float& g()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 6:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -1912,12 +1828,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            float& g_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    float m_g{0.0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_g = {0.0};
+    ;
+                }
+
+                return m_g;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        float m_g;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Double defined by the user in the IDL file.
@@ -1932,7 +1884,6 @@ public:
      */
     eProsima_user_DllExport Union_Double()
     {
-        m__d = 7;
     }
 
     /*!
@@ -1940,6 +1891,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Double()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -1951,14 +1906,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 7:
-                m_h = x.m_h;
-                break;
+                        case 0x00000001:
+                            h_() = x.m_h;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1971,14 +1924,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 7:
-                m_h = x.m_h;
-                break;
+                        case 0x00000001:
+                            h_() = std::move(x.m_h);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -1991,14 +1942,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 7:
-                m_h = x.m_h;
-                break;
+                        case 0x00000001:
+                            h_() = x.m_h;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2013,14 +1962,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 7:
-                m_h = x.m_h;
-                break;
+                        case 0x00000001:
+                            h_() = std::move(x.m_h);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2033,21 +1980,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Double& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_h == x.m_h);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 7:
-                return (m_h == x.m_h);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -2068,26 +2015,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 7:
-                switch (__d)
-                {
-                    case 7:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 7:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -2105,24 +2046,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member h
      * @param _h New value for member h
      */
     eProsima_user_DllExport void h(
             double _h)
     {
-        m_h = _h;
+        h_() = _h;
         m__d = 7;
-
     }
 
     /*!
@@ -2132,18 +2063,7 @@ public:
      */
     eProsima_user_DllExport double h() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 7:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2158,18 +2078,7 @@ public:
      */
     eProsima_user_DllExport double& h()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 7:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2178,12 +2087,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            double& h_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    double m_h{0.0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_h = {0.0};
+    ;
+                }
+
+                return m_h;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        double m_h;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_LongDouble defined by the user in the IDL file.
@@ -2198,7 +2143,6 @@ public:
      */
     eProsima_user_DllExport Union_LongDouble()
     {
-        m__d = 8;
     }
 
     /*!
@@ -2206,6 +2150,10 @@ public:
      */
     eProsima_user_DllExport ~Union_LongDouble()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -2217,14 +2165,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 8:
-                m_i = x.m_i;
-                break;
+                        case 0x00000001:
+                            i_() = x.m_i;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -2237,14 +2183,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 8:
-                m_i = x.m_i;
-                break;
+                        case 0x00000001:
+                            i_() = std::move(x.m_i);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -2257,14 +2201,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 8:
-                m_i = x.m_i;
-                break;
+                        case 0x00000001:
+                            i_() = x.m_i;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2279,14 +2221,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 8:
-                m_i = x.m_i;
-                break;
+                        case 0x00000001:
+                            i_() = std::move(x.m_i);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2299,21 +2239,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_LongDouble& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_i == x.m_i);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 8:
-                return (m_i == x.m_i);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -2334,26 +2274,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 8:
-                switch (__d)
-                {
-                    case 8:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 8:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -2371,24 +2305,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member i
      * @param _i New value for member i
      */
     eProsima_user_DllExport void i(
             long double _i)
     {
-        m_i = _i;
+        i_() = _i;
         m__d = 8;
-
     }
 
     /*!
@@ -2398,18 +2322,7 @@ public:
      */
     eProsima_user_DllExport long double i() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2424,18 +2337,7 @@ public:
      */
     eProsima_user_DllExport long double& i()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 8:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2444,12 +2346,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            long double& i_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    long double m_i{0.0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_i = {0.0};
+    ;
+                }
+
+                return m_i;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        long double m_i;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Boolean defined by the user in the IDL file.
@@ -2464,7 +2402,6 @@ public:
      */
     eProsima_user_DllExport Union_Boolean()
     {
-        m__d = 9;
     }
 
     /*!
@@ -2472,6 +2409,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Boolean()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -2483,14 +2424,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 9:
-                m_j = x.m_j;
-                break;
+                        case 0x00000001:
+                            j_() = x.m_j;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -2503,14 +2442,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 9:
-                m_j = x.m_j;
-                break;
+                        case 0x00000001:
+                            j_() = std::move(x.m_j);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -2523,14 +2460,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 9:
-                m_j = x.m_j;
-                break;
+                        case 0x00000001:
+                            j_() = x.m_j;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2545,14 +2480,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 9:
-                m_j = x.m_j;
-                break;
+                        case 0x00000001:
+                            j_() = std::move(x.m_j);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2565,21 +2498,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Boolean& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_j == x.m_j);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 9:
-                return (m_j == x.m_j);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -2600,26 +2533,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 9:
-                switch (__d)
-                {
-                    case 9:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 9:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -2637,24 +2564,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member j
      * @param _j New value for member j
      */
     eProsima_user_DllExport void j(
             bool _j)
     {
-        m_j = _j;
+        j_() = _j;
         m__d = 9;
-
     }
 
     /*!
@@ -2664,18 +2581,7 @@ public:
      */
     eProsima_user_DllExport bool j() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 9:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2690,18 +2596,7 @@ public:
      */
     eProsima_user_DllExport bool& j()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 9:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2710,12 +2605,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            bool& j_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    bool m_j{false};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_j = {false};
+    ;
+                }
+
+                return m_j;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        bool m_j;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Octet defined by the user in the IDL file.
@@ -2730,7 +2661,6 @@ public:
      */
     eProsima_user_DllExport Union_Octet()
     {
-        m__d = 10;
     }
 
     /*!
@@ -2738,6 +2668,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Octet()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -2749,14 +2683,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 10:
-                m_k = x.m_k;
-                break;
+                        case 0x00000001:
+                            k_() = x.m_k;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -2769,14 +2701,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 10:
-                m_k = x.m_k;
-                break;
+                        case 0x00000001:
+                            k_() = std::move(x.m_k);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -2789,14 +2719,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 10:
-                m_k = x.m_k;
-                break;
+                        case 0x00000001:
+                            k_() = x.m_k;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2811,14 +2739,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 10:
-                m_k = x.m_k;
-                break;
+                        case 0x00000001:
+                            k_() = std::move(x.m_k);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -2831,21 +2757,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Octet& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_k == x.m_k);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 10:
-                return (m_k == x.m_k);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -2866,26 +2792,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 10:
-                switch (__d)
-                {
-                    case 10:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 10:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -2903,24 +2823,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member k
      * @param _k New value for member k
      */
     eProsima_user_DllExport void k(
             uint8_t _k)
     {
-        m_k = _k;
+        k_() = _k;
         m__d = 10;
-
     }
 
     /*!
@@ -2930,18 +2840,7 @@ public:
      */
     eProsima_user_DllExport uint8_t k() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 10:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2956,18 +2855,7 @@ public:
      */
     eProsima_user_DllExport uint8_t& k()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 10:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -2976,12 +2864,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            uint8_t& k_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    uint8_t m_k{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_k = {0};
+    ;
+                }
+
+                return m_k;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        uint8_t m_k;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Char defined by the user in the IDL file.
@@ -2996,7 +2920,6 @@ public:
      */
     eProsima_user_DllExport Union_Char()
     {
-        m__d = 11;
     }
 
     /*!
@@ -3004,6 +2927,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Char()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -3015,14 +2942,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 11:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -3035,14 +2960,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 11:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -3055,14 +2978,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 11:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = x.m_l;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -3077,14 +2998,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 11:
-                m_l = x.m_l;
-                break;
+                        case 0x00000001:
+                            l_() = std::move(x.m_l);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -3097,21 +3016,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Char& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_l == x.m_l);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 11:
-                return (m_l == x.m_l);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -3132,26 +3051,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 11:
-                switch (__d)
-                {
-                    case 11:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 11:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -3169,24 +3082,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member l
      * @param _l New value for member l
      */
     eProsima_user_DllExport void l(
             char _l)
     {
-        m_l = _l;
+        l_() = _l;
         m__d = 11;
-
     }
 
     /*!
@@ -3196,18 +3099,7 @@ public:
      */
     eProsima_user_DllExport char l() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 11:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3222,18 +3114,7 @@ public:
      */
     eProsima_user_DllExport char& l()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 11:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3242,12 +3123,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            char& l_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    char m_l{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_l = {0};
+    ;
+                }
+
+                return m_l;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        char m_l;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_WChar defined by the user in the IDL file.
@@ -3262,7 +3179,6 @@ public:
      */
     eProsima_user_DllExport Union_WChar()
     {
-        m__d = 12;
     }
 
     /*!
@@ -3270,6 +3186,10 @@ public:
      */
     eProsima_user_DllExport ~Union_WChar()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -3281,14 +3201,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 12:
-                m_m = x.m_m;
-                break;
+                        case 0x00000001:
+                            m_() = x.m_m;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -3301,14 +3219,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 12:
-                m_m = x.m_m;
-                break;
+                        case 0x00000001:
+                            m_() = std::move(x.m_m);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -3321,14 +3237,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 12:
-                m_m = x.m_m;
-                break;
+                        case 0x00000001:
+                            m_() = x.m_m;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -3343,14 +3257,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 12:
-                m_m = x.m_m;
-                break;
+                        case 0x00000001:
+                            m_() = std::move(x.m_m);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -3363,21 +3275,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_WChar& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_m == x.m_m);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 12:
-                return (m_m == x.m_m);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -3398,26 +3310,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 12:
-                switch (__d)
-                {
-                    case 12:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 12:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -3435,24 +3341,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member m
      * @param _m New value for member m
      */
     eProsima_user_DllExport void m(
             wchar_t _m)
     {
-        m_m = _m;
+        m_() = _m;
         m__d = 12;
-
     }
 
     /*!
@@ -3462,18 +3358,7 @@ public:
      */
     eProsima_user_DllExport wchar_t m() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 12:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3488,18 +3373,7 @@ public:
      */
     eProsima_user_DllExport wchar_t& m()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 12:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3508,12 +3382,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            wchar_t& m_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    wchar_t m_m{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_m = {0};
+    ;
+                }
+
+                return m_m;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        wchar_t m_m;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_String defined by the user in the IDL file.
@@ -3528,7 +3438,6 @@ public:
      */
     eProsima_user_DllExport Union_String()
     {
-        m__d = 13;
     }
 
     /*!
@@ -3536,6 +3445,10 @@ public:
      */
     eProsima_user_DllExport ~Union_String()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -3547,14 +3460,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_n = x.m_n;
-                break;
+                        case 0x00000001:
+                            n_() = x.m_n;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -3567,15 +3478,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_n = std::move(x.m_n);
+                        case 0x00000001:
+                            n_() = std::move(x.m_n);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -3588,14 +3496,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_n = x.m_n;
-                break;
+                        case 0x00000001:
+                            n_() = x.m_n;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -3610,15 +3516,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_n = std::move(x.m_n);
+                        case 0x00000001:
+                            n_() = std::move(x.m_n);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -3631,21 +3534,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_String& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_n == x.m_n);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 13:
-                return (m_n == x.m_n);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -3666,26 +3569,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 13:
-                switch (__d)
-                {
-                    case 13:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 13:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -3703,24 +3600,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member n
      * @param _n New value to be copied in member n
      */
     eProsima_user_DllExport void n(
             const std::string& _n)
     {
-        m_n = _n;
+        n_() = _n;
         m__d = 13;
-
     }
 
     /*!
@@ -3730,9 +3617,8 @@ public:
     eProsima_user_DllExport void n(
             std::string&& _n)
     {
-        m_n = std::move(_n);
+        n_() = _n;
         m__d = 13;
-
     }
 
     /*!
@@ -3742,18 +3628,7 @@ public:
      */
     eProsima_user_DllExport const std::string& n() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 13:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3768,18 +3643,7 @@ public:
      */
     eProsima_user_DllExport std::string& n()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 13:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -3788,12 +3652,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            std::string& n_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    std::string m_n;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_n.~basic_string();};
+                    new(&m_n) std::string();
+    ;
+                }
+
+                return m_n;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        std::string m_n;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_WString defined by the user in the IDL file.
@@ -3808,7 +3708,6 @@ public:
      */
     eProsima_user_DllExport Union_WString()
     {
-        m__d = 14;
     }
 
     /*!
@@ -3816,6 +3715,10 @@ public:
      */
     eProsima_user_DllExport ~Union_WString()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -3827,14 +3730,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_o = x.m_o;
-                break;
+                        case 0x00000001:
+                            o_() = x.m_o;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -3847,15 +3748,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_o = std::move(x.m_o);
+                        case 0x00000001:
+                            o_() = std::move(x.m_o);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -3868,14 +3766,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_o = x.m_o;
-                break;
+                        case 0x00000001:
+                            o_() = x.m_o;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -3890,15 +3786,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_o = std::move(x.m_o);
+                        case 0x00000001:
+                            o_() = std::move(x.m_o);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -3911,21 +3804,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_WString& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_o == x.m_o);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 14:
-                return (m_o == x.m_o);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -3946,26 +3839,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 14:
-                switch (__d)
-                {
-                    case 14:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 14:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -3983,24 +3870,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member o
      * @param _o New value to be copied in member o
      */
     eProsima_user_DllExport void o(
             const std::wstring& _o)
     {
-        m_o = _o;
+        o_() = _o;
         m__d = 14;
-
     }
 
     /*!
@@ -4010,9 +3887,8 @@ public:
     eProsima_user_DllExport void o(
             std::wstring&& _o)
     {
-        m_o = std::move(_o);
+        o_() = _o;
         m__d = 14;
-
     }
 
     /*!
@@ -4022,18 +3898,7 @@ public:
      */
     eProsima_user_DllExport const std::wstring& o() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 14:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4048,18 +3913,7 @@ public:
      */
     eProsima_user_DllExport std::wstring& o()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 14:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4068,12 +3922,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            std::wstring& o_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    std::wstring m_o;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_o.~basic_string();};
+                    new(&m_o) std::wstring();
+    ;
+                }
+
+                return m_o;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        std::wstring m_o;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_BoundedString defined by the user in the IDL file.
@@ -4088,7 +3978,6 @@ public:
      */
     eProsima_user_DllExport Union_BoundedString()
     {
-        m__d = 13;
     }
 
     /*!
@@ -4096,6 +3985,10 @@ public:
      */
     eProsima_user_DllExport ~Union_BoundedString()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -4107,14 +4000,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_bn = x.m_bn;
-                break;
+                        case 0x00000001:
+                            bn_() = x.m_bn;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -4127,15 +4018,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_bn = std::move(x.m_bn);
+                        case 0x00000001:
+                            bn_() = std::move(x.m_bn);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -4148,14 +4036,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_bn = x.m_bn;
-                break;
+                        case 0x00000001:
+                            bn_() = x.m_bn;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -4170,15 +4056,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 13:
-                m_bn = std::move(x.m_bn);
+                        case 0x00000001:
+                            bn_() = std::move(x.m_bn);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -4191,21 +4074,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_BoundedString& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_bn == x.m_bn);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 13:
-                return (m_bn == x.m_bn);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -4226,26 +4109,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 13:
-                switch (__d)
-                {
-                    case 13:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 13:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -4263,24 +4140,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member bn
      * @param _bn New value to be copied in member bn
      */
     eProsima_user_DllExport void bn(
             const Inner_alias_bounded_string_helper& _bn)
     {
-        m_bn = _bn;
+        bn_() = _bn;
         m__d = 13;
-
     }
 
     /*!
@@ -4290,9 +4157,8 @@ public:
     eProsima_user_DllExport void bn(
             Inner_alias_bounded_string_helper&& _bn)
     {
-        m_bn = std::move(_bn);
+        bn_() = _bn;
         m__d = 13;
-
     }
 
     /*!
@@ -4302,18 +4168,7 @@ public:
      */
     eProsima_user_DllExport const Inner_alias_bounded_string_helper& bn() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 13:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4328,18 +4183,7 @@ public:
      */
     eProsima_user_DllExport Inner_alias_bounded_string_helper& bn()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 13:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4348,12 +4192,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            Inner_alias_bounded_string_helper& bn_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    Inner_alias_bounded_string_helper m_bn;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_bn.~Inner_alias_bounded_string_helper();};
+                    new(&m_bn) Inner_alias_bounded_string_helper();
+    ;
+                }
+
+                return m_bn;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        Inner_alias_bounded_string_helper m_bn;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_BoundedWString defined by the user in the IDL file.
@@ -4368,7 +4248,6 @@ public:
      */
     eProsima_user_DllExport Union_BoundedWString()
     {
-        m__d = 14;
     }
 
     /*!
@@ -4376,6 +4255,10 @@ public:
      */
     eProsima_user_DllExport ~Union_BoundedWString()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -4387,14 +4270,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_bo = x.m_bo;
-                break;
+                        case 0x00000001:
+                            bo_() = x.m_bo;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -4407,15 +4288,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_bo = std::move(x.m_bo);
+                        case 0x00000001:
+                            bo_() = std::move(x.m_bo);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -4428,14 +4306,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_bo = x.m_bo;
-                break;
+                        case 0x00000001:
+                            bo_() = x.m_bo;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -4450,15 +4326,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 14:
-                m_bo = std::move(x.m_bo);
+                        case 0x00000001:
+                            bo_() = std::move(x.m_bo);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -4471,21 +4344,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_BoundedWString& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_bo == x.m_bo);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 14:
-                return (m_bo == x.m_bo);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -4506,26 +4379,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 14:
-                switch (__d)
-                {
-                    case 14:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 14:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -4543,24 +4410,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member bo
      * @param _bo New value to be copied in member bo
      */
     eProsima_user_DllExport void bo(
             const Inner_alias_bounded_wstring_helper& _bo)
     {
-        m_bo = _bo;
+        bo_() = _bo;
         m__d = 14;
-
     }
 
     /*!
@@ -4570,9 +4427,8 @@ public:
     eProsima_user_DllExport void bo(
             Inner_alias_bounded_wstring_helper&& _bo)
     {
-        m_bo = std::move(_bo);
+        bo_() = _bo;
         m__d = 14;
-
     }
 
     /*!
@@ -4582,18 +4438,7 @@ public:
      */
     eProsima_user_DllExport const Inner_alias_bounded_wstring_helper& bo() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 14:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4608,18 +4453,7 @@ public:
      */
     eProsima_user_DllExport Inner_alias_bounded_wstring_helper& bo()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 14:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4628,12 +4462,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            Inner_alias_bounded_wstring_helper& bo_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    Inner_alias_bounded_wstring_helper m_bo;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_bo.~Inner_alias_bounded_wstring_helper();};
+                    new(&m_bo) Inner_alias_bounded_wstring_helper();
+    ;
+                }
+
+                return m_bo;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        Inner_alias_bounded_wstring_helper m_bo;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_InnerEnumHelper defined by the user in the IDL file.
@@ -4648,7 +4518,6 @@ public:
      */
     eProsima_user_DllExport Union_InnerEnumHelper()
     {
-        m__d = 15;
     }
 
     /*!
@@ -4656,6 +4525,10 @@ public:
      */
     eProsima_user_DllExport ~Union_InnerEnumHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -4667,14 +4540,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 15:
-                m_p = x.m_p;
-                break;
+                        case 0x00000001:
+                            p_() = x.m_p;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -4687,14 +4558,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 15:
-                m_p = x.m_p;
-                break;
+                        case 0x00000001:
+                            p_() = std::move(x.m_p);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -4707,14 +4576,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 15:
-                m_p = x.m_p;
-                break;
+                        case 0x00000001:
+                            p_() = x.m_p;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -4729,14 +4596,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 15:
-                m_p = x.m_p;
-                break;
+                        case 0x00000001:
+                            p_() = std::move(x.m_p);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -4749,21 +4614,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_InnerEnumHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_p == x.m_p);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 15:
-                return (m_p == x.m_p);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -4784,26 +4649,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 15:
-                switch (__d)
-                {
-                    case 15:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 15:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -4821,24 +4680,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member p
      * @param _p New value for member p
      */
     eProsima_user_DllExport void p(
             InnerEnumHelper _p)
     {
-        m_p = _p;
+        p_() = _p;
         m__d = 15;
-
     }
 
     /*!
@@ -4848,18 +4697,7 @@ public:
      */
     eProsima_user_DllExport InnerEnumHelper p() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 15:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4874,18 +4712,7 @@ public:
      */
     eProsima_user_DllExport InnerEnumHelper& p()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 15:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -4894,12 +4721,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            InnerEnumHelper& p_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    InnerEnumHelper m_p{InnerEnumHelper::ENUM_VALUE_1};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_p = {InnerEnumHelper::ENUM_VALUE_1};
+    ;
+                }
+
+                return m_p;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        InnerEnumHelper m_p;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_InnerBitMaskHelper defined by the user in the IDL file.
@@ -4914,7 +4777,6 @@ public:
      */
     eProsima_user_DllExport Union_InnerBitMaskHelper()
     {
-        m__d = 16;
     }
 
     /*!
@@ -4922,6 +4784,10 @@ public:
      */
     eProsima_user_DllExport ~Union_InnerBitMaskHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -4933,14 +4799,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 16:
-                m_q = x.m_q;
-                break;
+                        case 0x00000001:
+                            q_() = x.m_q;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -4953,15 +4817,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 16:
-                m_q = std::move(x.m_q);
+                        case 0x00000001:
+                            q_() = std::move(x.m_q);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -4974,14 +4835,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 16:
-                m_q = x.m_q;
-                break;
+                        case 0x00000001:
+                            q_() = x.m_q;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -4996,15 +4855,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 16:
-                m_q = std::move(x.m_q);
+                        case 0x00000001:
+                            q_() = std::move(x.m_q);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -5017,21 +4873,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_InnerBitMaskHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_q == x.m_q);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 16:
-                return (m_q == x.m_q);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -5052,26 +4908,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 16:
-                switch (__d)
-                {
-                    case 16:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 16:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -5089,24 +4939,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member q
      * @param _q New value to be copied in member q
      */
     eProsima_user_DllExport void q(
             const InnerBitMaskHelper& _q)
     {
-        m_q = _q;
+        q_() = _q;
         m__d = 16;
-
     }
 
     /*!
@@ -5116,9 +4956,8 @@ public:
     eProsima_user_DllExport void q(
             InnerBitMaskHelper&& _q)
     {
-        m_q = std::move(_q);
+        q_() = _q;
         m__d = 16;
-
     }
 
     /*!
@@ -5128,18 +4967,7 @@ public:
      */
     eProsima_user_DllExport const InnerBitMaskHelper& q() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5154,18 +4982,7 @@ public:
      */
     eProsima_user_DllExport InnerBitMaskHelper& q()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 16:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5174,12 +4991,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            InnerBitMaskHelper& q_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    InnerBitMaskHelper m_q{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_q.~InnerBitMaskHelper();};
+                    new(&m_q) InnerBitMaskHelper();
+    ;
+                }
+
+                return m_q;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        InnerBitMaskHelper m_q;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_InnerAliasHelper defined by the user in the IDL file.
@@ -5194,7 +5047,6 @@ public:
      */
     eProsima_user_DllExport Union_InnerAliasHelper()
     {
-        m__d = 17;
     }
 
     /*!
@@ -5202,6 +5054,10 @@ public:
      */
     eProsima_user_DllExport ~Union_InnerAliasHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -5213,14 +5069,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 17:
-                m_r = x.m_r;
-                break;
+                        case 0x00000001:
+                            r_() = x.m_r;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -5233,14 +5087,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 17:
-                m_r = x.m_r;
-                break;
+                        case 0x00000001:
+                            r_() = std::move(x.m_r);
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -5253,14 +5105,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 17:
-                m_r = x.m_r;
-                break;
+                        case 0x00000001:
+                            r_() = x.m_r;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -5275,14 +5125,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 17:
-                m_r = x.m_r;
-                break;
+                        case 0x00000001:
+                            r_() = std::move(x.m_r);
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -5295,21 +5143,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_InnerAliasHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_r == x.m_r);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 17:
-                return (m_r == x.m_r);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -5330,26 +5178,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 17:
-                switch (__d)
-                {
-                    case 17:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 17:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -5367,24 +5209,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member r
      * @param _r New value for member r
      */
     eProsima_user_DllExport void r(
             InnerAliasHelper _r)
     {
-        m_r = _r;
+        r_() = _r;
         m__d = 17;
-
     }
 
     /*!
@@ -5394,18 +5226,7 @@ public:
      */
     eProsima_user_DllExport InnerAliasHelper r() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 17:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5420,18 +5241,7 @@ public:
      */
     eProsima_user_DllExport InnerAliasHelper& r()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 17:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5440,12 +5250,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            InnerAliasHelper& r_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    InnerAliasHelper m_r{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_r = {0};
+    ;
+                }
+
+                return m_r;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        InnerAliasHelper m_r;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Array defined by the user in the IDL file.
@@ -5460,7 +5306,6 @@ public:
      */
     eProsima_user_DllExport Union_Array()
     {
-        m__d = 18;
     }
 
     /*!
@@ -5468,6 +5313,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Array()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -5479,14 +5328,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 18:
-                m_s = x.m_s;
-                break;
+                        case 0x00000001:
+                            s_() = x.m_s;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -5499,15 +5346,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 18:
-                m_s = std::move(x.m_s);
+                        case 0x00000001:
+                            s_() = std::move(x.m_s);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -5520,14 +5364,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 18:
-                m_s = x.m_s;
-                break;
+                        case 0x00000001:
+                            s_() = x.m_s;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -5542,15 +5384,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 18:
-                m_s = std::move(x.m_s);
+                        case 0x00000001:
+                            s_() = std::move(x.m_s);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -5563,21 +5402,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Array& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_s == x.m_s);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 18:
-                return (m_s == x.m_s);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -5598,26 +5437,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 18:
-                switch (__d)
-                {
-                    case 18:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 18:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -5635,24 +5468,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member s
      * @param _s New value to be copied in member s
      */
     eProsima_user_DllExport void s(
             const Inner_alias_array_helper& _s)
     {
-        m_s = _s;
+        s_() = _s;
         m__d = 18;
-
     }
 
     /*!
@@ -5662,9 +5485,8 @@ public:
     eProsima_user_DllExport void s(
             Inner_alias_array_helper&& _s)
     {
-        m_s = std::move(_s);
+        s_() = _s;
         m__d = 18;
-
     }
 
     /*!
@@ -5674,18 +5496,7 @@ public:
      */
     eProsima_user_DllExport const Inner_alias_array_helper& s() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 18:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5700,18 +5511,7 @@ public:
      */
     eProsima_user_DllExport Inner_alias_array_helper& s()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 18:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5720,12 +5520,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            Inner_alias_array_helper& s_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    Inner_alias_array_helper m_s{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_s.~Inner_alias_array_helper();};
+                    new(&m_s) Inner_alias_array_helper();
+    ;
+                }
+
+                return m_s;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        Inner_alias_array_helper m_s;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Sequence defined by the user in the IDL file.
@@ -5740,7 +5576,6 @@ public:
      */
     eProsima_user_DllExport Union_Sequence()
     {
-        m__d = 19;
     }
 
     /*!
@@ -5748,6 +5583,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Sequence()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -5759,14 +5598,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 19:
-                m_t = x.m_t;
-                break;
+                        case 0x00000001:
+                            t_() = x.m_t;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -5779,15 +5616,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 19:
-                m_t = std::move(x.m_t);
+                        case 0x00000001:
+                            t_() = std::move(x.m_t);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -5800,14 +5634,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 19:
-                m_t = x.m_t;
-                break;
+                        case 0x00000001:
+                            t_() = x.m_t;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -5822,15 +5654,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 19:
-                m_t = std::move(x.m_t);
+                        case 0x00000001:
+                            t_() = std::move(x.m_t);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -5843,21 +5672,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Sequence& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_t == x.m_t);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 19:
-                return (m_t == x.m_t);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -5878,26 +5707,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 19:
-                switch (__d)
-                {
-                    case 19:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 19:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -5915,24 +5738,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member t
      * @param _t New value to be copied in member t
      */
     eProsima_user_DllExport void t(
             const std::vector<int16_t>& _t)
     {
-        m_t = _t;
+        t_() = _t;
         m__d = 19;
-
     }
 
     /*!
@@ -5942,9 +5755,8 @@ public:
     eProsima_user_DllExport void t(
             std::vector<int16_t>&& _t)
     {
-        m_t = std::move(_t);
+        t_() = _t;
         m__d = 19;
-
     }
 
     /*!
@@ -5954,18 +5766,7 @@ public:
      */
     eProsima_user_DllExport const std::vector<int16_t>& t() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 19:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -5980,18 +5781,7 @@ public:
      */
     eProsima_user_DllExport std::vector<int16_t>& t()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 19:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6000,12 +5790,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            std::vector<int16_t>& t_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    std::vector<int16_t> m_t;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_t.~vector();};
+                    new(&m_t) std::vector<int16_t>();
+    ;
+                }
+
+                return m_t;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        std::vector<int16_t> m_t;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Map defined by the user in the IDL file.
@@ -6020,7 +5846,6 @@ public:
      */
     eProsima_user_DllExport Union_Map()
     {
-        m__d = 20;
     }
 
     /*!
@@ -6028,6 +5853,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Map()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -6039,14 +5868,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 20:
-                m_u = x.m_u;
-                break;
+                        case 0x00000001:
+                            u_() = x.m_u;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -6059,15 +5886,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 20:
-                m_u = std::move(x.m_u);
+                        case 0x00000001:
+                            u_() = std::move(x.m_u);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -6080,14 +5904,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 20:
-                m_u = x.m_u;
-                break;
+                        case 0x00000001:
+                            u_() = x.m_u;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -6102,15 +5924,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 20:
-                m_u = std::move(x.m_u);
+                        case 0x00000001:
+                            u_() = std::move(x.m_u);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -6123,21 +5942,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Map& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_u == x.m_u);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 20:
-                return (m_u == x.m_u);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -6158,26 +5977,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 20:
-                switch (__d)
-                {
-                    case 20:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 20:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -6195,24 +6008,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member u
      * @param _u New value to be copied in member u
      */
     eProsima_user_DllExport void u(
             const std::map<int32_t, int32_t>& _u)
     {
-        m_u = _u;
+        u_() = _u;
         m__d = 20;
-
     }
 
     /*!
@@ -6222,9 +6025,8 @@ public:
     eProsima_user_DllExport void u(
             std::map<int32_t, int32_t>&& _u)
     {
-        m_u = std::move(_u);
+        u_() = _u;
         m__d = 20;
-
     }
 
     /*!
@@ -6234,18 +6036,7 @@ public:
      */
     eProsima_user_DllExport const std::map<int32_t, int32_t>& u() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 20:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6260,18 +6051,7 @@ public:
      */
     eProsima_user_DllExport std::map<int32_t, int32_t>& u()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 20:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6280,12 +6060,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            std::map<int32_t, int32_t>& u_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    std::map<int32_t, int32_t> m_u;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_u.~map();};
+                    new(&m_u) std::map<int32_t, int32_t>();
+    ;
+                }
+
+                return m_u;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        std::map<int32_t, int32_t> m_u;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_InnerUnionHelper defined by the user in the IDL file.
@@ -6300,7 +6116,6 @@ public:
      */
     eProsima_user_DllExport Union_InnerUnionHelper()
     {
-        m__d = 21;
     }
 
     /*!
@@ -6308,6 +6123,10 @@ public:
      */
     eProsima_user_DllExport ~Union_InnerUnionHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -6319,14 +6138,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 21:
-                m_v = x.m_v;
-                break;
+                        case 0x00000001:
+                            v_() = x.m_v;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -6339,15 +6156,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 21:
-                m_v = std::move(x.m_v);
+                        case 0x00000001:
+                            v_() = std::move(x.m_v);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -6360,14 +6174,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 21:
-                m_v = x.m_v;
-                break;
+                        case 0x00000001:
+                            v_() = x.m_v;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -6382,15 +6194,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 21:
-                m_v = std::move(x.m_v);
+                        case 0x00000001:
+                            v_() = std::move(x.m_v);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -6403,21 +6212,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_InnerUnionHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_v == x.m_v);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 21:
-                return (m_v == x.m_v);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -6438,26 +6247,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 21:
-                switch (__d)
-                {
-                    case 21:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 21:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -6475,24 +6278,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member v
      * @param _v New value to be copied in member v
      */
     eProsima_user_DllExport void v(
             const InnerUnionHelper& _v)
     {
-        m_v = _v;
+        v_() = _v;
         m__d = 21;
-
     }
 
     /*!
@@ -6502,9 +6295,8 @@ public:
     eProsima_user_DllExport void v(
             InnerUnionHelper&& _v)
     {
-        m_v = std::move(_v);
+        v_() = _v;
         m__d = 21;
-
     }
 
     /*!
@@ -6514,18 +6306,7 @@ public:
      */
     eProsima_user_DllExport const InnerUnionHelper& v() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 21:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6540,18 +6321,7 @@ public:
      */
     eProsima_user_DllExport InnerUnionHelper& v()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 21:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6560,12 +6330,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            InnerUnionHelper& v_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    InnerUnionHelper m_v;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_v.~InnerUnionHelper();};
+                    new(&m_v) InnerUnionHelper();
+    ;
+                }
+
+                return m_v;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        InnerUnionHelper m_v;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_InnerStructureHelper defined by the user in the IDL file.
@@ -6580,7 +6386,6 @@ public:
      */
     eProsima_user_DllExport Union_InnerStructureHelper()
     {
-        m__d = 22;
     }
 
     /*!
@@ -6588,6 +6393,10 @@ public:
      */
     eProsima_user_DllExport ~Union_InnerStructureHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -6599,14 +6408,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 22:
-                m_w = x.m_w;
-                break;
+                        case 0x00000001:
+                            w_() = x.m_w;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -6619,15 +6426,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 22:
-                m_w = std::move(x.m_w);
+                        case 0x00000001:
+                            w_() = std::move(x.m_w);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -6640,14 +6444,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 22:
-                m_w = x.m_w;
-                break;
+                        case 0x00000001:
+                            w_() = x.m_w;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -6662,15 +6464,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 22:
-                m_w = std::move(x.m_w);
+                        case 0x00000001:
+                            w_() = std::move(x.m_w);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -6683,21 +6482,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_InnerStructureHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_w == x.m_w);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 22:
-                return (m_w == x.m_w);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -6718,26 +6517,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 22:
-                switch (__d)
-                {
-                    case 22:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 22:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -6755,24 +6548,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member w
      * @param _w New value to be copied in member w
      */
     eProsima_user_DllExport void w(
             const InnerStructureHelper& _w)
     {
-        m_w = _w;
+        w_() = _w;
         m__d = 22;
-
     }
 
     /*!
@@ -6782,9 +6565,8 @@ public:
     eProsima_user_DllExport void w(
             InnerStructureHelper&& _w)
     {
-        m_w = std::move(_w);
+        w_() = _w;
         m__d = 22;
-
     }
 
     /*!
@@ -6794,18 +6576,7 @@ public:
      */
     eProsima_user_DllExport const InnerStructureHelper& w() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 22:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6820,18 +6591,7 @@ public:
      */
     eProsima_user_DllExport InnerStructureHelper& w()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 22:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -6840,12 +6600,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            InnerStructureHelper& w_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    InnerStructureHelper m_w;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_w.~InnerStructureHelper();};
+                    new(&m_w) InnerStructureHelper();
+    ;
+                }
+
+                return m_w;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        InnerStructureHelper m_w;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_InnerBitsetHelper defined by the user in the IDL file.
@@ -6860,7 +6656,6 @@ public:
      */
     eProsima_user_DllExport Union_InnerBitsetHelper()
     {
-        m__d = 23;
     }
 
     /*!
@@ -6868,6 +6663,10 @@ public:
      */
     eProsima_user_DllExport ~Union_InnerBitsetHelper()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -6879,14 +6678,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 23:
-                m_x = x.m_x;
-                break;
+                        case 0x00000001:
+                            x_() = x.m_x;
+                            break;
 
-            default:
-                break;
         }
     }
 
@@ -6899,15 +6696,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 23:
-                m_x = std::move(x.m_x);
+                        case 0x00000001:
+                            x_() = std::move(x.m_x);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -6920,14 +6714,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 23:
-                m_x = x.m_x;
-                break;
+                        case 0x00000001:
+                            x_() = x.m_x;
+                            break;
 
-            default:
-                break;
         }
 
         return *this;
@@ -6942,15 +6734,12 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 23:
-                m_x = std::move(x.m_x);
+                        case 0x00000001:
+                            x_() = std::move(x.m_x);
+                            break;
 
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -6963,21 +6752,21 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_InnerBitsetHelper& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_x == x.m_x);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 23:
-                return (m_x == x.m_x);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -6998,26 +6787,20 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 23:
-                switch (__d)
-                {
-                    case 23:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 23:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -7035,24 +6818,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function copies the value in member x
      * @param _x New value to be copied in member x
      */
     eProsima_user_DllExport void x(
             const InnerBitsetHelper& _x)
     {
-        m_x = _x;
+        x_() = _x;
         m__d = 23;
-
     }
 
     /*!
@@ -7062,9 +6835,8 @@ public:
     eProsima_user_DllExport void x(
             InnerBitsetHelper&& _x)
     {
-        m_x = std::move(_x);
+        x_() = _x;
         m__d = 23;
-
     }
 
     /*!
@@ -7074,18 +6846,7 @@ public:
      */
     eProsima_user_DllExport const InnerBitsetHelper& x() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 23:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7100,18 +6861,7 @@ public:
      */
     eProsima_user_DllExport InnerBitsetHelper& x()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 23:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7120,12 +6870,48 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            InnerBitsetHelper& x_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    InnerBitsetHelper m_x;
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = [&]() {m_x.~InnerBitsetHelper();};
+                    new(&m_x) InnerBitsetHelper();
+    ;
+                }
+
+                return m_x;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        InnerBitsetHelper m_x;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_short defined by the user in the IDL file.
@@ -7140,7 +6926,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_short()
     {
-        m__d = 1;
     }
 
     /*!
@@ -7148,6 +6933,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_short()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -7159,19 +6948,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -7184,19 +6970,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -7209,19 +6992,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -7236,19 +7016,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -7261,26 +7038,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_short& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case -2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -7301,38 +7077,27 @@ public:
     eProsima_user_DllExport void _d(
             int16_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case -2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case -2:
-                switch (__d)
-                {
-                    case -2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -7350,24 +7115,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int16_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 1;
-
     }
 
     /*!
@@ -7377,18 +7132,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7403,18 +7147,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7430,9 +7163,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = -2;
-
     }
 
     /*!
@@ -7442,18 +7174,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case -2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7468,18 +7189,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case -2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7488,13 +7198,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int16_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    int16_t m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_unsigned_short defined by the user in the IDL file.
@@ -7509,7 +7273,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_unsigned_short()
     {
-        m__d = 1;
     }
 
     /*!
@@ -7517,6 +7280,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_unsigned_short()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -7528,19 +7295,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -7553,19 +7317,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -7578,19 +7339,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -7605,19 +7363,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -7630,26 +7385,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_unsigned_short& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case 2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -7670,38 +7424,27 @@ public:
     eProsima_user_DllExport void _d(
             uint16_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -7719,24 +7462,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint16_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 1;
-
     }
 
     /*!
@@ -7746,18 +7479,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7772,18 +7494,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7799,9 +7510,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = 2;
-
     }
 
     /*!
@@ -7811,18 +7521,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7837,18 +7536,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -7857,13 +7545,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint16_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    uint16_t m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_long defined by the user in the IDL file.
@@ -7878,7 +7620,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_long()
     {
-        m__d = 1;
     }
 
     /*!
@@ -7886,6 +7627,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_long()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -7897,19 +7642,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -7922,19 +7664,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -7947,19 +7686,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -7974,19 +7710,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -7999,26 +7732,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_long& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case -2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -8039,38 +7771,27 @@ public:
     eProsima_user_DllExport void _d(
             int32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case -2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case -2:
-                switch (__d)
-                {
-                    case -2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -8088,24 +7809,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 1;
-
     }
 
     /*!
@@ -8115,18 +7826,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8141,18 +7841,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8168,9 +7857,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = -2;
-
     }
 
     /*!
@@ -8180,18 +7868,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case -2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8206,18 +7883,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case -2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8226,13 +7892,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int32_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    int32_t m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_unsigned_long defined by the user in the IDL file.
@@ -8247,7 +7967,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_unsigned_long()
     {
-        m__d = 1;
     }
 
     /*!
@@ -8255,6 +7974,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_unsigned_long()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -8266,19 +7989,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -8291,19 +8011,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -8316,19 +8033,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -8343,19 +8057,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -8368,26 +8079,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_unsigned_long& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case 2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -8408,38 +8118,27 @@ public:
     eProsima_user_DllExport void _d(
             uint32_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -8457,24 +8156,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint32_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 1;
-
     }
 
     /*!
@@ -8484,18 +8173,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8510,18 +8188,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8537,9 +8204,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = 2;
-
     }
 
     /*!
@@ -8549,18 +8215,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8575,18 +8230,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8595,13 +8239,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint32_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    uint32_t m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_long_long defined by the user in the IDL file.
@@ -8616,7 +8314,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_long_long()
     {
-        m__d = 1;
     }
 
     /*!
@@ -8624,6 +8321,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_long_long()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -8635,19 +8336,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -8660,19 +8358,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -8685,19 +8380,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -8712,19 +8404,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case -2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -8737,26 +8426,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_long_long& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case -2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -8777,38 +8465,27 @@ public:
     eProsima_user_DllExport void _d(
             int64_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case -2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case -2:
-                switch (__d)
-                {
-                    case -2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -8826,24 +8503,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport int64_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 1;
-
     }
 
     /*!
@@ -8853,18 +8520,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8879,18 +8535,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8906,9 +8551,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = -2;
-
     }
 
     /*!
@@ -8918,18 +8562,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case -2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8944,18 +8577,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case -2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -8964,13 +8586,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    int64_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    int64_t m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_unsigned_long_long defined by the user in the IDL file.
@@ -8985,7 +8661,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_unsigned_long_long()
     {
-        m__d = 2;
     }
 
     /*!
@@ -8993,6 +8668,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_unsigned_long_long()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -9004,19 +8683,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -9029,19 +8705,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -9054,19 +8727,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -9081,19 +8751,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 2:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -9106,26 +8773,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_unsigned_long_long& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 2:
-                return (m_first == x.m_first);
-                break;
-
-
-            case 1:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -9146,38 +8812,27 @@ public:
     eProsima_user_DllExport void _d(
             uint64_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 2:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -9195,24 +8850,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint64_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 2;
-
     }
 
     /*!
@@ -9222,18 +8867,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9248,18 +8882,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9275,9 +8898,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = 1;
-
     }
 
     /*!
@@ -9287,18 +8909,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9313,18 +8924,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9333,13 +8933,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint64_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    uint64_t m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_boolean defined by the user in the IDL file.
@@ -9354,7 +9008,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_boolean()
     {
-        m__d = true;
     }
 
     /*!
@@ -9362,6 +9015,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_boolean()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -9373,19 +9030,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case true:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case false:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -9398,19 +9052,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case true:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case false:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -9423,19 +9074,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case true:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case false:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -9450,19 +9098,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case true:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case false:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -9475,26 +9120,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_boolean& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case true:
-                return (m_first == x.m_first);
-                break;
-
-
-            case false:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -9515,38 +9159,27 @@ public:
     eProsima_user_DllExport void _d(
             bool __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case true:
-                switch (__d)
-                {
-                    case true:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case true:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case false:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case false:
-                switch (__d)
-                {
-                    case false:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -9564,24 +9197,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport bool& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = true;
-
     }
 
     /*!
@@ -9591,18 +9214,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case true:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9617,18 +9229,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case true:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9644,9 +9245,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = false;
-
     }
 
     /*!
@@ -9656,18 +9256,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case false:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9682,18 +9271,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case false:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9702,13 +9280,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    bool m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    bool m__d {true};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_octet defined by the user in the IDL file.
@@ -9723,7 +9355,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_octet()
     {
-        m__d = 0;
     }
 
     /*!
@@ -9731,6 +9362,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_octet()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -9742,19 +9377,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -9767,19 +9399,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -9792,19 +9421,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -9819,19 +9445,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 0:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 1:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -9844,26 +9467,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_octet& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 0:
-                return (m_first == x.m_first);
-                break;
-
-
-            case 1:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -9884,38 +9506,27 @@ public:
     eProsima_user_DllExport void _d(
             uint8_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 0:
-                switch (__d)
-                {
-                    case 0:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 0:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 1:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -9933,24 +9544,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport uint8_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 0;
-
     }
 
     /*!
@@ -9960,18 +9561,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -9986,18 +9576,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 0:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10013,9 +9592,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = 1;
-
     }
 
     /*!
@@ -10025,18 +9603,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10051,18 +9618,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10071,13 +9627,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    uint8_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    uint8_t m__d {2};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_char defined by the user in the IDL file.
@@ -10092,7 +9702,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_char()
     {
-        m__d = 'a';
     }
 
     /*!
@@ -10100,6 +9709,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_char()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -10111,19 +9724,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -10136,19 +9746,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -10161,19 +9768,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -10188,19 +9792,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -10213,26 +9814,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_char& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 'a':
-                return (m_first == x.m_first);
-                break;
-
-
-            case 'b':
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -10253,38 +9853,27 @@ public:
     eProsima_user_DllExport void _d(
             char __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 'a':
-                switch (__d)
-                {
-                    case 'a':
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 'a':
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 'b':
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 'b':
-                switch (__d)
-                {
-                    case 'b':
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -10302,24 +9891,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport char& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 'a';
-
     }
 
     /*!
@@ -10329,18 +9908,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 'a':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10355,18 +9923,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 'a':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10382,9 +9939,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = 'b';
-
     }
 
     /*!
@@ -10394,18 +9950,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 'b':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10420,18 +9965,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 'b':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10440,13 +9974,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    char m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    char m__d {1};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_wchar defined by the user in the IDL file.
@@ -10461,7 +10049,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_wchar()
     {
-        m__d = L'a';
     }
 
     /*!
@@ -10469,6 +10056,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_wchar()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -10480,19 +10071,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case L'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case L'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -10505,19 +10093,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case L'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case L'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -10530,19 +10115,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case L'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case L'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -10557,19 +10139,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case L'a':
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case L'b':
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -10582,26 +10161,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_wchar& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case L'a':
-                return (m_first == x.m_first);
-                break;
-
-
-            case L'b':
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -10622,38 +10200,27 @@ public:
     eProsima_user_DllExport void _d(
             wchar_t __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case L'a':
-                switch (__d)
-                {
-                    case L'a':
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case L'a':
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case L'b':
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case L'b':
-                switch (__d)
-                {
-                    case L'b':
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -10671,24 +10238,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport wchar_t& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = L'a';
-
     }
 
     /*!
@@ -10698,18 +10255,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case L'a':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10724,18 +10270,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case L'a':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10751,9 +10286,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = L'b';
-
     }
 
     /*!
@@ -10763,18 +10297,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case L'b':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10789,18 +10312,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case L'b':
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -10809,13 +10321,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    wchar_t m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    wchar_t m__d {1};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_enum defined by the user in the IDL file.
@@ -10830,7 +10396,7 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_enum()
     {
-        m__d = InnerEnumHelper::ENUM_VALUE_3;
+        third_();
     }
 
     /*!
@@ -10838,6 +10404,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_enum()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -10849,22 +10419,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
+                        case 0x00000003:
+                            third_() = x.m_third;
+                            break;
 
-
-            default:
-                m_third = x.m_third;
-
-                break;
         }
     }
 
@@ -10877,21 +10445,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
+                        case 0x00000003:
+                            third_() = std::move(x.m_third);
+                            break;
 
-
-            default:
-                m_third = x.m_third;
-                break;
         }
     }
 
@@ -10904,22 +10471,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
+                        case 0x00000003:
+                            third_() = x.m_third;
+                            break;
 
-
-            default:
-                m_third = x.m_third;
-
-                break;
         }
 
         return *this;
@@ -10934,21 +10499,20 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
+                        case 0x00000003:
+                            third_() = std::move(x.m_third);
+                            break;
 
-
-            default:
-                m_third = x.m_third;
-                break;
         }
 
         return *this;
@@ -10961,28 +10525,29 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_enum& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+                                case 0x00000003:
+                                    ret_value = (m_third == x.m_third);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case InnerEnumHelper::ENUM_VALUE_2:
-                return (m_second == x.m_second);
-                break;
-
-
-            default:
-                return m_third == x.m_third;
-
-                break;
-        }
+        return ret_value;
     }
 
     /*!
@@ -11003,50 +10568,34 @@ public:
     eProsima_user_DllExport void _d(
             InnerEnumHelper __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                switch (__d)
-                {
-                    case InnerEnumHelper::ENUM_VALUE_1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case InnerEnumHelper::ENUM_VALUE_1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case InnerEnumHelper::ENUM_VALUE_2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                switch (__d)
-                {
-                    case InnerEnumHelper::ENUM_VALUE_2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-
-            default:
-                b = true;
-                switch (__d)
-                {
-                    case InnerEnumHelper::ENUM_VALUE_1:
-                    case InnerEnumHelper::ENUM_VALUE_2:
-                        b = false;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            if (0x00000003 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -11064,24 +10613,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport InnerEnumHelper& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = InnerEnumHelper::ENUM_VALUE_1;
-
     }
 
     /*!
@@ -11091,18 +10630,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11117,18 +10645,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11144,9 +10661,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = InnerEnumHelper::ENUM_VALUE_2;
-
     }
 
     /*!
@@ -11156,18 +10672,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11182,18 +10687,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11209,9 +10703,8 @@ public:
     eProsima_user_DllExport void third(
             uint8_t _third)
     {
-        m_third = _third;
+        third_() = _third;
         m__d = InnerEnumHelper::ENUM_VALUE_3;
-
     }
 
     /*!
@@ -11221,18 +10714,7 @@ public:
      */
     eProsima_user_DllExport uint8_t third() const
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_1:
-            case InnerEnumHelper::ENUM_VALUE_2:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11247,18 +10729,7 @@ public:
      */
     eProsima_user_DllExport uint8_t& third()
     {
-        bool b = true;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_1:
-            case InnerEnumHelper::ENUM_VALUE_2:
-                b = false;
-                break;
-            default:
-                break;
-        }
-        if (!b)
+        if (0x00000003 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11270,11 +10741,73 @@ public:
 
 private:
 
-    InnerEnumHelper m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
-    uint8_t m_third{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+            uint8_t& third_()
+            {
+                if (0x00000003 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000003;
+                    member_destructor_ = nullptr;
+                    m_third = {0};
+    ;
+                }
+
+                return m_third;
+            }
+
+
+    InnerEnumHelper m__d {InnerEnumHelper::ENUM_VALUE_3};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+        uint8_t m_third;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_enum_labels defined by the user in the IDL file.
@@ -11289,7 +10822,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_enum_labels()
     {
-        m__d = InnerEnumHelper::ENUM_VALUE_3;
     }
 
     /*!
@@ -11297,6 +10829,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_enum_labels()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -11308,20 +10844,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -11334,20 +10866,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -11360,20 +10888,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -11388,20 +10912,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -11414,27 +10934,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_enum_labels& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case InnerEnumHelper::ENUM_VALUE_2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -11455,40 +10973,28 @@ public:
     eProsima_user_DllExport void _d(
             InnerEnumHelper __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                switch (__d)
-                {
-                    case InnerEnumHelper::ENUM_VALUE_3:
-                    case InnerEnumHelper::ENUM_VALUE_1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case InnerEnumHelper::ENUM_VALUE_3:
+                        case InnerEnumHelper::ENUM_VALUE_1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case InnerEnumHelper::ENUM_VALUE_2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case InnerEnumHelper::ENUM_VALUE_2:
-                switch (__d)
-                {
-                    case InnerEnumHelper::ENUM_VALUE_2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -11506,24 +11012,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport InnerEnumHelper& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int16_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = InnerEnumHelper::ENUM_VALUE_3;
-
     }
 
     /*!
@@ -11533,19 +11029,7 @@ public:
      */
     eProsima_user_DllExport int16_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11560,19 +11044,7 @@ public:
      */
     eProsima_user_DllExport int16_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_3:
-            case InnerEnumHelper::ENUM_VALUE_1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11588,9 +11060,8 @@ public:
     eProsima_user_DllExport void second(
             int16_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = InnerEnumHelper::ENUM_VALUE_2;
-
     }
 
     /*!
@@ -11600,18 +11071,7 @@ public:
      */
     eProsima_user_DllExport int16_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11626,18 +11086,7 @@ public:
      */
     eProsima_user_DllExport int16_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case InnerEnumHelper::ENUM_VALUE_2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11646,13 +11095,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    InnerEnumHelper m__d;
+            int16_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int16_t m_first{0};
-    int16_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int16_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    InnerEnumHelper m__d {InnerEnumHelper::ENUM_VALUE_3};
+
+    union
+    {
+        int16_t m_first;
+        int16_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the union Union_Discriminator_alias defined by the user in the IDL file.
@@ -11667,7 +11170,6 @@ public:
      */
     eProsima_user_DllExport Union_Discriminator_alias()
     {
-        m__d = 1;
     }
 
     /*!
@@ -11675,6 +11177,10 @@ public:
      */
     eProsima_user_DllExport ~Union_Discriminator_alias()
     {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
     }
 
     /*!
@@ -11686,19 +11192,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -11711,19 +11214,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
     }
 
@@ -11736,19 +11236,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = x.m_first;
+                            break;
 
+                        case 0x00000002:
+                            second_() = x.m_second;
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -11763,19 +11260,16 @@ public:
     {
         m__d = x.m__d;
 
-        switch (m__d)
+        switch (x.selected_member_)
         {
-            case 1:
-                m_first = x.m_first;
-                break;
+                        case 0x00000001:
+                            first_() = std::move(x.m_first);
+                            break;
 
+                        case 0x00000002:
+                            second_() = std::move(x.m_second);
+                            break;
 
-            case 2:
-                m_second = x.m_second;
-                break;
-
-            default:
-                break;
         }
 
         return *this;
@@ -11788,26 +11282,25 @@ public:
     eProsima_user_DllExport bool operator ==(
             const Union_Discriminator_alias& x) const
     {
-        if (m__d != x.m__d)
+        bool ret_value {false};
+
+        if (m__d == x.m__d &&
+                selected_member_ == x.selected_member_)
         {
-            return false;
+            switch (selected_member_)
+            {
+                                case 0x00000001:
+                                    ret_value = (m_first == x.m_first);
+                                    break;
+
+                                case 0x00000002:
+                                    ret_value = (m_second == x.m_second);
+                                    break;
+
+            }
         }
 
-        switch (m__d)
-        {
-            case 1:
-                return (m_first == x.m_first);
-                break;
-
-
-            case 2:
-                return (m_second == x.m_second);
-                break;
-
-            default:
-                break;
-        }
-        return false;
+        return ret_value;
     }
 
     /*!
@@ -11828,38 +11321,27 @@ public:
     eProsima_user_DllExport void _d(
             InnerAliasHelper __d)
     {
-        bool b = false;
+        bool valid_discriminator = false;
 
-        switch (m__d)
+        switch (__d)
         {
-            case 1:
-                switch (__d)
-                {
-                    case 1:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
+                        case 1:
+                            if (0x00000001 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
+                        case 2:
+                            if (0x00000002 == selected_member_)
+                            {
+                                valid_discriminator = true;
+                            }
+                            break;
 
-            case 2:
-                switch (__d)
-                {
-                    case 2:
-                        b = true;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            default:
-                break;
         }
 
-        if (!b)
+        if (!valid_discriminator)
         {
             throw eprosima::fastcdr::exception::BadParamException("Discriminator doesn't correspond with the selected union member");
         }
@@ -11877,24 +11359,14 @@ public:
     }
 
     /*!
-     * @brief This function returns a reference to the discriminator.
-     * @return Reference to the discriminator.
-     */
-    eProsima_user_DllExport InnerAliasHelper& _d()
-    {
-        return m__d;
-    }
-
-    /*!
      * @brief This function sets a value in member first
      * @param _first New value for member first
      */
     eProsima_user_DllExport void first(
             int32_t _first)
     {
-        m_first = _first;
+        first_() = _first;
         m__d = 1;
-
     }
 
     /*!
@@ -11904,18 +11376,7 @@ public:
      */
     eProsima_user_DllExport int32_t first() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11930,18 +11391,7 @@ public:
      */
     eProsima_user_DllExport int32_t& first()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 1:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000001 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11957,9 +11407,8 @@ public:
     eProsima_user_DllExport void second(
             int64_t _second)
     {
-        m_second = _second;
+        second_() = _second;
         m__d = 2;
-
     }
 
     /*!
@@ -11969,18 +11418,7 @@ public:
      */
     eProsima_user_DllExport int64_t second() const
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -11995,18 +11433,7 @@ public:
      */
     eProsima_user_DllExport int64_t& second()
     {
-        bool b = false;
-
-        switch (m__d)
-        {
-            case 2:
-                b = true;
-                break;
-            default:
-                break;
-        }
-
-        if (!b)
+        if (0x00000002 != selected_member_)
         {
             throw eprosima::fastcdr::exception::BadParamException("This member has not been selected");
         }
@@ -12015,13 +11442,67 @@ public:
     }
 
 
+    void _default()
+    {
+        if (member_destructor_)
+        {
+            member_destructor_();
+        }
+
+        selected_member_ = 0x0FFFFFFFu;
+    }
+
 
 private:
 
-    InnerAliasHelper m__d;
+            int32_t& first_()
+            {
+                if (0x00000001 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
 
-    int32_t m_first{0};
-    int64_t m_second{0};
+                    selected_member_ = 0x00000001;
+                    member_destructor_ = nullptr;
+                    m_first = {0};
+    ;
+                }
+
+                return m_first;
+            }
+
+            int64_t& second_()
+            {
+                if (0x00000002 != selected_member_)
+                {
+                    if (member_destructor_)
+                    {
+                        member_destructor_();
+                    }
+
+                    selected_member_ = 0x00000002;
+                    member_destructor_ = nullptr;
+                    m_second = {0};
+    ;
+                }
+
+                return m_second;
+            }
+
+
+    InnerAliasHelper m__d {0};
+
+    union
+    {
+        int32_t m_first;
+        int64_t m_second;
+    };
+
+    uint32_t selected_member_ {0x0FFFFFFFu};
+
+    std::function<void()> member_destructor_;
 };
 /*!
  * @brief This class represents the structure UnionShort defined by the user in the IDL file.
