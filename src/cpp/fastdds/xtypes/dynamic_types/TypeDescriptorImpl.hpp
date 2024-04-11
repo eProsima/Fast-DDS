@@ -46,6 +46,8 @@ class TypeDescriptorImpl : public virtual TypeDescriptor
 
     ExtensibilityKind extensibility_kind_ {ExtensibilityKind::APPENDABLE};
 
+    bool is_extensibility_set {false};
+
     bool is_nested_ {false};
 
 public:
@@ -202,6 +204,7 @@ public:
             ExtensibilityKind extensibility_kind) noexcept override
     {
         extensibility_kind_ = extensibility_kind;
+        is_extensibility_set = true;
     }
 
     bool is_nested() const noexcept override

@@ -2030,7 +2030,7 @@ void DynamicDataImpl::apply_bitset_mask(
                                 enclosing_type_->get_all_members().at(member_id))};
     const auto member_index {member_impl->get_descriptor().index()};
     const auto bound {enclosing_type_->get_descriptor().bound().at(member_index)};
-    uint64_t mask {0XFFFFFFFFFFFFFFFFllu << bound};
+    uint64_t mask {64 == bound ? 0x0llu : 0XFFFFFFFFFFFFFFFFllu << bound};
     value &= static_cast<TypeForKind<TK>>(~mask);
 }
 
@@ -6677,9 +6677,17 @@ void DynamicDataImpl::serialize(
                 if (it != value_.end())
                 {
                     int64_t value {0};
+                    uint64_t uvalue {0};
                     auto member_data {std::static_pointer_cast<DynamicDataImpl>(it->second)};
 
-                    if (RETCODE_OK == member_data->get_value<TK_INT64>(value, MEMBER_ID_INVALID))
+                    ReturnCode_t ret_promotion_value {member_data->get_value<TK_INT64>(value, MEMBER_ID_INVALID)};
+                    if (RETCODE_OK != ret_promotion_value)
+                    {
+                        ret_promotion_value = member_data->get_value<TK_UINT64>(uvalue, MEMBER_ID_INVALID);
+                        value = static_cast<int64_t>(uvalue);
+                    }
+
+                    if (RETCODE_OK == ret_promotion_value)
                     {
                         auto base {member_id};
                         auto size {type->get_descriptor().bound().at(index)};

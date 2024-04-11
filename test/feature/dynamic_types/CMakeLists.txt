@@ -87,6 +87,10 @@ target_compile_definitions(DynamicTypesTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
+target_include_directories(DynamicTypesTests
+    PRIVATE
+    ${PROJECT_SOURCE_DIR}/test/utils/
+    )
 target_link_libraries(DynamicTypesTests
     GTest::gtest
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>

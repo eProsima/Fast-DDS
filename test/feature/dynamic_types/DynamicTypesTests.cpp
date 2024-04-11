@@ -24,7 +24,7 @@
 #include <thread>
 #include <tuple>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <ScopedLogs.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
@@ -232,7 +232,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
 
     DynamicTypeMember::_ref_type member;
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         // Check members are properly added
         // • checking invalid id
         EXPECT_NE(RETCODE_OK, struct_type_builder->get_member(member, 0));
@@ -249,7 +249,6 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member(member, 3));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
 
-    EXPECT_TRUE(md->is_consistent());
     EXPECT_EQ(md->index(), 0u);
     EXPECT_EQ(md->name(), md1->name());
     EXPECT_EQ(md->type(), md1->type());
@@ -261,7 +260,6 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     md2->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT64));
     ASSERT_EQ(RETCODE_OK, struct_type_builder->get_member(member, 1));
     ASSERT_EQ(RETCODE_OK, member->get_descriptor(md));
-    EXPECT_TRUE(md->is_consistent());
     EXPECT_EQ(md->index(), 1u);
     EXPECT_EQ(md->name(), md2->name());
     EXPECT_EQ(md->type(), md2->type());
@@ -368,7 +366,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
 
     // • checking adding duplicates
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         //    + duplicate name
         md = traits<MemberDescriptor>::make_shared();
         md->id(1);
@@ -2502,7 +2500,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         // Try to add a descriptor with the same name.
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
@@ -2717,7 +2715,7 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     ASSERT_EQ(test1, test2);
 
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID,
                 "TEST_OVER_LENGTH_LIMITS"), RETCODE_OK);
     }
@@ -2876,7 +2874,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
-    DynamicTypeBuilder::_ref_type builder {factory->create_wstring_type(0)};
+    DynamicTypeBuilder::_ref_type builder {factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))};
     ASSERT_TRUE(builder);
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
@@ -2905,7 +2903,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
     ASSERT_EQ(test1, test2);
 
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID,
                 L"TEST_OVER_LENGTH_LIMITS"), RETCODE_OK);
     }
@@ -3229,7 +3227,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     ASSERT_EQ(test1, test2);
 
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID,
                 "TEST_OVER_LENGTH_LIMITS"), RETCODE_OK);
     }
@@ -3719,7 +3717,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence)
 
     // Try to insert more than the limit.
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
 
         ASSERT_NE(data->set_int32_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_OK);
     }
@@ -3875,7 +3873,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
 
     // Try to insert more than the limit.
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         seq_data = data->loan_value(2);
         ASSERT_FALSE(seq_data);
     }
@@ -4055,7 +4053,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
 
     // Try to insert more than the limit.
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
 
         ASSERT_NE(data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8, 9}), RETCODE_OK);
     }
@@ -4235,7 +4233,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 
     // Try to insert more than the limit.
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+        eprosima::fastdds::testing::ScopeLogs _("disable");
         seq_data = data->loan_value(4);
         ASSERT_FALSE(seq_data);
     }
@@ -5130,7 +5128,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));
 
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");     // avoid expected errors logging
+        eprosima::fastdds::testing::ScopeLogs _("disable");     // avoid expected errors logging
         member_descriptor->name("child_int32");
         member_descriptor->id(1);
         ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
@@ -5653,7 +5651,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     {
-        eprosima::fastdds::dds::Log::ScopeLogs _("disable");     // avoid expected errors logging
+        eprosima::fastdds::testing::ScopeLogs _("disable");     // avoid expected errors logging
 
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(eprosima::fastdds::dds::TK_INT32));

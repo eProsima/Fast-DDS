@@ -188,6 +188,20 @@ bool TypeDescriptorImpl::is_consistent() noexcept
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Descriptor type and the base_type are not of the same kind");
             return false;
         }
+
+        // Check extensibility on structures.
+        if (TK_STRUCTURE == kind_)
+        {
+            if (!is_extensibility_set)
+            {
+                extensibility_kind_ = base_type->get_descriptor().extensibility_kind();
+            }
+            else if (extensibility_kind_ != base_type->get_descriptor().extensibility_kind())
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "ExtensibilityKind is different from that of base type.");
+                return false;
+            }
+        }
     }
 
     // Arrays need one or more bound fields with the lenghts of each dimension.
