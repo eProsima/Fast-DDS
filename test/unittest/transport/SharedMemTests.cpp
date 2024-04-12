@@ -1013,6 +1013,40 @@ TEST_F(SHMTransportTests, port_lock_read_exclusive)
     port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
 }
 
+// Regression test for redmine issue #20701
+TEST_F(SHMTransportTests, port_lock_read_shared_then_exclusive)
+{
+    const std::string domain_name("SHMTests");
+
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+
+    shared_mem_manager->remove_port(0);
+
+    auto port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadShared);
+    ASSERT_THROW(shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive),
+            std::exception);
+
+    port.reset();
+    port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+}
+
+// Regression test for redmine issue #20701
+TEST_F(SHMTransportTests, port_lock_read_exclusive_then_shared)
+{
+    const std::string domain_name("SHMTests");
+
+    auto shared_mem_manager = SharedMemManager::create(domain_name);
+
+    shared_mem_manager->remove_port(0);
+
+    auto port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadExclusive);
+    ASSERT_THROW(shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadShared),
+            std::exception);
+
+    port.reset();
+    port = shared_mem_manager->open_port(0, 1, 1000, SharedMemGlobal::Port::OpenMode::ReadShared);
+}
+
 TEST_F(SHMTransportTests, robust_exclusive_lock)
 {
     const std::string lock_name = "robust_exclusive_lock_test1_el";
