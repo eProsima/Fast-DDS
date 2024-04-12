@@ -1175,9 +1175,9 @@ void PDPServer::update_remote_servers_list()
         return;
     }
 
-    std::lock_guard<std::recursive_mutex> lock(*getMutex());
-
     {
+        std::lock_guard<std::recursive_mutex> lock(*getMutex());
+
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // Create resources for remote servers. If a sender resource is already created, this step will be skipped for
@@ -1579,7 +1579,6 @@ void PDPServer::ping_remote_servers()
 
     // Iterate over the list of servers
     {
-        std::lock_guard<std::recursive_mutex> lock(*getMutex());
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
         // Get the info to send to this already known locators
         locators_ping = mp_builtin->m_DiscoveryServers;
