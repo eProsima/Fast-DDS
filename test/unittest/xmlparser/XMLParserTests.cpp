@@ -38,6 +38,7 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 
 #include <tinyxml2.h>
+#include <sys/resource.h>
 
 #include <gtest/gtest.h>
 
@@ -77,6 +78,20 @@ TEST_F(XMLParserTests, regressions)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/20187_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/20608_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/20610_profile_bin.xml", root));
+}
+
+TEST_F(XMLParserTests, memory_usage_regression)
+{
+    XMLP_ret xml_ret = XMLProfileManager::loadXMLFile("regressions/20732_profile_bin.xml");
+
+    struct rusage r_usage;
+    int ret_mem = getrusage(RUSAGE_SELF, &r_usage);
+    if(ret_mem==0){
+        std::cout<<"Maximum rss: "<<r_usage.ru_maxrss<< " kB"<<std::endl;
+    }
+    else{std::cout<<"getrusage() failed "<<std::endl;}
+
+    EXPECT_EQ(XMLP_ret::XML_ERROR, xml_ret);
 }
 
 TEST_F(XMLParserTests, NoFile)
