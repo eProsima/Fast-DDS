@@ -14,6 +14,7 @@
 
 #include "DynamicTypeBuilderFactoryImpl.hpp"
 
+#include <cassert>
 #include <ios>
 #include <sstream>
 #include <string>
@@ -260,12 +261,8 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_strin
     ret_val->get_descriptor().element_type(char8_type_);
     ret_val->get_descriptor().bound().push_back(bound);
 
-    if (ret_val->get_descriptor().is_consistent())
-    {
-        return ret_val;
-    }
-
-    return {};
+    assert(ret_val->get_descriptor().is_consistent());
+    return ret_val;
 }
 
 traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstring_type(
@@ -276,12 +273,8 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_wstri
     ret_val->get_descriptor().element_type(char16_type_);
     ret_val->get_descriptor().bound().push_back(bound);
 
-    if (ret_val->get_descriptor().is_consistent())
-    {
-        return ret_val;
-    }
-
-    return {};
+    assert(ret_val->get_descriptor().is_consistent());
+    return ret_val;
 }
 
 //}}}

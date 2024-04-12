@@ -89,7 +89,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder reference representing a bounded string type.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the string type shall be considered to be unbounded.
-     * @return new @ref DynamicTypeBuilder reference.. Nil reference returned in error case.
+     * @return new @ref DynamicTypeBuilder reference.
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicTypeBuilder>::ref_type create_string_type(
             uint32_t bound) = 0;
@@ -98,7 +98,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder reference representing a bounded wstring type.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * If the value is equal to LENGTH_UNLIMITED, the wstring type shall be considered to be unbounded.
-     * @return new @ref DynamicTypeBuilder reference.. Nil reference returned in error case.
+     * @return new @ref DynamicTypeBuilder reference.
      */
     FASTDDS_EXPORTED_API virtual traits<DynamicTypeBuilder>::ref_type create_wstring_type(
             uint32_t bound) = 0;
