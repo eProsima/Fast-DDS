@@ -622,15 +622,14 @@ void PDPServer::match_reliable_pdp_endpoints(
 void PDPServer::assignRemoteEndpoints(
         ParticipantProxyData* pdata)
 {
+    std::string part_type;
     {
         eprosima::shared_lock<eprosima::shared_mutex> disc_lock(mp_builtin->getDiscoveryMutex());
 
         // If the received participant GUID is from a server, update the servers list and DB and match the endpoints
-        std::string part_type = check_participant_type(pdata->m_properties);
+        part_type = check_participant_type(pdata->m_properties);
         if (part_type == ParticipantType::SERVER || part_type == ParticipantType::BACKUP)
         {
-            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for SERVER: " << pdata->m_guid.guidPrefix);
-
             // Update DisvoveryDataBase
             discovery_db_.add_server(pdata->m_guid.guidPrefix);
 
@@ -642,11 +641,8 @@ void PDPServer::assignRemoteEndpoints(
                 match_pdp_reader_nts_(*pdata);
             }
         }
-        else
-        {
-            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for CLIENT: " << pdata->m_guid.guidPrefix);
-        }
     }
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for " << part_type << ": " << pdata->m_guid.guidPrefix);
     match_reliable_pdp_endpoints(*pdata);
 
 #if HAVE_SECURITY
@@ -654,6 +650,12 @@ void PDPServer::assignRemoteEndpoints(
 #endif // HAVE_SECURITY
     {
         perform_builtin_endpoints_matching(*pdata);
+    }
+
+    // Send the Data(p) to the client
+    if (part_type == ParticipantType::CLIENT || part_type == ParticipantType::SUPER_CLIENT)
+    {
+        discovery_db().add_own_pdp_to_send_();
     }
 }
 
