@@ -22,10 +22,7 @@ extern "C" int LLVMFuzzerTestOneInput(
         return EXIT_FAILURE;
     }
 
-    if (ReturnCode_t::RETCODE_OK != fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(reinterpret_cast<const char*>(data), size))
-    {
-        return EXIT_FAILURE;
-    }
+    fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_string(reinterpret_cast<const char*>(data), size);
 
     return 0;
 }
