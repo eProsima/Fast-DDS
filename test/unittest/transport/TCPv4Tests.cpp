@@ -1345,7 +1345,6 @@ TEST_F(TCPv4Tests, secure_non_blocking_send)
        a connection. This channel will not be present in the server's channel_resources_ map
        as communication lacks most of the discovery messages using a raw socket as participant.
      */
-    // auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     auto sender_unbound_channel_resources = senderTransportUnderTest.get_unbound_channel_resources();
     ASSERT_TRUE(sender_unbound_channel_resources.size() == 1);
     auto sender_channel_resource =
