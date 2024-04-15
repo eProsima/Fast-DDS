@@ -1,4 +1,3 @@
-#include <fastrtps/Domain.h>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include "fuzz_utils.h"
