@@ -132,6 +132,10 @@ jobs:
       #     show_disabled: 'False'
       #     show_skipped: 'False'
 
+      - uses: actions/checkout@v2
+        with:
+          path: src/Fast-DDS
+
       - name: Create Fake Log File
         run: |
           echo "Reference Branch: ${{ github.event.pull_request.base.ref }}" > fake_log.xml
@@ -143,13 +147,34 @@ jobs:
           echo "Test 3" >> fake_log.xml
         shell: bash
 
-      - uses: actions/checkout@master
+      - name: Generate coverage report
+        run: |
+          cp src/Fast-DDS/codecov.yml .
+          mkdir coverage-report
+          gcovr \
+          --root src/Fast-DDS/ \
+          --object-directory build/fastrtps \
+          --output coverage-report/coverage.xml \
+          --xml-pretty \
+          --exclude='.*examples/.*' \
+          --exclude='.*thirdparty/.*' \
+          --exclude='.*test/.*' \
+          --exclude='.*/sqlite3.c' \
+          --exclude='.*/optionparser.h' \
+          --exclude-unreachable-branches
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v1
+        with:
+          name: coverage-report
+          path: coverage-report/
+        if: always()
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: true
-          file: ./fake_log.xml
+          file: coverage-report/coverage.xml
           name: codecov-prova
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
