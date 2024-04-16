@@ -25,3 +25,6 @@ names:
             - "-Dgtest_force_shared_crt=ON"
             - "-DBUILD_SHARED_LIBS=ON"
             - "-DBUILD_GMOCK=ON"
+    ShapesDemo:
+        cmake-args:
+            - "-DQT_PATH=$GITHUB_WORKSPACE/qt_installation/Qt/5.15.2"
