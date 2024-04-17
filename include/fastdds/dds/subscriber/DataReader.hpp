@@ -785,7 +785,9 @@ public:
             const void* instance) const;
 
     /**
-     * @brief Returns information about the first untaken sample.
+     * @brief Returns information about the first untaken sample. This method is meant to be called prior to
+     * a read() or take() operation as it does not modify the status condition of the entity.
+     *
      *
      * @param [out] info Pointer to a SampleInfo_t structure to store first untaken sample information.
      *
