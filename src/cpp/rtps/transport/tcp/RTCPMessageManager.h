@@ -23,7 +23,6 @@
 #include <memory>
 #include <atomic>
 
-#include <fastdds/rtps/common/all_common.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 #include <rtps/transport/tcp/TCPControlMessage.h>

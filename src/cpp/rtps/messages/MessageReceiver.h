@@ -23,7 +23,12 @@
 #include <functional>
 #include <unordered_map>
 
-#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/MatchingInfo.h>
+#include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/VendorId_t.hpp>
 
 #include <utils/shared_mutex.hpp>

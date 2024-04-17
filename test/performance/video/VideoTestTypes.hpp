@@ -39,7 +39,8 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
 
 #include <fastdds/utils/IPFinder.h>
 

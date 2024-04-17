@@ -21,12 +21,13 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
+#include <atomic>
 #include <string>
 #include <vector>
 
 #include <fastcdr/cdr/fixed_size_string.hpp>
 
-#include <fastdds/rtps/common/all_common.h>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/Token.h>
 
 #if HAVE_SECURITY
