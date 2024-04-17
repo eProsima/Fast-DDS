@@ -35,6 +35,7 @@ namespace rtps {
 namespace security {
 
 class Logging;
+class SecurityException;
 
 enum ValidationResult_t : uint32_t
 {

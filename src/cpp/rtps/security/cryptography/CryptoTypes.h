@@ -22,7 +22,6 @@
 #include <rtps/security/common/Handle.h>
 #include <rtps/security/common/SharedSecretHandle.h>
 #include <rtps/security/exceptions/SecurityException.h>
-
 #include <array>
 
 #define GMCLASSID_SECURITY_PARTICIPANT_CRYPTO_TOKENS "dds.sec.participant_crypto_tokens"

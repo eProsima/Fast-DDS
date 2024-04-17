@@ -18,7 +18,7 @@
 #ifndef _FASTDDS_RTPS_SECURITY_EXCEPTIONS_SECURITYEXCEPTION_H_
 #define _FASTDDS_RTPS_SECURITY_EXCEPTIONS_SECURITYEXCEPTION_H_
 
-#include <fastdds/rtps/exceptions/Exception.h>
+#include <rtps/exceptions/Exception.h>
 
 namespace eprosima {
 namespace fastrtps {
