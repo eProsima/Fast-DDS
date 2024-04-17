@@ -3269,7 +3269,10 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value, and does not make any change.
+    // Updated to check negative values (Redmine ticket #20722)
+    qos.resource_limits().max_samples = -1;
     qos.resource_limits().max_instances = -1;
+    qos.resource_limits().max_samples_per_instance = -1;
 
     DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
     ASSERT_NE(data_reader2, nullptr);
@@ -3322,7 +3325,10 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyNotKeyed)
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
     // By not using instances, instance allocation consistency is not checked.
+    // Updated to check negative values (Redmine ticket #20722)
+    qos2.resource_limits().max_samples = -1;
     qos2.resource_limits().max_instances = -1;
+    qos2.resource_limits().max_samples_per_instance = -1;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
 
@@ -3393,8 +3399,10 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
-    qos.resource_limits().max_samples = 0;
+    // Updated to check negative values (Redmine ticket #20722)
+    qos.resource_limits().max_samples = -1;
     qos.resource_limits().max_instances = -1;
+    qos.resource_limits().max_samples_per_instance = -1;
 
     DataReader* data_reader2 = subscriber->create_datareader(topic, qos);
     ASSERT_NE(data_reader2, nullptr);
@@ -3452,8 +3460,10 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
 
     // Below an ampliation of the last comprobation, for which it is proved the case of < 0 (-1),
     // which also means infinite value.
-    qos2.resource_limits().max_samples = 0;
+    // Updated to check negative values (Redmine ticket #20722)
+    qos2.resource_limits().max_samples = -1;
     qos2.resource_limits().max_instances = -1;
+    qos2.resource_limits().max_samples_per_instance = -1;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
 
