@@ -258,14 +258,14 @@ ReturnCode_t DataReaderImpl::enable()
 
     reader_ = reader;
 
-    deadline_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+    deadline_timer_ = new TimedEvent(subscriber_->rtps_participant()->get_resource_event(),
                     [&]() -> bool
                     {
                         return deadline_missed();
                     },
                     qos_.deadline().period.to_ns() * 1e-6);
 
-    lifespan_timer_ = new TimedEvent(subscriber_->get_participant()->get_resource_event(),
+    lifespan_timer_ = new TimedEvent(subscriber_->rtps_participant()->get_resource_event(),
                     [&]() -> bool
                     {
                         return lifespan_expired();

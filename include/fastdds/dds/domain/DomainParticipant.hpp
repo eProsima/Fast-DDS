@@ -834,15 +834,6 @@ public:
             fastrtps::rtps::EndpointKind_t kind);
 
     /**
-     * @brief Getter for the resource event
-     *
-     * @pre The DomainParticipant is enabled.
-     *
-     * @return A reference to the resource event
-     */
-    FASTDDS_EXPORTED_API fastrtps::rtps::ResourceEvent& get_resource_event() const;
-
-    /**
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.
      *
      * DDS specifies a SQL-like content filter to be used by content filtered topics.

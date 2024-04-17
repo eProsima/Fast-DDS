@@ -492,11 +492,6 @@ bool DomainParticipant::new_remote_endpoint_discovered(
     return impl_->new_remote_endpoint_discovered(partguid, userId, kind);
 }
 
-fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
-{
-    return impl_->get_resource_event();
-}
-
 bool DomainParticipant::has_active_entities()
 {
     return impl_->has_active_entities();
