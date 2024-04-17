@@ -899,12 +899,22 @@ public:
 
         void lock_read_exclusive()
         {
+            if (OpenMode::ReadShared == open_mode())
+            {
+                throw std::runtime_error("port is opened ReadShared");
+            }
+
             std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_el";
             read_exclusive_lock_ = std::unique_ptr<RobustExclusiveLock>(new RobustExclusiveLock(lock_name));
         }
 
         void lock_read_shared()
         {
+            if (OpenMode::ReadExclusive == open_mode())
+            {
+                throw std::runtime_error("port is opened ReadExclusive");
+            }
+
             std::string lock_name = std::string(node_->domain_name) + "_port" + std::to_string(node_->port_id) + "_sl";
             read_shared_lock_ = std::unique_ptr<RobustSharedLock>(new RobustSharedLock(lock_name));
         }
@@ -1125,7 +1135,24 @@ private:
                         std::stringstream ss;
 
                         ss << port_node->port_id << " (" << port_node->uuid.to_string() <<
-                            ") because is ReadExclusive locked";
+                            ") because it was already locked";
+
+                        err_reason = ss.str();
+                        port.reset();
+                    }
+                }
+                else if (open_mode == Port::OpenMode::ReadShared)
+                {
+                    try
+                    {
+                        port->lock_read_shared();
+                    }
+                    catch (const std::exception&)
+                    {
+                        std::stringstream ss;
+
+                        ss << port_node->port_id << " (" << port_node->uuid.to_string() <<
+                            ") because it had a ReadExclusive lock";
 
                         err_reason = ss.str();
                         port.reset();
