@@ -528,6 +528,8 @@ private:
     uint32_t domain_id_;
     //!Attributes of the RTPSParticipant
     RTPSParticipantAttributes m_att;
+    //! Metatraffic unicast port used by default on this participant
+    uint32_t metatraffic_unicast_port_ = 0;
     //!Guid of the RTPSParticipant.
     GUID_t m_guid;
     //! String containing the RTPSParticipant Guid.
@@ -593,6 +595,21 @@ private:
     //! Determine if the RTPSParticipantImpl was initialized successfully.
     bool initialized_ = false;
 
+<<<<<<< HEAD
+=======
+    //! Ignored entities collections
+    std::set<GuidPrefix_t> ignored_participants_;
+    std::set<GUID_t> ignored_writers_;
+    std::set<GUID_t> ignored_readers_;
+    //! Protect ignored entities collection concurrent access
+    mutable shared_mutex ignored_mtx_;
+
+    void setup_meta_traffic();
+    void setup_user_traffic();
+    void setup_initial_peers();
+    void setup_output_traffic();
+
+>>>>>>> ea5af48d0 (Internal refactor on port handling (#3440))
     RTPSParticipantImpl& operator =(
             const RTPSParticipantImpl&) = delete;
 
