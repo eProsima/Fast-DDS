@@ -146,7 +146,7 @@ bool ParameterList::read_guid_from_cdr_msg(
         valid = true;
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
-        if ((pid == PID_SENTINEL) || !valid)
+        if (!valid || (pid == PID_SENTINEL))
         {
             break;
         }
