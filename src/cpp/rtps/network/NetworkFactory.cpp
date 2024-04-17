@@ -460,30 +460,27 @@ bool NetworkFactory::configureInitialPeerLocator(
 }
 
 bool NetworkFactory::getDefaultUnicastLocators(
-        uint32_t domain_id,
         LocatorList_t& locators,
-        const RTPSParticipantAttributes& m_att) const
+        uint32_t port) const
 {
     bool result = false;
     for (auto& transport : mRegisteredTransports)
     {
-        result |= transport->getDefaultUnicastLocators(locators, calculate_well_known_port(domain_id, m_att, false));
+        result |= transport->getDefaultUnicastLocators(locators, port);
     }
     return result;
 }
 
 bool NetworkFactory::fill_default_locator_port(
-        uint32_t domain_id,
         Locator_t& locator,
-        const RTPSParticipantAttributes& m_att,
-        bool is_multicast) const
+        uint32_t port) const
 {
     bool result = false;
     for (auto& transport : mRegisteredTransports)
     {
         if (transport->IsLocatorSupported(locator))
         {
-            result |= transport->fillUnicastLocator(locator, calculate_well_known_port(domain_id, m_att, is_multicast));
+            result |= transport->fillUnicastLocator(locator, port);
         }
     }
     return result;
