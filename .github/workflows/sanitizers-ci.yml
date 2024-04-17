@@ -73,5 +73,5 @@ jobs:
       colcon_test_args: ${{ inputs.colcon_test_args || '' }}
       cmake_args: ${{ inputs.cmake_args || '' }}
       ctest_args: ${{ inputs.ctest_args || '' }}
-      fastdds_ref: ${{ inputs.fastdds_ref || github.ref || 'master' }}
-      discovery_server_ref: ${{ inputs.discovery_server_ref || 'master' }}
+      fastdds_ref: ${{ inputs.fastdds_ref || github.ref || '2.10.x' }}
+      discovery_server_ref: ${{ inputs.discovery_server_ref || 'v1.2.1' }}

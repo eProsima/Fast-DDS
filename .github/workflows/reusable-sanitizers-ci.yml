@@ -77,7 +77,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.16.3'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -145,7 +145,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.16.3'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -175,7 +175,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
           cmake_args: ${{ inputs.cmake_args }}
-          cmake_args_default: -DEPROSIMA_BUILD_TESTS=ON -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON -DPERFORMANCE_TESTS=ON
+          cmake_args_default: -DEPROSIMA_BUILD_TESTS=ON -DGTEST_INDIVIDUAL=ON -DRTPS_API_TESTS=ON -DFASTRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON -DPERFORMANCE_TESTS=ON
           cmake_build_type: 'Debug'
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
@@ -228,7 +228,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.16.3'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
@@ -338,7 +338,7 @@ jobs:
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
-          cmakeVersion: '3.22.6'
+          cmakeVersion: '3.16.3'
 
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0

@@ -1,16 +1,6 @@
 names:
     fastrtps:
         cmake-args:
-<<<<<<< HEAD
-            - "-DCMAKE_BUILD_TYPE=Debug"
-            - "-DEPROSIMA_BUILD_TESTS=ON"
-            - "-DGTEST_INDIVIDUAL=ON"
-            - "-DRTPS_API_TESTS=ON"
-            - "-DFASTRTPS_API_TESTS=ON"
-            - "-DFASTDDS_PIM_API_TESTS=ON"
-            - "-DPERFORMANCE_TESTS=ON"
-=======
->>>>>>> ac0e737a9 (Refactor Github CI sanitizer related jobs (#4662))
             - "-DNO_TLS=OFF"
             - "-DSECURITY=ON"
             - "-DFASTDDS_STATISTICS=ON"
