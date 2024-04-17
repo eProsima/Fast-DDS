@@ -23,8 +23,6 @@
 #include <string>
 #include <vector>
 
-#include <fastdds/rtps/exceptions/Exception.h>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
