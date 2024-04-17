@@ -1464,10 +1464,10 @@ p_dynamictypebuilder_t XMLParser::parseXMLMemberDynamicType(
     {
         if (strncmp(memberTopicKey, "true", 5) == 0)
         {
-            memberBuilder->apply_annotation(types::ANNOTATION_KEY_ID, "value", "true");
+            memberBuilder->apply_annotation(types::ANNOTATION_KEY_ID, "key", "true");
             if (p_dynamictype != nullptr)
             {
-                p_dynamictype->apply_annotation(types::ANNOTATION_KEY_ID, "value", "true");
+                p_dynamictype->apply_annotation(types::ANNOTATION_KEY_ID, "key", "true");
             }
         }
     }
