@@ -624,8 +624,7 @@ bool DomainParticipantImpl::delete_topic_and_type(
 
 bool DomainParticipantImpl::get_monitoring_status(
         const fastrtps::rtps::GUID_t& entity_guid,
-        const uint32_t& status_id,
-        eprosima::fastdds::statistics::rtps::DDSEntityStatus*& status)
+        eprosima::fastdds::statistics::MonitorServiceData& status)
 {
     ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
 
@@ -634,7 +633,7 @@ bool DomainParticipantImpl::get_monitoring_status(
         std::lock_guard<std::mutex> lock(mtx_subs_);
         for (auto& sub : subscribers_)
         {
-            if (sub.second->get_monitoring_status(status_id, status, entity_guid))
+            if (sub.second->get_monitoring_status(status, entity_guid))
             {
                 ret = ReturnCode_t::RETCODE_OK;
                 break;
@@ -646,7 +645,7 @@ bool DomainParticipantImpl::get_monitoring_status(
         std::lock_guard<std::mutex> lock(mtx_pubs_);
         for (auto& pub : publishers_)
         {
-            if (pub.second->get_monitoring_status(status_id, status, entity_guid))
+            if (pub.second->get_monitoring_status(status, entity_guid))
             {
                 ret = ReturnCode_t::RETCODE_OK;
                 break;

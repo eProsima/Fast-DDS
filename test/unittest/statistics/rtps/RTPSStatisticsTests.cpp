@@ -38,7 +38,6 @@
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
@@ -52,6 +51,7 @@
 
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
+#include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/types/types.h>
 #include <utils/SystemInfo.hpp>
 

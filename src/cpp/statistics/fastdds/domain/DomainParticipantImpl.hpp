@@ -34,12 +34,12 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
 #include "DomainParticipantStatisticsListener.hpp"
+#include <statistics/rtps/monitor-service/Interfaces.hpp>
 
 namespace efd = eprosima::fastdds::dds;
 
@@ -290,8 +290,7 @@ protected:
      */
     bool get_monitoring_status(
             const fastrtps::rtps::GUID_t& entity_guid,
-            const uint32_t& status_id,
-            eprosima::fastdds::statistics::rtps::DDSEntityStatus*&) override;
+            eprosima::fastdds::statistics::MonitorServiceData&) override;
 
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;

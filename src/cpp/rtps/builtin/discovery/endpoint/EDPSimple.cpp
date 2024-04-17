@@ -37,6 +37,9 @@
 #include <fastdds/dds/log/Log.hpp>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#ifdef FASTDDS_STATISTICS
+#include <statistics/rtps/monitor-service/interfaces/IProxyObserver.hpp>
+#endif //FASTDDS_STATISTICS
 
 #include <rtps/builtin/discovery/endpoint/EDPUtils.hpp>
 
