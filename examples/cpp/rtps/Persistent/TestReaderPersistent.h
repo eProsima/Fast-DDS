@@ -21,7 +21,19 @@
 #define TESTREADERPERSISTENT_H_
 
 #include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/rtps_fwd.h>
+
+namespace eprosima
+{
+namespace fastrtps
+{
+namespace rtps
+{
+class RTPSParticipant;
+class ReaderHistory;
+class RTPSReader;
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 class TestReaderPersistent
 {

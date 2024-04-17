@@ -24,7 +24,18 @@
 #include <cstdio>
 #include <string>
 
-#include <fastdds/rtps/rtps_fwd.h>
+namespace eprosima
+{
+namespace fastrtps
+{
+namespace rtps
+{
+class RTPSParticipant;
+class WriterHistory;
+class RTPSWriter;
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 class TestWriterSocket
 {
