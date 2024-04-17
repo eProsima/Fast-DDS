@@ -18,8 +18,8 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 
+#include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 
@@ -30,10 +30,9 @@ namespace rtps {
 
 struct MockStatusQueryable : public IStatusQueryable
 {
-    MOCK_METHOD3(get_monitoring_status, bool (
+    MOCK_METHOD2(get_monitoring_status, bool (
                 const fastrtps::rtps::GUID_t& guid,
-                const uint32_t& id,
-                DDSEntityStatus * &status));
+                MonitorServiceData & status));
 };
 
 struct MockConnectionsQueryable : public IConnectionsQueryable
@@ -208,11 +207,11 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
     ASSERT_TRUE(monitor_srv_.enable_monitor_service());
     ASSERT_TRUE(monitor_srv_.is_enabled());
 
-    ON_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+    ON_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_)).
             WillByDefault(testing::Return(true));
 
     //! Expect the getters for each status that is going to be updated
-    EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+    EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_)).
             Times(n_local_entities * 5);//statuses * n_local_entities
 
     //! Trigger statuses updates for each entity
@@ -247,7 +246,7 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
             WillByDefault(testing::Return(true));
     ON_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).
             WillByDefault(testing::Return(true));
-    ON_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+    ON_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_)).
             WillByDefault(testing::Return(true));
 
     //! Expect the creation 5 ones
@@ -257,7 +256,7 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
             Times(5);
 
     //! Expect the getters for each status that is going to be updated
-    EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
+    EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_)).
             Times(5 * 5);
 
     //! Trigger statuses updates for each of the non-existent entity

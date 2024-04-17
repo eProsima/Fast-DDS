@@ -28,6 +28,7 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
+<<<<<<< HEAD
 #include <fastrtps/qos/LivelinessChangedStatus.h>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
@@ -37,6 +38,12 @@
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
 #endif // ifdef FASTDDS_STATISTICS
+=======
+#include <fastdds/statistics/rtps/monitor_service/connections_fwd.hpp>
+#include <fastdds/statistics/rtps/StatisticsCommon.hpp>
+#include <fastrtps/qos/LivelinessChangedStatus.h>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
+>>>>>>> fb841b9a1 (Refactor IStatusQueryable and make monitor service interfaces private (#4651))
 
 namespace eprosima {
 namespace fastrtps {

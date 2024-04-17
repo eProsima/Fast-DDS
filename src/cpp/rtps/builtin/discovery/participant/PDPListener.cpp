@@ -39,7 +39,7 @@
 #include <mutex>
 
 #ifdef FASTDDS_STATISTICS
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
+#include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
 #endif //FASTDDS_STATISTICS
 
 using ParameterList = eprosima::fastdds::dds::ParameterList;
