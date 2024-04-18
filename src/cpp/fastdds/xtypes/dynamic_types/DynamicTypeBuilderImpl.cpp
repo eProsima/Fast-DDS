@@ -246,34 +246,38 @@ bool DynamicTypeBuilderImpl::equals(
     return ret_value;
 }
 
+//{{{ Auxiliary structure to revert default_value setting.
+template<typename T>
+struct RollbackSetting
+{
+    RollbackSetting(
+            T& value_reference)
+        : value_reference_{value_reference}
+        , previous_value_{value_reference}
+    {
+    }
+
+    ~RollbackSetting()
+    {
+        if (activate)
+        {
+            value_reference_ = previous_value_;
+        }
+    }
+
+    bool activate {false};
+    T& value_reference_;
+    T previous_value_;
+};
+//}}}
+
 ReturnCode_t DynamicTypeBuilderImpl::add_member(
         traits<MemberDescriptor>::ref_type descriptor) noexcept
 {
     auto type_descriptor_kind = type_descriptor_.kind();
 
-    //{{{ Auxiliary structure to revert index/id increasing.
-    struct RollbackIncreasing
-    {
-        RollbackIncreasing(
-                uint32_t& value_reference)
-            : value_reference_{value_reference}
-        {
-        }
-
-        ~RollbackIncreasing()
-        {
-            if (activate)
-            {
-                --value_reference_;
-            }
-        }
-
-        bool activate {false};
-        uint32_t& value_reference_;
-    }
-    //}}}
-    id_reverter{next_id_},
-    index_reverter{next_index_};
+    RollbackSetting<uint32_t> id_reverter{next_id_}, index_reverter{next_index_};
+    RollbackSetting<int32_t> default_value_reverter{default_value_};
 
     if (TK_ANNOTATION != type_descriptor_kind &&
             TK_BITMASK != type_descriptor_kind &&
@@ -336,6 +340,11 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             member_id = next_id_++;
             id_reverter.activate = true;
 
+        }
+        else if (member_id >= next_id_)
+        {
+            next_id_ = member_id + 1;
+            id_reverter.activate = true;
         }
 
         // Check there is already a member with same id.
@@ -506,11 +515,13 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
             if (value >= default_value_)
             {
                 default_value_ = value + 1;
+                default_value_reverter.activate = true;
             }
         }
         else
         {
             dyn_member->get_descriptor().default_value(std::to_string(default_value_++));
+            default_value_reverter.activate = true;
         }
     }
     //}}}
@@ -555,6 +566,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
 
     id_reverter.activate = false;
     index_reverter.activate = false;
+    default_value_reverter.activate = false;
     return RETCODE_OK;
 }
 

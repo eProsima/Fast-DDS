@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <functional>
 #include <string>
 
@@ -30,6 +31,26 @@
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
+
+std::array<DataRepresentationId_t, 2> encodings {{XCDR_DATA_REPRESENTATION, XCDR2_DATA_REPRESENTATION}};
+
+void encoding_deconding_test(
+        DynamicType::_ref_type created_type,
+        DynamicData::_ref_type encoding_data,
+        DynamicData::_ref_type decoding_data,
+        DataRepresentationId_t encoding
+        )
+{
+    DynamicPubSubType pubsubType(created_type);
+    uint32_t payloadSize =
+            static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&encoding_data, encoding)());
+    SerializedPayload_t payload(payloadSize);
+    EXPECT_TRUE(pubsubType.serialize(&encoding_data, &payload, encoding));
+    EXPECT_EQ(payload.length, payloadSize);
+    EXPECT_LE(payload.length, pubsubType.m_typeSize);
+    EXPECT_TRUE(pubsubType.deserialize(&payload, &decoding_data));
+    EXPECT_TRUE(decoding_data->equals(encoding_data));
+}
 
 // Testing the primitive creation APIS
 // and get_primitive_type().
@@ -500,18 +521,21 @@ TEST_F(DynamicTypesTests, DynamicType_basic)
     auto dm = members_by_id[3];
     ASSERT_EQ(RETCODE_OK, dm->get_descriptor(tmp));
     EXPECT_EQ(tmp->index(), 0u);
+    EXPECT_EQ(tmp->id(), 3u);
     EXPECT_EQ(tmp->name(), md1->name());
     EXPECT_EQ(tmp->type(), md1->type());
 
     dm = members_by_id[7];
     ASSERT_EQ(RETCODE_OK, dm->get_descriptor(tmp));
-    EXPECT_EQ(tmp->index(), 7u);
+    EXPECT_EQ(tmp->index(), 2u);
+    EXPECT_EQ(tmp->id(), 7u);
     EXPECT_EQ(tmp->name(), md->name());
     EXPECT_EQ(tmp->type(), md->type());
 
     dm = members_by_id[1];
     ASSERT_EQ(RETCODE_OK, dm->get_descriptor(tmp));
     EXPECT_EQ(tmp->index(), 1u);
+    EXPECT_EQ(tmp->id(), 1u);
     EXPECT_EQ(tmp->name(), md2->name());
     EXPECT_EQ(tmp->type(), md2->type());
 
@@ -578,158 +602,217 @@ TEST_F(DynamicTypesTests, DynamicType_int32)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     // Test setters and getters.
     const int32_t test1 {123};
     int32_t test2 {0};
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_int32_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100, test2);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 101), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(101, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 303), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(303, test2);
-    ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    uint32_t uTest32;
-    ASSERT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    int16_t iTest16;
-    ASSERT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    uint16_t uTest16;
-    ASSERT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(100, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232, test2);
+
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 101), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(101, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 303), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(303, test2);
+
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_BAD_PARAMETER);
+
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(iTest64, 1);
-    uint64_t uTest64;
-    ASSERT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    float fTest32;
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(iTest64, 1);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest64, 1);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest64, 1);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest128, 1);
-    char cTest8;
-    ASSERT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    wchar_t cTest16;
-    ASSERT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    octet oTest;
-    ASSERT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    bool bTest;
-    ASSERT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    std::string sTest;
-    ASSERT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
-    std::wstring wsTest;
-    ASSERT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest128, 1);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
 
     // Test clone.
     auto clone = data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        int32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         int32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        EXPECT_EQ(data2->get_int32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_uint32)
@@ -742,149 +825,203 @@ TEST_F(DynamicTypesTests, DynamicType_uint32)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const uint32_t test1 = 123;
     uint32_t test2 = 0;
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_uint32_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232u, test2);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 303), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(303u, test2);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1u, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232u, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 303), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(303u, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1u, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_uint32_value(test2, 0), RETCODE_BAD_PARAMETER);
+
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(iTest64, 1);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(iTest64, 1);
+
     uint64_t uTest64;
-    ASSERT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(uTest64, 1);
-    float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(uTest64, 1);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest64, 1);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest64, 1);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest128, 1);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest128, 1);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32;
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         uint32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_int16)
@@ -897,152 +1034,207 @@ TEST_F(DynamicTypesTests, DynamicType_int16)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const int16_t test1 = 123;
     int16_t test2 = 0;
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_int16_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100, test2);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
+    EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(100, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232, test2);
+
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_int16_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int32_t iTest32;
-    ASSERT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest32);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest32);
+
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest64);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest64);
+
     float fTest32;
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest32);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest64);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        int16_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         int16_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_int16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_int16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_uint16)
@@ -1055,151 +1247,206 @@ TEST_F(DynamicTypesTests, DynamicType_uint16)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const uint16_t test1 = 123;
     uint16_t test2 = 0;
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_uint16_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232u, test2);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1u, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232u, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1u, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_uint16_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int32_t iTest32;
-    ASSERT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest32);
+    EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest32);
+
     uint32_t uTest32;
-    ASSERT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, uTest32);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, uTest32);
+
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest64);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest64);
+
     uint64_t uTest64;
-    ASSERT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, uTest64);
+    EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, uTest64);
+
     float fTest32;
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest32);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest64);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint16_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         uint16_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_uint16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_uint16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_int64)
@@ -1212,153 +1459,215 @@ TEST_F(DynamicTypesTests, DynamicType_int64)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const int64_t test1 = 123;
     int64_t test2 = 0;
-    ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_int64_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 3003), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(3003, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 2003), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2003, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 300), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(300, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100, test2);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    double fTest64;
-    ASSERT_NE(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 3003), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(3003, test2);
+
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 2003), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2003, test2);
+
+    EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 30), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(30, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(10, test2);
+
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 300), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(300, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(100, test2);
+
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'b'), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(98, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_int64_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32;
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        double fTest64;
+        EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        int64_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         int64_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_int64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_int64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_uint64)
@@ -1371,149 +1680,196 @@ TEST_F(DynamicTypesTests, DynamicType_uint64)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const uint64_t test1 = 123;
     uint64_t test2 = 0;
-    ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_uint64_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 3004), RETCODE_OK);
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(3004u, test2);
-    ASSERT_NE(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232u, test2);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100u, test2);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1u, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    int64_t iTest64;
-    ASSERT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    double fTest64;
-    ASSERT_NE(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 3004), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(3004u, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232u, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(100u, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1u, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_uint64_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32;
+        EXPECT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+        uint32_t uTest32;
+        EXPECT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
+        int16_t iTest16;
+        EXPECT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
+        uint16_t uTest16;
+        EXPECT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+        int64_t iTest64;
+        EXPECT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+        float fTest32;
+        EXPECT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+        double fTest64;
+        EXPECT_NE(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+        char cTest8;
+        EXPECT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
+        wchar_t cTest16;
+        EXPECT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
+        octet oTest;
+        EXPECT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
+        bool bTest;
+        EXPECT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
+        std::string sTest;
+        EXPECT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
+        std::wstring wsTest;
+        EXPECT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint64_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         uint64_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_uint64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_uint64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_float32)
@@ -1526,156 +1882,211 @@ TEST_F(DynamicTypesTests, DynamicType_float32)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const float test1 = 123.0f;
     float test2 = 0.0f;
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_float32_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100, test2);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 200), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(200, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(10, test2);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    int64_t iTest64;
-    ASSERT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(100, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232, test2);
+
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 200), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(200, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(10, test2);
+
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_float32_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest64);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32;
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int64_t iTest64;
+        EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        float test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_float32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         float test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_float32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_float32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_float32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_float64)
@@ -1688,161 +2099,218 @@ TEST_F(DynamicTypesTests, DynamicType_float64)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const double test1 = 123.0;
     double test2 = 0.0;
-    ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_float64_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, -100), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(-100, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 1000), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1000, test2);
-    ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(100, test2);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(232, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, -10), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(-10, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(10, test2);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 11), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(11, test2);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    int64_t iTest64;
-    ASSERT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, -100), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(-100, test2);
+
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 1000), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1000, test2);
+
+    EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(100, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(232, test2);
+
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, -10), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(-10, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(10, test2);
+
+    EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 11), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(11, test2);
+
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'b'), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(98, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_float64_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32;
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int64_t iTest64;
+        EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        double test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_float64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         double test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_float64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_float64_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_float64_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_float128)
@@ -1855,166 +2323,226 @@ TEST_F(DynamicTypesTests, DynamicType_float128)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const long double test1 = 123.0;
     long double test2 = 0.0;
-    ASSERT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_float128_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_EQ(data->set_int32_value(MEMBER_ID_INVALID, -3000), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(-3000, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 3000), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(3000, test2);
-    ASSERT_EQ(data->set_int8_value(MEMBER_ID_INVALID, -20), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(-20, test2);
-    ASSERT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 200), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(200, test2);
-    ASSERT_EQ(data->set_int16_value(MEMBER_ID_INVALID, -200), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(-200, test2);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 200), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(200, test2);
-    ASSERT_EQ(data->set_int64_value(MEMBER_ID_INVALID, -2000), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(-2000, test2);
-    ASSERT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 2000), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2000, test2);
-    ASSERT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 20), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(20, test2);
-    ASSERT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 30), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(30, test2);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
-    int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    int64_t iTest64;
-    ASSERT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    double fTest64;
-    ASSERT_NE(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, -3000), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(-3000, test2);
+
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 3000), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(3000, test2);
+
+    EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, -20), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(-20, test2);
+
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 200), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(200, test2);
+
+    EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, -200), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(-200, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 200), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(200, test2);
+
+    EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, -2000), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(-2000, test2);
+
+    EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 2000), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2000, test2);
+
+    EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 20), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(20, test2);
+
+    EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 30), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(30, test2);
+
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'b'), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(98, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_float128_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32;
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int64_t iTest64;
+        EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        double fTest64;
+        EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        long double test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_float128_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         long double test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_float128_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_float128_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_float128_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_char8)
@@ -2027,146 +2555,199 @@ TEST_F(DynamicTypesTests, DynamicType_char8)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const char test1 = 'a';
     char test2 = 'b';
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_char8_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_char8_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+
+    //{{{ Successful getters
     int32_t iTest32;
-    ASSERT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest32);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest32);
+
     int16_t iTest16;
-    ASSERT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest16);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest16);
+
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest64);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest64);
+
     float fTest32;
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest32);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest64);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+
     wchar_t cTest16;
-    ASSERT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, cTest16);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, cTest16);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        char test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_char8_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         char test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_char8_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_char8_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_char8_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_char16)
@@ -2179,145 +2760,199 @@ TEST_F(DynamicTypesTests, DynamicType_char16)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const wchar_t test1 = L'a';
     wchar_t test2 = L'b';
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_char16_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(97, test2);
-    ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
+    EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_char16_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int32_t iTest32;
-    ASSERT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest32);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest32);
+
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, iTest64);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, iTest64);
+
     float fTest32;
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest32);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest64);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        uint32_t uTest32;
+        EXPECT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
+        uint16_t uTest16;
+        EXPECT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+        uint64_t uTest64;
+        EXPECT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+        char cTest8;
+        EXPECT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
+        octet oTest;
+        EXPECT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
+        bool bTest;
+        EXPECT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
+        std::string sTest;
+        EXPECT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
+        std::wstring wsTest;
+        EXPECT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        wchar_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_char16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         wchar_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_char16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_char16_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_char16_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_byte)
@@ -2330,150 +2965,177 @@ TEST_F(DynamicTypesTests, DynamicType_byte)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const octet test1 {255};
     octet test2 {0};
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_byte_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+    //}}}
 
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_byte_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int32_t iTest32;
-    ASSERT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(iTest32, test1);
+    EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(iTest32, test1);
+
     uint32_t uTest32;
-    ASSERT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(uTest32, test1);
+    EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(uTest32, test1);
+
+    int8_t iTest8;
+    EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(static_cast<uint8_t>(iTest8), test1);
+
+    uint8_t uTest8;
+    EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(uTest8, test1);
+
     int16_t iTest16;
-    ASSERT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(iTest16, test1);
+    EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(iTest16, test1);
+
     uint16_t uTest16;
-    ASSERT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(uTest16, test1);
+    EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(uTest16, test1);
+
     int64_t iTest64;
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(iTest64, test1);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(iTest64, test1);
+
     uint64_t uTest64;
-    ASSERT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(uTest64, test1);
+    EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(uTest64, test1);
+
     float fTest32;
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest32, test1);
+    EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest32, test1);
+
     double fTest64;
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest64, test1);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest64, test1);
+
     long double fTest128;
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(fTest128, test1);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(fTest128, test1);
+
     char cTest8;
-    ASSERT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(cTest8, static_cast<char>(test1));
+    EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(cTest8, static_cast<char>(test1));
+
     wchar_t cTest16;
-    ASSERT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(cTest16, test1);
+    EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(cTest16, test1);
+
     bool bTest;
-    ASSERT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(bTest, true);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(bTest, true);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        octet test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_byte_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         octet test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_byte_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_byte_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_byte_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_boolean)
@@ -2486,149 +3148,208 @@ TEST_F(DynamicTypesTests, DynamicType_boolean)
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     const bool test1 = true;
     bool test2 = false;
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_NE(data->get_boolean_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(true, test2);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(false, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
+    EXPECT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(false, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_boolean_value(test2, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int32_t iTest32 {1};
-    ASSERT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, iTest32);
+    EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, iTest32);
+
     uint32_t uTest32 {1};
-    ASSERT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, uTest32);
+    EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, uTest32);
+
+    int8_t iTest8 {1};
+    EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, iTest8);
+
+    uint8_t uTest8 {1};
+    EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, uTest8);
+
     int16_t iTest16 {1};
-    ASSERT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, iTest16);
+    EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, iTest16);
+
     uint16_t uTest16 {1};
-    ASSERT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, uTest16);
+    EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, uTest16);
+
     int64_t iTest64 {1};
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, iTest64);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, iTest64);
+
     uint64_t uTest64 {1};
-    ASSERT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, uTest64);
+    EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, uTest64);
+
     float fTest32 {1};
-    ASSERT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, fTest32);
+
     double fTest64 {1};
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, fTest64);
+
     long double fTest128 {1};
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        bool test3 {false};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_boolean_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         bool test3 {false};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_boolean_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_boolean_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_boolean_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_enum)
@@ -2638,23 +3359,31 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_ENUM);
     DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
-    DynamicType::_ref_type created_type {builder->build()};
-    // Enumerator without literals are invalid.
-    ASSERT_FALSE(created_type);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        DynamicType::_ref_type created_type {builder->build()};
+        // Enumerator without literals are invalid.
+        EXPECT_FALSE(created_type);
+    }
 
     // Add three members to the enum.
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+    {
+        // Negative case: descriptor without name.
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+    }
     member_descriptor->name("DEFAULT");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_UINT32));
     member_descriptor->name("FIRST");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_UINT32));
     member_descriptor->name("SECOND");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
@@ -2662,180 +3391,234 @@ TEST_F(DynamicTypesTests, DynamicType_enum)
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(TK_INT32));
         member_descriptor->name("THIRD");
-        EXPECT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
     }
 
-    created_type = builder->build();
+    DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
 
-    ASSERT_EQ(3, created_type->get_member_count());
+    EXPECT_EQ(3, created_type->get_member_count());
     DynamicTypeMember::_ref_type member;
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_index(member, 0));
-    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
-    ASSERT_STREQ("DEFAULT", member->get_name());
+    EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
+    EXPECT_STREQ("DEFAULT", member->get_name());
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_index(member, 1));
-    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
-    ASSERT_STREQ("FIRST", member->get_name());
+    EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
+    EXPECT_STREQ("FIRST", member->get_name());
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_index(member, 2));
-    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
-    ASSERT_STREQ("SECOND", member->get_name());
+    EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
+    EXPECT_STREQ("SECOND", member->get_name());
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_name(member, "DEFAULT"));
-    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
-    ASSERT_STREQ("DEFAULT", member->get_name());
+    EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
+    EXPECT_STREQ("DEFAULT", member->get_name());
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_name(member, "FIRST"));
-    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
-    ASSERT_STREQ("FIRST", member->get_name());
+    EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
+    EXPECT_STREQ("FIRST", member->get_name());
     ASSERT_EQ(RETCODE_OK, created_type->get_member_by_name(member, "SECOND"));
-    ASSERT_EQ(MEMBER_ID_INVALID, member->get_id());
-    ASSERT_STREQ("SECOND", member->get_name());
+    EXPECT_EQ(MEMBER_ID_INVALID, member->get_id());
+    EXPECT_STREQ("SECOND", member->get_name());
 
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
     ASSERT_TRUE(data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("DEFAULT"));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("DEFAULT"));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
 
     // Test getters and setters.
     const uint32_t test1 {2};
     uint32_t test2 {0};
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2u, test2);
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(1u, test2);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 2), RETCODE_OK);
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2u, test2);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2u, test2);
 
-    int32_t iTest32 {0};
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    int16_t iTest16 {0};
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    uint16_t uTest16 {0};
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 3), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(3u, test2);
+
+    EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(1u, test2);
+
+    EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+
+    EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 2), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2u, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
     int64_t iTest64 {0};
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2, iTest64);
+    EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2, iTest64);
+
     uint64_t uTest64 {0};
-    ASSERT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2, uTest64);
-    float fTest32 {0};
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2, uTest64);
+
     double fTest64 {0};
-    ASSERT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2, fTest64);
+
     long double fTest128 {0};
-    ASSERT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(2, fTest128);
-    char cTest8 {0};
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    wchar_t cTest16 {0};
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    octet oTest {0};
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    bool bTest {false};
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(2, fTest128);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        int32_t iTest32 {0};
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16 {0};
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16 {0};
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32 {0};
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8 {0};
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16 {0};
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest {0};
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest {false};
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(1u, data->get_item_count());
-
-    // Encoding/decoding
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(1u, data->get_item_count());
+
+    // Encoding/decoding
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         uint32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
-    ASSERT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(0u, test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
+    EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(0u, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_string)
@@ -2845,15 +3628,18 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     DynamicTypeBuilder::_ref_type builder {factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))};
     ASSERT_TRUE(builder);
     DynamicType::_ref_type created_type {builder->build()};
-    ASSERT_TRUE(created_type);
+    EXPECT_TRUE(created_type);
 
     const uint32_t length = 15;
     builder = factory->create_string_type(length);
     ASSERT_TRUE(builder);
-    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->type(factory->get_primitive_type(TK_UINT32));
-    member_descriptor->name("Wrong");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+        member_descriptor->name("Wrong");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    }
 
     created_type = builder->build();
     ASSERT_TRUE(created_type);
@@ -2861,170 +3647,225 @@ TEST_F(DynamicTypesTests, DynamicType_string)
     ASSERT_TRUE(data);
 
     // Test getters and setters.
-    ASSERT_NE(data->set_string_value(1, ""), RETCODE_OK);
     const std::string test1 {"STRING_TEST"};
-    ASSERT_EQ(data->set_string_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-
     std::string test2;
-    ASSERT_EQ(data->get_string_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ("S", test2);
-    ASSERT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_string_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ("S", test2);
+    EXPECT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+    //}}}
+
+    //{{{ Failing setters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-        ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID,
-                "TEST_OVER_LENGTH_LIMITS"), RETCODE_OK);
+        EXPECT_EQ(data->set_string_value(1, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID,
+                "TEST_OVER_LENGTH_LIMITS"), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
     }
+    //}}}
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_NE(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_OK);
+    //{{{ Successful getters
 
     int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(iTest32, 1), RETCODE_OK);
-    ASSERT_EQ(84, iTest32);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_uint32_value(uTest32, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(iTest32, 1), RETCODE_OK);
+    EXPECT_EQ(84, iTest32);
+
     int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int16_value(iTest16, 1), RETCODE_OK);
-    ASSERT_EQ(84, iTest16);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_uint16_value(uTest16, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_value(iTest16, 1), RETCODE_OK);
+    EXPECT_EQ(84, iTest16);
+
     int64_t iTest64;
-    ASSERT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(iTest64, 1), RETCODE_OK);
-    ASSERT_EQ(84, iTest64);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_uint64_value(uTest64, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(iTest64, 1), RETCODE_OK);
+    EXPECT_EQ(84, iTest64);
+
     float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(fTest32, 1), RETCODE_OK);
-    ASSERT_EQ(84, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, 1), RETCODE_OK);
+    EXPECT_EQ(84, fTest32);
+
     double fTest64;
-    ASSERT_NE(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(fTest64, 1), RETCODE_OK);
-    ASSERT_EQ(84, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, 1), RETCODE_OK);
+    EXPECT_EQ(84, fTest64);
+
     long double fTest128;
-    ASSERT_NE(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(fTest128, 1), RETCODE_OK);
-    ASSERT_EQ(84, fTest128);
+    EXPECT_EQ(data->get_float128_value(fTest128, 1), RETCODE_OK);
+    EXPECT_EQ(84, fTest128);
+
     char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_char8_value(cTest8, 1), RETCODE_OK);
-    ASSERT_EQ('T', cTest8);
+    EXPECT_EQ(data->get_char8_value(cTest8, 1), RETCODE_OK);
+    EXPECT_EQ('T', cTest8);
+
     wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_char16_value(cTest16, 1), RETCODE_OK);
-    ASSERT_EQ(L'T', cTest16);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_byte_value(oTest, 1), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_boolean_value(bTest, 1), RETCODE_OK);
-    std::wstring wsTest;
-    ASSERT_NE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_wstring_value(wsTest, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_value(cTest16, 1), RETCODE_OK);
+    EXPECT_EQ(L'T', cTest16);
+
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint32_value(uTest32, 1), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int8_value(iTest8, 1), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint8_value(uTest8, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint16_value(uTest16, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint64_value(uTest64, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_byte_value(oTest, 1), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_boolean_value(bTest, 1), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_wstring_value(wsTest, 1), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(0, data->get_member_id_at_index(0));
-    ASSERT_EQ(1, data->get_member_id_at_index(1));
-    ASSERT_EQ(10, data->get_member_id_at_index(10));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(10, data->get_member_id_at_index(10));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(test1.length(), data->get_item_count());
-
-    // Encoding/decoding
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        std::string test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(test1.length(), data->get_item_count());
+
+    // Encoding/decoding
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         std::string test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ("", test2);
-    ASSERT_EQ(data->set_string_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ("", test2);
-    ASSERT_EQ(data->set_string_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ("", test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ("", test2);
+    EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ("", test2);
+    EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ("", test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_wstring)
@@ -3034,183 +3875,203 @@ TEST_F(DynamicTypesTests, DynamicType_wstring)
     DynamicTypeBuilder::_ref_type builder {factory->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))};
     ASSERT_TRUE(builder);
     DynamicType::_ref_type created_type {builder->build()};
-    ASSERT_TRUE(created_type);
+    EXPECT_TRUE(created_type);
 
     const uint32_t length = 15;
     builder = factory->create_wstring_type(length);
     ASSERT_TRUE(builder);
-    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->type(factory->get_primitive_type(TK_UINT32));
-    member_descriptor->name("Wrong");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(TK_UINT32));
+        member_descriptor->name("Wrong");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    }
 
     created_type = builder->build();
     ASSERT_TRUE(created_type);
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
     ASSERT_TRUE(data);
 
-    ASSERT_NE(data->set_wstring_value(1, L""), RETCODE_OK);
     const std::wstring test1 = L"STRING_TEST";
-    ASSERT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-
     std::wstring test2;
-    ASSERT_EQ(data->get_wstring_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(L"S", test2);
-    ASSERT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
 
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_wstring_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(L"S", test2);
+    EXPECT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+
+    //}}}
+
+    //{{{ Failing setters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-        ASSERT_NE(data->set_wstring_value(MEMBER_ID_INVALID,
-                L"TEST_OVER_LENGTH_LIMITS"), RETCODE_OK);
+        EXPECT_EQ(data->set_wstring_value(1, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L"TEST_OVER_LENGTH_LIMITS"), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(MEMBER_ID_INVALID, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(MEMBER_ID_INVALID, {L"wstr"}), RETCODE_BAD_PARAMETER);
     }
+    //}}}
 
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_char8_value(MEMBER_ID_INVALID, 'a'), RETCODE_OK);
-    ASSERT_NE(data->set_char16_value(MEMBER_ID_INVALID, L'a'), RETCODE_OK);
-    ASSERT_NE(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_OK);
-    ASSERT_NE(data->set_boolean_value(MEMBER_ID_INVALID, false), RETCODE_OK);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
 
+    //{{{ Successful getters
     int32_t iTest32;
-    ASSERT_NE(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int32_value(iTest32, 1), RETCODE_OK);
-    ASSERT_EQ(84, iTest32);
-    uint32_t uTest32;
-    ASSERT_NE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_uint32_value(uTest32, 1), RETCODE_OK);
-    int16_t iTest16;
-    ASSERT_NE(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_int16_value(iTest16, 1), RETCODE_OK);
-    uint16_t uTest16;
-    ASSERT_NE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_uint16_value(uTest16, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(iTest32, 1), RETCODE_OK);
+    EXPECT_EQ(84, iTest32);
+
     int64_t iTest64;
-    ASSERT_NE(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_int64_value(iTest64, 1), RETCODE_OK);
-    ASSERT_EQ(84, iTest64);
-    uint64_t uTest64;
-    ASSERT_NE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_uint64_value(uTest64, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_value(iTest64, 1), RETCODE_OK);
+    EXPECT_EQ(84, iTest64);
+
     float fTest32;
-    ASSERT_NE(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_float32_value(fTest32, 1), RETCODE_OK);
-    ASSERT_EQ(84, fTest32);
+    EXPECT_EQ(data->get_float32_value(fTest32, 1), RETCODE_OK);
+    EXPECT_EQ(84, fTest32);
+
     double fTest64;
-    ASSERT_NE(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_float64_value(fTest64, 1), RETCODE_OK);
-    ASSERT_EQ(84, fTest64);
+    EXPECT_EQ(data->get_float64_value(fTest64, 1), RETCODE_OK);
+    EXPECT_EQ(84, fTest64);
+
     long double fTest128;
-    ASSERT_NE(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_float128_value(fTest128, 1), RETCODE_OK);
-    ASSERT_EQ(84, fTest128);
-    char cTest8;
-    ASSERT_NE(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_char8_value(cTest8, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_value(fTest128, 1), RETCODE_OK);
+    EXPECT_EQ(84, fTest128);
+
     wchar_t cTest16;
-    ASSERT_NE(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(data->get_char16_value(cTest16, 1), RETCODE_OK);
-    ASSERT_EQ(L'T', cTest16);
-    octet oTest;
-    ASSERT_NE(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_byte_value(oTest, 1), RETCODE_OK);
-    bool bTest;
-    ASSERT_NE(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_boolean_value(bTest, 1), RETCODE_OK);
-    std::string sTest;
-    ASSERT_NE(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_NE(data->get_string_value(sTest, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_value(cTest16, 1), RETCODE_OK);
+    EXPECT_EQ(L'T', cTest16);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint32_value(uTest32, 1), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int8_value(iTest8, 1), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint8_value(uTest8, 1), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int16_value(iTest16, 1), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint16_value(uTest16, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint64_value(uTest64, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_char8_value(cTest8, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_byte_value(oTest, 1), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_boolean_value(bTest, 1), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_string_value(sTest, 1), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(0, data->get_member_id_at_index(0));
-    ASSERT_EQ(1, data->get_member_id_at_index(1));
-    ASSERT_EQ(10, data->get_member_id_at_index(10));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(10, data->get_member_id_at_index(10));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(11));
 
     // Test clone.
     auto clone = data->clone();
-    ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(clone);
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
-
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
-
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
-
-    // Test get_item_count().
-    ASSERT_EQ(test1.length(), data->get_item_count());
-
-    // Encoding/decoding
-    // XCDRv1
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        std::wstring test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_wstring_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
     }
 
-    // XCDRv2
+    // Test get_item_count().
+    EXPECT_EQ(test1.length(), data->get_item_count());
+
+    // Encoding/decoding
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         std::wstring test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_wstring_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        encoding_deconding_test(created_type, data, data2, encoding);
+        EXPECT_EQ(data2->get_wstring_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(test1, test3);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(L"", test2);
-    ASSERT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(L"", test2);
-    ASSERT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(L"", test2);
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(L"", test2);
+    EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(L"", test2);
+    EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, test1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->clear_value(MEMBER_ID_INVALID));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(data->get_wstring_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(L"", test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_alias)
@@ -3273,42 +4134,14 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     ASSERT_EQ(1u, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         uint32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t test3 {0};
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint32_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
@@ -3325,7 +4158,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias)
     ASSERT_EQ(data->get_uint32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
     ASSERT_EQ(0, test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_nested_alias)
@@ -3410,43 +4243,15 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     // Test get_item_count().
     ASSERT_EQ(test1.length(), data->get_item_count());
 
-    // XCDRv1
     // Encoding/decoding
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(nested_alias_type);
         std::string test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(nested_alias_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(nested_alias_type, data, data2, encoding);
         ASSERT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
         ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(nested_alias_type);
-        std::string test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(nested_alias_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_string_value(test3, MEMBER_ID_INVALID), RETCODE_OK);
-        ASSERT_EQ(test1, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Test clear functions.
@@ -3463,7 +4268,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias)
     ASSERT_EQ(data->get_string_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
     ASSERT_EQ("", test2);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_bitset)
@@ -3562,44 +4367,16 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
     // Testing get_item_count.
     ASSERT_EQ(2u, data->get_item_count());
 
-    // XCDRv1
+    // Encoding/decoding
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_uint8_value(get_test_field_1, 0), RETCODE_OK);
         ASSERT_EQ(set_test_field_1 & 0x3, get_test_field_1);
         ASSERT_EQ(data2->get_int32_value(get_test_field_2, 3), RETCODE_OK);
         ASSERT_EQ(set_test_field_2, get_test_field_2);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_uint8_value(get_test_field_1, 0), RETCODE_OK);
-        ASSERT_EQ(set_test_field_1 & 0x3, get_test_field_1);
-        ASSERT_EQ(data2->get_int32_value(get_test_field_2, 3), RETCODE_OK);
-        ASSERT_EQ(set_test_field_2, get_test_field_2);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -3742,19 +4519,11 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     // Testing get_item_count.
     ASSERT_EQ(3, data->get_item_count());
 
-    // XCDRv1
+    // Encoding/decoding
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_boolean_value(bit_get, 0), RETCODE_OK);
         ASSERT_EQ(true, bit_get);
         ASSERT_EQ(data2->get_boolean_value(bit_get, 1), RETCODE_OK);
@@ -3765,33 +4534,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
         ASSERT_EQ(false, bit_get);
         ASSERT_EQ(data2->get_boolean_value(bit_get, 5), RETCODE_OK);
         ASSERT_EQ(true, bit_get);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 0), RETCODE_OK);
-        ASSERT_EQ(true, bit_get);
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 1), RETCODE_OK);
-        ASSERT_EQ(false, bit_get);
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 2), RETCODE_OK);
-        ASSERT_EQ(true, bit_get);
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 3), RETCODE_OK);
-        ASSERT_EQ(false, bit_get);
-        ASSERT_EQ(data2->get_boolean_value(bit_get, 5), RETCODE_OK);
-        ASSERT_EQ(true, bit_get);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -3839,7 +4582,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     ASSERT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
     ASSERT_EQ(true, bit_get);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_sequence)
@@ -3929,42 +4672,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence)
     ASSERT_EQ(length, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
         ASSERT_EQ(test_all, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
-        ASSERT_EQ(test_all, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -3980,7 +4695,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence)
     ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
     ASSERT_EQ(test2, Int32Seq({1, 3}));
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
@@ -4078,21 +4793,11 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-
+        encoding_deconding_test(created_type, data, data2, encoding);
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4103,37 +4808,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({0, 1}));
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
-
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-
-        seq_data = data2->loan_value(0);
-        ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({2, 3, 4}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
-        seq_data = data2->loan_value(1);
-        ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
-
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -4166,7 +4841,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_EQ(good_seq, Int32Seq({0, 1}));
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_array)
@@ -4264,42 +4939,14 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     ASSERT_EQ(8u, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
         ASSERT_EQ(test_all, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
-        ASSERT_EQ(test_all, test3);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -4319,7 +4966,7 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
     ASSERT_EQ(test2, Int32Seq({1, 0, 3, 4, 5, 6, 7, 8}));
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
@@ -4444,21 +5091,11 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_EQ(4u, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
         Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-
+        encoding_deconding_test(created_type, data, data2, encoding);
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
@@ -4479,47 +5116,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
         ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
         ASSERT_EQ(good_seq, Int32Seq({1, 0}));
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
-
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        /// Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        Int32Seq test3;
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-
-        seq_data = data->loan_value(0);
-        ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({2, 3}));
-        ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(1);
-        ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(2);
-        ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({3, 4}));
-        ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
-        seq_data = data->loan_value(3);
-        ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({1, 0}));
-        ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
-
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -4680,7 +5277,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_EQ(good_seq, Int32Seq({0, 0}));
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_map)
@@ -4755,48 +5352,17 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     ASSERT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(test2, data->get_member_id_by_name(
                     "10")), RETCODE_OK);
         ASSERT_EQ(test1, test2);
         ASSERT_EQ(data2->get_int32_value(test4, data->get_member_id_by_name(
                     "20")), RETCODE_OK);
         ASSERT_EQ(test3, test4);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(data2->get_int32_value(test2, data->get_member_id_by_name(
-                    "10")), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        ASSERT_EQ(data2->get_int32_value(test4, data->get_member_id_by_name(
-                    "20")), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -4823,7 +5389,7 @@ TEST_F(DynamicTypesTests, DynamicType_map)
     ASSERT_EQ(RETCODE_OK, data->get_int32_value(test4, 1));
     ASSERT_EQ(test3, test4);
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
@@ -4944,19 +5510,10 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     ASSERT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
+        encoding_deconding_test(created_type, data, data2, encoding);
         ASSERT_EQ(2u, data2->get_item_count());
         loan_data = data2->loan_value(0);
         ASSERT_TRUE(loan_data);
@@ -4978,44 +5535,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
                 loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("2")));
         ASSERT_EQ(test1, test_get);
         ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(created_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&data, XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(data));
-        ASSERT_EQ(2u, data2->get_item_count());
-        loan_data = data2->loan_value(0);
-        ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2u, loan_data->get_item_count());
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
-        ASSERT_EQ(test3, test_get);
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("4")));
-        ASSERT_EQ(test4, test_get);
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
-        loan_data = data2->loan_value(1);
-        ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2u, loan_data->get_item_count());
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
-        ASSERT_EQ(test2, test_get);
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("2")));
-        ASSERT_EQ(test1, test_get);
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -5082,7 +5602,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     ASSERT_EQ(test1, test_get);
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
 
-    DynamicDataFactory::get_instance()->delete_data(data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_structure)
@@ -5105,7 +5625,6 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT64));
     member_descriptor->name("int64");
-    member_descriptor->id(1);
     member_descriptor->default_value("3");
     ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
@@ -5174,46 +5693,15 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     ASSERT_EQ(2u, struct_data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(struct_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data,
-                XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(struct_data));
+        encoding_deconding_test(struct_type, struct_data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
         ASSERT_EQ(test1, test2);
         ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
         ASSERT_EQ(test3, test4);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(struct_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data,
-                XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(struct_data));
-        ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -5243,7 +5731,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
     ASSERT_EQ(3, test4);
 
-    DynamicDataFactory::get_instance()->delete_data(struct_data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(struct_data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
@@ -5453,20 +5941,10 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_EQ(4u, struct_data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(derived_struct_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data,
-                XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(struct_data));
+        encoding_deconding_test(derived_struct_type, struct_data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
         ASSERT_EQ(test11, test2);
         ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
@@ -5475,32 +5953,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
         ASSERT_EQ(test1, test2);
         ASSERT_EQ(data2->get_string_value(test6, 4), RETCODE_OK);
         ASSERT_EQ(test5, test6);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(derived_struct_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data,
-                XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(struct_data));
-        ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
-        ASSERT_EQ(test11, test2);
-        ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
-        ASSERT_EQ(data2->get_int32_value(test2, 2), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        ASSERT_EQ(data2->get_string_value(test6, 4), RETCODE_OK);
-        ASSERT_EQ(test5, test6);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -5548,7 +6001,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
     ASSERT_EQ("", test6);
 
-    DynamicDataFactory::get_instance()->delete_data(struct_data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(struct_data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_multi_structure)
@@ -5666,20 +6119,10 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(2u, struct_data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(struct_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data,
-                XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(struct_data));
+        encoding_deconding_test(struct_type, struct_data, data2, encoding);
         ASSERT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
         ASSERT_EQ(test1, test2);
         inner_struct_data = struct_data->loan_value(0);
@@ -5689,35 +6132,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
         ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
         ASSERT_EQ(test5, test6);
         ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
-
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(struct_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&struct_data,
-                XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&struct_data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(struct_data));
-        ASSERT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        inner_struct_data = struct_data->loan_value(0);
-        ASSERT_TRUE(inner_struct_data);
-        ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
-        ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
-        ASSERT_EQ(test5, test6);
-        ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
-
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -5770,7 +6185,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_EQ(0, test6);
     ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
 
-    DynamicDataFactory::get_instance()->delete_data(struct_data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(struct_data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_union)
@@ -5929,48 +6344,16 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     // Encoding/decoding
     ASSERT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
     ASSERT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(union_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&union_data,
-                XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&union_data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(union_data));
+        encoding_deconding_test(union_type, union_data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
         ASSERT_EQ(4, discriminator_value);
         ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
         ASSERT_EQ(data2->get_string_value(string_get, 3), RETCODE_OK);
         ASSERT_EQ(string_set, string_get);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(union_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&union_data,
-                XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&union_data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(union_data));
-        ASSERT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
-        ASSERT_EQ(4, discriminator_value);
-        ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-        ASSERT_EQ(data2->get_string_value(string_get, 3), RETCODE_OK);
-        ASSERT_EQ(string_set, string_get);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -6003,7 +6386,7 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
     ASSERT_EQ("default", string_get);
 
-    DynamicDataFactory::get_instance()->delete_data(union_data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(union_data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
@@ -6129,20 +6512,10 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_EQ(2u, union_data->get_item_count());
 
     // Encoding/decoding
-    // XCDRv1
+    for (auto encoding : encodings)
     {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(union_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&union_data,
-                XCDR_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&union_data, &payload, XCDR_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(union_data));
+        encoding_deconding_test(union_type, union_data, data2, encoding);
         ASSERT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
         ASSERT_EQ(4, discriminator_value);
         child_data = union_data->loan_value(2);
@@ -6150,31 +6523,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
         ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
         ASSERT_EQ("another", test3);
         ASSERT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
-        DynamicDataFactory::get_instance()->delete_data(data2);
-    }
-
-    // XCDRv2
-    {
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(union_type);
-        uint32_t payloadSize =
-                static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(&union_data,
-                XCDR2_DATA_REPRESENTATION)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(&union_data, &payload, XCDR2_DATA_REPRESENTATION));
-        ASSERT_EQ(payload.length, payloadSize);
-        ASSERT_LE(payload.length, pubsubType.m_typeSize);
-        DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
-        ASSERT_TRUE(pubsubType.deserialize(&payload, &data2));
-        ASSERT_TRUE(data2->equals(union_data));
-        ASSERT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
-        ASSERT_EQ(4, discriminator_value);
-        child_data = union_data->loan_value(2);
-        ASSERT_TRUE(child_data);
-        ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
-        ASSERT_EQ("another", test3);
-        ASSERT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
-        DynamicDataFactory::get_instance()->delete_data(data2);
+        EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
@@ -6206,7 +6555,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
     ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
 
-    DynamicDataFactory::get_instance()->delete_data(union_data);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(union_data), RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)

@@ -115,6 +115,18 @@ struct LogResources
         category_filter_.reset(new std::regex(filter));
     }
 
+    void UnsetCategoryFilter()
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex_);
+        category_filter_.reset();
+    }
+
+    bool HasCategoryFilter()
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex_);
+        return !!category_filter_;
+    }
+
     //! Returns a copy of the current category filter or an empty object otherwise
     std::regex GetCategoryFilter()
     {
@@ -472,6 +484,16 @@ void Log::SetThreadConfig(
         const rtps::ThreadSettings& config)
 {
     detail::get_log_resources()->SetThreadConfig(config);
+}
+
+void Log::UnsetCategoryFilter()
+{
+    return detail::get_log_resources()->UnsetCategoryFilter();
+}
+
+bool Log::HasCategoryFilter()
+{
+    return detail::get_log_resources()->HasCategoryFilter();
 }
 
 std::regex Log::GetCategoryFilter()
