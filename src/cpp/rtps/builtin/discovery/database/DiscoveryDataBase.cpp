@@ -2346,10 +2346,14 @@ bool DiscoveryDataBase::add_pdp_to_send_(
 
 bool DiscoveryDataBase::add_own_pdp_to_send_()
 {
-    auto our_data_it = participants_.find(server_guid_prefix_);
-    assert(our_data_it != participants_.end());
+    if (!backup_in_progress())
+    {
+        auto our_data_it = participants_.find(server_guid_prefix_);
+        assert(our_data_it != participants_.end());
 
-    return add_pdp_to_send_(our_data_it->second.change());
+        return add_pdp_to_send_(our_data_it->second.change());
+    }
+    return false;
 }
 
 bool DiscoveryDataBase::add_edp_publications_to_send_(
