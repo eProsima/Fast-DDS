@@ -191,12 +191,17 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             /* Check PARTICIPANT_TYPE */
             bool is_client = true;
+            bool is_superclient = false;
             std::string participant_type_str = parent_pdp_->check_participant_type(properties);
 
             if (participant_type_str == ParticipantType::SERVER ||
-                    participant_type_str == ParticipantType::BACKUP ||
-                    participant_type_str == ParticipantType::SUPER_CLIENT)
+                    participant_type_str == ParticipantType::BACKUP)
             {
+                is_client = false;
+            }
+            else if (participant_type_str == ParticipantType::SUPER_CLIENT)
+            {
+                is_superclient = true;
                 is_client = false;
             }
             else if (participant_type_str == ParticipantType::SIMPLE)
@@ -245,7 +250,8 @@ void PDPServerListener::onNewCacheChangeAdded(
                             ddb::DiscoveryParticipantChangeData(
                                 participant_data.metatraffic_locators,
                                 is_client,
-                                is_local)))
+                                is_local,
+                                is_superclient)))
                 {
                     // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                     // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.

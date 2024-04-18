@@ -724,7 +724,8 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-           participant_info.is_client() == new_change_data.is_client());
+           participant_info.is_client() == new_change_data.is_client() &&
+           participant_info.is_superclient() == new_change_data.is_superclient());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
@@ -1119,6 +1120,10 @@ void DiscoveryDataBase::match_writer_reader_(
     }
     DiscoveryParticipantInfo& writer_participant_info = p_wit->second;
 
+    bool should_publish_writer_edp = (writer_participant_info.is_client() ||
+                                        writer_participant_info.is_superclient() ||
+                                        writer_guid.guidPrefix == server_guid_prefix_);
+
     // reader entity
     auto rit = readers_.find(reader_guid);
     if (rit == readers_.end())
@@ -1136,6 +1141,10 @@ void DiscoveryDataBase::match_writer_reader_(
         return;
     }
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
+
+    bool should_publish_reader_edp = (reader_participant_info.is_client() ||
+                                        reader_participant_info.is_superclient() ||
+                                        reader_guid.guidPrefix == server_guid_prefix_);
 
     // virtual              - needs info and give none
     // local                - needs info and give info
@@ -1160,7 +1169,7 @@ void DiscoveryDataBase::match_writer_reader_(
 
             // Only match EDP if the reader is pure client OR from this participant. This will allow to only redirect Data(p) of
             // our remote clients or subscribers in the same participant, but avoid redirecting Data(p) of other servers' readers.
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && (reader_participant_info.is_client() || reader_guid.guidPrefix == server_guid_prefix_))
+            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && should_publish_reader_edp)
             {
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
@@ -1182,7 +1191,7 @@ void DiscoveryDataBase::match_writer_reader_(
 
             // Only match EDP if the writer is pure client OR from this participant. This will allow to only redirect Data(p) of
             // our remote clients or publishers in the same participant, but avoid redirecting Data(p) of other servers' writers.
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && (writer_participant_info.is_client() || writer_guid.guidPrefix == server_guid_prefix_))
+            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && should_publish_writer_edp)
             {
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
@@ -1199,7 +1208,7 @@ void DiscoveryDataBase::match_writer_reader_(
 
             // Only match EDP if the writer is pure client OR from this participant. This will allow to only redirect Data(p) of
             // our remote clients or publishers in the same participant, but avoid redirecting Data(p) of other servers' writers.
-            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && (reader_participant_info.is_client() || writer_guid.guidPrefix == server_guid_prefix_))
+            if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && should_publish_reader_edp)
             {
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
@@ -1211,7 +1220,7 @@ void DiscoveryDataBase::match_writer_reader_(
 
             // Only match EDP if the reader is pure client OR from this participant. This will allow to only redirect Data(p) of
             // our remote clients or subscribers in the same participant, but avoid redirecting Data(p) of other servers' readers.
-            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && (writer_participant_info.is_client() || reader_guid.guidPrefix == server_guid_prefix_))
+            if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && should_publish_writer_edp)
             {
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
