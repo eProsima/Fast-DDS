@@ -358,12 +358,13 @@ bool DataReaderHistory::get_first_untaken_info(
         auto& instance_changes = it.second->cache_changes;
         for (auto& instance_change : instance_changes)
         {
-            WriterProxy* wp;
+            WriterProxy* wp = nullptr;
             bool is_future_change = false;
 
+            if (mp_reader->begin_sample_access_nts(instance_change, wp, is_future_change))
             {
-                std::lock_guard<RecursiveTimedMutex> _(mp_reader->getMutex());
-                if (mp_reader->begin_sample_access_nts(instance_change, wp, is_future_change) && is_future_change)
+                mp_reader->end_sample_access_nts(instance_change, wp, false);
+                if (is_future_change)
                 {
                     continue;
                 }
