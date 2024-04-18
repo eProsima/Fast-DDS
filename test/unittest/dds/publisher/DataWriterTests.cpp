@@ -2178,6 +2178,7 @@ public:
     {
         return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION); // default XCDR1
     }
+
 };
 
 TEST(DataWriterTests, data_type_is_plain_data_representation)
@@ -2203,7 +2204,7 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
-            testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
 
     /* Create a datawriter will trigger the "is_plain" call */
@@ -2221,7 +2222,7 @@ TEST(DataWriterTests, data_type_is_plain_data_representation)
     /* Expect the "is_plain" method called with XCDR2 data representation */
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
-            testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
 
     /* Create a datawriter will trigger the "is_plain" call */
     DataWriter* datawriter_xcdr2 = publisher->create_datawriter(topic, qos_xcdr2);

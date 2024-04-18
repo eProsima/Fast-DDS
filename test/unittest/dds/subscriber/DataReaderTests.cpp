@@ -3865,7 +3865,7 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
 
     /* Expect the "is_plain" method called with default data representation (XCDR1) */
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(
-            testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(0);
 
     /* Create a datareader will trigger the "is_plain" call */
@@ -3883,7 +3883,7 @@ TEST_F(DataReaderTests, data_type_is_plain_data_representation)
     /* Expect the "is_plain" method called with XCDR2 data representation */
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)).Times(0);
     EXPECT_CALL(*type, custom_is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION)).Times(
-            testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
+        testing::AtLeast(1)).WillRepeatedly(testing::Return(true));
 
     /* Create a datareader will trigger the "is_plain" call */
     DataReader* datareader_xcdr2 = subscriber->create_datareader(topic, qos_xcdr2);
