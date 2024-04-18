@@ -1803,7 +1803,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     if (!sample_pool_)
     {
-        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
+        sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_, type_->is_plain(data_representation_));
     }
     if (!is_custom_payload_pool_)
     {
