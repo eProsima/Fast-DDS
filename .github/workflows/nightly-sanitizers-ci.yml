@@ -7,7 +7,7 @@ on:
 
 jobs:
   nightly-sanitizers-ci-master:
-    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@master
     with:
       label: 'nightly-sec-sanitizers-ci-master'
       run_asan_fastdds: true
@@ -21,7 +21,7 @@ jobs:
       discovery_server_ref: 'master'
 
   nightly-sanitizers-ci-2_13_x:
-      uses: ./.github/workflows/reusable-sanitizers-ci.yml
+      uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.13.x
       with:
         label: 'nightly-sec-sanitizers-ci-2.13.x'
         run_asan_fastdds: true
@@ -35,7 +35,7 @@ jobs:
         discovery_server_ref: 'v1.2.2'
 
   nightly-sanitizers-ci-2_10_x:
-    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.10.x
     with:
       label: 'nightly-sec-sanitizers-ci-2.10.x'
       run_asan_fastdds: true
@@ -49,7 +49,7 @@ jobs:
       discovery_server_ref: 'v1.2.1'
 
   nightly-sanitizers-ci-2_6_x:
-    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@2.6.x
     with:
       label: 'nightly-sec-sanitizers-ci-2.6.x'
       run_asan_fastdds: true
@@ -63,7 +63,7 @@ jobs:
       discovery_server_ref: 'v1.2.1'
 
   nightly-sanitizers-ci-3_0_x-devel:
-    uses: ./.github/workflows/reusable-sanitizers-ci.yml
+    uses: eProsima/Fast-DDS/.github/workflows/reusable-sanitizers-ci.yml@3.0.x-devel
     with:
       label: 'nightly-sec-sanitizers-ci-3.0.x-devel'
       run_asan_fastdds: true
