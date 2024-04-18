@@ -192,7 +192,8 @@ void PDPServerListener::on_new_cache_change_added(
                             ddb::DiscoveryParticipantChangeData(
                                 participant_data.metatraffic_locators,
                                 is_client,
-                                is_local)))
+                                is_local,
+                                participant_type_str == ParticipantType::SUPER_CLIENT)))
                 {
                     // Remove change from PDP reader history, but do not return it to the pool. From here on, the discovery
                     // database takes ownership of the CacheChange_t. Henceforth there are no references to the change.

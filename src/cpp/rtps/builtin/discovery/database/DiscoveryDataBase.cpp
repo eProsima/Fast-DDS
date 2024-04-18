@@ -724,7 +724,8 @@ bool DiscoveryDataBase::participant_data_has_changed_(
         const DiscoveryParticipantChangeData& new_change_data)
 {
     return !(participant_info.is_local() == new_change_data.is_local() &&
-           participant_info.is_client() == new_change_data.is_client());
+           participant_info.is_client() == new_change_data.is_client() &&
+           participant_info.is_superclient() == new_change_data.is_superclient());
 }
 
 void DiscoveryDataBase::create_new_participant_from_change_(
