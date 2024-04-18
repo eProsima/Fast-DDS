@@ -1,12 +1,6 @@
 names:
     fastrtps:
         cmake-args:
-            - "-DCMAKE_BUILD_TYPE=Debug"
-            - "-DEPROSIMA_BUILD_TESTS=ON"
-            - "-DRTPS_API_TESTS=ON"
-            - "-DFASTRTPS_API_TESTS=ON"
-            - "-DFASTDDS_PIM_API_TESTS=ON"
-            - "-DPERFORMANCE_TESTS=ON"
             - "-DNO_TLS=OFF"
             - "-DSECURITY=ON"
             - "-DFASTDDS_STATISTICS=ON"
@@ -14,7 +8,6 @@ names:
             - "-DCMAKE_CXX_FLAGS='-Werror'"
     discovery-server:
         cmake-args:
-            - "-DCMAKE_BUILD_TYPE=Debug"
             - "-DSANITIZER=Address"
     googletest-distribution:
         cmake-args:
