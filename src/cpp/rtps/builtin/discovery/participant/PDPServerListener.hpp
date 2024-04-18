@@ -65,12 +65,14 @@ protected:
      * Checks discovery conditions on a discovery server entity.
      * Essentially, it checks for incoming PIDS of remote proxy datas.
      * @param participant_data Remote participant data to check.
+     * @param participant_type_str Type of the remote participant.
      * @return A pair of booleans.
      * The first one indicates if the remote participant data is valid.
      * The second one indicates if the remote participant data is a client.
      */
     std::pair<bool, bool> check_server_discovery_conditions(
-            fastdds::rtps::ParticipantProxyData& participant_data);
+            fastdds::rtps::ParticipantProxyData& participant_data,
+            std::string& participant_type_str);
 };
 
 
