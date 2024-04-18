@@ -193,6 +193,7 @@ inline std::istream& operator >>(
             if (letter == 'M')
             {
                 input.get(sb_aux, '[');
+                input >> punct;
 
                 // Read every locator
                 while (punct != ']')
@@ -207,6 +208,7 @@ inline std::istream& operator >>(
 
             if (letter == 'U')
             {
+                input.get(sb_aux, '[');
                 input >> punct;
 
                 // Read every locator

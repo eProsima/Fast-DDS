@@ -452,48 +452,52 @@ inline std::istream& operator >>(
             else
             {
                 kind = LOCATOR_KIND_INVALID;
+                loc.kind = LOCATOR_KIND_INVALID;
             }
 
-            // Get chars :[
-            input >> punct >> punct;
-
-            // Get address in string
-            input.get(sb_address, ']');
-            address = sb_address.str();
-
-            // check if this is a valid IPv4 or IPv6 and call DNS if not
-            if ((kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4) &&
-                    !IPLocator::isIPv4(address))
+            if (kind != LOCATOR_KIND_INVALID)
             {
-                auto addresses = IPLocator::resolveNameDNS(address);
-                if (addresses.first.empty())
+                // Get chars :[
+                input >> punct >> punct;
+
+                // Get address in string
+                input.get(sb_address, ']');
+                address = sb_address.str();
+
+                // check if this is a valid IPv4 or IPv6 and call DNS if not
+                if ((kind == LOCATOR_KIND_UDPv4 || kind == LOCATOR_KIND_TCPv4) &&
+                        !IPLocator::isIPv4(address))
                 {
-                    loc.kind = LOCATOR_KIND_INVALID;
-                    EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
-                    return input;
+                    auto addresses = IPLocator::resolveNameDNS(address);
+                    if (addresses.first.empty())
+                    {
+                        loc.kind = LOCATOR_KIND_INVALID;
+                        EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
+                        return input;
+                    }
+                    address = *addresses.first.begin();
                 }
-                address = *addresses.first.begin();
-            }
-            if ((kind == LOCATOR_KIND_UDPv6 || kind == LOCATOR_KIND_TCPv6) &&
-                    !IPLocator::isIPv6(address))
-            {
-                auto addresses = IPLocator::resolveNameDNS(address);
-                if (addresses.second.empty())
+                if ((kind == LOCATOR_KIND_UDPv6 || kind == LOCATOR_KIND_TCPv6) &&
+                        !IPLocator::isIPv6(address))
                 {
-                    loc.kind = LOCATOR_KIND_INVALID;
-                    EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
-                    return input;
+                    auto addresses = IPLocator::resolveNameDNS(address);
+                    if (addresses.second.empty())
+                    {
+                        loc.kind = LOCATOR_KIND_INVALID;
+                        EPROSIMA_LOG_WARNING(LOCATOR, "Error deserializing Locator");
+                        return input;
+                    }
+                    address = *addresses.second.begin();
                 }
-                address = *addresses.second.begin();
+
+                // Get char ]:
+                input >> punct >> punct;
+
+                // Get port
+                input >> port;
+
+                IPLocator::createLocator(kind, address, port, loc);
             }
-
-            // Get char ]:
-            input >> punct >> punct;
-
-            // Get port
-            input >> port;
-
-            IPLocator::createLocator(kind, address, port, loc);
         }
         catch (std::ios_base::failure& )
         {

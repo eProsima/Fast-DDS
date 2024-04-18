@@ -1724,6 +1724,16 @@ TEST(RemoteLocatorsTests, RemoteLocator_deserialization)
     serialized_ss >> rll;
     ASSERT_EQ(rll.multicast.size(), 2u);
     ASSERT_EQ(rll.unicast.size(), 2u);
+    Locator_t loc_test2;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "239.255.255.255", 2, loc_test2);
+    Locator_t loc_test3;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "1.2.3.4", 3, loc_test3);
+    Locator_t loc_test4;
+    IPLocator::createLocator(LOCATOR_KIND_UDPv4, "4.3.2.1", 4, loc_test4);
+    ASSERT_EQ(rll.multicast[0], locator);
+    ASSERT_EQ(rll.multicast[1], loc_test2);
+    ASSERT_EQ(rll.unicast[0], loc_test3);
+    ASSERT_EQ(rll.unicast[1], loc_test4);
 
     // Check error List
     serialized_ss.clear();
