@@ -118,14 +118,14 @@ bool ParameterList::read_guid_from_cdr_msg(
         fastrtps::rtps::GUID_t& guid)
 {
     bool valid = false;
-    uint16_t pid;
-    uint16_t plength;
+    uint16_t pid = 0;
+    uint16_t plength = 0;
     while (msg.pos < msg.length)
     {
         valid = true;
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &pid);
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
-        if ((pid == PID_SENTINEL) || !valid)
+        if (!valid || (pid == PID_SENTINEL))
         {
             break;
         }
