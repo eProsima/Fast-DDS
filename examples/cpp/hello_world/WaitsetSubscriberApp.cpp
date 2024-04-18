@@ -116,7 +116,7 @@ void WaitsetSubscriberApp::run()
     {
         ConditionSeq triggered_conditions;
         ReturnCode_t ret_code = wait_set_.wait(triggered_conditions, eprosima::fastrtps::c_TimeInfinite);
-        if (ReturnCode_t::RETCODE_OK != ret_code)
+        if (RETCODE_OK != ret_code)
         {
             EPROSIMA_LOG_ERROR(SUBSCRIBER_WAITSET, "Error waiting for conditions");
             continue;
@@ -151,7 +151,7 @@ void WaitsetSubscriberApp::run()
                 {
                     SampleInfo info;
                     while ((!is_stopped()) &&
-                            (ReturnCode_t::RETCODE_OK == reader_->take_next_sample(&hello_, &info)))
+                            (RETCODE_OK == reader_->take_next_sample(&hello_, &info)))
                     {
                         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
                         {

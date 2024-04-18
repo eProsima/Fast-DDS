@@ -34,6 +34,7 @@ public:
 
     CLIParser() = delete;
 
+    //! Entity kind enumeration
     enum class EntityKind : uint8_t
     {
         PUBLISHER,
@@ -41,16 +42,19 @@ public:
         UNDEFINED
     };
 
+    //! Publisher configuration structure (shared for both publisher and subscriber applications)
     struct publisher_config
     {
         uint16_t samples = 0;
     };
 
+    //! Subscriber application configuration structure
     struct subscriber_config : public publisher_config
     {
         bool use_waitset = false;
     };
 
+    //! Configuration structure for the application
     struct hello_world_config
     {
         CLIParser::EntityKind entity = CLIParser::EntityKind::UNDEFINED;
@@ -58,6 +62,13 @@ public:
         subscriber_config sub_config;
     };
 
+    /**
+     * @brief Print usage help message and exit with the given return code
+     *
+     * @param return_code return code to exit with
+     *
+     * @warning This method finishes the execution of the program with the input return code
+     */
     static void print_help(
             uint8_t return_code)
     {
@@ -77,6 +88,15 @@ public:
         std::exit(return_code);
     }
 
+    /**
+     * @brief Parse the command line options and return the configuration_config object
+     *
+     * @param argc number of arguments
+     * @param argv array of arguments
+     * @return configuration_config object with the parsed options
+     *
+     * @warning This method finishes the execution of the program if the input arguments are invalid
+     */
     static hello_world_config parse_cli_options(
             int argc,
             char* argv[])
@@ -184,6 +204,12 @@ public:
         return config;
     }
 
+    /**
+     * @brief Parse the signal number into the signal name
+     *
+     * @param signum signal number
+     * @return std::string signal name
+     */
     static std::string parse_signal(
             const int& signum)
     {
@@ -204,6 +230,12 @@ public:
         }
     }
 
+    /**
+     * @brief Parse the entity kind into std::string
+     *
+     * @param entity entity kind
+     * @return std::string entity kind
+     */
     static std::string parse_entity_kind(
             const EntityKind& entity)
     {
