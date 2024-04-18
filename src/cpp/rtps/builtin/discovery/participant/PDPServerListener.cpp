@@ -191,56 +191,27 @@ void PDPServerListener::onNewCacheChangeAdded(
 
             /* Check PARTICIPANT_TYPE */
             bool is_client = true;
-            auto participant_type = std::find_if(
-                properties.begin(),
-                properties.end(),
-                [](const dds::ParameterProperty_t& property)
-                {
-                    return property.first() == dds::parameter_property_participant_type;
-                });
+            std::string participant_type_str = parent_pdp_->check_participant_type(properties);
 
-            if (participant_type != properties.end())
+            if (participant_type_str == ParticipantType::SERVER ||
+                    participant_type_str == ParticipantType::BACKUP ||
+                    participant_type_str == ParticipantType::SUPER_CLIENT)
             {
-                if (participant_type->second() == ParticipantType::SERVER ||
-                        participant_type->second() == ParticipantType::BACKUP ||
-                        participant_type->second() == ParticipantType::SUPER_CLIENT)
-                {
-                    is_client = false;
-                }
-                else if (participant_type->second() == ParticipantType::SIMPLE)
-                {
-                    EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Ignoring " << dds::parameter_property_participant_type << ": "
-                                                                     << participant_type->second());
-                    return;
-                }
-                else if (participant_type->second() != ParticipantType::CLIENT)
-                {
-                    EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
-                                                                   << participant_type->second());
-                    return;
-                }
-                EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type->second());
+                is_client = false;
             }
-            else
+            else if (participant_type_str == ParticipantType::SIMPLE)
             {
-                EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, dds::parameter_property_participant_type << " is not set");
-                // Fallback to checking whether participant is a SERVER looking for the persistence GUID
-                auto persistence_guid = std::find_if(
-                    properties.begin(),
-                    properties.end(),
-                    [](const dds::ParameterProperty_t& property)
-                    {
-                        return property.first() == dds::parameter_property_persistence_guid;
-                    });
-                // The presence of persistence GUID property suggests a SERVER. This assumption is made to keep
-                // backwards compatibility with Discovery Server v1.0. However, any participant that has been configured
-                // as persistent will have this property.
-                if (persistence_guid != properties.end())
-                {
-                    is_client = false;
-                }
-                EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant is client: " << std::boolalpha << is_client);
+                EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Ignoring " << dds::parameter_property_participant_type << ": "
+                                                                    << participant_type_str);
+                return;
             }
+            else if (participant_type_str != ParticipantType::CLIENT)
+            {
+                EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
+                                                                << participant_type_str);
+                return;
+            }
+            EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type_str);
 
             // Check whether the participant is a client/server of this server or if it has been forwarded from
             //  another entity (server).
@@ -254,7 +225,11 @@ void PDPServerListener::onNewCacheChangeAdded(
             // If the instance handle is different from the writer GUID, then the change has been relayed
             if (iHandle2GUID(change->instanceHandle).guidPrefix != change->writerGUID.guidPrefix)
             {
-                is_local = false;
+                // Servers are always local because we are connected to them in a mesh topology
+                if (participant_type_str != ParticipantType::SERVER && participant_type_str != ParticipantType::BACKUP)
+                {
+                    is_local = false;
+                }
             }
             else
             {
