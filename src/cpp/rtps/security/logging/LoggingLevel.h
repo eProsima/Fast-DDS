@@ -18,6 +18,8 @@
 #ifndef _FASTDDS_RTPS_SECURITY_LOGGING_LOGGINGLEVEL_H_
 #define _FASTDDS_RTPS_SECURITY_LOGGING_LOGGINGLEVEL_H_
 
+#include <string>
+
 #include <rtps/security/exceptions/SecurityException.h>
 
 namespace eprosima {
@@ -44,95 +46,15 @@ enum struct LoggingLevel : long
     DEBUG_LEVEL
 };
 
-inline bool string_to_LogLevel(
+bool string_to_LogLevel(
         const std::string& s,
         LoggingLevel& l,
-        SecurityException& e)
-{
-    //TODO(artivis): use an array of const char to avoid strings?
-    bool convert = true;
-    if (!s.compare("0") || !s.compare("EMERGENCY_LEVEL"))
-    {
-        l = LoggingLevel::EMERGENCY_LEVEL;
-    }
-    else if (!s.compare("1") || !s.compare("ALERT_LEVEL"))
-    {
-        l = LoggingLevel::ALERT_LEVEL;
-    }
-    else if (!s.compare("2") || !s.compare("CRITICAL_LEVEL"))
-    {
-        l = LoggingLevel::CRITICAL_LEVEL;
-    }
-    else if (!s.compare("3") || !s.compare("ERROR_LEVEL"))
-    {
-        l = LoggingLevel::ERROR_LEVEL;
-    }
-    else if (!s.compare("4") || !s.compare("WARNING_LEVEL"))
-    {
-        l = LoggingLevel::WARNING_LEVEL;
-    }
-    else if (!s.compare("5") || !s.compare("NOTICE_LEVEL"))
-    {
-        l = LoggingLevel::NOTICE_LEVEL;
-    }
-    else if (!s.compare("6") || !s.compare("INFORMATIONAL_LEVEL"))
-    {
-        l = LoggingLevel::INFORMATIONAL_LEVEL;
-    }
-    else if (!s.compare("7") || !s.compare("DEBUG_LEVEL"))
-    {
-        l = LoggingLevel::DEBUG_LEVEL;
-    }
-    else
-    {
-        e = SecurityException("Unknown LoggingLevel");
-        convert = false;
-    }
+        SecurityException& e);
 
-    return convert;
-}
-
-inline bool LogLevel_to_string(
+bool LogLevel_to_string(
         const LoggingLevel l,
         std::string& s,
-        SecurityException& e)
-{
-    bool convert = true;
-    switch (l)
-    {
-        case LoggingLevel::EMERGENCY_LEVEL:
-            s = "EMERGENCY";
-            break;
-        case LoggingLevel::ALERT_LEVEL:
-            s = "ALERT";
-            break;
-        case LoggingLevel::CRITICAL_LEVEL:
-            s = "CRITICAL";
-            break;
-        case LoggingLevel::ERROR_LEVEL:
-            s = "ERROR";
-            break;
-        case LoggingLevel::WARNING_LEVEL:
-            s = "WARNING";
-            break;
-        case LoggingLevel::NOTICE_LEVEL:
-            s = "NOTICE";
-            break;
-        case LoggingLevel::INFORMATIONAL_LEVEL:
-            s = "INFORMATIONAL";
-            break;
-        case LoggingLevel::DEBUG_LEVEL:
-            s = "DEBUG";
-            break;
-        default:
-            s = "UNKNOWN";
-            convert = false;
-            e = SecurityException("Unknown LoggingLevel");
-            break;
-    }
-
-    return convert;
-}
+        SecurityException& e);
 
 } //namespace security
 } //namespace rtps
