@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/resources/ResourceEvent.h>
+#include <rtps/resources/ResourceEvent.h>
 
 #include "mock/MockEvent.h"
 

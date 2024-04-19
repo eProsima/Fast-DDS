@@ -16,9 +16,10 @@
  * @file ResourceEvent.cpp
  */
 
+#include <rtps/resources/ResourceEvent.h>
+
 #include <cassert>
 
-#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include "TimedEventImpl.h"
