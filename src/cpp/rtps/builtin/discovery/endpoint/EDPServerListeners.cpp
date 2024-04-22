@@ -113,7 +113,8 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
+            // This is a normal case in server redudancy scenarios
+            EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
         }
 
 
@@ -229,6 +230,11 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         if (get_pdp()->lookupReaderProxyData(auxGUID, *temp_reader_data))
         {
             topic_name = temp_reader_data->topicName().to_string();
+        }
+        else
+        {
+            // This is a normal case in server redudancy scenarios
+            EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
         }
 
         // Remove ReaderProxy data information
