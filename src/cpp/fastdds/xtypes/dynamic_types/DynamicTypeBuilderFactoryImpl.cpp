@@ -607,7 +607,7 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_struc
     type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
             (struct_type.struct_flags() &
             xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
-    bool inheritance_correct = true;
+    bool inheritance_correct {true};
     if (xtypes::TK_NONE != struct_type.header().base_type()._d())
     {
         traits<DynamicType>::ref_type base_type = base_type_from_type_identifier(struct_type.header().base_type());
