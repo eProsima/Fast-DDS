@@ -910,6 +910,7 @@ private:
 };
 
 RTPS_DllAPI extern const DataWriterQos DATAWRITER_QOS_DEFAULT;
+RTPS_DllAPI extern const DataWriterQos DATAWRITER_QOS_USE_TOPIC_QOS;
 
 } // namespace dds
 } // namespace fastdds

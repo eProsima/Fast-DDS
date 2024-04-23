@@ -156,7 +156,14 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , type_(type)
     , topic_(topic)
-    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() :
+            (&qos == &DATAWRITER_QOS_USE_TOPIC_QOS ?
+            ([this]()->DataWriterQos
+            {
+                DataWriterQos default_qos_with_topic_qos_ = this->publisher_->get_default_datawriter_qos();
+                this->publisher_->copy_from_topic_qos(default_qos_with_topic_qos_, this->topic_->get_qos());
+                return default_qos_with_topic_qos_;
+            })() : qos))
     , listener_(listen)
     , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
             [this](
@@ -198,7 +205,14 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , type_(type)
     , topic_(topic)
-    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() : qos)
+    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() :
+            (&qos == &DATAWRITER_QOS_USE_TOPIC_QOS ?
+            ([this]()->DataWriterQos
+            {
+                DataWriterQos default_qos_with_topic_qos_ = this->publisher_->get_default_datawriter_qos();
+                this->publisher_->copy_from_topic_qos(default_qos_with_topic_qos_, this->topic_->get_qos());
+                return default_qos_with_topic_qos_;
+            })() : qos))
     , listener_(listen)
     , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
             [this](
