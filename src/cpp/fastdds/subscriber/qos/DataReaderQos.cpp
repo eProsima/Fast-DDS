@@ -25,6 +25,7 @@ namespace fastdds {
 namespace dds {
 
 const DataReaderQos DATAREADER_QOS_DEFAULT;
+const DataReaderQos DATAREADER_QOS_USE_TOPIC_QOS;
 
 ReaderQos DataReaderQos::get_readerqos(
         const SubscriberQos& sqos) const

@@ -112,7 +112,17 @@ DataReaderImpl::DataReaderImpl(
     : subscriber_(s)
     , type_(type)
     , topic_(topic)
-    , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() : qos)
+    , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() :
+            (&qos == &DATAREADER_QOS_USE_TOPIC_QOS ?
+            ([this]()->DataReaderQos
+            {
+                //TODO when MultiTopic is supported: using DATAREADER_QOS_USE_TOPIC_QOS when creating
+                //a DataReader with MultiTopic should return error.
+                Topic* topicPtr = dynamic_cast<Topic*>(this->topic_);
+                DataReaderQos default_qos_with_topic_qos_ = this->subscriber_->get_default_datareader_qos();
+                this->subscriber_->copy_from_topic_qos(default_qos_with_topic_qos_, topicPtr->get_qos());
+                return default_qos_with_topic_qos_;
+            })() : qos))
 #pragma warning (disable : 4355 )
     , history_(type, *topic, qos_)
     , listener_(listener)
