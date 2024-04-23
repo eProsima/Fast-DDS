@@ -208,7 +208,7 @@ ReturnCode_t Publisher::get_default_datawriter_qos(
 
 ReturnCode_t Publisher::copy_from_topic_qos(
         fastdds::dds::DataWriterQos& writer_qos,
-        const fastdds::dds::TopicQos& topic_qos) const
+        const fastdds::dds::TopicQos& topic_qos)
 {
     static_cast<void> (writer_qos);
     static_cast<void> (topic_qos);

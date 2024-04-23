@@ -442,15 +442,26 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-/* TODO
-   bool SubscriberImpl::copy_from_topic_qos(
-        DataReaderQos&,
-        const fastrtps::TopicAttributes&) const
-   {
-    EPROSIMA_LOG_ERROR(PUBLISHER, "Operation not implemented");
-    return false;
-   }
- */
+ReturnCode_t SubscriberImpl::copy_from_topic_qos(
+        DataReaderQos& reader_qos,
+        const TopicQos& topic_qos) const
+{
+    TypeConsistencyQos new_value;
+    reader_qos.durability(topic_qos.durability());
+    reader_qos.durability_service(topic_qos.durability_service());
+    reader_qos.deadline(topic_qos.deadline());
+    reader_qos.latency_budget(topic_qos.latency_budget());
+    reader_qos.liveliness(topic_qos.liveliness());
+    reader_qos.reliability(topic_qos.reliability());
+    reader_qos.destination_order(topic_qos.destination_order());
+    reader_qos.history(topic_qos.history());
+    reader_qos.resource_limits(topic_qos.resource_limits());
+    reader_qos.lifespan(topic_qos.lifespan());
+    reader_qos.ownership(topic_qos.ownership());
+    new_value.representation = topic_qos.representation();
+    reader_qos.type_consistency(new_value);
+    return ReturnCode_t::RETCODE_OK;
+}
 
 const DomainParticipant* SubscriberImpl::get_participant() const
 {
