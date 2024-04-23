@@ -765,6 +765,11 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
         EPROSIMA_LOG_ERROR(XMLPARSER, "Missing required attribute 'name' in 'structDcl'.");
         return XMLP_ret::XML_ERROR;
     }
+    if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'structDcl' type: Type '" << name << "' already defined.");
+        return XMLP_ret::XML_ERROR;
+    }
 
     p_dynamictypebuilder_t typeBuilder; // = types::DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
     //typeBuilder->set_name(name);
@@ -810,7 +815,10 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
         }
     }
 
-    XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+    if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
+    {
+        types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+    }
 
     return ret;
 }
