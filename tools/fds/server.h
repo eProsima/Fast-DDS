@@ -101,7 +101,7 @@ const option::Descriptor usage[] = {
 
 const std::string EXAMPLES =
 
-      "Examples:\n"
+        "Examples:\n"
 
       "\t1.  Launch a default server with id 0 (first on ROS_DISCOVERY_SERVER)\n"
       "\t    listening on all available interfaces on UDP port 11811. Only one\n"

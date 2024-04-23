@@ -229,7 +229,9 @@ int fastdds_discovery_server(
     is.str("");
 
     // Set Participant Name
-    std::string server_name = (server_id == -1) ? "eProsima Guidless Server" : "eProsima Default Server" + std::to_string(server_id);
+    std::string server_name =
+            (server_id == -1) ? "eProsima Guidless Server" : "eProsima Default Server" + std::to_string(
+        server_id);
     is << server_name;
     participantQos.name(is.str().c_str());
 

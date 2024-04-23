@@ -642,7 +642,8 @@ void PDPServer::assignRemoteEndpoints(
             }
         }
     }
-    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Assigning remote endpoint for " << part_type << ": " << pdata->m_guid.guidPrefix);
+    EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+            "Assigning remote endpoint for " << part_type << ": " << pdata->m_guid.guidPrefix);
     match_reliable_pdp_endpoints(*pdata);
 
 #if HAVE_SECURITY
@@ -1341,8 +1342,11 @@ bool PDPServer::process_disposals()
             bool should_publish_disposal = !announcement_from_same_participant_in_disposals(disposals,
                             change_guid_prefix);
             auto direct_participants = discovery_db_.direct_clients_and_servers();
-            bool our_client = (std::find(direct_participants.begin(), direct_participants.end(), change_guid_prefix) != direct_participants.end());
-            bool is_server_responsible = (our_client || (change_guid_prefix == mp_RTPSParticipant->getGuid().guidPrefix));
+            bool our_client =
+                    (std::find(direct_participants.begin(), direct_participants.end(),
+                    change_guid_prefix) != direct_participants.end());
+            bool is_server_responsible =
+                    (our_client || (change_guid_prefix == mp_RTPSParticipant->getGuid().guidPrefix));
             should_publish_disposal = should_publish_disposal && is_server_responsible;
             if (!edp->process_disposal(change, discovery_db_, change_guid_prefix, should_publish_disposal))
             {

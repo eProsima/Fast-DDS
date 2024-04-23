@@ -1121,8 +1121,8 @@ void DiscoveryDataBase::match_writer_reader_(
     DiscoveryParticipantInfo& writer_participant_info = p_wit->second;
 
     bool should_publish_writer_edp = (writer_participant_info.is_client() ||
-                                        writer_participant_info.is_superclient() ||
-                                        writer_guid.guidPrefix == server_guid_prefix_);
+            writer_participant_info.is_superclient() ||
+            writer_guid.guidPrefix == server_guid_prefix_);
 
     // reader entity
     auto rit = readers_.find(reader_guid);
@@ -1143,8 +1143,8 @@ void DiscoveryDataBase::match_writer_reader_(
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
     bool should_publish_reader_edp = (reader_participant_info.is_client() ||
-                                        reader_participant_info.is_superclient() ||
-                                        reader_guid.guidPrefix == server_guid_prefix_);
+            reader_participant_info.is_superclient() ||
+            reader_guid.guidPrefix == server_guid_prefix_);
 
     // virtual              - needs info and give none
     // local                - needs info and give info

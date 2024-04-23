@@ -207,13 +207,13 @@ void PDPServerListener::onNewCacheChangeAdded(
             else if (participant_type_str == ParticipantType::SIMPLE)
             {
                 EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Ignoring " << dds::parameter_property_participant_type << ": "
-                                                                    << participant_type_str);
+                                                                 << participant_type_str);
                 return;
             }
             else if (participant_type_str != ParticipantType::CLIENT)
             {
                 EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << dds::parameter_property_participant_type << ": "
-                                                                << participant_type_str);
+                                                               << participant_type_str);
                 return;
             }
             EPROSIMA_LOG_INFO(RTPS_PDP_LISTENER, "Participant type " << participant_type_str);
