@@ -343,9 +343,20 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             const char* name = p_root->Attribute(NAME);
             if (name != nullptr)
             {
-                p_dynamictypebuilder_t typeBuilder =
-                        types::DynamicTypeBuilderFactory::get_instance()->create_alias_builder(valueBuilder, name);
-                XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+                if (nullptr == XMLProfileManager::getDynamicTypeByName(name))
+                {
+                    p_dynamictypebuilder_t typeBuilder =
+                            types::DynamicTypeBuilderFactory::get_instance()->create_alias_builder(valueBuilder, name);
+                    if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
+                    {
+                        types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing alias type: Type '" << name << "' already defined.");
+                    ret = XMLP_ret::XML_ERROR;
+                }
             }
             else
             {
