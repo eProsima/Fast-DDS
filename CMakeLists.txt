@@ -30,7 +30,7 @@ endif()
 ###############################################################################
 # Project                                                                     #
 ###############################################################################
-project(fastrtps VERSION "2.6.7" LANGUAGES C CXX)
+project(fastrtps VERSION "2.6.8" LANGUAGES C CXX)
 
 set(PROJECT_NAME_LARGE "Fast RTPS")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
@@ -57,7 +57,7 @@ if(MSVC OR MSVC_IDE)
     endif()
 
     # make visual studio more gcc and clang like.
-    # C4101 'identifier' : unreferenced local variable 
+    # C4101 'identifier' : unreferenced local variable
     # C4189 'identifier' : local variable is initialized but not referenced
     # C4555  expression has no effect; expected expression with side-effect
     # C4715: 'Test': not all control paths return a value
@@ -292,7 +292,7 @@ option(FASTDDS_STATISTICS "Enable Fast DDS Statistics Module" OFF)
 add_subdirectory(src/cpp)
 
 ###############################################################################
-# Add http://optionparser.sourceforge.net/ as unified cli parser 
+# Add http://optionparser.sourceforge.net/ as unified cli parser
 ###############################################################################
 add_subdirectory(thirdparty/optionparser)
 
@@ -411,9 +411,9 @@ if(BUILD_DOCUMENTATION)
 
             # As stated in CMake's documentation: https://cmake.org/cmake/help/latest/command/file.html#transfer
             # STATUS will return a list with two elements: the numeric status and the message returned.
-            # A 0 numeric error means no error in the operation 
+            # A 0 numeric error means no error in the operation
             list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RC)
-            
+
             if (DOWNLOAD_RC)
                 message(STATUS "Unable to download documentation for version ${PROJECT_VERSION}. Falling back to latest.")
                 file(DOWNLOAD "https://fast-dds.docs.eprosima.com/_/downloads/en/latest/htmlzip/" "./eprosima-fast-rtps.zip")
@@ -434,7 +434,7 @@ if(BUILD_DOCUMENTATION)
         configure_file(${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom_template.cmake  ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake)
 
         add_custom_target(readthedocs
-            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake 
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/readthedocs_custom.cmake
             )
 
         add_dependencies(readthedocs docdirs)
