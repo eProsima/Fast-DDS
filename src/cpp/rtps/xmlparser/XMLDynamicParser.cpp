@@ -410,6 +410,11 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'bitsetDcl' type. No name attribute given.");
         return XMLP_ret::XML_ERROR;
     }
+    if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'bitsetDcl' type: Type '" << name << "' already defined.");
+        return XMLP_ret::XML_ERROR;
+    }
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
@@ -452,7 +457,10 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         }
     }
 
-    XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+    if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
+    {
+        types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+    }
     return ret;
 }
 
