@@ -803,11 +803,8 @@ void PDPClient::announceParticipantState(
                     // This is because we no longer use the GUID to match servers, so we cannot discern which servers are connected
                     // and which are not. We cannot map servers in m_DiscoveryServers to connected_servers_.
 
-                    // Ping not-connected servers
-                    if (connected_servers_.size() < mp_builtin->m_DiscoveryServers.size())
-                    {
-                        locators = mp_builtin->m_DiscoveryServers;
-                    }
+                    // Ping always not-connected servers. This is done to ensure ping is sent to new servers after a list update.
+                    locators = mp_builtin->m_DiscoveryServers;
 
                     // Announce liveliness (lease duration) to all servers
                     if (!_serverPing)
@@ -858,6 +855,10 @@ void PDPClient::update_remote_servers_list()
 
         endpoints->reader.reader_->enableMessagesFromUnkownWriters(true);
     }
+    // Make at least one ping to the new servers.
+    _serverPing = true;
+    WriteParams __wp = WriteParams::write_params_default();
+    announceParticipantState(false, false, __wp);
     mp_sync->restart_timer();
 }
 
