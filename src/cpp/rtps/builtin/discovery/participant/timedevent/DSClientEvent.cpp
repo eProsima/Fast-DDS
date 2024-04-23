@@ -78,7 +78,7 @@ bool DSClientEvent::event()
         {
             EPROSIMA_LOG_ERROR(CLIENT_PDP_THREAD,
                     "Error while retrieving Participant Proxy Data of a connected server: "
-                                << server.guidPrefix);
+                    << server.guidPrefix);
         }
     }
 

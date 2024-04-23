@@ -101,7 +101,7 @@ const option::Descriptor usage[] = {
 
 const std::string EXAMPLES =
 
-      "Examples:\n"
+        "Examples:\n"
 
         "\t1.  Launch a default server listening on all available interfaces on\n"
         "\t    UDP port 11811. Only one server can use default values per machine.\n\n"

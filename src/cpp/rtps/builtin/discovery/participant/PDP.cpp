@@ -262,7 +262,7 @@ std::string PDP::check_participant_type(
         else
         {
             EPROSIMA_LOG_ERROR(RTPS_PDP_LISTENER, "Wrong " << fastdds::dds::parameter_property_participant_type << ": "
-                                                            << participant_type->second());
+                                                           << participant_type->second());
             return fastdds::rtps::ParticipantType::UNKNOWN;
         }
     }
