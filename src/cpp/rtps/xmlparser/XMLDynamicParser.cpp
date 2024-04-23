@@ -849,6 +849,17 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
 
     XMLP_ret ret = XMLP_ret::XML_OK;
     const char* name = p_root->Attribute(NAME);
+    if (nullptr == name || name[0] == '\0')
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Missing required attribute 'name' in 'unionDcl'.");
+        return XMLP_ret::XML_ERROR;
+    }
+    if (nullptr != XMLProfileManager::getDynamicTypeByName(name))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'unionDcl' type: Type '" << name << "' already defined.");
+        return XMLP_ret::XML_ERROR;
+    }
+
     tinyxml2::XMLElement* p_element = p_root->FirstChildElement(DISCRIMINATOR);
     if (p_element != nullptr)
     {
@@ -912,7 +923,10 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
                 }
             }
 
-            XMLProfileManager::insertDynamicTypeByName(name, typeBuilder);
+            if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
+            {
+                types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+            }
         }
     }
     else
