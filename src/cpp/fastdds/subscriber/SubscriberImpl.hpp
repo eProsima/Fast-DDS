@@ -153,9 +153,9 @@ public:
             const std::string& profile_name,
             DataReaderQos& qos) const;
 
-    ReturnCode_t copy_from_topic_qos(
+    ReturnCode_t static copy_from_topic_qos(
             DataReaderQos& reader_qos,
-            const TopicQos& topic_qos) const;
+            const TopicQos& topic_qos);
 
     const DomainParticipant* get_participant() const;
 

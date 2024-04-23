@@ -444,7 +444,7 @@ const ReturnCode_t SubscriberImpl::get_datareader_qos_from_profile(
 
 ReturnCode_t SubscriberImpl::copy_from_topic_qos(
         DataReaderQos& reader_qos,
-        const TopicQos& topic_qos) const
+        const TopicQos& topic_qos)
 {
     TypeConsistencyQos new_value;
     reader_qos.durability(topic_qos.durability());

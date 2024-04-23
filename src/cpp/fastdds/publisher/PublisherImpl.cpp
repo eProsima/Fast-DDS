@@ -483,7 +483,7 @@ const ReturnCode_t PublisherImpl::get_datawriter_qos_from_profile(
 
 ReturnCode_t PublisherImpl::copy_from_topic_qos(
         DataWriterQos& writer_qos,
-        const TopicQos& topic_qos)const
+        const TopicQos& topic_qos)
 {
     writer_qos.durability(topic_qos.durability());
     writer_qos.durability_service(topic_qos.durability_service());

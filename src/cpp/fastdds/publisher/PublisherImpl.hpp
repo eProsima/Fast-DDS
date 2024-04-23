@@ -174,9 +174,9 @@ public:
             const std::string& profile_name,
             DataWriterQos& qos) const;
 
-    ReturnCode_t copy_from_topic_qos(
+    ReturnCode_t static copy_from_topic_qos(
             DataWriterQos& writer_qos,
-            const TopicQos& topic_qos) const;
+            const TopicQos& topic_qos);
 
     fastrtps::rtps::RTPSParticipant* rtps_participant() const
     {
