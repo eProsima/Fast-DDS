@@ -711,6 +711,11 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'enum' type. No name attribute given.");
         return XMLP_ret::XML_ERROR;
     }
+    if (nullptr != XMLProfileManager::getDynamicTypeByName(enumName))
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing 'enum' type: Type '" << enumName << "' already defined.");
+        return XMLP_ret::XML_ERROR;
+    }
 
     p_dynamictypebuilder_t typeBuilder = types::DynamicTypeBuilderFactory::get_instance()->create_enum_builder();
     uint32_t currValue = 0;
@@ -732,7 +737,10 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
         typeBuilder->add_empty_member(currValue++, name);
     }
 
-    XMLProfileManager::insertDynamicTypeByName(enumName, typeBuilder);
+    if (false == XMLProfileManager::insertDynamicTypeByName(enumName, typeBuilder))
+    {
+        types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+    }
     return ret;
 }
 
