@@ -329,7 +329,7 @@ TEST(DDSDataReader, GetFirstUntakenInfoReturnsTheFirstValidChange)
     // get_first_untaken_info() must return OK now
     ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
             reader.get_native_reader().get_first_untaken_info(&info));
-    eprosima::fastdds::dds::StackAllocatedSequence<HelloWorld*, 1> data_values;
+    eprosima::fastdds::dds::StackAllocatedSequence<HelloWorld, 1> data_values;
     eprosima::fastdds::dds::SampleInfoSeq sample_infos{1};
     // As get_first_untaken_info() returns OK, take() must return OK too
     ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
