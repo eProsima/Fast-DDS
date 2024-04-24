@@ -414,6 +414,80 @@ TEST(DDSDataReader, default_qos_large_history_depth)
     ASSERT_TRUE(reader.isInitialized());
 }
 
+/*
+* This test creates a DataReader using DATAREADER_QOS_USE_TOPIC_QOS and checks if DataReader QoS
+* are correctly set from Topic QoS. It also checks if one of the QoS that is not in common with Topic QoS
+* is correctly set as the default one.
+*/
+TEST(DDSDataReader, datareader_qos_use_topic_qos)
+{
+    using namespace eprosima::fastdds::dds;
+
+    // Set custom Topic QoS
+    TopicQos topic_qos;
+    DurabilityServiceQosPolicy durability_service;
+    durability_service.history_kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    topic_qos.durability_service(durability_service);
+    ReliabilityQosPolicy reliability;
+    reliability.kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    topic_qos.reliability(reliability);
+    DurabilityQosPolicy durability;
+    durability.kind = eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS;
+    topic_qos.durability(durability);
+    DeadlineQosPolicy deadline;
+    deadline.period = {0, 500000000};
+    topic_qos.deadline(deadline);
+    LatencyBudgetQosPolicy latency;
+    latency.duration = 0;
+    topic_qos.latency_budget(latency);
+    LivelinessQosPolicy liveliness;
+    liveliness.kind = eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    topic_qos.liveliness(liveliness);
+    ResourceLimitsQosPolicy resource_limit;
+    resource_limit.max_samples = 1000;
+    topic_qos.resource_limits(resource_limit);
+    LifespanQosPolicy lifespan;
+    lifespan.duration = {5, 0};
+    topic_qos.lifespan(lifespan);
+    OwnershipQosPolicy ownership;
+    ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
+    topic_qos.ownership(ownership);
+    DataRepresentationQosPolicy data_rep;
+    data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    topic_qos.representation(data_rep);
+
+    DomainParticipant* participant_ =
+        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant_, nullptr);
+
+    TypeSupport type_support_;
+    type_support_.reset(new HelloWorldPubSubType());
+    type_support_.register_type(participant_, "HelloWorld");
+    Topic* topic_ = participant_->create_topic("HelloWorldTopic","HelloWorld", topic_qos);
+    Subscriber* subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber_, nullptr);
+    // Create DataReader with DATAREADER_QOS_USE_TOPIC_QOS
+    DataReader* reader_;
+    reader_ = subscriber_->create_datareader(topic_, DATAREADER_QOS_USE_TOPIC_QOS);
+    ASSERT_NE(reader_, nullptr);
+
+    // Check if DataReader QoS have been correctly set from Topic QoS
+    DataReaderQos r_qos;
+    reader_->get_qos(r_qos);
+    ASSERT_EQ(r_qos.durability_service().history_kind, eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
+    ASSERT_EQ(r_qos.reliability().kind, eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
+    ASSERT_EQ(r_qos.durability().kind, eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
+    ASSERT_EQ(r_qos.deadline().period, 0.5);
+    ASSERT_EQ(r_qos.latency_budget().duration, 0);
+    ASSERT_EQ(r_qos.liveliness().kind, eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    ASSERT_EQ(r_qos.resource_limits().max_samples, 1000);
+    ASSERT_EQ(r_qos.lifespan().duration, 5);
+    ASSERT_EQ(r_qos.ownership().kind, eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS);
+    ASSERT_EQ(r_qos.type_consistency().representation.m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    // Check default QoS
+    ASSERT_EQ(r_qos.data_sharing().kind(), eprosima::fastdds::dds::AUTO);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
