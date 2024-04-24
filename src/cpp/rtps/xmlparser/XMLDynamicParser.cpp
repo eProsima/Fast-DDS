@@ -350,6 +350,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                     if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
                     {
                         types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+                        ret = XMLP_ret::XML_ERROR;
                     }
                 }
                 else
@@ -460,6 +461,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
     {
         types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+        ret = XMLP_ret::XML_ERROR;
     }
     return ret;
 }
@@ -681,6 +683,7 @@ XMLP_ret XMLParser::parseXMLBitmaskDynamicType(
     if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
     {
         types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+        ret = XMLP_ret::XML_ERROR;
     }
     return ret;
 }
@@ -740,6 +743,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     if (false == XMLProfileManager::insertDynamicTypeByName(enumName, typeBuilder))
     {
         types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+        ret = XMLP_ret::XML_ERROR;
     }
     return ret;
 }
@@ -818,6 +822,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
     {
         types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+        ret = XMLP_ret::XML_ERROR;
     }
 
     return ret;
@@ -926,6 +931,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
             if (false == XMLProfileManager::insertDynamicTypeByName(name, typeBuilder))
             {
                 types::DynamicTypeBuilderFactory::get_instance()->delete_builder(typeBuilder);
+                ret = XMLP_ret::XML_ERROR;
             }
         }
     }
