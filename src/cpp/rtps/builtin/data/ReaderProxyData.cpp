@@ -185,6 +185,9 @@ uint32_t ReaderProxyData::get_serialized_size(
 {
     uint32_t ret_val = include_encapsulation ? 4 : 0;
 
+    // PID_ENDPOINT_GUID
+    ret_val += 4 + PARAMETER_GUID_LENGTH;
+
     // PID_NETWORK_CONFIGURATION_SET
     ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
@@ -208,9 +211,6 @@ uint32_t ReaderProxyData::get_serialized_size(
 
     // PID_KEY_HASH
     ret_val += 4 + 16;
-
-    // PID_ENDPOINT_GUID
-    ret_val += 4 + PARAMETER_GUID_LENGTH;
 
     // PID_PROTOCOL_VERSION
     ret_val += 4 + 4;
@@ -288,6 +288,14 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += fastdds::dds::QosPoliciesSerializer<DisablePositiveACKsQosPolicy>::cdr_serialized_size(
             m_qos.m_disablePositiveACKs);
     }
+
+    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
+            m_qos.data_sharing.kind() != fastdds::dds::OFF)
+    {
+        ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size(
+            m_qos.data_sharing);
+    }
+
     if (m_type_id && m_type_id->m_type_identifier._d() != 0)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(*m_type_id);
@@ -295,22 +303,6 @@ uint32_t ReaderProxyData::get_serialized_size(
     if (m_type && m_type->m_type_object._d() != 0)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(*m_type);
-    }
-    if (m_type_information && m_type_information->assigned())
-    {
-        ret_val +=
-                fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(*m_type_information);
-    }
-    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
-    {
-        ret_val += fastdds::dds::QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
-            m_qos.type_consistency);
-    }
-    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::OFF)
-    {
-        ret_val += fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::cdr_serialized_size(
-            m_qos.data_sharing);
     }
 
     if (m_properties.size() > 0)
@@ -332,6 +324,23 @@ uint32_t ReaderProxyData::get_serialized_size(
         ret_val += 4 + PARAMETER_ENDPOINT_SECURITY_INFO_LENGTH;
     }
 #endif // if HAVE_SECURITY
+
+    if (m_qos.representation.send_always() || m_qos.representation.hasChanged)
+    {
+        ret_val += fastdds::dds::QosPoliciesSerializer<DataRepresentationQosPolicy>::cdr_serialized_size(
+            m_qos.representation);
+    }
+
+    if (m_qos.type_consistency.send_always() || m_qos.type_consistency.hasChanged)
+    {
+        ret_val += fastdds::dds::QosPoliciesSerializer<TypeConsistencyEnforcementQosPolicy>::cdr_serialized_size(
+            m_qos.type_consistency);
+    }
+    if (m_type_information && m_type_information->assigned())
+    {
+        ret_val +=
+                fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(*m_type_information);
+    }
 
     // PID_SENTINEL
     return ret_val + 4;
@@ -550,6 +559,15 @@ bool ReaderProxyData::writeToCDRMessage(
         }
     }
 
+    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
+            m_qos.data_sharing.kind() != fastdds::dds::OFF)
+    {
+        if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(m_qos.data_sharing, msg))
+        {
+            return false;
+        }
+    }
+
     if (m_type_id && m_type_id->m_type_identifier._d() != 0)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(*m_type_id, msg))
@@ -617,15 +635,6 @@ bool ReaderProxyData::writeToCDRMessage(
     if (m_type_information && m_type_information->assigned())
     {
         if (!fastdds::dds::QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(*m_type_information, msg))
-        {
-            return false;
-        }
-    }
-
-    if ((m_qos.data_sharing.send_always() || m_qos.data_sharing.hasChanged) &&
-            m_qos.data_sharing.kind() != fastdds::dds::OFF)
-    {
-        if (!fastdds::dds::QosPoliciesSerializer<DataSharingQosPolicy>::add_to_cdr_message(m_qos.data_sharing, msg))
         {
             return false;
         }
