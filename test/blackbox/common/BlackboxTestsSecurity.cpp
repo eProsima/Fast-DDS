@@ -3350,19 +3350,26 @@ TEST_P(Security, BuiltinAuthenticationAndAccessAndCryptoPlugin_Permissions_valid
 
     for (size_t i = 0; i < num_samples; ++i)
     {
+        // Switch to third partition and wait for all entities to unmatch
+        writer.update_partition("Partition3");
+        reader_p_1.wait_writer_undiscovery();
+        reader_p_2.wait_writer_undiscovery();
+        writer.wait_discovery(0u);
+
+        // Switch partition and wait for the corresponding reader to discover the writer
         if (0 == i % 2)
         {
             writer.update_partition("Partition1");
-            reader_p_2.wait_writer_undiscovery();
             reader_p_1.wait_discovery();
         }
         else
         {
             writer.update_partition("Partition2");
-            reader_p_1.wait_writer_undiscovery();
             reader_p_2.wait_discovery();
         }
 
+        // Ensure the writer matches the reader before sending the sample
+        writer.wait_discovery(1u);
         writer.send_sample(data.front());
         data.pop_front();
         writer.waitForAllAcked(std::chrono::milliseconds(100));
