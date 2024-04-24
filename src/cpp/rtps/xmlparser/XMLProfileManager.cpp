@@ -779,4 +779,15 @@ void XMLProfileManager::DeleteInstance()
     topic_profiles_.clear();
     xml_files_.clear();
     transport_profiles_.clear();
+
+    // Delete the registered dynamic types builders
+    {
+        namespace dyn_types = eprosima::fastrtps::types;
+        auto factory = dyn_types::DynamicTypeBuilderFactory::get_instance();
+        for (auto&& type : dynamic_types_)
+        {
+            factory->delete_builder(type.second);
+        }
+        dynamic_types_.clear();
+    }
 }
