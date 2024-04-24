@@ -1643,17 +1643,6 @@ TEST(TypeObjectUtilsTests, build_complete_struct_member_inconsistent_hashid_memb
     EXPECT_NO_THROW(CompleteStructMember member = TypeObjectUtils::build_complete_struct_member(common, empty_detail));
 }
 
-// Build CompleteTypeDetail with empty type_name
-TEST(TypeObjectUtilsTests, build_complete_type_detail_empty_type_name)
-{
-    EXPECT_THROW(CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
-                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
-                eprosima::fastcdr::optional<AppliedAnnotationSeq>(), ""), InvalidArgumentError);
-    EXPECT_NO_THROW(CompleteTypeDetail detail = TypeObjectUtils::build_complete_type_detail(
-                eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>(),
-                eprosima::fastcdr::optional<AppliedAnnotationSeq>(), "type_name"));
-}
-
 // Build CommonUnionMember with empty case labels
 TEST(TypeObjectUtilsTests, build_common_union_member_empty_case_labels)
 {

@@ -858,10 +858,6 @@ const CompleteTypeDetail TypeObjectUtils::build_complete_type_detail(
         const eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom,
         const QualifiedTypeName& type_name)
 {
-    if (type_name.size() == 0)
-    {
-        throw InvalidArgumentError("QualifiedTypeName cannot be empty");
-    }
 #if !defined(NDEBUG)
     if (ann_builtin.has_value())
     {
@@ -2538,10 +2534,6 @@ void TypeObjectUtils::applied_builtin_type_annotations_consistency(
 void TypeObjectUtils::complete_type_detail_consistency(
         const CompleteTypeDetail& complete_type_detail)
 {
-    if (complete_type_detail.type_name().size() == 0)
-    {
-        throw InvalidArgumentError("QualifiedTypeName cannot be empty");
-    }
     if (complete_type_detail.ann_builtin().has_value())
     {
         applied_builtin_type_annotations_consistency(complete_type_detail.ann_builtin().value());

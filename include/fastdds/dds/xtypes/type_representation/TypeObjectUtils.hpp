@@ -874,8 +874,7 @@ public:
      * @param[in] ann_custom Applied annotations.
      * @param[in] type_name Name of the type.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if:
-     *              1. Given type_name is empty.
-     *              2. any applied annotation is not consistent (only Debug build mode).
+     *              1. any applied annotation is not consistent (only Debug build mode).
      * @return const CompleteTypeDetail instance.
      */
     FASTDDS_EXPORTED_API static const CompleteTypeDetail build_complete_type_detail(
