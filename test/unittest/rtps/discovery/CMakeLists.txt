@@ -71,6 +71,7 @@ target_include_directories(EdpTests PRIVATE
 target_link_libraries(EdpTests
     fastdds::log
     fastdds::xtypes::type-representation
+    fastdds::xtypes::dynamic-types::impl
     foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})

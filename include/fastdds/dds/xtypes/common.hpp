@@ -56,6 +56,16 @@ enum class PlacementKind : uint32_t
     END_FILE
 };
 
+/*!
+ * @brief Valid placement values
+ */
+constexpr const char* begin_declaration_file_str = "begin-declaration-file";
+constexpr const char* before_declaration_str = "before-declaration";
+constexpr const char* begin_declaration_str = "begin-declaration";
+constexpr const char* end_declaration_str = "end-declaration";
+constexpr const char* after_declaration_str = "after-declaration";
+constexpr const char* end_declaration_file_str = "end-declaration-file";
+
 // Primitive type names
 constexpr const char* boolean_type_name = "_bool";
 constexpr const char* byte_type_name = "_byte";

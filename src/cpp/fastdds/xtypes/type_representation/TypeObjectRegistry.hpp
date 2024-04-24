@@ -25,8 +25,11 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <fastcdr/xcdr/optional.hpp>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/Types.hpp>
 #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObject.hpp>
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
@@ -248,7 +251,7 @@ public:
 
     /**
      * @brief Register DynamicType TypeObject representation in TypeObjectRegistry.
-     * 
+     *
      * @param dynamic_type DynamicType to be registered.
      * @return ReturnCode_t RETCODE_OK if successfully registered.
      *         TODO: COMPLETE documentation
@@ -760,9 +763,324 @@ protected:
     const TypeIdentifier minimal_from_complete_type_identifier(
             const TypeIdentifier& complete_type_id);
 
-    // ReturnCode_t create_structure_typeobject_w_dynamic_type(
-    //         const DynamicType::_ref_type dynamic_type,
-    //         TypeObject& type_object);
+    /**
+     * @brief Register DynamicType TypeObject.
+     *
+     * @param[in] dynamic_type DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponfind to the registered DynamicType TypeObject.
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of an Alias type.
+     *
+     * @param[in] dynamic_type Alias DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Alias DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_alias_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of an Annotation type.
+     *
+     * @param[in] dynamic_type Annotation DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Annotation DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_annotation_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Structure type.
+     *
+     * @param[in] dynamic_type Structure DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Structure DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_struct_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Union type.
+     *
+     * @param[in] dynamic_type Union DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Union DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_union_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Bitset type.
+     *
+     * @param[in] dynamic_type Bitset DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Bitset DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_bitset_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Sequence type.
+     *
+     * @param[in] dynamic_type Sequence DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Sequence DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_sequence_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Array type.
+     *
+     * @param[in] dynamic_type Array DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Array DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_array_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Map type.
+     *
+     * @param[in] dynamic_type Map DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Map DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_map_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Enumeration type.
+     *
+     * @param[in] dynamic_type Enumeration DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Enumeration DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_enum_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType TypeObject of a Bitmask type.
+     *
+     * @param[in] dynamic_type Bitmask DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the Bitmask DynamicType TypeObject.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t register_typeobject_w_bitmask_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType indirect-hash TypeIdentifier of a Sequence type.
+     *
+     * @param[in] dynamic_type Sequence DynamicType to be registered.
+     * @param[out] type_id Complete indirect hash TypeIdentifier corresponding to the Sequence DynamicType.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t typeidentifier_w_sequence_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType indirect-hash TypeIdentifier of a Array type.
+     *
+     * @param[in] dynamic_type Array DynamicType to be registered.
+     * @param[out] type_id Complete indirect hash TypeIdentifier corresponding to the Array DynamicType.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t typeidentifier_w_array_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType indirect-hash TypeIdentifier of a Map type.
+     *
+     * @param[in] dynamic_type Map DynamicType to be registered.
+     * @param[out] type_id Complete indirect hash TypeIdentifier corresponding to the Map DynamicType.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t typeidentifier_w_map_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType fully-descriptive TypeIdentifier of a String type.
+     *
+     * @param[in] dynamic_type String DynamicType to be registered.
+     * @param[out] type_id Fully-descriptive TypeIdentifier corresponding to the String DynamicType.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t typeidentifier_w_string_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Register DynamicType fully-descriptive TypeIdentifier of a Wide String type.
+     *
+     * @param[in] dynamic_type Wide String DynamicType to be registered.
+     * @param[out] type_id Fully-descriptive TypeIdentifier corresponding to the Wide String DynamicType.
+     *                     TypeIdentifier is required to define dependencies within the parent TypeObject
+     *                     (if applicable).
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t typeidentifier_w_wstring_dynamic_type(
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id);
+
+    /**
+     * @brief Apply DynamicType custom annotations to TypeObject.
+     *
+     * @param[in] dynamic_type DynamicType being registered.
+     * @param[out] tmp_ann_custom Sequence with TypeObject AppliedAnnotationSeq.
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t  apply_custom_annotations(
+            const DynamicType::_ref_type& dynamic_type,
+            eprosima::fastcdr::optional<AppliedAnnotationSeq>& ann_custom);
+
+    /**
+     * @brief Apply DynamicType verbatim annotation to TypeObject.
+     *
+     * @param[in] dynamic_type DynamicType being registered.
+     * @param[out] ann_builtin Verbatim annotation applied to TypeObject.
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t apply_verbatim_annotation(
+            const DynamicType::_ref_type& dynamic_type,
+            eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations>& ann_builtin);
+
+    /**
+     * @brief Set the annotation parameter value object
+     *
+     * @param[in] kind Annotation Parameter DynamicType TypeKind
+     * @param[in] value String representation of the annotation parameter value to be set.
+     * @param[out] param_value AnnotationParameterValue instance.
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t set_annotation_parameter_value(
+            const DynamicType::_ref_type& dynamic_type,
+            const std::string& value,
+            AnnotationParameterValue& param_value);
+
+    /**
+     * @brief Wrap CompleteTypeDetail construction
+     *
+     * @param[in] dynamic_type DynamicType to build the CompleteTypeDetail
+     * @param[out] detail CompleteTypeDetail instance
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t complete_type_detail(
+            const DynamicType::_ref_type& dynamic_type,
+            CompleteTypeDetail& detail);
+
+    /**
+     * @brief Wrap CompleteMemberDetail construction
+     *
+     * @param member_descriptor MemberDescriptor to build the CompleteMemberDetail
+     * @param member_detail CompleteMemberDetail instance
+     * @return ReturnCode_t RETCODE_OK always.
+     */
+    ReturnCode_t complete_member_detail(
+            const MemberDescriptor::_ref_type& member_descriptor,
+            CompleteMemberDetail& member_detail);
+
+    /**
+     * @brief Auxiliary function to translate ExtensibilityKind namespace.
+     *
+     * @param[in] extensibility_kind to be translated.
+     * @return const ExtensibilityKind translated.
+     */
+    ExtensibilityKind extensibility_kind(
+            eprosima::fastdds::dds::ExtensibilityKind extensibility_kind) const;
+
+    /**
+     * @brief Auxiliary function to translate TryConstructKind namespace.
+     *
+     * @param[in] try_construct_kind to be translated.
+     * @return const TryConstructKind translated.
+     */
+    TryConstructKind try_construct_kind(
+            eprosima::fastdds::dds::TryConstructKind try_construct_kind) const;
+
+    /**
+     * @brief Auxiliary function to translate TypeKind namespace.
+     *
+     * @param[in] type_kind to be translated.
+     * @return const TypeKind translated.
+     */
+    TypeKind type_kind(
+            eprosima::fastdds::dds::TypeKind type_kind) const;
+
+    /**
+     * @brief Auxiliary method to get the equivalence kind from a sequence/array.
+     *
+     * @param[in] element_type_id Collection element TypeIdentifier.
+     * @return EquivalenceKind corresponding to the collection.
+     */
+    EquivalenceKind equivalence_kind(
+            const TypeIdentifier& element_type_id);
+
+    /**
+     * @brief Auxiliary method to get the equivalence kind from a map collection.
+     *
+     * @param[in] element_type_id Collection element TypeIdentifier.
+     * @param[in] key_type_id Map key TypeIdentifier.
+     * @return EquivalenceKind corresponding to the collection.
+     */
+    EquivalenceKind equivalence_kind(
+            const TypeIdentifier& element_type_id,
+            const TypeIdentifier& key_type_id);
+
+    /**
+     * @brief Auxiliary method to translate Verbatim placement_kind string into xtypes::PlacementKind enum.
+     *
+     * @param placement_kind string contained in Verbatim placement_kind property.
+     * @return PlacementKind Corresponding enumeration value.
+     */
+    PlacementKind placement_kind(
+            const std::string& placement_kind) const;
 
     // Collection of local TypeIdentifiers hashed by type_name.
     // TypeIdentifierPair contains both the minimal and complete TypeObject TypeIdentifiers.

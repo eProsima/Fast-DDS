@@ -29,6 +29,8 @@ class FASTDDS_EXPORTED_API VerbatimTextDescriptor
 {
 public:
 
+    using _ref_type = typename traits<VerbatimTextDescriptor>::ref_type;
+
     /*!
      * Returns the location within the generated output at which the output text should be inserted.
      * @return The location.

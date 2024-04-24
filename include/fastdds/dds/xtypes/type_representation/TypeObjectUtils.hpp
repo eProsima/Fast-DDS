@@ -1874,7 +1874,7 @@ public:
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given
      *            TypeObject is not consistent.
      */
-    static void type_object_consistency(
+    FASTDDS_EXPORTED_API static void type_object_consistency(
             const TypeObject& type_object);
 
 private:
