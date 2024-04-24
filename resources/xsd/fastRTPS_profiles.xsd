@@ -854,6 +854,7 @@
             <xs:element name="check_crc" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="enable_tcp_nodelay" type="boolType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="tls" type="tlsConfigType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tcp_negotiation_timeout" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="segment_size" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="port_queue_capacity" type="uint32Type" minOccurs="0" maxOccurs="1"/>
             <xs:element name="healthy_check_timeout_ms" type="uint32Type" minOccurs="0" maxOccurs="1"/>
@@ -1138,4 +1139,3 @@
     </xs:complexType>
 
 </xs:schema>
-
