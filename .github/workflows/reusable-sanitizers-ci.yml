@@ -175,7 +175,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/asan_colcon.meta
           colcon_build_args: ${{ inputs.colcon_build_args }}
           cmake_args: ${{ inputs.cmake_args }}
-          cmake_args_default: -DEPROSIMA_BUILD_TESTS=ON -DRTPS_API_TESTS=ON -Dfastdds_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON -DPERFORMANCE_TESTS=ON
+          cmake_args_default: -DEPROSIMA_BUILD_TESTS=ON -DRTPS_API_TESTS=ON -DFASTDDS_PIM_API_TESTS=ON -DPERFORMANCE_TESTS=ON
           cmake_build_type: 'Debug'
           workspace: ${{ github.workspace }}
           workspace_dependencies: ''
