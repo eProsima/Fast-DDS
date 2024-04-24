@@ -996,6 +996,75 @@ TEST(SubscriberTests, DeleteContainedEntities)
     ASSERT_TRUE(data_reader_list.size() == 0);
 }
 
+/*
+* This test checks if DataReader QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
+* DataReader QoS previously set (which are not in common with Topic QoS) are not modified.
+*/
+TEST(SubscriberTests, datareader_copy_from_topic_qos)
+{
+    // Set custom Topic QoS
+    TopicQos topic_qos;
+    DurabilityServiceQosPolicy durability_service;
+    durability_service.history_kind = KEEP_ALL_HISTORY_QOS;
+    topic_qos.durability_service(durability_service);
+    ReliabilityQosPolicy reliability;
+    reliability.kind = RELIABLE_RELIABILITY_QOS;
+    topic_qos.reliability(reliability);
+    DurabilityQosPolicy durability;
+    durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+    topic_qos.durability(durability);
+    DeadlineQosPolicy deadline;
+    deadline.period = {0, 500000000};
+    topic_qos.deadline(deadline);
+    LatencyBudgetQosPolicy latency;
+    latency.duration = 0;
+    topic_qos.latency_budget(latency);
+    LivelinessQosPolicy liveliness;
+    liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+    topic_qos.liveliness(liveliness);
+    DestinationOrderQosPolicy destination_order;
+    destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    topic_qos.destination_order(destination_order);
+    ResourceLimitsQosPolicy resource_limit;
+    resource_limit.max_samples = 1000;
+    topic_qos.resource_limits(resource_limit);
+    LifespanQosPolicy lifespan;
+    lifespan.duration = {5, 0};
+    topic_qos.lifespan(lifespan);
+    OwnershipQosPolicy ownership;
+    ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
+    topic_qos.ownership(ownership);
+    DataRepresentationQosPolicy data_rep;
+    data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    topic_qos.representation(data_rep);
+
+    // Set custom DataReader QoS
+    DataReaderQos r_qos;
+    r_qos.data_sharing().off();
+    DomainParticipant* participant =
+        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    subscriber->copy_from_topic_qos(r_qos, topic_qos);
+
+    // Check if DataReader QoS have been correctly set from Topic QoS
+    ASSERT_EQ(r_qos.durability_service().history_kind, KEEP_ALL_HISTORY_QOS);
+    ASSERT_EQ(r_qos.reliability().kind, RELIABLE_RELIABILITY_QOS);
+    ASSERT_EQ(r_qos.durability().kind, TRANSIENT_LOCAL_DURABILITY_QOS);
+    ASSERT_EQ(r_qos.deadline().period, 0.5);
+    ASSERT_EQ(r_qos.latency_budget().duration, 0);
+    ASSERT_EQ(r_qos.liveliness().kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
+    ASSERT_EQ(r_qos.destination_order().kind, BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
+    ASSERT_EQ(r_qos.resource_limits().max_samples, 1000);
+    ASSERT_EQ(r_qos.lifespan().duration, 5);
+    ASSERT_EQ(r_qos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
+    ASSERT_EQ(r_qos.type_consistency().representation.m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    // Check if DataReader QoS previously set are correct
+    ASSERT_EQ(r_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
