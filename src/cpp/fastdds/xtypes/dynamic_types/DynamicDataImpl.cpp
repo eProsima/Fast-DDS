@@ -4772,7 +4772,7 @@ void DynamicDataImpl::set_value(
         {
             auto& members = enclosed_type->get_all_members_by_index();
             assert(0 < members.size());
-            TypeForKind<TK_UINT32> value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
+            TypeForKind<TK_INT32> value = TypeValueConverter::sto(members.at(0)->get_descriptor().default_value());
             for (auto member_it {members.begin()}; member_it != members.end(); ++member_it)
             {
                 if (0 == sValue.to_string().compare((*member_it)->get_name().to_string()))

@@ -130,6 +130,7 @@ ReturnCode_t TypeDescriptorImpl::copy_from(
     key_element_type_ = descriptor.key_element_type_;
     extensibility_kind_ = descriptor.extensibility_kind_;
     is_nested_ = descriptor.is_nested_;
+    is_extensibility_set = descriptor.is_extensibility_set;
 
     return RETCODE_OK;
 }

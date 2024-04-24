@@ -872,7 +872,7 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
         }
 
         MemberDescriptor::_ref_type md {traits<MemberDescriptor>::make_shared()};
-        md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+        md->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_INT32));
         md->name(name);
 
         const char* value = literal->Attribute(VALUE);
