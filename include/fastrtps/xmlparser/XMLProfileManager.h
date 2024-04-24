@@ -255,24 +255,14 @@ public:
      * XMLProfileManager::DeleteDynamicPubSubType method.
      */
     RTPS_DllAPI static types::DynamicPubSubType* CreateDynamicPubSubType(
-            const std::string& type_name)
-    {
-        if (dynamic_types_.find(type_name) != dynamic_types_.end())
-        {
-            return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
-        }
-        return nullptr;
-    }
+            const std::string& type_name);
 
     /**
      * Deletes the given DynamicPubSubType previously created by calling
      * XMLProfileManager::CreateDynamicPubSubType method.
      */
     RTPS_DllAPI static void DeleteDynamicPubSubType(
-            types::DynamicPubSubType* type)
-    {
-        delete type;
-    }
+            types::DynamicPubSubType* type);
 
 private:
 
