@@ -1402,6 +1402,12 @@ public:
         return true;
     }
 
+    bool is_plain(
+            DataRepresentationId_t) const override
+    {
+        return true;
+    }
+
     bool construct_sample(
             void* sample) const override
     {
@@ -1505,6 +1511,12 @@ public:
     bool construct_sample_result = true;
 
     bool is_plain() const override
+    {
+        return is_plain_result;
+    }
+
+    bool is_plain(
+            DataRepresentationId_t) const override
     {
         return is_plain_result;
     }
