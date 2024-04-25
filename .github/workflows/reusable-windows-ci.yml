@@ -56,6 +56,10 @@ jobs:
           submodules: true
           ref: ${{ inputs.fastdds_branch }}
 
+      - uses: eProsima/eProsima-CI/external/setup-python@v0
+        with:
+          python-version: '3.11'
+
       - name: Get minimum supported version of CMake
         uses: eProsima/eProsima-CI/external/get-cmake@v0
         with:
