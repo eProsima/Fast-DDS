@@ -13,56 +13,90 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file SimpleLargeCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/SimpleLarge.hpp"
+#include "../gen/SimpleLargeTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SIMPLELARGE>(
+void* get_data_by_type_support<DataTypeKind::SIMPLELARGE>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    SimpleLarge_TypeIntrospectionExample* new_data = (SimpleLarge_TypeIntrospectionExample*)type_support.create_data();
 
     // Set index
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
+
     // Set message
-    new_data->set_string_value("Hello World", 1);
-    // Set second_message
-    new_data->set_string_value(std::to_string(index), 3);
+    new_data->message("Hello World");
+
+    // Set points
+    std::array<int32_t, 3> points = {index + 1, index * 0.5, index * -1};
+    new_data->points(points);
+
+    // Set second message
+    new_data->second_message(std::to_string(index));
+
+    // Set some values
+    std::vector<int16_t> some_values = {index + 1, index * 0.5, index * -1};
+    new_data->some_values(some_values);
+
     // Set is_it_not_true_that_true_is_not_true
-    new_data->set_bool_value((index % 2 == 0), 5);
+    new_data->is_it_not_true_that_true_is_not_true(index % 2 == 0);
 
-    // Set points (it requires to loan the simple)
-    eprosima::fastrtps::types::DynamicData* simple = new_data->loan_value(2);
+    return new_data;
+}
 
-    simple->set_int32_value(index + 1, 0);
-    simple->set_int32_value(index * 0.5, 1);
-    simple->set_int32_value(index * -1, 2);
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::SIMPLELARGE>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
 
-    new_data->return_loaned_value(simple);
+    DynamicData::_ref_type new_data = *new_data_ptr;
 
-    // Set points (it requires to loan the Sequence)
-    eprosima::fastrtps::types::DynamicData* sequence = new_data->loan_value(4);
+    // Set index
+    new_data->set_uint32_value(0, index);
+    // Set message
+    new_data->set_string_value(1, "Hello World");
+    // Set second_message
+    new_data->set_string_value(3, std::to_string(index));
+    // Set is_it_not_true_that_true_is_not_true
+    new_data->set_boolean_value(5, (index % 2 == 0));
 
-    eprosima::fastrtps::types::MemberId id0, id1, id2;
-    sequence->insert_int16_value(index + 1, id0);
-    sequence->insert_int16_value(index * 0.5, id1);
-    sequence->insert_int16_value(index * -1, id2);
+    // Set points (it requires to loan the array)
+    traits<DynamicData>::ref_type array = new_data->loan_value(2);
+
+    array->set_int32_value(0, index + 1);
+    array->set_int32_value(1, index * 0.5);
+    array->set_int32_value(2, index * -1);
+
+    new_data->return_loaned_value(array);
+
+    // Set points (it requires to loan the sequence)
+    traits<DynamicData>::ref_type sequence = new_data->loan_value(4);
+
+    sequence->set_int16_value(0, index + 1);
+    sequence->set_int16_value(1, index * 0.5);
+    sequence->set_int16_value(2, index * -1);
 
     new_data->return_loaned_value(sequence);
 
-    // Return data
-    return new_data;
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::SIMPLELARGE>()
+{
+    register_SimpleLarge_type_objects();
 }

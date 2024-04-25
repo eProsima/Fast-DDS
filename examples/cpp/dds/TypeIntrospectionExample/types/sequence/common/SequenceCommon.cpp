@@ -13,45 +13,62 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file SequenceCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/Sequence.hpp"
+#include "../gen/SequenceTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SEQUENCE>(
+void* get_data_by_type_support<DataTypeKind::SEQUENCE>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
-
-    // Set max length sequence
-    int max_len_seq = 128;
+    Sequence_TypeIntrospectionExample* new_data = (Sequence_TypeIntrospectionExample*)type_support.create_data();
 
     // Set index
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
 
-    // Set points (it requires to loan the Sequence)
-    eprosima::fastrtps::types::DynamicData* sequence = new_data->loan_value(1);
+    // Set points
+    std::vector<int32_t> points = {index + 1, index * 0.5, index * -1};
+    new_data->points(points);
 
-    unsigned int new_index = index % max_len_seq;
-    for (eprosima::fastrtps::types::MemberId id = 0; id < new_index; id++)
-    {
-        sequence->insert_int32_value(id + 1, id);
-    }
+    return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::SEQUENCE>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    // Set index
+    new_data->set_uint32_value(0, index);
+
+    // Set points (it requires to loan the sequence)
+    traits<DynamicData>::ref_type sequence = new_data->loan_value(1);
+
+    sequence->set_int32_value(0, index + 1);
+    sequence->set_int32_value(1, index * 0.5);
+    sequence->set_int32_value(2, index * -1);
 
     new_data->return_loaned_value(sequence);
 
-    // Return data
-    return new_data;
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::SEQUENCE>()
+{
+    register_Sequence_type_objects();
 }

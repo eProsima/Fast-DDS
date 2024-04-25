@@ -13,32 +13,53 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file HelloWorldCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/HelloWorld.hpp"
+#include "../gen/HelloWorldTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::HELLO_WORLD>(
+void* get_data_by_type_support<DataTypeKind::HELLO_WORLD>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    HelloWorld_TypeIntrospectionExample* new_data = (HelloWorld_TypeIntrospectionExample*)type_support.create_data();
 
     // Set index
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
     // Set message
-    new_data->set_string_value("Hello World", 1);
+    new_data->message("Hello World");
 
     return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::HELLO_WORLD>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    // Set index
+    assert(RETCODE_OK == new_data->set_uint32_value(0, index));
+    // Set message
+    assert(RETCODE_OK == new_data->set_string_value(1, "Hello World"));
+
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::HELLO_WORLD>()
+{
+    register_HelloWorld_type_objects();
 }

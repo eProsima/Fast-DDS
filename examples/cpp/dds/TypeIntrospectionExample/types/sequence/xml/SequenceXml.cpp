@@ -13,32 +13,17 @@
 // limitations under the License.
 
 /**
- * @file SequenceGenDataType.cpp
+ * @file SequenceXml.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-
 #include "../../types.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicType_ptr
-DataType<DataTypeKind::SEQUENCE, GeneratorKind::XML>::generate_type_() const
+void
+DataType<DataTypeKind::SEQUENCE, GeneratorKind::XML>::generate_type_support_()
 {
-
-    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile(xml()))
-    {
-        throw std::ios_base::failure(
-                  "Cannot open XML file. Please, run the publisher from the folder that contains this XML file.");
-    }
-
-    // Create Dynamic data
-    return eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName(name())->build();
+    generate_type_support_xml_();
 }

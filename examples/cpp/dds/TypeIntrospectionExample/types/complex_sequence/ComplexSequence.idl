@@ -13,7 +13,7 @@ struct InternalSequenceMessage_TypeIntrospectionExample
 
 struct ComplexSequence_TypeIntrospectionExample
 {
-	unsigned long index;
+    unsigned long index;
     sequence<InternalSequencePoints_TypeIntrospectionExample> internal_data;
     sequence<InternalSequenceMessage_TypeIntrospectionExample, 2> messages;
 };

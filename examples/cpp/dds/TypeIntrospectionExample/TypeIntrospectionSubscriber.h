@@ -27,8 +27,13 @@
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+
 
 #include "types/types.hpp"
 
@@ -42,9 +47,7 @@ public:
 
     TypeIntrospectionSubscriber(
             const std::string& topic_name,
-            uint32_t domain,
-            bool use_type_object,
-            bool use_type_information);
+            uint32_t domain);
 
     virtual ~TypeIntrospectionSubscriber();
 
@@ -58,37 +61,31 @@ public:
     //! Trigger the end of execution
     static void stop();
 
-    //! Callback executed when a new sample is received
-    void on_data_available(
-            eprosima::fastdds::dds::DataReader* reader) override;
+    //! Callback executed when a DomainParticipant is discovered, removed or changed QoS
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            bool& /*should_be_ignored*/) override;
+
+    //! Callback executed when a DataWriter is discovered, removed, ignored or changed QoS
+    void on_data_writer_discovery(
+            eprosima::fastdds::dds::DomainParticipant* /*participant*/,
+            eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+            bool& /*should_be_ignored*/) override;
 
     //! Callback executed when a DataWriter is matched or unmatched
     void on_subscription_matched(
             eprosima::fastdds::dds::DataReader* reader,
             const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
 
-    void on_participant_discovery(
-            eprosima::fastdds::dds::DomainParticipant* participant,
-            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
-
-    void on_type_discovery(
-            eprosima::fastdds::dds::DomainParticipant* participant,
-            const eprosima::fastrtps::rtps::SampleIdentity& request_sample_id,
-            const eprosima::fastrtps::string_255& topic,
-            const eprosima::fastrtps::types::TypeIdentifier* identifier,
-            const eprosima::fastrtps::types::TypeObject* object,
-            eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
-
-    virtual void on_type_information_received(
-            eprosima::fastdds::dds::DomainParticipant* participant,
-            const eprosima::fastrtps::string_255 topic_name,
-            const eprosima::fastrtps::string_255 type_name,
-            const eprosima::fastrtps::types::TypeInformation& type_information) override;
+    //! Callback executed when a new sample is received
+    void on_data_available(
+            eprosima::fastdds::dds::DataReader* reader) override;
 
 protected:
 
     void on_type_discovered_and_registered_(
-            const eprosima::fastrtps::types::DynamicType_ptr type);
+            const eprosima::fastdds::dds::DynamicType::_ref_type& type);
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 
@@ -133,13 +130,10 @@ protected:
     static std::condition_variable terminate_cv_;
 
     // Dynamic data information
-    eprosima::fastrtps::types::DynamicType_ptr dyn_type_;
+    eprosima::fastdds::dds::DynamicType::_ref_type dyn_type_;
 
     // Instances count received
     std::set<eprosima::fastdds::dds::InstanceHandle_t> instances_;
-
-    bool use_type_object_;
-    bool use_type_information_;
 };
 
 #endif /* _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_TYPEINTROSPECTIONEXAMPLE_TYPEINTROSPECTIONSUBSCRIBER_H_ */

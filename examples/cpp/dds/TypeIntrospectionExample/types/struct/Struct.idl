@@ -8,6 +8,6 @@ struct InternalStruct_TypeIntrospectionExample
 
 struct Struct_TypeIntrospectionExample
 {
-	unsigned long index;
+    unsigned long index;
     InternalStruct_TypeIntrospectionExample internal_data;
 };

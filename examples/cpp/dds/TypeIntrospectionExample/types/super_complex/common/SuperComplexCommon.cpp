@@ -17,42 +17,205 @@
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/SuperComplex.hpp"
+#include "../gen/SuperComplexTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SUPER_COMPLEX>(
+void* get_data_by_type_support<DataTypeKind::SUPER_COMPLEX>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    SuperComplex_TypeIntrospectionExample* new_data = (SuperComplex_TypeIntrospectionExample*)type_support.create_data();
 
     ///////////////////////////////////////////
     // INDEX
     ///////////////////////////////////////////
-    new_data->set_uint32_value(index, 0);
+    new_data->index(index);
 
 
     ///////////////////////////////////////////
     // MAIN POINT
     ///////////////////////////////////////////
-    eprosima::fastrtps::types::DynamicData* main_point = new_data->loan_value(1);
-    main_point->set_int32_value(50, 0);
-    main_point->set_int32_value(100, 1);
-    main_point->set_int32_value(200, 2);
+    InternalPoints_TypeIntrospectionExample main_point;
+    main_point.x_member(50);
+    main_point.y_member(100);
+    main_point.z_member(200);
 
     // timestamp
-    eprosima::fastrtps::types::DynamicData* timestamp = main_point->loan_value(3);
-    timestamp->set_int32_value(1 + index, 0);
-    timestamp->set_int32_value(1000 * (1 + index), 1);
+    InternalTimestamp_TypeIntrospectionExample timestamp;
+    timestamp.seconds(1 + index);
+    timestamp.milliseconds(1000 * (1 + index));
+    main_point.t_member(timestamp);
+
+    new_data->main_point(main_point);
+
+
+    ///////////////////////////////////////////
+    // INTERNAL DATA
+    ///////////////////////////////////////////
+    std::vector<InternalPoints_TypeIntrospectionExample> internal_data;
+    InternalPoints_TypeIntrospectionExample seq_elem;
+
+    // Set sequence element 0
+    seq_elem.x_member(0);
+    seq_elem.y_member(1);
+    seq_elem.z_member(2);
+    // timestamp
+    timestamp.seconds(1 + index);
+    timestamp.milliseconds(1000 * (1 + index));
+    seq_elem.t_member(timestamp);
+    // Add to sequence
+    internal_data.push_back(seq_elem);
+
+    // Set sequence element 1
+    seq_elem.x_member(3);
+    seq_elem.y_member(4);
+    seq_elem.z_member(5);
+    // timestamp
+    timestamp.seconds(2 + index);
+    timestamp.milliseconds(1000 * (2 + index));
+    seq_elem.t_member(timestamp);
+    // Add to sequence
+    internal_data.push_back(seq_elem);
+
+    // Set sequence element 2
+    seq_elem.x_member(6);
+    seq_elem.y_member(7);
+    seq_elem.z_member(8);
+    // timestamp
+    timestamp.seconds(3 + index);
+    timestamp.milliseconds(1000 * (3 + index));
+    seq_elem.t_member(timestamp);
+    // Add to sequence
+    internal_data.push_back(seq_elem);
+
+    new_data->internal_data(internal_data);
+
+
+    ///////////////////////////////////////////
+    // INTERNAL DATA BOUNDED
+    ///////////////////////////////////////////
+    std::vector<InternalPoints_TypeIntrospectionExample> internal_data_bounded;
+
+    // Set sequence element 0
+    seq_elem.x_member(0);
+    seq_elem.y_member(1);
+    seq_elem.z_member(2);
+    // timestamp
+    timestamp.seconds(1 + index);
+    timestamp.milliseconds(1000 * (1 + index));
+    seq_elem.t_member(timestamp);
+    // Add to sequence
+    internal_data_bounded.push_back(seq_elem);
+
+    // Set sequence element 1
+    seq_elem.x_member(3);
+    seq_elem.y_member(4);
+    seq_elem.z_member(5);
+    // timestamp
+    timestamp.seconds(2 + index);
+    timestamp.milliseconds(1000 * (2 + index));
+    seq_elem.t_member(timestamp);
+    // Add to sequence
+    internal_data_bounded.push_back(seq_elem);
+
+    // Set sequence element 2
+    seq_elem.x_member(6);
+    seq_elem.y_member(7);
+    seq_elem.z_member(8);
+    // timestamp
+    timestamp.seconds(3 + index);
+    timestamp.milliseconds(1000 * (3 + index));
+    seq_elem.t_member(timestamp);
+    // Add to sequence
+    internal_data_bounded.push_back(seq_elem);
+
+    new_data->internal_data_bounded(internal_data_bounded);
+
+
+    ///////////////////////////////////////////
+    // MESSAGES
+    ///////////////////////////////////////////
+    std::array<InternalMessage_TypeIntrospectionExample, 2> messages;
+
+    for (int i=0; i<2; i++)
+    {
+        InternalMessage_TypeIntrospectionExample array_elem;
+
+        ////////////////
+        // descriptor //
+        ////////////////
+        InternalMsgDescriptor_TypeIntrospectionExample descriptor;
+        // id
+        descriptor.id(i);
+        // topic
+        descriptor.topic("Valuable information");
+        // timestamp
+        timestamp.seconds(index);
+        timestamp.milliseconds(1000 * index);
+        descriptor.timestamp(timestamp);
+
+        array_elem.descriptor(descriptor);
+
+        /////////////
+        // message //
+        /////////////
+        array_elem.message("message #" + std::to_string(i));
+
+        //////////////////////
+        // timestamps array //
+        //////////////////////
+        // timestamps[0]
+        InternalTimestamp_TypeIntrospectionExample timestamp_0;
+        timestamp_0.seconds(index);
+        timestamp_0.milliseconds(1000 * index);
+        // timestamps[1]
+        InternalTimestamp_TypeIntrospectionExample timestamp_1;
+        timestamp_1.seconds(1 + index);
+        timestamp_1.milliseconds(1000 * (1 + index));
+
+        array_elem.timestamps({timestamp_0, timestamp_1});
+
+        messages[i] = array_elem;
+    }
+    new_data->messages(messages);
+
+    return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::SUPER_COMPLEX>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    ///////////////////////////////////////////
+    // INDEX
+    ///////////////////////////////////////////
+    new_data->set_uint32_value(0, index);
+
+
+    ///////////////////////////////////////////
+    // MAIN POINT
+    ///////////////////////////////////////////
+    traits<DynamicData>::ref_type main_point = new_data->loan_value(1);
+    main_point->set_int32_value(0, 50);
+    main_point->set_int32_value(1, 100);
+    main_point->set_int32_value(2, 200);
+
+    // timestamp
+    traits<DynamicData>::ref_type timestamp = main_point->loan_value(3);
+    timestamp->set_int32_value(0, 1 + index);
+    timestamp->set_int32_value(1, 1000 * (1 + index));
     main_point->return_loaned_value(timestamp);
 
     new_data->return_loaned_value(main_point);
@@ -61,45 +224,45 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SUPER_
     ///////////////////////////////////////////
     // INTERNAL DATA
     ///////////////////////////////////////////
-    eprosima::fastrtps::types::DynamicData* points_sequence = new_data->loan_value(2);
-    eprosima::fastrtps::types::DynamicType_ptr seq_elem_type =
-            points_sequence->get_type()->get_descriptor()->get_element_type();
-    eprosima::fastrtps::types::DynamicData_ptr seq_elem;
-    eprosima::fastrtps::types::MemberId id;
+    traits<DynamicData>::ref_type points_sequence = new_data->loan_value(2);
+    TypeDescriptor::_ref_type seq_descriptor {traits<TypeDescriptor>::make_shared()};
+    points_sequence->type()->get_descriptor(seq_descriptor);
+    traits<DynamicType>::ref_type seq_elem_type = seq_descriptor->element_type();
+    traits<DynamicData>::ref_type seq_elem;
 
-    // Set sequence element 1
-    seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);
+    // Set sequence element 0
+    seq_elem = DynamicDataFactory::get_instance()->create_data(seq_elem_type);
     seq_elem->set_int32_value(0, 0);
     seq_elem->set_int32_value(1, 1);
     seq_elem->set_int32_value(2, 2);
     // timestamp
     timestamp = seq_elem->loan_value(3);
-    timestamp->set_int32_value(1 + index, 0);
-    timestamp->set_int32_value(1000 * (1 + index), 1);
+    timestamp->set_int32_value(0, 1 + index);
+    timestamp->set_int32_value(1, 1000 * (1 + index));
     seq_elem->return_loaned_value(timestamp);
-    points_sequence->insert_complex_value(seq_elem, id);
+    points_sequence->set_complex_value(0, seq_elem);
+
+    // Set sequence element 1
+    seq_elem = DynamicDataFactory::get_instance()->create_data(seq_elem_type);
+    seq_elem->set_int32_value(0, 3);
+    seq_elem->set_int32_value(1, 4);
+    seq_elem->set_int32_value(2, 5);
+    timestamp = seq_elem->loan_value(3);
+    timestamp->set_int32_value(0, 2 + index);
+    timestamp->set_int32_value(1, 1000 * (2 + index));
+    seq_elem->return_loaned_value(timestamp);
+    points_sequence->set_complex_value(1, seq_elem);
 
     // Set sequence element 2
-    seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);
-    seq_elem->set_int32_value(3, 0);
-    seq_elem->set_int32_value(4, 1);
-    seq_elem->set_int32_value(5, 2);
+    seq_elem = DynamicDataFactory::get_instance()->create_data(seq_elem_type);
+    seq_elem->set_int32_value(0, 6);
+    seq_elem->set_int32_value(1, 7);
+    seq_elem->set_int32_value(2, 8);
     timestamp = seq_elem->loan_value(3);
-    timestamp->set_int32_value(2 + index, 0);
-    timestamp->set_int32_value(1000 * (2 + index), 1);
+    timestamp->set_int32_value(0, 3 + index);
+    timestamp->set_int32_value(1, 1000 * (3 + index));
     seq_elem->return_loaned_value(timestamp);
-    points_sequence->insert_complex_value(seq_elem, id);
-
-    // Set sequence element 3
-    seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);
-    seq_elem->set_int32_value(6, 0);
-    seq_elem->set_int32_value(7, 1);
-    seq_elem->set_int32_value(8, 2);
-    timestamp = seq_elem->loan_value(3);
-    timestamp->set_int32_value(3 + index, 0);
-    timestamp->set_int32_value(1000 * (3 + index), 1);
-    seq_elem->return_loaned_value(timestamp);
-    points_sequence->insert_complex_value(seq_elem, id);
+    points_sequence->set_complex_value(2, seq_elem);
 
     new_data->return_loaned_value(points_sequence);
 
@@ -108,83 +271,84 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SUPER_
     // INTERNAL DATA BOUNDED
     ///////////////////////////////////////////
     points_sequence = new_data->loan_value(3);
-    seq_elem_type = points_sequence->get_type()->get_descriptor()->get_element_type();
+    points_sequence->type()->get_descriptor(seq_descriptor);
+    seq_elem_type = seq_descriptor->element_type();
 
-    // Set sequence element 1
-    seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);
+    // Set sequence element 0
+    seq_elem = DynamicDataFactory::get_instance()->create_data(seq_elem_type);
     seq_elem->set_int32_value(0, 0);
     seq_elem->set_int32_value(1, 1);
     seq_elem->set_int32_value(2, 2);
     // timestamp
     timestamp = seq_elem->loan_value(3);
-    timestamp->set_int32_value(1 + index, 0);
-    timestamp->set_int32_value(1000 * (1 + index), 1);
+    timestamp->set_int32_value(0, 1 + index);
+    timestamp->set_int32_value(1, 1000 * (1 + index));
     seq_elem->return_loaned_value(timestamp);
-    points_sequence->insert_complex_value(seq_elem, id);
+    points_sequence->set_complex_value(0, seq_elem);
+
+    // Set sequence element 1
+    seq_elem = DynamicDataFactory::get_instance()->create_data(seq_elem_type);
+    seq_elem->set_int32_value(0, 3);
+    seq_elem->set_int32_value(1, 4);
+    seq_elem->set_int32_value(2, 5);
+    timestamp = seq_elem->loan_value(3);
+    timestamp->set_int32_value(0, 2 + index);
+    timestamp->set_int32_value(1, 1000 * (2 + index));
+    seq_elem->return_loaned_value(timestamp);
+    points_sequence->set_complex_value(1, seq_elem);
 
     // Set sequence element 2
-    seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);
-    seq_elem->set_int32_value(3, 0);
-    seq_elem->set_int32_value(4, 1);
-    seq_elem->set_int32_value(5, 2);
+    seq_elem = DynamicDataFactory::get_instance()->create_data(seq_elem_type);
+    seq_elem->set_int32_value(0, 6);
+    seq_elem->set_int32_value(1, 7);
+    seq_elem->set_int32_value(2, 8);
     timestamp = seq_elem->loan_value(3);
-    timestamp->set_int32_value(2 + index, 0);
-    timestamp->set_int32_value(1000 * (2 + index), 1);
+    timestamp->set_int32_value(0, 3 + index);
+    timestamp->set_int32_value(1, 1000 * (3 + index));
     seq_elem->return_loaned_value(timestamp);
-    points_sequence->insert_complex_value(seq_elem, id);
-
-    // Set sequence element 3
-    seq_elem = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(seq_elem_type);
-    seq_elem->set_int32_value(6, 0);
-    seq_elem->set_int32_value(7, 1);
-    seq_elem->set_int32_value(8, 2);
-    timestamp = seq_elem->loan_value(3);
-    timestamp->set_int32_value(3 + index, 0);
-    timestamp->set_int32_value(1000 * (3 + index), 1);
-    seq_elem->return_loaned_value(timestamp);
-    points_sequence->insert_complex_value(seq_elem, id);
+    points_sequence->set_complex_value(2, seq_elem);
 
     new_data->return_loaned_value(points_sequence);
 
 
-    ///////////////////////////////////////////
+    /////////////////////////////////////////
     // MESSAGES
-    ///////////////////////////////////////////
-    eprosima::fastrtps::types::DynamicData* messages_array = new_data->loan_value(4);
-    eprosima::fastrtps::types::DynamicData* array_elem;
-    eprosima::fastrtps::types::DynamicData* sub_elem;
-    for (int i = 0; i < 2; i++)
+    /////////////////////////////////////////
+    traits<DynamicData>::ref_type messages_array = new_data->loan_value(4);
+    traits<DynamicData>::ref_type array_elem;
+    traits<DynamicData>::ref_type sub_elem;
+    for (int i=0; i<2; i++)
     {
         array_elem = messages_array->loan_value(i);
 
         // descriptor
         sub_elem = array_elem->loan_value(0);
         // id
-        sub_elem->set_uint32_value(i, 0);
+        sub_elem->set_uint32_value(0, i);
         // topic
-        sub_elem->set_string_value("Valuable information", 1);
+        sub_elem->set_string_value(1, "Valuable information");
         // timestamp
         timestamp = sub_elem->loan_value(2);
-        timestamp->set_int32_value(index, 0);
-        timestamp->set_int32_value(1000 * index, 1);
+        timestamp->set_int32_value(0, index);
+        timestamp->set_int32_value(1, 1000 * index);
         sub_elem->return_loaned_value(timestamp);
         array_elem->return_loaned_value(sub_elem);
 
         // message
-        array_elem->set_string_value("message #" + std::to_string(i), 1);
+        array_elem->set_string_value(1, "message #" + std::to_string(i));
         messages_array->return_loaned_value(array_elem);
 
         // timestamps array
         sub_elem = array_elem->loan_value(2);
         // timestamps[0]
         timestamp = sub_elem->loan_value(0);
-        timestamp->set_int32_value(index, 0);
-        timestamp->set_int32_value(1000 * index, 1);
+        timestamp->set_int32_value(0, index);
+        timestamp->set_int32_value(1, 1000 * index);
         sub_elem->return_loaned_value(timestamp);
         // timestamps[1]
         timestamp = sub_elem->loan_value(1);
-        timestamp->set_int32_value(1 + index, 0);
-        timestamp->set_int32_value(1000 * (1 + index), 1);
+        timestamp->set_int32_value(0, 1 + index);
+        timestamp->set_int32_value(1, 1000 * (1 + index));
         sub_elem->return_loaned_value(timestamp);
 
         array_elem->return_loaned_value(sub_elem);
@@ -192,5 +356,11 @@ eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::SUPER_
 
     new_data->return_loaned_value(messages_array);
 
-    return new_data;
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::SUPER_COMPLEX>()
+{
+    register_SuperComplex_type_objects();
 }

@@ -13,43 +13,75 @@
 // limitations under the License.
 
 /**
- * @file ComplexCode.h
+ * @file KeyCommon.cpp
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 
 #include "../../types.hpp"
+#include "../gen/Key.hpp"
+#include "../gen/KeyTypeObjectSupport.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicData_ptr get_data_by_type<DataTypeKind::KEY>(
+void* get_data_by_type_support<DataTypeKind::KEY>(
         const unsigned int& index,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        TypeSupport type_support)
 {
-    // Create and initialize new data
-    eprosima::fastrtps::types::DynamicData_ptr new_data;
-    new_data = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    Key_TypeIntrospectionExample* new_data = (Key_TypeIntrospectionExample*)type_support.create_data();
+
+    // Set index
+    new_data->index(index);
 
     // Set message and value (depending on instance)
     // There will be 2 instances of the message, one sent in odd indexes and one sent in even indexes.
     if (index % 2 == 0)
     {
-        new_data->set_string_value("Even_Instance", 0);
-        new_data->set_int32_value(index, 2);
+        new_data->instance_key("Even_Instance");
+        new_data->value(index);
     }
     else
     {
-        new_data->set_string_value("Odd_Instance", 0);
-        new_data->set_int32_value(-index, 2);
+        new_data->instance_key("Odd_Instance");
+        new_data->value(-index);
     }
 
-    // Set index
-    new_data->set_uint32_value(index / 2, 0);
-
     return new_data;
+}
+
+template <>
+void* get_dynamic_data_by_type_support<DataTypeKind::KEY>(
+        const unsigned int& index,
+        TypeSupport type_support)
+{
+    DynamicData::_ref_type* new_data_ptr = reinterpret_cast<DynamicData::_ref_type*>(type_support.create_data());
+
+    DynamicData::_ref_type new_data = *new_data_ptr;
+
+    // Set index
+    new_data->set_uint32_value(1, index);
+
+    // Set message and value (depending on instance)
+    // There will be 2 instances of the message, one sent in odd indexes and one sent in even indexes.
+    if (index % 2 == 0)
+    {
+        new_data->set_string_value(0, "Even_Instance");
+        new_data->set_int32_value(2, index);
+    }
+    else
+    {
+        new_data->set_string_value(0, "Odd_Instance");
+        new_data->set_int32_value(2, -index);
+    }
+
+    return new_data_ptr;
+}
+
+template <>
+void register_type_object_representation_gen<DataTypeKind::KEY>()
+{
+    register_Key_type_objects();
 }

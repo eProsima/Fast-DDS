@@ -17,18 +17,18 @@
  *
  */
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
 
 #include "../../types.hpp"
 
-using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds::dds;
 
 template <>
-eprosima::fastrtps::types::DynamicType_ptr
-DataType<DataTypeKind::COMPLEX_ARRAY, GeneratorKind::CODE>::generate_type_() const
+void
+DataType<DataTypeKind::COMPLEX_ARRAY, GeneratorKind::CODE>::generate_type_support_()
 {
-    return eprosima::fastrtps::types::DynamicType_ptr();
+    // TODO
 }

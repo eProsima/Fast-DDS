@@ -25,23 +25,19 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-#include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/types/DynamicDataHelper.hpp>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/TypesBase.h>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp>
+#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-#include "TypeIntrospectionSubscriber.h"
 #include "types/types.hpp"
 
+#include "TypeIntrospectionSubscriber.h"
+
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
-using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps;
 
 std::atomic<bool> TypeIntrospectionSubscriber::type_discovered_(false);
 std::atomic<bool> TypeIntrospectionSubscriber::type_registered_(false);
@@ -53,37 +49,22 @@ std::condition_variable TypeIntrospectionSubscriber::terminate_cv_;
 
 TypeIntrospectionSubscriber::TypeIntrospectionSubscriber(
         const std::string& topic_name,
-        uint32_t domain,
-        bool use_type_object,
-        bool use_type_information)
+        uint32_t domain)
     : participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , topic_name_(topic_name)
     , samples_(0)
-    , use_type_object_(use_type_object)
-    , use_type_information_(use_type_information)
 {
     DomainParticipantQos pqos;
     pqos.name("TypeIntrospectionExample_Participant_Subscriber");
-
-    pqos.wire_protocol().builtin.typelookup_config.use_server = false;
-    if (use_type_information_)
-    {
-        pqos.wire_protocol().builtin.typelookup_config.use_client = true;
-    }
-    else
-    {
-        pqos.wire_protocol().builtin.typelookup_config.use_client = false;
-    }
 
     // Create listener mask so the data do not go to on_data_on_readers from subscriber
     StatusMask mask;
     mask.any();
     mask << StatusMask::data_available();
     mask << StatusMask::subscription_matched();
-    // No mask for type_information_received
 
     // CREATE THE PARTICIPANT
     participant_ = DomainParticipantFactory::get_instance()->create_participant(domain, pqos, this, mask);
@@ -105,9 +86,6 @@ TypeIntrospectionSubscriber::TypeIntrospectionSubscriber(
         "Participant < " << participant_->guid() <<
         " > created in domain < " << participant_->get_domain_id() <<
         " > waiting to discover type in topic < " << topic_name <<
-        " > using to receive data type : " <<
-        (use_type_information ? "< type information > " : "") <<
-        (use_type_object ? "< type object > " : "") <<
         std::endl;
 }
 
@@ -145,12 +123,45 @@ TypeIntrospectionSubscriber::~TypeIntrospectionSubscriber()
 }
 
 void TypeIntrospectionSubscriber::on_participant_discovery(
-        eprosima::fastdds::dds::DomainParticipant*,
-        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info)
+        DomainParticipant*,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        bool&)
 {
     if (info.status == eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
     {
         std::cout << "Participant found with guid: " << info.info.m_guid << std::endl;
+    }
+}
+
+void TypeIntrospectionSubscriber::on_data_writer_discovery(
+        DomainParticipant*,
+        eprosima::fastrtps::rtps::WriterDiscoveryInfo&& info,
+        bool&)
+{
+    std::string type_name = info.info.typeName().to_string();
+
+    // Check if the type is already created
+    if (nullptr == participant_->find_type(type_name))
+    {
+        //CREATE THE DYNAMIC TYPE
+        xtypes::TypeObject type_object;
+        if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+                    info.info.type_information().type_information.complete().typeid_with_size().type_id(), type_object))
+
+        {
+            std::cout << "ERROR: TypeObject cannot be retrieved for type: " << type_name << std::endl;
+            return;
+        }
+
+        // Create DynamicType
+        auto dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(type_object)->build();
+        if (!dyn_type)
+        {
+            std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
+            return;
+        }
+
+        on_type_discovered_and_registered_(dyn_type);
     }
 }
 
@@ -177,12 +188,12 @@ void TypeIntrospectionSubscriber::on_data_available(
         DataReader* reader)
 {
     // Dynamic DataType
-    types::DynamicData_ptr new_data;
-    new_data = types::DynamicDataFactory::get_instance()->create_data(dyn_type_);
+    DynamicData::_ref_type new_data =
+                        DynamicDataFactory::get_instance()->create_data(dyn_type_);
 
     SampleInfo info;
 
-    while ((reader->take_next_sample(new_data.get(), &info) == ReturnCode_t::RETCODE_OK) && !is_stopped())
+    while ((reader->take_next_sample(&new_data, &info) == RETCODE_OK) && !is_stopped())
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
@@ -199,87 +210,6 @@ void TypeIntrospectionSubscriber::on_data_available(
                 stop();
             }
         }
-    }
-}
-
-void TypeIntrospectionSubscriber::on_type_discovery(
-        eprosima::fastdds::dds::DomainParticipant*,
-        const eprosima::fastrtps::rtps::SampleIdentity&,
-        const eprosima::fastrtps::string_255& topic,
-        const eprosima::fastrtps::types::TypeIdentifier*,
-        const eprosima::fastrtps::types::TypeObject*,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
-{
-    if (use_type_object_)
-    {
-        if (!dyn_type)
-        {
-            // This is a Fast bug... ups
-            std::cout << "on_type_discovery return a nullptr type" << std::endl;
-            return;
-        }
-
-        if (topic.to_string() != topic_name_)
-        {
-            std::cout << "Discovered Topic " << topic.to_string() << " . Not the one expecting, Skipping." << std::endl;
-            return;
-        }
-
-        bool already_discovered = type_discovered_.exchange(true);
-        if (already_discovered)
-        {
-            return;
-        }
-
-        std::cout <<
-            "Discovered type from topic < " << topic.to_string() <<
-            " > with name < " << dyn_type->get_name() <<
-            " > by Topic discovery. Registering." << std::endl;
-
-        // Registering type and creating reader
-        on_type_discovered_and_registered_(dyn_type);
-    }
-}
-
-void TypeIntrospectionSubscriber::on_type_information_received(
-        eprosima::fastdds::dds::DomainParticipant*,
-        const eprosima::fastrtps::string_255 topic_name,
-        const eprosima::fastrtps::string_255 type_name,
-        const eprosima::fastrtps::types::TypeInformation& type_information)
-{
-    if (use_type_information_)
-    {
-        if (topic_name.to_string() != topic_name_)
-        {
-            std::cout <<
-                "Discovered Type information from Topic < " << topic_name.to_string() <<
-                " > . Not the one expecting, Skipping." << std::endl;
-            return;
-        }
-
-        bool already_discovered = type_discovered_.exchange(true);
-        if (already_discovered)
-        {
-            return;
-        }
-
-        std::cout <<
-            "Found type in topic < " << topic_name_ <<
-            " > with name < " << type_name.to_string() <<
-            " > by LookUp. Registering." << std::endl;
-
-        std::function<void(const std::string&, const eprosima::fastrtps::types::DynamicType_ptr)> callback(
-            [this]
-                (const std::string&, const eprosima::fastrtps::types::DynamicType_ptr type)
-            {
-                this->on_type_discovered_and_registered_(type);
-            });
-
-        // Registering type and creating reader
-        participant_->register_remote_type(
-            type_information,
-            type_name.to_string(),
-            callback);
     }
 }
 
@@ -348,16 +278,19 @@ void TypeIntrospectionSubscriber::run(
 }
 
 void TypeIntrospectionSubscriber::on_type_discovered_and_registered_(
-        const eprosima::fastrtps::types::DynamicType_ptr type)
+        const DynamicType::_ref_type& type)
 {
+    // Copy dynamic type
+    dyn_type_ = type;
+
     // Register type
-    TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(type));
+    TypeSupport m_type(new DynamicPubSubType(type));
     m_type.register_type(participant_);
 
     // Create topic
     topic_ = participant_->create_topic(
         topic_name_,
-        type->get_name(),
+        m_type->getName(),
         TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
@@ -381,8 +314,6 @@ void TypeIntrospectionSubscriber::on_type_discovered_and_registered_(
         std::endl;
 
     std::cout << "Data Type for this Subscriber is: " << type << std::endl;
-
-    dyn_type_ = type;
 
     type_discovered_.store(true);
     type_registered_.store(true);

@@ -1,13 +1,12 @@
 <types>
     <type>
-        <typedef name="my_sequence_inner" type="int32"/>
         <struct name="SimpleLarge_TypeIntrospectionExample">
             <member name="index" type="uint32"/>
-            <member name="points" type="int32" simpleDimensions="3"/>
             <member name="message" type="string"/>
+            <member name="points" type="int32" arrayDimensions="3"/>
             <member name="second_message" type="string"/>
-            <member name="some_values" type="nonBasic" nonBasicTypeName="my_sequence_inner"/>
-            <member name="is_it_not_true_that_true_is_not_true" type="bool"/>
+            <member name="some_values" type="int16" sequenceMaxLength="-1"/>
+            <member name="is_it_not_true_that_true_is_not_true" type="boolean"/>
         </struct>
     </type>
 </types>

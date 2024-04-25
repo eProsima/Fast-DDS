@@ -31,7 +31,7 @@
         <struct name="SuperComplex_TypeIntrospectionExample">
             <member name="index" type="uint32"/>
             <member name="main_point" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample"/>
-            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample" sequenceMaxLength="0"/>
+            <member name="internal_data" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample" sequenceMaxLength="-1"/>
             <member name="internal_data_bounded" type="nonBasic" nonBasicTypeName="InternalPoints_TypeIntrospectionExample" sequenceMaxLength="3"/>
             <member name="messages" type="nonBasic" nonBasicTypeName="InternalMessage_TypeIntrospectionExample" arrayDimensions="2"/>
         </struct>

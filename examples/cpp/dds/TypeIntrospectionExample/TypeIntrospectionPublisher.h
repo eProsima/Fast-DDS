@@ -21,13 +21,13 @@
 #define _EPROSIMA_FASTDDS_EXAMPLES_CPP_DDS_TYPEINTROSPECTIONEXAMPLE_TYPEINTROSPECTIONPUBLISHER_H_
 
 #include <atomic>
-#include <condition_variable>
-#include <mutex>
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastdds/dds/topic/Topic.hpp>
 
 #include "types/types.hpp"
 
@@ -47,9 +47,7 @@ public:
             const std::string& topic_name,
             const uint32_t domain,
             DataTypeKind data_type_kind,
-            GeneratorKind generator_kind,
-            bool use_type_object,
-            bool use_type_information);
+            GeneratorKind generator_kind);
 
     virtual ~TypeIntrospectionPublisher();
 
@@ -68,10 +66,13 @@ public:
     // Listener callback methods
     ///////////////////////////////////////////
 
+    //! Callback executed when a DomainParticipant is discovered, removed or changed QoS
     void on_participant_discovery(
             eprosima::fastdds::dds::DomainParticipant* participant,
-            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            bool& /*should_be_ignored*/) override;
 
+    //! Callback executed when a DataReader is matched or unmatched
     void on_publication_matched(
             eprosima::fastdds::dds::DataWriter* writer,
             const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
