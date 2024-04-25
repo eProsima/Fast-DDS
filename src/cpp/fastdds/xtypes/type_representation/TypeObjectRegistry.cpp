@@ -1495,25 +1495,29 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     CompleteUnionMemberSeq member_seq;
     for (auto& member : union_members)
     {
-        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        member.second->get_descriptor(member_descriptor);
-        UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(
-                try_construct_kind(member_descriptor->try_construct_kind()), member_descriptor->is_default_label(),
-                member_descriptor->is_shared());
-        TypeIdentifier member_type_id;
-        register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);
-        UnionCaseLabelSeq labels;
-        for (int32_t label : member_descriptor->label())
+        // Member ID 0 is the discriminator
+        if (0 != member.second->get_id())
         {
-            TypeObjectUtils::add_union_case_label(labels, label);
-        }
-        CommonUnionMember common = TypeObjectUtils::build_common_union_member(member_descriptor->id(), member_flags,
-                member_type_id, labels);
+            MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+            member.second->get_descriptor(member_descriptor);
+            UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(
+                    try_construct_kind(member_descriptor->try_construct_kind()), member_descriptor->is_default_label(),
+                    member_descriptor->is_shared());
+            TypeIdentifier member_type_id;
+            register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);
+            UnionCaseLabelSeq labels;
+            for (int32_t label : member_descriptor->label())
+            {
+                TypeObjectUtils::add_union_case_label(labels, label);
+            }
+            CommonUnionMember common = TypeObjectUtils::build_common_union_member(member_descriptor->id(), member_flags,
+                    member_type_id, labels);
 
-        CompleteMemberDetail member_detail;
-        complete_member_detail(member_descriptor, member_detail);
-        CompleteUnionMember union_member = TypeObjectUtils::build_complete_union_member(common, member_detail);
-        TypeObjectUtils::add_complete_union_member(member_seq, union_member);
+            CompleteMemberDetail member_detail;
+            complete_member_detail(member_descriptor, member_detail);
+            CompleteUnionMember union_member = TypeObjectUtils::build_complete_union_member(common, member_detail);
+            TypeObjectUtils::add_complete_union_member(member_seq, union_member);
+        }
     }
 
     CompleteUnionType union_type = TypeObjectUtils::build_complete_union_type(union_flags, header, discriminator,
@@ -1610,7 +1614,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
     uint32_t dummy;
     type_id = calculate_type_identifier(typeobject, dummy);
     ret_code = register_type_object(type_id, typeobject);
-    assert(RETCODE == ret_code);
+    assert(RETCODE_OK == ret_code);
 
     return ret_code;
 }
@@ -1650,7 +1654,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
     uint32_t dummy;
     type_id = calculate_type_identifier(typeobject, dummy);
     ret_code = register_type_object(type_id, typeobject);
-    assert(RETCODE == ret_code);
+    assert(RETCODE_OK == ret_code);
 
     return ret_code;
 }
@@ -1702,7 +1706,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     uint32_t dummy;
     type_id = calculate_type_identifier(typeobject, dummy);
     ret_code = register_type_object(type_id, typeobject);
-    assert(RETCODE == ret_code);
+    assert(RETCODE_OK == ret_code);
 
     return ret_code;
 }
@@ -1716,23 +1720,45 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     dynamic_type->get_descriptor(type_descriptor);
 
-    CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(
-            type_descriptor->bound().front());
+    DynamicTypeMember::_ref_type member;
+    ret_code = dynamic_type->get_member_by_index(member, 0);
+    assert(RETCODE_OK == ret_code);
+    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+    member->get_descriptor(member_descriptor);
+    BitBound bound = 32;
+    switch (member_descriptor->type()->get_kind())
+    {
+        case TK_BOOLEAN:
+            bound = 1;
+            break;
+        case TK_INT8:
+        case TK_UINT8:
+            bound = 8;
+            break;
+        case TK_INT16:
+        case TK_UINT16:
+            bound = 16;
+            break;
+    }
+
+    CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(bound);
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
     CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail);
 
-    DynamicTypeMembersById literals;
-    dynamic_type->get_all_members(literals);
+    // Enum members cannot be accessed using get_all_members because the Member Id does not apply to enum literals.
+    DynamicTypeMembersByName literals;
+    dynamic_type->get_all_members_by_name(literals);
     CompleteEnumeratedLiteralSeq literal_seq;
     for (auto& literal : literals)
     {
-        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor = traits<MemberDescriptor>::make_shared();
         literal.second->get_descriptor(member_descriptor);
         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(
                 member_descriptor->is_default_label());
+        // TODO(richi): Literal value might be automatically assigned or taken from default_value (@value annotation)
         CommonEnumeratedLiteral common_literal = TypeObjectUtils::build_common_enumerated_literal(
-                member_descriptor->id(), flags);
+                member_descriptor->index(), flags);
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
         CompleteEnumeratedLiteral literal_member = TypeObjectUtils::build_complete_enumerated_literal(common_literal,
