@@ -102,7 +102,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
     for (auto encoding : encodings)
     {
         EnumStructure struct_data;
-        EnumStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new EnumStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_InnerEnumHelper()), test_value);
@@ -139,7 +139,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitMaskStructure)
     for (auto encoding : encodings)
     {
         BitMaskStructure struct_data;
-        BitMaskStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BitMaskStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBitMaskHelper(), test_value);
@@ -177,7 +177,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBitMaskStructure)
     for (auto encoding : encodings)
     {
         BoundedBitMaskStructure struct_data;
-        BoundedBitMaskStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BoundedBitMaskStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_InnerBoundedBitMaskHelper(), test_value);

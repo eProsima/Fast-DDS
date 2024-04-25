@@ -300,7 +300,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChild)
     for (auto encoding : encodings)
     {
         InnerStructureHelperChild struct_data;
-        InnerStructureHelperChildPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new InnerStructureHelperChildPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -371,7 +371,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChildChild)
     for (auto encoding : encodings)
     {
         InnerStructureHelperChildChild struct_data;
-        InnerStructureHelperChildChildPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new InnerStructureHelperChildChildPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -411,7 +411,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChild)
     for (auto encoding : encodings)
     {
         InnerStructureHelperEmptyChild struct_data;
-        InnerStructureHelperEmptyChildPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new InnerStructureHelperEmptyChildPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -455,7 +455,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChildChil
     for (auto encoding : encodings)
     {
         InnerStructureHelperEmptyChildChild struct_data;
-        InnerStructureHelperEmptyChildChildPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new InnerStructureHelperEmptyChildChildPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -496,7 +496,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerEmptyStructureHelperChild)
     for (auto encoding : encodings)
     {
         InnerEmptyStructureHelperChild struct_data;
-        InnerEmptyStructureHelperChildPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new InnerEmptyStructureHelperChildPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -543,7 +543,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAliasInheritanceStruct)
     for (auto encoding : encodings)
     {
         StructAliasInheritanceStruct struct_data;
-        StructAliasInheritanceStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructAliasInheritanceStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -819,7 +819,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructInheritanceStruct)
     for (auto encoding : encodings)
     {
         StructuresInheritanceStruct struct_data;
-        StructuresInheritanceStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructuresInheritanceStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(value, struct_data);
@@ -954,7 +954,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
     for (auto encoding : encodings)
     {
         BitsetsChildInheritanceStruct struct_data;
-        BitsetsChildInheritanceStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BitsetsChildInheritanceStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a());

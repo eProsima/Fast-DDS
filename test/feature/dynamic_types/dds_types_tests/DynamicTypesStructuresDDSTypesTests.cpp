@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/structuresPubSubTypes.h"
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -544,7 +545,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructShort)
     for (auto encoding : encodings)
     {
         StructShort struct_data;
-        StructShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_short(), test_value);
     }
@@ -568,7 +569,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedShort)
     for (auto encoding : encodings)
     {
         StructUnsignedShort struct_data;
-        StructUnsignedShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructUnsignedShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_ushort(), test_value);
     }
@@ -592,7 +593,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLong)
     for (auto encoding : encodings)
     {
         StructLong struct_data;
-        StructLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_long(), test_value);
     }
@@ -616,7 +617,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedLong)
     for (auto encoding : encodings)
     {
         StructUnsignedLong struct_data;
-        StructUnsignedLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructUnsignedLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_ulong(), test_value);
     }
@@ -640,7 +641,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLongLong)
     for (auto encoding : encodings)
     {
         StructLongLong struct_data;
-        StructLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_longlong(), test_value);
     }
@@ -664,7 +665,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedLongLong)
     for (auto encoding : encodings)
     {
         StructUnsignedLongLong struct_data;
-        StructUnsignedLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructUnsignedLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_ulonglong(), test_value);
     }
@@ -688,7 +689,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructFloat)
     for (auto encoding : encodings)
     {
         StructFloat struct_data;
-        StructFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_float(), test_value);
     }
@@ -712,7 +713,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructDouble)
     for (auto encoding : encodings)
     {
         StructDouble struct_data;
-        StructDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_double(), test_value);
     }
@@ -736,7 +737,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLongDouble)
     for (auto encoding : encodings)
     {
         StructLongDouble struct_data;
-        StructLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_longdouble(), test_value);
     }
@@ -760,7 +761,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoolean)
     for (auto encoding : encodings)
     {
         StructBoolean struct_data;
-        StructBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_boolean(), test_value);
     }
@@ -784,7 +785,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructOctet)
     for (auto encoding : encodings)
     {
         StructOctet struct_data;
-        StructOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_octet(), test_value);
     }
@@ -808,7 +809,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructChar8)
     for (auto encoding : encodings)
     {
         StructChar8 struct_data;
-        StructChar8PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructChar8PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_char8(), test_value);
     }
@@ -832,7 +833,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructChar16)
     for (auto encoding : encodings)
     {
         StructChar16 struct_data;
-        StructChar16PubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructChar16PubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_char16(), test_value);
     }
@@ -856,7 +857,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructString)
     for (auto encoding : encodings)
     {
         StructString struct_data;
-        StructStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string(), test_value);
     }
@@ -880,7 +881,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructWString)
     for (auto encoding : encodings)
     {
         StructWString struct_data;
-        StructWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_wstring(), test_value);
     }
@@ -904,7 +905,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoundedString)
     for (auto encoding : encodings)
     {
         StructBoundedString struct_data;
-        StructBoundedStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructBoundedStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bounded_string(), test_value);
     }
@@ -928,7 +929,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoundedWString)
     for (auto encoding : encodings)
     {
         StructBoundedWString struct_data;
-        StructBoundedWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructBoundedWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bounded_wstring(), test_value);
     }
@@ -953,7 +954,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructEnum)
     for (auto encoding : encodings)
     {
         StructEnum struct_data;
-        StructEnumPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructEnumPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_enum()), test_value);
     }
@@ -978,7 +979,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitMask)
     for (auto encoding : encodings)
     {
         StructBitMask struct_data;
-        StructBitMaskPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructBitMaskPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bitmask(), test_value);
     }
@@ -1002,7 +1003,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAlias)
     for (auto encoding : encodings)
     {
         StructAlias struct_data;
-        StructAliasPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructAliasPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_alias(), test_value);
     }
@@ -1026,7 +1027,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructShortArray)
     for (auto encoding : encodings)
     {
         StructShortArray struct_data;
-        StructShortArrayPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructShortArrayPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(test_value.size(), struct_data.var_array_short().size());
         for (size_t i = 0; i < test_value.size(); ++i)
@@ -1054,7 +1055,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructSequence)
     for (auto encoding : encodings)
     {
         StructSequence struct_data;
-        StructSequencePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructSequencePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_sequence(), test_value);
     }
@@ -1091,7 +1092,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructMap)
     for (auto encoding : encodings)
     {
         StructMap struct_data;
-        StructMapPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructMapPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         map_data = data->loan_value(data->get_member_id_by_name(var_map_name));
         ASSERT_TRUE(map_data);
@@ -1132,7 +1133,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnion)
     for (auto encoding : encodings)
     {
         StructUnion struct_data;
-        StructUnionPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructUnionPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
     }
@@ -1168,7 +1169,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructure)
     for (auto encoding : encodings)
     {
         StructStructure data_struct;
-        StructStructurePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructStructurePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, data_struct, static_pubsubType);
         EXPECT_EQ(data_struct.var_structure().field1(), test_long_value);
         EXPECT_EQ(data_struct.var_structure().field2(), test_float_value);
@@ -1215,7 +1216,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
     for (auto encoding : encodings)
     {
         StructBitset data_struct;
-        StructBitsetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructBitsetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, data_struct, static_pubsubType);
         EXPECT_EQ(data_struct.var_bitset().a(), test_octet_value);
         EXPECT_EQ(data_struct.var_bitset().b(), test_bool_value);
@@ -1728,7 +1729,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     for (auto encoding : encodings)
     {
         Structures struct_data;
-        StructuresPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StructuresPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         check_structure_static_data(data, struct_data, testing_values);
     }
@@ -1897,7 +1898,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_root)
     for (auto encoding : encodings)
     {
         root struct_data;
-        rootPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new rootPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_root1().foo_struct().a(), a_value);
         EXPECT_EQ(struct_data.var_root1().foo_struct().b(), b_value);

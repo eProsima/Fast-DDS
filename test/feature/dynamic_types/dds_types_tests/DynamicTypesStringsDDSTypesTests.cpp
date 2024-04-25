@@ -70,7 +70,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StringStruct)
     for (auto encoding : encodings)
     {
         StringStruct struct_data;
-        StringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new StringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string8(), test_value);
     }
@@ -104,7 +104,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WStringStruct)
     for (auto encoding : encodings)
     {
         WStringStruct struct_data;
-        WStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new WStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_string16(), test_value);
     }
@@ -137,7 +137,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallStringStruct)
     for (auto encoding : encodings)
     {
         SmallStringStruct struct_data;
-        SmallStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new SmallStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_string(), test_value);
     }
@@ -170,7 +170,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SmallWStringStruct)
     for (auto encoding : encodings)
     {
         SmallWStringStruct struct_data;
-        SmallWStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new SmallWStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_small_wstring(), test_value);
     }
@@ -203,7 +203,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeStringStruct)
     for (auto encoding : encodings)
     {
         LargeStringStruct struct_data;
-        LargeStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new LargeStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_string(), test_value);
     }
@@ -236,7 +236,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeWStringStruct)
     for (auto encoding : encodings)
     {
         LargeWStringStruct struct_data;
-        LargeWStringStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new LargeWStringStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_large_wstring(), test_value);
     }

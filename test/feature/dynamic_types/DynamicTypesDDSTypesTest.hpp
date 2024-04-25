@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp>
@@ -108,9 +109,9 @@ public:
             static_data& data_static,
             static_pubsub& static_pubsubType)
     {
-        DynamicPubSubType dyn_pubsubType(type);
+        TypeSupport dyn_pubsubType {new DynamicPubSubType(type)};
 
-        uint32_t dyn_payloadSize = static_cast<uint32_t>(dyn_pubsubType.getSerializedSizeProvider(&data,
+        uint32_t dyn_payloadSize = static_cast<uint32_t>(dyn_pubsubType.get_serialized_size_provider(&data,
                 data_representation)());
 
         // Dynamic Serialization <-> Dynamic Deserialization
@@ -124,7 +125,7 @@ public:
         ASSERT_TRUE(static_pubsubType.deserialize(&dyn_payload, &data_static));
 
         // Static Serialization <-> Dynamic Deserialization
-        uint32_t static_payloadSize = static_cast<uint32_t>(static_pubsubType.getSerializedSizeProvider(&data_static,
+        uint32_t static_payloadSize = static_cast<uint32_t>(static_pubsubType.get_serialized_size_provider(&data_static,
                 data_representation)());
         EXPECT_EQ(static_payloadSize, dyn_payloadSize);
         eprosima::fastrtps::rtps::SerializedPayload_t static_payload(static_payloadSize);

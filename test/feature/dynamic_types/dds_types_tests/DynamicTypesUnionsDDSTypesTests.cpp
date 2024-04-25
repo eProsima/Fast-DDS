@@ -220,7 +220,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionShort)
     for (auto encoding : encodings)
     {
         UnionShort struct_data;
-        UnionShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_short().a(), test_value);
@@ -270,7 +270,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionUShort)
     for (auto encoding : encodings)
     {
         UnionUShort struct_data;
-        UnionUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ushort().b(), test_value);
@@ -320,7 +320,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLong)
     for (auto encoding : encodings)
     {
         UnionLong struct_data;
-        UnionLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_long().c(), test_value);
@@ -370,7 +370,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionULong)
     for (auto encoding : encodings)
     {
         UnionULong struct_data;
-        UnionULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ulong().d(), test_value);
@@ -420,7 +420,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLongLong)
     for (auto encoding : encodings)
     {
         UnionLongLong struct_data;
-        UnionLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_long_long().e(), test_value);
@@ -470,7 +470,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionULongLong)
     for (auto encoding : encodings)
     {
         UnionULongLong struct_data;
-        UnionULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ulong_long().f(), test_value);
@@ -520,7 +520,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionFloat)
     for (auto encoding : encodings)
     {
         UnionFloat struct_data;
-        UnionFloatPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionFloatPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_float().g(), test_value);
@@ -570,7 +570,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDouble)
     for (auto encoding : encodings)
     {
         UnionDouble struct_data;
-        UnionDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_double().h(), test_value);
@@ -620,7 +620,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLongDouble)
     for (auto encoding : encodings)
     {
         UnionLongDouble struct_data;
-        UnionLongDoublePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionLongDoublePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_long_double().i(), test_value);
@@ -670,7 +670,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoolean)
     for (auto encoding : encodings)
     {
         UnionBoolean struct_data;
-        UnionBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_boolean().j(), test_value);
@@ -720,7 +720,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionOctet)
     for (auto encoding : encodings)
     {
         UnionOctet struct_data;
-        UnionOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_octet().k(), test_value);
@@ -770,7 +770,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionChar)
     for (auto encoding : encodings)
     {
         UnionChar struct_data;
-        UnionCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_char().l(), test_value);
@@ -820,7 +820,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWChar)
     for (auto encoding : encodings)
     {
         UnionWChar struct_data;
-        UnionWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_wchar().m(), test_value);
@@ -871,7 +871,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionString)
     for (auto encoding : encodings)
     {
         UnionString struct_data;
-        UnionStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_string().n(), test_value);
@@ -922,7 +922,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWString)
     for (auto encoding : encodings)
     {
         UnionWString struct_data;
-        UnionWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_wstring().o(), test_value);
@@ -972,7 +972,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedString)
     for (auto encoding : encodings)
     {
         UnionBoundedString struct_data;
-        UnionBoundedStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionBoundedStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_bounded_string().bn(), test_value);
@@ -1022,7 +1022,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedWString)
     for (auto encoding : encodings)
     {
         UnionBoundedWString struct_data;
-        UnionBoundedWStringPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionBoundedWStringPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_bounded_wstring().bo(), test_value);
@@ -1073,7 +1073,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerEnumHelper)
     for (auto encoding : encodings)
     {
         UnionInnerEnumHelper struct_data;
-        UnionInnerEnumHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_union_my_enum().p()), test_value);
@@ -1124,7 +1124,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitMaskHelper)
     for (auto encoding : encodings)
     {
         UnionInnerBitMaskHelper struct_data;
-        UnionInnerBitMaskHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionInnerBitMaskHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_bit_mask().q(), test_value);
@@ -1174,7 +1174,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerAliasHelper)
     for (auto encoding : encodings)
     {
         UnionInnerAliasHelper struct_data;
-        UnionInnerAliasHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionInnerAliasHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_alias().r(), test_value);
@@ -1224,7 +1224,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionArray)
     for (auto encoding : encodings)
     {
         UnionArray struct_data;
-        UnionArrayPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionArrayPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_array().s().size(), test_value.size());
@@ -1279,7 +1279,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionSequence)
     for (auto encoding : encodings)
     {
         UnionSequence struct_data;
-        UnionSequencePubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionSequencePubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_sequence().t(), test_value);
@@ -1344,7 +1344,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionMap)
     for (auto encoding : encodings)
     {
         UnionMap struct_data;
-        UnionMapPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionMapPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         union_data = data->loan_value(data->get_member_id_by_name(var_union_map_name));
@@ -1421,7 +1421,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerUnionHelper)
     for (auto encoding : encodings)
     {
         UnionInnerUnionHelper struct_data;
-        UnionInnerUnionHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionInnerUnionHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_union().v().longValue(), test_long_value);
@@ -1483,7 +1483,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerStructureHelper)
     for (auto encoding : encodings)
     {
         UnionInnerStructureHelper struct_data;
-        UnionInnerStructureHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionInnerStructureHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_structure().w().field1(), test_long_value);
@@ -1555,7 +1555,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     for (auto encoding : encodings)
     {
         UnionInnerBitsetHelper struct_data;
-        UnionInnerBitsetHelperPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionInnerBitsetHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_bitset().x().a(), test_octet_value);
@@ -1622,7 +1622,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorShort)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorShort struct_data;
-        UnionDiscriminatorShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_short().second(), test_long_long_value);
@@ -1686,7 +1686,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorUShort)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorUShort struct_data;
-        UnionDiscriminatorUShortPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorUShortPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_ushort().second(), test_long_long_value);
@@ -1750,7 +1750,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLong)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorLong struct_data;
-        UnionDiscriminatorLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_long().second(), test_long_long_value);
@@ -1814,7 +1814,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULong)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorULong struct_data;
-        UnionDiscriminatorULongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorULongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_ulong().second(), test_long_long_value);
@@ -1878,7 +1878,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLongLong)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorLongLong struct_data;
-        UnionDiscriminatorLongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorLongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_long_long().second(), test_long_long_value);
@@ -1942,7 +1942,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULongLong)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorULongLong struct_data;
-        UnionDiscriminatorULongLongPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorULongLongPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_ulong_long().second(), test_long_long_value);
@@ -2006,7 +2006,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorBoolean)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorBoolean struct_data;
-        UnionDiscriminatorBooleanPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorBooleanPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_boolean().second(), test_long_long_value);
@@ -2070,7 +2070,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorOctet)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorOctet struct_data;
-        UnionDiscriminatorOctetPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorOctetPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_octet().second(), test_long_long_value);
@@ -2134,7 +2134,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorChar)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorChar struct_data;
-        UnionDiscriminatorCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_char().second(), test_long_long_value);
@@ -2198,7 +2198,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorWChar)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorWChar struct_data;
-        UnionDiscriminatorWCharPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorWCharPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_wchar().second(), test_long_long_value);
@@ -2274,7 +2274,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnum)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorEnum struct_data;
-        UnionDiscriminatorEnumPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorEnumPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_long_long_value);
@@ -2338,7 +2338,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnumLabel)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorEnumLabel struct_data;
-        UnionDiscriminatorEnumLabelPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorEnumLabelPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_short_value);
@@ -2404,7 +2404,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorAlias)
     for (auto encoding : encodings)
     {
         UnionDiscriminatorAlias struct_data;
-        UnionDiscriminatorAliasPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new UnionDiscriminatorAliasPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_alias().second(), test_long_long_value);

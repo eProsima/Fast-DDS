@@ -308,7 +308,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
     for (auto encoding : encodings)
     {
         BitsetStruct data_struct;
-        BitsetStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new BitsetStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, data_struct,
                 static_pubsubType);
         EXPECT_EQ(data_struct.var_InnerBitsetHelper().a(), test_uint8_value);

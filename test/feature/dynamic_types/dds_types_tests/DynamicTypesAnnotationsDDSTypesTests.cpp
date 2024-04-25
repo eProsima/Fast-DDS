@@ -179,7 +179,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
     for (auto encoding : encodings)
     {
         AnnotatedStruct struct_data;
-        AnnotatedStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new AnnotatedStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
 
@@ -212,7 +212,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EmptyAnnotatedStruct)
     for (auto encoding : encodings)
     {
         EmptyAnnotatedStruct struct_data;
-        EmptyAnnotatedStructPubSubType static_pubsubType;
+        TypeSupport static_pubsubType {new EmptyAnnotatedStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
 
