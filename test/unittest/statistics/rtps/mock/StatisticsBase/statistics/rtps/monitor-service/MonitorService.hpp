@@ -30,10 +30,10 @@
 #include <fastdds/dds/publisher/qos/WriterQos.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <rtps/history/ITopicPayloadPool.h>
+#include <rtps/resources/TimedEvent.h>
 #include <statistics/rtps/monitor-service/Interfaces.hpp>
 #include <statistics/rtps/monitor-service/MonitorServiceListener.hpp>
 #include <statistics/types/monitorservice_types.hpp>

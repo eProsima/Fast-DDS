@@ -20,9 +20,8 @@
 
 #include <mutex>
 
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/utils/collections/ResourceLimitedVector.hpp>
-
+#include <rtps/resources/TimedEvent.h>
 #include <rtps/writer/LivelinessData.hpp>
 #include <utils/shared_mutex.hpp>
 

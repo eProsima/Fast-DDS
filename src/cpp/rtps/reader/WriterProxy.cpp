@@ -23,7 +23,6 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/messages/RTPSMessageCreator.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 
 #include "rtps/RTPSDomainImpl.hpp"
@@ -31,6 +30,7 @@
 #include <rtps/network/utils/external_locators.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <rtps/resources/TimedEvent.h>
 
 #if !defined(NDEBUG) && !defined(ANDROID) && defined(FASTDDS_SOURCE) && defined(__unix__)
 #define SHOULD_DEBUG_LINUX
