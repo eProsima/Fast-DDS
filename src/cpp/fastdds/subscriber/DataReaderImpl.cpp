@@ -1787,10 +1787,14 @@ DataReaderListener* DataReaderImpl::get_listener_for(
 std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 {
     // Check whether DataReader's type is plain in all its data representations
-    bool is_plain = true;
-    for (auto data_representation : qos_.type_consistency().representation.m_value)
+    bool is_plain = type_->is_plain();
+    if (qos_.type_consistency().representation.m_value.size() > 0)
     {
-        is_plain = is_plain && type_->is_plain(data_representation);
+        is_plain = true;
+        for (auto data_representation : qos_.type_consistency().representation.m_value)
+        {
+            is_plain = is_plain && type_->is_plain(data_representation);
+        }
     }
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot
