@@ -397,7 +397,8 @@ protected:
     // Functions related with create_participant_from_change_
 
     void match_new_server_(
-            eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);
+            eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix,
+            bool is_superclient);
 
     void create_virtual_endpoints_(
             eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix);

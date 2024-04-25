@@ -610,7 +610,8 @@ void DiscoveryDataBase::create_participant_from_change_(
 }
 
 void DiscoveryDataBase::match_new_server_(
-        eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix)
+        eprosima::fastrtps::rtps::GuidPrefix_t& participant_prefix,
+        bool is_superclient)
 {
     // Send Our DATA(p) to the new participant.
     // If this is not done, our data could be skipped afterwards because of a gap sent in newer DATA(p)s,
@@ -619,39 +620,42 @@ void DiscoveryDataBase::match_new_server_(
     assert(our_data_it != participants_.end());
     add_pdp_to_send_(our_data_it->second.change());
 
-    // To obtain a mesh topology, we need to:
-    // - Make all known servers relevant to the new server
-    // - Make the new server relevant to all known servers
-    // - Send DATA(p) of all known servers to the new server
-    // - Send Data(p) of the new server to all other servers
-    for (auto& part : participants_)
+    if (!is_superclient)
     {
-        if (part.first != server_guid_prefix_ && !part.second.is_client())
+        // To obtain a mesh topology with servers, we need to:
+        // - Make all known servers relevant to the new server
+        // - Make the new server relevant to all known servers
+        // - Send DATA(p) of all known servers to the new server
+        // - Send Data(p) of the new server to all other servers
+        for (auto& part : participants_)
         {
-            if (part.first == participant_prefix)
+            if (part.first != server_guid_prefix_ && !part.second.is_client() && !part.second.is_superclient())
             {
-                bool resend_new_pdp = false;
-                for (auto& server: servers_)
+                if (part.first == participant_prefix)
                 {
-                    if (server != participant_prefix)
+                    bool resend_new_pdp = false;
+                    for (auto& server: servers_)
                     {
-                        // Make all known servers relevant to the new server, but not matched
-                        part.second.add_or_update_ack_participant(server, false);
-                        resend_new_pdp = true;
+                        if (server != participant_prefix)
+                        {
+                            // Make all known servers relevant to the new server, but not matched
+                            part.second.add_or_update_ack_participant(server, false);
+                            resend_new_pdp = true;
+                        }
+                    }
+                    if (resend_new_pdp)
+                    {
+                        // Send DATA(p) of the new server to all other servers.
+                        add_pdp_to_send_(part.second.change());
                     }
                 }
-                if (resend_new_pdp)
+                else
                 {
-                    // Send DATA(p) of the new server to all other servers.
+                    // Make the new server relevant to all known servers
+                    part.second.add_or_update_ack_participant(participant_prefix, false);
+                    // Send DATA(p) of all known servers to the new participant
                     add_pdp_to_send_(part.second.change());
                 }
-            }
-            else
-            {
-                // Make the new server relevant to all known servers
-                part.second.add_or_update_ack_participant(participant_prefix, false);
-                // Send DATA(p) of all known servers to the new participant
-                add_pdp_to_send_(part.second.change());
             }
         }
     }
@@ -768,7 +772,7 @@ void DiscoveryDataBase::create_new_participant_from_change_(
                 !ret.first->second.is_client() && ret.first->second.is_local())
         {
             // Match new server and create virtual endpoints
-            match_new_server_(change_guid.guidPrefix);
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
         }
     }
     else
@@ -795,7 +799,7 @@ void DiscoveryDataBase::update_participant_from_change_(
         // If it is local and server the only possibility is it was a remote server and it must be converted to local
         if (!change_data.is_client())
         {
-            match_new_server_(change_guid.guidPrefix);
+            match_new_server_(change_guid.guidPrefix, change_data.is_superclient());
         }
 
         // Update the change data
