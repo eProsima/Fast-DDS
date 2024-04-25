@@ -1257,7 +1257,7 @@ bool SecurityManager::create_participant_volatile_message_secure_writer()
     RTPSWriter* wout = nullptr;
     if (participant_->createWriter(&wout, watt, participant_volatile_message_secure_pool_,
             participant_volatile_message_secure_writer_history_,
-            nullptr, participant_volatile_message_secure_writer_entity_id, true))
+            this, participant_volatile_message_secure_writer_entity_id, true))
     {
         participant_->set_endpoint_rtps_protection_supports(wout, false);
         participant_volatile_message_secure_writer_ = dynamic_cast<StatefulWriter*>(wout);
@@ -4371,4 +4371,17 @@ bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
         }
     }
     return ret;
+}
+
+void SecurityManager::onWriterChangeReceivedByAll(
+        RTPSWriter* writer,
+        CacheChange_t* change)
+{
+    static_cast<void>(writer);
+    assert(writer == participant_volatile_message_secure_writer_);
+
+    if (nullptr != participant_volatile_message_secure_writer_history_)
+    {
+        participant_volatile_message_secure_writer_history_->remove_change(change);
+    }
 }
