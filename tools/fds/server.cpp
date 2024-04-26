@@ -176,7 +176,7 @@ int fastdds_discovery_server(
     // Note there is a specific cast to pointer if the Option is valid
     option::Option* pOp = options[SERVERID];
     int server_id = -1;
-    std::stringstream is;
+    std::stringstream server_stream;
 
     if (nullptr == pOp)
     {
@@ -203,8 +203,8 @@ int fastdds_discovery_server(
     else
     {
         // Cast of option to int has already been checked
-        is << pOp->arg;
-        is >> server_id;
+        server_stream << pOp->arg;
+        server_stream >> server_id;
         if (!eprosima::fastdds::rtps::get_server_client_default_guidPrefix(server_id,
                 participantQos.wire_protocol().prefix))
         {
@@ -214,15 +214,15 @@ int fastdds_discovery_server(
     }
 
     // Clear the std::stringstream state and reset it to an empty string
-    is.clear();
-    is.str("");
+    server_stream.clear();
+    server_stream.str("");
 
     // Set Participant Name
     std::string server_name =
             (server_id == -1) ? "eProsima Guidless Server" : "eProsima Default Server" + std::to_string(
         server_id);
-    is << server_name;
-    participantQos.name(is.str().c_str());
+    server_stream << server_name;
+    participantQos.name(server_stream.str().c_str());
 
     // Choose the kind of server to create
     pOp = options[BACKUP];
@@ -260,10 +260,6 @@ int fastdds_discovery_server(
     option::Option* pO_port = options[UDP_PORT];
     if (nullptr != pO_port)
     {
-        // if (eprosima::fastdds::dds::check_udp_port(*pO_port, true) != option::ARG_OK)
-        // {
-        //     return 1;
-        // }
         std::stringstream is;
         is << pO_port->arg;
         uint16_t id;

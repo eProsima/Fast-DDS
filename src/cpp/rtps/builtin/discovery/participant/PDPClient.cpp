@@ -1378,7 +1378,7 @@ void set_server_client_random_guidPrefix(
     eprosima::fastdds::rtps::GuidUtils::instance().guid_prefix_create(0, guid);
 
     auto now = std::chrono::high_resolution_clock::now();
-    srand(now.time_since_epoch().count());
+    srand(static_cast<uint32_t>(now.time_since_epoch().count()));
     for (auto i = 4; i < 12; i++)
     {
         guid.value[i] = eprosima::fastrtps::rtps::octet(rand() % 254);
