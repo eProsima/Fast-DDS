@@ -91,6 +91,8 @@ void EDPServerPUBListener::onNewCacheChangeAdded(
         // Note: add_writer_from_change() removes the change from the EDP publications' reader history, but it does not
         // return it to the pool
         add_writer_from_change(reader, reader_history, change, sedp_, false);
+        std::cout << "Data(W) of received in Participant: " << get_pdp()->getRTPSParticipant()->getGuid() <<
+            "\nChange instance Handle is: " << iHandle2GUID(change->instanceHandle).guidPrefix << ". Maybe: " << change->writerGUID.guidPrefix << std::endl;
 
         // Retrieve the topic after creating the WriterProxyData (in add_writer_from_change()). This way, not matter
         // whether the DATA(w) is a new one or an update, the WriterProxyData exists, and so the topic can be retrieved
@@ -206,6 +208,8 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
         // Note: add_reader_from_change() removes the change from the EDP subscriptions' reader history, but it does not
         // return it to the pool
         add_reader_from_change(reader, reader_history, change, sedp_, false);
+        std::cout << "Data(r) of received in Participant: " << get_pdp()->getRTPSParticipant()->getGuid() <<
+                    "\nChange instance Handle is: " << iHandle2GUID(change->instanceHandle).guidPrefix << ". Maybe: " << change->writerGUID.guidPrefix << std::endl;
 
         // Retrieve the topic after creating the ReaderProxyData (in add_reader_from_change()). This way, not matter
         // whether the DATA(r) is a new one or an update, the ReaderProxyData exists, and so the topic can be retrieved
@@ -237,6 +241,8 @@ void EDPServerSUBListener::onNewCacheChangeAdded(
             EPROSIMA_LOG_INFO(RTPS_EDP_LISTENER, "Writer Proxy Data missing for change " << auxGUID);
         }
 
+        std::cout << "Data(Ur) of " << auxGUID << " received in Participant: " << get_pdp()->getRTPSParticipant()->getGuid() <<
+                    "\nChange instance Handle is: " << iHandle2GUID(change->instanceHandle).guidPrefix << ". Maybe: " << change->writerGUID.guidPrefix << std::endl;
         // Remove ReaderProxy data information
         get_pdp()->removeReaderProxyData(auxGUID);
 

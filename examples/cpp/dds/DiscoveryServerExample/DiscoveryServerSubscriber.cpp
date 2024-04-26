@@ -163,7 +163,7 @@ bool HelloWorldSubscriber::init(
 
     // Set participant as DS CLIENT
     pqos.wire_protocol().builtin.discovery_config.discoveryProtocol =
-            eprosima::fastrtps::rtps::DiscoveryProtocol_t::CLIENT;
+            eprosima::fastrtps::rtps::DiscoveryProtocol_t::SUPER_CLIENT;
 
     // Add remote SERVER to CLIENT's list of SERVERs
     pqos.wire_protocol().builtin.discovery_config.m_DiscoveryServers.push_back(server_locator);

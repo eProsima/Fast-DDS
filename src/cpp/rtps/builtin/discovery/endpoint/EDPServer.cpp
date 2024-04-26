@@ -463,6 +463,7 @@ bool EDPServer::process_disposal(
 
             if (should_publish_disposal)
             {
+                std::cout << "Publishing disposal: " << disposal_change->writerGUID << std::endl;
                 disposal_change->writerGUID.entityId = builtin_pair.first->getGuid().entityId;
                 builtin_pair.second->add_change(disposal_change, wp);
             }

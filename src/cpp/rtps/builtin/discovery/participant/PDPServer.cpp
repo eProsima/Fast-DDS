@@ -1484,6 +1484,10 @@ bool PDPServer::process_to_send_lists()
 
     // Process edp_publications_to_send_
     EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "Processing edp_publications_to_send");
+    if (!discovery_db_.edp_publications_to_send().empty())
+    {
+        std::cout << "Sending EDP" << std::endl;
+    }
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     process_to_send_list(
         discovery_db_.edp_publications_to_send(),

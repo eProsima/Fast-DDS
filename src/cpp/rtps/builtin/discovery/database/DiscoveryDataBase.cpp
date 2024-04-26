@@ -372,6 +372,9 @@ bool DiscoveryDataBase::update(
         return false;
     }
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(p|Up) to the queue: " << change->instanceHandle);
+    std::cout << "[DSL] Adding DATA(p|Up) to the queue: " << iHandle2GUID(change->instanceHandle).guidPrefix
+                << ". Writer GUID: " << change->writerGUID.guidPrefix
+                << "\nLocal: " << participant_change_data.is_local() << std::endl;
     // Add the DATA(p|Up) to the PDP queue to process
     pdp_data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryPDPDataQueueInfo(change, participant_change_data));
     return true;
@@ -404,7 +407,7 @@ bool DiscoveryDataBase::update(
         return false;
     }
 
-    EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(w|Uw|r|Ur) to the queue: " << change->instanceHandle);
+    EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Adding DATA(w|Uw|r|Ur) to the queue: " << change->instanceHandle);
     //  add the DATA(w|Uw|r|Ur) to the EDP queue to process
     edp_data_queue_.Push(eprosima::fastdds::rtps::ddb::DiscoveryEDPDataQueueInfo(change, topic_name));
     return true;
@@ -618,6 +621,7 @@ void DiscoveryDataBase::match_new_server_(
     // so the new participant could never receive our data
     auto our_data_it = participants_.find(server_guid_prefix_);
     assert(our_data_it != participants_.end());
+    EPROSIMA_LOG_ERROR(DISVOVERY_DATABASE, "Sending Data(p) 1");
     add_pdp_to_send_(our_data_it->second.change());
 
     if (!is_superclient)
@@ -646,6 +650,7 @@ void DiscoveryDataBase::match_new_server_(
                     if (resend_new_pdp)
                     {
                         // Send DATA(p) of the new server to all other servers.
+                        EPROSIMA_LOG_ERROR(DISVOVERY_DATABASE, "Sending Data(p) 2");
                         add_pdp_to_send_(part.second.change());
                     }
                 }
@@ -654,6 +659,7 @@ void DiscoveryDataBase::match_new_server_(
                     // Make the new server relevant to all known servers
                     part.second.add_or_update_ack_participant(participant_prefix, false);
                     // Send DATA(p) of all known servers to the new participant
+                    EPROSIMA_LOG_ERROR(DISVOVERY_DATABASE, "Sending Data(p) 3");
                     add_pdp_to_send_(part.second.change());
                 }
             }
@@ -1125,7 +1131,7 @@ void DiscoveryDataBase::match_writer_reader_(
     DiscoveryParticipantInfo& writer_participant_info = p_wit->second;
 
     bool should_publish_writer_edp = (writer_participant_info.is_client() ||
-            writer_participant_info.is_superclient() ||
+            // writer_participant_info.is_superclient() ||
             writer_guid.guidPrefix == server_guid_prefix_);
 
     // reader entity
@@ -1147,7 +1153,7 @@ void DiscoveryDataBase::match_writer_reader_(
     DiscoveryParticipantInfo& reader_participant_info = p_rit->second;
 
     bool should_publish_reader_edp = (reader_participant_info.is_client() ||
-            reader_participant_info.is_superclient() ||
+            // reader_participant_info.is_superclient() ||
             reader_guid.guidPrefix == server_guid_prefix_);
 
     // virtual              - needs info and give none
@@ -1157,6 +1163,15 @@ void DiscoveryDataBase::match_writer_reader_(
     // writer give info     = add reader participant in writer ack list
 
     // TODO reduce number of cases. This is more visual, but can be reduce joining them
+
+    std::cout << "[MWR] START - Writer: " << writer_guid << " and Reader: " << reader_guid
+              << "\n | " << writer_info.is_virtual() << ", "
+              << writer_participant_info.is_client() << ", "
+              << writer_participant_info.is_local() << " | "
+              << reader_info.is_virtual() << ", "
+              << reader_participant_info.is_client() << ", "
+              << reader_participant_info.is_local() << std::endl;
+
     if (writer_info.is_virtual())
     {
         // Writer virtual
@@ -1169,6 +1184,7 @@ void DiscoveryDataBase::match_writer_reader_(
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
             {
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+                std::cout << "Matched PDP: V - L. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
             }
 
             // Only match EDP if the reader is pure client OR from this participant. This will allow to only redirect Data(p) of
@@ -1176,6 +1192,7 @@ void DiscoveryDataBase::match_writer_reader_(
             if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && should_publish_reader_edp)
             {
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
+                std::cout << "Matched EDP: V - L. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
             }
         }
     }
@@ -1190,6 +1207,7 @@ void DiscoveryDataBase::match_writer_reader_(
             // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
             {
+                std::cout << "Matched PDP: L - V. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
 
@@ -1197,6 +1215,7 @@ void DiscoveryDataBase::match_writer_reader_(
             // our remote clients or publishers in the same participant, but avoid redirecting Data(p) of other servers' writers.
             if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && should_publish_writer_edp)
             {
+                std::cout << "Matched EDP: L - V. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
         }
@@ -1207,6 +1226,7 @@ void DiscoveryDataBase::match_writer_reader_(
             // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
             {
+                std::cout << "Matched PDP: L - L. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
 
@@ -1214,11 +1234,13 @@ void DiscoveryDataBase::match_writer_reader_(
             // our remote clients or publishers in the same participant, but avoid redirecting Data(p) of other servers' writers.
             if (!writer_info.is_relevant_participant(reader_guid.guidPrefix) && should_publish_reader_edp)
             {
+                std::cout << "Matched EDP: L - L. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
 
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
             {
+                std::cout << "Matched 2 PDP: L - L. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
 
@@ -1226,6 +1248,7 @@ void DiscoveryDataBase::match_writer_reader_(
             // our remote clients or subscribers in the same participant, but avoid redirecting Data(p) of other servers' readers.
             if (!reader_info.is_relevant_participant(writer_guid.guidPrefix) && should_publish_writer_edp)
             {
+                std::cout << "Matched 2 EDP: L - L. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
         }
@@ -1236,11 +1259,13 @@ void DiscoveryDataBase::match_writer_reader_(
             // Only if they do not have the info yet
             if (!reader_participant_info.is_relevant_participant(writer_guid.guidPrefix))
             {
+                std::cout << "Matched PDP: L - E. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 reader_participant_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
 
             if (!reader_info.is_relevant_participant(writer_guid.guidPrefix))
             {
+                std::cout << "Matched EDP: L - E. Writer: " << writer_info.change()->instanceHandle << " and reader: " << reader_participant_info.change()->instanceHandle << std::endl;
                 reader_info.add_or_update_ack_participant(writer_guid.guidPrefix);
             }
         }
@@ -1256,15 +1281,18 @@ void DiscoveryDataBase::match_writer_reader_(
             // Only if they do not have the info yet
             if (!writer_participant_info.is_relevant_participant(reader_guid.guidPrefix))
             {
+                std::cout << "Matched PDP: E - LnV" << std::endl;
                 writer_participant_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
 
             if (!writer_info.is_relevant_participant(reader_guid.guidPrefix))
             {
+                std::cout << "Matched EDP: E - LnV" << std::endl;
                 writer_info.add_or_update_ack_participant(reader_guid.guidPrefix);
             }
         }
     }
+    std::cout << "[MRW] END" << std::endl;
 }
 
 bool DiscoveryDataBase::set_dirty_topic_(
@@ -2357,7 +2385,7 @@ bool DiscoveryDataBase::add_pdp_to_send_(
                 pdp_to_send_.end(),
                 change) == pdp_to_send_.end())
     {
-        EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Adding DATA(p) to send: "
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Adding DATA(p) to send: "
                 << change->instanceHandle);
         pdp_to_send_.push_back(change);
         return true;

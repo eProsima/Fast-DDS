@@ -37,6 +37,7 @@ int main(
 {
     int columns;
 
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Error);
 #if defined(_WIN32)
     char* buf = nullptr;
     size_t sz = 0;
