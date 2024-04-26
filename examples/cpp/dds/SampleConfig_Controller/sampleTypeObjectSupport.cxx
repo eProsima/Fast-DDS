@@ -43,12 +43,15 @@ void register_sample_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_sample_type_identifier();
+                TypeIdentifier type_id;
+                register_sample_type_identifier(type_id);
 
             });
 }
 
-void register_sample_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_sample_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_sample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -71,6 +74,7 @@ void register_sample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -117,6 +121,7 @@ void register_sample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure index member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_index = "index";
@@ -135,6 +140,7 @@ void register_sample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "key_value Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_key_value = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -181,6 +187,7 @@ void register_sample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure key_value member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_key_value = "key_value";
@@ -205,7 +212,7 @@ void register_sample_type_identifier()
         }
         CompleteStructType struct_type_sample = TypeObjectUtils::build_complete_struct_type(struct_flags_sample, header_sample, member_seq_sample);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_sample, type_name_sample.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_sample, type_name_sample.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "sample already registered in TypeObjectRegistry for a different type.");
@@ -217,6 +224,7 @@ void register_sample_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "sample: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

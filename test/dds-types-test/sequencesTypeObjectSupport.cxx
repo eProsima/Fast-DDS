@@ -44,72 +44,75 @@ void register_sequences_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_InnerStructureHelper_type_identifier();
+                TypeIdentifier type_id;
+                register_InnerStructureHelper_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelper_type_identifier();
+                register_InnerEmptyStructureHelper_type_identifier(type_id);
 
-                register_InnerUnionHelper_type_identifier();
+                register_InnerUnionHelper_type_identifier(type_id);
 
-                register_SequenceShort_type_identifier();
+                register_SequenceShort_type_identifier(type_id);
 
-                register_SequenceUShort_type_identifier();
+                register_SequenceUShort_type_identifier(type_id);
 
-                register_SequenceLong_type_identifier();
+                register_SequenceLong_type_identifier(type_id);
 
-                register_SequenceULong_type_identifier();
+                register_SequenceULong_type_identifier(type_id);
 
-                register_SequenceLongLong_type_identifier();
+                register_SequenceLongLong_type_identifier(type_id);
 
-                register_SequenceULongLong_type_identifier();
+                register_SequenceULongLong_type_identifier(type_id);
 
-                register_SequenceFloat_type_identifier();
+                register_SequenceFloat_type_identifier(type_id);
 
-                register_SequenceDouble_type_identifier();
+                register_SequenceDouble_type_identifier(type_id);
 
-                register_SequenceLongDouble_type_identifier();
+                register_SequenceLongDouble_type_identifier(type_id);
 
-                register_SequenceBoolean_type_identifier();
+                register_SequenceBoolean_type_identifier(type_id);
 
-                register_SequenceOctet_type_identifier();
+                register_SequenceOctet_type_identifier(type_id);
 
-                register_SequenceChar_type_identifier();
+                register_SequenceChar_type_identifier(type_id);
 
-                register_SequenceWChar_type_identifier();
+                register_SequenceWChar_type_identifier(type_id);
 
-                register_SequenceString_type_identifier();
+                register_SequenceString_type_identifier(type_id);
 
-                register_SequenceWString_type_identifier();
+                register_SequenceWString_type_identifier(type_id);
 
-                register_SequenceStringBounded_type_identifier();
+                register_SequenceStringBounded_type_identifier(type_id);
 
-                register_SequenceWStringBounded_type_identifier();
+                register_SequenceWStringBounded_type_identifier(type_id);
 
-                register_SequenceEnum_type_identifier();
+                register_SequenceEnum_type_identifier(type_id);
 
-                register_SequenceBitMask_type_identifier();
+                register_SequenceBitMask_type_identifier(type_id);
 
-                register_SequenceAlias_type_identifier();
+                register_SequenceAlias_type_identifier(type_id);
 
-                register_SequenceShortArray_type_identifier();
+                register_SequenceShortArray_type_identifier(type_id);
 
-                register_SequenceSequence_type_identifier();
+                register_SequenceSequence_type_identifier(type_id);
 
-                register_SequenceMap_type_identifier();
+                register_SequenceMap_type_identifier(type_id);
 
-                register_SequenceUnion_type_identifier();
+                register_SequenceUnion_type_identifier(type_id);
 
-                register_SequenceStructure_type_identifier();
+                register_SequenceStructure_type_identifier(type_id);
 
-                register_SequenceBitset_type_identifier();
+                register_SequenceBitset_type_identifier(type_id);
 
-                register_BoundedSmallSequences_type_identifier();
+                register_BoundedSmallSequences_type_identifier(type_id);
 
-                register_BoundedBigSequences_type_identifier();
+                register_BoundedBigSequences_type_identifier(type_id);
 
             });
 }
 
-void register_SequenceShort_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceShort_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -138,6 +141,7 @@ void register_SequenceShort_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_int16_t_unbounded {nullptr};
@@ -181,6 +185,7 @@ void register_SequenceShort_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_int16_t_unbounded = EK_COMPLETE;
@@ -208,6 +213,7 @@ void register_SequenceShort_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_int16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -255,6 +261,7 @@ void register_SequenceShort_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_short member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_short = "var_sequence_short";
@@ -266,7 +273,7 @@ void register_SequenceShort_type_identifier()
         }
         CompleteStructType struct_type_SequenceShort = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceShort, header_SequenceShort, member_seq_SequenceShort);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceShort, type_name_SequenceShort.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceShort, type_name_SequenceShort.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceShort already registered in TypeObjectRegistry for a different type.");
@@ -278,11 +285,14 @@ void register_SequenceShort_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceShort: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceUShort_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceUShort_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceUShort = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -311,6 +321,7 @@ void register_SequenceUShort_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint16_t_unbounded {nullptr};
@@ -354,6 +365,7 @@ void register_SequenceUShort_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint16_t_unbounded = EK_COMPLETE;
@@ -381,6 +393,7 @@ void register_SequenceUShort_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -428,6 +441,7 @@ void register_SequenceUShort_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_ushort member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_ushort = "var_sequence_ushort";
@@ -439,7 +453,7 @@ void register_SequenceUShort_type_identifier()
         }
         CompleteStructType struct_type_SequenceUShort = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceUShort, header_SequenceUShort, member_seq_SequenceUShort);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceUShort, type_name_SequenceUShort.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceUShort, type_name_SequenceUShort.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceUShort already registered in TypeObjectRegistry for a different type.");
@@ -451,11 +465,14 @@ void register_SequenceUShort_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceUShort: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceLong_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceLong_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -484,6 +501,7 @@ void register_SequenceLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_int32_t_unbounded {nullptr};
@@ -527,6 +545,7 @@ void register_SequenceLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_int32_t_unbounded = EK_COMPLETE;
@@ -554,6 +573,7 @@ void register_SequenceLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_int32_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -601,6 +621,7 @@ void register_SequenceLong_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_long member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_long = "var_sequence_long";
@@ -612,7 +633,7 @@ void register_SequenceLong_type_identifier()
         }
         CompleteStructType struct_type_SequenceLong = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceLong, header_SequenceLong, member_seq_SequenceLong);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceLong, type_name_SequenceLong.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceLong, type_name_SequenceLong.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceLong already registered in TypeObjectRegistry for a different type.");
@@ -624,11 +645,14 @@ void register_SequenceLong_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceLong: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceULong_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceULong_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceULong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -657,6 +681,7 @@ void register_SequenceULong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint32_t_unbounded {nullptr};
@@ -700,6 +725,7 @@ void register_SequenceULong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint32_t_unbounded = EK_COMPLETE;
@@ -727,6 +753,7 @@ void register_SequenceULong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint32_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -774,6 +801,7 @@ void register_SequenceULong_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_ulong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_ulong = "var_sequence_ulong";
@@ -785,7 +813,7 @@ void register_SequenceULong_type_identifier()
         }
         CompleteStructType struct_type_SequenceULong = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceULong, header_SequenceULong, member_seq_SequenceULong);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceULong, type_name_SequenceULong.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceULong, type_name_SequenceULong.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceULong already registered in TypeObjectRegistry for a different type.");
@@ -797,11 +825,14 @@ void register_SequenceULong_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceULong: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceLongLong_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceLongLong_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceLongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -830,6 +861,7 @@ void register_SequenceLongLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_int64_t_unbounded {nullptr};
@@ -873,6 +905,7 @@ void register_SequenceLongLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_int64_t_unbounded = EK_COMPLETE;
@@ -900,6 +933,7 @@ void register_SequenceLongLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_int64_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -947,6 +981,7 @@ void register_SequenceLongLong_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_longlong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_longlong = "var_sequence_longlong";
@@ -958,7 +993,7 @@ void register_SequenceLongLong_type_identifier()
         }
         CompleteStructType struct_type_SequenceLongLong = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceLongLong, header_SequenceLongLong, member_seq_SequenceLongLong);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceLongLong, type_name_SequenceLongLong.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceLongLong, type_name_SequenceLongLong.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceLongLong already registered in TypeObjectRegistry for a different type.");
@@ -970,11 +1005,14 @@ void register_SequenceLongLong_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceLongLong: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceULongLong_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceULongLong_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceULongLong = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1003,6 +1041,7 @@ void register_SequenceULongLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint64_t_unbounded {nullptr};
@@ -1046,6 +1085,7 @@ void register_SequenceULongLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint64_t_unbounded = EK_COMPLETE;
@@ -1073,6 +1113,7 @@ void register_SequenceULongLong_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint64_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1120,6 +1161,7 @@ void register_SequenceULongLong_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_ulonglong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_ulonglong = "var_sequence_ulonglong";
@@ -1131,7 +1173,7 @@ void register_SequenceULongLong_type_identifier()
         }
         CompleteStructType struct_type_SequenceULongLong = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceULongLong, header_SequenceULongLong, member_seq_SequenceULongLong);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceULongLong, type_name_SequenceULongLong.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceULongLong, type_name_SequenceULongLong.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceULongLong already registered in TypeObjectRegistry for a different type.");
@@ -1143,11 +1185,14 @@ void register_SequenceULongLong_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceULongLong: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceFloat_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceFloat_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceFloat = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1176,6 +1221,7 @@ void register_SequenceFloat_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_float_unbounded {nullptr};
@@ -1219,6 +1265,7 @@ void register_SequenceFloat_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_float_unbounded = EK_COMPLETE;
@@ -1246,6 +1293,7 @@ void register_SequenceFloat_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_float_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1293,6 +1341,7 @@ void register_SequenceFloat_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_float member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_float = "var_sequence_float";
@@ -1304,7 +1353,7 @@ void register_SequenceFloat_type_identifier()
         }
         CompleteStructType struct_type_SequenceFloat = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceFloat, header_SequenceFloat, member_seq_SequenceFloat);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceFloat, type_name_SequenceFloat.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceFloat, type_name_SequenceFloat.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceFloat already registered in TypeObjectRegistry for a different type.");
@@ -1316,11 +1365,14 @@ void register_SequenceFloat_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceFloat: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceDouble_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceDouble_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1349,6 +1401,7 @@ void register_SequenceDouble_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_double_unbounded {nullptr};
@@ -1392,6 +1445,7 @@ void register_SequenceDouble_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_double_unbounded = EK_COMPLETE;
@@ -1419,6 +1473,7 @@ void register_SequenceDouble_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_double_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1466,6 +1521,7 @@ void register_SequenceDouble_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_double member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_double = "var_sequence_double";
@@ -1477,7 +1533,7 @@ void register_SequenceDouble_type_identifier()
         }
         CompleteStructType struct_type_SequenceDouble = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceDouble, header_SequenceDouble, member_seq_SequenceDouble);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceDouble, type_name_SequenceDouble.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceDouble, type_name_SequenceDouble.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceDouble already registered in TypeObjectRegistry for a different type.");
@@ -1489,11 +1545,14 @@ void register_SequenceDouble_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceDouble: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceLongDouble_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceLongDouble_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceLongDouble = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1522,6 +1581,7 @@ void register_SequenceLongDouble_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_longdouble_unbounded {nullptr};
@@ -1565,6 +1625,7 @@ void register_SequenceLongDouble_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_longdouble_unbounded = EK_COMPLETE;
@@ -1592,6 +1653,7 @@ void register_SequenceLongDouble_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_longdouble_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1639,6 +1701,7 @@ void register_SequenceLongDouble_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_longdouble member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_longdouble = "var_sequence_longdouble";
@@ -1650,7 +1713,7 @@ void register_SequenceLongDouble_type_identifier()
         }
         CompleteStructType struct_type_SequenceLongDouble = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceLongDouble, header_SequenceLongDouble, member_seq_SequenceLongDouble);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceLongDouble, type_name_SequenceLongDouble.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceLongDouble, type_name_SequenceLongDouble.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceLongDouble already registered in TypeObjectRegistry for a different type.");
@@ -1662,11 +1725,14 @@ void register_SequenceLongDouble_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceLongDouble: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceBoolean_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceBoolean_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceBoolean = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1695,6 +1761,7 @@ void register_SequenceBoolean_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_bool_unbounded {nullptr};
@@ -1738,6 +1805,7 @@ void register_SequenceBoolean_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_bool_unbounded = EK_COMPLETE;
@@ -1765,6 +1833,7 @@ void register_SequenceBoolean_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_bool_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1812,6 +1881,7 @@ void register_SequenceBoolean_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_boolean member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_boolean = "var_sequence_boolean";
@@ -1823,7 +1893,7 @@ void register_SequenceBoolean_type_identifier()
         }
         CompleteStructType struct_type_SequenceBoolean = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceBoolean, header_SequenceBoolean, member_seq_SequenceBoolean);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceBoolean, type_name_SequenceBoolean.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceBoolean, type_name_SequenceBoolean.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceBoolean already registered in TypeObjectRegistry for a different type.");
@@ -1835,11 +1905,14 @@ void register_SequenceBoolean_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceBoolean: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceOctet_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceOctet_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceOctet = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -1868,6 +1941,7 @@ void register_SequenceOctet_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint8_t_unbounded {nullptr};
@@ -1911,6 +1985,7 @@ void register_SequenceOctet_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint8_t_unbounded = EK_COMPLETE;
@@ -1938,6 +2013,7 @@ void register_SequenceOctet_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint8_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1985,6 +2061,7 @@ void register_SequenceOctet_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_octet member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_octet = "var_sequence_octet";
@@ -1996,7 +2073,7 @@ void register_SequenceOctet_type_identifier()
         }
         CompleteStructType struct_type_SequenceOctet = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceOctet, header_SequenceOctet, member_seq_SequenceOctet);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceOctet, type_name_SequenceOctet.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceOctet, type_name_SequenceOctet.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceOctet already registered in TypeObjectRegistry for a different type.");
@@ -2008,11 +2085,14 @@ void register_SequenceOctet_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceOctet: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceChar_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceChar_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2041,6 +2121,7 @@ void register_SequenceChar_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_char_unbounded {nullptr};
@@ -2084,6 +2165,7 @@ void register_SequenceChar_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_char_unbounded = EK_COMPLETE;
@@ -2111,6 +2193,7 @@ void register_SequenceChar_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_char_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -2158,6 +2241,7 @@ void register_SequenceChar_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_char member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_char = "var_sequence_char";
@@ -2169,7 +2253,7 @@ void register_SequenceChar_type_identifier()
         }
         CompleteStructType struct_type_SequenceChar = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceChar, header_SequenceChar, member_seq_SequenceChar);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceChar, type_name_SequenceChar.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceChar, type_name_SequenceChar.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceChar already registered in TypeObjectRegistry for a different type.");
@@ -2181,11 +2265,14 @@ void register_SequenceChar_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceChar: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceWChar_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceWChar_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceWChar = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2214,6 +2301,7 @@ void register_SequenceWChar_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_wchar_t_unbounded {nullptr};
@@ -2257,6 +2345,7 @@ void register_SequenceWChar_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_wchar_t_unbounded = EK_COMPLETE;
@@ -2284,6 +2373,7 @@ void register_SequenceWChar_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_wchar_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -2331,6 +2421,7 @@ void register_SequenceWChar_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_wchar member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_wchar = "var_sequence_wchar";
@@ -2342,7 +2433,7 @@ void register_SequenceWChar_type_identifier()
         }
         CompleteStructType struct_type_SequenceWChar = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceWChar, header_SequenceWChar, member_seq_SequenceWChar);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceWChar, type_name_SequenceWChar.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceWChar, type_name_SequenceWChar.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceWChar already registered in TypeObjectRegistry for a different type.");
@@ -2354,11 +2445,14 @@ void register_SequenceWChar_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceWChar: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceString_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceString_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2403,6 +2497,7 @@ void register_SequenceString_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -2447,6 +2542,7 @@ void register_SequenceString_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_string_unbounded_unbounded = EK_COMPLETE;
@@ -2474,6 +2570,7 @@ void register_SequenceString_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_string_unbounded_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -2521,6 +2618,7 @@ void register_SequenceString_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_string member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_string = "var_sequence_string";
@@ -2532,7 +2630,7 @@ void register_SequenceString_type_identifier()
         }
         CompleteStructType struct_type_SequenceString = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceString, header_SequenceString, member_seq_SequenceString);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceString, type_name_SequenceString.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceString, type_name_SequenceString.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceString already registered in TypeObjectRegistry for a different type.");
@@ -2544,11 +2642,14 @@ void register_SequenceString_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceString: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceWString_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceWString_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceWString = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2593,6 +2694,7 @@ void register_SequenceWString_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_wstring_unbounded: Given WString TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -2637,6 +2739,7 @@ void register_SequenceWString_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_wstring_unbounded_unbounded = EK_COMPLETE;
@@ -2664,6 +2767,7 @@ void register_SequenceWString_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_wstring_unbounded_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -2711,6 +2815,7 @@ void register_SequenceWString_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_wstring member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_wstring = "var_sequence_wstring";
@@ -2722,7 +2827,7 @@ void register_SequenceWString_type_identifier()
         }
         CompleteStructType struct_type_SequenceWString = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceWString, header_SequenceWString, member_seq_SequenceWString);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceWString, type_name_SequenceWString.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceWString, type_name_SequenceWString.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceWString already registered in TypeObjectRegistry for a different type.");
@@ -2734,11 +2839,14 @@ void register_SequenceWString_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceWString: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceStringBounded_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceStringBounded_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceStringBounded = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2796,6 +2904,7 @@ void register_SequenceStringBounded_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_string_10: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                     }
@@ -2840,6 +2949,7 @@ void register_SequenceStringBounded_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Inner_alias_bounded_string_helper related TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_string_helper;
@@ -2859,6 +2969,7 @@ void register_SequenceStringBounded_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Inner_alias_bounded_string_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -2903,6 +3014,7 @@ void register_SequenceStringBounded_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_string_10_unbounded = EK_COMPLETE;
@@ -2930,6 +3042,7 @@ void register_SequenceStringBounded_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_string_10_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -2977,6 +3090,7 @@ void register_SequenceStringBounded_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_bounded_string member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_bounded_string = "var_sequence_bounded_string";
@@ -2988,7 +3102,7 @@ void register_SequenceStringBounded_type_identifier()
         }
         CompleteStructType struct_type_SequenceStringBounded = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceStringBounded, header_SequenceStringBounded, member_seq_SequenceStringBounded);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceStringBounded, type_name_SequenceStringBounded.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceStringBounded, type_name_SequenceStringBounded.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceStringBounded already registered in TypeObjectRegistry for a different type.");
@@ -3000,11 +3114,14 @@ void register_SequenceStringBounded_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceStringBounded: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceWStringBounded_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceWStringBounded_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceWStringBounded = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -3062,6 +3179,7 @@ void register_SequenceWStringBounded_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_wstring_10: Given WString TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                     }
@@ -3106,6 +3224,7 @@ void register_SequenceWStringBounded_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Inner_alias_bounded_wstring_helper related TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_bounded_wstring_helper;
@@ -3125,6 +3244,7 @@ void register_SequenceWStringBounded_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Inner_alias_bounded_wstring_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -3169,6 +3289,7 @@ void register_SequenceWStringBounded_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_wstring_10_unbounded = EK_COMPLETE;
@@ -3196,6 +3317,7 @@ void register_SequenceWStringBounded_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_wstring_10_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -3243,6 +3365,7 @@ void register_SequenceWStringBounded_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_bounded_wstring member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_bounded_wstring = "var_sequence_bounded_wstring";
@@ -3254,7 +3377,7 @@ void register_SequenceWStringBounded_type_identifier()
         }
         CompleteStructType struct_type_SequenceWStringBounded = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceWStringBounded, header_SequenceWStringBounded, member_seq_SequenceWStringBounded);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceWStringBounded, type_name_SequenceWStringBounded.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceWStringBounded, type_name_SequenceWStringBounded.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceWStringBounded already registered in TypeObjectRegistry for a different type.");
@@ -3266,11 +3389,14 @@ void register_SequenceWStringBounded_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceWStringBounded: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceEnum_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceEnum_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceEnum = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -3351,6 +3477,7 @@ void register_SequenceEnum_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerEnumHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -3395,6 +3522,7 @@ void register_SequenceEnum_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_InnerEnumHelper_unbounded = EK_COMPLETE;
@@ -3422,6 +3550,7 @@ void register_SequenceEnum_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_InnerEnumHelper_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -3469,6 +3598,7 @@ void register_SequenceEnum_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_enum member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_enum = "var_sequence_enum";
@@ -3480,7 +3610,7 @@ void register_SequenceEnum_type_identifier()
         }
         CompleteStructType struct_type_SequenceEnum = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceEnum, header_SequenceEnum, member_seq_SequenceEnum);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceEnum, type_name_SequenceEnum.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceEnum, type_name_SequenceEnum.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceEnum already registered in TypeObjectRegistry for a different type.");
@@ -3492,11 +3622,14 @@ void register_SequenceEnum_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceEnum: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceBitMask_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceBitMask_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceBitMask = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -3610,6 +3743,7 @@ void register_SequenceBitMask_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerBitMaskHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -3654,6 +3788,7 @@ void register_SequenceBitMask_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_InnerBitMaskHelper_unbounded = EK_COMPLETE;
@@ -3681,6 +3816,7 @@ void register_SequenceBitMask_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_InnerBitMaskHelper_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -3728,6 +3864,7 @@ void register_SequenceBitMask_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_bitmask member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_bitmask = "var_sequence_bitmask";
@@ -3739,7 +3876,7 @@ void register_SequenceBitMask_type_identifier()
         }
         CompleteStructType struct_type_SequenceBitMask = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceBitMask, header_SequenceBitMask, member_seq_SequenceBitMask);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceBitMask, type_name_SequenceBitMask.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceBitMask, type_name_SequenceBitMask.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceBitMask already registered in TypeObjectRegistry for a different type.");
@@ -3751,11 +3888,14 @@ void register_SequenceBitMask_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceBitMask: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceAlias_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceAlias_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceAlias = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -3797,6 +3937,7 @@ void register_SequenceAlias_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerAliasHelper related TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CommonAliasBody common_InnerAliasHelper;
@@ -3840,6 +3981,7 @@ void register_SequenceAlias_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerAliasHelper related TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_InnerAliasHelper;
@@ -3859,6 +4001,7 @@ void register_SequenceAlias_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerAliasHelper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -3903,6 +4046,7 @@ void register_SequenceAlias_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_InnerAliasHelper_unbounded = EK_COMPLETE;
@@ -3930,6 +4074,7 @@ void register_SequenceAlias_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_InnerAliasHelper_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -3977,6 +4122,7 @@ void register_SequenceAlias_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_alias member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_alias = "var_sequence_alias";
@@ -3988,7 +4134,7 @@ void register_SequenceAlias_type_identifier()
         }
         CompleteStructType struct_type_SequenceAlias = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceAlias, header_SequenceAlias, member_seq_SequenceAlias);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceAlias, type_name_SequenceAlias.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceAlias, type_name_SequenceAlias.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceAlias already registered in TypeObjectRegistry for a different type.");
@@ -4000,11 +4146,14 @@ void register_SequenceAlias_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceAlias: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceShortArray_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceShortArray_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceShortArray = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -4052,6 +4201,7 @@ void register_SequenceShortArray_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         TypeIdentifier* element_identifier_anonymous_array_int16_t_2 {nullptr};
@@ -4095,6 +4245,7 @@ void register_SequenceShortArray_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Array element TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         EquivalenceKind equiv_kind_anonymous_array_int16_t_2 = EK_COMPLETE;
@@ -4124,6 +4275,7 @@ void register_SequenceShortArray_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_array_int16_t_2: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                     }
@@ -4168,6 +4320,7 @@ void register_SequenceShortArray_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Inner_alias_array_helper related TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_array_helper;
@@ -4187,6 +4340,7 @@ void register_SequenceShortArray_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Inner_alias_array_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -4231,6 +4385,7 @@ void register_SequenceShortArray_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_array_int16_t_2_unbounded = EK_COMPLETE;
@@ -4258,6 +4413,7 @@ void register_SequenceShortArray_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_array_int16_t_2_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -4305,6 +4461,7 @@ void register_SequenceShortArray_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_short_array member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_short_array = "var_sequence_short_array";
@@ -4316,7 +4473,7 @@ void register_SequenceShortArray_type_identifier()
         }
         CompleteStructType struct_type_SequenceShortArray = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceShortArray, header_SequenceShortArray, member_seq_SequenceShortArray);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceShortArray, type_name_SequenceShortArray.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceShortArray, type_name_SequenceShortArray.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceShortArray already registered in TypeObjectRegistry for a different type.");
@@ -4328,11 +4485,14 @@ void register_SequenceShortArray_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceShortArray: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceSequence_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceSequence_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceSequence = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -4380,6 +4540,7 @@ void register_SequenceSequence_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         TypeIdentifier* element_identifier_anonymous_sequence_int16_t_unbounded {nullptr};
@@ -4423,6 +4584,7 @@ void register_SequenceSequence_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Sequence element TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         EquivalenceKind equiv_kind_anonymous_sequence_int16_t_unbounded = EK_COMPLETE;
@@ -4450,6 +4612,7 @@ void register_SequenceSequence_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_sequence_int16_t_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                     }
@@ -4494,6 +4657,7 @@ void register_SequenceSequence_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Inner_alias_sequence_helper related TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_sequence_helper;
@@ -4513,6 +4677,7 @@ void register_SequenceSequence_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Inner_alias_sequence_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -4557,6 +4722,7 @@ void register_SequenceSequence_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_sequence_int16_t_unbounded_unbounded = EK_COMPLETE;
@@ -4584,6 +4750,7 @@ void register_SequenceSequence_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_sequence_int16_t_unbounded_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -4631,6 +4798,7 @@ void register_SequenceSequence_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_sequence member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_sequence = "var_sequence_sequence";
@@ -4642,7 +4810,7 @@ void register_SequenceSequence_type_identifier()
         }
         CompleteStructType struct_type_SequenceSequence = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceSequence, header_SequenceSequence, member_seq_SequenceSequence);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceSequence, type_name_SequenceSequence.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceSequence, type_name_SequenceSequence.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceSequence already registered in TypeObjectRegistry for a different type.");
@@ -4654,11 +4822,14 @@ void register_SequenceSequence_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceSequence: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceMap_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceMap_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceMap = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -4706,6 +4877,7 @@ void register_SequenceMap_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Map element TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         TypeIdentifier* element_identifier_anonymous_map_int32_t_int32_t_unbounded {nullptr};
@@ -4749,6 +4921,7 @@ void register_SequenceMap_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_map_int32_t_int32_t_unbounded inconsistent element TypeIdentifier.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         return_code_SequenceMap =
@@ -4759,6 +4932,7 @@ void register_SequenceMap_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Map key TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         TypeIdentifier* key_identifier_anonymous_map_int32_t_int32_t_unbounded {nullptr};
@@ -4802,6 +4976,7 @@ void register_SequenceMap_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_map_int32_t_int32_t_unbounded inconsistent key TypeIdentifier.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         EquivalenceKind equiv_kind_anonymous_map_int32_t_int32_t_unbounded = EK_BOTH;
@@ -4837,6 +5012,7 @@ void register_SequenceMap_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "anonymous_map_int32_t_int32_t_unbounded: Given Map TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                     }
@@ -4881,6 +5057,7 @@ void register_SequenceMap_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Inner_alias_map_helper related TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_Inner_alias_map_helper;
@@ -4900,6 +5077,7 @@ void register_SequenceMap_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Inner_alias_map_helper: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -4944,6 +5122,7 @@ void register_SequenceMap_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_map_int32_t_int32_t_0_unbounded = EK_COMPLETE;
@@ -4971,6 +5150,7 @@ void register_SequenceMap_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_map_int32_t_int32_t_0_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -5018,6 +5198,7 @@ void register_SequenceMap_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_map member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_map = "var_sequence_map";
@@ -5029,7 +5210,7 @@ void register_SequenceMap_type_identifier()
         }
         CompleteStructType struct_type_SequenceMap = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceMap, header_SequenceMap, member_seq_SequenceMap);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceMap, type_name_SequenceMap.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceMap, type_name_SequenceMap.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceMap already registered in TypeObjectRegistry for a different type.");
@@ -5041,11 +5222,14 @@ void register_SequenceMap_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceMap: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceUnion_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceUnion_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceUnion = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -5099,6 +5283,7 @@ void register_SequenceUnion_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         CommonDiscriminatorMember common_InnerUnionHelper;
@@ -5114,6 +5299,7 @@ void register_SequenceUnion_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerUnionHelper discriminator TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         type_ann_builtin_InnerUnionHelper.reset();
@@ -5130,6 +5316,7 @@ void register_SequenceUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "longValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             UnionMemberFlag member_flags_longValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5180,6 +5367,7 @@ void register_SequenceUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Union longValue member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_longValue = "longValue";
@@ -5198,6 +5386,7 @@ void register_SequenceUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "floatValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             UnionMemberFlag member_flags_floatValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5248,6 +5437,7 @@ void register_SequenceUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Union floatValue member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_floatValue = "floatValue";
@@ -5266,6 +5456,7 @@ void register_SequenceUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "shortValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             UnionMemberFlag member_flags_shortValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5315,6 +5506,7 @@ void register_SequenceUnion_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Union shortValue member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_shortValue = "shortValue";
@@ -5327,7 +5519,7 @@ void register_SequenceUnion_type_identifier()
                         CompleteUnionType union_type_InnerUnionHelper = TypeObjectUtils::build_complete_union_type(union_flags_InnerUnionHelper, header_InnerUnionHelper, discriminator_InnerUnionHelper,
                                 member_seq_InnerUnionHelper);
                         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_union_type_object(union_type_InnerUnionHelper, type_name_InnerUnionHelper.to_string()))
+                                TypeObjectUtils::build_and_register_union_type_object(union_type_InnerUnionHelper, type_name_InnerUnionHelper.to_string(), type_id))
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerUnionHelper already registered in TypeObjectRegistry for a different type.");
@@ -5339,8 +5531,11 @@ void register_SequenceUnion_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerUnionHelper: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
+                        return_code_SequenceUnion = return_code_InnerUnionHelper;
+                        type_ids_SequenceUnion = type_ids_InnerUnionHelper;
                     }
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_InnerUnionHelper_unbounded {nullptr};
@@ -5384,6 +5579,7 @@ void register_SequenceUnion_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_InnerUnionHelper_unbounded = EK_COMPLETE;
@@ -5411,6 +5607,7 @@ void register_SequenceUnion_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_InnerUnionHelper_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -5458,6 +5655,7 @@ void register_SequenceUnion_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_union member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_union = "var_sequence_union";
@@ -5469,7 +5667,7 @@ void register_SequenceUnion_type_identifier()
         }
         CompleteStructType struct_type_SequenceUnion = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceUnion, header_SequenceUnion, member_seq_SequenceUnion);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceUnion, type_name_SequenceUnion.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceUnion, type_name_SequenceUnion.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceUnion already registered in TypeObjectRegistry for a different type.");
@@ -5481,11 +5679,14 @@ void register_SequenceUnion_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceUnion: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceStructure_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceStructure_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -5540,6 +5741,7 @@ void register_SequenceStructure_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "field1 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_field1 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5586,6 +5788,7 @@ void register_SequenceStructure_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure field1 member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_field1 = "field1";
@@ -5604,6 +5807,7 @@ void register_SequenceStructure_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "field2 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_field2 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5650,6 +5854,7 @@ void register_SequenceStructure_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure field2 member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_field2 = "field2";
@@ -5661,7 +5866,7 @@ void register_SequenceStructure_type_identifier()
                         }
                         CompleteStructType struct_type_InnerStructureHelper = TypeObjectUtils::build_complete_struct_type(struct_flags_InnerStructureHelper, header_InnerStructureHelper, member_seq_InnerStructureHelper);
                         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string()))
+                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_InnerStructureHelper, type_name_InnerStructureHelper.to_string(), type_id))
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerStructureHelper already registered in TypeObjectRegistry for a different type.");
@@ -5673,8 +5878,11 @@ void register_SequenceStructure_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "InnerStructureHelper: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
+                        return_code_SequenceStructure = return_code_InnerStructureHelper;
+                        type_ids_SequenceStructure = type_ids_InnerStructureHelper;
                     }
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_InnerStructureHelper_unbounded {nullptr};
@@ -5718,6 +5926,7 @@ void register_SequenceStructure_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_InnerStructureHelper_unbounded = EK_COMPLETE;
@@ -5745,6 +5954,7 @@ void register_SequenceStructure_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_InnerStructureHelper_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -5792,6 +6002,7 @@ void register_SequenceStructure_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_structure member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_structure = "var_sequence_structure";
@@ -5803,7 +6014,7 @@ void register_SequenceStructure_type_identifier()
         }
         CompleteStructType struct_type_SequenceStructure = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceStructure, header_SequenceStructure, member_seq_SequenceStructure);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceStructure, type_name_SequenceStructure.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceStructure, type_name_SequenceStructure.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceStructure already registered in TypeObjectRegistry for a different type.");
@@ -5815,11 +6026,14 @@ void register_SequenceStructure_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceStructure: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_SequenceBitset_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_SequenceBitset_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_SequenceBitset = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -5919,6 +6133,7 @@ void register_SequenceBitset_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerBitsetHelper: Given Bitset TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -5963,6 +6178,7 @@ void register_SequenceBitset_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_InnerBitsetHelper_unbounded = EK_COMPLETE;
@@ -5990,6 +6206,7 @@ void register_SequenceBitset_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_InnerBitsetHelper_unbounded: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -6037,6 +6254,7 @@ void register_SequenceBitset_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_bitset member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_bitset = "var_sequence_bitset";
@@ -6048,7 +6266,7 @@ void register_SequenceBitset_type_identifier()
         }
         CompleteStructType struct_type_SequenceBitset = TypeObjectUtils::build_complete_struct_type(struct_flags_SequenceBitset, header_SequenceBitset, member_seq_SequenceBitset);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceBitset, type_name_SequenceBitset.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_SequenceBitset, type_name_SequenceBitset.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "SequenceBitset already registered in TypeObjectRegistry for a different type.");
@@ -6060,11 +6278,14 @@ void register_SequenceBitset_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "SequenceBitset: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_BoundedSmallSequences_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_BoundedSmallSequences_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_BoundedSmallSequences = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -6093,6 +6314,7 @@ void register_BoundedSmallSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_int16_t_1 {nullptr};
@@ -6136,6 +6358,7 @@ void register_BoundedSmallSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_int16_t_1 = EK_COMPLETE;
@@ -6163,6 +6386,7 @@ void register_BoundedSmallSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_int16_t_1: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -6210,6 +6434,7 @@ void register_BoundedSmallSequences_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_small member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_small = "var_sequence_small";
@@ -6250,6 +6475,7 @@ void register_BoundedSmallSequences_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -6294,6 +6520,7 @@ void register_BoundedSmallSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_string_unbounded_5 = EK_COMPLETE;
@@ -6321,6 +6548,7 @@ void register_BoundedSmallSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_string_unbounded_5: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -6368,6 +6596,7 @@ void register_BoundedSmallSequences_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_unbounded_string_small_bounded_sequence member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_unbounded_string_small_bounded_sequence = "var_unbounded_string_small_bounded_sequence";
@@ -6379,7 +6608,7 @@ void register_BoundedSmallSequences_type_identifier()
         }
         CompleteStructType struct_type_BoundedSmallSequences = TypeObjectUtils::build_complete_struct_type(struct_flags_BoundedSmallSequences, header_BoundedSmallSequences, member_seq_BoundedSmallSequences);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BoundedSmallSequences, type_name_BoundedSmallSequences.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BoundedSmallSequences, type_name_BoundedSmallSequences.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BoundedSmallSequences already registered in TypeObjectRegistry for a different type.");
@@ -6391,11 +6620,14 @@ void register_BoundedSmallSequences_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "BoundedSmallSequences: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_BoundedBigSequences_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_BoundedBigSequences_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_BoundedBigSequences = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -6424,6 +6656,7 @@ void register_BoundedBigSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_int16_t_41925 {nullptr};
@@ -6467,6 +6700,7 @@ void register_BoundedBigSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_int16_t_41925 = EK_COMPLETE;
@@ -6494,6 +6728,7 @@ void register_BoundedBigSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_int16_t_41925: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -6541,6 +6776,7 @@ void register_BoundedBigSequences_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_sequence_big member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_sequence_big = "var_sequence_big";
@@ -6581,6 +6817,7 @@ void register_BoundedBigSequences_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -6625,6 +6862,7 @@ void register_BoundedBigSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_anonymous_string_unbounded_256 = EK_COMPLETE;
@@ -6652,6 +6890,7 @@ void register_BoundedBigSequences_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_anonymous_string_unbounded_256: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -6699,6 +6938,7 @@ void register_BoundedBigSequences_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_unbounded_string_large_bounded_sequence member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_unbounded_string_large_bounded_sequence = "var_unbounded_string_large_bounded_sequence";
@@ -6710,7 +6950,7 @@ void register_BoundedBigSequences_type_identifier()
         }
         CompleteStructType struct_type_BoundedBigSequences = TypeObjectUtils::build_complete_struct_type(struct_flags_BoundedBigSequences, header_BoundedBigSequences, member_seq_BoundedBigSequences);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BoundedBigSequences, type_name_BoundedBigSequences.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BoundedBigSequences, type_name_BoundedBigSequences.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BoundedBigSequences already registered in TypeObjectRegistry for a different type.");
@@ -6722,6 +6962,7 @@ void register_BoundedBigSequences_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "BoundedBigSequences: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

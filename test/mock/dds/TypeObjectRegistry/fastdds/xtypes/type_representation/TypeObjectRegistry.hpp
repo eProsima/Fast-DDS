@@ -45,7 +45,8 @@ public:
     }
 
     ReturnCode_t register_typeobject_w_dynamic_type(
-            const DynamicType::_ref_type&)
+            const DynamicType::_ref_type&,
+            TypeIdentifier&)
     {
         return fastdds::dds::RETCODE_OK;
     }

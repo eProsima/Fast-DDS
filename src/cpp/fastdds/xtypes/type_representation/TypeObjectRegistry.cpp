@@ -35,6 +35,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/utils/md5.h>
 
+#include <fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/TypeValueConverter.hpp>
 
 namespace eprosima {
@@ -53,7 +54,8 @@ bool TypeRegistryEntry::operator !=(
 
 ReturnCode_t TypeObjectRegistry::register_type_object(
         const std::string& type_name,
-        const CompleteTypeObject& complete_type_object)
+        const CompleteTypeObject& complete_type_object,
+        TypeIdentifier& type_id)
 {
     if (type_name.empty())
     {
@@ -79,6 +81,7 @@ ReturnCode_t TypeObjectRegistry::register_type_object(
             minimal_entry.type_object_serialized_size_));
     type_ids.type_identifier2(calculate_type_identifier(complete_entry.type_object_,
             complete_entry.type_object_serialized_size_));
+    type_id = type_ids.type_identifier2();
 
     std::lock_guard<std::mutex> data_guard(type_object_registry_mutex_);
     auto type_ids_result = local_type_identifiers_.insert({type_name, type_ids});
@@ -1171,13 +1174,6 @@ const TypeIdentifier TypeObjectRegistry::minimal_from_complete_type_identifier(
 }
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
-        const DynamicType::_ref_type& dynamic_type)
-{
-    TypeIdentifier type_id;
-    return register_typeobject_w_dynamic_type(dynamic_type, type_id);
-}
-
-ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
         const DynamicType::_ref_type& dynamic_type,
         TypeIdentifier& type_id)
 {
@@ -1412,7 +1408,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(
-            extensibility_kind(type_descriptor->extensibility_kind()), type_descriptor->is_nested(), false);
+            traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
+            extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+            type_descriptor->is_nested(), false);
 
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
@@ -1433,8 +1431,10 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         member.second->get_descriptor(member_descriptor);
         StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(
-                try_construct_kind(member_descriptor->try_construct_kind()), member_descriptor->is_optional(),
-                member_descriptor->is_must_understand(), member_descriptor->is_key(), member_descriptor->is_shared());
+                traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->is_try_construct_kind_set() ?
+                try_construct_kind(member_descriptor->try_construct_kind()) : TryConstructKind::NOT_APPLIED,
+                member_descriptor->is_optional(), member_descriptor->is_must_understand(), member_descriptor->is_key(),
+                member_descriptor->is_shared());
         TypeIdentifier member_type_id;
         register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);
         CommonStructMember common = TypeObjectUtils::build_common_struct_member(member.first,
@@ -1469,7 +1469,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(
-            extensibility_kind(type_descriptor->extensibility_kind()), type_descriptor->is_nested(), false);
+            traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
+            extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+            type_descriptor->is_nested(), false);
 
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
@@ -1501,7 +1503,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member.second->get_descriptor(member_descriptor);
             UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(
-                    try_construct_kind(member_descriptor->try_construct_kind()), member_descriptor->is_default_label(),
+                    traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->
+                    is_try_construct_kind_set() ? try_construct_kind(member_descriptor->try_construct_kind()) :
+                    TryConstructKind::NOT_APPLIED, member_descriptor->is_default_label(),
                     member_descriptor->is_shared());
             TypeIdentifier member_type_id;
             register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);

@@ -1708,6 +1708,7 @@ public:
      *
      * @param[in] annotation_type CompleteAnnotationType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_id Complete TypeIdentifier corresponding to the CompleteAnnotationType being registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1717,7 +1718,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_annotation_type_object(
             const CompleteAnnotationType& annotation_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifier& type_id);
 
     /**
      * @brief Register structure TypeObject into TypeObjectRegistry.
@@ -1725,6 +1727,7 @@ public:
      *
      * @param[in] struct_type CompleteStructType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_id Complete TypeIdentifier corresponding to the CompleteStructType being registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1734,7 +1737,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_struct_type_object(
             const CompleteStructType& struct_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifier& type_id);
 
     /**
      * @brief Register union TypeObject into TypeObjectRegistry.
@@ -1742,6 +1746,7 @@ public:
      *
      * @param[in] union_type CompleteUnionType.
      * @param[in] type_name Name to be registered in the registry.
+     * @param[out] type_id Complete TypeIdentifier corresponding to the CompleteUnionType being registered.
      * @exception eprosima::fastdds::dds::xtypes::InvalidArgumentError exception if the given type is inconsistent
      *            (only in Debug build mode).
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
@@ -1751,7 +1756,8 @@ public:
      */
     FASTDDS_EXPORTED_API static ReturnCode_t build_and_register_union_type_object(
             const CompleteUnionType& union_type,
-            const std::string& type_name);
+            const std::string& type_name,
+            TypeIdentifier& type_id);
 
     /**
      * @brief Register bitset TypeObject into TypeObjectRegistry.

@@ -92,6 +92,7 @@ public:
      *
      * @param[in] type_name Name of the type being registered.
      * @param[in] complete_type_object CompleteTypeObject related to the given type name.
+     * @param[out] type_id TypeIdentifier corresponding to the CompleteTypeObject just registered.
      * @return ReturnCode_t RETCODE_OK if correctly registered in TypeObjectRegistry.
      *                      RETCODE_BAD_PARAMETER if there is already another different TypeObject registered with the
      *                      given type_name.
@@ -100,7 +101,8 @@ public:
      */
     ReturnCode_t register_type_object(
             const std::string& type_name,
-            const CompleteTypeObject& complete_type_object) override;
+            const CompleteTypeObject& complete_type_object,
+            TypeIdentifier& type_id) override;
 
     /**
      * @brief Register an indirect hash TypeIdentifier.
@@ -250,14 +252,15 @@ public:
             const TypeObject& type_object);
 
     /**
-     * @brief Register DynamicType TypeObject representation in TypeObjectRegistry.
+     * @brief Register DynamicType TypeObject.
      *
-     * @param dynamic_type DynamicType to be registered.
-     * @return ReturnCode_t RETCODE_OK if successfully registered.
-     *         TODO: COMPLETE documentation
+     * @param[in] dynamic_type DynamicType to be registered.
+     * @param[out] type_id TypeIdentifier corresponding to the registered DynamicType TypeObject.
+     * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type);
+            const DynamicType::_ref_type& dynamic_type,
+            TypeIdentifier& type_id) override;
 
     /**
      * @brief Check if two given types are compatible according to the given TypeConsistencyEnforcement QoS.
@@ -762,17 +765,6 @@ protected:
      */
     const TypeIdentifier minimal_from_complete_type_identifier(
             const TypeIdentifier& complete_type_id);
-
-    /**
-     * @brief Register DynamicType TypeObject.
-     *
-     * @param[in] dynamic_type DynamicType to be registered.
-     * @param[out] type_id TypeIdentifier corresponfind to the registered DynamicType TypeObject.
-     * @return ReturnCode_t RETCODE_OK always.
-     */
-    ReturnCode_t register_typeobject_w_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
-            TypeIdentifier& type_id);
 
     /**
      * @brief Register DynamicType TypeObject of an Alias type.

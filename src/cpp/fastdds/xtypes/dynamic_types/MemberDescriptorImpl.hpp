@@ -321,6 +321,11 @@ public:
             MemberDescriptorImpl& descriptor) noexcept;
 
     bool is_consistent() noexcept override;
+
+    bool is_try_construct_kind_set()
+    {
+        return is_try_construct_kind_set_;
+    }
 };
 
 } // namespace dds

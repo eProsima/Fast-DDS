@@ -43,12 +43,15 @@ void register_FilteringExample_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_FilteringExample_type_identifier();
+                TypeIdentifier type_id;
+                register_FilteringExample_type_identifier(type_id);
 
             });
 }
 
-void register_FilteringExample_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FilteringExample_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FilteringExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -71,6 +74,7 @@ void register_FilteringExample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "sampleNumber Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_sampleNumber = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -117,6 +121,7 @@ void register_FilteringExample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure sampleNumber member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_sampleNumber = "sampleNumber";
@@ -128,7 +133,7 @@ void register_FilteringExample_type_identifier()
         }
         CompleteStructType struct_type_FilteringExample = TypeObjectUtils::build_complete_struct_type(struct_flags_FilteringExample, header_FilteringExample, member_seq_FilteringExample);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FilteringExample, type_name_FilteringExample.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FilteringExample, type_name_FilteringExample.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FilteringExample already registered in TypeObjectRegistry for a different type.");
@@ -140,6 +145,7 @@ void register_FilteringExample_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FilteringExample: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

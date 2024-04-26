@@ -43,12 +43,15 @@ void register_FixedSized_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_FixedSized_type_identifier();
+                TypeIdentifier type_id;
+                register_FixedSized_type_identifier(type_id);
 
             });
 }
 
-void register_FixedSized_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FixedSized_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FixedSized = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL,
@@ -78,6 +81,7 @@ void register_FixedSized_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -124,6 +128,7 @@ void register_FixedSized_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure index member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_index = "index";
@@ -135,7 +140,7 @@ void register_FixedSized_type_identifier()
         }
         CompleteStructType struct_type_FixedSized = TypeObjectUtils::build_complete_struct_type(struct_flags_FixedSized, header_FixedSized, member_seq_FixedSized);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixedSized, type_name_FixedSized.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixedSized, type_name_FixedSized.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FixedSized already registered in TypeObjectRegistry for a different type.");
@@ -147,6 +152,7 @@ void register_FixedSized_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FixedSized: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

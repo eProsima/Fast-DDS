@@ -43,12 +43,15 @@ void register_OwnershipStrength_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_ExampleMessage_type_identifier();
+                TypeIdentifier type_id;
+                register_ExampleMessage_type_identifier(type_id);
 
             });
 }
 
-void register_ExampleMessage_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_ExampleMessage_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_ExampleMessage = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -71,6 +74,7 @@ void register_ExampleMessage_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -117,6 +121,7 @@ void register_ExampleMessage_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure index member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_index = "index";
@@ -135,6 +140,7 @@ void register_ExampleMessage_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ownershipStrength Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ownershipStrength = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -181,6 +187,7 @@ void register_ExampleMessage_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ownershipStrength member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ownershipStrength = "ownershipStrength";
@@ -215,6 +222,7 @@ void register_ExampleMessage_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -262,6 +270,7 @@ void register_ExampleMessage_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure message member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_message = "message";
@@ -273,7 +282,7 @@ void register_ExampleMessage_type_identifier()
         }
         CompleteStructType struct_type_ExampleMessage = TypeObjectUtils::build_complete_struct_type(struct_flags_ExampleMessage, header_ExampleMessage, member_seq_ExampleMessage);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ExampleMessage, type_name_ExampleMessage.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_ExampleMessage, type_name_ExampleMessage.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "ExampleMessage already registered in TypeObjectRegistry for a different type.");
@@ -285,6 +294,7 @@ void register_ExampleMessage_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ExampleMessage: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

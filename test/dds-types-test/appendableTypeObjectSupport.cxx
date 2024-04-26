@@ -44,54 +44,57 @@ void register_appendable_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_InnerStructureHelper_type_identifier();
+                TypeIdentifier type_id;
+                register_InnerStructureHelper_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelper_type_identifier();
+                register_InnerEmptyStructureHelper_type_identifier(type_id);
 
-                register_InnerUnionHelper_type_identifier();
+                register_InnerUnionHelper_type_identifier(type_id);
 
-                register_AppendableShortStruct_type_identifier();
+                register_AppendableShortStruct_type_identifier(type_id);
 
-                register_AppendableUShortStruct_type_identifier();
+                register_AppendableUShortStruct_type_identifier(type_id);
 
-                register_AppendableLongStruct_type_identifier();
+                register_AppendableLongStruct_type_identifier(type_id);
 
-                register_AppendableULongStruct_type_identifier();
+                register_AppendableULongStruct_type_identifier(type_id);
 
-                register_AppendableLongLongStruct_type_identifier();
+                register_AppendableLongLongStruct_type_identifier(type_id);
 
-                register_AppendableULongLongStruct_type_identifier();
+                register_AppendableULongLongStruct_type_identifier(type_id);
 
-                register_AppendableFloatStruct_type_identifier();
+                register_AppendableFloatStruct_type_identifier(type_id);
 
-                register_AppendableDoubleStruct_type_identifier();
+                register_AppendableDoubleStruct_type_identifier(type_id);
 
-                register_AppendableLongDoubleStruct_type_identifier();
+                register_AppendableLongDoubleStruct_type_identifier(type_id);
 
-                register_AppendableBooleanStruct_type_identifier();
+                register_AppendableBooleanStruct_type_identifier(type_id);
 
-                register_AppendableOctetStruct_type_identifier();
+                register_AppendableOctetStruct_type_identifier(type_id);
 
-                register_AppendableCharStruct_type_identifier();
+                register_AppendableCharStruct_type_identifier(type_id);
 
-                register_AppendableWCharStruct_type_identifier();
+                register_AppendableWCharStruct_type_identifier(type_id);
 
-                register_AppendableUnionStruct_type_identifier();
+                register_AppendableUnionStruct_type_identifier(type_id);
 
-                register_AppendableEmptyStruct_type_identifier();
+                register_AppendableEmptyStruct_type_identifier(type_id);
 
-                register_AppendableEmptyInheritanceStruct_type_identifier();
+                register_AppendableEmptyInheritanceStruct_type_identifier(type_id);
 
-                register_AppendableInheritanceStruct_type_identifier();
+                register_AppendableInheritanceStruct_type_identifier(type_id);
 
-                register_AppendableInheritanceEmptyStruct_type_identifier();
+                register_AppendableInheritanceEmptyStruct_type_identifier(type_id);
 
-                register_AppendableExtensibilityInheritance_type_identifier();
+                register_AppendableExtensibilityInheritance_type_identifier(type_id);
 
             });
 }
 
-void register_AppendableShortStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableShortStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -121,6 +124,7 @@ void register_AppendableShortStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -167,6 +171,7 @@ void register_AppendableShortStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_short member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_short = "var_short";
@@ -178,7 +183,7 @@ void register_AppendableShortStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableShortStruct, header_AppendableShortStruct, member_seq_AppendableShortStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableShortStruct already registered in TypeObjectRegistry for a different type.");
@@ -190,11 +195,14 @@ void register_AppendableShortStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableUShortStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableUShortStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableUShortStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -224,6 +232,7 @@ void register_AppendableUShortStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_ushort Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_ushort = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -270,6 +279,7 @@ void register_AppendableUShortStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_ushort member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_ushort = "var_ushort";
@@ -281,7 +291,7 @@ void register_AppendableUShortStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableUShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableUShortStruct, header_AppendableUShortStruct, member_seq_AppendableUShortStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableUShortStruct, type_name_AppendableUShortStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableUShortStruct, type_name_AppendableUShortStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableUShortStruct already registered in TypeObjectRegistry for a different type.");
@@ -293,11 +303,14 @@ void register_AppendableUShortStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableUShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableLongStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableLongStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableLongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -327,6 +340,7 @@ void register_AppendableLongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -373,6 +387,7 @@ void register_AppendableLongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_long member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_long = "var_long";
@@ -384,7 +399,7 @@ void register_AppendableLongStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableLongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableLongStruct, header_AppendableLongStruct, member_seq_AppendableLongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableLongStruct, type_name_AppendableLongStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableLongStruct, type_name_AppendableLongStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableLongStruct already registered in TypeObjectRegistry for a different type.");
@@ -396,11 +411,14 @@ void register_AppendableLongStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableLongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableULongStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableULongStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableULongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -430,6 +448,7 @@ void register_AppendableULongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_ulong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_ulong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -476,6 +495,7 @@ void register_AppendableULongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_ulong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_ulong = "var_ulong";
@@ -487,7 +507,7 @@ void register_AppendableULongStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableULongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableULongStruct, header_AppendableULongStruct, member_seq_AppendableULongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableULongStruct, type_name_AppendableULongStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableULongStruct, type_name_AppendableULongStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableULongStruct already registered in TypeObjectRegistry for a different type.");
@@ -499,11 +519,14 @@ void register_AppendableULongStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableULongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableLongLongStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableLongLongStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableLongLongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -533,6 +556,7 @@ void register_AppendableLongLongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_longlong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_longlong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -579,6 +603,7 @@ void register_AppendableLongLongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_longlong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_longlong = "var_longlong";
@@ -590,7 +615,7 @@ void register_AppendableLongLongStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableLongLongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableLongLongStruct, header_AppendableLongLongStruct, member_seq_AppendableLongLongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableLongLongStruct, type_name_AppendableLongLongStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableLongLongStruct, type_name_AppendableLongLongStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableLongLongStruct already registered in TypeObjectRegistry for a different type.");
@@ -602,11 +627,14 @@ void register_AppendableLongLongStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableLongLongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableULongLongStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableULongLongStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableULongLongStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -636,6 +664,7 @@ void register_AppendableULongLongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_ulonglong Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_ulonglong = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -682,6 +711,7 @@ void register_AppendableULongLongStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_ulonglong member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_ulonglong = "var_ulonglong";
@@ -693,7 +723,7 @@ void register_AppendableULongLongStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableULongLongStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableULongLongStruct, header_AppendableULongLongStruct, member_seq_AppendableULongLongStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableULongLongStruct, type_name_AppendableULongLongStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableULongLongStruct, type_name_AppendableULongLongStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableULongLongStruct already registered in TypeObjectRegistry for a different type.");
@@ -705,11 +735,14 @@ void register_AppendableULongLongStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableULongLongStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableFloatStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableFloatStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableFloatStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -739,6 +772,7 @@ void register_AppendableFloatStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_float Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_float = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -785,6 +819,7 @@ void register_AppendableFloatStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_float member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_float = "var_float";
@@ -796,7 +831,7 @@ void register_AppendableFloatStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableFloatStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableFloatStruct, header_AppendableFloatStruct, member_seq_AppendableFloatStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableFloatStruct, type_name_AppendableFloatStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableFloatStruct, type_name_AppendableFloatStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableFloatStruct already registered in TypeObjectRegistry for a different type.");
@@ -808,11 +843,14 @@ void register_AppendableFloatStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableFloatStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableDoubleStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableDoubleStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableDoubleStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -842,6 +880,7 @@ void register_AppendableDoubleStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_double Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_double = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -888,6 +927,7 @@ void register_AppendableDoubleStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_double member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_double = "var_double";
@@ -899,7 +939,7 @@ void register_AppendableDoubleStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableDoubleStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableDoubleStruct, header_AppendableDoubleStruct, member_seq_AppendableDoubleStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableDoubleStruct, type_name_AppendableDoubleStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableDoubleStruct, type_name_AppendableDoubleStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableDoubleStruct already registered in TypeObjectRegistry for a different type.");
@@ -911,11 +951,14 @@ void register_AppendableDoubleStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableDoubleStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableLongDoubleStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableLongDoubleStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableLongDoubleStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -945,6 +988,7 @@ void register_AppendableLongDoubleStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_longdouble Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_longdouble = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -991,6 +1035,7 @@ void register_AppendableLongDoubleStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_longdouble member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_longdouble = "var_longdouble";
@@ -1002,7 +1047,7 @@ void register_AppendableLongDoubleStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableLongDoubleStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableLongDoubleStruct, header_AppendableLongDoubleStruct, member_seq_AppendableLongDoubleStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableLongDoubleStruct, type_name_AppendableLongDoubleStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableLongDoubleStruct, type_name_AppendableLongDoubleStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableLongDoubleStruct already registered in TypeObjectRegistry for a different type.");
@@ -1014,11 +1059,14 @@ void register_AppendableLongDoubleStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableLongDoubleStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableBooleanStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableBooleanStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableBooleanStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1048,6 +1096,7 @@ void register_AppendableBooleanStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_boolean Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_boolean = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1094,6 +1143,7 @@ void register_AppendableBooleanStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_boolean member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_boolean = "var_boolean";
@@ -1105,7 +1155,7 @@ void register_AppendableBooleanStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableBooleanStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableBooleanStruct, header_AppendableBooleanStruct, member_seq_AppendableBooleanStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableBooleanStruct, type_name_AppendableBooleanStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableBooleanStruct, type_name_AppendableBooleanStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableBooleanStruct already registered in TypeObjectRegistry for a different type.");
@@ -1117,11 +1167,14 @@ void register_AppendableBooleanStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableBooleanStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableOctetStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableOctetStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableOctetStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1151,6 +1204,7 @@ void register_AppendableOctetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_octet Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_octet = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1197,6 +1251,7 @@ void register_AppendableOctetStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_octet member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_octet = "var_octet";
@@ -1208,7 +1263,7 @@ void register_AppendableOctetStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableOctetStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableOctetStruct, header_AppendableOctetStruct, member_seq_AppendableOctetStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableOctetStruct, type_name_AppendableOctetStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableOctetStruct, type_name_AppendableOctetStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableOctetStruct already registered in TypeObjectRegistry for a different type.");
@@ -1220,11 +1275,14 @@ void register_AppendableOctetStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableOctetStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableCharStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableCharStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableCharStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1254,6 +1312,7 @@ void register_AppendableCharStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_char8 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_char8 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1300,6 +1359,7 @@ void register_AppendableCharStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_char8 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_char8 = "var_char8";
@@ -1311,7 +1371,7 @@ void register_AppendableCharStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableCharStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableCharStruct, header_AppendableCharStruct, member_seq_AppendableCharStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableCharStruct, type_name_AppendableCharStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableCharStruct, type_name_AppendableCharStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableCharStruct already registered in TypeObjectRegistry for a different type.");
@@ -1323,11 +1383,14 @@ void register_AppendableCharStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableCharStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableWCharStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableWCharStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableWCharStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1357,6 +1420,7 @@ void register_AppendableWCharStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_char16 Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_char16 = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1403,6 +1467,7 @@ void register_AppendableWCharStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_char16 member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_char16 = "var_char16";
@@ -1414,7 +1479,7 @@ void register_AppendableWCharStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableWCharStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableWCharStruct, header_AppendableWCharStruct, member_seq_AppendableWCharStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableWCharStruct, type_name_AppendableWCharStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableWCharStruct, type_name_AppendableWCharStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableWCharStruct already registered in TypeObjectRegistry for a different type.");
@@ -1426,11 +1491,14 @@ void register_AppendableWCharStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableWCharStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableUnionStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableUnionStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableUnionStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1485,6 +1553,7 @@ void register_AppendableUnionStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Union discriminator TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     CommonDiscriminatorMember common_InnerUnionHelper;
@@ -1500,6 +1569,7 @@ void register_AppendableUnionStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerUnionHelper discriminator TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     type_ann_builtin_InnerUnionHelper.reset();
@@ -1516,6 +1586,7 @@ void register_AppendableUnionStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "longValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         UnionMemberFlag member_flags_longValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1566,6 +1637,7 @@ void register_AppendableUnionStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Union longValue member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_longValue = "longValue";
@@ -1584,6 +1656,7 @@ void register_AppendableUnionStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "floatValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         UnionMemberFlag member_flags_floatValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1634,6 +1707,7 @@ void register_AppendableUnionStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Union floatValue member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_floatValue = "floatValue";
@@ -1652,6 +1726,7 @@ void register_AppendableUnionStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "shortValue Union member TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         UnionMemberFlag member_flags_shortValue = TypeObjectUtils::build_union_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1701,6 +1776,7 @@ void register_AppendableUnionStruct_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "Union shortValue member TypeIdentifier inconsistent.");
+                            type_id = TypeIdentifier();
                             return;
                         }
                         MemberName name_shortValue = "shortValue";
@@ -1713,7 +1789,7 @@ void register_AppendableUnionStruct_type_identifier()
                     CompleteUnionType union_type_InnerUnionHelper = TypeObjectUtils::build_complete_union_type(union_flags_InnerUnionHelper, header_InnerUnionHelper, discriminator_InnerUnionHelper,
                             member_seq_InnerUnionHelper);
                     if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                            TypeObjectUtils::build_and_register_union_type_object(union_type_InnerUnionHelper, type_name_InnerUnionHelper.to_string()))
+                            TypeObjectUtils::build_and_register_union_type_object(union_type_InnerUnionHelper, type_name_InnerUnionHelper.to_string(), type_id))
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerUnionHelper already registered in TypeObjectRegistry for a different type.");
@@ -1725,8 +1801,11 @@ void register_AppendableUnionStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "InnerUnionHelper: Given Union TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
+                    return_code_AppendableUnionStruct = return_code_InnerUnionHelper;
+                    type_ids_AppendableUnionStruct = type_ids_InnerUnionHelper;
                 }
             }
             StructMemberFlag member_flags_var_union = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1773,6 +1852,7 @@ void register_AppendableUnionStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_union member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_union = "var_union";
@@ -1784,7 +1864,7 @@ void register_AppendableUnionStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableUnionStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableUnionStruct, header_AppendableUnionStruct, member_seq_AppendableUnionStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableUnionStruct, type_name_AppendableUnionStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableUnionStruct, type_name_AppendableUnionStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableUnionStruct already registered in TypeObjectRegistry for a different type.");
@@ -1796,11 +1876,14 @@ void register_AppendableUnionStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableUnionStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableEmptyStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableEmptyStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableEmptyStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1823,7 +1906,7 @@ void register_AppendableEmptyStruct_type_identifier()
         CompleteStructMemberSeq member_seq_AppendableEmptyStruct;
         CompleteStructType struct_type_AppendableEmptyStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableEmptyStruct, header_AppendableEmptyStruct, member_seq_AppendableEmptyStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableEmptyStruct, type_name_AppendableEmptyStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableEmptyStruct, type_name_AppendableEmptyStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableEmptyStruct already registered in TypeObjectRegistry for a different type.");
@@ -1835,11 +1918,14 @@ void register_AppendableEmptyStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableEmptyStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableEmptyInheritanceStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableEmptyInheritanceStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableEmptyInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -1873,7 +1959,7 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
                 CompleteStructMemberSeq member_seq_AppendableEmptyStruct;
                 CompleteStructType struct_type_AppendableEmptyStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableEmptyStruct, header_AppendableEmptyStruct, member_seq_AppendableEmptyStruct);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableEmptyStruct, type_name_AppendableEmptyStruct.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableEmptyStruct, type_name_AppendableEmptyStruct.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AppendableEmptyStruct already registered in TypeObjectRegistry for a different type.");
@@ -1885,8 +1971,11 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AppendableEmptyStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_AppendableEmptyInheritanceStruct = return_code_AppendableEmptyStruct;
+                type_ids_AppendableEmptyInheritanceStruct = type_ids_AppendableEmptyStruct;
             }
         }
         QualifiedTypeName type_name_AppendableEmptyInheritanceStruct = "AppendableEmptyInheritanceStruct";
@@ -1913,6 +2002,7 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableEmptyInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_AppendableEmptyInheritanceStruct;
@@ -1941,6 +2031,7 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -1988,6 +2079,7 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_str member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_str = "var_str";
@@ -1999,7 +2091,7 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableEmptyInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableEmptyInheritanceStruct, header_AppendableEmptyInheritanceStruct, member_seq_AppendableEmptyInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableEmptyInheritanceStruct, type_name_AppendableEmptyInheritanceStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableEmptyInheritanceStruct, type_name_AppendableEmptyInheritanceStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableEmptyInheritanceStruct already registered in TypeObjectRegistry for a different type.");
@@ -2011,11 +2103,14 @@ void register_AppendableEmptyInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableEmptyInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableInheritanceStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableInheritanceStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableInheritanceStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -2056,6 +2151,7 @@ void register_AppendableInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2102,6 +2198,7 @@ void register_AppendableInheritanceStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure var_short member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_var_short = "var_short";
@@ -2113,7 +2210,7 @@ void register_AppendableInheritanceStruct_type_identifier()
                 }
                 CompleteStructType struct_type_AppendableShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableShortStruct, header_AppendableShortStruct, member_seq_AppendableShortStruct);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AppendableShortStruct already registered in TypeObjectRegistry for a different type.");
@@ -2125,8 +2222,11 @@ void register_AppendableInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AppendableShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_AppendableInheritanceStruct = return_code_AppendableShortStruct;
+                type_ids_AppendableInheritanceStruct = type_ids_AppendableShortStruct;
             }
         }
         QualifiedTypeName type_name_AppendableInheritanceStruct = "AppendableInheritanceStruct";
@@ -2153,6 +2253,7 @@ void register_AppendableInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableInheritanceStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_AppendableInheritanceStruct;
@@ -2181,6 +2282,7 @@ void register_AppendableInheritanceStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -2228,6 +2330,7 @@ void register_AppendableInheritanceStruct_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_str member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_str = "var_str";
@@ -2239,7 +2342,7 @@ void register_AppendableInheritanceStruct_type_identifier()
         }
         CompleteStructType struct_type_AppendableInheritanceStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableInheritanceStruct, header_AppendableInheritanceStruct, member_seq_AppendableInheritanceStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableInheritanceStruct, type_name_AppendableInheritanceStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableInheritanceStruct, type_name_AppendableInheritanceStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableInheritanceStruct already registered in TypeObjectRegistry for a different type.");
@@ -2251,11 +2354,14 @@ void register_AppendableInheritanceStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableInheritanceStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableInheritanceEmptyStruct_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableInheritanceEmptyStruct_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableInheritanceEmptyStruct = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::APPENDABLE,
@@ -2296,6 +2402,7 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2342,6 +2449,7 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure var_short member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_var_short = "var_short";
@@ -2353,7 +2461,7 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
                 }
                 CompleteStructType struct_type_AppendableShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableShortStruct, header_AppendableShortStruct, member_seq_AppendableShortStruct);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AppendableShortStruct already registered in TypeObjectRegistry for a different type.");
@@ -2365,8 +2473,11 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AppendableShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_AppendableInheritanceEmptyStruct = return_code_AppendableShortStruct;
+                type_ids_AppendableInheritanceEmptyStruct = type_ids_AppendableShortStruct;
             }
         }
         QualifiedTypeName type_name_AppendableInheritanceEmptyStruct = "AppendableInheritanceEmptyStruct";
@@ -2393,12 +2504,13 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableInheritanceEmptyStruct Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_AppendableInheritanceEmptyStruct;
         CompleteStructType struct_type_AppendableInheritanceEmptyStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableInheritanceEmptyStruct, header_AppendableInheritanceEmptyStruct, member_seq_AppendableInheritanceEmptyStruct);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableInheritanceEmptyStruct, type_name_AppendableInheritanceEmptyStruct.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableInheritanceEmptyStruct, type_name_AppendableInheritanceEmptyStruct.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableInheritanceEmptyStruct already registered in TypeObjectRegistry for a different type.");
@@ -2410,11 +2522,14 @@ void register_AppendableInheritanceEmptyStruct_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableInheritanceEmptyStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AppendableExtensibilityInheritance_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AppendableExtensibilityInheritance_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AppendableExtensibilityInheritance = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -2455,6 +2570,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "var_short Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_var_short = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2501,6 +2617,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure var_short member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_var_short = "var_short";
@@ -2512,7 +2629,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
                 }
                 CompleteStructType struct_type_AppendableShortStruct = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableShortStruct, header_AppendableShortStruct, member_seq_AppendableShortStruct);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableShortStruct, type_name_AppendableShortStruct.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AppendableShortStruct already registered in TypeObjectRegistry for a different type.");
@@ -2524,8 +2641,11 @@ void register_AppendableExtensibilityInheritance_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AppendableShortStruct: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_AppendableExtensibilityInheritance = return_code_AppendableShortStruct;
+                type_ids_AppendableExtensibilityInheritance = type_ids_AppendableShortStruct;
             }
         }
         QualifiedTypeName type_name_AppendableExtensibilityInheritance = "AppendableExtensibilityInheritance";
@@ -2545,6 +2665,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableExtensibilityInheritance Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_AppendableExtensibilityInheritance;
@@ -2557,6 +2678,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "var_long Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_var_long = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2603,6 +2725,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_long member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_long = "var_long";
@@ -2614,7 +2737,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
         }
         CompleteStructType struct_type_AppendableExtensibilityInheritance = TypeObjectUtils::build_complete_struct_type(struct_flags_AppendableExtensibilityInheritance, header_AppendableExtensibilityInheritance, member_seq_AppendableExtensibilityInheritance);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableExtensibilityInheritance, type_name_AppendableExtensibilityInheritance.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AppendableExtensibilityInheritance, type_name_AppendableExtensibilityInheritance.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AppendableExtensibilityInheritance already registered in TypeObjectRegistry for a different type.");
@@ -2626,6 +2749,7 @@ void register_AppendableExtensibilityInheritance_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AppendableExtensibilityInheritance: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

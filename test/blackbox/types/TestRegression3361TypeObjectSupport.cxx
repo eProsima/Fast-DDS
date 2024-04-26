@@ -44,12 +44,15 @@ void register_TestRegression3361_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_TestRegression3361_type_identifier();
+                TypeIdentifier type_id;
+                register_TestRegression3361_type_identifier(type_id);
 
             });
 }
 
-void register_TestRegression3361_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_TestRegression3361_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_TestRegression3361 = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -101,6 +104,7 @@ void register_TestRegression3361_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "anonymous_string_unbounded: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                 }
@@ -145,6 +149,7 @@ void register_TestRegression3361_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "TestModule::MACHINEID related TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_MACHINEID;
@@ -164,6 +169,7 @@ void register_TestRegression3361_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "TestModule::MACHINEID: Given Alias TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -211,6 +217,7 @@ void register_TestRegression3361_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure uuid member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_uuid = "uuid";
@@ -222,7 +229,7 @@ void register_TestRegression3361_type_identifier()
         }
         CompleteStructType struct_type_TestRegression3361 = TypeObjectUtils::build_complete_struct_type(struct_flags_TestRegression3361, header_TestRegression3361, member_seq_TestRegression3361);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_TestRegression3361, type_name_TestRegression3361.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_TestRegression3361, type_name_TestRegression3361.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "TestRegression3361 already registered in TypeObjectRegistry for a different type.");
@@ -234,6 +241,7 @@ void register_TestRegression3361_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "TestRegression3361: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

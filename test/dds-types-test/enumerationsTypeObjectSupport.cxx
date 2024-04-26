@@ -44,24 +44,27 @@ void register_enumerations_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_InnerStructureHelper_type_identifier();
+                TypeIdentifier type_id;
+                register_InnerStructureHelper_type_identifier(type_id);
 
-                register_InnerEmptyStructureHelper_type_identifier();
+                register_InnerEmptyStructureHelper_type_identifier(type_id);
 
-                register_InnerUnionHelper_type_identifier();
+                register_InnerUnionHelper_type_identifier(type_id);
 
-                register_EnumStructure_type_identifier();
+                register_EnumStructure_type_identifier(type_id);
 
-                register_BitMaskStructure_type_identifier();
+                register_BitMaskStructure_type_identifier(type_id);
 
-                register_BoundedBitMaskStructure_type_identifier();
+                register_BoundedBitMaskStructure_type_identifier(type_id);
 
             });
 }
 
 namespace Test {
 } // namespace Test
-void register_EnumStructure_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_EnumStructure_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_EnumStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -136,6 +139,7 @@ void register_EnumStructure_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerEnumHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -183,6 +187,7 @@ void register_EnumStructure_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerEnumHelper member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerEnumHelper = "var_InnerEnumHelper";
@@ -253,6 +258,7 @@ void register_EnumStructure_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Test::InnerEnumHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -300,6 +306,7 @@ void register_EnumStructure_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_scoped_InnerEnumHelper member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_scoped_InnerEnumHelper = "var_scoped_InnerEnumHelper";
@@ -311,7 +318,7 @@ void register_EnumStructure_type_identifier()
         }
         CompleteStructType struct_type_EnumStructure = TypeObjectUtils::build_complete_struct_type(struct_flags_EnumStructure, header_EnumStructure, member_seq_EnumStructure);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_EnumStructure, type_name_EnumStructure.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_EnumStructure, type_name_EnumStructure.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "EnumStructure already registered in TypeObjectRegistry for a different type.");
@@ -323,11 +330,14 @@ void register_EnumStructure_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "EnumStructure: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_BitMaskStructure_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_BitMaskStructure_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_BitMaskStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -435,6 +445,7 @@ void register_BitMaskStructure_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerBitMaskHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -482,6 +493,7 @@ void register_BitMaskStructure_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerBitMaskHelper member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerBitMaskHelper = "var_InnerBitMaskHelper";
@@ -493,7 +505,7 @@ void register_BitMaskStructure_type_identifier()
         }
         CompleteStructType struct_type_BitMaskStructure = TypeObjectUtils::build_complete_struct_type(struct_flags_BitMaskStructure, header_BitMaskStructure, member_seq_BitMaskStructure);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BitMaskStructure, type_name_BitMaskStructure.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BitMaskStructure, type_name_BitMaskStructure.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BitMaskStructure already registered in TypeObjectRegistry for a different type.");
@@ -505,11 +517,14 @@ void register_BitMaskStructure_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "BitMaskStructure: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_BoundedBitMaskStructure_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_BoundedBitMaskStructure_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_BoundedBitMaskStructure = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -624,6 +639,7 @@ void register_BoundedBitMaskStructure_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "InnerBoundedBitMaskHelper: Given Enum TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -671,6 +687,7 @@ void register_BoundedBitMaskStructure_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure var_InnerBoundedBitMaskHelper member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_var_InnerBoundedBitMaskHelper = "var_InnerBoundedBitMaskHelper";
@@ -682,7 +699,7 @@ void register_BoundedBitMaskStructure_type_identifier()
         }
         CompleteStructType struct_type_BoundedBitMaskStructure = TypeObjectUtils::build_complete_struct_type(struct_flags_BoundedBitMaskStructure, header_BoundedBitMaskStructure, member_seq_BoundedBitMaskStructure);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BoundedBitMaskStructure, type_name_BoundedBitMaskStructure.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_BoundedBitMaskStructure, type_name_BoundedBitMaskStructure.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "BoundedBitMaskStructure already registered in TypeObjectRegistry for a different type.");
@@ -694,6 +711,7 @@ void register_BoundedBitMaskStructure_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "BoundedBitMaskStructure: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

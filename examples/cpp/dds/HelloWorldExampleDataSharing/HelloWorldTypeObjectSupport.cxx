@@ -43,12 +43,15 @@ void register_HelloWorld_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_HelloWorld_type_identifier();
+                TypeIdentifier type_id;
+                register_HelloWorld_type_identifier(type_id);
 
             });
 }
 
-void register_HelloWorld_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_HelloWorld_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_HelloWorld = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -71,6 +74,7 @@ void register_HelloWorld_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "index Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_index = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -117,6 +121,7 @@ void register_HelloWorld_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure index member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_index = "index";
@@ -151,6 +156,7 @@ void register_HelloWorld_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_string_20: Given String TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -198,6 +204,7 @@ void register_HelloWorld_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure message member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_message = "message";
@@ -209,7 +216,7 @@ void register_HelloWorld_type_identifier()
         }
         CompleteStructType struct_type_HelloWorld = TypeObjectUtils::build_complete_struct_type(struct_flags_HelloWorld, header_HelloWorld, member_seq_HelloWorld);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_HelloWorld, type_name_HelloWorld.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_HelloWorld, type_name_HelloWorld.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "HelloWorld already registered in TypeObjectRegistry for a different type.");
@@ -221,6 +228,7 @@ void register_HelloWorld_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "HelloWorld: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

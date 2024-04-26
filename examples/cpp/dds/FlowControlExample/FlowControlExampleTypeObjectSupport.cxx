@@ -43,12 +43,15 @@ void register_FlowControlExample_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_FlowControlExample_type_identifier();
+                TypeIdentifier type_id;
+                register_FlowControlExample_type_identifier(type_id);
 
             });
 }
 
-void register_FlowControlExample_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FlowControlExample_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FlowControlExample = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -77,6 +80,7 @@ void register_FlowControlExample_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Array element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_array_char_600000 {nullptr};
@@ -120,6 +124,7 @@ void register_FlowControlExample_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Array element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_array_char_600000 = EK_COMPLETE;
@@ -149,6 +154,7 @@ void register_FlowControlExample_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_array_char_600000: Given Array TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -196,6 +202,7 @@ void register_FlowControlExample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure message member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_message = "message";
@@ -214,6 +221,7 @@ void register_FlowControlExample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "wasFast Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_wasFast = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -260,6 +268,7 @@ void register_FlowControlExample_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure wasFast member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_wasFast = "wasFast";
@@ -271,7 +280,7 @@ void register_FlowControlExample_type_identifier()
         }
         CompleteStructType struct_type_FlowControlExample = TypeObjectUtils::build_complete_struct_type(struct_flags_FlowControlExample, header_FlowControlExample, member_seq_FlowControlExample);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FlowControlExample, type_name_FlowControlExample.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FlowControlExample, type_name_FlowControlExample.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FlowControlExample already registered in TypeObjectRegistry for a different type.");
@@ -283,6 +292,7 @@ void register_FlowControlExample_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FlowControlExample: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

@@ -73,7 +73,8 @@ void register_empty_structure_type_object()
         eprosima::fastcdr::optional<AppliedAnnotationSeq>(), empty_struct_name);
     CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail);
     CompleteStructType struct_type = TypeObjectUtils::build_complete_struct_type(0, header, CompleteStructMemberSeq());
-    TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name);
+    TypeIdentifier type_id;
+    TypeObjectUtils::build_and_register_struct_type_object(struct_type, empty_struct_name, type_id);
 }
 
 void register_plain_seq_type_object(
@@ -1582,7 +1583,7 @@ TEST(TypeObjectUtilsTests, build_applied_annotation_invalid_type_identifier)
                     CompleteAnnotationParameterSeq());
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             TypeObjectUtils::build_and_register_annotation_type_object(custom_annotation,
-            "custom"));
+            "custom", type_id));
     TypeIdentifierPair custom_annotation_ids;
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("custom",
@@ -2783,19 +2784,19 @@ TEST(TypeObjectUtilsTests, register_annotation_type_object)
     CompleteAnnotationHeader header = TypeObjectUtils::build_complete_annotation_header("annotation_name");
     CompleteAnnotationType annotation = TypeObjectUtils::build_complete_annotation_type(0, header,
                     CompleteAnnotationParameterSeq());
+    TypeIdentifier type_id;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
-            "annotation"));
+            "annotation", type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(annotation,
-            "annotation"));
+            "annotation", type_id));
     CompleteAnnotationHeader other_header = TypeObjectUtils::build_complete_annotation_header("other_annotation_name");
     CompleteAnnotationType other_annotation = TypeObjectUtils::build_complete_annotation_type(0, other_header,
                     CompleteAnnotationParameterSeq());
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_annotation_type_object(
-                other_annotation, "annotation"));
+                other_annotation, "annotation", type_id));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_annotation_type_object(
-                other_annotation,
-                type_name));
+                other_annotation, type_name, type_id));
 }
 
 // Register structure TypeObject
@@ -2809,20 +2810,20 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
     CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), empty_type_detail);
     CompleteStructType structure = TypeObjectUtils::build_complete_struct_type(flags, header,
                     CompleteStructMemberSeq());
+    TypeIdentifier type_id;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
-            "structure"));
+            "structure", type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_struct_type_object(structure,
-            "structure"));
+            "structure", type_id));
     StructTypeFlag other_flags = TypeObjectUtils::build_struct_type_flag(
         eprosima::fastdds::dds::xtypes::ExtensibilityKind::FINAL, false, false);
     CompleteStructType other_structure = TypeObjectUtils::build_complete_struct_type(other_flags,
                     header, CompleteStructMemberSeq());
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_struct_type_object(
-                other_structure, "structure"));
+                other_structure, "structure", type_id));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_struct_type_object(
-                other_structure,
-                type_name));
+                other_structure, type_name, type_id));
 }
 
 // Register union TypeObject
@@ -2860,19 +2861,18 @@ TEST(TypeObjectUtilsTests, register_union_type_object)
     CompleteUnionType union_type = TypeObjectUtils::build_complete_union_type(flags, header,
                     discriminator, member_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-            TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
+            TypeObjectUtils::build_and_register_union_type_object(union_type, "union", type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK,
-            TypeObjectUtils::build_and_register_union_type_object(union_type, "union"));
+            TypeObjectUtils::build_and_register_union_type_object(union_type, "union", type_id));
     UnionTypeFlag other_flags = TypeObjectUtils::build_union_type_flag(
         eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE, false, false);
     CompleteUnionType other_union_type = TypeObjectUtils::build_complete_union_type(other_flags, header,
                     discriminator, member_seq);
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER, TypeObjectUtils::build_and_register_union_type_object(
-                other_union_type, "union"));
+                other_union_type, "union", type_id));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_union_type_object(
-                other_union_type,
-                type_name));
+                other_union_type, type_name, type_id));
 }
 
 // Register bitset TypeObject
@@ -3126,12 +3126,13 @@ TEST(TypeObjectUtilsTests, add_to_applied_annotation_seq)
                     CompleteAnnotationParameterSeq());
     CompleteAnnotationType third_custom_annotation = TypeObjectUtils::build_complete_annotation_type(0, third_ann,
                     CompleteAnnotationParameterSeq());
+    TypeIdentifier type_id;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
-                first_custom_annotation, "first_custom"));
+                first_custom_annotation, "first_custom", type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
-                second_custom_annotation, "second_custom"));
+                second_custom_annotation, "second_custom", type_id));
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_OK, TypeObjectUtils::build_and_register_annotation_type_object(
-                third_custom_annotation, "third_custom"));
+                third_custom_annotation, "third_custom", type_id));
     TypeIdentifierPair first_custom_annotation_ids;
     ASSERT_EQ(eprosima::fastdds::dds::RETCODE_OK,
             DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers("first_custom",

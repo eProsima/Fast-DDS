@@ -43,12 +43,15 @@ void register_KeyedData1mb_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_KeyedData1mb_type_identifier();
+                TypeIdentifier type_id;
+                register_KeyedData1mb_type_identifier(type_id);
 
             });
 }
 
-void register_KeyedData1mb_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_KeyedData1mb_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_KeyedData1mb = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -71,6 +74,7 @@ void register_KeyedData1mb_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "key Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_key = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -117,6 +121,7 @@ void register_KeyedData1mb_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure key member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_key = "key";
@@ -154,6 +159,7 @@ void register_KeyedData1mb_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint8_t_1023996 {nullptr};
@@ -197,6 +203,7 @@ void register_KeyedData1mb_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint8_t_1023996 = EK_COMPLETE;
@@ -224,6 +231,7 @@ void register_KeyedData1mb_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint8_t_1023996: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -271,6 +279,7 @@ void register_KeyedData1mb_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure data member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_data = "data";
@@ -282,7 +291,7 @@ void register_KeyedData1mb_type_identifier()
         }
         CompleteStructType struct_type_KeyedData1mb = TypeObjectUtils::build_complete_struct_type(struct_flags_KeyedData1mb, header_KeyedData1mb, member_seq_KeyedData1mb);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_KeyedData1mb, type_name_KeyedData1mb.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_KeyedData1mb, type_name_KeyedData1mb.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "KeyedData1mb already registered in TypeObjectRegistry for a different type.");
@@ -294,6 +303,7 @@ void register_KeyedData1mb_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "KeyedData1mb: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

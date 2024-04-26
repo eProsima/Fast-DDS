@@ -264,7 +264,7 @@ bool MemberDescriptorImpl::is_consistent() noexcept
         }
         else
         {
-            EPROSIMA_LOG_WARNING(DYN_TYPES, "type_construct_kind is not implemented yet.");
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "try_construct_kind is not implemented yet.");
         }
     }
 

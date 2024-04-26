@@ -43,12 +43,15 @@ void register_Data64kb_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_Data64kb_type_identifier();
+                TypeIdentifier type_id;
+                register_Data64kb_type_identifier(type_id);
 
             });
 }
 
-void register_Data64kb_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_Data64kb_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_Data64kb = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -77,6 +80,7 @@ void register_Data64kb_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "Sequence element TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 TypeIdentifier* element_identifier_anonymous_sequence_uint8_t_63996 {nullptr};
@@ -120,6 +124,7 @@ void register_Data64kb_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Sequence element TypeIdentifier inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 EquivalenceKind equiv_kind_anonymous_sequence_uint8_t_63996 = EK_COMPLETE;
@@ -147,6 +152,7 @@ void register_Data64kb_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "anonymous_sequence_uint8_t_63996: Given Sequence TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
             }
@@ -194,6 +200,7 @@ void register_Data64kb_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure data member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_data = "data";
@@ -205,7 +212,7 @@ void register_Data64kb_type_identifier()
         }
         CompleteStructType struct_type_Data64kb = TypeObjectUtils::build_complete_struct_type(struct_flags_Data64kb, header_Data64kb, member_seq_Data64kb);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Data64kb, type_name_Data64kb.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_Data64kb, type_name_Data64kb.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "Data64kb already registered in TypeObjectRegistry for a different type.");
@@ -217,6 +224,7 @@ void register_Data64kb_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Data64kb: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }

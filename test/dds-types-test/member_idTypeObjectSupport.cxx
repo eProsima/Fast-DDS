@@ -43,34 +43,37 @@ void register_member_id_type_objects()
     static std::once_flag once_flag;
     std::call_once(once_flag, []()
             {
-                register_FixId_type_identifier();
+                TypeIdentifier type_id;
+                register_FixId_type_identifier(type_id);
 
-                register_FixHexId_type_identifier();
+                register_FixHexId_type_identifier(type_id);
 
-                register_FixHashidDefault_type_identifier();
+                register_FixHashidDefault_type_identifier(type_id);
 
-                register_FixHashid_type_identifier();
+                register_FixHashid_type_identifier(type_id);
 
-                register_FixMix_type_identifier();
+                register_FixMix_type_identifier(type_id);
 
-                register_AutoidDefault_type_identifier();
+                register_AutoidDefault_type_identifier(type_id);
 
-                register_AutoidSequential_type_identifier();
+                register_AutoidSequential_type_identifier(type_id);
 
-                register_AutoidHash_type_identifier();
+                register_AutoidHash_type_identifier(type_id);
 
-                register_DerivedAutoidDefault_type_identifier();
+                register_DerivedAutoidDefault_type_identifier(type_id);
 
-                register_DerivedEmptyAutoidSequential_type_identifier();
+                register_DerivedEmptyAutoidSequential_type_identifier(type_id);
 
-                register_DerivedAutoidSequential_type_identifier();
+                register_DerivedAutoidSequential_type_identifier(type_id);
 
-                register_DerivedAutoidHash_type_identifier();
+                register_DerivedAutoidHash_type_identifier(type_id);
 
             });
 }
 
-void register_FixId_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FixId_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FixId = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -100,6 +103,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -146,6 +150,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -177,6 +182,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -223,6 +229,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -254,6 +261,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -300,6 +308,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -331,6 +340,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -377,6 +387,7 @@ void register_FixId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -388,7 +399,7 @@ void register_FixId_type_identifier()
         }
         CompleteStructType struct_type_FixId = TypeObjectUtils::build_complete_struct_type(struct_flags_FixId, header_FixId, member_seq_FixId);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixId, type_name_FixId.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixId, type_name_FixId.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FixId already registered in TypeObjectRegistry for a different type.");
@@ -400,11 +411,14 @@ void register_FixId_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FixId: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_FixHexId_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FixHexId_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FixHexId = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -434,6 +448,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ho Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ho = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -480,6 +495,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ho member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ho = "ho";
@@ -511,6 +527,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "hs Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_hs = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -557,6 +574,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure hs member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_hs = "hs";
@@ -588,6 +606,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "hl Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_hl = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -634,6 +653,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure hl member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_hl = "hl";
@@ -665,6 +685,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -711,6 +732,7 @@ void register_FixHexId_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -722,7 +744,7 @@ void register_FixHexId_type_identifier()
         }
         CompleteStructType struct_type_FixHexId = TypeObjectUtils::build_complete_struct_type(struct_flags_FixHexId, header_FixHexId, member_seq_FixHexId);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixHexId, type_name_FixHexId.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixHexId, type_name_FixHexId.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FixHexId already registered in TypeObjectRegistry for a different type.");
@@ -734,11 +756,14 @@ void register_FixHexId_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FixHexId: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_FixHashidDefault_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FixHashidDefault_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FixHashidDefault = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -768,6 +793,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -814,6 +840,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -847,6 +874,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -893,6 +921,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -926,6 +955,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -972,6 +1002,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -1005,6 +1036,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1051,6 +1083,7 @@ void register_FixHashidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -1062,7 +1095,7 @@ void register_FixHashidDefault_type_identifier()
         }
         CompleteStructType struct_type_FixHashidDefault = TypeObjectUtils::build_complete_struct_type(struct_flags_FixHashidDefault, header_FixHashidDefault, member_seq_FixHashidDefault);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixHashidDefault, type_name_FixHashidDefault.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixHashidDefault, type_name_FixHashidDefault.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FixHashidDefault already registered in TypeObjectRegistry for a different type.");
@@ -1074,11 +1107,14 @@ void register_FixHashidDefault_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FixHashidDefault: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_FixHashid_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FixHashid_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FixHashid = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -1108,6 +1144,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1154,6 +1191,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -1187,6 +1225,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1233,6 +1272,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -1266,6 +1306,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1312,6 +1353,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -1345,6 +1387,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1391,6 +1434,7 @@ void register_FixHashid_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -1402,7 +1446,7 @@ void register_FixHashid_type_identifier()
         }
         CompleteStructType struct_type_FixHashid = TypeObjectUtils::build_complete_struct_type(struct_flags_FixHashid, header_FixHashid, member_seq_FixHashid);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixHashid, type_name_FixHashid.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixHashid, type_name_FixHashid.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FixHashid already registered in TypeObjectRegistry for a different type.");
@@ -1414,11 +1458,14 @@ void register_FixHashid_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FixHashid: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_FixMix_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_FixMix_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_FixMix = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -1448,6 +1495,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1494,6 +1542,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -1525,6 +1574,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ho Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ho = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1571,6 +1621,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ho member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ho = "ho";
@@ -1602,6 +1653,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1648,6 +1700,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -1681,6 +1734,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1727,6 +1781,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -1760,6 +1815,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1806,6 +1862,7 @@ void register_FixMix_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -1817,7 +1874,7 @@ void register_FixMix_type_identifier()
         }
         CompleteStructType struct_type_FixMix = TypeObjectUtils::build_complete_struct_type(struct_flags_FixMix, header_FixMix, member_seq_FixMix);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixMix, type_name_FixMix.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_FixMix, type_name_FixMix.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "FixMix already registered in TypeObjectRegistry for a different type.");
@@ -1829,11 +1886,14 @@ void register_FixMix_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "FixMix: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AutoidDefault_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AutoidDefault_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AutoidDefault = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -1863,6 +1923,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1909,6 +1970,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure c member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_c = "c";
@@ -1927,6 +1989,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -1973,6 +2036,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -2004,6 +2068,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2050,6 +2115,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -2083,6 +2149,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2129,6 +2196,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -2162,6 +2230,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2208,6 +2277,7 @@ void register_AutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -2219,7 +2289,7 @@ void register_AutoidDefault_type_identifier()
         }
         CompleteStructType struct_type_AutoidDefault = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidDefault, header_AutoidDefault, member_seq_AutoidDefault);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidDefault, type_name_AutoidDefault.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidDefault, type_name_AutoidDefault.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AutoidDefault already registered in TypeObjectRegistry for a different type.");
@@ -2231,11 +2301,14 @@ void register_AutoidDefault_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AutoidDefault: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AutoidSequential_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AutoidSequential_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AutoidSequential = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -2265,6 +2338,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2311,6 +2385,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure c member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_c = "c";
@@ -2329,6 +2404,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2375,6 +2451,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -2406,6 +2483,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2452,6 +2530,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -2485,6 +2564,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2531,6 +2611,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -2564,6 +2645,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2610,6 +2692,7 @@ void register_AutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -2621,7 +2704,7 @@ void register_AutoidSequential_type_identifier()
         }
         CompleteStructType struct_type_AutoidSequential = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidSequential, header_AutoidSequential, member_seq_AutoidSequential);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidSequential, type_name_AutoidSequential.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidSequential, type_name_AutoidSequential.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AutoidSequential already registered in TypeObjectRegistry for a different type.");
@@ -2633,11 +2716,14 @@ void register_AutoidSequential_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AutoidSequential: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_AutoidHash_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_AutoidHash_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_AutoidHash = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::MUTABLE,
@@ -2667,6 +2753,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2713,6 +2800,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure c member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_c = "c";
@@ -2731,6 +2819,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2777,6 +2866,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure o member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_o = "o";
@@ -2808,6 +2898,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2854,6 +2945,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure s member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_s = "s";
@@ -2887,6 +2979,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -2933,6 +3026,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure l member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_l = "l";
@@ -2966,6 +3060,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3012,6 +3107,7 @@ void register_AutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ll member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ll = "ll";
@@ -3023,7 +3119,7 @@ void register_AutoidHash_type_identifier()
         }
         CompleteStructType struct_type_AutoidHash = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidHash, header_AutoidHash, member_seq_AutoidHash);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidHash, type_name_AutoidHash.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidHash, type_name_AutoidHash.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "AutoidHash already registered in TypeObjectRegistry for a different type.");
@@ -3035,11 +3131,14 @@ void register_AutoidHash_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "AutoidHash: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_DerivedAutoidDefault_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_DerivedAutoidDefault_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_DerivedAutoidDefault = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -3080,6 +3179,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3126,6 +3226,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure c member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_c = "c";
@@ -3144,6 +3245,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3190,6 +3292,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure o member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_o = "o";
@@ -3221,6 +3324,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3267,6 +3371,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure s member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_s = "s";
@@ -3300,6 +3405,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3346,6 +3452,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure l member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_l = "l";
@@ -3379,6 +3486,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3425,6 +3533,7 @@ void register_DerivedAutoidDefault_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure ll member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_ll = "ll";
@@ -3436,7 +3545,7 @@ void register_DerivedAutoidDefault_type_identifier()
                 }
                 CompleteStructType struct_type_AutoidDefault = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidDefault, header_AutoidDefault, member_seq_AutoidDefault);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidDefault, type_name_AutoidDefault.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidDefault, type_name_AutoidDefault.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AutoidDefault already registered in TypeObjectRegistry for a different type.");
@@ -3448,8 +3557,11 @@ void register_DerivedAutoidDefault_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AutoidDefault: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_DerivedAutoidDefault = return_code_AutoidDefault;
+                type_ids_DerivedAutoidDefault = type_ids_AutoidDefault;
             }
         }
         QualifiedTypeName type_name_DerivedAutoidDefault = "DerivedAutoidDefault";
@@ -3476,6 +3588,7 @@ void register_DerivedAutoidDefault_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedAutoidDefault Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_DerivedAutoidDefault;
@@ -3488,6 +3601,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "cd Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_cd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3534,6 +3648,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure cd member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_cd = "cd";
@@ -3552,6 +3667,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "od Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_od = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3598,6 +3714,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure od member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_od = "od";
@@ -3629,6 +3746,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "sd Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_sd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3675,6 +3793,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure sd member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_sd = "sd";
@@ -3708,6 +3827,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ld Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3754,6 +3874,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ld member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ld = "ld";
@@ -3787,6 +3908,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "lld Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_lld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3833,6 +3955,7 @@ void register_DerivedAutoidDefault_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure lld member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_lld = "lld";
@@ -3844,7 +3967,7 @@ void register_DerivedAutoidDefault_type_identifier()
         }
         CompleteStructType struct_type_DerivedAutoidDefault = TypeObjectUtils::build_complete_struct_type(struct_flags_DerivedAutoidDefault, header_DerivedAutoidDefault, member_seq_DerivedAutoidDefault);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedAutoidDefault, type_name_DerivedAutoidDefault.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedAutoidDefault, type_name_DerivedAutoidDefault.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedAutoidDefault already registered in TypeObjectRegistry for a different type.");
@@ -3856,11 +3979,14 @@ void register_DerivedAutoidDefault_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "DerivedAutoidDefault: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_DerivedEmptyAutoidSequential_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_DerivedEmptyAutoidSequential_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_DerivedEmptyAutoidSequential = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -3901,6 +4027,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -3947,6 +4074,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure c member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_c = "c";
@@ -3965,6 +4093,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4011,6 +4140,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure o member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_o = "o";
@@ -4042,6 +4172,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4088,6 +4219,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure s member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_s = "s";
@@ -4121,6 +4253,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4167,6 +4300,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure l member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_l = "l";
@@ -4200,6 +4334,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4246,6 +4381,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure ll member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_ll = "ll";
@@ -4257,7 +4393,7 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                 }
                 CompleteStructType struct_type_AutoidSequential = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidSequential, header_AutoidSequential, member_seq_AutoidSequential);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidSequential, type_name_AutoidSequential.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidSequential, type_name_AutoidSequential.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AutoidSequential already registered in TypeObjectRegistry for a different type.");
@@ -4269,8 +4405,11 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AutoidSequential: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_DerivedEmptyAutoidSequential = return_code_AutoidSequential;
+                type_ids_DerivedEmptyAutoidSequential = type_ids_AutoidSequential;
             }
         }
         QualifiedTypeName type_name_DerivedEmptyAutoidSequential = "DerivedEmptyAutoidSequential";
@@ -4297,12 +4436,13 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedEmptyAutoidSequential Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_DerivedEmptyAutoidSequential;
         CompleteStructType struct_type_DerivedEmptyAutoidSequential = TypeObjectUtils::build_complete_struct_type(struct_flags_DerivedEmptyAutoidSequential, header_DerivedEmptyAutoidSequential, member_seq_DerivedEmptyAutoidSequential);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedEmptyAutoidSequential, type_name_DerivedEmptyAutoidSequential.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedEmptyAutoidSequential, type_name_DerivedEmptyAutoidSequential.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedEmptyAutoidSequential already registered in TypeObjectRegistry for a different type.");
@@ -4314,11 +4454,14 @@ void register_DerivedEmptyAutoidSequential_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "DerivedEmptyAutoidSequential: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_DerivedAutoidSequential_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_DerivedAutoidSequential_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_DerivedAutoidSequential = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -4370,6 +4513,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4416,6 +4560,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure c member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_c = "c";
@@ -4434,6 +4579,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4480,6 +4626,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure o member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_o = "o";
@@ -4511,6 +4658,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4557,6 +4705,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure s member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_s = "s";
@@ -4590,6 +4739,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4636,6 +4786,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure l member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_l = "l";
@@ -4669,6 +4820,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4715,6 +4867,7 @@ void register_DerivedAutoidSequential_type_identifier()
                             {
                                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "Structure ll member TypeIdentifier inconsistent.");
+                                type_id = TypeIdentifier();
                                 return;
                             }
                             MemberName name_ll = "ll";
@@ -4726,7 +4879,7 @@ void register_DerivedAutoidSequential_type_identifier()
                         }
                         CompleteStructType struct_type_AutoidSequential = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidSequential, header_AutoidSequential, member_seq_AutoidSequential);
                         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidSequential, type_name_AutoidSequential.to_string()))
+                                TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidSequential, type_name_AutoidSequential.to_string(), type_id))
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                     "AutoidSequential already registered in TypeObjectRegistry for a different type.");
@@ -4738,8 +4891,11 @@ void register_DerivedAutoidSequential_type_identifier()
                         {
                             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                         "AutoidSequential: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                            type_id = TypeIdentifier();
                             return;
                         }
+                        return_code_DerivedEmptyAutoidSequential = return_code_AutoidSequential;
+                        type_ids_DerivedEmptyAutoidSequential = type_ids_AutoidSequential;
                     }
                 }
                 QualifiedTypeName type_name_DerivedEmptyAutoidSequential = "DerivedEmptyAutoidSequential";
@@ -4766,12 +4922,13 @@ void register_DerivedAutoidSequential_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "DerivedEmptyAutoidSequential Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+                    type_id = TypeIdentifier();
                     return;
                 }
                 CompleteStructMemberSeq member_seq_DerivedEmptyAutoidSequential;
                 CompleteStructType struct_type_DerivedEmptyAutoidSequential = TypeObjectUtils::build_complete_struct_type(struct_flags_DerivedEmptyAutoidSequential, header_DerivedEmptyAutoidSequential, member_seq_DerivedEmptyAutoidSequential);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedEmptyAutoidSequential, type_name_DerivedEmptyAutoidSequential.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedEmptyAutoidSequential, type_name_DerivedEmptyAutoidSequential.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "DerivedEmptyAutoidSequential already registered in TypeObjectRegistry for a different type.");
@@ -4783,8 +4940,11 @@ void register_DerivedAutoidSequential_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "DerivedEmptyAutoidSequential: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_DerivedAutoidSequential = return_code_DerivedEmptyAutoidSequential;
+                type_ids_DerivedAutoidSequential = type_ids_DerivedEmptyAutoidSequential;
             }
         }
         QualifiedTypeName type_name_DerivedAutoidSequential = "DerivedAutoidSequential";
@@ -4811,6 +4971,7 @@ void register_DerivedAutoidSequential_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedAutoidSequential Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_DerivedAutoidSequential;
@@ -4823,6 +4984,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "cd Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_cd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4869,6 +5031,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure cd member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_cd = "cd";
@@ -4887,6 +5050,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "od Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_od = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -4933,6 +5097,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure od member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_od = "od";
@@ -4964,6 +5129,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "sd Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_sd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5010,6 +5176,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure sd member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_sd = "sd";
@@ -5043,6 +5210,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ld Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5089,6 +5257,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ld member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ld = "ld";
@@ -5122,6 +5291,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "lld Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_lld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5168,6 +5338,7 @@ void register_DerivedAutoidSequential_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure lld member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_lld = "lld";
@@ -5179,7 +5350,7 @@ void register_DerivedAutoidSequential_type_identifier()
         }
         CompleteStructType struct_type_DerivedAutoidSequential = TypeObjectUtils::build_complete_struct_type(struct_flags_DerivedAutoidSequential, header_DerivedAutoidSequential, member_seq_DerivedAutoidSequential);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedAutoidSequential, type_name_DerivedAutoidSequential.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedAutoidSequential, type_name_DerivedAutoidSequential.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedAutoidSequential already registered in TypeObjectRegistry for a different type.");
@@ -5191,11 +5362,14 @@ void register_DerivedAutoidSequential_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "DerivedAutoidSequential: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
 }
-void register_DerivedAutoidHash_type_identifier()
+// TypeIdentifier is returned by reference: dependent structures/unions are registered in this same method
+void register_DerivedAutoidHash_type_identifier(
+        TypeIdentifier& type_id)
 {
     {
         StructTypeFlag struct_flags_DerivedAutoidHash = TypeObjectUtils::build_struct_type_flag(eprosima::fastdds::dds::xtypes::ExtensibilityKind::NOT_APPLIED,
@@ -5236,6 +5410,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "c Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_c = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5282,6 +5457,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure c member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_c = "c";
@@ -5300,6 +5476,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "o Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_o = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5346,6 +5523,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure o member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_o = "o";
@@ -5377,6 +5555,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "s Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_s = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5423,6 +5602,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure s member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_s = "s";
@@ -5456,6 +5636,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "l Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_l = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5502,6 +5683,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure l member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_l = "l";
@@ -5535,6 +5717,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "ll Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     StructMemberFlag member_flags_ll = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5581,6 +5764,7 @@ void register_DerivedAutoidHash_type_identifier()
                     {
                         EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "Structure ll member TypeIdentifier inconsistent.");
+                        type_id = TypeIdentifier();
                         return;
                     }
                     MemberName name_ll = "ll";
@@ -5592,7 +5776,7 @@ void register_DerivedAutoidHash_type_identifier()
                 }
                 CompleteStructType struct_type_AutoidHash = TypeObjectUtils::build_complete_struct_type(struct_flags_AutoidHash, header_AutoidHash, member_seq_AutoidHash);
                 if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidHash, type_name_AutoidHash.to_string()))
+                        TypeObjectUtils::build_and_register_struct_type_object(struct_type_AutoidHash, type_name_AutoidHash.to_string(), type_id))
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                             "AutoidHash already registered in TypeObjectRegistry for a different type.");
@@ -5604,8 +5788,11 @@ void register_DerivedAutoidHash_type_identifier()
                 {
                     EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                                 "AutoidHash: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+                    type_id = TypeIdentifier();
                     return;
                 }
+                return_code_DerivedAutoidHash = return_code_AutoidHash;
+                type_ids_DerivedAutoidHash = type_ids_AutoidHash;
             }
         }
         QualifiedTypeName type_name_DerivedAutoidHash = "DerivedAutoidHash";
@@ -5632,6 +5819,7 @@ void register_DerivedAutoidHash_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedAutoidHash Structure: base_type TypeIdentifier registered in TypeObjectRegistry is inconsistent.");
+            type_id = TypeIdentifier();
             return;
         }
         CompleteStructMemberSeq member_seq_DerivedAutoidHash;
@@ -5644,6 +5832,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "cd Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_cd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5690,6 +5879,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure cd member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_cd = "cd";
@@ -5708,6 +5898,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "od Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_od = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5754,6 +5945,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure od member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_od = "od";
@@ -5785,6 +5977,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "sd Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_sd = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5831,6 +6024,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure sd member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_sd = "sd";
@@ -5864,6 +6058,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "ld Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_ld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5910,6 +6105,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure ld member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_ld = "ld";
@@ -5943,6 +6139,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "lld Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                type_id = TypeIdentifier();
                 return;
             }
             StructMemberFlag member_flags_lld = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructKind::NOT_APPLIED,
@@ -5989,6 +6186,7 @@ void register_DerivedAutoidHash_type_identifier()
             {
                 EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "Structure lld member TypeIdentifier inconsistent.");
+                type_id = TypeIdentifier();
                 return;
             }
             MemberName name_lld = "lld";
@@ -6000,7 +6198,7 @@ void register_DerivedAutoidHash_type_identifier()
         }
         CompleteStructType struct_type_DerivedAutoidHash = TypeObjectUtils::build_complete_struct_type(struct_flags_DerivedAutoidHash, header_DerivedAutoidHash, member_seq_DerivedAutoidHash);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
-                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedAutoidHash, type_name_DerivedAutoidHash.to_string()))
+                TypeObjectUtils::build_and_register_struct_type_object(struct_type_DerivedAutoidHash, type_name_DerivedAutoidHash.to_string(), type_id))
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                     "DerivedAutoidHash already registered in TypeObjectRegistry for a different type.");
@@ -6012,6 +6210,7 @@ void register_DerivedAutoidHash_type_identifier()
         {
             EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
                         "DerivedAutoidHash: Given Struct TypeIdentifier unknown to TypeObjectRegistry.");
+            type_id = TypeIdentifier();
             return;
         }
     }
