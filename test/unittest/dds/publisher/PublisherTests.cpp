@@ -868,15 +868,19 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     TransportPriorityQosPolicy transport_prio;
     transport_prio.value = 1;
     topic_qos.transport_priority(transport_prio);
-    LifespanQosPolicy lifespan;
-    lifespan.duration = {5, 0};
-    topic_qos.lifespan(lifespan);
+    
     OwnershipQosPolicy ownership;
     ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
     topic_qos.ownership(ownership);
     DataRepresentationQosPolicy data_rep;
     data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     topic_qos.representation(data_rep);
+    DestinationOrderQosPolicy dest_order;
+    dest_order.kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    topic_qos.destination_order(dest_order);
+    HistoryQosPolicy history;
+    history.kind = KEEP_ALL_HISTORY_QOS;
+    topic_qos.history(history);
 
     // Set custom DataWriter QoS
     DataWriterQos w_qos;
@@ -899,9 +903,10 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     ASSERT_EQ(w_qos.destination_order().kind, BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
     ASSERT_EQ(w_qos.resource_limits().max_samples, 1000);
     ASSERT_EQ(w_qos.transport_priority().value, 1);
-    ASSERT_EQ(w_qos.lifespan().duration, 5);
     ASSERT_EQ(w_qos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
     ASSERT_EQ(w_qos.representation().m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    ASSERT_EQ(w_qos.destination_order().kind, eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
+    ASSERT_EQ(w_qos.history().kind, KEEP_ALL_HISTORY_QOS);
     // Check if DataWriter QoS previously set are correct
     ASSERT_EQ(w_qos.ownership_strength().value, 1);
 }

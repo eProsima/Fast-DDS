@@ -112,17 +112,7 @@ DataReaderImpl::DataReaderImpl(
     : subscriber_(s)
     , type_(type)
     , topic_(topic)
-    , qos_(&qos == &DATAREADER_QOS_DEFAULT ? subscriber_->get_default_datareader_qos() :
-            (&qos == &DATAREADER_QOS_USE_TOPIC_QOS ?
-            ([this]()->DataReaderQos
-            {
-                //TODO when MultiTopic is supported: using DATAREADER_QOS_USE_TOPIC_QOS when creating
-                //a DataReader with MultiTopic should return error.
-                Topic* topicPtr = dynamic_cast<Topic*>(this->topic_);
-                DataReaderQos default_qos_with_topic_qos_ = this->subscriber_->get_default_datareader_qos();
-                this->subscriber_->copy_from_topic_qos(default_qos_with_topic_qos_, topicPtr->get_qos());
-                return default_qos_with_topic_qos_;
-            })() : qos))
+    , qos_(get_datareader_qos_from_settings(qos))
 #pragma warning (disable : 4355 )
     , history_(type, *topic, qos_)
     , listener_(listener)
@@ -146,6 +136,28 @@ DataReaderImpl::DataReaderImpl(
         is_custom_payload_pool_ = true;
         payload_pool_ = payload_pool;
     }
+}
+
+//TODO when MultiTopic is supported: using DATAREADER_QOS_USE_TOPIC_QOS when creating
+//a DataReader with MultiTopic should return error.
+DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(const DataReaderQos& qos)
+{
+    Topic* topicPtr = dynamic_cast<Topic*>(this->topic_);
+    DataReaderQos data_reader_qos_;
+    if (&qos == &DATAREADER_QOS_DEFAULT)
+    {
+        data_reader_qos_ = this->subscriber_->get_default_datareader_qos();
+    }
+    else if (&qos == &DATAREADER_QOS_USE_TOPIC_QOS)
+    {
+        data_reader_qos_ = this->subscriber_->get_default_datareader_qos();
+        this->subscriber_->copy_from_topic_qos(data_reader_qos_, topicPtr->get_qos());
+    }
+    else
+    {
+        data_reader_qos_ = qos;
+    }
+    return data_reader_qos_;
 }
 
 ReturnCode_t DataReaderImpl::enable()

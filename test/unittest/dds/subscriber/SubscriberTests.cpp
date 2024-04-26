@@ -1028,15 +1028,18 @@ TEST(SubscriberTests, datareader_copy_from_topic_qos)
     ResourceLimitsQosPolicy resource_limit;
     resource_limit.max_samples = 1000;
     topic_qos.resource_limits(resource_limit);
-    LifespanQosPolicy lifespan;
-    lifespan.duration = {5, 0};
-    topic_qos.lifespan(lifespan);
     OwnershipQosPolicy ownership;
     ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
     topic_qos.ownership(ownership);
     DataRepresentationQosPolicy data_rep;
     data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     topic_qos.representation(data_rep);
+    DestinationOrderQosPolicy dest_order;
+    dest_order.kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+    topic_qos.destination_order(dest_order);
+    HistoryQosPolicy history;
+    history.kind = KEEP_ALL_HISTORY_QOS;
+    topic_qos.history(history);
 
     // Set custom DataReader QoS
     DataReaderQos r_qos;
@@ -1058,9 +1061,10 @@ TEST(SubscriberTests, datareader_copy_from_topic_qos)
     ASSERT_EQ(r_qos.liveliness().kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     ASSERT_EQ(r_qos.destination_order().kind, BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
     ASSERT_EQ(r_qos.resource_limits().max_samples, 1000);
-    ASSERT_EQ(r_qos.lifespan().duration, 5);
     ASSERT_EQ(r_qos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
     ASSERT_EQ(r_qos.type_consistency().representation.m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    ASSERT_EQ(r_qos.destination_order().kind, eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
+    ASSERT_EQ(r_qos.history().kind, KEEP_ALL_HISTORY_QOS);
     // Check if DataReader QoS previously set are correct
     ASSERT_EQ(r_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
 }

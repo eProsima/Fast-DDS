@@ -221,7 +221,7 @@ ReturnCode_t Subscriber::copy_from_topic_qos(
         DataReaderQos& reader_qos,
         const TopicQos& topic_qos)
 {
-    return impl_->copy_from_topic_qos(reader_qos, topic_qos);
+    return SubscriberImpl::copy_from_topic_qos(reader_qos, topic_qos);
 }
 
 const DomainParticipant* Subscriber::get_participant() const

@@ -156,14 +156,7 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , type_(type)
     , topic_(topic)
-    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() :
-            (&qos == &DATAWRITER_QOS_USE_TOPIC_QOS ?
-            ([this]()->DataWriterQos
-            {
-                DataWriterQos default_qos_with_topic_qos_ = this->publisher_->get_default_datawriter_qos();
-                this->publisher_->copy_from_topic_qos(default_qos_with_topic_qos_, this->topic_->get_qos());
-                return default_qos_with_topic_qos_;
-            })() : qos))
+    , qos_(get_datawriter_qos_from_settings(qos))
     , listener_(listen)
     , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
             [this](
@@ -205,14 +198,7 @@ DataWriterImpl::DataWriterImpl(
     : publisher_(p)
     , type_(type)
     , topic_(topic)
-    , qos_(&qos == &DATAWRITER_QOS_DEFAULT ? publisher_->get_default_datawriter_qos() :
-            (&qos == &DATAWRITER_QOS_USE_TOPIC_QOS ?
-            ([this]()->DataWriterQos
-            {
-                DataWriterQos default_qos_with_topic_qos_ = this->publisher_->get_default_datawriter_qos();
-                this->publisher_->copy_from_topic_qos(default_qos_with_topic_qos_, this->topic_->get_qos());
-                return default_qos_with_topic_qos_;
-            })() : qos))
+    , qos_(get_datawriter_qos_from_settings(qos))
     , listener_(listen)
     , history_(get_topic_attributes(qos_, *topic_, type_), type_->m_typeSize, qos_.endpoint().history_memory_policy,
             [this](
@@ -229,6 +215,25 @@ DataWriterImpl::DataWriterImpl(
     , lifespan_duration_us_(qos_.lifespan().duration.to_ns() * 1e-3)
 {
     guid_ = { publisher_->get_participant_impl()->guid().guidPrefix, entity_id};
+}
+
+DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(const DataWriterQos& qos)
+{
+    DataWriterQos data_writer_qos_;
+    if (&qos == &DATAWRITER_QOS_DEFAULT)
+    {
+        data_writer_qos_ = this->publisher_->get_default_datawriter_qos();
+    }
+    else if (&qos == &DATAWRITER_QOS_USE_TOPIC_QOS)
+    {
+        data_writer_qos_ = this->publisher_->get_default_datawriter_qos();
+        this->publisher_->copy_from_topic_qos(data_writer_qos_, this->topic_->get_qos());
+    }
+    else
+    {
+        data_writer_qos_ = qos;
+    }
+    return data_writer_qos_;
 }
 
 ReturnCode_t DataWriterImpl::enable()

@@ -651,6 +651,8 @@ protected:
 private:
 
     void update_rtps_reader_qos();
+    DataReaderQos get_datareader_qos_from_settings(const DataReaderQos& qos);
+
 
 };
 

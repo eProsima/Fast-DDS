@@ -210,7 +210,7 @@ ReturnCode_t Publisher::copy_from_topic_qos(
         fastdds::dds::DataWriterQos& writer_qos,
         const fastdds::dds::TopicQos& topic_qos)
 {
-    return impl_->copy_from_topic_qos(writer_qos, topic_qos);
+    return PublisherImpl::copy_from_topic_qos(writer_qos, topic_qos);
 }
 
 const fastrtps::rtps::InstanceHandle_t& Publisher::get_instance_handle() const

@@ -446,15 +446,15 @@ TEST(DDSDataReader, datareader_qos_use_topic_qos)
     ResourceLimitsQosPolicy resource_limit;
     resource_limit.max_samples = 1000;
     topic_qos.resource_limits(resource_limit);
-    LifespanQosPolicy lifespan;
-    lifespan.duration = {5, 0};
-    topic_qos.lifespan(lifespan);
     OwnershipQosPolicy ownership;
     ownership.kind = eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS;
     topic_qos.ownership(ownership);
     DataRepresentationQosPolicy data_rep;
     data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     topic_qos.representation(data_rep);
+    HistoryQosPolicy history;
+    history.kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
+    topic_qos.history(history);
 
     DomainParticipant* participant_ =
         DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -481,9 +481,9 @@ TEST(DDSDataReader, datareader_qos_use_topic_qos)
     ASSERT_EQ(r_qos.latency_budget().duration, 0);
     ASSERT_EQ(r_qos.liveliness().kind, eprosima::fastdds::dds::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
     ASSERT_EQ(r_qos.resource_limits().max_samples, 1000);
-    ASSERT_EQ(r_qos.lifespan().duration, 5);
     ASSERT_EQ(r_qos.ownership().kind, eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS);
     ASSERT_EQ(r_qos.type_consistency().representation.m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    ASSERT_EQ(r_qos.history().kind, eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
     // Check default QoS
     ASSERT_EQ(r_qos.data_sharing().kind(), eprosima::fastdds::dds::AUTO);
 }

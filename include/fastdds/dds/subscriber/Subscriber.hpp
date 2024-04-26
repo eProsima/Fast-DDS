@@ -361,7 +361,7 @@ public:
      * @param[in] topic_qos
      * @return RETCODE_OK if successful, an error code otherwise
      */
-    RTPS_DllAPI ReturnCode_t copy_from_topic_qos(
+    RTPS_DllAPI static ReturnCode_t copy_from_topic_qos(
             DataReaderQos& reader_qos,
             const TopicQos& topic_qos);
 
