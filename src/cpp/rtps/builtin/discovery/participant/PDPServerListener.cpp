@@ -256,7 +256,7 @@ void PDPServerListener::on_new_cache_change_added(
 
                 // All local builtins are connected, the database will avoid any EDP DATA to be send before having PDP
                 // DATA acknowledgement. Non-local SERVERs will also be connected
-                if ( pdata && (is_local || !is_client))
+                if (pdata && (is_local || (!is_client && participant_type_str != ParticipantType::SUPER_CLIENT)))
                 {
                     pdp_server()->assignRemoteEndpoints(pdata);
                 }
