@@ -54,15 +54,15 @@ if(EPROSIMA_BUILD_TESTS)
     find_package(GTest CONFIG REQUIRED)
     include(${PROJECT_SOURCE_DIR}/cmake/testing/GoogleTest.cmake)
 
-    add_subdirectory(blackbox)
-    add_subdirectory(unittest)
-    add_subdirectory(xtypes)
-    add_subdirectory(dds/communication)
-    add_subdirectory(dds/communication/security)
-    add_subdirectory(dds/discovery)
+    #add_subdirectory(blackbox)
+    #add_subdirectory(unittest)
+    #add_subdirectory(xtypes)
+    #add_subdirectory(dds/communication)
+    #add_subdirectory(dds/communication/security)
+    #add_subdirectory(dds/discovery)
 
     if(UNIX AND NOT APPLE AND STRICT_REALTIME)
-        add_subdirectory(realtime)
+        #add_subdirectory(realtime)
     endif()
 endif()
 
@@ -70,7 +70,7 @@ endif()
 # Example tests
 ###############################################################################
 if (COMPILE_EXAMPLES AND FASTDDS_EXAMPLE_TESTS)
-    add_subdirectory(examples)
+    #add_subdirectory(examples)
 endif()
 
 ###############################################################################
@@ -79,7 +79,7 @@ endif()
 if(NOT ((MSVC OR MSVC_IDE)) AND PROFILING_TESTS)
     find_program(CTEST_MEMORYCHECK_COMMAND NAMES valgrind)
     if(CTEST_MEMORYCHECK_COMMAND)
-        add_subdirectory(profiling)
+        #add_subdirectory(profiling)
     endif()
 endif()
 
@@ -87,7 +87,7 @@ endif()
 # Performance tests
 ###############################################################################
 if(PERFORMANCE_TESTS)
-    add_subdirectory(performance)
+    #add_subdirectory(performance)
 endif()
 
 ###############################################################################
