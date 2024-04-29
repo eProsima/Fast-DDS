@@ -434,8 +434,8 @@ TEST(DDSDataWriter, default_qos_large_history_depth)
 
 /*
  * This test creates a DataWriter using DATAWRITER_QOS_USE_TOPIC_QOS and checks if DataWriter QoS
- * are correctly set from Topic QoS. It also checks if one of the QoS that is not in common with Topic QoS
- * is correctly set as the default one.
+ * are correctly set from Topic QoS. It also checks if the QoS that is not in common with Topic QoS
+ * is correctly set as the default ones.
  */
 TEST(DDSDataWriter, datawriter_qos_use_topic_qos)
 {
@@ -476,6 +476,9 @@ TEST(DDSDataWriter, datawriter_qos_use_topic_qos)
     HistoryQosPolicy history;
     history.kind = eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS;
     topic_qos.history(history);
+    LifespanQosPolicy lifespan_;
+    lifespan_.duration = {5, 0};
+    topic_qos.lifespan(lifespan_);
 
     DomainParticipant* participant_ =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -484,15 +487,45 @@ TEST(DDSDataWriter, datawriter_qos_use_topic_qos)
     type_support_.reset(new HelloWorldPubSubType());
     type_support_.register_type(participant_, "HelloWorld");
     Topic* topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", topic_qos);
+
+    // Set publisher default qos
+    PublisherQos p_qos;
+    p_qos.presentation().access_scope = eprosima::fastdds::dds::TOPIC_PRESENTATION_QOS;
+    std::vector<std::string> part;
+    part.push_back("part1");
+    p_qos.partition().names(part);
+    GroupDataQosPolicy group_data;
+    std::vector<eprosima::fastrtps::rtps::octet> vec;
+    vec.push_back(3);
+    group_data.data_vec(vec);
+    p_qos.group_data(group_data);
+    EntityFactoryQosPolicy entity_factory;
+    entity_factory.autoenable_created_entities = false;
+    p_qos.entity_factory(entity_factory);
+    participant_->set_default_publisher_qos(p_qos);
     Publisher* publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher_, nullptr);
-    // Create DataWriter with DATAWRITER_QOS_USE_TOPIC_QOS
+    // Set datawriter default qos
+    DataWriterQos w_qos;
+    w_qos.ownership_strength().value = 1;
+    PublishModeQosPolicy publish_mode;
+    publish_mode.kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    w_qos.publish_mode(publish_mode);
+    w_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    w_qos.user_data().push_back(0);
+    RTPSEndpointQos endpoint_;
+    endpoint_.entity_id = 1;
+    w_qos.endpoint(endpoint_);
+    WriterResourceLimitsQos writer_limits;
+    writer_limits.matched_subscriber_allocation = ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    w_qos.writer_resource_limits(writer_limits);
+    w_qos.data_sharing().off();
+    publisher_->set_default_datawriter_qos(w_qos);
     DataWriter* writer_;
     writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_USE_TOPIC_QOS);
     ASSERT_NE(writer_, nullptr);
 
     // Check if DataWriter QoS have been correctly set from Topic QoS
-    DataWriterQos w_qos;
     writer_->get_qos(w_qos);
     ASSERT_EQ(w_qos.durability_service().history_kind, eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
     ASSERT_EQ(w_qos.reliability().kind, eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS);
@@ -505,6 +538,21 @@ TEST(DDSDataWriter, datawriter_qos_use_topic_qos)
     ASSERT_EQ(w_qos.ownership().kind, eprosima::fastdds::dds::EXCLUSIVE_OWNERSHIP_QOS);
     ASSERT_EQ(w_qos.history().kind, eprosima::fastdds::dds::KEEP_ALL_HISTORY_QOS);
     ASSERT_EQ(w_qos.representation().m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    ASSERT_EQ(w_qos.lifespan().duration, 5);
+    publisher_->get_qos(p_qos);
+    // Check if QoS have been correctly set from Default Qos
+    ASSERT_EQ(p_qos.presentation().access_scope, eprosima::fastdds::dds::TOPIC_PRESENTATION_QOS);
+    ASSERT_EQ(p_qos.partition().names()[0], "part1");
+    ASSERT_EQ(p_qos.group_data(), group_data);
+    ASSERT_EQ(p_qos.entity_factory().autoenable_created_entities, false);
+    ASSERT_EQ(w_qos.ownership_strength().value, 1);
+    ASSERT_EQ(w_qos.publish_mode().kind, eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
+    ASSERT_EQ(w_qos.writer_data_lifecycle().autodispose_unregistered_instances, false);
+    ASSERT_EQ(w_qos.user_data()[0], 0);
+    ASSERT_EQ(w_qos.endpoint().entity_id, 1);
+    ASSERT_EQ(w_qos.writer_resource_limits().matched_subscriber_allocation.initial, 1u);
+    ASSERT_EQ(w_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
+
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

@@ -885,6 +885,18 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     // Set custom DataWriter QoS
     DataWriterQos w_qos;
     w_qos.ownership_strength().value = 1;
+    PublishModeQosPolicy publish_mode;
+    publish_mode.kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    w_qos.publish_mode(publish_mode);
+    w_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    w_qos.user_data().push_back(0);
+    RTPSEndpointQos endpoint_;
+    endpoint_.entity_id = 1;
+    w_qos.endpoint(endpoint_);
+    WriterResourceLimitsQos writer_limits;
+    writer_limits.matched_subscriber_allocation = eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    w_qos.writer_resource_limits(writer_limits);
+    w_qos.data_sharing().off();
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
@@ -909,6 +921,12 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     ASSERT_EQ(w_qos.history().kind, KEEP_ALL_HISTORY_QOS);
     // Check if DataWriter QoS previously set are correct
     ASSERT_EQ(w_qos.ownership_strength().value, 1);
+    ASSERT_EQ(w_qos.publish_mode().kind, eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
+    ASSERT_EQ(w_qos.writer_data_lifecycle().autodispose_unregistered_instances, false);
+    ASSERT_EQ(w_qos.user_data()[0], 0);
+    ASSERT_EQ(w_qos.endpoint().entity_id, 1);
+    ASSERT_EQ(w_qos.writer_resource_limits().matched_subscriber_allocation.initial, 1u);
+    ASSERT_EQ(w_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
 }
 
 } // namespace dds

@@ -1043,6 +1043,14 @@ TEST(SubscriberTests, datareader_copy_from_topic_qos)
 
     // Set custom DataReader QoS
     DataReaderQos r_qos;
+    r_qos.reader_data_lifecycle().autopurge_no_writer_samples_delay = {3, 0};
+    r_qos.user_data().push_back(0);
+    RTPSEndpointQos endpoint_;
+    endpoint_.entity_id = 1;
+    r_qos.endpoint(endpoint_);
+    ReaderResourceLimitsQos reader_limits;
+    reader_limits.matched_publisher_allocation = eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    r_qos.reader_resource_limits(reader_limits);
     r_qos.data_sharing().off();
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
@@ -1066,6 +1074,10 @@ TEST(SubscriberTests, datareader_copy_from_topic_qos)
     ASSERT_EQ(r_qos.destination_order().kind, eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
     ASSERT_EQ(r_qos.history().kind, KEEP_ALL_HISTORY_QOS);
     // Check if DataReader QoS previously set are correct
+    ASSERT_EQ(r_qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.seconds, 3);
+    ASSERT_EQ(r_qos.user_data()[0], 0);
+    ASSERT_EQ(r_qos.endpoint().entity_id, 1);
+    ASSERT_EQ(r_qos.reader_resource_limits().matched_publisher_allocation.initial, 1u);
     ASSERT_EQ(r_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
 }
 
