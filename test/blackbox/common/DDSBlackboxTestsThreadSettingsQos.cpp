@@ -31,12 +31,14 @@ class CustomLogConsumer : public LogConsumer
 
 public:
 
-    CustomLogConsumer(const char* regex_str)
+    CustomLogConsumer(
+            const char* regex_str)
         : regex_(regex_str)
     {
     }
 
-    void set_regex(const char* regex_str)
+    void set_regex(
+            const char* regex_str)
     {
         std::lock_guard<std::mutex> lock(mutex_);
         regex_ = std::regex(regex_str);
@@ -79,7 +81,7 @@ TEST(ThreadSettingsQoS, thread_settings_qos_outputs_proper_logging_on_failure)
     th_settings.priority = -5;
 
     writer.set_events_thread_settings(th_settings)
-          .init();
+            .init();
 
     Log::Flush();
 
@@ -92,8 +94,8 @@ TEST(ThreadSettingsQoS, thread_settings_qos_outputs_proper_logging_on_failure)
     th_settings.scheduling_policy = 1;
 
     writer.set_events_thread_settings(th_settings)
-          .init();
+            .init();
 
     Log::Flush();
-#endif
+#endif // ifndef _WIN32
 }

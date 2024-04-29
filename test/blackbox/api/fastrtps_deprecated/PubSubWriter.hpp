@@ -1274,7 +1274,8 @@ public:
         return *this;
     }
 
-    PubSubWriter& set_events_thread_settings(const eprosima::fastdds::rtps::ThreadSettings& settings)
+    PubSubWriter& set_events_thread_settings(
+            const eprosima::fastdds::rtps::ThreadSettings& settings)
     {
         participant_attr_.rtps.timed_events_thread = settings;
         return *this;

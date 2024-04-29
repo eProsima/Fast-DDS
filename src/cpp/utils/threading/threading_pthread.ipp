@@ -27,11 +27,13 @@
 
 namespace eprosima {
 
-template<typename... Args>
+template<typename ... Args>
 static void set_name_to_current_thread_impl(
-    char* thread_name_buffer, const char* fmt, Args... args)
+        char* thread_name_buffer,
+        const char* fmt,
+        Args... args)
 {
-    snprintf(thread_name_buffer, 16, fmt, args...);
+    snprintf(thread_name_buffer, 16, fmt, args ...);
     auto id = pthread_self();
     pthread_setname_np(id, thread_name_buffer);
 }
@@ -101,9 +103,9 @@ static void configure_current_thread_scheduler(
     // Set Scheduler Class and Priority
     //
 
-    if((sched_class == SCHED_OTHER) ||
-       (sched_class == SCHED_BATCH) ||
-       (sched_class == SCHED_IDLE))
+    if ((sched_class == SCHED_OTHER) ||
+            (sched_class == SCHED_BATCH) ||
+            (sched_class == SCHED_IDLE))
     {
         //
         // BATCH and IDLE do not have explicit priority values.
@@ -115,20 +117,22 @@ static void configure_current_thread_scheduler(
         // Sched OTHER has a nice value, that we pull from the priority parameter.
         //
 
-        if(0 == result && sched_class == SCHED_OTHER && change_priority)
+        if (0 == result && sched_class == SCHED_OTHER && change_priority)
         {
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
             if (0 != result)
             {
-                EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(result) << "'");
+                EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(
+                            result) << "'");
             }
         }
         else if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(result) << "'");
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(
+                        result) << "'");
         }
     }
-    else if((sched_class == SCHED_FIFO) ||
+    else if ((sched_class == SCHED_FIFO) ||
             (sched_class == SCHED_RR))
     {
         //
@@ -139,7 +143,8 @@ static void configure_current_thread_scheduler(
         result = pthread_setschedparam(self_tid, sched_class, &param);
         if (0 != result)
         {
-            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(result) << "'");
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(
+                        result) << "'");
         }
     }
 }
@@ -169,9 +174,9 @@ static void configure_current_thread_affinity(
     //
     cpu_count = get_nprocs_conf();
 
-    for(a = 0; a < cpu_count; a++)
+    for (a = 0; a < cpu_count; a++)
     {
-        if(0 != (affinity_mask & 1))
+        if (0 != (affinity_mask & 1))
         {
             CPU_SET(a, &cpu_set);
             result++;
@@ -184,18 +189,19 @@ static void configure_current_thread_affinity(
         EPROSIMA_LOG_ERROR(SYSTEM, "Affinity mask has more processors than the ones present in the system");
     }
 
-    if(result > 0)
+    if (result > 0)
     {
 #ifdef ANDROID
         result = sched_setaffinity(self_tid, sizeof(cpu_set_t), &cpu_set);
 #else
         result = pthread_setaffinity_np(self_tid, sizeof(cpu_set_t), &cpu_set);
-#endif
+#endif // ifdef ANDROID
     }
 
     if (0 != result)
     {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(result) << "'");
+        EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(
+                    result) << "'");
     }
 }
 
