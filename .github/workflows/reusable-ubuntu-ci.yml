@@ -94,6 +94,13 @@ jobs:
           python3 -c "import xmlschema"
           echo $?
           ls -l $(which python3)
+          echo $?
+          installation_path=$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')
+          echo "import sys; sys.path.append($(pip show xmlschema | grep -i 'Location' | awk '{print $2}'))"
+          python3 -c "import sys; sys.path.append(\"$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')\")"
+          echo $?
+          ls -l $(which python3)
+          echo $?
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/python
