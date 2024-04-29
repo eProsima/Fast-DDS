@@ -31,6 +31,7 @@ MemberDescriptor::MemberDescriptor()
     , index_(INDEX_INVALID)
     , default_label_(false)
 {
+    copy_annotations_from_type(type_);
 }
 
 MemberDescriptor::MemberDescriptor(
@@ -43,6 +44,7 @@ MemberDescriptor::MemberDescriptor(
     , index_(index)
     , default_label_(false)
 {
+    copy_annotations_from_type(type_);
 }
 
 MemberDescriptor::MemberDescriptor(
@@ -55,51 +57,54 @@ MemberDescriptor::MemberDescriptor(
     , default_label_(false)
 {
     copy_from(descriptor);
+    copy_annotations_from_type(type_);
 }
 
 MemberDescriptor::MemberDescriptor(
         MemberId id,
         const std::string& name,
-        DynamicType_ptr type_)
+        DynamicType_ptr type)
     : name_(name)
     , id_(id)
-    , type_(type_)
+    , type_(type)
     , default_value_("")
     , index_(INDEX_INVALID)
     , default_label_(false)
 {
-
+    copy_annotations_from_type(type_);
 }
 
 MemberDescriptor::MemberDescriptor(
         MemberId id,
         const std::string& name,
-        DynamicType_ptr type_,
+        DynamicType_ptr type,
         const std::string& defaultValue)
     : name_(name)
     , id_(id)
-    , type_(type_)
+    , type_(type)
     , default_value_(defaultValue)
     , index_(INDEX_INVALID)
     , default_label_(false)
 {
+    copy_annotations_from_type(type_);
 }
 
 MemberDescriptor::MemberDescriptor(
         MemberId id,
         const std::string& name,
-        DynamicType_ptr type_,
+        DynamicType_ptr type,
         const std::string& defaultValue,
         const std::vector<uint64_t>& unionLabels,
         bool isDefaultLabel)
     : name_(name)
     , id_(id)
-    , type_(type_)
+    , type_(type)
     , default_value_(defaultValue)
     , index_(INDEX_INVALID)
     , default_label_(isDefaultLabel)
 {
     labels_ = unionLabels;
+    copy_annotations_from_type(type_);
 }
 
 MemberDescriptor::~MemberDescriptor()
@@ -409,6 +414,25 @@ bool MemberDescriptor::is_type_name_consistent(
         const std::string& sName) const
 {
     return TypeDescriptor::is_type_name_consistent(sName);
+}
+
+void MemberDescriptor::copy_annotations_from_type(
+        const DynamicType_ptr& type)
+{
+    if (type)
+    {
+        // Copy annotation from type
+        uint32_t num_annotations = type->get_annotation_count();
+        for (uint32_t i = 0; i < num_annotations; ++i)
+        {
+            AnnotationDescriptor ann;
+            type->get_annotation(ann, i);
+            AnnotationDescriptor* pNewDescriptor = new AnnotationDescriptor();
+            pNewDescriptor->copy_from(&ann);
+            annotation_.push_back(pNewDescriptor);
+        }
+    }
+
 }
 
 void MemberDescriptor::set_id(
