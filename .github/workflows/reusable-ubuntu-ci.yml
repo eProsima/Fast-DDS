@@ -72,35 +72,25 @@ jobs:
           update: false
           upgrade: false
 
-      #- name: Install colcon
-      #  uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/python
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/python
 
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@hotfix/python
         with:
-          packages: vcstool xmlschema
+          packages: vcstool
           upgrade: false
 
-      - name: Check python installed dependencies
-        run: |
-          python3 -m pip list
-          echo $?
-          python3 -m pip show vcstool
-          echo $?
-          python3 -m pip show xmlschema
-          echo $?
-          python3 -c "import sys"
-          echo $?
-          python3 -c "import xmlschema"
-          echo $?
-          ls -l $(which python3)
-          echo $?
-          installation_path=$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')
-          echo "import sys; sys.path.append($(pip show xmlschema | grep -i 'Location' | awk '{print $2}'))"
-          python3 -c "import sys; sys.path.append(\"$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')\")"
-          echo $?
-          ls -l $(which python3)
-          echo $?
+      - name: Install Python dependencies
+        uses: eProsima/eProsima-CI/multiplatform/install_python_packages@hotfix/python
+        with:
+          packages: xmlschema
+          upgrade: false
+          path: $( which python3 )/../../lib
+
+      #- name: Source python installed dependencies
+      #  run: |
+      #    python3 -c "import sys; sys.path.append(\"$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')\")"
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/python
@@ -124,59 +114,59 @@ jobs:
           skip_existing: 'true'
 
       # Get Shapes Demo to make sure it keeps compiling
-#      - name: Get Shapes Demo branch
-#        id: get_shapes_demo_branch
-#        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@hotfix/python
-#        with:
-#          remote_repository: eProsima/ShapesDemo
-#          fallback_branch: ${{ inputs.fastdds-branch || 'master' }}
-#
-#      - name: Download Shapes Demo repo
-#        uses: eProsima/eProsima-CI/external/checkout@hotfix/python
-#        with:
-#          repository: eProsima/ShapesDemo
-#          path: src/shapes-demo
-#          ref: ${{ steps.get_shapes_demo_branch.outputs.deduced_branch }}
-#
-#      # Required for Shapes Demo
-#      - name: Install Qt
-#        uses: jurplel/install-qt-action@v2.13.0
-#        with:
-#          version: '5.15.2'
-#          dir: '${{ github.workspace }}/qt_installation/'
-#          modules: 'qtcharts'
-#
-#      - name: Colcon build
-#        continue-on-error: false
-#        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/python
-#        with:
-#          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
-#          colcon_build_args: ${{ inputs.colcon-args }}
-#          cmake_args: ${{ inputs.cmake-args }}
-#          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
-#          cmake_build_type: ${{ matrix.cmake-build-type }}
-#          workspace: ${{ github.workspace }}
-#
-#      - name: Colcon test
-#        id: test
-#        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-#        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/python
-#        with:
-#          colcon_test_args: ${{ inputs.colcon-args }}
-#          colcon_test_args_default: --event-handlers=console_direct+
-#          ctest_args: ${{ inputs.ctest-args }}
-#          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
-#          packages_names: fastrtps
-#          workspace: ${{ github.workspace }}
-#          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
-#
-#      - name: Test summary
-#        uses: eProsima/eProsima-CI/multiplatform/junit_summary@hotfix/python
-#        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-#        with:
-#          junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
-#          print_summary: 'True'
-#          show_failed: 'True'
-#          show_disabled: 'False'
-#          show_skipped: 'False'
-#
+      - name: Get Shapes Demo branch
+        id: get_shapes_demo_branch
+        uses: eProsima/eProsima-CI/ubuntu/get_related_branch_from_repo@hotfix/python
+        with:
+          remote_repository: eProsima/ShapesDemo
+          fallback_branch: ${{ inputs.fastdds-branch || 'master' }}
+
+      - name: Download Shapes Demo repo
+        uses: eProsima/eProsima-CI/external/checkout@hotfix/python
+        with:
+          repository: eProsima/ShapesDemo
+          path: src/shapes-demo
+          ref: ${{ steps.get_shapes_demo_branch.outputs.deduced_branch }}
+
+      # Required for Shapes Demo
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2.13.0
+        with:
+          version: '5.15.2'
+          dir: '${{ github.workspace }}/qt_installation/'
+          modules: 'qtcharts'
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/python
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Colcon test
+        id: test
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/python
+        with:
+          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args_default: --event-handlers=console_direct+
+          ctest_args: ${{ inputs.ctest-args }}
+          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
+          packages_names: fastrtps
+          workspace: ${{ github.workspace }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+
+      - name: Test summary
+        uses: eProsima/eProsima-CI/multiplatform/junit_summary@hotfix/python
+        if: ${{ !cancelled() && !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        with:
+          junit_reports_dir: "${{ steps.test.outputs.ctest_results_path }}"
+          print_summary: 'True'
+          show_failed: 'True'
+          show_disabled: 'False'
+          show_skipped: 'False'
+
