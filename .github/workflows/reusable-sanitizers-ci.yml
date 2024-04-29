@@ -86,7 +86,7 @@ jobs:
       - name: Install apt packages
         uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@hotfix/python
         with:
-          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip software-properties-common wget
+          packages: curl grep libasio-dev libtinyxml2-dev software-properties-common wget
 
       - name: Install colcon
         uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/python
