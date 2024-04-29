@@ -120,35 +120,6 @@ bool PDPServer::init(
         return false;
     }
 
-    std::vector<nlohmann::json> backup_queue;
-    if (durability_ == TRANSIENT)
-    {
-        nlohmann::json backup_json;
-        // If the DS is BACKUP, try to restore DDB from file
-        discovery_db().backup_in_progress(true);
-        if (read_backup(backup_json, backup_queue))
-        {
-            if (process_backup_discovery_database_restore(backup_json))
-            {
-                EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
-            }
-        }
-        else
-        {
-            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
-                    "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
-        }
-
-        discovery_db().backup_in_progress(false);
-
-        discovery_db_.persistence_enable(get_ddb_queue_persistence_file_name());
-    }
-    else
-    {
-        // Allows the ddb to process new messages from this point
-        discovery_db_.enable();
-    }
-
     // Activate listeners
     EDPServer* edp = static_cast<EDPServer*>(mp_EDP);
     builtin_endpoints_->enable_pdp_readers(getRTPSParticipant());
@@ -178,6 +149,41 @@ bool PDPServer::init(
                         m_discovery.discovery_config.discoveryServer_client_syncperiod));
     ping_->restart_timer();
 
+    return true;
+}
+
+bool PDPServer::enable()
+{
+    std::vector<nlohmann::json> backup_queue;
+    // Restore the DDB from file if this is a BACKUP server
+    if (durability_ == TRANSIENT)
+    {
+        nlohmann::json backup_json;
+        // If the DS is BACKUP, try to restore DDB from file
+        discovery_db().backup_in_progress(true);
+        if (read_backup(backup_json, backup_queue))
+        {
+            if (process_backup_discovery_database_restore(backup_json))
+            {
+                EPROSIMA_LOG_INFO(RTPS_PDP_SERVER, "DiscoveryDataBase restored correctly");
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_INFO(RTPS_PDP_SERVER,
+                    "Error reading backup file. Corrupted or unmissing file, restarting from scratch");
+        }
+
+        discovery_db().backup_in_progress(false);
+
+        discovery_db_.persistence_enable(get_ddb_queue_persistence_file_name());
+    }
+    else
+    {
+        // Allows the ddb to process new messages from this point
+        discovery_db_.enable();
+    }
+
     // Restoring the queue must be done after starting the routine
     if (durability_ == TRANSIENT)
     {
@@ -185,7 +191,7 @@ bool PDPServer::init(
         process_backup_restore_queue(backup_queue);
     }
 
-    return true;
+    return PDP::enable();
 }
 
 ParticipantProxyData* PDPServer::createParticipantProxyData(

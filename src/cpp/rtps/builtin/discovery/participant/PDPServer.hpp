@@ -80,6 +80,13 @@ public:
             fastrtps::rtps::RTPSParticipantImpl* part) override;
 
     /**
+     * @brief Enable the Participant Discovery Protocol and checks if a backup file
+     * needs to be restored for DiscoveryProtocol_t::BACKUP.
+     *
+     * @return true if enabled correctly, or if already enabled; false otherwise
+     */
+    bool enable() override;
+    /**
      * Creates an initializes a new participant proxy from a DATA(p) raw info
      * @param p ParticipantProxyData from DATA msg deserialization
      * @param writer_guid GUID of originating writer

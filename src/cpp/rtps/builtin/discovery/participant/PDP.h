@@ -129,7 +129,7 @@ public:
      *
      * @return true if enabled correctly, or if already enabled; false otherwise
      */
-    bool enable();
+    virtual bool enable();
 
     /**
      * @brief Disable the Participant Discovery Protocol
