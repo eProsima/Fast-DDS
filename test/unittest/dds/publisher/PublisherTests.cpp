@@ -834,9 +834,9 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
 }
 
 /*
-* This test checks if DataWriter QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
-* DataWriter QoS previously set (which are not in common with Topic QoS) are not modified.
-*/
+ * This test checks if DataWriter QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
+ * DataWriter QoS previously set (which are not in common with Topic QoS) are not modified.
+ */
 TEST(PublisherTests, datawriter_copy_from_topic_qos)
 {
     // Set custom Topic QoS
@@ -868,7 +868,7 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     TransportPriorityQosPolicy transport_prio;
     transport_prio.value = 1;
     topic_qos.transport_priority(transport_prio);
-    
+
     OwnershipQosPolicy ownership;
     ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
     topic_qos.ownership(ownership);
@@ -886,7 +886,7 @@ TEST(PublisherTests, datawriter_copy_from_topic_qos)
     DataWriterQos w_qos;
     w_qos.ownership_strength().value = 1;
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);

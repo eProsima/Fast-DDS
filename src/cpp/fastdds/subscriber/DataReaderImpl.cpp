@@ -140,7 +140,8 @@ DataReaderImpl::DataReaderImpl(
 
 //TODO when MultiTopic is supported: using DATAREADER_QOS_USE_TOPIC_QOS when creating
 //a DataReader with MultiTopic should return error.
-DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(const DataReaderQos& qos)
+DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(
+        const DataReaderQos& qos)
 {
     Topic* topicPtr = dynamic_cast<Topic*>(this->topic_);
     DataReaderQos data_reader_qos_;

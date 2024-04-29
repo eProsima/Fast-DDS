@@ -415,10 +415,10 @@ TEST(DDSDataReader, default_qos_large_history_depth)
 }
 
 /*
-* This test creates a DataReader using DATAREADER_QOS_USE_TOPIC_QOS and checks if DataReader QoS
-* are correctly set from Topic QoS. It also checks if one of the QoS that is not in common with Topic QoS
-* is correctly set as the default one.
-*/
+ * This test creates a DataReader using DATAREADER_QOS_USE_TOPIC_QOS and checks if DataReader QoS
+ * are correctly set from Topic QoS. It also checks if one of the QoS that is not in common with Topic QoS
+ * is correctly set as the default one.
+ */
 TEST(DDSDataReader, datareader_qos_use_topic_qos)
 {
     using namespace eprosima::fastdds::dds;
@@ -457,13 +457,13 @@ TEST(DDSDataReader, datareader_qos_use_topic_qos)
     topic_qos.history(history);
 
     DomainParticipant* participant_ =
-        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant_, nullptr);
 
     TypeSupport type_support_;
     type_support_.reset(new HelloWorldPubSubType());
     type_support_.register_type(participant_, "HelloWorld");
-    Topic* topic_ = participant_->create_topic("HelloWorldTopic","HelloWorld", topic_qos);
+    Topic* topic_ = participant_->create_topic("HelloWorldTopic", "HelloWorld", topic_qos);
     Subscriber* subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber_, nullptr);
     // Create DataReader with DATAREADER_QOS_USE_TOPIC_QOS

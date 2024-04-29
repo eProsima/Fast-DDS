@@ -997,9 +997,9 @@ TEST(SubscriberTests, DeleteContainedEntities)
 }
 
 /*
-* This test checks if DataReader QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
-* DataReader QoS previously set (which are not in common with Topic QoS) are not modified.
-*/
+ * This test checks if DataReader QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
+ * DataReader QoS previously set (which are not in common with Topic QoS) are not modified.
+ */
 TEST(SubscriberTests, datareader_copy_from_topic_qos)
 {
     // Set custom Topic QoS
@@ -1045,7 +1045,7 @@ TEST(SubscriberTests, datareader_copy_from_topic_qos)
     DataReaderQos r_qos;
     r_qos.data_sharing().off();
     DomainParticipant* participant =
-        DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);

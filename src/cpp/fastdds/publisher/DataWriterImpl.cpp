@@ -217,7 +217,8 @@ DataWriterImpl::DataWriterImpl(
     guid_ = { publisher_->get_participant_impl()->guid().guidPrefix, entity_id};
 }
 
-DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(const DataWriterQos& qos)
+DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(
+        const DataWriterQos& qos)
 {
     DataWriterQos data_writer_qos_;
     if (&qos == &DATAWRITER_QOS_DEFAULT)
