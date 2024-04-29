@@ -20,7 +20,6 @@
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/structuresPubSubTypes.h"
 #include "../../../dds-types-test/structuresTypeObjectSupport.hpp"
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -554,18 +553,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructShort)
 
     xtypes::TypeIdentifier static_type_id;
     register_StructShort_type_identifier(static_type_id);
-    EXPECT_NE(static_type_id, xtypes::TypeIdentifier());
-    xtypes::TypeIdentifier dynamic_type_id;
-    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().
-                    register_typeobject_w_dynamic_type(struct_type, dynamic_type_id));
-    EXPECT_EQ(static_type_id, dynamic_type_id);
-    xtypes::TypeObject type_object;
-    EXPECT_EQ(RETCODE_OK, DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
-                dynamic_type_id, type_object));
-    DynamicTypeBuilder::_ref_type builder = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
-        type_object);
-    ASSERT_NE(builder, nullptr);
-    EXPECT_TRUE(builder->equals(struct_type));
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -591,6 +579,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedShort)
         EXPECT_EQ(struct_data.var_ushort(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructUnsignedShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -614,6 +606,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLong)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_long(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -639,6 +635,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedLong)
         EXPECT_EQ(struct_data.var_ulong(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructUnsignedLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -662,6 +662,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLongLong)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_longlong(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -687,6 +691,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnsignedLongLong)
         EXPECT_EQ(struct_data.var_ulonglong(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructUnsignedLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -710,6 +718,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructFloat)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_float(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -735,6 +747,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructDouble)
         EXPECT_EQ(struct_data.var_double(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -758,6 +774,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLongDouble)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_longdouble(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -783,6 +803,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoolean)
         EXPECT_EQ(struct_data.var_boolean(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -806,6 +830,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructOctet)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_octet(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -831,6 +859,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructChar8)
         EXPECT_EQ(struct_data.var_char8(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructChar8_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -854,6 +886,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructChar16)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_char16(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructChar16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -879,6 +915,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructString)
         EXPECT_EQ(struct_data.var_string(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -902,6 +942,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructWString)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_wstring(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -927,6 +971,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoundedString)
         EXPECT_EQ(struct_data.var_bounded_string(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructBoundedString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -950,6 +998,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBoundedWString)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_bounded_wstring(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructBoundedWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -976,6 +1028,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructEnum)
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_enum()), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructEnum_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1001,6 +1057,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitMask)
         EXPECT_EQ(struct_data.var_bitmask(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructBitMask_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1024,6 +1084,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructAlias)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_alias(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructAlias_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1053,6 +1117,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructShortArray)
         }
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructShortArray_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1076,6 +1144,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructSequence)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_sequence(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructSequence_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1119,6 +1191,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructMap)
         EXPECT_EQ(data->return_loaned_value(map_data), RETCODE_OK);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructMap_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1154,6 +1230,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructUnion)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         EXPECT_EQ(struct_data.var_union().shortValue(), test_short_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructUnion_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1192,6 +1272,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructure)
         EXPECT_EQ(data_struct.var_structure().field2(), test_float_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructStructure_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1202,8 +1286,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    uint8_t octet_value = 5;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet octet_value = 5;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -1212,8 +1296,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
     int16_t test_short_value = 0;
     DynamicData::_ref_type bitset_data = data->loan_value(data->get_member_id_by_name(var_bitset_name));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
@@ -1241,6 +1325,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructBitset)
         EXPECT_EQ(data_struct.var_bitset().d(), test_short_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_StructBitset_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1250,6 +1338,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructEmpty)
 
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
+
+    xtypes::TypeIdentifier static_type_id;
+    register_StructEmpty_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1273,12 +1365,12 @@ struct testing_values_struct
     std::wstring test_wstring_value;
     std::string test_bounded_string_value;
     std::wstring test_bounded_wstring_value;
-    uint32_t test_enum_value;
+    int32_t test_enum_value;
     InnerBitMaskHelper test_bitmask_value;
     Int16Seq test_array_value;
     Int32Seq test_seq_value;
     int32_t test_map_value;
-    uint8_t test_octet_value;
+    eprosima::fastrtps::rtps::octet test_octet_value;
 };
 
 void check_structure_static_data(
@@ -1308,7 +1400,7 @@ void check_structure_static_data(
     EXPECT_EQ(struct_data.var_StructWString().var_wstring(), testing_values.test_wstring_value);
     EXPECT_EQ(struct_data.var_StructBoundedString().var_bounded_string(), testing_values.test_bounded_string_value);
     EXPECT_EQ(struct_data.var_StructBoundedWString().var_bounded_wstring(), testing_values.test_bounded_wstring_value);
-    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_StructEnum().var_enum()), testing_values.test_enum_value);
+    EXPECT_EQ(static_cast<int32_t>(struct_data.var_StructEnum().var_enum()), testing_values.test_enum_value);
     EXPECT_EQ(struct_data.var_StructBitMask().var_bitmask(), testing_values.test_bitmask_value);
     EXPECT_EQ(struct_data.var_StructAlias().var_alias(), testing_values.test_long_value);
     EXPECT_EQ(struct_data.var_StructShortArray().var_array_short().size(), testing_values.test_array_value.size());
@@ -1475,7 +1567,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     Int16Seq array_value = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     Int32Seq seq_value = {10, 20};
     int32_t map_value = 253;
-    uint8_t octet_value = 7;
+    eprosima::fastrtps::rtps::octet octet_value = 7;
     testing_values_struct testing_values;
 
     DynamicData::_ref_type short_struct_data = data->loan_value(data->get_member_id_by_name(var_short_struct_name));
@@ -1632,11 +1724,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     EXPECT_EQ(bounded_wstring_struct_data->get_wstring_value(testing_values.test_bounded_wstring_value,
             bounded_wstring_struct_data->get_member_id_by_name(var_bounded_wstring_name)), RETCODE_OK);
     EXPECT_EQ(bounded_wstring_value, testing_values.test_bounded_wstring_value);
-    EXPECT_EQ(enum_struct_data->set_uint32_value(enum_struct_data->get_member_id_by_name(var_enum_name),
-            static_cast<uint32_t>(enum_value)), RETCODE_OK);
-    EXPECT_EQ(enum_struct_data->get_uint32_value(testing_values.test_enum_value,
+    EXPECT_EQ(enum_struct_data->set_int32_value(enum_struct_data->get_member_id_by_name(var_enum_name),
+            static_cast<int32_t>(enum_value)), RETCODE_OK);
+    EXPECT_EQ(enum_struct_data->get_int32_value(testing_values.test_enum_value,
             enum_struct_data->get_member_id_by_name(var_enum_name)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(enum_value), testing_values.test_enum_value);
+    EXPECT_EQ(static_cast<int32_t>(enum_value), testing_values.test_enum_value);
     EXPECT_EQ(bitmask_struct_data->set_uint32_value(bitmask_struct_data->get_member_id_by_name(var_bitmask_name),
             bitmask_value), RETCODE_OK);
     EXPECT_EQ(bitmask_struct_data->get_uint32_value(testing_values.test_bitmask_value,
@@ -1695,11 +1787,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
     testing_values.test_bool_value = false;
     testing_values.test_ushort_value = 0;
     testing_values.test_short_value = 0;
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_uint16_value(bitset_data->get_member_id_by_name(bitfield_c), ushort_value), RETCODE_OK);
     EXPECT_EQ(bitset_data->set_int16_value(bitset_data->get_member_id_by_name(bitfield_d), short_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(testing_values.test_octet_value,
+    EXPECT_EQ(bitset_data->get_byte_value(testing_values.test_octet_value,
             bitset_data->get_member_id_by_name(bitfield_a)), RETCODE_OK);
     EXPECT_EQ(bitset_data->get_boolean_value(testing_values.test_bool_value,
             bitset_data->get_member_id_by_name(bitfield_b)), RETCODE_OK);
@@ -1750,6 +1842,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructStructures)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
         check_structure_static_data(data, struct_data, testing_values);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_Structures_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1923,6 +2019,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_root)
         EXPECT_EQ(struct_data.var_root2().foo_struct().d(), d_value);
         EXPECT_EQ(struct_data.var_root2().bar_struct().e(), e_value);
     }
+
+    // DynamicType defined for this test is not the same as the one defined in the IDL file as the modules are not
+    // defined for the DynamicType. Specifically, this test checks that using Dynamic Language Binding, the unique
+    // name rule is not applied.
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

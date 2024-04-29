@@ -713,7 +713,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasEnum)
     ASSERT_TRUE(data);
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
-    uint32_t test_value = 0;
+    uint32_t test_value {0};
     EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
                 struct_member_name), static_cast<uint32_t>(value)), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(struct_member_name)), RETCODE_OK);
@@ -1137,8 +1137,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    uint8_t octet_value = 5;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet octet_value = 5;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;

@@ -729,7 +729,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceEnum)
         EXPECT_EQ(struct_data.var_sequence_enum().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
-            EXPECT_EQ(static_cast<uint32_t>(struct_data.var_sequence_enum()[i]), test_value[i]);
+            EXPECT_EQ(static_cast<int32_t>(struct_data.var_sequence_enum()[i]), test_value[i]);
         }
     }
 
@@ -1136,9 +1136,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    uint8_t first_octet_value = 5;
-    uint8_t second_octet_value = 7;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet first_octet_value = 5;
+    eprosima::fastrtps::rtps::octet second_octet_value = 7;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool first_bool_value = true;
     bool second_bool_value = false;
     bool test_bool_value = false;

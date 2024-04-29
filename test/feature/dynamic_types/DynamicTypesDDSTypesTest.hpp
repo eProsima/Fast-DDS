@@ -139,6 +139,10 @@ public:
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
+    static void check_typeobject_registry(
+            const DynamicType::_ref_type& dyn_type,
+            const xtypes::TypeIdentifier& static_type_id);
+
     /**
      * Auxiliary methods to create helper types
      */

@@ -528,9 +528,12 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_struc
     type_descriptor.kind(TK_STRUCTURE);
     type_descriptor.name(struct_type.header().detail().type_name());
     type_descriptor.is_nested(struct_type.struct_flags() & xtypes::IS_NESTED);
-    type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
+    if (struct_type.struct_flags() & (xtypes::IS_FINAL | xtypes::IS_APPENDABLE | xtypes::IS_MUTABLE))
+    {
+        type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
             (struct_type.struct_flags() &
             xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
+    }
 
     ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);
 

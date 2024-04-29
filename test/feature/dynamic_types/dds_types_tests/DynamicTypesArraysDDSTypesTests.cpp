@@ -801,21 +801,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayEnum)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    UInt32Seq value = {
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3)
+    Int32Seq value = {
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3)
     };
-    UInt32Seq test_value;
-    EXPECT_EQ(data->set_uint32_values(data->get_member_id_by_name(var_enum_array), value), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_values(test_value, data->get_member_id_by_name(var_enum_array)), RETCODE_OK);
+    Int32Seq test_value;
+    EXPECT_EQ(data->set_int32_values(data->get_member_id_by_name(var_enum_array), value), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(test_value, data->get_member_id_by_name(var_enum_array)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
     for (auto encoding : encodings)
@@ -826,7 +826,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayEnum)
         EXPECT_EQ(struct_data.var_array_enum().size(), test_value.size());
         for (size_t i = 0; i < test_value.size(); ++i)
         {
-            EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_enum()[i]), test_value[i]);
+            EXPECT_EQ(static_cast<int32_t>(struct_data.var_array_enum()[i]), test_value[i]);
         }
     }
 
@@ -1302,9 +1302,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    uint8_t first_octet_value = 5;
-    uint8_t second_octet_value = 7;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet first_octet_value = 5;
+    eprosima::fastrtps::rtps::octet second_octet_value = 7;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool first_bool_value = true;
     bool second_bool_value = false;
     bool test_bool_value = false;
@@ -2440,29 +2440,29 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionEnum)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    UInt32Seq value = {
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-        static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3)
+    Int32Seq value = {
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+        static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3)
     };
     value.insert(value.end(), 88, 0);
-    value.insert(value.end(), static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3));
+    value.insert(value.end(), static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3));
     value.insert(value.end(), 100, 0);
-    value.insert(value.end(), static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1));
+    value.insert(value.end(), static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1));
     value.insert(value.end(), 100, 0);
-    value.insert(value.end(), static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2));
-    UInt32Seq test_value;
-    EXPECT_EQ(data->set_uint32_values(data->get_member_id_by_name(var_enum_array), value), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_values(test_value, data->get_member_id_by_name(var_enum_array)), RETCODE_OK);
+    value.insert(value.end(), static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2));
+    Int32Seq test_value;
+    EXPECT_EQ(data->set_int32_values(data->get_member_id_by_name(var_enum_array), value), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(test_value, data->get_member_id_by_name(var_enum_array)), RETCODE_OK);
     value.insert(value.end(), 697, 0);
     EXPECT_EQ(value.size(), test_value.size());
     EXPECT_EQ(value, test_value);
@@ -3000,10 +3000,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    uint8_t first_octet_value = 5;
-    uint8_t second_octet_value = 7;
-    uint8_t third_octet_value = 1;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet first_octet_value = 5;
+    eprosima::fastrtps::rtps::octet second_octet_value = 7;
+    eprosima::fastrtps::rtps::octet third_octet_value = 1;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool first_bool_value = true;
     bool second_bool_value = false;
     bool third_bool_value = true;

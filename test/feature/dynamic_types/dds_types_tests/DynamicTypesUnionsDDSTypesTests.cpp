@@ -1062,12 +1062,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerEnumHelper)
     ASSERT_TRUE(union_data);
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_3;
-    uint32_t test_value = 1243;
-    EXPECT_EQ(union_data->set_uint32_value(union_data->get_member_id_by_name(var_union_member_p),
-            static_cast<uint32_t>(value)), RETCODE_OK);
-    EXPECT_EQ(union_data->get_uint32_value(test_value, union_data->get_member_id_by_name(
+    int32_t test_value = 1243;
+    EXPECT_EQ(union_data->set_int32_value(union_data->get_member_id_by_name(var_union_member_p),
+            static_cast<int32_t>(value)), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int32_value(test_value, union_data->get_member_id_by_name(
                 var_union_member_p)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(value), test_value);
+    EXPECT_EQ(static_cast<int32_t>(value), test_value);
     EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
 
     for (auto encoding : encodings)
@@ -1076,7 +1076,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerEnumHelper)
         TypeSupport static_pubsubType {new UnionInnerEnumHelperPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data,
                 static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_union_my_enum().p()), test_value);
+        EXPECT_EQ(static_cast<int32_t>(struct_data.var_union_my_enum().p()), test_value);
     }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
@@ -1523,8 +1523,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     DynamicData::_ref_type union_data = data->loan_value(data->get_member_id_by_name(var_union_bitset_name));
     ASSERT_TRUE(union_data);
 
-    uint8_t octet_value = 5;
-    uint8_t test_octet_value = 0;
+    eprosima::fastrtps::rtps::octet octet_value = 5;
+    eprosima::fastrtps::rtps::octet test_octet_value = 0;
     bool bool_value = true;
     bool test_bool_value = false;
     uint16_t ushort_value = 1000;
@@ -1533,8 +1533,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
     int16_t test_short_value = 0;
     DynamicData::_ref_type bitset_data = union_data->loan_value(union_data->get_member_id_by_name(var_union_member_x));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);
