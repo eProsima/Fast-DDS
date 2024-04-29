@@ -29,25 +29,43 @@ namespace eprosima {
 
 template<typename... Args>
 static void set_name_to_current_thread_impl(
-    const char* fmt, Args... args)
+    char* thread_name_buffer, const char* fmt, Args... args)
 {
-    char thread_name[16]{};
-    snprintf(thread_name, 16, fmt, args...);
+    snprintf(thread_name_buffer, 16, fmt, args...);
     auto id = pthread_self();
-    pthread_setname_np(id, thread_name);
+    pthread_setname_np(id, thread_name_buffer);
 }
 
 void set_name_to_current_thread(
+        char* thread_name_buffer,
         const char* name)
 {
-    set_name_to_current_thread_impl("%s", name);
+    set_name_to_current_thread_impl(thread_name_buffer, "%s", name);
+}
+
+void set_name_to_current_thread(
+        char* thread_name_buffer,
+        const char* fmt,
+        uint32_t arg)
+{
+    set_name_to_current_thread_impl(thread_name_buffer, fmt, arg);
 }
 
 void set_name_to_current_thread(
         const char* fmt,
         uint32_t arg)
 {
-    set_name_to_current_thread_impl(fmt, arg);
+    char thread_name_buffer[16];
+    set_name_to_current_thread(thread_name_buffer, fmt, arg);
+}
+
+void set_name_to_current_thread(
+        char* thread_name_buffer,
+        const char* fmt,
+        uint32_t arg1,
+        uint32_t arg2)
+{
+    set_name_to_current_thread_impl(thread_name_buffer, fmt, arg1, arg2);
 }
 
 void set_name_to_current_thread(
@@ -55,10 +73,12 @@ void set_name_to_current_thread(
         uint32_t arg1,
         uint32_t arg2)
 {
-    set_name_to_current_thread_impl(fmt, arg1, arg2);
+    char thread_name_buffer[16];
+    set_name_to_current_thread(thread_name_buffer, fmt, arg1, arg2);
 }
 
 static void configure_current_thread_scheduler(
+        const char* thread_name,
         int sched_class,
         int sched_priority)
 {
@@ -98,6 +118,14 @@ static void configure_current_thread_scheduler(
         if(0 == result && sched_class == SCHED_OTHER && change_priority)
         {
             result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
+            if (0 != result)
+            {
+                EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_priority << ". Error '" << strerror(result) << "'");
+            }
+        }
+        else if (0 != result)
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << ". Error '" << strerror(result) << "'");
         }
     }
     else if((sched_class == SCHED_FIFO) ||
@@ -109,15 +137,15 @@ static void configure_current_thread_scheduler(
 
         param.sched_priority = change_priority ? sched_priority : current_param.sched_priority;
         result = pthread_setschedparam(self_tid, sched_class, &param);
-    }
-
-    if (0 != result)
-    {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring scheduler for thread " << self_tid);
+        if (0 != result)
+        {
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set scheduler of thread with id [" << self_tid << "," << thread_name << "] to value " << sched_class << " with priority " << param.sched_priority << ". Error '" << strerror(result) << "'");
+        }
     }
 }
 
 static void configure_current_thread_affinity(
+        const char* thread_name,
         uint64_t affinity_mask)
 {
     int a;
@@ -167,15 +195,16 @@ static void configure_current_thread_affinity(
 
     if (0 != result)
     {
-        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring affinity for thread " << self_tid);
+        EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << self_tid << "," << thread_name << "] to value " << affinity_mask << ". Error '" << strerror(result) << "'");
     }
 }
 
 void apply_thread_settings_to_current_thread(
+        const char* thread_name,
         const fastdds::rtps::ThreadSettings& settings)
 {
-    configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
-    configure_current_thread_affinity(settings.affinity);
+    configure_current_thread_scheduler(thread_name, settings.scheduling_policy, settings.priority);
+    configure_current_thread_affinity(thread_name, settings.affinity);
 }
 
 }  // namespace eprosima

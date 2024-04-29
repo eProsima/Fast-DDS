@@ -23,30 +23,49 @@ namespace eprosima {
 
 template<typename ... Args>
 static void set_name_to_current_thread_impl(
+        char* thread_name_buffer,
         const char* fmt,
         Args... args)
 {
-    char thread_name[16]{};
-    snprintf(thread_name, 16, fmt, args ...);
+    snprintf(thread_name_buffer, 16, fmt, args ...);
 
     std::wstringstream stream;
-    stream << thread_name;
+    stream << thread_name_buffer;
     std::wstring w_thread_name = stream.str();
 
     SetThreadDescription(GetCurrentThread(), w_thread_name.c_str());
 }
 
 void set_name_to_current_thread(
+        char* thread_name_buffer,
         const char* name)
 {
-    set_name_to_current_thread_impl("%s", name);
+    set_name_to_current_thread_impl(thread_name_buffer, "%s", name);
+}
+
+void set_name_to_current_thread(
+        char* thread_name_buffer,
+        const char* fmt,
+        uint32_t arg)
+{
+    set_name_to_current_thread_impl(thread_name_buffer, fmt, arg);
 }
 
 void set_name_to_current_thread(
         const char* fmt,
         uint32_t arg)
 {
-    set_name_to_current_thread_impl(fmt, arg);
+    char thread_name_buffer[16];
+    set_name_to_current_thread(thread_name_buffer, fmt, arg);
+}
+
+void set_name_to_current_thread(
+        char* thread_name_buffer,
+        const char* fmt,
+        uint32_t arg1,
+        uint32_t arg2)
+{
+    set_name_to_current_thread_impl(thread_name_buffer, fmt, arg1, arg2);
 }
 
 void set_name_to_current_thread(
@@ -54,40 +73,42 @@ void set_name_to_current_thread(
         uint32_t arg1,
         uint32_t arg2)
 {
-    set_name_to_current_thread_impl(fmt, arg1, arg2);
+    char thread_name_buffer[16];
+    set_name_to_current_thread(thread_name_buffer, fmt, arg1, arg2);
 }
 
 static void configure_current_thread_priority(
+        const char* thread_name,
         int32_t priority)
 {
     if (priority != std::numeric_limits<int32_t>::min())
     {
         if (0 == SetThreadPriority(GetCurrentThread(), priority))
         {
-            EPROSIMA_LOG_ERROR(SYSTEM,
-                    "Error '" << GetLastError() << "' configuring priority for thread " << GetCurrentThread());
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set priority of thread with id [" << GetCurrentThreadId() << "," << thread_name << "] to value " << priority << ".");
         }
     }
 }
 
 static void configure_current_thread_affinity(
+        const char* thread_name,
         uint64_t affinity_mask)
 {
     if (affinity_mask != 0)
     {
         if (0 == SetThreadAffinityMask(GetCurrentThread(), static_cast<DWORD_PTR>(affinity_mask)))
         {
-            EPROSIMA_LOG_ERROR(SYSTEM,
-                    "Error '" << GetLastError() << "' configuring affinity for thread " << GetCurrentThread());
+            EPROSIMA_LOG_ERROR(SYSTEM, "Problem to set affinity of thread with id [" << GetCurrentThreadId() << "," << thread_name << "] to value " << affinity_mask << ".");
         }
     }
 }
 
 void apply_thread_settings_to_current_thread(
+        const char* thread_name,
         const fastdds::rtps::ThreadSettings& settings)
 {
-    configure_current_thread_priority(settings.priority);
-    configure_current_thread_affinity(settings.affinity);
+    configure_current_thread_priority(thread_name, settings.priority);
+    configure_current_thread_affinity(thread_name, settings.affinity);
 }
 
 }  // namespace eprosima
