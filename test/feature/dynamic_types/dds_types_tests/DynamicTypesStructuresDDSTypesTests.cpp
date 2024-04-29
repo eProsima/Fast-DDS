@@ -1014,18 +1014,18 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructEnum)
     ASSERT_TRUE(data);
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
-    uint32_t test_value = 0;
-    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
+    int32_t test_value = 0;
+    EXPECT_EQ(data->set_int32_value(data->get_member_id_by_name(
                 var_enum_name), static_cast<uint32_t>(value)), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_enum_name)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(value), test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(var_enum_name)), RETCODE_OK);
+    EXPECT_EQ(static_cast<int32_t>(value), test_value);
 
     for (auto encoding : encodings)
     {
         StructEnum struct_data;
         TypeSupport static_pubsubType {new StructEnumPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_enum()), test_value);
+        EXPECT_EQ(static_cast<int32_t>(struct_data.var_enum()), test_value);
     }
 
     xtypes::TypeIdentifier static_type_id;

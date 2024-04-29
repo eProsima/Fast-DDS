@@ -241,6 +241,7 @@ public:
     {
         return is_extensibility_set_;
     }
+
 };
 
 } // namespace dds

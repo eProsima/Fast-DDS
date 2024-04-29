@@ -240,7 +240,7 @@ void DynamicPubSubType::register_type_object_representation() const
     {
         xtypes::TypeIdentifier type_id;
         if (RETCODE_OK != fastrtps::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
-                register_typeobject_w_dynamic_type(dynamic_type_, type_id))
+                        register_typeobject_w_dynamic_type(dynamic_type_, type_id))
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES, "Error registering DynamicType TypeObject representation.");
         }

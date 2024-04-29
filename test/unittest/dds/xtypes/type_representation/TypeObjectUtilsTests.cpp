@@ -2796,7 +2796,8 @@ TEST(TypeObjectUtilsTests, register_annotation_type_object)
                 other_annotation, "annotation", type_id));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_annotation_type_object(
-                other_annotation, type_name, type_id));
+                other_annotation, type_name,
+                type_id));
 }
 
 // Register structure TypeObject
@@ -2823,7 +2824,8 @@ TEST(TypeObjectUtilsTests, register_structure_type_object)
                 other_structure, "structure", type_id));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_struct_type_object(
-                other_structure, type_name, type_id));
+                other_structure, type_name,
+                type_id));
 }
 
 // Register union TypeObject
@@ -2872,7 +2874,8 @@ TEST(TypeObjectUtilsTests, register_union_type_object)
                 other_union_type, "union", type_id));
     std::string type_name;
     EXPECT_EQ(eprosima::fastdds::dds::RETCODE_PRECONDITION_NOT_MET, TypeObjectUtils::build_and_register_union_type_object(
-                other_union_type, type_name, type_id));
+                other_union_type, type_name,
+                type_id));
 }
 
 // Register bitset TypeObject

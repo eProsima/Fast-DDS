@@ -326,6 +326,7 @@ public:
     {
         return is_try_construct_kind_set_;
     }
+
 };
 
 } // namespace dds

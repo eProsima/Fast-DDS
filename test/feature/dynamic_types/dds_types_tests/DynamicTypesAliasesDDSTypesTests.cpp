@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/aliasesPubSubTypes.h"
+#include "../../../dds-types-test/aliasesTypeObjectSupport.hpp"
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -124,6 +125,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt16)
         EXPECT_EQ(alias_data.value(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasInt16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -164,6 +169,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUint16)
         EXPECT_EQ(alias_data.value(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasUint16_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -203,6 +212,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasInt32)
         check_serialization_deserialization(struct_type, data, encoding, alias_data, static_pubsubType);
         EXPECT_EQ(alias_data.value(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_AliasInt32_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -713,11 +726,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasEnum)
     ASSERT_TRUE(data);
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
-    uint32_t test_value {0};
-    EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
-                struct_member_name), static_cast<uint32_t>(value)), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(struct_member_name)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(value), test_value);
+    int32_t test_value {0};
+    EXPECT_EQ(data->set_int32_value(data->get_member_id_by_name(
+                struct_member_name), static_cast<int32_t>(value)), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test_value, data->get_member_id_by_name(struct_member_name)), RETCODE_OK);
+    EXPECT_EQ(static_cast<int32_t>(value), test_value);
 
     for (auto encoding : encodings)
     {
@@ -1147,8 +1160,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasBitset)
     int16_t test_short_value = 0;
     DynamicData::_ref_type bitset_data = data->loan_value(data->get_member_id_by_name(struct_member_name));
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), octet_value), RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(bitfield_b), bool_value), RETCODE_OK);

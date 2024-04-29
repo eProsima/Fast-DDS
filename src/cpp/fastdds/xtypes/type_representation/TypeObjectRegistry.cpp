@@ -1315,7 +1315,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
         case eprosima::fastdds::dds::TK_STRING16:
             typeidentifier_w_wstring_dynamic_type(dynamic_type, type_id);
             break;
-        // DynamicType consistency is ensure by DynamicTypeBuilder.
+            // DynamicType consistency is ensure by DynamicTypeBuilder.
     }
     assert(RETCODE_OK == ret_code);
     return ret_code;
@@ -1342,8 +1342,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_alias_dynamic_type(
 
     CommonAliasBody common = TypeObjectUtils::build_common_alias_body(0, alias_type_id);
     CompleteAliasBody body = TypeObjectUtils::build_complete_alias_body(common,
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
-            eprosima::fastcdr::optional<AppliedAnnotationSeq>());
+                    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(),
+                    eprosima::fastcdr::optional<AppliedAnnotationSeq>());
     CompleteAliasType alias_type = TypeObjectUtils::build_complete_alias_type(0, header, body);
     CompleteTypeObject complete_typeobject;
     complete_typeobject.alias_type(alias_type);
@@ -1381,7 +1381,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
                 default_value);
 
         CompleteAnnotationParameter param = TypeObjectUtils::build_complete_annotation_parameter(common,
-                member_descriptor->name(), default_value);
+                        member_descriptor->name(), default_value);
         TypeObjectUtils::add_complete_annotation_parameter(member_seq, param);
     }
 
@@ -1408,9 +1408,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(
-            traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
-            extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
-            type_descriptor->is_nested(), false);
+        traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
+        extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+        type_descriptor->is_nested(), false);
 
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
@@ -1431,14 +1431,14 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         member.second->get_descriptor(member_descriptor);
         StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(
-                traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->is_try_construct_kind_set() ?
-                try_construct_kind(member_descriptor->try_construct_kind()) : TryConstructKind::NOT_APPLIED,
-                member_descriptor->is_optional(), member_descriptor->is_must_understand(), member_descriptor->is_key(),
-                member_descriptor->is_shared());
+            traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->is_try_construct_kind_set() ?
+            try_construct_kind(member_descriptor->try_construct_kind()) : TryConstructKind::NOT_APPLIED,
+            member_descriptor->is_optional(), member_descriptor->is_must_understand(), member_descriptor->is_key(),
+            member_descriptor->is_shared());
         TypeIdentifier member_type_id;
         register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);
         CommonStructMember common = TypeObjectUtils::build_common_struct_member(member.first,
-                member_flags, member_type_id);
+                        member_flags, member_type_id);
 
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
@@ -1469,9 +1469,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     UnionTypeFlag union_flags = TypeObjectUtils::build_union_type_flag(
-            traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
-            extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
-            type_descriptor->is_nested(), false);
+        traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
+        extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+        type_descriptor->is_nested(), false);
 
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
@@ -1479,18 +1479,18 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
 
     // Union discriminator is described using a TypeDescriptor and not a MemberDescriptor (!)
     UnionDiscriminatorFlag discriminator_flags = TypeObjectUtils::build_union_discriminator_flag(
-            TryConstructKind::NOT_APPLIED, false);
+        TryConstructKind::NOT_APPLIED, false);
     TypeIdentifier discriminator_type_id;
     register_typeobject_w_dynamic_type(type_descriptor->discriminator_type(), discriminator_type_id);
     CommonDiscriminatorMember common_discriminator = TypeObjectUtils::build_common_discriminator_member(
-            discriminator_flags, discriminator_type_id);
+        discriminator_flags, discriminator_type_id);
 
     eprosima::fastcdr::optional<AppliedBuiltinTypeAnnotations> ann_builtin;
     apply_verbatim_annotation(type_descriptor->discriminator_type(), ann_builtin);
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
     apply_custom_annotations(type_descriptor->discriminator_type(), ann_custom);
     CompleteDiscriminatorMember discriminator = TypeObjectUtils::build_complete_discriminator_member(
-            common_discriminator, ann_builtin, ann_custom);
+        common_discriminator, ann_builtin, ann_custom);
 
     DynamicTypeMembersById union_members;
     dynamic_type->get_all_members(union_members); // Always returns RETCODE_OK
@@ -1503,10 +1503,10 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
             MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
             member.second->get_descriptor(member_descriptor);
             UnionMemberFlag member_flags = TypeObjectUtils::build_union_member_flag(
-                    traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->
-                    is_try_construct_kind_set() ? try_construct_kind(member_descriptor->try_construct_kind()) :
-                    TryConstructKind::NOT_APPLIED, member_descriptor->is_default_label(),
-                    member_descriptor->is_shared());
+                traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->
+                        is_try_construct_kind_set() ? try_construct_kind(member_descriptor->try_construct_kind()) :
+                TryConstructKind::NOT_APPLIED, member_descriptor->is_default_label(),
+                member_descriptor->is_shared());
             TypeIdentifier member_type_id;
             register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);
             UnionCaseLabelSeq labels;
@@ -1515,7 +1515,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
                 TypeObjectUtils::add_union_case_label(labels, label);
             }
             CommonUnionMember common = TypeObjectUtils::build_common_union_member(member_descriptor->id(), member_flags,
-                    member_type_id, labels);
+                            member_type_id, labels);
 
             CompleteMemberDetail member_detail;
             complete_member_detail(member_descriptor, member_detail);
@@ -1525,7 +1525,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_union_dynamic_type(
     }
 
     CompleteUnionType union_type = TypeObjectUtils::build_complete_union_type(union_flags, header, discriminator,
-            member_seq);
+                    member_seq);
     CompleteTypeObject complete_typeobject;
     complete_typeobject.union_type(union_type);
     TypeObject typeobject;
@@ -1559,8 +1559,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitset_dynamic_type(
         MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
         bitfield.second->get_descriptor(member_descriptor);
         CommonBitfield common = TypeObjectUtils::build_common_bitfield(member_descriptor->id(), 0,
-                type_descriptor->bound().at(member_descriptor->index()),
-                type_kind(member_descriptor->type()->get_kind()));
+                        type_descriptor->bound().at(member_descriptor->index()),
+                        type_kind(member_descriptor->type()->get_kind()));
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
         CompleteBitfield bitfield_member = TypeObjectUtils::build_complete_bitfield(common, member_detail);
@@ -1590,8 +1590,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     CommonCollectionHeader common = TypeObjectUtils::build_common_collection_header(
-            (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor->bound().front()) ?
-            0 : type_descriptor->bound().front());
+        (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor->bound().front()) ?
+        0 : type_descriptor->bound().front());
 
     eprosima::fastcdr::optional<CompleteTypeDetail> detail;
     complete_type_detail(dynamic_type, detail.value());
@@ -1607,9 +1607,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_sequence_dynamic_type(
     apply_custom_annotations(type_descriptor->element_type(), ann_custom);
 
     CompleteElementDetail detail_element = TypeObjectUtils::build_complete_element_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom);
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom);
     CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
-            detail_element);
+                    detail_element);
     CompleteSequenceType sequence_type = TypeObjectUtils::build_complete_sequence_type(0, header, element);
     CompleteTypeObject complete_typeobject;
     complete_typeobject.sequence_type(sequence_type);
@@ -1647,9 +1647,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_array_dynamic_type(
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
     apply_custom_annotations(type_descriptor->element_type(), ann_custom);
     CompleteElementDetail detail_element = TypeObjectUtils::build_complete_element_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom);
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom);
     CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
-            detail_element);
+                    detail_element);
     CompleteArrayType array_type = TypeObjectUtils::build_complete_array_type(0, header, element);
     CompleteTypeObject complete_typeobject;
     complete_typeobject.array_type(array_type);
@@ -1673,8 +1673,8 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     CommonCollectionHeader common = TypeObjectUtils::build_common_collection_header(
-            (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor->bound().front()) ?
-            0 : type_descriptor->bound().front());
+        (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor->bound().front()) ?
+        0 : type_descriptor->bound().front());
 
     eprosima::fastcdr::optional<CompleteTypeDetail> detail;
     complete_type_detail(dynamic_type, detail.value());
@@ -1689,9 +1689,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
     apply_custom_annotations(type_descriptor->element_type(), ann_custom);
     CompleteElementDetail detail_element = TypeObjectUtils::build_complete_element_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom);
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom);
     CompleteCollectionElement element = TypeObjectUtils::build_complete_collection_element(common_element,
-            detail_element);
+                    detail_element);
 
     TypeIdentifier key_type_id;
     register_typeobject_w_dynamic_type(type_descriptor->key_element_type(), key_type_id);
@@ -1699,7 +1699,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_map_dynamic_type(
     eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom_key;
     apply_custom_annotations(type_descriptor->key_element_type(), ann_custom_key);
     CompleteElementDetail detail_key = TypeObjectUtils::build_complete_element_detail(
-            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom_key);
+        eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations>(), ann_custom_key);
     CompleteCollectionElement key = TypeObjectUtils::build_complete_collection_element(common_key, detail_key);
 
     CompleteMapType map_type = TypeObjectUtils::build_complete_map_type(0, header, key, element);
@@ -1759,14 +1759,14 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_enum_dynamic_type(
         member_descriptor = traits<MemberDescriptor>::make_shared();
         literal.second->get_descriptor(member_descriptor);
         EnumeratedLiteralFlag flags = TypeObjectUtils::build_enumerated_literal_flag(
-                member_descriptor->is_default_label());
+            member_descriptor->is_default_label());
         // TODO(richi): Literal value might be automatically assigned or taken from default_value (@value annotation)
         CommonEnumeratedLiteral common_literal = TypeObjectUtils::build_common_enumerated_literal(
-                member_descriptor->index(), flags);
+            member_descriptor->index(), flags);
         CompleteMemberDetail member_detail;
         complete_member_detail(member_descriptor, member_detail);
         CompleteEnumeratedLiteral literal_member = TypeObjectUtils::build_complete_enumerated_literal(common_literal,
-                member_detail);
+                        member_detail);
         TypeObjectUtils::add_complete_enumerated_literal(literal_seq, literal_member);
     }
 
@@ -1793,7 +1793,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_bitmask_dynamic_type(
     dynamic_type->get_descriptor(type_descriptor);
 
     CommonEnumeratedHeader common = TypeObjectUtils::build_common_enumerated_header(
-            type_descriptor->bound().front(), true);
+        type_descriptor->bound().front(), true);
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
     CompleteEnumeratedHeader header = TypeObjectUtils::build_complete_enumerated_header(common, detail, true);
@@ -1849,13 +1849,13 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_sequence_dynamic_type(
         SBound bound = (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor->bound().front()) ?
                 0 : type_descriptor->bound().front();
         PlainSequenceSElemDefn seq_defn = TypeObjectUtils::build_plain_sequence_s_elem_defn(header, bound,
-                external_element_type_id);
+                        external_element_type_id);
         type_id.seq_sdefn(seq_defn);
     }
     else
     {
         PlainSequenceLElemDefn seq_defn = TypeObjectUtils::build_plain_sequence_l_elem_defn(header,
-                type_descriptor->bound().front(), external_element_type_id);
+                        type_descriptor->bound().front(), external_element_type_id);
         type_id.seq_ldefn(seq_defn);
     }
 
@@ -1896,13 +1896,13 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_array_dynamic_type(
             bounds.push_back(static_cast<SBound>(bound));
         }
         PlainArraySElemDefn array_defn = TypeObjectUtils::build_plain_array_s_elem_defn(header,
-                bounds, external_element_type_id);
+                        bounds, external_element_type_id);
         type_id.array_sdefn(array_defn);
     }
     else
     {
         PlainArrayLElemDefn array_defn = TypeObjectUtils::build_plain_array_l_elem_defn(header,
-                type_descriptor->bound(), external_element_type_id);
+                        type_descriptor->bound(), external_element_type_id);
         type_id.array_ldefn(array_defn);
     }
 
@@ -1935,13 +1935,13 @@ ReturnCode_t TypeObjectRegistry::typeidentifier_w_map_dynamic_type(
         SBound bound = (static_cast<uint32_t>(LENGTH_UNLIMITED) == type_descriptor->bound().front()) ?
                 0 : type_descriptor->bound().front();
         PlainMapSTypeDefn map_defn = TypeObjectUtils::build_plain_map_s_type_defn(header, bound,
-                external_element_type_id, 0, external_key_type_id);
+                        external_element_type_id, 0, external_key_type_id);
         type_id.map_sdefn(map_defn);
     }
     else
     {
         PlainMapLTypeDefn map_defn = TypeObjectUtils::build_plain_map_l_type_defn(header,
-                type_descriptor->bound().front(), external_element_type_id, 0, external_key_type_id);
+                        type_descriptor->bound().front(), external_element_type_id, 0, external_key_type_id);
         type_id.map_ldefn(map_defn);
     }
 
@@ -2028,7 +2028,7 @@ ReturnCode_t TypeObjectRegistry::apply_custom_annotations(
                 set_annotation_parameter_value(param_descriptor->type(), param->second.to_string(),
                         param_value);
                 AppliedAnnotationParameter parameter = TypeObjectUtils::build_applied_annotation_parameter(
-                        paramname_hash, param_value);
+                    paramname_hash, param_value);
                 TypeObjectUtils::add_applied_annotation_parameter(tmp_param_seq, parameter);
             }
             if (!tmp_param_seq.empty())
@@ -2036,7 +2036,7 @@ ReturnCode_t TypeObjectRegistry::apply_custom_annotations(
                 param_seq = tmp_param_seq;
             }
             AppliedAnnotation applied_annotation = TypeObjectUtils::build_applied_annotation(annotation_typeid,
-                    param_seq);
+                            param_seq);
             TypeObjectUtils::add_applied_annotation(tmp_ann_custom, applied_annotation);
         }
     }
@@ -2058,9 +2058,9 @@ ReturnCode_t TypeObjectRegistry::apply_verbatim_annotation(
 
         // TypeObject only allows defining one @verbatim comment
         AppliedVerbatimAnnotation verbatim = TypeObjectUtils::build_applied_verbatim_annotation(
-                placement_kind(verbatim_descriptor->placement()), "c++", verbatim_descriptor->text());
+            placement_kind(verbatim_descriptor->placement()), "c++", verbatim_descriptor->text());
         ann_builtin = TypeObjectUtils::build_applied_builtin_type_annotations(
-                verbatim);
+            verbatim);
     }
     return RETCODE_OK;
 }
@@ -2074,55 +2074,55 @@ ReturnCode_t TypeObjectRegistry::set_annotation_parameter_value(
     {
         case TK_BOOLEAN:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<bool>(!value.empty() ?
-                    TypeValueConverter::sto(value) : false));
+                            TypeValueConverter::sto(value) : false));
             break;
         case TK_BYTE:
             param_value = TypeObjectUtils::build_annotation_parameter_value_byte(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0);
+                            TypeValueConverter::sto(value) : 0);
             break;
         case TK_INT8:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<int8_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_UINT8:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint8_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_INT16:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<int16_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_UINT16:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint16_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_INT32:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<int32_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_UINT32:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint32_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_INT64:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<int64_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_UINT64:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<uint64_t>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_FLOAT32:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<float>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_FLOAT64:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<double>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_FLOAT128:
             param_value = TypeObjectUtils::build_annotation_parameter_value(static_cast<long double>(!value.empty() ?
-                    TypeValueConverter::sto(value) : 0));
+                            TypeValueConverter::sto(value) : 0));
             break;
         case TK_CHAR8:
             param_value = TypeObjectUtils::build_annotation_parameter_value(!value.empty() ? value : 0);
@@ -2132,13 +2132,13 @@ ReturnCode_t TypeObjectRegistry::set_annotation_parameter_value(
             DynamicTypeMember::_ref_type member;
             dynamic_type->get_member_by_index(member, 0);
             param_value = TypeObjectUtils::build_annotation_parameter_value_enum(static_cast<int32_t>(!value.empty() ?
-                    std::stol(value) : member->get_id()));
+                            std::stol(value) : member->get_id()));
             break;
         }
         case TK_STRING8:
             param_value = TypeObjectUtils::build_annotation_parameter_value(!value.empty() ? value : "");
             break;
-        // Wide char and wide string annotation parameter values not yet supported.
+            // Wide char and wide string annotation parameter values not yet supported.
     }
     return RETCODE_OK;
 }
@@ -2154,7 +2154,7 @@ ReturnCode_t TypeObjectRegistry::complete_type_detail(
     apply_custom_annotations(dynamic_type, ann_custom);
 
     detail = TypeObjectUtils::build_complete_type_detail(ann_builtin, ann_custom,
-            dynamic_type->get_name());
+                    dynamic_type->get_name());
 
     return RETCODE_OK;
 }
@@ -2170,7 +2170,7 @@ ReturnCode_t TypeObjectRegistry::complete_member_detail(
     apply_custom_annotations(member_descriptor->type(), ann_custom);
 
     member_detail = TypeObjectUtils::build_complete_member_detail(member_descriptor->name(),
-            member_ann_builtin, ann_custom);
+                    member_ann_builtin, ann_custom);
     return RETCODE_OK;
 }
 

@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_typesPubSubTypes.h"
 #include "../../../dds-types-test/unionsPubSubTypes.h"
+#include "../../../dds-types-test/unionsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
@@ -226,6 +227,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionShort)
         EXPECT_EQ(struct_data.var_union_short().a(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -275,6 +280,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionUShort)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ushort().b(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -326,6 +335,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLong)
         EXPECT_EQ(struct_data.var_union_long().c(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -375,6 +388,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionULong)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ulong().d(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -426,6 +443,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLongLong)
         EXPECT_EQ(struct_data.var_union_long_long().e(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -475,6 +496,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionULongLong)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_ulong_long().f(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -526,6 +551,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionFloat)
         EXPECT_EQ(struct_data.var_union_float().g(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionFloat_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -575,6 +604,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDouble)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_double().h(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -626,6 +659,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionLongDouble)
         EXPECT_EQ(struct_data.var_union_long_double().i(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionLongDouble_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -675,6 +712,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoolean)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_boolean().j(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -726,6 +767,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionOctet)
         EXPECT_EQ(struct_data.var_union_octet().k(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -776,6 +821,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionChar)
         EXPECT_EQ(struct_data.var_union_char().l(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -825,6 +874,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWChar)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_wchar().m(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -877,6 +930,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionString)
         EXPECT_EQ(struct_data.var_union_string().n(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -928,6 +985,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionWString)
         EXPECT_EQ(struct_data.var_union_wstring().o(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -978,6 +1039,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedString)
         EXPECT_EQ(struct_data.var_union_bounded_string().bn(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionBoundedString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1027,6 +1092,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedWString)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_bounded_wstring().bo(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionBoundedWString_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1079,6 +1148,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerEnumHelper)
         EXPECT_EQ(static_cast<int32_t>(struct_data.var_union_my_enum().p()), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionInnerEnumHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1130,6 +1203,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitMaskHelper)
         EXPECT_EQ(struct_data.var_union_my_bit_mask().q(), test_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionInnerBitMaskHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1179,6 +1256,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerAliasHelper)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_my_alias().r(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionInnerAliasHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1234,6 +1315,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionArray)
         }
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionArray_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1284,6 +1369,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionSequence)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_sequence().t(), test_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionSequence_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1358,6 +1447,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionMap)
         EXPECT_EQ(data->return_loaned_value(union_data), RETCODE_OK);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionMap_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1427,6 +1520,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerUnionHelper)
         EXPECT_EQ(struct_data.var_union_my_union().v().longValue(), test_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionInnerUnionHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1489,6 +1586,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerStructureHelper)
         EXPECT_EQ(struct_data.var_union_my_structure().w().field1(), test_long_value);
         EXPECT_EQ(struct_data.var_union_my_structure().w().field2(), test_float_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionInnerStructureHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1564,6 +1665,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
         EXPECT_EQ(struct_data.var_union_my_bitset().x().d(), test_short_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionInnerBitsetHelper_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1627,6 +1732,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorShort)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_short().second(), test_long_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1692,6 +1801,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorUShort)
         EXPECT_EQ(struct_data.var_union_discriminator_ushort().second(), test_long_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorUShort_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1755,6 +1868,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLong)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_long().second(), test_long_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1820,6 +1937,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULong)
         EXPECT_EQ(struct_data.var_union_discriminator_ulong().second(), test_long_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorULong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -1883,6 +2004,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLongLong)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_long_long().second(), test_long_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorLongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -1948,6 +2073,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULongLong)
         EXPECT_EQ(struct_data.var_union_discriminator_ulong_long().second(), test_long_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorULongLong_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -2011,6 +2140,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorBoolean)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_boolean().second(), test_long_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorBoolean_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -2076,6 +2209,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorOctet)
         EXPECT_EQ(struct_data.var_union_discriminator_octet().second(), test_long_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorOctet_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -2140,6 +2277,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorChar)
         EXPECT_EQ(struct_data.var_union_discriminator_char().second(), test_long_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -2203,6 +2344,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorWChar)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_wchar().second(), test_long_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorWChar_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -2280,6 +2425,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnum)
         EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_long_long_value);
     }
 
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorEnum_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -2343,6 +2492,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnumLabel)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_enum().second(), test_short_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorEnumLabel_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -2409,6 +2562,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorAlias)
                 static_pubsubType);
         EXPECT_EQ(struct_data.var_union_discriminator_alias().second(), test_long_long_value);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_UnionDiscriminatorAlias_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }

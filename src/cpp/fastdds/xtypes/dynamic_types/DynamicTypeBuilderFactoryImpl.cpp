@@ -531,8 +531,8 @@ traits<DynamicTypeBuilder>::ref_type DynamicTypeBuilderFactoryImpl::create_struc
     if (struct_type.struct_flags() & (xtypes::IS_FINAL | xtypes::IS_APPENDABLE | xtypes::IS_MUTABLE))
     {
         type_descriptor.extensibility_kind(struct_type.struct_flags() & xtypes::IS_FINAL ? ExtensibilityKind::FINAL :
-            (struct_type.struct_flags() &
-            xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
+                (struct_type.struct_flags() &
+                xtypes::IS_MUTABLE ? ExtensibilityKind::MUTABLE : ExtensibilityKind::APPENDABLE));
     }
 
     ret_val = std::make_shared<DynamicTypeBuilderImpl>(type_descriptor);

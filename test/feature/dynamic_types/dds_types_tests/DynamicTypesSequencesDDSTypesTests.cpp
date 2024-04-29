@@ -712,13 +712,13 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceEnum)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    UInt32Seq value =
-    {static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_2),
-     static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_1),
-     static_cast<uint32_t>(InnerEnumHelper::ENUM_VALUE_3)};
-    UInt32Seq test_value;
-    EXPECT_EQ(data->set_uint32_values(data->get_member_id_by_name(var_enum_seq), value), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_values(test_value, data->get_member_id_by_name(var_enum_seq)), RETCODE_OK);
+    Int32Seq value =
+    {static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_2),
+     static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_1),
+     static_cast<int32_t>(InnerEnumHelper::ENUM_VALUE_3)};
+    Int32Seq test_value;
+    EXPECT_EQ(data->set_int32_values(data->get_member_id_by_name(var_enum_seq), value), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(test_value, data->get_member_id_by_name(var_enum_seq)), RETCODE_OK);
     EXPECT_EQ(value, test_value);
 
     for (auto encoding : encodings)
@@ -1152,9 +1152,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     ASSERT_TRUE(seq_data);
     DynamicData::_ref_type bitset_data = seq_data->loan_value(0);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
-                bitfield_a), first_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), first_octet_value),
+            RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(first_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
@@ -1175,9 +1175,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
     EXPECT_EQ(seq_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = seq_data->loan_value(1);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(
                 bitfield_a), second_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(second_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(

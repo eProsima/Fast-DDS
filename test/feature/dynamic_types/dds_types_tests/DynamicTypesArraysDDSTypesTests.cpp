@@ -1318,9 +1318,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type bitset_data = array_data->loan_value(0);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
-                bitfield_a), first_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), first_octet_value),
+            RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(first_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
@@ -1341,9 +1341,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = array_data->loan_value(1);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(
                 bitfield_a), second_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(second_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
@@ -1367,7 +1367,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
     {
         bitset_data = array_data->loan_value(i);
         ASSERT_TRUE(bitset_data);
-        EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(
+        EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(
                     bitfield_a)), RETCODE_OK);
         EXPECT_EQ(bitset_data->get_boolean_value(test_bool_value, bitset_data->get_member_id_by_name(
                     bitfield_b)), RETCODE_OK);
@@ -1783,8 +1783,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionFloat)
 
     Float32Seq value =
     {-1.234f, 2.000103f, 3.14f, -4.01f, 5.00000001f, 6.0f, 7.5f, 8.21f, 9.0f, 10.0f, 100.0f, 1000.0f, 10000.0f,
-     100000.0f,
-     1000000.0f, 10000000.0f, 100000000.0f, 1000000000.0f};
+     100000.0f, 1000000.0f, 10000000.0f, 100000000.0f, 1000000000.0f};
     value.insert(value.end(), 82, 0);
     value.insert(value.end(), 10);
     value.insert(value.end(), 100, 0);
@@ -2481,7 +2480,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionEnum)
             {
                 for (size_t k = 0; k < struct_data.var_array_enum()[i][j].size(); ++k)
                 {
-                    EXPECT_EQ(static_cast<uint32_t>(struct_data.var_array_enum()[i][j][k]),
+                    EXPECT_EQ(static_cast<int32_t>(struct_data.var_array_enum()[i][j][k]),
                             test_value[i * struct_data.var_array_enum().size() *
                             struct_data.var_array_enum()[i].size() + j *
                             struct_data.var_array_enum()[i].size() + k]);
@@ -3020,9 +3019,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
     ASSERT_TRUE(array_data);
     DynamicData::_ref_type bitset_data = array_data->loan_value(0);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
-                bitfield_a), first_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), first_octet_value),
+            RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(first_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
@@ -3043,9 +3042,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = array_data->loan_value(33);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(
                 bitfield_a), second_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(second_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
@@ -3066,9 +3065,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
     EXPECT_EQ(array_data->return_loaned_value(bitset_data), RETCODE_OK);
     bitset_data = array_data->loan_value(857);
     ASSERT_TRUE(bitset_data);
-    EXPECT_EQ(bitset_data->set_uint8_value(bitset_data->get_member_id_by_name(
-                bitfield_a), third_octet_value), RETCODE_OK);
-    EXPECT_EQ(bitset_data->get_uint8_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
+    EXPECT_EQ(bitset_data->set_byte_value(bitset_data->get_member_id_by_name(bitfield_a), third_octet_value),
+            RETCODE_OK);
+    EXPECT_EQ(bitset_data->get_byte_value(test_octet_value, bitset_data->get_member_id_by_name(bitfield_a)),
             RETCODE_OK);
     EXPECT_EQ(third_octet_value, test_octet_value);
     EXPECT_EQ(bitset_data->set_boolean_value(bitset_data->get_member_id_by_name(
