@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -421,7 +422,7 @@ void MemberDescriptor::copy_annotations_from_type(
 {
     if (type)
     {
-        // Copy annotation from type
+        // Copy annotations from type
         uint32_t num_annotations = type->get_annotation_count();
         for (uint32_t i = 0; i < num_annotations; ++i)
         {

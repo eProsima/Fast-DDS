@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/AnnotationDescriptor.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -96,9 +97,9 @@ bool AnnotationDescriptor::key_annotation() const
     if (type_ && (type_->get_name() == ANNOTATION_KEY_ID || type_->get_name() == ANNOTATION_EPKEY_ID))
     {
         // When an annotation is a key annotation, there is only one entry in value_.
-        // Its map key is "value" and its value is either "true" of "false".
+        // Its map key is ANNOTATION_VALUE_ID and its value is either "true" of "false".
         // We cannot call get_value() directly because it is not const-qualified
-        auto it = value_.find("value");
+        auto it = value_.find(ANNOTATION_VALUE_ID);
 
         if (it != value_.end())
         {
@@ -112,7 +113,7 @@ bool AnnotationDescriptor::key_annotation() const
 ReturnCode_t AnnotationDescriptor::get_value(
         std::string& value)
 {
-    return get_value(value, "value");
+    return get_value(value, ANNOTATION_VALUE_ID);
 }
 
 ReturnCode_t AnnotationDescriptor::get_value(
