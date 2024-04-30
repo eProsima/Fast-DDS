@@ -325,7 +325,7 @@ public:
 
     bool is_consistent() noexcept override;
 
-    bool is_try_construct_kind_set()
+    bool is_try_construct_kind_set() const noexcept
     {
         return is_try_construct_kind_set_;
     }

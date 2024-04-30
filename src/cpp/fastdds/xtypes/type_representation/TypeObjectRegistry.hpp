@@ -35,6 +35,8 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/fastdds_dll.hpp>
 
+#include <fastdds/xtypes/dynamic_types/DynamicTypeImpl.hpp>
+#include <fastdds/xtypes/dynamic_types/MemberDescriptorImpl.hpp>
 #include <fastdds/xtypes/type_representation/TypeIdentifierWithSizeHashSpecialization.h>
 
 namespace std {
@@ -802,7 +804,7 @@ protected:
      * @return ReturnCode_t RETCODE_OK always.
      */
     ReturnCode_t register_typeobject_w_struct_dynamic_type(
-            const DynamicType::_ref_type& dynamic_type,
+            const traits<DynamicTypeImpl>::ref_type& dynamic_type,
             TypeIdentifier& type_id);
 
     /**
@@ -1016,6 +1018,9 @@ protected:
      */
     ReturnCode_t complete_member_detail(
             const MemberDescriptor::_ref_type& member_descriptor,
+            CompleteMemberDetail& member_detail);
+    ReturnCode_t complete_member_detail(
+            const MemberDescriptorImpl& member_descriptor,
             CompleteMemberDetail& member_detail);
 
     /**

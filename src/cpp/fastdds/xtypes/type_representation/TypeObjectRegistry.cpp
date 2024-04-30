@@ -35,6 +35,7 @@
 #include <fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp>
 #include <fastdds/utils/md5.h>
 
+#include <fastdds/xtypes/dynamic_types/DynamicTypeImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/TypeDescriptorImpl.hpp>
 #include <fastdds/xtypes/dynamic_types/TypeValueConverter.hpp>
 
@@ -1178,9 +1179,10 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
         TypeIdentifier& type_id)
 {
     ReturnCode_t ret_code = eprosima::fastdds::dds::RETCODE_OK;
+    traits<DynamicTypeImpl>::ref_type dynamic_type_impl {traits<DynamicType>::narrow<DynamicTypeImpl>(dynamic_type)};
 
     ExtendedTypeDefn reset_type_id;
-    switch (dynamic_type->get_kind())
+    switch (dynamic_type_impl->get_kind())
     {
         case eprosima::fastdds::dds::TK_ALIAS:
             ret_code = register_typeobject_w_alias_dynamic_type(dynamic_type, type_id);
@@ -1189,7 +1191,7 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
             ret_code = register_typeobject_w_annotation_dynamic_type(dynamic_type, type_id);
             break;
         case eprosima::fastdds::dds::TK_STRUCTURE:
-            ret_code = register_typeobject_w_struct_dynamic_type(dynamic_type, type_id);
+            ret_code = register_typeobject_w_struct_dynamic_type(dynamic_type_impl, type_id);
             break;
         case eprosima::fastdds::dds::TK_UNION:
             ret_code = register_typeobject_w_union_dynamic_type(dynamic_type, type_id);
@@ -1199,10 +1201,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
             break;
         case eprosima::fastdds::dds::TK_SEQUENCE:
         {
-            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-            dynamic_type->get_descriptor(type_descriptor);
-            if (0 == dynamic_type->get_annotation_count() && 0 == dynamic_type->get_verbatim_text_count() &&
-                    0 == type_descriptor->element_type()->get_annotation_count())
+            const TypeDescriptorImpl& type_descriptor {dynamic_type_impl->get_descriptor()};
+            if (0 == dynamic_type_impl->get_annotation_count() && 0 == dynamic_type->get_verbatim_text_count() &&
+                    0 == type_descriptor.element_type()->get_annotation_count())
             {
                 ret_code = typeidentifier_w_sequence_dynamic_type(dynamic_type, type_id);
             }
@@ -1214,10 +1215,9 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
         }
         case eprosima::fastdds::dds::TK_ARRAY:
         {
-            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-            dynamic_type->get_descriptor(type_descriptor);
-            if (0 == dynamic_type->get_annotation_count() && 0 == dynamic_type->get_verbatim_text_count() &&
-                    0 == type_descriptor->element_type()->get_annotation_count())
+            const TypeDescriptorImpl& type_descriptor {dynamic_type_impl->get_descriptor()};
+            if (0 == dynamic_type_impl->get_annotation_count() && 0 == dynamic_type->get_verbatim_text_count() &&
+                    0 == type_descriptor.element_type()->get_annotation_count())
             {
                 ret_code = typeidentifier_w_array_dynamic_type(dynamic_type, type_id);
             }
@@ -1229,11 +1229,10 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_dynamic_type(
         }
         case eprosima::fastdds::dds::TK_MAP:
         {
-            TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-            dynamic_type->get_descriptor(type_descriptor);
-            if (0 == dynamic_type->get_annotation_count() && 0 == dynamic_type->get_verbatim_text_count() &&
-                    0 == type_descriptor->element_type()->get_annotation_count() &&
-                    0 == type_descriptor->key_element_type()->get_annotation_count())
+            const TypeDescriptorImpl& type_descriptor {dynamic_type_impl->get_descriptor()};
+            if (0 == dynamic_type_impl->get_annotation_count() && 0 == dynamic_type_impl->get_verbatim_text_count() &&
+                    0 == type_descriptor.element_type()->get_annotation_count() &&
+                    0 == type_descriptor.key_element_type()->get_annotation_count())
             {
                 ret_code = typeidentifier_w_map_dynamic_type(dynamic_type, type_id);
             }
@@ -1399,45 +1398,45 @@ ReturnCode_t TypeObjectRegistry::register_typeobject_w_annotation_dynamic_type(
 }
 
 ReturnCode_t TypeObjectRegistry::register_typeobject_w_struct_dynamic_type(
-        const DynamicType::_ref_type& dynamic_type,
+        const traits<DynamicTypeImpl>::ref_type& dynamic_type,
         TypeIdentifier& type_id)
 {
-    ReturnCode_t ret_code = RETCODE_OK;
+    ReturnCode_t ret_code {RETCODE_OK};
 
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    dynamic_type->get_descriptor(type_descriptor);
+    const TypeDescriptorImpl& type_descriptor {dynamic_type->get_descriptor()};
 
-    StructTypeFlag struct_flags = TypeObjectUtils::build_struct_type_flag(
-        traits<TypeDescriptor>::narrow<TypeDescriptorImpl>(type_descriptor)->is_extensibility_set() ?
-        extensibility_kind(type_descriptor->extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
-        type_descriptor->is_nested(), false);
+    StructTypeFlag struct_flags {TypeObjectUtils::build_struct_type_flag(
+                                     type_descriptor.is_extensibility_set() ?
+                                     extensibility_kind(
+                                         type_descriptor.extensibility_kind()) : ExtensibilityKind::NOT_APPLIED,
+                                     type_descriptor.is_nested(), false)};
 
     CompleteTypeDetail detail;
     complete_type_detail(dynamic_type, detail);
 
     TypeIdentifier base_type_id;
-    if (type_descriptor->base_type())
+    if (type_descriptor.base_type())
     {
-        register_typeobject_w_dynamic_type(type_descriptor->base_type(), base_type_id);
+        register_typeobject_w_dynamic_type(type_descriptor.base_type(), base_type_id);
     }
 
     CompleteStructHeader header = TypeObjectUtils::build_complete_struct_header(base_type_id, detail);
 
-    DynamicTypeMembersById struct_members;
-    dynamic_type->get_all_members(struct_members); // Always returns RETCODE_OK
+    auto& struct_members {dynamic_type->get_all_members_by_index()};
     CompleteStructMemberSeq member_seq;
-    for (auto& member : struct_members)
+    uint32_t initial_index {dynamic_type->get_index_own_members()};
+    assert(initial_index <= struct_members.size());
+    for (auto member {struct_members.begin() + initial_index}; member != struct_members.end(); ++member)
     {
-        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-        member.second->get_descriptor(member_descriptor);
+        MemberDescriptorImpl& member_descriptor {(*member)->get_descriptor()};
         StructMemberFlag member_flags = TypeObjectUtils::build_struct_member_flag(
-            traits<MemberDescriptor>::narrow<MemberDescriptorImpl>(member_descriptor)->is_try_construct_kind_set() ?
-            try_construct_kind(member_descriptor->try_construct_kind()) : TryConstructKind::NOT_APPLIED,
-            member_descriptor->is_optional(), member_descriptor->is_must_understand(), member_descriptor->is_key(),
-            member_descriptor->is_shared());
+            member_descriptor.is_try_construct_kind_set() ?
+            try_construct_kind(member_descriptor.try_construct_kind()) : TryConstructKind::NOT_APPLIED,
+            member_descriptor.is_optional(), member_descriptor.is_must_understand(), member_descriptor.is_key(),
+            member_descriptor.is_shared());
         TypeIdentifier member_type_id;
-        register_typeobject_w_dynamic_type(member_descriptor->type(), member_type_id);
-        CommonStructMember common = TypeObjectUtils::build_common_struct_member(member.first,
+        register_typeobject_w_dynamic_type(member_descriptor.type(), member_type_id);
+        CommonStructMember common = TypeObjectUtils::build_common_struct_member(member_descriptor.id(),
                         member_flags, member_type_id);
 
         CompleteMemberDetail member_detail;
@@ -2160,7 +2159,7 @@ ReturnCode_t TypeObjectRegistry::complete_type_detail(
 }
 
 ReturnCode_t TypeObjectRegistry::complete_member_detail(
-        const MemberDescriptor::_ref_type& member_descriptor,
+        const MemberDescriptorImpl::_ref_type& member_descriptor,
         CompleteMemberDetail& member_detail)
 {
     // @unit, @max, @min, @range & @hashid builtin annotations are not applied with dynamic language binding
@@ -2170,6 +2169,21 @@ ReturnCode_t TypeObjectRegistry::complete_member_detail(
     apply_custom_annotations(member_descriptor->type(), ann_custom);
 
     member_detail = TypeObjectUtils::build_complete_member_detail(member_descriptor->name(),
+                    member_ann_builtin, ann_custom);
+    return RETCODE_OK;
+}
+
+ReturnCode_t TypeObjectRegistry::complete_member_detail(
+        const MemberDescriptorImpl& member_descriptor,
+        CompleteMemberDetail& member_detail)
+{
+    // @unit, @max, @min, @range & @hashid builtin annotations are not applied with dynamic language binding
+    eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin; // Empty
+
+    eprosima::fastcdr::optional<AppliedAnnotationSeq> ann_custom;
+    apply_custom_annotations(member_descriptor.type(), ann_custom);
+
+    member_detail = TypeObjectUtils::build_complete_member_detail(member_descriptor.name(),
                     member_ann_builtin, ann_custom);
     return RETCODE_OK;
 }
