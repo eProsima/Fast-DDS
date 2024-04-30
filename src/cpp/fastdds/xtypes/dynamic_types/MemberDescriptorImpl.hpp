@@ -320,6 +320,9 @@ public:
     bool equals(
             MemberDescriptorImpl& descriptor) noexcept;
 
+    bool equal_labels(
+            UnionCaseLabelSeq& label) noexcept;
+
     bool is_consistent() noexcept override;
 
     bool is_try_construct_kind_set()

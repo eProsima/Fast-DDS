@@ -115,6 +115,7 @@ if (FASTDDS_STATISTICS)
         fastcdr
         fastdds::log
         fastdds::xtypes::type-representation
+        fastdds::xtypes::dynamic-types::impl
         GTest::gmock
         )
     gtest_discover_tests(DomainParticipantStatisticsListenerTests)

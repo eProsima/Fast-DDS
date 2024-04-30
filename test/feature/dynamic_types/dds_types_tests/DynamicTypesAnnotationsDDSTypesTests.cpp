@@ -19,6 +19,7 @@
 #include "../DynamicTypesDDSTypesTest.hpp"
 #include "../../../dds-types-test/helpers/basic_inner_types.hpp"
 #include "../../../dds-types-test/annotationsPubSubTypes.h"
+#include "../../../dds-types-test/annotationsTypeObjectSupport.hpp"
 #include <fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
 #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
@@ -183,6 +184,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AnnotatedStruct)
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
 
+    // Dynamic Language Binding does not currently support wchar and wstring parameters.
+
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
@@ -215,6 +218,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EmptyAnnotatedStruct)
         TypeSupport static_pubsubType {new EmptyAnnotatedStructPubSubType()};
         check_serialization_deserialization(struct_type, data, encoding, struct_data, static_pubsubType);
     }
+
+    xtypes::TypeIdentifier static_type_id;
+    register_EmptyAnnotatedStruct_type_identifier(static_type_id);
+    check_typeobject_registry(struct_type, static_type_id);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
