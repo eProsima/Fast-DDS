@@ -191,7 +191,7 @@ ReturnCode_t DynamicType::copy_from_builder(
         {
             DynamicTypeMember* newMember = new DynamicTypeMember(it->second);
             newMember->set_parent(this);
-            is_key_defined_ = newMember->key_annotation();
+            is_key_defined_ |= newMember->key_annotation();
             member_by_id_.insert(std::make_pair(newMember->get_id(), newMember));
             member_by_name_.insert(std::make_pair(newMember->get_name(), newMember));
         }
@@ -245,14 +245,7 @@ TypeDescriptor* DynamicType::get_descriptor()
 
 bool DynamicType::key_annotation() const
 {
-    for (auto anIt = descriptor_->annotation_.begin(); anIt != descriptor_->annotation_.end(); ++anIt)
-    {
-        if ((*anIt)->key_annotation())
-        {
-            return true;
-        }
-    }
-    return false;
+    return descriptor_->annotation_get_key();
 }
 
 bool DynamicType::equals(

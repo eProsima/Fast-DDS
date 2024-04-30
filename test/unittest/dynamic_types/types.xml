@@ -268,4 +268,11 @@
             <bit_value name="flag5" position="5"/>
         </bitmask>
     </type>
+    <type>
+        <struct name="my_keyed_struct">
+            <member name="first" type="int32"/>
+            <member name="second" type="int64"/>
+            <member name="third" type="int32" key="true"/>
+        </struct>
+    </type>
 </types>
