@@ -15,31 +15,30 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastcdr/Cdr.h>
+
 #include <dds/core/types.hpp>
 #include <dds/domain/DomainParticipant.hpp>
 #include <dds/sub/DataReader.hpp>
 #include <dds/sub/qos/DataReaderQos.hpp>
 #include <dds/sub/Subscriber.hpp>
+#include <dds/topic/qos/TopicQos.hpp>
 #include <dds/topic/Topic.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
-
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/DataWriter.hpp>
-
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-
-#include <fastcdr/Cdr.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -996,89 +995,105 @@ TEST(SubscriberTests, DeleteContainedEntities)
     ASSERT_TRUE(data_reader_list.size() == 0);
 }
 
+/**
+ * Utility class to set some values other than default to those Qos common to Topic and DataReader.
+ *
+ * This is a class instead of a free function to avoid linking with its TestsPublisher counterpart.
+ */
+class TestsSubscriberQosCommonUtils
+{
+public:
+
+    // Set common Qos values to both TopicQos and DataReaderQos
+    template<typename T>
+    static void set_common_qos(
+            T& qos)
+    {
+        qos.durability_service().history_kind = KEEP_ALL_HISTORY_QOS;
+        qos.reliability().kind = RELIABLE_RELIABILITY_QOS;
+        qos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
+        qos.deadline().period = {0, 500000000};
+        qos.latency_budget().duration = 0;
+        qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+        qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        qos.resource_limits().max_samples = 1000;
+        qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+        // Representation is not on the same place in DataReaderQos and TopicQos
+        set_representation_qos(qos);
+        qos.destination_order().kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        qos.history().kind = KEEP_ALL_HISTORY_QOS;
+    }
+
+private:
+
+    // Set representation Qos (as it is not in the same place in DataReaderQos and TopicQos)
+    template<typename T>
+    static void set_representation_qos(
+            T& qos);
+};
+
+// Specialization for DataReaderQos
+template<>
+void TestsSubscriberQosCommonUtils::set_representation_qos(
+        eprosima::fastdds::dds::DataReaderQos& qos)
+{
+    qos.type_consistency().representation.m_value.push_back(
+        eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+}
+
+// Specialization for TopicQos
+template<>
+void TestsSubscriberQosCommonUtils::set_representation_qos(
+        eprosima::fastdds::dds::TopicQos& qos)
+{
+    qos.representation().m_value.push_back(eprosima::fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+}
+
 /*
- * This test checks if DataReader QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
- * DataReader QoS previously set (which are not in common with Topic QoS) are not modified.
+ * This test:
+ *   1. Creates a Topic with custom Qos
+ *   2. Creates a control DataReaderQos in which the non-common Qos are set to a value different from the default
+ *   3. Creates a test DataReaderQos and assigns it the value of the control Qos
+ *   4. Updates the control Qos' common Qos with the same values used in the Topic Qos
+ *   5. Calls Subscriber::copy_from_topic_qos() with the test Qos and the Topic Qos
+ *   6. Checks that the resulting test Qos has the same values as the control Qos
  */
 TEST(SubscriberTests, datareader_copy_from_topic_qos)
 {
-    // Set custom Topic QoS
+    /* Set Topic Qos different from default */
     TopicQos topic_qos;
-    DurabilityServiceQosPolicy durability_service;
-    durability_service.history_kind = KEEP_ALL_HISTORY_QOS;
-    topic_qos.durability_service(durability_service);
-    ReliabilityQosPolicy reliability;
-    reliability.kind = RELIABLE_RELIABILITY_QOS;
-    topic_qos.reliability(reliability);
-    DurabilityQosPolicy durability;
-    durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    topic_qos.durability(durability);
-    DeadlineQosPolicy deadline;
-    deadline.period = {0, 500000000};
-    topic_qos.deadline(deadline);
-    LatencyBudgetQosPolicy latency;
-    latency.duration = 0;
-    topic_qos.latency_budget(latency);
-    LivelinessQosPolicy liveliness;
-    liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-    topic_qos.liveliness(liveliness);
-    DestinationOrderQosPolicy destination_order;
-    destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
-    topic_qos.destination_order(destination_order);
-    ResourceLimitsQosPolicy resource_limit;
-    resource_limit.max_samples = 1000;
-    topic_qos.resource_limits(resource_limit);
-    OwnershipQosPolicy ownership;
-    ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-    topic_qos.ownership(ownership);
-    DataRepresentationQosPolicy data_rep;
-    data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
-    topic_qos.representation(data_rep);
-    DestinationOrderQosPolicy dest_order;
-    dest_order.kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
-    topic_qos.destination_order(dest_order);
-    HistoryQosPolicy history;
-    history.kind = KEEP_ALL_HISTORY_QOS;
-    topic_qos.history(history);
+    TestsSubscriberQosCommonUtils::set_common_qos(topic_qos);
 
-    // Set custom DataReader QoS
-    DataReaderQos r_qos;
-    r_qos.reader_data_lifecycle().autopurge_no_writer_samples_delay = {3, 0};
-    r_qos.user_data().push_back(0);
-    RTPSEndpointQos endpoint_;
-    endpoint_.entity_id = 1;
-    r_qos.endpoint(endpoint_);
-    ReaderResourceLimitsQos reader_limits;
-    reader_limits.matched_publisher_allocation = eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
-    r_qos.reader_resource_limits(reader_limits);
-    r_qos.data_sharing().off();
+    /* Create the subscriber under test */
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
+
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
     ASSERT_NE(subscriber, nullptr);
 
-    subscriber->copy_from_topic_qos(r_qos, topic_qos);
+    /* Create control and test Qos instances */
+    // Override non-common Qos with values different from the default on the control Qos
+    DataReaderQos control_qos;
+    control_qos.reader_data_lifecycle().autopurge_no_writer_samples_delay = {3, 0};
+    control_qos.user_data().push_back(0);
+    control_qos.endpoint().entity_id = 1;
+    control_qos.reader_resource_limits().matched_publisher_allocation =
+            eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    control_qos.data_sharing().off();
 
-    // Check if DataReader QoS have been correctly set from Topic QoS
-    ASSERT_EQ(r_qos.durability_service().history_kind, KEEP_ALL_HISTORY_QOS);
-    ASSERT_EQ(r_qos.reliability().kind, RELIABLE_RELIABILITY_QOS);
-    ASSERT_EQ(r_qos.durability().kind, TRANSIENT_LOCAL_DURABILITY_QOS);
-    ASSERT_EQ(r_qos.deadline().period, 0.5);
-    ASSERT_EQ(r_qos.latency_budget().duration, 0);
-    ASSERT_EQ(r_qos.liveliness().kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_EQ(r_qos.destination_order().kind, BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
-    ASSERT_EQ(r_qos.resource_limits().max_samples, 1000);
-    ASSERT_EQ(r_qos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
-    ASSERT_EQ(r_qos.type_consistency().representation.m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
-    ASSERT_EQ(r_qos.destination_order().kind, eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
-    ASSERT_EQ(r_qos.history().kind, KEEP_ALL_HISTORY_QOS);
-    // Check if DataReader QoS previously set are correct
-    ASSERT_EQ(r_qos.reader_data_lifecycle().autopurge_no_writer_samples_delay.seconds, 3);
-    ASSERT_EQ(r_qos.user_data()[0], 0);
-    ASSERT_EQ(r_qos.endpoint().entity_id, 1);
-    ASSERT_EQ(r_qos.reader_resource_limits().matched_publisher_allocation.initial, 1u);
-    ASSERT_EQ(r_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
+    // Copy control Qos to test Qos. At this point, test_qos has non-default values for the non-common Qos,
+    // and default values for the common Qos
+    DataReaderQos test_qos = control_qos;
+
+    // Set common Qos to the control Qos with the same values used in the Topic Qos
+    TestsSubscriberQosCommonUtils::set_common_qos(control_qos);
+
+    /* Function under test call */
+    subscriber->copy_from_topic_qos(test_qos, topic_qos);
+
+    /* Check that the test Qos has the same values as the control Qos */
+    ASSERT_EQ(control_qos, test_qos);
 }
 
 } // namespace dds

@@ -15,19 +15,16 @@
 /**
  * @file DataReaderImpl.cpp
  */
+#include <fastdds/subscriber/DataReaderImpl.hpp>
 
 #include <memory>
 #include <stdexcept>
-
 #if defined(__has_include) && __has_include(<version>)
 #   include <version>
 #endif // if defined(__has_include) && __has_include(<version>)
 
-#include <fastrtps/config.h>
-
-#include <fastdds/subscriber/DataReaderImpl.hpp>
-#include <fastdds/subscriber/ReadConditionImpl.hpp>
-
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
@@ -37,30 +34,23 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
-
-#include <fastdds/core/condition/StatusConditionImpl.hpp>
-#include <fastdds/core/policy/QosPolicyUtils.hpp>
-
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-
-#include <fastdds/subscriber/SubscriberImpl.hpp>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/subscriber/DataReaderImpl/ReadTakeCommand.hpp>
 #include <fastdds/subscriber/DataReaderImpl/StateFilter.hpp>
-
+#include <fastdds/subscriber/ReadConditionImpl.hpp>
+#include <fastdds/subscriber/SubscriberImpl.hpp>
 #include <fastdds/topic/ContentFilteredTopicImpl.hpp>
-
-#include <fastrtps/utils/TimeConversion.h>
+#include <fastrtps/config.h>
 #include <fastrtps/subscriber/SampleInfo.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.h>
@@ -138,27 +128,28 @@ DataReaderImpl::DataReaderImpl(
     }
 }
 
-//TODO when MultiTopic is supported: using DATAREADER_QOS_USE_TOPIC_QOS when creating
-//a DataReader with MultiTopic should return error.
+// TODO(elianalf): when MultiTopic is supported: using DATAREADER_QOS_USE_TOPIC_QOS when creating
+// a DataReader with MultiTopic should return error.
 DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(
         const DataReaderQos& qos)
 {
-    Topic* topicPtr = dynamic_cast<Topic*>(this->topic_);
-    DataReaderQos data_reader_qos_;
-    if (&qos == &DATAREADER_QOS_DEFAULT)
+    DataReaderQos return_qos = subscriber_->get_default_datareader_qos();
+
+    Topic* topic = dynamic_cast<Topic*>(topic_);
+
+    if (topic != nullptr)
     {
-        data_reader_qos_ = this->subscriber_->get_default_datareader_qos();
+        if (&DATAREADER_QOS_USE_TOPIC_QOS == &qos)
+        {
+            subscriber_->copy_from_topic_qos(return_qos, topic->get_qos());
+        }
+        else if (&DATAREADER_QOS_DEFAULT != &qos)
+        {
+            return_qos = qos;
+        }
     }
-    else if (&qos == &DATAREADER_QOS_USE_TOPIC_QOS)
-    {
-        data_reader_qos_ = this->subscriber_->get_default_datareader_qos();
-        this->subscriber_->copy_from_topic_qos(data_reader_qos_, topicPtr->get_qos());
-    }
-    else
-    {
-        data_reader_qos_ = qos;
-    }
-    return data_reader_qos_;
+
+    return return_qos;
 }
 
 ReturnCode_t DataReaderImpl::enable()

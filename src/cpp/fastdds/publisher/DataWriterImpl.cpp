@@ -16,45 +16,39 @@
  * DataWriterImpl.cpp
  *
  */
-#include <fastrtps/config.h>
-
 #include <fastdds/publisher/DataWriterImpl.hpp>
 
 #include <functional>
 #include <iostream>
 
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
+#include <fastdds/core/policy/ParameterSerializer.hpp>
+#include <fastdds/core/policy/QosPolicyUtils.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
-
-#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/domain/DomainParticipantImpl.hpp>
+#include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
+#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
-
-#include <fastdds/publisher/PublisherImpl.hpp>
 #include <fastrtps/attributes/TopicAttributes.h>
+#include <fastrtps/config.h>
 #include <fastrtps/utils/TimeConversion.h>
-
-#include <fastdds/core/condition/StatusConditionImpl.hpp>
-#include <fastdds/core/policy/ParameterSerializer.hpp>
-#include <fastdds/core/policy/QosPolicyUtils.hpp>
-
-#include <fastdds/domain/DomainParticipantImpl.hpp>
-#include <fastdds/publisher/filtering/DataWriterFilteredChangePool.hpp>
 
 #include <rtps/DataSharing/DataSharingPayloadPool.hpp>
 #include <rtps/history/CacheChangePool.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
-
 #ifdef FASTDDS_STATISTICS
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/types/monitorservice_types.h>
@@ -220,21 +214,18 @@ DataWriterImpl::DataWriterImpl(
 DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(
         const DataWriterQos& qos)
 {
-    DataWriterQos data_writer_qos_;
-    if (&qos == &DATAWRITER_QOS_DEFAULT)
+    DataWriterQos return_qos = publisher_->get_default_datawriter_qos();
+
+    if (&DATAWRITER_QOS_USE_TOPIC_QOS == &qos)
     {
-        data_writer_qos_ = this->publisher_->get_default_datawriter_qos();
+        publisher_->copy_from_topic_qos(return_qos, topic_->get_qos());
     }
-    else if (&qos == &DATAWRITER_QOS_USE_TOPIC_QOS)
+    else if (&DATAWRITER_QOS_DEFAULT != &qos)
     {
-        data_writer_qos_ = this->publisher_->get_default_datawriter_qos();
-        this->publisher_->copy_from_topic_qos(data_writer_qos_, this->topic_->get_qos());
+        return_qos = qos;
     }
-    else
-    {
-        data_writer_qos_ = qos;
-    }
-    return data_writer_qos_;
+
+    return return_qos;
 }
 
 ReturnCode_t DataWriterImpl::enable()

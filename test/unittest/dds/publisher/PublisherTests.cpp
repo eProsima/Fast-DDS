@@ -12,32 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fstream>
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <dds/domain/DomainParticipant.hpp>
-#include <dds/domain/DomainParticipant.hpp>
 #include <dds/pub/DataWriter.hpp>
-#include <dds/pub/Publisher.hpp>
 #include <dds/pub/Publisher.hpp>
 #include <dds/pub/qos/DataWriterQos.hpp>
 #include <dds/pub/qos/PublisherQos.hpp>
 #include <dds/topic/Topic.hpp>
-
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/PublisherListener.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
-
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fstream>
-
 
 namespace eprosima {
 namespace fastdds {
@@ -833,100 +830,84 @@ TEST(PublisherTests, UnsupportedPublisherMethods)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+/**
+ * Utility class to set some values other than default to those Qos common to Topic and DataWriter.
+ *
+ * This is a class instead of a free function to avoid linking with its TestsSubscriber counterpart.
+ */
+class TestsPublisherQosCommonUtils
+{
+public:
+
+    template<typename T>
+    static void set_common_qos(
+            T& qos)
+    {
+        qos.durability_service().history_kind = KEEP_ALL_HISTORY_QOS;
+        qos.reliability().kind = BEST_EFFORT_RELIABILITY_QOS;
+        qos.durability().kind = VOLATILE_DURABILITY_QOS;
+        qos.deadline().period = {0, 500000000};
+        qos.latency_budget().duration = 0;
+        qos.liveliness().kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
+        qos.destination_order().kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        qos.resource_limits().max_samples = 1000;
+        qos.transport_priority().value = 1;
+        qos.ownership().kind = EXCLUSIVE_OWNERSHIP_QOS;
+        qos.representation().m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        qos.destination_order().kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
+        qos.history().kind = KEEP_ALL_HISTORY_QOS;
+        qos.lifespan().duration = {5, 0};
+    }
+
+};
+
 /*
- * This test checks if DataWriter QoS are correctly set from Topic QoS using copy_from_topic_qos() and if
- * DataWriter QoS previously set (which are not in common with Topic QoS) are not modified.
+ * This test:
+ *   1. Creates a Topic with custom Qos
+ *   2. Creates a control DataWriterQos in which the non-common Qos are set to a value different from the default
+ *   3. Creates a test DataWriterQos and assigns it the value of the control Qos
+ *   4. Updates the control Qos' common Qos with the same values used in the Topic Qos
+ *   5. Calls Publisher::copy_from_topic_qos() with the test Qos and the Topic Qos
+ *   6. Checks that the resulting test Qos has the same values as the control Qos
  */
 TEST(PublisherTests, datawriter_copy_from_topic_qos)
 {
-    // Set custom Topic QoS
+    /* Set Topic Qos different from default */
     TopicQos topic_qos;
-    DurabilityServiceQosPolicy durability_service;
-    durability_service.history_kind = KEEP_ALL_HISTORY_QOS;
-    topic_qos.durability_service(durability_service);
-    ReliabilityQosPolicy reliability;
-    reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-    topic_qos.reliability(reliability);
-    DurabilityQosPolicy durability;
-    durability.kind = VOLATILE_DURABILITY_QOS;
-    topic_qos.durability(durability);
-    DeadlineQosPolicy deadline;
-    deadline.period = {0, 500000000};
-    topic_qos.deadline(deadline);
-    LatencyBudgetQosPolicy latency;
-    latency.duration = 0;
-    topic_qos.latency_budget(latency);
-    LivelinessQosPolicy liveliness;
-    liveliness.kind = MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-    topic_qos.liveliness(liveliness);
-    DestinationOrderQosPolicy destination_order;
-    destination_order.kind = BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
-    topic_qos.destination_order(destination_order);
-    ResourceLimitsQosPolicy resource_limit;
-    resource_limit.max_samples = 1000;
-    topic_qos.resource_limits(resource_limit);
-    TransportPriorityQosPolicy transport_prio;
-    transport_prio.value = 1;
-    topic_qos.transport_priority(transport_prio);
+    TestsPublisherQosCommonUtils::set_common_qos(topic_qos);
 
-    OwnershipQosPolicy ownership;
-    ownership.kind = EXCLUSIVE_OWNERSHIP_QOS;
-    topic_qos.ownership(ownership);
-    DataRepresentationQosPolicy data_rep;
-    data_rep.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
-    topic_qos.representation(data_rep);
-    DestinationOrderQosPolicy dest_order;
-    dest_order.kind = eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS;
-    topic_qos.destination_order(dest_order);
-    HistoryQosPolicy history;
-    history.kind = KEEP_ALL_HISTORY_QOS;
-    topic_qos.history(history);
-
-    // Set custom DataWriter QoS
-    DataWriterQos w_qos;
-    w_qos.ownership_strength().value = 1;
-    PublishModeQosPolicy publish_mode;
-    publish_mode.kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
-    w_qos.publish_mode(publish_mode);
-    w_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
-    w_qos.user_data().push_back(0);
-    RTPSEndpointQos endpoint_;
-    endpoint_.entity_id = 1;
-    w_qos.endpoint(endpoint_);
-    WriterResourceLimitsQos writer_limits;
-    writer_limits.matched_subscriber_allocation = eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
-    w_qos.writer_resource_limits(writer_limits);
-    w_qos.data_sharing().off();
+    /* Create the publisher under test */
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
+
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     ASSERT_NE(publisher, nullptr);
 
-    publisher->copy_from_topic_qos(w_qos, topic_qos);
+    /* Create control and test Qos instances */
+    // Override non-common Qos with values different from the default on the control Qos
+    DataWriterQos control_qos;
+    control_qos.ownership_strength().value = 1;
+    control_qos.publish_mode().kind = eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE;
+    control_qos.writer_data_lifecycle().autodispose_unregistered_instances = false;
+    control_qos.user_data().push_back(0);
+    control_qos.endpoint().entity_id = 1;
+    control_qos.writer_resource_limits().matched_subscriber_allocation =
+            eprosima::fastrtps::ResourceLimitedContainerConfig::fixed_size_configuration(1u);
+    control_qos.data_sharing().off();
 
-    // Check if DataWriter QoS have been correctly set from Topic QoS
-    ASSERT_EQ(w_qos.durability_service().history_kind, KEEP_ALL_HISTORY_QOS);
-    ASSERT_EQ(w_qos.reliability().kind, BEST_EFFORT_RELIABILITY_QOS);
-    ASSERT_EQ(w_qos.durability().kind, VOLATILE_DURABILITY_QOS);
-    ASSERT_EQ(w_qos.deadline().period, 0.5);
-    ASSERT_EQ(w_qos.latency_budget().duration, 0);
-    ASSERT_EQ(w_qos.liveliness().kind, MANUAL_BY_PARTICIPANT_LIVELINESS_QOS);
-    ASSERT_EQ(w_qos.destination_order().kind, BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
-    ASSERT_EQ(w_qos.resource_limits().max_samples, 1000);
-    ASSERT_EQ(w_qos.transport_priority().value, 1);
-    ASSERT_EQ(w_qos.ownership().kind, EXCLUSIVE_OWNERSHIP_QOS);
-    ASSERT_EQ(w_qos.representation().m_value[0], DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
-    ASSERT_EQ(w_qos.destination_order().kind, eprosima::fastdds::dds::BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS);
-    ASSERT_EQ(w_qos.history().kind, KEEP_ALL_HISTORY_QOS);
-    // Check if DataWriter QoS previously set are correct
-    ASSERT_EQ(w_qos.ownership_strength().value, 1);
-    ASSERT_EQ(w_qos.publish_mode().kind, eprosima::fastdds::dds::ASYNCHRONOUS_PUBLISH_MODE);
-    ASSERT_EQ(w_qos.writer_data_lifecycle().autodispose_unregistered_instances, false);
-    ASSERT_EQ(w_qos.user_data()[0], 0);
-    ASSERT_EQ(w_qos.endpoint().entity_id, 1);
-    ASSERT_EQ(w_qos.writer_resource_limits().matched_subscriber_allocation.initial, 1u);
-    ASSERT_EQ(w_qos.data_sharing().kind(), eprosima::fastdds::dds::OFF);
+    // Copy control Qos to test Qos. At this point, test_qos has non-default values for the non-common Qos,
+    // and default values for the common Qos
+    DataWriterQos test_qos = control_qos;
+
+    // Set common Qos to the control Qos with the same values used in the Topic Qos
+    TestsPublisherQosCommonUtils::set_common_qos(control_qos);
+
+    /* Function under test call */
+    publisher->copy_from_topic_qos(test_qos, topic_qos);
+
+    /* Check that the test Qos has the same values as the control Qos */
+    ASSERT_EQ(control_qos, test_qos);
 }
 
 } // namespace dds
