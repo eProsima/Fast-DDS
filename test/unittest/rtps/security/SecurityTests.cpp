@@ -245,12 +245,13 @@ void SecurityTest::final_message_process_ok(
     info.guid = remote_participant_key;
     EXPECT_CALL(*participant_.getListener(), onParticipantAuthentication(_, info)).Times(1);
 
-    CacheChange_t* kx_change = new CacheChange_t(200);
-    expect_kx_exchange(kx_change);
+    CacheChange_t kx_change_to_add;
+    CacheChange_t* kx_change_to_remove = new CacheChange_t(200);
+    expect_kx_exchange(kx_change_to_add, kx_change_to_remove);
 
     stateless_reader_->listener_->onNewCacheChangeAdded(stateless_reader_, change);
 
-    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change);
+    volatile_writer_->listener_->onWriterChangeReceivedByAll(volatile_writer_, kx_change_to_remove);
 
     if (final_message_change == nullptr)
     {
@@ -263,17 +264,18 @@ void SecurityTest::final_message_process_ok(
 }
 
 void SecurityTest::expect_kx_exchange(
-        CacheChange_t* kx_change)
+        CacheChange_t& kx_change_to_add,
+        CacheChange_t* kx_change_to_remove)
 {
     EXPECT_CALL(*volatile_writer_, new_change(_, _, _)).Times(1).WillOnce(
-        DoAll(Invoke([kx_change](const std::function<uint32_t()>& f, ChangeKind_t, InstanceHandle_t)
+        DoAll(Invoke([&kx_change_to_add](const std::function<uint32_t()>& f, ChangeKind_t, InstanceHandle_t)
         {
-            kx_change->serializedPayload.reserve(f());
+            kx_change_to_add.serializedPayload.reserve(f());
         }),
-        Return(kx_change)));
-    EXPECT_CALL(*volatile_writer_->history_, add_change_mock(kx_change)).Times(1).
+        Return(&kx_change_to_add)));
+    EXPECT_CALL(*volatile_writer_->history_, add_change_mock(&kx_change_to_add)).Times(1).
             WillOnce(Return(true));
-    EXPECT_CALL(*volatile_writer_->history_, remove_change_mock(kx_change)).Times(1).
+    EXPECT_CALL(*volatile_writer_->history_, remove_change_mock(kx_change_to_remove)).Times(1).
             WillOnce(Return(true));
 }
 
