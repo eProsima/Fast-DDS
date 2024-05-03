@@ -1,0 +1,128 @@
+name: Detect flakiness Ubuntu workflow
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+    inputs:
+      label:
+        description: 'ID associated to the workflow'
+        required: false
+        type: string
+      colcon-args:
+        description: 'Extra arguments for colcon cli'
+        required: false
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-ci:
+    runs-on: 'ubuntu-22.04'
+    strategy:
+      fail-fast: false
+      matrix:
+        fastdds-branch:
+          - 'master'
+        cmake-build-type:
+          - 'RelWithDebInfo'
+    steps:
+
+      - name: Sync eProsima/Fast-DDS repository
+        uses: eProsima/eProsima-CI/external/checkout@v0
+        with:
+          path: src/fastrtps
+          ref: ${{ matrix.fastdds-branch }}
+
+      - name: Get minimum supported version of CMake
+        uses: eProsima/eProsima-CI/external/get-cmake@v0
+        with:
+          cmakeVersion: '3.22.6'
+
+      - name: Install apt dependencies
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
+        with:
+          packages: libasio-dev libtinyxml2-dev libssl-dev
+          update: false
+          upgrade: false
+
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@v0
+
+      - name: Install Python dependencies
+        run: |
+          pip install pytest pytest-json-report requests vcstool lxml junitparser pandas numpy seaborn
+
+      - name: Setup CCache
+        uses: eProsima/eProsima-CI/external/setup-ccache-action@v0
+
+      - name: Fetch Fast DDS dependencies
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Fetch googletest
+        uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
+        with:
+          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          destination_workspace: src
+          skip_existing: 'true'
+
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: -DSECURITY=ON
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Set current date as env variable
+        id: date
+        run: |
+          echo "TODAY=$(date +'%Y-%m-%dT%H-%M-%S')" >> $GITHUB_ENV
+          echo "NOW=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_ENV
+
+      - name: Colcon test
+        run: |
+          cd ${{ github.workspace }}
+          test_results_file="${{ github.workspace }}/test_results-$TODAY.xml"
+          colcon test --packages-select=fastrtps --event-handlers=console_direct+ --repeat-until-pass:3 --timeout=300 --label-exclude="xfail"
+          # Translate CTest XML reports to jUnit
+          if [ ! -f ${test_results_file} ]
+          then
+            echo "::group::Translating test report to jUnit..."
+            python3 ${{ github.workspace }}/src/fastrtps/resources/ctest2junit.py \
+              --build-dir ${{ github.workspace }}/build/fastrtps \
+              --xslt ${{ github.workspace }}/src/fastrtps/resources/ctest-to-junit-reducted.xsl \
+              --output-junit ${test_results_file} \
+              --timestamp "$NOW"
+            echo "::endgroup::"
+          fi
+
+      - name: Download previous test results with plugin
+        if: always()
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: nightly-ubuntu-detect-flaky.yml
+          name: test-results-all
+          workflow_conclusion: completed
+
+      - name: Flaky test analysis on [window-size] runs history
+        id: flaky_analysis
+        run: |
+          python ${{ github.workspace }}/src/flaky_test_infra_poc/resources/check_flakes.py --junit-files=. --grouping-option=runs --window-size=6 --window-count=1 --output-file=$GITHUB_STEP_SUMMARY
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results-all
+          path: |
+            *.xml
