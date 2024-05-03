@@ -122,6 +122,18 @@ public:
             up_base_node_t& root);
 
     /**
+     * Load a XML file.
+     * @param filename Name for the file to be loaded.
+     * @param root Root node.
+     * @param is_default Is the default XML file.
+     * @return XMLP_ret::XML_OK on success, XMLP_ret::XML_ERROR in other case.
+     */
+    static XMLP_ret loadXML(
+            const std::string& filename,
+            up_base_node_t& root,
+            bool is_default);
+
+    /**
      * Load a XML data from buffer.
      * @param data XML data to load.
      * @param length Length of the XML data.
