@@ -81,7 +81,7 @@ jobs:
           colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: -DSECURITY=ON
-          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
           cmake_build_type: ${{ matrix.cmake-build-type }}
           workspace: ${{ github.workspace }}
 
@@ -95,7 +95,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           test_results_file="${{ github.workspace }}/test_results-$TODAY.xml"
-          colcon test --packages-select=fastrtps --event-handlers=console_direct+ --repeat-until-pass:3 --timeout=300 --label-exclude="xfail"
+          colcon test --packages-select=fastrtps --event-handlers=console_direct+ --ctest-args --repeat-until-pass:3 --timeout=300 --label-exclude="xfail"
           # Translate CTest XML reports to jUnit
           if [ ! -f ${test_results_file} ]
           then
