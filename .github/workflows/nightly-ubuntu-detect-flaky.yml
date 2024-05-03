@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         fastdds-branch:
-          - 'master'
+          - '3.0.x-devel'
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
@@ -35,7 +35,7 @@ jobs:
       - name: Sync eProsima/Fast-DDS repository
         uses: eProsima/eProsima-CI/external/checkout@v0
         with:
-          path: src/fastrtps
+          path: src/fastdds
           ref: ${{ matrix.fastdds-branch }}
 
       - name: Get minimum supported version of CMake
@@ -63,14 +63,14 @@ jobs:
       - name: Fetch Fast DDS dependencies
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/fastrtps.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/fastdds.repos
           destination_workspace: src
           skip_existing: 'true'
 
       - name: Fetch googletest
         uses: eProsima/eProsima-CI/multiplatform/vcs_import@v0
         with:
-          vcs_repos_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.repos
+          vcs_repos_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.repos
           destination_workspace: src
           skip_existing: 'true'
 
@@ -78,7 +78,7 @@ jobs:
         continue-on-error: false
         uses: eProsima/eProsima-CI/multiplatform/colcon_build@v0
         with:
-          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
+          colcon_meta_file: ${{ github.workspace }}/src/fastdds/.github/workflows/config/ci.meta
           colcon_build_args: ${{ inputs.colcon-args }}
           cmake_args: -DSECURITY=ON
           cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual"
@@ -95,14 +95,14 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           test_results_file="${{ github.workspace }}/test_results-$TODAY.xml"
-          colcon test --packages-select=fastrtps --event-handlers=console_direct+ --ctest-args --repeat-until-pass:3 --timeout=300 --label-exclude="xfail"
+          colcon test --packages-select=fastdds --event-handlers=console_direct+ --ctest-args --repeat-until-pass:3 --timeout=300 --label-exclude="xfail"
           # Translate CTest XML reports to jUnit
           if [ ! -f ${test_results_file} ]
           then
             echo "::group::Translating test report to jUnit..."
-            python3 ${{ github.workspace }}/src/fastrtps/resources/ctest2junit.py \
-              --build-dir ${{ github.workspace }}/build/fastrtps \
-              --xslt ${{ github.workspace }}/src/fastrtps/resources/ctest-to-junit-reducted.xsl \
+            python3 ${{ github.workspace }}/src/fastdds/resources/ctest2junit.py \
+              --build-dir ${{ github.workspace }}/build/fastdds \
+              --xslt ${{ github.workspace }}/src/fastdds/resources/ctest-to-junit-reducted.xsl \
               --output-junit ${test_results_file} \
               --timestamp "$NOW"
             echo "::endgroup::"
