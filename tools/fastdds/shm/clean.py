@@ -23,6 +23,9 @@ import os
 import platform
 import re
 from pathlib import Path
+import sys
+
+print (sys.path)
 
 if os.name == 'posix':
     import fcntl

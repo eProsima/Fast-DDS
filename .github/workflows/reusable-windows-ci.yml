@@ -97,7 +97,18 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/windows/install_python_packages@hotfix/python
         with:
-          packages: vcstool xmlschema
+          packages: vcstool xmlschema pywin32
+
+      - name: Check python installed dependencies
+        run: |
+          python3 -m pip list
+          echo $?
+          python3 -m pip show pywin32
+          echo $?
+          python3 -c "import sys; print(sys.path)"
+          echo $?
+          python3 -c "import win32con"
+          echo $?
 
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
