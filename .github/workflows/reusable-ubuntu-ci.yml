@@ -72,8 +72,8 @@ jobs:
           update: false
           upgrade: false
 
-      #- name: Install colcon
-      #  uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/python
+      - name: Install colcon
+        uses: eProsima/eProsima-CI/ubuntu/install_colcon@hotfix/python
 
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@hotfix/python
@@ -146,29 +146,29 @@ jobs:
 #          dir: '${{ github.workspace }}/qt_installation/'
 #          modules: 'qtcharts'
 #
-#      - name: Colcon build
-#        continue-on-error: false
-#        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/python
-#        with:
-#          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
-#          colcon_build_args: ${{ inputs.colcon-args }}
-#          cmake_args: ${{ inputs.cmake-args }}
-#          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
-#          cmake_build_type: ${{ matrix.cmake-build-type }}
-#          workspace: ${{ github.workspace }}
-#
-#      - name: Colcon test
-#        id: test
-#        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
-#        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/python
-#        with:
-#          colcon_test_args: ${{ inputs.colcon-args }}
-#          colcon_test_args_default: --event-handlers=console_direct+
-#          ctest_args: ${{ inputs.ctest-args }}
-#          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
-#          packages_names: fastrtps
-#          workspace: ${{ github.workspace }}
-#          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
+      - name: Colcon build
+        continue-on-error: false
+        uses: eProsima/eProsima-CI/multiplatform/colcon_build@hotfix/python
+        with:
+          colcon_meta_file: ${{ github.workspace }}/src/fastrtps/.github/workflows/config/ci.meta
+          colcon_build_args: ${{ inputs.colcon-args }}
+          cmake_args: ${{ inputs.cmake-args }}
+          cmake_args_default: -DCMAKE_CXX_FLAGS="-Werror -Wall -Wextra -Wpedantic -Wunused-value -Woverloaded-virtual" -DFASTDDS_EXAMPLE_TESTS=ON
+          cmake_build_type: ${{ matrix.cmake-build-type }}
+          workspace: ${{ github.workspace }}
+
+      - name: Colcon test
+        id: test
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
+        uses: eProsima/eProsima-CI/multiplatform/colcon_test@hotfix/python
+        with:
+          colcon_test_args: ${{ inputs.colcon-args }}
+          colcon_test_args_default: --event-handlers=console_direct+
+          ctest_args: -R xml.validate
+          ctest_args_default: --repeat until-pass:3 --timeout 300 --label-exclude "xfail"
+          packages_names: fastrtps
+          workspace: ${{ github.workspace }}
+          test_report_artifact: ${{ format('test_report_{0}_{1}_{2}', inputs.label, github.job, join(matrix.*, '_')) }}
 #
 #      - name: Test summary
 #        uses: eProsima/eProsima-CI/multiplatform/junit_summary@hotfix/python
