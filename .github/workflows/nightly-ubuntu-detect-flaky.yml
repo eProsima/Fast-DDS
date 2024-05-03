@@ -3,6 +3,8 @@ name: Detect flakiness Ubuntu workflow
 on:
   schedule:
     - cron: '0 1 * * *'
+  pull_request:
+    types: [opened, synchronize]
   workflow_dispatch:
     inputs:
       label:
