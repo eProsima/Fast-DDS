@@ -214,13 +214,17 @@ DataWriterImpl::DataWriterImpl(
 DataWriterQos DataWriterImpl::get_datawriter_qos_from_settings(
         const DataWriterQos& qos)
 {
-    DataWriterQos return_qos = publisher_->get_default_datawriter_qos();
-
-    if (&DATAWRITER_QOS_USE_TOPIC_QOS == &qos)
+    DataWriterQos return_qos;
+    if (&DATAWRITER_QOS_DEFAULT == &qos)
     {
+        return_qos = publisher_->get_default_datawriter_qos();
+    }
+    else if (&DATAWRITER_QOS_USE_TOPIC_QOS == &qos)
+    {
+        return_qos = publisher_->get_default_datawriter_qos();
         publisher_->copy_from_topic_qos(return_qos, topic_->get_qos());
     }
-    else if (&DATAWRITER_QOS_DEFAULT != &qos)
+    else
     {
         return_qos = qos;
     }

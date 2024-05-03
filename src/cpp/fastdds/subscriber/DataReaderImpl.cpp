@@ -133,20 +133,24 @@ DataReaderImpl::DataReaderImpl(
 DataReaderQos DataReaderImpl::get_datareader_qos_from_settings(
         const DataReaderQos& qos)
 {
-    DataReaderQos return_qos = subscriber_->get_default_datareader_qos();
+    DataReaderQos return_qos;
 
-    Topic* topic = dynamic_cast<Topic*>(topic_);
-
-    if (topic != nullptr)
+    if (&DATAREADER_QOS_DEFAULT == &qos)
     {
-        if (&DATAREADER_QOS_USE_TOPIC_QOS == &qos)
+        return_qos = subscriber_->get_default_datareader_qos();
+    }
+    else if (&DATAREADER_QOS_USE_TOPIC_QOS == &qos)
+    {
+        Topic* topic = dynamic_cast<Topic*>(topic_);
+        if (topic != nullptr)
         {
+            return_qos = subscriber_->get_default_datareader_qos();
             subscriber_->copy_from_topic_qos(return_qos, topic->get_qos());
         }
-        else if (&DATAREADER_QOS_DEFAULT != &qos)
-        {
-            return_qos = qos;
-        }
+    }
+    else
+    {
+        return_qos = qos;
     }
 
     return return_qos;
