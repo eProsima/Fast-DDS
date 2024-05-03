@@ -78,24 +78,19 @@ jobs:
       - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@hotfix/python
         with:
-          packages: vcstool xmlschema==3.0.2
+          packages: vcstool
           upgrade: false
 
-      - name: Install xmlschema in specific python installation lib folder
+      - name: Install Python dependencies
         uses: eProsima/eProsima-CI/multiplatform/install_python_packages@hotfix/python
         with:
-          packages: xmlschema==3.0.2
+          packages: xmlschema
           upgrade: false
-          path: $(dirname "$(dirname "$( which python3 )")")/lib/python$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")/site-packages
+          path: $( which python3 )/../../lib
 
-      - name: Debug checks and prints
-        run: |
-          echo "which pip3: $( which pip3 )"
-          which pip3
-          echo "$(dirname "$(dirname "$( which python3 )")")/lib/python$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")/site-packages"
-          ls -la $(dirname "$(dirname "$( which python3 )")")/lib/python$(python3 -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")/site-packages
-          echo "$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')"
-          ls -la "$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')"
+      #- name: Source python installed dependencies
+      #  run: |
+      #    python3 -c "import sys; sys.path.append(\"$(pip show xmlschema | grep -i 'Location' | awk '{print $2}')\")"
 
       - name: Setup CCache
         uses: eProsima/eProsima-CI/external/setup-ccache-action@hotfix/python
