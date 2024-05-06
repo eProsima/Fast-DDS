@@ -451,7 +451,7 @@ XMLP_ret XMLParser::validateXMLTransportElements(
                 strcmp(name, MAX_INITIAL_PEERS_RANGE) == 0 ||
                 strcmp(name, WHITE_LIST) == 0 ||
                 strcmp(name, NETMASK_FILTER) == 0 ||
-                strcmp(name, INTERFACES) == 0 ||
+                strcmp(name, NETWORK_INTERFACES) == 0 ||
                 strcmp(name, TTL) == 0 ||
                 strcmp(name, NON_BLOCKING_SEND) == 0 ||
                 strcmp(name, UDP_OUTPUT_PORT) == 0 ||
@@ -636,7 +636,7 @@ XMLP_ret XMLParser::parseXMLSocketTransportData(
                     p_aux1 != nullptr; p_aux1 = p_aux1->NextSiblingElement())
             {
                 address = p_aux1->Name();
-                if (strcmp(address, ADDRESS) == 0 || strcmp(address, INTERFACE) == 0)
+                if (strcmp(address, ADDRESS) == 0 || strcmp(address, NETWORK_INTERFACE) == 0)
                 {
                     std::string text = get_element_text(p_aux1);
                     if (!text.empty())
@@ -671,7 +671,7 @@ XMLP_ret XMLParser::parseXMLSocketTransportData(
                 return XMLP_ret::XML_ERROR;
             }
         }
-        else if (strcmp(name, INTERFACES) == 0)
+        else if (strcmp(name, NETWORK_INTERFACES) == 0)
         {
             if (XMLP_ret::XML_OK != parseXMLInterfaces(p_aux0, p_transport))
             {
