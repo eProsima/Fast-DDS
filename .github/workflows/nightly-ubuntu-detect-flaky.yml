@@ -95,14 +95,14 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           test_results_file="${{ github.workspace }}/test_results-$TODAY.xml"
-          colcon test --packages-select=fastdds --event-handlers=console_direct+ --ctest-args --repeat-until-pass:3 --timeout=300 --label-exclude="xfail"
+          colcon test --packages-select=fastdds --event-handlers=console_direct+ --ctest-args --timeout=300 --label-exclude="xfail"
           # Translate CTest XML reports to jUnit
           if [ ! -f ${test_results_file} ]
           then
             echo "::group::Translating test report to jUnit..."
-            python3 ${{ github.workspace }}/src/fastdds/resources/ctest2junit.py \
+            python3 ${{ github.workspace }}/src/fastdds/.github/resources/ctest2junit.py \
               --build-dir ${{ github.workspace }}/build/fastdds \
-              --xslt ${{ github.workspace }}/src/fastdds/resources/ctest-to-junit-reducted.xsl \
+              --xslt ${{ github.workspace }}/src/fastdds/.github/resources/ctest-to-junit-reducted.xsl \
               --output-junit ${test_results_file} \
               --timestamp "$NOW"
             echo "::endgroup::"
@@ -119,7 +119,7 @@ jobs:
       - name: Flaky test analysis on [window-size] runs history
         id: flaky_analysis
         run: |
-          python ${{ github.workspace }}/src/flaky_test_infra_poc/resources/check_flakes.py --junit-files=. --grouping-option=runs --window-size=6 --window-count=1 --output-file=$GITHUB_STEP_SUMMARY
+          python ${{ github.workspace }}/src/fastdds/.github/resources/check_flakes.py --junit-files=. --grouping-option=runs --window-size=6 --window-count=1 --output-file=$GITHUB_STEP_SUMMARY
 
       - name: Upload test results
         if: always()
