@@ -93,7 +93,7 @@ public:
     static ReturnCode_t delete_instance() noexcept;
 
     ReturnCode_t delete_type(
-            traits<DynamicType>::ref_type type) noexcept override;
+            traits<DynamicType>::ref_type& type) noexcept override;
 
     static traits<DynamicTypeBuilderFactory>::ref_type get_instance() noexcept;
 

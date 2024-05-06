@@ -51,8 +51,6 @@ constexpr const char* const final_inheritance_struct_name = "FinalInheritanceStr
 constexpr const char* const final_inheritanceempty_struct_name = "InheritanceEmptyStruct";
 constexpr const char* const final_extensibilityinheritance_struct_name = "FinalExtensibilityInheritance";
 
-constexpr const char* var_str_name = "var_str";
-
 DynamicType::_ref_type create_final_short_struct()
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -700,13 +698,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalUnionStruct)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalEmptyStruct)
 {
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(final_empty_struct_name);
-    type_descriptor->extensibility_kind(ExtensibilityKind::FINAL);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
-
-    DynamicType::_ref_type struct_type = type_builder->build();
+    DynamicType::_ref_type struct_type = create_final_empty_struct();
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
@@ -778,7 +770,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalInheritanceStruct)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(final_emptyinheritance_struct_name);
+    type_descriptor->name(final_inheritance_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::FINAL);
     type_descriptor->base_type(create_final_short_struct());
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
@@ -827,7 +819,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalInheritanceStruct)
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FinalInheritanceEmptyStruct)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InheritanceEmptyStruct)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);

@@ -182,7 +182,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors)
         TypeDescriptor::_ref_type state {traits<TypeDescriptor>::make_shared()};
         ASSERT_EQ(primitive->get_descriptor(state), RETCODE_OK);
         EXPECT_FALSE(state->base_type());
-        EXPECT_EQ(state->bound(), BoundSeq{});
+        EXPECT_TRUE(state->bound().empty());
         EXPECT_FALSE(state->discriminator_type());
         EXPECT_FALSE(state->element_type());
         EXPECT_EQ(state->extensibility_kind(), ExtensibilityKind::APPENDABLE);
@@ -258,7 +258,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors)
     }
     //}}}
 
-    //{{{ Test descriptor of an map type.
+    //{{{ Test descriptor of a map type.
     {
         TypeDescriptor::_ref_type descriptor {traits<TypeDescriptor>::make_shared()};
         descriptor->name("map");
@@ -279,7 +279,6 @@ TEST_F(DynamicTypesTests, TypeDescriptors)
         EXPECT_FALSE(state->base_type());
         EXPECT_EQ(state->bound(), BoundSeq({4}));
         EXPECT_FALSE(state->discriminator_type());
-        EXPECT_TRUE(state->element_type());
         EXPECT_EQ(state->element_type(), factory->get_primitive_type(TK_FLOAT32));
         EXPECT_EQ(state->extensibility_kind(), ExtensibilityKind::APPENDABLE);
         EXPECT_FALSE(state->is_nested());
@@ -591,6 +590,8 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_create_strings)
 
     EXPECT_EQ(RETCODE_OK, factory->delete_type(type));
     EXPECT_EQ(RETCODE_OK, factory->delete_type(type2));
+    EXPECT_FALSE(type);
+    EXPECT_FALSE(type2);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_int32)
@@ -5241,6 +5242,9 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
 
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->id(1);
+        member_descriptor->type(factory->get_primitive_type(TK_INT32));
+        // Try to add without name.
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
         member_descriptor->name("int20");
         // Try to add a descriptor with diferent kind.
         member_descriptor->type(factory->get_primitive_type(TK_UINT32));
@@ -5365,11 +5369,13 @@ TEST_F(DynamicTypesTests, DynamicType_bitset)
         // Test get_complex_value
         DynamicData::_ref_type complex_data;
         EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 2)); // Non-existing ID.
         EXPECT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
         EXPECT_EQ(complex_data->get_uint8_value(get_test_field_1, MEMBER_ID_INVALID), RETCODE_OK);
 
         // Test set_complex_value
         EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(2, complex_data)); // Non-existing ID.
         EXPECT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
         // Testing loan_value.
@@ -5420,6 +5426,42 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_BITMASK);
+    type_descriptor->element_type(factory->get_primitive_type(TK_BOOLEAN));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test with invalid element_type.
+        type_descriptor->element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_BOOLEAN));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     const uint32_t limit = 6;
 
     {
@@ -5464,11 +5506,16 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
         member_descriptor->name("BIT6");
+        // Test that not setting the id it will try with next id (6) which is invalid due to bound.
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+        // Test setting the id 6 which is invalid due to bound.
         member_descriptor->id(6);
         EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(TK_BOOLEAN));
+        // Test setting with already existing name.
         member_descriptor->name("BIT0");
+        member_descriptor->id(4);
         EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
     }
 
@@ -5555,63 +5602,25 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         encoding_deconding_test(created_type, data, data2, encoding);
-        EXPECT_EQ(data2->get_boolean_value(bit_get, 0), RETCODE_OK);
-        EXPECT_EQ(true, bit_get);
-        EXPECT_EQ(data2->get_boolean_value(bit_get, 1), RETCODE_OK);
-        EXPECT_EQ(false, bit_get);
-        EXPECT_EQ(data2->get_boolean_value(bit_get, 2), RETCODE_OK);
-        EXPECT_EQ(true, bit_get);
-        EXPECT_EQ(data2->get_boolean_value(bit_get, 3), RETCODE_OK);
-        EXPECT_EQ(false, bit_get);
-        EXPECT_EQ(data2->get_boolean_value(bit_get, 5), RETCODE_OK);
-        EXPECT_EQ(true, bit_get);
+        EXPECT_EQ(data->get_uint8_value(bitmask_value_get, MEMBER_ID_INVALID), RETCODE_OK);
+        EXPECT_EQ(bitmask_value_get, 0x25);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
     EXPECT_EQ(RETCODE_OK, data->clear_all_values());
-    EXPECT_EQ(data->get_boolean_value(bit_get, 0), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 1), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 2), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-
-    EXPECT_EQ(data->set_boolean_value(0, true), RETCODE_OK);
-    EXPECT_EQ(data->set_boolean_value(2, true), RETCODE_OK);
-    EXPECT_EQ(data->set_boolean_value(5, true), RETCODE_OK);
+    EXPECT_EQ(data->get_uint8_value(bitmask_value_get, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(bitmask_value_get, 0);
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0x25), RETCODE_OK);
     EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    EXPECT_EQ(data->get_boolean_value(bit_get, 0), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 1), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 2), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-
-    EXPECT_EQ(data->set_boolean_value(0, true), RETCODE_OK);
-    EXPECT_EQ(data->set_boolean_value(2, true), RETCODE_OK);
-    EXPECT_EQ(data->set_boolean_value(5, true), RETCODE_OK);
+    EXPECT_EQ(data->get_uint8_value(bitmask_value_get, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(bitmask_value_get, 0);
+    EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0x25), RETCODE_OK);
     EXPECT_EQ(RETCODE_OK, data->clear_value(1));
     EXPECT_EQ(RETCODE_OK, data->clear_value(2));
     EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    EXPECT_EQ(data->get_boolean_value(bit_get, 0), RETCODE_OK);
-    EXPECT_EQ(true, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 1), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 2), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 3), RETCODE_OK);
-    EXPECT_EQ(false, bit_get);
-    EXPECT_EQ(data->get_boolean_value(bit_get, 5), RETCODE_OK);
-    EXPECT_EQ(true, bit_get);
+    EXPECT_EQ(data->get_uint8_value(bitmask_value_get, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(bitmask_value_get, 0x21);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -5619,6 +5628,38 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask)
 TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
+
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
 
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
@@ -5691,10 +5732,15 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    // Try to writer to MEMBER_ID_INVALID
+    EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, iTestSeq32), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(iTestSeq32, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -5703,6 +5749,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_int32_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_int32_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -5750,9 +5799,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int32)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_int32_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -5888,6 +5934,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_UINT32));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_UINT32));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_UINT32),
@@ -5940,10 +6018,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_uint32_values(MEMBER_ID_INVALID, uTestSeq32), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(uTestSeq32, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -5952,6 +6034,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_uint32_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_uint32_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -6007,9 +6092,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint32)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_uint32_value(234, 1), RETCODE_BAD_PARAMETER);
 
         int32_t iTest32;
         EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -6149,6 +6231,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_INT8));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT8));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_INT8), 0)};
@@ -6190,10 +6304,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
     EXPECT_EQ(data->get_int8_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int8_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_int8_values(MEMBER_ID_INVALID, iTestSeq8), RETCODE_OK);
+    EXPECT_EQ(data->get_int8_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(iTestSeq8, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -6202,6 +6320,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_int8_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_int8_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -6267,9 +6388,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int8)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_int8_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -6405,6 +6523,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_UINT8));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_UINT8));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_UINT8),
@@ -6447,10 +6597,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
     EXPECT_EQ(data->get_uint8_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint8_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_uint8_values(MEMBER_ID_INVALID, uTestSeq8), RETCODE_OK);
+    EXPECT_EQ(data->get_uint8_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(uTestSeq8, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -6459,6 +6613,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_uint8_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_uint8_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -6536,9 +6693,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint8)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_uint8_value(234, 1), RETCODE_BAD_PARAMETER);
 
         int32_t iTest32;
         EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -6670,6 +6824,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_INT16));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT16));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_INT16), 0)};
@@ -6726,10 +6912,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_int16_values(MEMBER_ID_INVALID, iTestSeq16), RETCODE_OK);
+    EXPECT_EQ(data->get_int16_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(iTestSeq16, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -6738,6 +6928,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_int16_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_int16_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -6796,9 +6989,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int16)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_int16_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -6933,6 +7123,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_UINT16));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_UINT16));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_UINT16),
@@ -6980,10 +7202,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
     EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_uint16_values(MEMBER_ID_INVALID, uTestSeq16), RETCODE_OK);
+    EXPECT_EQ(data->get_uint16_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(uTestSeq16, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -6992,6 +7218,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_uint16_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_uint16_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -7060,9 +7289,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint16)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_uint32_value(234, 1), RETCODE_BAD_PARAMETER);
 
         int32_t iTest32;
         EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -7197,6 +7423,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_INT64));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT64));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_INT64), 0)};
@@ -7278,10 +7536,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_int64_values(MEMBER_ID_INVALID, iTestSeq64), RETCODE_OK);
+    EXPECT_EQ(data->get_int64_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(iTestSeq64, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -7290,6 +7552,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_int64_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_int64_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -7327,9 +7592,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_int64)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_int64_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -7469,6 +7731,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_UINT64));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_UINT64));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_UINT64),
@@ -7526,10 +7820,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_uint64_values(MEMBER_ID_INVALID, uTestSeq64), RETCODE_OK);
+    EXPECT_EQ(data->get_uint64_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(uTestSeq64, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -7538,6 +7836,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_uint64_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_uint64_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -7580,9 +7881,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_uint64)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_uint64_value(234, 1), RETCODE_BAD_PARAMETER);
 
         int32_t iTest32;
         EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -7728,6 +8026,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_FLOAT32));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_FLOAT32));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_FLOAT32),
@@ -7800,10 +8130,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_float32_values(MEMBER_ID_INVALID, fTestSeq32), RETCODE_OK);
+    EXPECT_EQ(data->get_float32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(fTestSeq32, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -7812,6 +8146,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_float32_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_float32_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -7855,9 +8192,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float32)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_float32_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -7995,6 +8329,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_FLOAT64));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_FLOAT64));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_FLOAT64),
@@ -8082,10 +8448,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_float64_values(MEMBER_ID_INVALID, fTestSeq64), RETCODE_OK);
+    EXPECT_EQ(data->get_float64_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(fTestSeq64, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -8094,6 +8464,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_float64_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_float64_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -8130,9 +8503,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float64)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_float64_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -8271,6 +8641,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_FLOAT128));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_FLOAT128));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_FLOAT128),
@@ -8373,10 +8775,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{1, 2, 3, 4}};
+    ByteSeq oTestSeq {{2, 3, 4, 5}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_float128_values(MEMBER_ID_INVALID, fTestSeq128), RETCODE_OK);
+    EXPECT_EQ(data->get_float128_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(fTestSeq128, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -8385,6 +8791,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_float128_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_float128_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -8415,9 +8824,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_float128)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_float128_value(234, 1), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -8557,6 +8963,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_CHAR8));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_CHAR8));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_CHAR8), 0)};
@@ -8593,10 +9031,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
     EXPECT_EQ(data->get_char8_values(get_test_value, 0), RETCODE_OK);
     EXPECT_EQ(cTestSeq8, get_test_value);
 
-    ByteSeq oTestSeq {{97, 98, 99, 100}};
+    ByteSeq oTestSeq {{98, 99, 100, 101}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_char8_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_char8_values(MEMBER_ID_INVALID, cTestSeq8), RETCODE_OK);
+    EXPECT_EQ(data->get_char8_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(cTestSeq8, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -8605,6 +9047,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_char8_values(0, {'a', 'b', 'c', 'd', 'e', 'f', 'g'}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_char8_value(234, 'z'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(10, {'z'}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -8674,9 +9119,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char8)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_char8_value(234, 'z'), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -8811,6 +9253,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_CHAR16));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_CHAR16));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_CHAR16),
@@ -8853,10 +9327,14 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
     EXPECT_EQ(data->get_char16_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
 
-    ByteSeq oTestSeq {{97, 98, 99, 100}};
+    ByteSeq oTestSeq {{98, 99, 100, 101}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_char16_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_char16_values(MEMBER_ID_INVALID, cTestSeq16), RETCODE_OK);
+    EXPECT_EQ(data->get_char16_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(cTestSeq16, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -8865,6 +9343,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_char16_values(0, {L'a', L'b', L'c', L'd', L'e', L'f', L'g'}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_char16_value(234, L'z'), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(10, {L'z'}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -8925,9 +9406,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_char16)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_char16_value(234, L'z'), RETCODE_BAD_PARAMETER);
 
         uint32_t uTest32;
         EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -9064,6 +9542,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_BYTE));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_BYTE));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_BYTE),
@@ -9099,7 +9609,11 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
     ByteSeq oTestSeq {{1, 2, 3, 4}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_byte_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(oTestSeq, get_test_value);
+    EXPECT_EQ(oTestSeq, get_test_value);
+
+    EXPECT_EQ(data->set_byte_values(MEMBER_ID_INVALID, oTestSeq), RETCODE_OK);
+    EXPECT_EQ(data->get_byte_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(oTestSeq, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -9108,6 +9622,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_byte_values(0, {0, 1, 2, 3, 4, 5, 6}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_byte_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(10, {1}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -9207,9 +9724,6 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_byte)
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_byte_value(234, 1), RETCODE_BAD_PARAMETER);
 
         int32_t iTest32;
         EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -9333,6 +9847,38 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_SEQUENCE);
+    type_descriptor->element_type(factory->get_primitive_type(TK_BOOLEAN));
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({10});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_BOOLEAN));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         DynamicTypeBuilder::_ref_type builder {factory->create_sequence_type(factory->get_primitive_type(TK_BOOLEAN),
@@ -9368,12 +9914,16 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
     BooleanSeq bTestSeq {{true, false, false, true}};
     EXPECT_EQ(data->set_boolean_values(0, bTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_boolean_values(get_test_value, 0), RETCODE_OK);
-    EXPECT_THAT(bTestSeq, get_test_value);
+    EXPECT_EQ(bTestSeq, get_test_value);
 
-    ByteSeq oTestSeq {{1, 0, 0, 1}};
+    ByteSeq oTestSeq {{0, 1, 1, 0}};
     EXPECT_EQ(data->set_byte_values(0, oTestSeq), RETCODE_OK);
     EXPECT_EQ(data->get_boolean_values(get_test_value, 0), RETCODE_OK);
     EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_boolean_values(MEMBER_ID_INVALID, bTestSeq), RETCODE_OK);
+    EXPECT_EQ(data->get_boolean_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(bTestSeq, get_test_value);
     //}}}
 
     //{{{ Failing setters
@@ -9382,6 +9932,9 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
 
         // Try to insert more than the limit.
         EXPECT_EQ(data->set_boolean_values(0, {true, false, false, true, false, false, true}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_boolean_value(234, true), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(10, {true}), RETCODE_BAD_PARAMETER);
 
         EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
         EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
@@ -9422,55 +9975,52 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_boolean)
     //{{{ Successful getters
     Int8Seq iTestSeq8;
     EXPECT_EQ(data->get_int8_values(iTestSeq8, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     UInt8Seq uTestSeq8;
     EXPECT_EQ(data->get_uint8_values(uTestSeq8, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     Int16Seq iTestSeq16;
     EXPECT_EQ(data->get_int16_values(iTestSeq16, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     UInt16Seq uTestSeq16;
     EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     Int32Seq iTestSeq32;
     EXPECT_EQ(data->get_int32_values(iTestSeq32, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq32, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(iTestSeq32, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     UInt32Seq uTestSeq32;
     EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(uTestSeq32, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     Int64Seq iTestSeq64;
     EXPECT_EQ(data->get_int64_values(iTestSeq64, 0), RETCODE_OK);
-    EXPECT_THAT(iTestSeq64, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(iTestSeq64, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     UInt64Seq uTestSeq64;
     EXPECT_EQ(data->get_uint64_values(uTestSeq64, 0), RETCODE_OK);
-    EXPECT_THAT(uTestSeq64, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(uTestSeq64, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     Float32Seq fTestSeq32;
     EXPECT_EQ(data->get_float32_values(fTestSeq32, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq32, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(fTestSeq32, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     Float64Seq fTestSeq64;
     EXPECT_EQ(data->get_float64_values(fTestSeq64, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq64, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(fTestSeq64, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
 
     Float128Seq fTestSeq128;
     EXPECT_EQ(data->get_float128_values(fTestSeq128, 0), RETCODE_OK);
-    EXPECT_THAT(fTestSeq128, testing::ElementsAreArray(oTestSeq.begin(), oTestSeq.end()));
+    EXPECT_THAT(fTestSeq128, testing::ElementsAreArray(bTestSeq.begin(), bTestSeq.end()));
     //}}}
 
     //{{{ Failing getters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-
-        // Try to write on an empty position
-        EXPECT_EQ(data->set_boolean_value(234, true), RETCODE_BAD_PARAMETER);
 
         int32_t iTest32;
         EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
@@ -9608,10 +10158,13 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     ASSERT_TRUE(builder);
     builder = factory->create_sequence_type(builder->build(), sequence_length);
     ASSERT_TRUE(builder);
-    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->type(factory->get_primitive_type(TK_INT32));
-    member_descriptor->name("Wrong");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(TK_INT32));
+        member_descriptor->name("Wrong");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    }
 
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
@@ -9619,75 +10172,93 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
 
     // Test getters, setters and loan_value.
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(0, {1, 2}), RETCODE_BAD_PARAMETER);
+    }
 
-    ASSERT_NE(data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_values(0, {1, 2}), RETCODE_OK);
     Int32Seq good_seq;
-    ASSERT_EQ(data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
+    EXPECT_EQ(data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2}));
 
     auto seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {1, 2, 3}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->set_uint32_values(0, {1, 2, 3}), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->set_uint32_value(1, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
-    // Try to insert more than the limit.
+    // Try to loan non-existent element
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
         seq_data = data->loan_value(2);
-        ASSERT_FALSE(seq_data);
+        EXPECT_FALSE(seq_data);
     }
 
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
     UInt32Seq wrong_seq;
-    ASSERT_NE(seq_data->get_uint32_values(wrong_seq, 0), RETCODE_OK);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->get_uint32_values(wrong_seq, 0), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2, 3}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(0, data->get_member_id_at_index(0));
-    ASSERT_EQ(1, data->get_member_id_at_index(1));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
 
     // Test clone.
     auto clone = data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2, 3}));
+    EXPECT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2, 3}));
 
     // Test set_complex_value
     good_seq = {2, 3, 4};
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(complex_data->set_int32_values(0, good_seq), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    }
+    EXPECT_EQ(complex_data->set_int32_values(0, good_seq), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
     // Test get_item_count().
-    ASSERT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
@@ -9697,46 +10268,49 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences)
         encoding_deconding_test(created_type, data, data2, encoding);
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({2, 3, 4}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
+        EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+        EXPECT_EQ(good_seq, Int32Seq({2, 3, 4}));
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
+        EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+        EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(0u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(0u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(0u, data->get_item_count());
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(0u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2, 3}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
-    ASSERT_EQ(RETCODE_OK, data->clear_value(0));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(1u, data->get_item_count());
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(RETCODE_OK, data->clear_value(0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    }
+    EXPECT_EQ(1u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -9745,13 +10319,40 @@ TEST_F(DynamicTypesTests, DynamicType_array)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_ARRAY);
+    type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-        BoundSeq array_dimensions {{ 2, 0, 2 }};
-        DynamicTypeBuilder::_ref_type builder {factory->create_array_type(
-                                                   factory->get_primitive_type(
-                                                       TK_INT32), array_dimensions)};
-        ASSERT_FALSE(builder);
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        // Test bounds with a zero value.
+        type_descriptor->bound({2, 0, 2});
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({2, 2, 2});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type set
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
     }
 
     BoundSeq array_dimensions {{ 2, 2, 2 }};
@@ -9760,10 +10361,13 @@ TEST_F(DynamicTypesTests, DynamicType_array)
                                                factory->get_primitive_type(
                                                    TK_INT32), array_dimensions)};
     ASSERT_TRUE(builder);
-    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->type(factory->get_primitive_type(TK_INT32));
-    member_descriptor->name("Wrong");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(TK_INT32));
+        member_descriptor->name("Wrong");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    }
 
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
@@ -9771,78 +10375,247 @@ TEST_F(DynamicTypesTests, DynamicType_array)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(0, data->get_member_id_at_index(0));
-    ASSERT_EQ(1, data->get_member_id_at_index(1));
-    ASSERT_EQ(7, data->get_member_id_at_index(7));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(8));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(7, data->get_member_id_at_index(7));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(8));
 
-    // Test getters and setters.
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    // Try to write on an empty position
-    ASSERT_NE(data->set_int32_value(234, 1), RETCODE_OK);
+    //{{{ Successful setters
+    Int32Seq get_test_value;
 
-    ASSERT_NE(data->set_uint32_values(0, {1, 2, 3, 4}), RETCODE_OK);
-    ASSERT_EQ(data->set_int32_values(0, {1, 2, 3, 4}), RETCODE_OK);
-    ASSERT_EQ(data->set_int32_value(4, 5), RETCODE_OK);
-    ASSERT_EQ(data->set_int32_value(5, 6), RETCODE_OK);
-    ASSERT_EQ(data->set_int32_value(6, 7), RETCODE_OK);
+    Int32Seq iTestSeq32 {{1, 2, 3, 4, 5, 6, 7, 0}};
+    EXPECT_EQ(data->set_int32_values(0, {1, 2, 3, 4}), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(4, 5), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(5, 6), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_value(6, 7), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(iTestSeq32, get_test_value);
 
-    // Try to insert more than the limit.
+    Int8Seq iTestSeq8 {{2, 3, 4, 5, 6, 7, 8, 0}};
+    EXPECT_EQ(data->set_int8_values(0, {2, 3, 4, 5}), RETCODE_OK);
+    EXPECT_EQ(data->set_int8_value(4, 6), RETCODE_OK);
+    EXPECT_EQ(data->set_int8_value(5, 7), RETCODE_OK);
+    EXPECT_EQ(data->set_int8_value(6, 8), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(iTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    UInt8Seq uTestSeq8 {{3, 4, 5, 6, 7, 8, 9, 0}};
+    EXPECT_EQ(data->set_uint8_values(0, {3, 4, 5, 6}), RETCODE_OK);
+    EXPECT_EQ(data->set_uint8_value(4, 7), RETCODE_OK);
+    EXPECT_EQ(data->set_uint8_value(5, 8), RETCODE_OK);
+    EXPECT_EQ(data->set_uint8_value(6, 9), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(uTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    Int16Seq iTestSeq16 {{2, 3, 4, 5, 6, 7, 8, 0}};
+    EXPECT_EQ(data->set_int16_values(0, {2, 3, 4, 5}), RETCODE_OK);
+    EXPECT_EQ(data->set_int16_value(4, 6), RETCODE_OK);
+    EXPECT_EQ(data->set_int16_value(5, 7), RETCODE_OK);
+    EXPECT_EQ(data->set_int16_value(6, 8), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(iTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    UInt16Seq uTestSeq16 {{3, 4, 5, 6, 7, 8, 9, 0}};
+    EXPECT_EQ(data->set_uint16_values(0, {3, 4, 5, 6}), RETCODE_OK);
+    EXPECT_EQ(data->set_uint16_value(4, 7), RETCODE_OK);
+    EXPECT_EQ(data->set_uint16_value(5, 8), RETCODE_OK);
+    EXPECT_EQ(data->set_uint16_value(6, 9), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(uTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    CharSeq cTestSeq8 {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 0}};
+    EXPECT_EQ(data->set_char8_values(0, {'a', 'b', 'c', 'd'}), RETCODE_OK);
+    EXPECT_EQ(data->set_char8_value(4, 'e'), RETCODE_OK);
+    EXPECT_EQ(data->set_char8_value(5, 'f'), RETCODE_OK);
+    EXPECT_EQ(data->set_char8_value(6, 'g'), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(cTestSeq8, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    WcharSeq cTestSeq16 {{L'b', L'c', L'd', L'e', L'f', L'g', L'h', 0}};
+    EXPECT_EQ(data->set_char16_values(0, {L'b', L'c', L'd', L'e'}), RETCODE_OK);
+    EXPECT_EQ(data->set_char16_value(4, L'f'), RETCODE_OK);
+    EXPECT_EQ(data->set_char16_value(5, L'g'), RETCODE_OK);
+    EXPECT_EQ(data->set_char16_value(6, L'h'), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(cTestSeq16, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    BooleanSeq bTestSeq {{1, 0, 0, 1, 1, 0, 1, 0}};
+    EXPECT_EQ(data->set_boolean_values(0, {true, false, false, true}), RETCODE_OK);
+    EXPECT_EQ(data->set_boolean_value(4, true), RETCODE_OK);
+    EXPECT_EQ(data->set_boolean_value(5, false), RETCODE_OK);
+    EXPECT_EQ(data->set_boolean_value(6, true), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(bTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    ByteSeq oTestSeq {{2, 3, 4, 5, 6, 7, 8, 0}};
+    EXPECT_EQ(data->set_byte_values(0, {2, 3, 4, 5}), RETCODE_OK);
+    EXPECT_EQ(data->set_byte_value(4, 6), RETCODE_OK);
+    EXPECT_EQ(data->set_byte_value(5, 7), RETCODE_OK);
+    EXPECT_EQ(data->set_byte_value(6, 8), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_THAT(oTestSeq, testing::ElementsAreArray(get_test_value.begin(), get_test_value.end()));
+
+    EXPECT_EQ(data->set_int32_values(MEMBER_ID_INVALID, iTestSeq32), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 0), RETCODE_OK);
+    EXPECT_EQ(iTestSeq32, get_test_value);
+    //}}}
+
+    //{{{ Failing setters
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
 
-        ASSERT_NE(data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8, 9}), RETCODE_OK);
+        // Try to insert more than the limit.
+        EXPECT_EQ(data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8, 9}), RETCODE_BAD_PARAMETER);
+        // Try to write on an empty position
+        EXPECT_EQ(data->set_int32_value(234, 1), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(10, {1}), RETCODE_BAD_PARAMETER);
+
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_value(MEMBER_ID_INVALID, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(MEMBER_ID_INVALID, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(0, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(0, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(0, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(0, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(0, {L"wstr"}), RETCODE_BAD_PARAMETER);
+
     }
+    //}}}
 
-    int32_t test1 {0};
-    ASSERT_EQ(data->get_int32_value(test1, 0), RETCODE_OK);
-    ASSERT_EQ(1, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 1), RETCODE_OK);
-    ASSERT_EQ(2, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 2), RETCODE_OK);
-    ASSERT_EQ(3, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 3), RETCODE_OK);
-    ASSERT_EQ(4, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 4), RETCODE_OK);
-    ASSERT_EQ(5, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 5), RETCODE_OK);
-    ASSERT_EQ(6, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 6), RETCODE_OK);
-    ASSERT_EQ(7, test1);
-    ASSERT_EQ(data->get_int32_value(test1, 7), RETCODE_OK);
-    ASSERT_EQ(0, test1);
+    //{{{ Successful getters
+    int32_t test_value {0};
+    EXPECT_EQ(data->get_int32_value(test_value, 0), RETCODE_OK);
+    EXPECT_EQ(1, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 1), RETCODE_OK);
+    EXPECT_EQ(2, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 2), RETCODE_OK);
+    EXPECT_EQ(3, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 3), RETCODE_OK);
+    EXPECT_EQ(4, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 4), RETCODE_OK);
+    EXPECT_EQ(5, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 5), RETCODE_OK);
+    EXPECT_EQ(6, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 6), RETCODE_OK);
+    EXPECT_EQ(7, test_value);
+    EXPECT_EQ(data->get_int32_value(test_value, 7), RETCODE_OK);
+    EXPECT_EQ(0, test_value);
 
-    Int32Seq test2;
-    ASSERT_EQ(data->get_int32_values(test2, 0), RETCODE_OK);
-    Int32Seq test_all {{1, 2, 3, 4, 5, 6, 7, 0}};
-    ASSERT_EQ(test2, test_all);
-
-    ASSERT_EQ(data->get_int32_values(test2, 2), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_values(get_test_value, 2), RETCODE_OK);
     Int32Seq test_less {{3, 4, 5, 6, 7, 0}};
-    ASSERT_EQ(test2, test_less);
+    EXPECT_EQ(get_test_value, test_less);
+
+    Int64Seq iTestSeq64;
+    EXPECT_EQ(data->get_int64_values(iTestSeq64, 0), RETCODE_OK);
+    EXPECT_THAT(iTestSeq64, testing::ElementsAreArray(iTestSeq32.begin(), iTestSeq32.end()));
+
+    Float64Seq fTestSeq64;
+    EXPECT_EQ(data->get_float64_values(fTestSeq64, 0), RETCODE_OK);
+    EXPECT_THAT(fTestSeq64, testing::ElementsAreArray(iTestSeq32.begin(), iTestSeq32.end()));
+
+    Float128Seq fTestSeq128;
+    EXPECT_EQ(data->get_float128_values(fTestSeq128, 0), RETCODE_OK);
+    EXPECT_THAT(fTestSeq128, testing::ElementsAreArray(iTestSeq32.begin(), iTestSeq32.end()));
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+
+        int32_t iTest32;
+        EXPECT_EQ(data->get_int32_value(iTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        int64_t iTest64;
+        EXPECT_EQ(data->get_int64_value(iTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        double fTest64;
+        EXPECT_EQ(data->get_float64_value(fTest64, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        long double fTest128;
+        EXPECT_EQ(data->get_float128_value(fTest128, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, MEMBER_ID_INVALID), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->get_byte_values(oTestSeq, 0), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, 0), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
 
     // Test clone.
     auto clone = data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
-    // Test loan_value
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
+        // Test loan_value
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
+    }
 
     // Test get_item_count().
-    ASSERT_EQ(8u, data->get_item_count());
+    EXPECT_EQ(8u, data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
@@ -9850,27 +10623,30 @@ TEST_F(DynamicTypesTests, DynamicType_array)
         Int32Seq test3;
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         encoding_deconding_test(created_type, data, data2, encoding);
-        ASSERT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
-        ASSERT_EQ(test_all, test3);
+        EXPECT_EQ(data2->get_int32_values(test3, 0), RETCODE_OK);
+        EXPECT_EQ(iTestSeq32, test3);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(8u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
-    ASSERT_EQ(test2, Int32Seq({0, 0, 0, 0, 0, 0, 0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8}));
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(8u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
-    ASSERT_EQ(test2, Int32Seq({0, 0, 0, 0, 0, 0, 0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8}));
-    ASSERT_EQ(RETCODE_OK, data->clear_value(1));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(8u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->get_int32_values(test2, 0));
-    ASSERT_EQ(test2, Int32Seq({1, 0, 3, 4, 5, 6, 7, 8}));
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(8u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->get_int32_values(get_test_value, 0));
+    EXPECT_EQ(get_test_value, Int32Seq({0, 0, 0, 0, 0, 0, 0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8}));
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(8u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->get_int32_values(get_test_value, 0));
+    EXPECT_EQ(get_test_value, Int32Seq({0, 0, 0, 0, 0, 0, 0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_values(0, {1, 2, 3, 4, 5, 6, 7, 8}));
+    EXPECT_EQ(RETCODE_OK, data->clear_value(1));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    }
+    EXPECT_EQ(8u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->get_int32_values(get_test_value, 0));
+    EXPECT_EQ(get_test_value, Int32Seq({1, 0, 3, 4, 5, 6, 7, 8}));
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -9889,10 +10665,14 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     ASSERT_TRUE(builder);
     builder = factory->create_array_type(builder->build(), array_dimensions);
     ASSERT_TRUE(builder);
-    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->type(factory->get_primitive_type(TK_INT32));
-    member_descriptor->name("Wrong");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(TK_INT32));
+        member_descriptor->name("Wrong");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    }
 
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
@@ -9900,46 +10680,61 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(0, data->get_member_id_at_index(0));
-    ASSERT_EQ(1, data->get_member_id_at_index(1));
-    ASSERT_EQ(2, data->get_member_id_at_index(2));
-    ASSERT_EQ(3, data->get_member_id_at_index(3));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(4));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
+    EXPECT_EQ(2, data->get_member_id_at_index(2));
+    EXPECT_EQ(3, data->get_member_id_at_index(3));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(4));
 
     // Test getters, setters and loan_value.
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(0, {1, 2}), RETCODE_BAD_PARAMETER);
+    }
 
-    ASSERT_NE(data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    EXPECT_EQ(data->set_int32_values(0, {1, 2}), RETCODE_OK);
     Int32Seq good_seq;
-    ASSERT_EQ(data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
+    EXPECT_EQ(data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2}));
 
     auto seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->set_uint32_values(0, {1, 2}), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->set_uint32_value(1, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->set_uint32_values(0, {3, 4}), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(seq_data->set_uint32_value(0, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     // Try to insert more than the limit.
     {
@@ -9950,51 +10745,60 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
 
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    UInt32Seq wrong_seq;
-    ASSERT_NE(seq_data->get_uint32_values(wrong_seq, 0), RETCODE_OK);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        UInt32Seq wrong_seq;
+        EXPECT_EQ(seq_data->get_uint32_values(wrong_seq, 0), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({3, 4}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({3, 4}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     // Test clone.
     auto clone = data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
+    EXPECT_EQ(complex_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2}));
 
     // Test set_complex_value
     good_seq = {2, 3};
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(complex_data->set_int32_values(0, good_seq), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    }
+    EXPECT_EQ(complex_data->set_int32_values(0, good_seq), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
 
     // Test get_item_count().
-    ASSERT_EQ(4u, data->get_item_count());
+    EXPECT_EQ(4u, data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
@@ -10004,184 +10808,175 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays)
         encoding_deconding_test(created_type, data, data2, encoding);
         seq_data = data2->loan_value(0);
         ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({2, 3}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
+        EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+        EXPECT_EQ(good_seq, Int32Seq({2, 3}));
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(1);
         ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
+        EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+        EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(2);
         ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({3, 4}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
+        EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+        EXPECT_EQ(good_seq, Int32Seq({3, 4}));
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         seq_data = data2->loan_value(3);
         ASSERT_TRUE(seq_data);
-        ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-        ASSERT_EQ(good_seq, Int32Seq({1, 0}));
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
+        EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+        EXPECT_EQ(good_seq, Int32Seq({1, 0}));
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(seq_data));
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(4u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(4u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
-    ASSERT_EQ(RETCODE_OK, data->clear_value(2));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(4u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_value(2));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    }
+    EXPECT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {1, 2}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_value(1, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_values(0, {3, 4}), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_NE(seq_data->set_uint32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->set_int32_value(0, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
-    ASSERT_EQ(RETCODE_OK, data->clear_value(3));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(4u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_value(3));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    EXPECT_EQ(4u, data->get_item_count());
     seq_data = data->loan_value(0);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({1, 2}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({1, 2}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(1);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 1}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 1}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(2);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({3, 4}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({3, 4}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
     seq_data = data->loan_value(3);
     ASSERT_TRUE(seq_data);
-    ASSERT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
-    ASSERT_EQ(good_seq, Int32Seq({0, 0}));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
+    EXPECT_EQ(seq_data->get_int32_values(good_seq, 0), RETCODE_OK);
+    EXPECT_EQ(good_seq, Int32Seq({0, 0}));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(seq_data));
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -10190,13 +10985,49 @@ TEST_F(DynamicTypesTests, DynamicType_map)
 {
     DynamicTypeBuilderFactory::_ref_type factory {DynamicTypeBuilderFactory::get_instance()};
 
+    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
+    type_descriptor->kind(TK_MAP);
+    type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+    type_descriptor->key_element_type(factory->get_primitive_type(TK_INT32));
+
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");
-        DynamicTypeBuilder::_ref_type builder {factory->create_map_type(
-                                                   factory->get_primitive_type(TK_INT32),
-                                                   factory->get_primitive_type(TK_INT32),
-                                                   0)};
-        ASSERT_FALSE(builder);
+        // Test without bound.
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        // Test bounds with a zero value.
+        type_descriptor->bound({0});
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({2});
+        // Test without element_type.
+        type_descriptor->element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+        // Test with a base_type
+        type_descriptor->base_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test without key_element_type
+        type_descriptor->key_element_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        // Test with invalid key type.
+        type_descriptor->key_element_type(factory->create_wstring_type(20)->build());
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        // Test with invalid key type.
+        type_descriptor->key_element_type(factory->create_array_type(factory->get_primitive_type(TK_UINT32),
+                {20})->build());
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
     }
 
     const uint32_t map_length {2};
@@ -10205,104 +11036,269 @@ TEST_F(DynamicTypesTests, DynamicType_map)
                                                factory->get_primitive_type(TK_INT32),
                                                factory->get_primitive_type(TK_INT32),
                                                map_length)};
-    MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
-    member_descriptor->type(factory->get_primitive_type(TK_INT32));
-    member_descriptor->name("Wrong");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
+        member_descriptor->type(factory->get_primitive_type(TK_INT32));
+        member_descriptor->name("Wrong");
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_PRECONDITION_NOT_MET);
+    }
 
-    // Then
     DynamicType::_ref_type created_type {builder->build()};
     ASSERT_TRUE(created_type);
 
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(1));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("string"));
-    ASSERT_EQ(0, data->get_member_id_by_name("10"));
-    ASSERT_EQ(1, data->get_member_id_by_name("20"));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("30"));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(1));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("string"));
+    EXPECT_EQ(0, data->get_member_id_by_name("10"));
+    EXPECT_EQ(1, data->get_member_id_by_name("20"));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("30"));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
 
     // Testing getters and setters.
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
+    const int32_t test1 {123};
+    int32_t test2 {0};
 
-    // Try to write on an empty position
-    ASSERT_NE(data->set_int32_value(2, 10), RETCODE_OK);
+    //{{{ Successful setters
+    EXPECT_EQ(data->set_int32_value(0, test1), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+
+    EXPECT_EQ(data->set_int8_value(0, 100), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(100, test2);
+
+    EXPECT_EQ(data->set_uint8_value(0, 232), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(232, test2);
+
+    EXPECT_EQ(data->set_int16_value(0, 101), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(101, test2);
+
+    EXPECT_EQ(data->set_uint16_value(0, 303), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(303, test2);
+
+    EXPECT_EQ(data->set_char8_value(0, 'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_char16_value(0, L'a'), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(97, test2);
+
+    EXPECT_EQ(data->set_boolean_value(0, false), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+
+    EXPECT_EQ(data->set_byte_value(0, 1), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(1, test2);
+    //}}}
+
+    //{{{ Failing setters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_BAD_PARAMETER);
+        // Try to write on an invalid position
+        EXPECT_EQ(data->set_int32_value(2, 10), RETCODE_BAD_PARAMETER);
+
+        EXPECT_EQ(data->set_uint32_value(0, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_value(0, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_value(0, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_value(0, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_value(0, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_value(0, 0), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(0, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_value(0, L""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int8_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint8_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint16_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int32_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint32_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int64_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_uint64_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float32_values(0, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float64_values(0, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_float128_values(0, {0.0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char8_values(0, {'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_char16_values(0, {L'c'}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_byte_values(0, {0}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_boolean_values(0, {true}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_values(0, {"str"}), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_wstring_values(0, {L"wstr"}), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
+    //{{{ Successful getters
+    int64_t iTest64;
+    EXPECT_EQ(data->get_int64_value(iTest64, 0), RETCODE_OK);
+    EXPECT_EQ(iTest64, 1);
+
+    double fTest64;
+    EXPECT_EQ(data->get_float64_value(fTest64, 0), RETCODE_OK);
+    EXPECT_EQ(fTest64, 1);
+
+    long double fTest128;
+    EXPECT_EQ(data->get_float128_value(fTest128, 0), RETCODE_OK);
+    EXPECT_EQ(fTest128, 1);
+    //}}}
+
+    //{{{ Failing getters
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        uint32_t uTest32;
+        EXPECT_EQ(data->get_uint32_value(uTest32, 0), RETCODE_BAD_PARAMETER);
+        int8_t iTest8;
+        EXPECT_EQ(data->get_int8_value(iTest8, 0), RETCODE_BAD_PARAMETER);
+        uint8_t uTest8;
+        EXPECT_EQ(data->get_uint8_value(uTest8, 0), RETCODE_BAD_PARAMETER);
+        int16_t iTest16;
+        EXPECT_EQ(data->get_int16_value(iTest16, 0), RETCODE_BAD_PARAMETER);
+        uint16_t uTest16;
+        EXPECT_EQ(data->get_uint16_value(uTest16, 0), RETCODE_BAD_PARAMETER);
+        uint64_t uTest64;
+        EXPECT_EQ(data->get_uint64_value(uTest64, 0), RETCODE_BAD_PARAMETER);
+        float fTest32;
+        EXPECT_EQ(data->get_float32_value(fTest32, 0), RETCODE_BAD_PARAMETER);
+        char cTest8;
+        EXPECT_EQ(data->get_char8_value(cTest8, 0), RETCODE_BAD_PARAMETER);
+        wchar_t cTest16;
+        EXPECT_EQ(data->get_char16_value(cTest16, 0), RETCODE_BAD_PARAMETER);
+        octet oTest;
+        EXPECT_EQ(data->get_byte_value(oTest, 0), RETCODE_BAD_PARAMETER);
+        bool bTest;
+        EXPECT_EQ(data->get_boolean_value(bTest, 0), RETCODE_BAD_PARAMETER);
+        std::string sTest;
+        EXPECT_EQ(data->get_string_value(sTest, 0), RETCODE_BAD_PARAMETER);
+        std::wstring wsTest;
+        EXPECT_EQ(data->get_wstring_value(wsTest, 0), RETCODE_BAD_PARAMETER);
+        Int8Seq iTestSeq8;
+        EXPECT_EQ(data->get_int8_values(iTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        UInt8Seq uTestSeq8;
+        EXPECT_EQ(data->get_uint8_values(uTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        Int16Seq iTestSeq16;
+        EXPECT_EQ(data->get_int16_values(iTestSeq16, 0), RETCODE_BAD_PARAMETER);
+        UInt16Seq uTestSeq16;
+        EXPECT_EQ(data->get_uint16_values(uTestSeq16, 0), RETCODE_BAD_PARAMETER);
+        Int32Seq iTestSeq32;
+        EXPECT_EQ(data->get_int32_values(iTestSeq32, 0), RETCODE_BAD_PARAMETER);
+        UInt32Seq uTestSeq32;
+        EXPECT_EQ(data->get_uint32_values(uTestSeq32, 0), RETCODE_BAD_PARAMETER);
+        Int64Seq iTestSeq64;
+        EXPECT_EQ(data->get_int64_values(iTestSeq64, 0), RETCODE_BAD_PARAMETER);
+        UInt64Seq uTestSeq64;
+        EXPECT_EQ(data->get_uint64_values(uTestSeq64, 0), RETCODE_BAD_PARAMETER);
+        Float32Seq fTestSeq32;
+        EXPECT_EQ(data->get_float32_values(fTestSeq32, 0), RETCODE_BAD_PARAMETER);
+        Float64Seq fTestSeq64;
+        EXPECT_EQ(data->get_float64_values(fTestSeq64, 0), RETCODE_BAD_PARAMETER);
+        Float128Seq fTestSeq128;
+        EXPECT_EQ(data->get_float128_values(fTestSeq128, 0), RETCODE_BAD_PARAMETER);
+        CharSeq cTestSeq8;
+        EXPECT_EQ(data->get_char8_values(cTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        WcharSeq cTestSeq16;
+        EXPECT_EQ(data->get_char16_values(cTestSeq16, 0), RETCODE_BAD_PARAMETER);
+        ByteSeq oTestSeq;
+        EXPECT_EQ(data->get_byte_values(oTestSeq, 0), RETCODE_BAD_PARAMETER);
+        BooleanSeq bTestSeq;
+        EXPECT_EQ(data->get_boolean_values(bTestSeq, 0), RETCODE_BAD_PARAMETER);
+        StringSeq sTestSeq8;
+        EXPECT_EQ(data->get_string_values(sTestSeq8, 0), RETCODE_BAD_PARAMETER);
+        WstringSeq sTestSeq16;
+        EXPECT_EQ(data->get_wstring_values(sTestSeq16, 0), RETCODE_BAD_PARAMETER);
+    }
+    //}}}
+
 
     // Set and get a value.
-    int32_t test1 {234};
-    ASSERT_EQ(data->set_int32_value(0, test1), RETCODE_OK);
-    int32_t test2 {0};
-    ASSERT_EQ(data->get_int32_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(data->set_int32_value(0, test1), RETCODE_OK);
     int32_t test3 {132};
-    ASSERT_EQ(data->set_int32_value(1, test3), RETCODE_OK);
-    int32_t test4 {0};
-    ASSERT_EQ(data->get_int32_value(test4, 1), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
+    EXPECT_EQ(data->set_int32_value(1, test3), RETCODE_OK);
+    EXPECT_EQ(data->get_int32_value(test2, 1), RETCODE_OK);
+    EXPECT_EQ(test3, test2);
 
     // Test clone.
     auto clone = data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(data->equals(clone));
 
-    // Test get_complex_value
-    DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test get_complex_value
+        DynamicData::_ref_type complex_data;
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, 0));
 
-    // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
+        // Test set_complex_value
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(0, complex_data));
 
-    // Testing loan_value.
-    ASSERT_FALSE(data->loan_value(1));
-    ASSERT_FALSE(data->loan_value(MEMBER_ID_INVALID));
+        // Testing loan_value.
+        EXPECT_FALSE(data->loan_value(1));
+        EXPECT_FALSE(data->loan_value(MEMBER_ID_INVALID));
+    }
 
     // Test get_item_count().
-    ASSERT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         encoding_deconding_test(created_type, data, data2, encoding);
-        ASSERT_EQ(data2->get_int32_value(test2, data->get_member_id_by_name(
+        EXPECT_EQ(data2->get_int32_value(test2, data->get_member_id_by_name(
                     "10")), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        ASSERT_EQ(data2->get_int32_value(test4, data->get_member_id_by_name(
+        EXPECT_EQ(test1, test2);
+        EXPECT_EQ(data2->get_int32_value(test2, data->get_member_id_by_name(
                     "20")), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
+        EXPECT_EQ(test3, test2);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(0u, data->get_item_count());
-    ASSERT_NE(RETCODE_OK, data->get_int32_value(test2, 0));
-    ASSERT_NE(RETCODE_OK, data->get_int32_value(test4, 1));
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(0u, data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_int32_value(test2, 0));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_int32_value(test2, 1));
+    }
 
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("10"), test1));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("20"), test3));
-    ASSERT_EQ(2u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(0u, data->get_item_count());
-    ASSERT_NE(RETCODE_OK, data->get_int32_value(test2, 0));
-    ASSERT_NE(RETCODE_OK, data->get_int32_value(test4, 1));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("10"), test1));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("20"), test3));
+    EXPECT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(0u, data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_int32_value(test2, 0));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_int32_value(test2, 1));
+    }
 
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("10"), test1));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("20"), test3));
-    ASSERT_EQ(2u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->clear_value(0));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(1u, data->get_item_count());
-    ASSERT_NE(RETCODE_OK, data->get_int32_value(test2, 0));
-    ASSERT_EQ(RETCODE_OK, data->get_int32_value(test4, 1));
-    ASSERT_EQ(test3, test4);
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("10"), test1));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(data->get_member_id_by_name("20"), test3));
+    EXPECT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_value(0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    }
+    EXPECT_EQ(1u, data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_int32_value(test2, 0));
+    }
+    EXPECT_EQ(RETCODE_OK, data->get_int32_value(test2, 1));
+    EXPECT_EQ(test3, test2);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -10315,14 +11311,15 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     const uint32_t inner_map_length {3};
 
     DynamicTypeBuilder::_ref_type builder {factory->create_map_type(
-                                               factory->get_primitive_type(TK_INT32),
-                                               factory->get_primitive_type(TK_INT32),
+                                               factory->create_string_type(100)->build(),
+                                               factory->create_string_type(100)->build(),
                                                inner_map_length)};
 
+    ASSERT_TRUE(builder);
     DynamicType::_ref_type inner_type = builder->build();
     ASSERT_TRUE(inner_type);
 
-    builder = factory->create_map_type(factory->get_primitive_type(TK_INT32),
+    builder = factory->create_map_type(factory->get_primitive_type(TK_INT16),
                     inner_type, map_length);
 
     DynamicType::_ref_type created_type = builder->build();
@@ -10331,191 +11328,196 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(created_type)};
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(1));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("string"));
-    ASSERT_EQ(0, data->get_member_id_by_name("10"));
-    ASSERT_EQ(1, data->get_member_id_by_name("20"));
-    ASSERT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("30"));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(0));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(1));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_at_index(2));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name(""));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("string"));
+    EXPECT_EQ(0, data->get_member_id_by_name("-2"));
+    EXPECT_EQ(1, data->get_member_id_by_name("14"));
+    EXPECT_EQ(MEMBER_ID_INVALID, data->get_member_id_by_name("30"));
+    EXPECT_EQ(0, data->get_member_id_at_index(0));
+    EXPECT_EQ(1, data->get_member_id_at_index(1));
 
     // Testing getters and setters.
-    ASSERT_NE(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
-    ASSERT_NE(data->set_int32_value(MEMBER_ID_INVALID, 10), RETCODE_OK);
-
-    ASSERT_NE(data->set_int32_value(0, 10), RETCODE_OK);
-    ASSERT_NE(data->set_int32_value(1, 10), RETCODE_OK);
-    ASSERT_NE(data->set_int32_value(2, 10), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_int16_value(MEMBER_ID_INVALID, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(data->set_string_value(0, ""), RETCODE_BAD_PARAMETER);
+    }
 
     // Testing getters, setters, loan_value.
-    DynamicData::_ref_type loan_data {data->loan_value(0)};
+    DynamicData::_ref_type loan_data {data->loan_value(data->get_member_id_by_name("-2"))};
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0u, loan_data->get_item_count());
-    int32_t test1 {234};
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("3"), test1));
-    int32_t test2 {123};
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("4"), test2));
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    loan_data = data->loan_value(1);
+    EXPECT_EQ(0u, loan_data->get_item_count());
+    std::string test1 {"str1"};
+    std::string test2 {"str2"};
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key3"), test1));
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key4"), test2));
+    EXPECT_EQ(2u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    loan_data = data->loan_value(data->get_member_id_by_name("14"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("1"), test2));
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("2"), test1));
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    EXPECT_EQ(0u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key1"), test2));
+    EXPECT_EQ(1u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
 
-    int32_t test_get {0};
-    loan_data = data->loan_value(0);
+    std::string test_get {0};
+    loan_data = data->loan_value(data->get_member_id_by_name("-2"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
-    ASSERT_EQ(test1, test_get);
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("4")));
-    ASSERT_EQ(test2, test_get);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    loan_data = data->loan_value(1);
+    EXPECT_EQ(2u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key3")));
+    EXPECT_EQ(test1, test_get);
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key4")));
+    EXPECT_EQ(test2, test_get);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    loan_data = data->loan_value(data->get_member_id_by_name("14"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(2u, loan_data->get_item_count());
+    ASSERT_EQ(1u, loan_data->get_item_count());
     ASSERT_EQ(RETCODE_OK,
-            loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
+            loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key1")));
     ASSERT_EQ(test2, test_get);
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("2")));
-    ASSERT_EQ(test1, test_get);
     ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
 
     // Test clone.
     auto clone = data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(data->equals(clone));
+    EXPECT_TRUE(data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_OK, data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(RETCODE_OK, data->get_complex_value(complex_data, data->get_member_id_by_name("-2")));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(2u, complex_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            complex_data->get_int32_value(test_get, complex_data->get_member_id_by_name("3")));
-    ASSERT_EQ(test1, test_get);
-    ASSERT_EQ(RETCODE_OK,
-            complex_data->get_int32_value(test_get, complex_data->get_member_id_by_name("4")));
-    ASSERT_EQ(test2, test_get);
+    EXPECT_EQ(2u, complex_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            complex_data->get_string_value(test_get, complex_data->get_member_id_by_name("key3")));
+    EXPECT_EQ(test1, test_get);
+    EXPECT_EQ(RETCODE_OK,
+            complex_data->get_string_value(test_get, complex_data->get_member_id_by_name("key4")));
+    EXPECT_EQ(test2, test_get);
 
 
     // Test set_complex_value
-    int32_t test3 {456};
-    int32_t test4 {345};
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_OK,
-            complex_data->set_int32_value(complex_data->get_member_id_by_name("3"), test3));
-    ASSERT_EQ(RETCODE_OK,
-            complex_data->set_int32_value(complex_data->get_member_id_by_name("4"), test4));
-    ASSERT_EQ(RETCODE_OK, data->set_complex_value(0, complex_data));
+    std::string test3 {"456"};
+    std::string test4 {"345"};
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    }
+    EXPECT_EQ(RETCODE_OK,
+            complex_data->set_string_value(complex_data->get_member_id_by_name("key3"), test3));
+    EXPECT_EQ(RETCODE_OK,
+            complex_data->set_string_value(complex_data->get_member_id_by_name("key4"), test4));
+    EXPECT_EQ(RETCODE_OK, data->set_complex_value(data->get_member_id_by_name("-2"), complex_data));
 
     // Test get_item_count().
-    ASSERT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(2u, data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(created_type)};
         encoding_deconding_test(created_type, data, data2, encoding);
-        ASSERT_EQ(2u, data2->get_item_count());
-        loan_data = data2->loan_value(0);
+        EXPECT_EQ(2u, data2->get_item_count());
+        loan_data = data2->loan_value(data2->get_member_id_by_name("-2"));
         ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2u, loan_data->get_item_count());
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("3")));
-        ASSERT_EQ(test3, test_get);
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("4")));
-        ASSERT_EQ(test4, test_get);
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
-        loan_data = data2->loan_value(1);
+        EXPECT_EQ(2u, loan_data->get_item_count());
+        EXPECT_EQ(RETCODE_OK,
+                loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key3")));
+        EXPECT_EQ(test3, test_get);
+        EXPECT_EQ(RETCODE_OK,
+                loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key4")));
+        EXPECT_EQ(test4, test_get);
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
+        loan_data = data2->loan_value(data2->get_member_id_by_name("14"));
         ASSERT_TRUE(loan_data);
-        ASSERT_EQ(2u, loan_data->get_item_count());
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
-        ASSERT_EQ(test2, test_get);
-        ASSERT_EQ(RETCODE_OK,
-                loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("2")));
-        ASSERT_EQ(test1, test_get);
-        ASSERT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
+        EXPECT_EQ(1u, loan_data->get_item_count());
+        EXPECT_EQ(RETCODE_OK,
+                loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key1")));
+        EXPECT_EQ(test2, test_get);
+        EXPECT_EQ(RETCODE_OK, data2->return_loaned_value(loan_data));
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, data->clear_all_values());
-    ASSERT_EQ(0u, data->get_item_count());
-    ASSERT_FALSE(data->loan_value(0));
-    ASSERT_FALSE(data->loan_value(1));
+    EXPECT_EQ(RETCODE_OK, data->clear_all_values());
+    EXPECT_EQ(0u, data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(data->loan_value(0));
+        EXPECT_FALSE(data->loan_value(1));
+    }
 
-    loan_data = data->loan_value(data->get_member_id_by_name("10"));
+    loan_data = data->loan_value(data->get_member_id_by_name("-2"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("3"), test1));
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("4"), test2));
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    loan_data = data->loan_value(data->get_member_id_by_name("20"));
+    EXPECT_EQ(0u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key3"), test1));
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key4"), test2));
+    EXPECT_EQ(2u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    loan_data = data->loan_value(data->get_member_id_by_name("14"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("1"), test2));
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("2"), test1));
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    ASSERT_EQ(2u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->clear_nonkey_values());
-    ASSERT_EQ(0u, data->get_item_count());
-    ASSERT_FALSE(data->loan_value(0));
-    ASSERT_FALSE(data->loan_value(1));
+    EXPECT_EQ(0u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key1"), test2));
+    EXPECT_EQ(1u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    EXPECT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_nonkey_values());
+    EXPECT_EQ(0u, data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(data->loan_value(0));
+        EXPECT_FALSE(data->loan_value(1));
+    }
 
-    loan_data = data->loan_value(data->get_member_id_by_name("10"));
+    loan_data = data->loan_value(data->get_member_id_by_name("-2"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("3"), test1));
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("4"), test2));
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    loan_data = data->loan_value(data->get_member_id_by_name("20"));
+    EXPECT_EQ(0u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key3"), test1));
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key4"), test2));
+    EXPECT_EQ(2u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    loan_data = data->loan_value(data->get_member_id_by_name("14"));
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(0u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("1"), test2));
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->set_int32_value(loan_data->get_member_id_by_name("2"), test1));
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
-    ASSERT_EQ(2u, data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, data->clear_value(0));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
-    ASSERT_EQ(1u, data->get_item_count());
-    ASSERT_FALSE(data->loan_value(0));
+    EXPECT_EQ(0u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->set_string_value(loan_data->get_member_id_by_name("key1"), test2));
+    EXPECT_EQ(1u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    EXPECT_EQ(2u, data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, data->clear_value(0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, data->clear_value(100));
+    }
+    EXPECT_EQ(1u, data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(data->loan_value(0));
+    }
     loan_data = data->loan_value(1);
     ASSERT_TRUE(loan_data);
-    ASSERT_EQ(2u, loan_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("1")));
-    ASSERT_EQ(test2, test_get);
-    ASSERT_EQ(RETCODE_OK,
-            loan_data->get_int32_value(test_get, loan_data->get_member_id_by_name("2")));
-    ASSERT_EQ(test1, test_get);
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
+    EXPECT_EQ(1u, loan_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK,
+            loan_data->get_string_value(test_get, loan_data->get_member_id_by_name("key1")));
+    EXPECT_EQ(test2, test_get);
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(loan_data));
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
 }
@@ -10527,6 +11529,36 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name("StructTest");
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test with bound.
+        type_descriptor->bound({10});
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({});
+        // Test with invalid base_type.
+        type_descriptor->base_type(factory->get_primitive_type(TK_INT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with element_type.
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(nullptr);
+        // Test with discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(nullptr);
+        // Test with key_element_type
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+    }
+
     DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
     ASSERT_TRUE(builder);
 
@@ -10535,13 +11567,22 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("int32");
     member_descriptor->id(0);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT64));
     member_descriptor->name("int64");
     member_descriptor->default_value("3");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        member_descriptor->is_default_label(true);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+        member_descriptor->is_default_label(false);
+        member_descriptor->label({0, 1});
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+        member_descriptor->label({});
+    }
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type struct_type {builder->build()};
     ASSERT_TRUE(struct_type);
@@ -10549,102 +11590,120 @@ TEST_F(DynamicTypesTests, DynamicType_structure)
     DynamicData::_ref_type struct_data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(struct_data);
 
-    ASSERT_NE(struct_data->set_int64_value(0, 10), RETCODE_OK);
-    ASSERT_NE(struct_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(struct_data->set_int64_value(0, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(struct_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+    }
 
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
-    ASSERT_EQ(0, struct_data->get_member_id_by_name("int32"));
-    ASSERT_EQ(1, struct_data->get_member_id_by_name("int64"));
-    ASSERT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(2));
-    ASSERT_EQ(0, struct_data->get_member_id_at_index(0));
-    ASSERT_EQ(1, struct_data->get_member_id_at_index(1));
+    EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
+    EXPECT_EQ(0, struct_data->get_member_id_by_name("int32"));
+    EXPECT_EQ(1, struct_data->get_member_id_by_name("int64"));
+    EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(2));
+    EXPECT_EQ(0, struct_data->get_member_id_at_index(0));
+    EXPECT_EQ(1, struct_data->get_member_id_at_index(1));
 
     // Test getters and setters.
     int32_t test1 {234};
-    ASSERT_EQ(struct_data->set_int32_value(0, test1), RETCODE_OK);
-    uint32_t wrong {0};
-    ASSERT_NE(struct_data->get_uint32_value(wrong, 0), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int32_value(0, test1), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        uint32_t wrong {0};
+        EXPECT_EQ(struct_data->get_uint32_value(wrong, 0), RETCODE_BAD_PARAMETER);
+    }
     int32_t test2 {0};
-    ASSERT_EQ(struct_data->get_int32_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(struct_data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
     int64_t test3 {234};
-    ASSERT_EQ(struct_data->set_int64_value(1, test3), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int64_value(1, test3), RETCODE_OK);
     int64_t test4 {0};
-    ASSERT_EQ(struct_data->get_int64_value(test4, 1), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
+    EXPECT_EQ(struct_data->get_int64_value(test4, 1), RETCODE_OK);
+    EXPECT_EQ(test3, test4);
 
     // Test clone.
     auto clone = struct_data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(struct_data->equals(clone));
+    EXPECT_TRUE(struct_data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
     // Test set_complex_value
     test1 = 456;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    }
     ASSERT_EQ(RETCODE_OK,
             complex_data->set_int32_value(MEMBER_ID_INVALID, test1));
     ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
 
     // Test loan_value
-    DynamicData::_ref_type loan_data = struct_data->loan_value(1);
+    DynamicData::_ref_type loan_data = struct_data->loan_value(struct_data->get_member_id_by_name("int64"));
     ASSERT_TRUE(loan_data);
-    ASSERT_FALSE(struct_data->loan_value(1));
-    ASSERT_EQ(loan_data->get_int64_value(test4, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
-    ASSERT_EQ(struct_data->return_loaned_value(loan_data), RETCODE_OK);
-    ASSERT_FALSE(struct_data->loan_value(MEMBER_ID_INVALID));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(struct_data->loan_value(struct_data->get_member_id_by_name("int64")));
+    }
+    EXPECT_EQ(loan_data->get_int64_value(test4, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test3, test4);
+    EXPECT_EQ(struct_data->return_loaned_value(loan_data), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(struct_data->loan_value(MEMBER_ID_INVALID));
+    }
 
     // Test get_item_count.
-    ASSERT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(2u, struct_data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
         encoding_deconding_test(struct_type, struct_data, data2, encoding);
-        ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
+        EXPECT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
+        EXPECT_EQ(test1, test2);
+        EXPECT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
+        EXPECT_EQ(test3, test4);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_all_values());
-    ASSERT_EQ(2u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
-    ASSERT_EQ(3, test4);
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_all_values());
+    EXPECT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    EXPECT_EQ(3, test4);
 
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
-    ASSERT_EQ(2u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
-    ASSERT_EQ(3, test4);
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
+    EXPECT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    EXPECT_EQ(3, test4);
 
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_value(1));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
-    ASSERT_EQ(2u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
-    ASSERT_EQ(test1, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
-    ASSERT_EQ(3, test4);
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_value(1));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
+    EXPECT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    EXPECT_EQ(test1, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    EXPECT_EQ(3, test4);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(struct_data), RETCODE_OK);
 }
@@ -10665,16 +11724,28 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("int32");
     member_descriptor->id(0);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT64));
     member_descriptor->name("int64");
     member_descriptor->id(1);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type base_struct_type {builder->build()};
     ASSERT_TRUE(base_struct_type);
+
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Check cannot set extensibility if base type didn't do it.
+        type_descriptor = traits<TypeDescriptor>::make_shared();
+        type_descriptor->kind(TK_STRUCTURE);
+        type_descriptor->name("DerivedStructTest");
+        type_descriptor->base_type(base_struct_type);
+        type_descriptor->extensibility_kind(ExtensibilityKind::FINAL);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+    }
 
     // Create the derived struct.
     type_descriptor = traits<TypeDescriptor>::make_shared();
@@ -10691,92 +11762,95 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
         eprosima::fastdds::testing::ScopeLogs _("disable");     // avoid expected errors logging
         member_descriptor->name("child_int32");
         member_descriptor->id(1);
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
         member_descriptor->name("int32");
         member_descriptor->id(2);
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+        // Derived struct cannot have key members.
+        member_descriptor->name("child_int32");
+        member_descriptor->is_key(true);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+        member_descriptor->is_key(false);
     }
 
-    member_descriptor->name("child_int32");
-    member_descriptor->id(2);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("child_string");
     member_descriptor->id(4);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type derived_struct_type {builder->build()};
     ASSERT_TRUE(derived_struct_type);
 
-    ASSERT_EQ(4u, derived_struct_type->get_member_count());
+    EXPECT_EQ(4u, derived_struct_type->get_member_count());
 
     DynamicTypeMember::_ref_type member;
     DynamicTypeMember::_ref_type member_aux;
     MemberDescriptor::_ref_type descriptor = traits<MemberDescriptor>::make_shared();
 
-    ASSERT_EQ(derived_struct_type->get_member(member, 0), RETCODE_OK);
-    ASSERT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
-    ASSERT_EQ(descriptor->name(), "int32");
-    ASSERT_EQ(descriptor->index(), 0u);
-    ASSERT_EQ(descriptor->id(), 0);
-    ASSERT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT32)));
-    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+    EXPECT_EQ(derived_struct_type->get_member(member, 0), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
+    EXPECT_EQ(descriptor->name(), "int32");
+    EXPECT_EQ(descriptor->index(), 0u);
+    EXPECT_EQ(descriptor->id(), 0);
+    EXPECT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT32)));
+    EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
-    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+    EXPECT_TRUE(member->equals(member_aux));
+    EXPECT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
             RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
+    EXPECT_TRUE(member->equals(member_aux));
 
-    ASSERT_EQ(derived_struct_type->get_member(member, 1), RETCODE_OK);
-    ASSERT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
-    ASSERT_EQ(descriptor->name(), "int64");
-    ASSERT_EQ(descriptor->index(), 1u);
-    ASSERT_EQ(descriptor->id(), 1);
-    ASSERT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT64)));
-    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+    EXPECT_EQ(derived_struct_type->get_member(member, 1), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
+    EXPECT_EQ(descriptor->name(), "int64");
+    EXPECT_EQ(descriptor->index(), 1u);
+    EXPECT_EQ(descriptor->id(), 1);
+    EXPECT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT64)));
+    EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
-    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+    EXPECT_TRUE(member->equals(member_aux));
+    EXPECT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
             RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
+    EXPECT_TRUE(member->equals(member_aux));
 
-    ASSERT_EQ(derived_struct_type->get_member(member, 2), RETCODE_OK);
-    ASSERT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
-    ASSERT_EQ(descriptor->name(), "child_int32");
-    ASSERT_EQ(descriptor->index(), 2u);
-    ASSERT_EQ(descriptor->id(), 2);
-    ASSERT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT32)));
-    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+    EXPECT_EQ(derived_struct_type->get_member(member, 2), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
+    EXPECT_EQ(descriptor->name(), "child_int32");
+    EXPECT_EQ(descriptor->index(), 2u);
+    EXPECT_EQ(descriptor->id(), 2);
+    EXPECT_TRUE(descriptor->type()->equals(factory->get_primitive_type(TK_INT32)));
+    EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
-    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+    EXPECT_TRUE(member->equals(member_aux));
+    EXPECT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
             RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
+    EXPECT_TRUE(member->equals(member_aux));
 
-    ASSERT_EQ(derived_struct_type->get_member(member, 4), RETCODE_OK);
-    ASSERT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
-    ASSERT_EQ(descriptor->name(), "child_string");
-    ASSERT_EQ(descriptor->index(), 3u);
-    ASSERT_EQ(descriptor->id(), 4);
-    ASSERT_TRUE(descriptor->type()->equals(factory->create_string_type(
+    EXPECT_EQ(derived_struct_type->get_member(member, 4), RETCODE_OK);
+    EXPECT_EQ(member->get_descriptor(descriptor), RETCODE_OK);
+    EXPECT_EQ(descriptor->name(), "child_string");
+    EXPECT_EQ(descriptor->index(), 3u);
+    EXPECT_EQ(descriptor->id(), 4);
+    EXPECT_TRUE(descriptor->type()->equals(factory->create_string_type(
                 static_cast<uint32_t>(LENGTH_UNLIMITED))->build()));
-    ASSERT_EQ(derived_struct_type->get_member_by_name(member_aux,
+    EXPECT_EQ(derived_struct_type->get_member_by_name(member_aux,
             descriptor->name()), RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
-    ASSERT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
+    EXPECT_TRUE(member->equals(member_aux));
+    EXPECT_EQ(derived_struct_type->get_member_by_index(member_aux, descriptor->index()),
             RETCODE_OK);
-    ASSERT_TRUE(member->equals(member_aux));
+    EXPECT_TRUE(member->equals(member_aux));
 
 
     DynamicTypeMembersById members_by_id;
-    ASSERT_EQ(derived_struct_type->get_all_members(members_by_id), RETCODE_OK);
-    ASSERT_EQ(members_by_id.size(), 4u);
+    EXPECT_EQ(derived_struct_type->get_all_members(members_by_id), RETCODE_OK);
+    EXPECT_EQ(members_by_id.size(), 4u);
 
     DynamicTypeMembersByName members_by_name;
-    ASSERT_EQ(derived_struct_type->get_all_members_by_name(members_by_name), RETCODE_OK);
-    ASSERT_EQ(members_by_name.size(), 4u);
+    EXPECT_EQ(derived_struct_type->get_all_members_by_name(members_by_name), RETCODE_OK);
+    EXPECT_EQ(members_by_name.size(), 4u);
 
 
     // Validating data management
@@ -10784,137 +11858,159 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance)
     ASSERT_TRUE(derived_struct_type);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
-    ASSERT_EQ(0, struct_data->get_member_id_by_name("int32"));
-    ASSERT_EQ(1, struct_data->get_member_id_by_name("int64"));
-    ASSERT_EQ(2, struct_data->get_member_id_by_name("child_int32"));
-    ASSERT_EQ(4, struct_data->get_member_id_by_name("child_string"));
-    ASSERT_EQ(0, struct_data->get_member_id_at_index(0));
-    ASSERT_EQ(1, struct_data->get_member_id_at_index(1));
-    ASSERT_EQ(2, struct_data->get_member_id_at_index(2));
-    ASSERT_EQ(4, struct_data->get_member_id_at_index(3));
-    ASSERT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(4));
+    EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
+    EXPECT_EQ(0, struct_data->get_member_id_by_name("int32"));
+    EXPECT_EQ(1, struct_data->get_member_id_by_name("int64"));
+    EXPECT_EQ(2, struct_data->get_member_id_by_name("child_int32"));
+    EXPECT_EQ(4, struct_data->get_member_id_by_name("child_string"));
+    EXPECT_EQ(0, struct_data->get_member_id_at_index(0));
+    EXPECT_EQ(1, struct_data->get_member_id_at_index(1));
+    EXPECT_EQ(2, struct_data->get_member_id_at_index(2));
+    EXPECT_EQ(4, struct_data->get_member_id_at_index(3));
+    EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(4));
 
     // Testing getters and setters.
-    // Setting invalid types should fail
-    ASSERT_NE(struct_data->set_int64_value(0, 10), RETCODE_OK);
-    ASSERT_NE(struct_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Setting invalid types should fail
+        EXPECT_EQ(struct_data->set_int64_value(0, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(struct_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+    }
 
     // Set and get the parent values.
     int32_t test1 {234};
-    ASSERT_EQ(struct_data->set_int32_value(0, test1), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int32_value(0, test1), RETCODE_OK);
     int32_t test2 {0};
-    ASSERT_EQ(struct_data->get_int32_value(test2, 0), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(struct_data->get_int32_value(test2, 0), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
     int64_t test3 {234};
-    ASSERT_EQ(struct_data->set_int64_value(1, test3), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int64_value(1, test3), RETCODE_OK);
     int64_t test4 {0};
-    ASSERT_EQ(struct_data->get_int64_value(test4, 1), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
+    EXPECT_EQ(struct_data->get_int64_value(test4, 1), RETCODE_OK);
+    EXPECT_EQ(test3, test4);
 
     // Set and get the child value.
-    ASSERT_EQ(struct_data->set_int32_value(2, test1), RETCODE_OK);
-    ASSERT_EQ(struct_data->get_int32_value(test2, 2), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(struct_data->set_int32_value(2, test1), RETCODE_OK);
+    EXPECT_EQ(struct_data->get_int32_value(test2, 2), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
     std::string test5 {"Testing"};
-    ASSERT_EQ(struct_data->set_string_value(4, test5), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_string_value(4, test5), RETCODE_OK);
     std::string test6;
-    ASSERT_EQ(struct_data->get_string_value(test6, 4), RETCODE_OK);
+    EXPECT_EQ(struct_data->get_string_value(test6, 4), RETCODE_OK);
+    EXPECT_EQ(test5, test6);
 
     // Test clone.
     auto clone = struct_data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(struct_data->equals(clone));
+    EXPECT_TRUE(struct_data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(complex_data->get_int32_value(test2, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
     // Test set_complex_value
     uint32_t test11 {456};
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_OK,
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    }
+    EXPECT_EQ(RETCODE_OK,
             complex_data->set_int32_value(MEMBER_ID_INVALID, test11));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
 
     // Test loan_value
     DynamicData::_ref_type loan_data = struct_data->loan_value(1);
     ASSERT_TRUE(loan_data);
-    ASSERT_FALSE(struct_data->loan_value(1));
-    ASSERT_EQ(loan_data->get_int64_value(test4, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
-    ASSERT_EQ(struct_data->return_loaned_value(loan_data), RETCODE_OK);
-    ASSERT_FALSE(struct_data->loan_value(MEMBER_ID_INVALID));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(struct_data->loan_value(1));
+    }
+    EXPECT_EQ(loan_data->get_int64_value(test4, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(test3, test4);
+    EXPECT_EQ(struct_data->return_loaned_value(loan_data), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(struct_data->loan_value(MEMBER_ID_INVALID));
+    }
 
     // Testing get_item_count
-    ASSERT_EQ(4u, struct_data->get_item_count());
+    EXPECT_EQ(4u, struct_data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(derived_struct_type)};
         encoding_deconding_test(derived_struct_type, struct_data, data2, encoding);
-        ASSERT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
-        ASSERT_EQ(test11, test2);
-        ASSERT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
-        ASSERT_EQ(data2->get_int32_value(test2, 2), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
-        ASSERT_EQ(data2->get_string_value(test6, 4), RETCODE_OK);
-        ASSERT_EQ(test5, test6);
+        EXPECT_EQ(data2->get_int32_value(test2, 0), RETCODE_OK);
+        EXPECT_EQ(test11, test2);
+        EXPECT_EQ(data2->get_int64_value(test4, 1), RETCODE_OK);
+        EXPECT_EQ(test3, test4);
+        EXPECT_EQ(data2->get_int32_value(test2, 2), RETCODE_OK);
+        EXPECT_EQ(test1, test2);
+        EXPECT_EQ(data2->get_string_value(test6, 4), RETCODE_OK);
+        EXPECT_EQ(test5, test6);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_all_values());
-    ASSERT_EQ(4u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
-    ASSERT_EQ(0, test4);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 2));
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
-    ASSERT_EQ("", test6);
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_all_values());
+    EXPECT_EQ(4u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    EXPECT_EQ(0, test4);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 2));
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
+    EXPECT_EQ("", test6);
 
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(2, test1));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_string_value(4, test5));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
-    ASSERT_EQ(4u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
-    ASSERT_EQ(0, test4);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 2));
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
-    ASSERT_EQ("", test6);
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int32_value(2, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_string_value(4, test5));
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
+    EXPECT_EQ(4u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    EXPECT_EQ(0, test4);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 2));
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
+    EXPECT_EQ("", test6);
 
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int32_value(2, test1));
-    ASSERT_EQ(RETCODE_OK, struct_data->set_string_value(4, test5));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_value(1));
-    ASSERT_NE(RETCODE_OK, struct_data->clear_value(3));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_value(4));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
-    ASSERT_EQ(4u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
-    ASSERT_EQ(test1, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
-    ASSERT_EQ(0, test4);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 2));
-    ASSERT_EQ(test1, test2);
-    ASSERT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
-    ASSERT_EQ("", test6);
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int32_value(0, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int64_value(1, test3));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int32_value(2, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_string_value(4, test5));
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_value(1));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(3));
+    }
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_value(4));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
+    }
+    EXPECT_EQ(4u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 0));
+    EXPECT_EQ(test1, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test4, 1));
+    EXPECT_EQ(0, test4);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int32_value(test2, 2));
+    EXPECT_EQ(test1, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->get_string_value(test6, 4));
+    EXPECT_EQ("", test6);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(struct_data), RETCODE_OK);
 }
@@ -10933,14 +12029,12 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("int32");
-    member_descriptor->id(0);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT64));
     member_descriptor->name("int64");
-    member_descriptor->id(1);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type inner_struct_type {builder->build()};
     ASSERT_TRUE(inner_struct_type);
@@ -10956,14 +12050,13 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(inner_struct_type);
     member_descriptor->name("Structure");
-    member_descriptor->id(0);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT64));
     member_descriptor->name("int64");
     member_descriptor->id(10);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type struct_type {builder->build()};
     ASSERT_TRUE(struct_type);
@@ -10972,133 +12065,142 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure)
     ASSERT_TRUE(struct_data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
-    ASSERT_EQ(0, struct_data->get_member_id_by_name("Structure"));
-    ASSERT_EQ(10, struct_data->get_member_id_by_name("int64"));
-    ASSERT_EQ(0, struct_data->get_member_id_at_index(0));
-    ASSERT_EQ(10, struct_data->get_member_id_at_index(1));
-    ASSERT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(2));
+    EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_by_name(""));
+    EXPECT_EQ(0, struct_data->get_member_id_by_name("Structure"));
+    EXPECT_EQ(10, struct_data->get_member_id_by_name("int64"));
+    EXPECT_EQ(0, struct_data->get_member_id_at_index(0));
+    EXPECT_EQ(10, struct_data->get_member_id_at_index(1));
+    EXPECT_EQ(MEMBER_ID_INVALID, struct_data->get_member_id_at_index(2));
 
     // Testing getter, setters and loan_value.
-    ASSERT_NE(struct_data->set_int32_value(1, 10), RETCODE_OK);
-    ASSERT_NE(struct_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(struct_data->set_int32_value(1, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(struct_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+    }
 
     // Set and get the child values.
     const int64_t test1 {234};
-    ASSERT_EQ(struct_data->set_int64_value(10, test1), RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int64_value(10, test1), RETCODE_OK);
     int64_t test2 {0};
-    ASSERT_EQ(struct_data->get_int64_value(test2, 10), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(struct_data->get_int64_value(test2, 10), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
 
     auto inner_struct_data = struct_data->loan_value(0);
     ASSERT_TRUE(inner_struct_data);
 
-    // Set and get the child values.
+    // Set and get from child structure.
     int32_t test3 {234};
-    ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
+    EXPECT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
     int32_t test4 {0};
-    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
+    EXPECT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
+    EXPECT_EQ(test3, test4);
     int64_t test5 {234};
-    ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
+    EXPECT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
     int64_t test6 {0};
-    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
-    ASSERT_EQ(test5, test6);
+    EXPECT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
+    EXPECT_EQ(test5, test6);
 
-    ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
 
     // Test clone.
     auto clone = struct_data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(struct_data->equals(clone));
+    EXPECT_TRUE(struct_data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(RETCODE_OK, struct_data->get_complex_value(complex_data, 0));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_int32_value(test4, 0), RETCODE_OK);
-    ASSERT_EQ(test3, test4);
-    ASSERT_EQ(complex_data->get_int64_value(test6, 1), RETCODE_OK);
-    ASSERT_EQ(test5, test6);
+    EXPECT_EQ(complex_data->get_int32_value(test4, 0), RETCODE_OK);
+    EXPECT_EQ(test3, test4);
+    EXPECT_EQ(complex_data->get_int64_value(test6, 1), RETCODE_OK);
+    EXPECT_EQ(test5, test6);
 
     // Test set_complex_value
     test3 = 456;
     test5 = 567;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(complex_data->set_int32_value(0, test3), RETCODE_OK);
-    ASSERT_EQ(complex_data->set_int64_value(1, test5), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+    }
+    EXPECT_EQ(complex_data->set_int32_value(0, test3), RETCODE_OK);
+    EXPECT_EQ(complex_data->set_int64_value(1, test5), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, struct_data->set_complex_value(0, complex_data));
 
     // Testing get_item_count.
-    ASSERT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(2u, struct_data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(struct_type)};
         encoding_deconding_test(struct_type, struct_data, data2, encoding);
-        ASSERT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
-        ASSERT_EQ(test1, test2);
+        EXPECT_EQ(data2->get_int64_value(test2, 10), RETCODE_OK);
+        EXPECT_EQ(test1, test2);
         inner_struct_data = struct_data->loan_value(0);
         ASSERT_TRUE(inner_struct_data);
-        ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
-        ASSERT_EQ(test3, test4);
-        ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
-        ASSERT_EQ(test5, test6);
-        ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+        EXPECT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
+        EXPECT_EQ(test3, test4);
+        EXPECT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
+        EXPECT_EQ(test5, test6);
+        EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_all_values());
-    ASSERT_EQ(2u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_all_values());
+    EXPECT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
+    EXPECT_EQ(0, test2);
     inner_struct_data = struct_data->loan_value(0);
     ASSERT_TRUE(inner_struct_data);
-    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
-    ASSERT_EQ(0, test4);
-    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
-    ASSERT_EQ(0, test6);
-    ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    EXPECT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
+    EXPECT_EQ(0, test4);
+    EXPECT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
+    EXPECT_EQ(0, test6);
+    EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
 
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(10, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int64_value(10, test1));
     inner_struct_data = struct_data->loan_value(0);
     ASSERT_TRUE(inner_struct_data);
-    ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
-    ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
-    ASSERT_EQ(2u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
-    ASSERT_EQ(0, test2);
+    EXPECT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
+    EXPECT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_nonkey_values());
+    EXPECT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
+    EXPECT_EQ(0, test2);
     inner_struct_data = struct_data->loan_value(0);
     ASSERT_TRUE(inner_struct_data);
-    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
-    ASSERT_EQ(0, test4);
-    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
-    ASSERT_EQ(0, test6);
-    ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    EXPECT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
+    EXPECT_EQ(0, test4);
+    EXPECT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
+    EXPECT_EQ(0, test6);
+    EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
 
-    ASSERT_EQ(RETCODE_OK, struct_data->set_int64_value(10, test1));
+    EXPECT_EQ(RETCODE_OK, struct_data->set_int64_value(10, test1));
     inner_struct_data = struct_data->loan_value(0);
     ASSERT_TRUE(inner_struct_data);
-    ASSERT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
-    ASSERT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
-    ASSERT_EQ(RETCODE_OK, struct_data->clear_value(0));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
-    ASSERT_EQ(2u, struct_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
-    ASSERT_EQ(test1, test2);
+    EXPECT_EQ(inner_struct_data->set_int32_value(0, test3), RETCODE_OK);
+    EXPECT_EQ(inner_struct_data->set_int64_value(1, test5), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    EXPECT_EQ(RETCODE_OK, struct_data->clear_value(0));
+    EXPECT_EQ(RETCODE_BAD_PARAMETER, struct_data->clear_value(100));
+    EXPECT_EQ(2u, struct_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, struct_data->get_int64_value(test2, 10));
+    EXPECT_EQ(test1, test2);
     inner_struct_data = struct_data->loan_value(0);
     ASSERT_TRUE(inner_struct_data);
-    ASSERT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
-    ASSERT_EQ(0, test4);
-    ASSERT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
-    ASSERT_EQ(0, test6);
-    ASSERT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
+    EXPECT_EQ(inner_struct_data->get_int32_value(test4, 0), RETCODE_OK);
+    EXPECT_EQ(0, test4);
+    EXPECT_EQ(inner_struct_data->get_int64_value(test6, 1), RETCODE_OK);
+    EXPECT_EQ(0, test6);
+    EXPECT_EQ(RETCODE_OK, struct_data->return_loaned_value(inner_struct_data));
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(struct_data), RETCODE_OK);
 }
@@ -11111,13 +12213,40 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_UNION);
     type_descriptor->name("UnionTest");
-    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
-    ASSERT_FALSE(builder);
-    type_descriptor->discriminator_type(factory->get_primitive_type(TK_FLOAT32));
-    builder = factory->create_type(type_descriptor);
-    ASSERT_FALSE(builder);
     type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
-    builder = factory->create_type(type_descriptor);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        // Test with bound.
+        type_descriptor->bound({10});
+        DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
+        EXPECT_FALSE(builder);
+        type_descriptor->bound({});
+        // Test with invalid base_type.
+        type_descriptor->base_type(factory->get_primitive_type(TK_INT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->base_type(nullptr);
+        // Test with element_type.
+        type_descriptor->element_type(factory->get_primitive_type(TK_INT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->element_type(nullptr);
+        // Test with key_element_type
+        type_descriptor->key_element_type(factory->get_primitive_type(TK_UINT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->key_element_type(nullptr);
+        // Test without discriminator_type set
+        type_descriptor->discriminator_type(nullptr);
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        // Test with invalid discriminator_type set
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_FLOAT32));
+        builder = factory->create_type(type_descriptor);
+        EXPECT_FALSE(builder);
+        type_descriptor->discriminator_type(factory->get_primitive_type(TK_INT32));
+    }
+    DynamicTypeBuilder::_ref_type builder {factory->create_type(type_descriptor)};
     ASSERT_TRUE(builder);
 
 
@@ -11126,45 +12255,56 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     member_descriptor->name("first");
     member_descriptor->id(1);
     member_descriptor->label({0, 1});
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("second");
     member_descriptor->id(3);
     member_descriptor->label({4});
-    member_descriptor->default_value("default");
+    member_descriptor->default_value("my string");
     member_descriptor->is_default_label(true);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     {
         eprosima::fastdds::testing::ScopeLogs _("disable");     // avoid expected errors logging
 
         member_descriptor = traits<MemberDescriptor>::make_shared();
         member_descriptor->type(factory->get_primitive_type(TK_INT32));
+        // Testing setting a member with repeated name.
         member_descriptor->name("second");
         member_descriptor->id(4);
         member_descriptor->label({5});
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
 
+        // Testing setting a member with the discriminator's id.
         member_descriptor->name("third");
         member_descriptor->id(0);
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
 
+        // Testing setting a member with repeated id.
         member_descriptor->id(3);
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
 
+        // Testing setting a member without label and is_default_label.
         member_descriptor->id(5);
         member_descriptor->label({});
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
 
+        // Testing setting a member with a repeated label.
         member_descriptor->label({4, 5});
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
 
+        // Testing setting a second member with is_default_labael.
         member_descriptor->label({5, 6});
         member_descriptor->is_default_label(true);
-        ASSERT_NE(builder->add_member(member_descriptor), RETCODE_OK);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
+        member_descriptor->is_default_label(false);
 
+        // Testing setting a member as key.
+        member_descriptor->label({10});
+        member_descriptor->is_key(true);
+        EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_BAD_PARAMETER);
     }
 
     // Create a data of this union
@@ -11175,131 +12315,178 @@ TEST_F(DynamicTypesTests, DynamicType_union)
     ASSERT_TRUE(union_data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_by_name(""));
-    ASSERT_EQ(0, union_data->get_member_id_by_name("discriminator"));
-    ASSERT_EQ(1, union_data->get_member_id_by_name("first"));
-    ASSERT_EQ(3, union_data->get_member_id_by_name("second"));
-    ASSERT_EQ(0, union_data->get_member_id_at_index(0));
-    ASSERT_EQ(1, union_data->get_member_id_at_index(1));
-    ASSERT_EQ(3, union_data->get_member_id_at_index(2));
-    ASSERT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_at_index(3));
+    EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_by_name(""));
+    EXPECT_EQ(0, union_data->get_member_id_by_name("discriminator"));
+    EXPECT_EQ(1, union_data->get_member_id_by_name("first"));
+    EXPECT_EQ(3, union_data->get_member_id_by_name("second"));
+    EXPECT_EQ(0, union_data->get_member_id_at_index(0));
+    EXPECT_EQ(1, union_data->get_member_id_at_index(1));
+    EXPECT_EQ(3, union_data->get_member_id_at_index(2));
+    EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_at_index(3));
 
     // Testing getters and setters.
     int32_t discriminator_value {0};
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
 
     int64_t int64_get {0};
-    ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_BAD_PARAMETER);
+    }
     std::string string_get;
-    ASSERT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
-    ASSERT_EQ("default", string_get);
+    EXPECT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
+    EXPECT_EQ("my string", string_get);
 
-    ASSERT_NE(union_data->set_int32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->set_int32_value(0, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
 
     const int64_t int64_set {234};
 
-    ASSERT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 == discriminator_value);
-    ASSERT_NE(union_data->get_string_value(string_get, 3), RETCODE_OK);
-    ASSERT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-    ASSERT_EQ(int64_set, int64_get);
-    ASSERT_NE(union_data->set_int32_value(0, 4), RETCODE_OK);
-    ASSERT_EQ(union_data->set_int32_value(0, 1), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 == discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_string_value(string_get, 3), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
+    EXPECT_EQ(int64_set, int64_get);
+
+    // Discriminator is only allowed to change to any value that selects the same member.
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->set_int32_value(0, 4), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->set_int32_value(0, 1), RETCODE_OK);
 
     std::string string_set {"testing_value"};
-    ASSERT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
-    ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-    ASSERT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
-    ASSERT_EQ(string_set, string_get);
-    ASSERT_NE(union_data->set_int32_value(0, 1), RETCODE_OK);
-    ASSERT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
+    EXPECT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
+    EXPECT_EQ(string_set, string_get);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->set_int32_value(0, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
 
     // Test clone.
     auto clone = union_data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(union_data->equals(clone));
+    EXPECT_TRUE(union_data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
-    ASSERT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 3));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
+    }
+    EXPECT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 3));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_string_value(string_get, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(string_set, string_get);
+    EXPECT_EQ(complex_data->get_string_value(string_get, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(string_set, string_get);
 
     // Test set_complex_value
     string_set = "retesting";
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(0, complex_data));
-    ASSERT_EQ(complex_data->set_string_value(MEMBER_ID_INVALID, string_set), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, union_data->set_complex_value(3, complex_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(0, complex_data));
+    }
+    EXPECT_EQ(complex_data->set_string_value(MEMBER_ID_INVALID, string_set), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, union_data->set_complex_value(3, complex_data));
 
     // Testing loan_value.
     DynamicData::_ref_type loan_data = union_data->loan_value(1);
     ASSERT_TRUE(loan_data);
-    ASSERT_FALSE(union_data->loan_value(1));
-    ASSERT_EQ(loan_data->get_int64_value(int64_get, MEMBER_ID_INVALID), RETCODE_OK);
-    ASSERT_EQ(int64_set, int64_get);
-    ASSERT_EQ(union_data->return_loaned_value(loan_data), RETCODE_OK);
-    ASSERT_FALSE(union_data->loan_value(MEMBER_ID_INVALID));
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_EQ(0, discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(union_data->loan_value(1));
+    }
+    EXPECT_EQ(loan_data->get_int64_value(int64_get, MEMBER_ID_INVALID), RETCODE_OK);
+    EXPECT_EQ(int64_set, int64_get);
+    EXPECT_EQ(union_data->return_loaned_value(loan_data), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_FALSE(union_data->loan_value(MEMBER_ID_INVALID));
+    }
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_EQ(0, discriminator_value);
 
     // Testing loan_value.
 
     // Testing get_item_count.
-    ASSERT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(2u, union_data->get_item_count());
 
     // Encoding/decoding
-    ASSERT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
-    ASSERT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
+    EXPECT_EQ(union_data->set_string_value(3, string_set), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int32_value(0, 4), RETCODE_OK);
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
         encoding_deconding_test(union_type, union_data, data2, encoding);
-        ASSERT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
-        ASSERT_EQ(4, discriminator_value);
-        ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-        ASSERT_EQ(data2->get_string_value(string_get, 3), RETCODE_OK);
-        ASSERT_EQ(string_set, string_get);
+        EXPECT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
+        EXPECT_EQ(4, discriminator_value);
+        {
+            eprosima::fastdds::testing::ScopeLogs _("disable");
+            EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_BAD_PARAMETER);
+        }
+        EXPECT_EQ(data2->get_string_value(string_get, 3), RETCODE_OK);
+        EXPECT_EQ(string_set, string_get);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, union_data->clear_all_values());
-    ASSERT_EQ(2u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
-    ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-    ASSERT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
-    ASSERT_EQ("default", string_get);
+    EXPECT_EQ(RETCODE_OK, union_data->clear_all_values());
+    EXPECT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
+    EXPECT_EQ("my string", string_get);
 
-    ASSERT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, union_data->clear_nonkey_values());
-    ASSERT_EQ(2u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
-    ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-    ASSERT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
-    ASSERT_EQ("default", string_get);
+    EXPECT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, union_data->clear_nonkey_values());
+    EXPECT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
+    EXPECT_EQ("my string", string_get);
 
-    ASSERT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
-    ASSERT_NE(RETCODE_OK, union_data->clear_value(3));
-    ASSERT_EQ(RETCODE_OK, union_data->clear_value(1));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(100));
-    ASSERT_EQ(2u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-    ASSERT_EQ(0, int64_get);
-    ASSERT_EQ(RETCODE_OK, union_data->clear_value(0));
-    ASSERT_NE(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
-    ASSERT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
-    ASSERT_EQ("default", string_get);
+    EXPECT_EQ(union_data->set_int64_value(1, int64_set), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, union_data->clear_value(1));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(3));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(100));
+    }
+    EXPECT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_OK);
+    EXPECT_EQ(0, int64_get);
+    EXPECT_EQ(RETCODE_OK, union_data->clear_value(0));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(int64_get, 1), RETCODE_BAD_PARAMETER);
+    }
+    EXPECT_EQ(union_data->get_string_value(string_get, 3), RETCODE_OK);
+    EXPECT_EQ("my string", string_get);
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(union_data), RETCODE_OK);
 }
@@ -11322,16 +12509,15 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     member_descriptor->name("first");
     member_descriptor->id(1);
     member_descriptor->label({0, 1});
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     member_descriptor->name("second");
-    member_descriptor->id(2);
     member_descriptor->label({4});
-    member_descriptor->default_value("default");
+    member_descriptor->default_value("my string");
     member_descriptor->is_default_label(true);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type inner_union_type {builder->build()};
     ASSERT_TRUE(inner_union_type);
@@ -11348,14 +12534,14 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     member_descriptor->name("first");
     member_descriptor->id(1);
     member_descriptor->label({1});
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(inner_union_type);
     member_descriptor->name("second");
     member_descriptor->id(2);
     member_descriptor->label({4});
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type union_type {builder->build()};
     ASSERT_TRUE(union_type);
@@ -11364,111 +12550,132 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions)
     ASSERT_TRUE(union_data);
 
     // Test get_member_by_name and get_member_by_index.
-    ASSERT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_by_name(""));
-    ASSERT_EQ(0, union_data->get_member_id_by_name("discriminator"));
-    ASSERT_EQ(1, union_data->get_member_id_by_name("first"));
-    ASSERT_EQ(2, union_data->get_member_id_by_name("second"));
-    ASSERT_EQ(0, union_data->get_member_id_at_index(0));
-    ASSERT_EQ(1, union_data->get_member_id_at_index(1));
-    ASSERT_EQ(2, union_data->get_member_id_at_index(2));
-    ASSERT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_at_index(3));
+    EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_by_name(""));
+    EXPECT_EQ(0, union_data->get_member_id_by_name("discriminator"));
+    EXPECT_EQ(1, union_data->get_member_id_by_name("first"));
+    EXPECT_EQ(2, union_data->get_member_id_by_name("second"));
+    EXPECT_EQ(0, union_data->get_member_id_at_index(0));
+    EXPECT_EQ(1, union_data->get_member_id_at_index(1));
+    EXPECT_EQ(2, union_data->get_member_id_at_index(2));
+    EXPECT_EQ(MEMBER_ID_INVALID, union_data->get_member_id_at_index(3));
 
     // Testing getters, setters and loan_value.
     // Set and get the child values.
-    ASSERT_NE(union_data->set_int32_value(2, 10), RETCODE_OK);
-    ASSERT_NE(union_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_OK);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->set_int32_value(2, 10), RETCODE_BAD_PARAMETER);
+        EXPECT_EQ(union_data->set_string_value(MEMBER_ID_INVALID, ""), RETCODE_BAD_PARAMETER);
+    }
 
     int32_t discriminator_value {0};
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(1 != discriminator_value && 4 != discriminator_value);
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(1 != discriminator_value && 4 != discriminator_value);
 
     const int64_t test1 {234};
-    ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
     int64_t test2 {0};
-    ASSERT_EQ(union_data->get_int64_value(test2, 1), RETCODE_OK);
-    ASSERT_EQ(test1, test2);
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_EQ(1, discriminator_value);
+    EXPECT_EQ(union_data->get_int64_value(test2, 1), RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_EQ(1, discriminator_value);
 
     DynamicData::_ref_type child_data {union_data->loan_value(2)};
     ASSERT_TRUE(child_data);
 
     std::string test3;
 
-    ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
-    ASSERT_EQ("default", test3);
+    EXPECT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
+    EXPECT_EQ("my string", test3);
 
-    ASSERT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
+    EXPECT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
 
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_EQ(4, discriminator_value);
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_EQ(4, discriminator_value);
 
     // Test clone.
     auto clone = union_data->clone();
     ASSERT_TRUE(clone);
-    ASSERT_TRUE(union_data->equals(clone));
+    EXPECT_TRUE(union_data->equals(clone));
 
     // Test get_complex_value
     DynamicData::_ref_type complex_data;
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
-    ASSERT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 2));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, MEMBER_ID_INVALID));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->get_complex_value(complex_data, 1));
+    }
+    EXPECT_EQ(RETCODE_OK, union_data->get_complex_value(complex_data, 2));
     ASSERT_TRUE(complex_data);
-    ASSERT_EQ(complex_data->get_string_value(test3, 2), RETCODE_OK);
-    ASSERT_EQ("default", test3);
+    EXPECT_EQ(complex_data->get_string_value(test3, 2), RETCODE_OK);
+    EXPECT_EQ("my string", test3);
 
     // Test set_complex_value
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(0, complex_data));
-    ASSERT_EQ(complex_data->set_string_value(2, "another"), RETCODE_OK);
-    ASSERT_EQ(RETCODE_OK, union_data->set_complex_value(2, complex_data));
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(MEMBER_ID_INVALID, complex_data));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->set_complex_value(0, complex_data));
+    }
+    EXPECT_EQ(complex_data->set_string_value(2, "another"), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, union_data->set_complex_value(2, complex_data));
 
     // Testing get_item_count.
-    ASSERT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(2u, union_data->get_item_count());
 
     // Encoding/decoding
     for (auto encoding : encodings)
     {
         DynamicData::_ref_type data2 {DynamicDataFactory::get_instance()->create_data(union_type)};
         encoding_deconding_test(union_type, union_data, data2, encoding);
-        ASSERT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
-        ASSERT_EQ(4, discriminator_value);
+        EXPECT_EQ(data2->get_int32_value(discriminator_value, 0), RETCODE_OK);
+        EXPECT_EQ(4, discriminator_value);
         child_data = union_data->loan_value(2);
         ASSERT_TRUE(child_data);
-        ASSERT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
-        ASSERT_EQ("another", test3);
-        ASSERT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
+        EXPECT_EQ(child_data->get_string_value(test3, 2), RETCODE_OK);
+        EXPECT_EQ("another", test3);
+        EXPECT_EQ(union_data->return_loaned_value(child_data), RETCODE_OK);
         EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), RETCODE_OK);
     }
 
     // Remove the elements.
-    ASSERT_EQ(RETCODE_OK, union_data->clear_all_values());
-    ASSERT_EQ(1u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
-    ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
+    EXPECT_EQ(RETCODE_OK, union_data->clear_all_values());
+    EXPECT_EQ(1u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(test2, 1), RETCODE_BAD_PARAMETER);
+    }
 
-    ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
-    ASSERT_EQ(2u, union_data->get_item_count());
-    ASSERT_EQ(RETCODE_OK, union_data->clear_nonkey_values());
-    ASSERT_EQ(1u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
-    ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
+    EXPECT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(RETCODE_OK, union_data->clear_nonkey_values());
+    EXPECT_EQ(1u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(test2, 1), RETCODE_BAD_PARAMETER);
+    }
 
-    ASSERT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
-    ASSERT_EQ(2u, union_data->get_item_count());
-    ASSERT_NE(RETCODE_OK, union_data->clear_value(2));
-    ASSERT_EQ(RETCODE_OK, union_data->clear_value(1));
-    ASSERT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(100));
-    ASSERT_EQ(2u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int64_value(test2, 1), RETCODE_OK);
-    ASSERT_EQ(0, test2);
-    ASSERT_EQ(RETCODE_OK, union_data->clear_value(0));
-    ASSERT_EQ(1u, union_data->get_item_count());
-    ASSERT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
-    ASSERT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
-    ASSERT_NE(union_data->get_int64_value(test2, 1), RETCODE_OK);
+    EXPECT_EQ(union_data->set_int64_value(1, test1), RETCODE_OK);
+    EXPECT_EQ(2u, union_data->get_item_count());
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(2));
+        EXPECT_EQ(RETCODE_BAD_PARAMETER, union_data->clear_value(100));
+    }
+    EXPECT_EQ(RETCODE_OK, union_data->clear_value(1));
+    EXPECT_EQ(2u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int64_value(test2, 1), RETCODE_OK);
+    EXPECT_EQ(0, test2);
+    EXPECT_EQ(RETCODE_OK, union_data->clear_value(0));
+    EXPECT_EQ(1u, union_data->get_item_count());
+    EXPECT_EQ(union_data->get_int32_value(discriminator_value, 0), RETCODE_OK);
+    EXPECT_TRUE(0 != discriminator_value && 1 != discriminator_value && 4 != discriminator_value);
+    {
+        eprosima::fastdds::testing::ScopeLogs _("disable");
+        EXPECT_EQ(union_data->get_int64_value(test2, 1), RETCODE_BAD_PARAMETER);
+    }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(union_data), RETCODE_OK);
 }
@@ -11488,17 +12695,17 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("id");
     member_descriptor->is_key(true);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("x");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("y");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type struct_type {builder->build()};
     ASSERT_TRUE(struct_type);
@@ -11506,13 +12713,13 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(0, 0x12345678));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(1, 10));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(1, 20));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(0, 0x12345678));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(1, 10));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(1, 20));
 
     DynamicPubSubType pubsubType(struct_type);
     eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
-    ASSERT_TRUE(pubsubType.getKey(&data, &instance_handle));
+    EXPECT_TRUE(pubsubType.getKey(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
         0x12, 0x34, 0x56, 0x78,
@@ -11521,7 +12728,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_1)
         0x00, 0x00, 0x00, 0x00
     };
 
-    ASSERT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+    EXPECT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
 }
 
 TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
@@ -11539,23 +12746,23 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
     member_descriptor->type(factory->create_string_type(12)->build());
     member_descriptor->name("label");
     member_descriptor->is_key(true);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT64));
     member_descriptor->name("id");
     member_descriptor->is_key(true);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("x");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("y");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type struct_type {builder->build()};
     ASSERT_TRUE(struct_type);
@@ -11563,14 +12770,14 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    ASSERT_EQ(RETCODE_OK, data->set_string_value(0, "BLUE"));
-    ASSERT_EQ(RETCODE_OK, data->set_int64_value(1, 0x123456789abcdef0ll));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(2, 10));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(3, 20));
+    EXPECT_EQ(RETCODE_OK, data->set_string_value(0, "BLUE"));
+    EXPECT_EQ(RETCODE_OK, data->set_int64_value(1, 0x123456789abcdef0ll));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(2, 10));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(3, 20));
 
     DynamicPubSubType pubsubType(struct_type);
     eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
-    ASSERT_TRUE(pubsubType.getKey(&data, &instance_handle));
+    EXPECT_TRUE(pubsubType.getKey(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
         0xf9, 0x1a, 0x59, 0xe3,
@@ -11579,7 +12786,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_2)
         0xf5, 0xb6, 0xe3, 0x6e
     };
 
-    ASSERT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+    EXPECT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
 }
 
 TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
@@ -11598,17 +12805,17 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("m_long");
     member_descriptor->is_key(true);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("u");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("w");
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type nested_type {builder->build()};
     ASSERT_TRUE(nested_type);
@@ -11626,26 +12833,26 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
     member_descriptor->name("label");
     member_descriptor->is_key(true);
     member_descriptor->id(40);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(nested_type);
     member_descriptor->name("m_nested");
     member_descriptor->is_key(true);
     member_descriptor->id(30);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("x");
     member_descriptor->id(20);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->type(factory->get_primitive_type(TK_INT32));
     member_descriptor->name("y");
     member_descriptor->id(10);
-    ASSERT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
+    EXPECT_EQ(builder->add_member(member_descriptor), RETCODE_OK);
 
     DynamicType::_ref_type struct_type {builder->build()};
     ASSERT_TRUE(struct_type);
@@ -11653,19 +12860,19 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
-    ASSERT_EQ(RETCODE_OK, data->set_string_value(40, "BLUE"));
+    EXPECT_EQ(RETCODE_OK, data->set_string_value(40, "BLUE"));
     auto nested_data = data->loan_value(30);
     ASSERT_TRUE(nested_data);
-    ASSERT_EQ(RETCODE_OK, nested_data->set_int32_value(0, 0x12345678l));
-    ASSERT_EQ(RETCODE_OK, nested_data->set_int32_value(1, 10));
-    ASSERT_EQ(RETCODE_OK, nested_data->set_int32_value(2, 20));
-    ASSERT_EQ(RETCODE_OK, data->return_loaned_value(nested_data));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(20, 100));
-    ASSERT_EQ(RETCODE_OK, data->set_int32_value(10, 200));
+    EXPECT_EQ(RETCODE_OK, nested_data->set_int32_value(0, 0x12345678l));
+    EXPECT_EQ(RETCODE_OK, nested_data->set_int32_value(1, 10));
+    EXPECT_EQ(RETCODE_OK, nested_data->set_int32_value(2, 20));
+    EXPECT_EQ(RETCODE_OK, data->return_loaned_value(nested_data));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(20, 100));
+    EXPECT_EQ(RETCODE_OK, data->set_int32_value(10, 200));
 
     DynamicPubSubType pubsubType(struct_type);
     eprosima::fastrtps::rtps::InstanceHandle_t instance_handle;
-    ASSERT_TRUE(pubsubType.getKey(&data, &instance_handle));
+    EXPECT_TRUE(pubsubType.getKey(&data, &instance_handle));
 
     const uint8_t expected_key_hash[] {
         0x37, 0x4b, 0x96, 0xe2,
@@ -11674,7 +12881,7 @@ TEST_F(DynamicTypesTests, DynamicType_KeyHash_standard_example_3)
         0xbb, 0x6e, 0xb7, 0x1e
     };
 
-    ASSERT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
+    EXPECT_EQ(0, memcmp(expected_key_hash, &instance_handle, 16));
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_struct_with_enum)

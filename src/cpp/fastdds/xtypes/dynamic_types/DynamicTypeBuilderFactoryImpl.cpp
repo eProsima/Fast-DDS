@@ -296,7 +296,7 @@ ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_instance() noexcept
 }
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_type(
-        traits<DynamicType>::ref_type type) noexcept
+        traits<DynamicType>::ref_type& type) noexcept
 {
     type.reset();
     return RETCODE_OK;

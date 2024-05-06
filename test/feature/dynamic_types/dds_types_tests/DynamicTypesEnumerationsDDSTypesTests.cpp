@@ -39,6 +39,28 @@ constexpr const char* var_scoped_innerenumhelper = "var_scoped_InnerEnumHelper";
 constexpr const char* var_innerbitmaskhelper_name = "var_InnerBitMaskHelper";
 constexpr const char* var_innerboundedbitmaskhelper_name = "var_InnerBoundedBitMaskHelper";
 
+DynamicType::_ref_type create_scoped_inner_enum_helper()
+{
+    TypeDescriptor::_ref_type enum_descriptor {traits<TypeDescriptor>::make_shared()};
+    enum_descriptor->kind(TK_ENUM);
+    enum_descriptor->name(std::string("Test::") + std::string(enum_name));
+    DynamicTypeBuilder::_ref_type enum_builder {DynamicTypeBuilderFactory::get_instance()->create_type(enum_descriptor)};
+
+    MemberDescriptor::_ref_type enum_literal_descriptor {traits<MemberDescriptor>::make_shared()};
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->name(enum_value_1_name);
+    enum_builder->add_member(enum_literal_descriptor);
+    enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->name(enum_value_2_name);
+    enum_builder->add_member(enum_literal_descriptor);
+    enum_literal_descriptor = traits<MemberDescriptor>::make_shared();
+    enum_literal_descriptor->type(DynamicTypeBuilderFactory::get_instance()->get_primitive_type(TK_UINT32));
+    enum_literal_descriptor->name(enum_value_3_name);
+    enum_builder->add_member(enum_literal_descriptor);
+
+    return enum_builder->build();
+}
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
 {
@@ -49,12 +71,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_innerenumhelper_name);
-    member_descriptor->type(DynamicTypesDDSTypesTest::create_inner_enum_helper());
+    member_descriptor->type(create_inner_enum_helper());
     type_builder->add_member(member_descriptor);
 
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_scoped_innerenumhelper);
-    member_descriptor->type(DynamicTypesDDSTypesTest::create_inner_enum_helper());
+    member_descriptor->type(create_scoped_inner_enum_helper());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type = type_builder->build();
@@ -63,16 +85,19 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
     ASSERT_TRUE(data);
 
     InnerEnumHelper value = InnerEnumHelper::ENUM_VALUE_2;
+    ::Test::InnerEnumHelper scoped_value = ::Test::InnerEnumHelper::ENUM_VALUE_3;
     uint32_t test_value = 0;
+    uint32_t scoped_test_value = 0;
     EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
                 var_innerenumhelper_name), static_cast<uint32_t>(value)), RETCODE_OK);
     EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_innerenumhelper_name)), RETCODE_OK);
     EXPECT_EQ(static_cast<uint32_t>(value), test_value);
 
     EXPECT_EQ(data->set_uint32_value(data->get_member_id_by_name(
-                var_scoped_innerenumhelper), static_cast<uint32_t>(value)), RETCODE_OK);
-    EXPECT_EQ(data->get_uint32_value(test_value, data->get_member_id_by_name(var_scoped_innerenumhelper)), RETCODE_OK);
-    EXPECT_EQ(static_cast<uint32_t>(value), test_value);
+                var_scoped_innerenumhelper), static_cast<uint32_t>(scoped_value)), RETCODE_OK);
+    EXPECT_EQ(data->get_uint32_value(scoped_test_value, data->get_member_id_by_name(
+                var_scoped_innerenumhelper)), RETCODE_OK);
+    EXPECT_EQ(static_cast<uint32_t>(scoped_value), scoped_test_value);
 
     // XCDRv1
     {
@@ -81,7 +106,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
         check_serialization_deserialization(struct_type, data, XCDR_DATA_REPRESENTATION, struct_data,
                 static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_InnerEnumHelper()), test_value);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), test_value);
+        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
     }
 
     // XCDRv2
@@ -91,7 +116,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_EnumStructure)
         check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
                 static_pubsubType);
         EXPECT_EQ(static_cast<uint32_t>(struct_data.var_InnerEnumHelper()), test_value);
-        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), test_value);
+        EXPECT_EQ(static_cast<uint32_t>(struct_data.var_scoped_InnerEnumHelper()), scoped_test_value);
     }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);
@@ -106,7 +131,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitMaskStructure)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_innerbitmaskhelper_name);
-    member_descriptor->type(DynamicTypesDDSTypesTest::create_inner_bitmask_helper());
+    member_descriptor->type(create_inner_bitmask_helper());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type = type_builder->build();
@@ -146,12 +171,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBitMaskStructure)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(struct_bitmaskstructure_name);
+    type_descriptor->name(struct_boundedbitmaskstructure_name);
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_innerboundedbitmaskhelper_name);
-    member_descriptor->type(DynamicTypesDDSTypesTest::create_inner_bounded_bitmask_helper());
+    member_descriptor->type(create_inner_bounded_bitmask_helper());
     type_builder->add_member(member_descriptor);
 
     DynamicType::_ref_type struct_type = type_builder->build();

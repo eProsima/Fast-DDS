@@ -389,8 +389,18 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     }
     //}}}
 
+    //{{{ Specific checks for STRUCTURE
+    if (TK_STRUCTURE == type_descriptor_kind)
+    {
+        if (descriptor_impl->is_key() && type_descriptor_.base_type())
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "A derived structure cannot contains keyed members");
+            return RETCODE_BAD_PARAMETER;
+        }
+    }
+    //}}}
     //{{{ Specific checks for UNION
-    if (TK_UNION == type_descriptor_kind)
+    else if (TK_UNION == type_descriptor_kind)
     {
         for (auto member : members_)
         {

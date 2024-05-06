@@ -2965,7 +2965,7 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
         // Check MemberId was defined as a BITMASK member and retrieve the value.
         if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
         {
-            if (sequence->size() > id && (TK_BOOLEAN == TK || TypePromotion<TK_BOOLEAN, TK>::value))
+            if (sequence->size() > id && TypePromotion<TK_BOOLEAN, TK>::value)
             {
                 value = static_cast<TypeForKind<TK>>(sequence->at(id));
                 ret_value =  RETCODE_OK;
@@ -2989,7 +2989,7 @@ ReturnCode_t DynamicDataImpl::get_bitmask_bit(
         {
             valid_promotion = true;
         }
-        else if (TypePromotion<TK, TK_UINT64>::value)
+        else if (TypePromotion<TK_UINT64, TK>::value)
         {
             valid_promotion = true;
         }
@@ -3219,7 +3219,7 @@ ReturnCode_t DynamicDataImpl::get_primitive_value(
                 }
                 break;
             case TK_STRING8:
-                if (MEMBER_ID_INVALID != member_id && (TK == TK_CHAR8 || TypePromotion<TK_CHAR8, TK>::value))
+                if (MEMBER_ID_INVALID != member_id && TypePromotion<TK_CHAR8, TK>::value)
                 {
                     auto str = std::static_pointer_cast<TypeForKind<TK_STRING8>>(value_iterator->second);
                     if (member_id < str->length())
@@ -3231,7 +3231,7 @@ ReturnCode_t DynamicDataImpl::get_primitive_value(
                 }
                 break;
             case TK_STRING16:
-                if (MEMBER_ID_INVALID != member_id && (TK == TK_CHAR16 || TypePromotion<TK_CHAR16, TK>::value))
+                if (MEMBER_ID_INVALID != member_id && TypePromotion<TK_CHAR16, TK>::value)
                 {
                     auto str = std::static_pointer_cast<TypeForKind<TK_STRING16>>(value_iterator->second);
                     if (member_id < str->length())
@@ -3436,7 +3436,6 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
-            TK_MAP == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -3447,8 +3446,6 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
             {
                 ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->get_sequence_values<TK>(
                     value, 0);
-
-                ret_value = RETCODE_OK;
             }
             else
             {
@@ -3496,6 +3493,26 @@ ReturnCode_t DynamicDataImpl::get_sequence_values(
         else
         {
             ret_value = get_sequence_values_primitive<TK>(id, element_kind, it, value, 0);
+        }
+    }
+    else if (TK_MAP == type_kind)
+    {
+        TypeKind element_kind =
+                get_enclosing_typekind(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                            enclosing_type_->get_descriptor().element_type()));
+        if (TK_ARRAY == element_kind ||
+                TK_SEQUENCE == element_kind)
+        {
+            auto it = value_.find(id);
+            if (it != value_.end())
+            {
+                ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->get_sequence_values<TK>(
+                    value, 0);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find MemberId " << id);
+            }
         }
     }
     else
@@ -3716,7 +3733,7 @@ ReturnCode_t DynamicDataImpl::get_sequence_values_promoting(
         value.clear();
         return RETCODE_OK;
     }
-    if (sequence->size() > id && (TK == ToTK || TypePromotion<ToTK, TK>::value))
+    if (sequence->size() > id && TypePromotion<ToTK, TK>::value)
     {
         auto initial_pos = sequence->begin() + id;
         auto final_pos = sequence->end();
@@ -3862,7 +3879,7 @@ ReturnCode_t DynamicDataImpl::set_bitmask_bit(
         // Check MemberId was defined as a BITMASK member.
         if (enclosing_type_->get_all_members().end() != enclosing_type_->get_all_members().find(id))
         {
-            if (sequence->size() > id && (TK_BOOLEAN == TK || TypePromotion<TK, TK_BOOLEAN>::value))
+            if (sequence->size() > id && TypePromotion<TK, TK_BOOLEAN>::value)
             {
                 sequence->at(id) = static_cast<TypeForKind<TK_BOOLEAN>>(value);
                 ret_value =  RETCODE_OK;
@@ -4244,7 +4261,6 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
     TypeKind type_kind = enclosing_type_->get_kind();
 
     if (TK_ANNOTATION == type_kind ||
-            TK_MAP == type_kind ||
             TK_STRUCTURE == type_kind ||
             TK_UNION == type_kind)
     {
@@ -4263,8 +4279,7 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
             {
 
                 ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->set_sequence_values<TK>(
-                    0,
-                    value);
+                    0, value);
             }
             else
             {
@@ -4332,6 +4347,28 @@ ReturnCode_t DynamicDataImpl::set_sequence_values(
         else      // Try primitives
         {
             ret_value = set_sequence_values_primitive<TK>(MEMBER_ID_INVALID == id ? 0 : id, element_kind, it, value);
+        }
+    }
+    else if (TK_MAP == type_kind)
+    {
+        auto element_type =
+                get_enclosing_type(traits<DynamicType>::narrow<DynamicTypeImpl>(
+                            enclosing_type_->get_descriptor().element_type()));
+        TypeKind element_kind = element_type->get_kind();
+        if (TK_ARRAY == element_kind ||
+                TK_SEQUENCE == element_kind)
+        {
+            auto it = value_.find(id);
+            if (it != value_.end())
+            {
+
+                ret_value = std::static_pointer_cast<DynamicDataImpl>(it->second)->set_sequence_values<TK>(
+                    0, value);
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot find MemberId " << id);
+            }
         }
     }
     else
@@ -4526,7 +4563,7 @@ ReturnCode_t DynamicDataImpl::set_sequence_values_promoting(
             (TK_SEQUENCE == type_kind &&
             (static_cast<uint32_t>(LENGTH_UNLIMITED) == enclosing_type_->get_descriptor().bound().at(0) ||
             enclosing_type_->get_descriptor().bound().at(0) >= id + value.size()))) &&
-            (TK == ToTK || TypePromotion<TK, ToTK>::value))
+            TypePromotion<TK, ToTK>::value)
     {
         if (sequence->size() < id + value.size())
         {

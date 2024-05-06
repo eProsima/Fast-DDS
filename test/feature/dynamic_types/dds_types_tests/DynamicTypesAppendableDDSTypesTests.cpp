@@ -51,8 +51,6 @@ constexpr const char* const appendable_inheritance_struct_name = "AppendableInhe
 constexpr const char* const appendable_inheritanceempty_struct_name = "AppendableInheritanceEmptyStruct";
 constexpr const char* const appendable_extensibilityinheritance_struct_name = "AppendableExtensibilityInheritance";
 
-constexpr const char* var_str_name = "var_str";
-
 DynamicType::_ref_type create_appendable_short_struct()
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -700,13 +698,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AppendableUnionStruct)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AppendableEmptyStruct)
 {
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(appendable_empty_struct_name);
-    type_descriptor->extensibility_kind(ExtensibilityKind::APPENDABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
-
-    DynamicType::_ref_type struct_type = type_builder->build();
+    DynamicType::_ref_type struct_type = create_appendable_empty_struct();
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 
@@ -778,7 +770,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AppendableInheritanceStruct)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(appendable_emptyinheritance_struct_name);
+    type_descriptor->name(appendable_inheritance_struct_name);
     type_descriptor->extensibility_kind(ExtensibilityKind::APPENDABLE);
     type_descriptor->base_type(create_appendable_short_struct());
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};

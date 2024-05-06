@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <algorithm>
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -95,11 +97,11 @@ constexpr const char* const long_short_map_struct_name = "MapLongShort";
 constexpr const char* const long_ushort_map_struct_name = "MapLongUShort";
 constexpr const char* const long_long_map_struct_name = "MapLongLong";
 constexpr const char* const long_ulong_map_struct_name = "MapLongULong";
-constexpr const char* const long_longlong_map_struct_name = "MapLongLongLong";
+constexpr const char* const long_longlong_map_struct_name = "MapLongKeyLongLongValue";
 constexpr const char* const long_ulonglong_map_struct_name = "MapLongULongLong";
 constexpr const char* const long_float_map_struct_name = "MapLongFloat";
 constexpr const char* const long_double_map_struct_name = "MapLongDouble";
-constexpr const char* const long_longdouble_map_struct_name = "MapLongLongDouble";
+constexpr const char* const long_longdouble_map_struct_name = "MapLongKeyLongDoubleValue";
 constexpr const char* const long_boolean_map_struct_name = "MapLongBoolean";
 constexpr const char* const long_octet_map_struct_name = "MapLongOctet";
 constexpr const char* const long_char_map_struct_name = "MapLongChar";
@@ -107,9 +109,9 @@ constexpr const char* const long_wchar_map_struct_name = "MapLongWChar";
 constexpr const char* const long_string_map_struct_name = "MapLongString";
 constexpr const char* const long_wstring_map_struct_name = "MapLongWString";
 constexpr const char* const long_inneraliasboundedstringhelper_map_struct_name =
-        "MaplongInnerAliasBoundedStringHelper";
+        "MapLongInnerAliasBoundedStringHelper";
 constexpr const char* const long_inneraliasboundedwstringhelper_map_struct_name =
-        "MaplongInnerAliasBoundedWStringHelper";
+        "MapLongInnerAliasBoundedWStringHelper";
 constexpr const char* const long_innerenumhelper_map_struct_name = "MapLongInnerEnumHelper";
 constexpr const char* const long_innerbitmaskhelper_map_struct_name = "MapLongInnerBitMaskHelper";
 constexpr const char* const long_inneraliashelper_map_struct_name = "MapLongInnerAliasHelper";
@@ -123,11 +125,11 @@ constexpr const char* const ulong_short_map_struct_name = "MapULongShort";
 constexpr const char* const ulong_ushort_map_struct_name = "MapULongUShort";
 constexpr const char* const ulong_long_map_struct_name = "MapULongLong";
 constexpr const char* const ulong_ulong_map_struct_name = "MapULongULong";
-constexpr const char* const ulong_longlong_map_struct_name = "MapULongLongLong";
+constexpr const char* const ulong_longlong_map_struct_name = "MapKeyULongValueLongLong";
 constexpr const char* const ulong_ulonglong_map_struct_name = "MapULongULongLong";
 constexpr const char* const ulong_float_map_struct_name = "MapULongFloat";
 constexpr const char* const ulong_double_map_struct_name = "MapULongDouble";
-constexpr const char* const ulong_longdouble_map_struct_name = "MapULongLongDouble";
+constexpr const char* const ulong_longdouble_map_struct_name = "MapKeyULongValueLongDouble";
 constexpr const char* const ulong_boolean_map_struct_name = "MapULongBoolean";
 constexpr const char* const ulong_octet_map_struct_name = "MapULongOctet";
 constexpr const char* const ulong_char_map_struct_name = "MapULongChar";
@@ -135,9 +137,9 @@ constexpr const char* const ulong_wchar_map_struct_name = "MapULongWChar";
 constexpr const char* const ulong_string_map_struct_name = "MapULongString";
 constexpr const char* const ulong_wstring_map_struct_name = "MapULongWString";
 constexpr const char* const ulong_inneraliasboundedstringhelper_map_struct_name =
-        "MaplongInnerAliasBoundedStringHelper";
+        "MapULongInnerAliasBoundedStringHelper";
 constexpr const char* const ulong_inneraliasboundedwstringhelper_map_struct_name =
-        "MaplongInnerAliasBoundedWStringHelper";
+        "MapULongInnerAliasBoundedWStringHelper";
 constexpr const char* const ulong_innerenumhelper_map_struct_name = "MapULongInnerEnumHelper";
 constexpr const char* const ulong_innerbitmaskhelper_map_struct_name = "MapULongInnerBitMaskHelper";
 constexpr const char* const ulong_inneraliashelper_map_struct_name = "MapULongInnerAliasHelper";
@@ -149,12 +151,12 @@ constexpr const char* const ulong_innerstructurehelper_map_struct_name = "MapULo
 constexpr const char* const ulong_innerbitsethelper_map_struct_name = "MapULongInnerBitsetHelper";
 constexpr const char* const longlong_short_map_struct_name = "MapLongLongShort";
 constexpr const char* const longlong_ushort_map_struct_name = "MapLongLongUShort";
-constexpr const char* const longlong_long_map_struct_name = "MapLongLongLong";
+constexpr const char* const longlong_long_map_struct_name = "MapLongKeyLongLongValue";
 constexpr const char* const longlong_ulong_map_struct_name = "MapLongLongULong";
 constexpr const char* const longlong_longlong_map_struct_name = "MapLongLongLongLong";
 constexpr const char* const longlong_ulonglong_map_struct_name = "MapLongLongULongLong";
 constexpr const char* const longlong_float_map_struct_name = "MapLongLongFloat";
-constexpr const char* const longlong_double_map_struct_name = "MapLongLongDouble";
+constexpr const char* const longlong_double_map_struct_name = "MapLongLongKeyDoubleValue";
 constexpr const char* const longlong_longdouble_map_struct_name = "MapLongLongLongDouble";
 constexpr const char* const longlong_boolean_map_struct_name = "MapLongLongBoolean";
 constexpr const char* const longlong_octet_map_struct_name = "MapLongLongOctet";
@@ -163,9 +165,9 @@ constexpr const char* const longlong_wchar_map_struct_name = "MapLongLongWChar";
 constexpr const char* const longlong_string_map_struct_name = "MapLongLongString";
 constexpr const char* const longlong_wstring_map_struct_name = "MapLongLongWString";
 constexpr const char* const longlong_inneraliasboundedstringhelper_map_struct_name =
-        "MaplongInnerAliasBolongndedStringHelper";
+        "MapLongLongInnerAliasBoundedStringHelper";
 constexpr const char* const longlong_inneraliasboundedwstringhelper_map_struct_name =
-        "MaplongInnerAliasBolongndedWStringHelper";
+        "MapLongLongInnerAliasBoundedWStringHelper";
 constexpr const char* const longlong_innerenumhelper_map_struct_name = "MapLongLongInnerEnumHelper";
 constexpr const char* const longlong_innerbitmaskhelper_map_struct_name = "MapLongLongInnerBitMaskHelper";
 constexpr const char* const longlong_inneraliashelper_map_struct_name = "MapLongLongInnerAliasHelper";
@@ -182,7 +184,7 @@ constexpr const char* const ulonglong_ulong_map_struct_name = "MapULongLongULong
 constexpr const char* const ulonglong_longlong_map_struct_name = "MapULongLongLongLong";
 constexpr const char* const ulonglong_ulonglong_map_struct_name = "MapULongLongULongLong";
 constexpr const char* const ulonglong_float_map_struct_name = "MapULongLongFloat";
-constexpr const char* const ulonglong_double_map_struct_name = "MapULongLongDouble";
+constexpr const char* const ulonglong_double_map_struct_name = "MapKeyULongLongValueDouble";
 constexpr const char* const ulonglong_longdouble_map_struct_name = "MapULongLongLongDouble";
 constexpr const char* const ulonglong_boolean_map_struct_name = "MapULongLongBoolean";
 constexpr const char* const ulonglong_octet_map_struct_name = "MapULongLongOctet";
@@ -191,9 +193,9 @@ constexpr const char* const ulonglong_wchar_map_struct_name = "MapULongLongWChar
 constexpr const char* const ulonglong_string_map_struct_name = "MapULongLongString";
 constexpr const char* const ulonglong_wstring_map_struct_name = "MapULongLongWString";
 constexpr const char* const ulonglong_inneraliasboundedstringhelper_map_struct_name =
-        "MapulongInnerAliasBolongndedStringHelper";
+        "MapULongLongInnerAliasBoundedStringHelper";
 constexpr const char* const ulonglong_inneraliasboundedwstringhelper_map_struct_name =
-        "MapulongInnerAliasBolongndedWStringHelper";
+        "MapULongLongInnerAliasBoundedWStringHelper";
 constexpr const char* const ulonglong_innerenumhelper_map_struct_name = "MapULongLongInnerEnumHelper";
 constexpr const char* const ulonglong_innerbitmaskhelper_map_struct_name = "MapULongLongInnerBitMaskHelper";
 constexpr const char* const ulonglong_inneraliashelper_map_struct_name = "MapULongLongInnerAliasHelper";
@@ -219,9 +221,9 @@ constexpr const char* const string_wchar_map_struct_name = "MapStringWChar";
 constexpr const char* const string_string_map_struct_name = "MapStringString";
 constexpr const char* const string_wstring_map_struct_name = "MapStringWString";
 constexpr const char* const string_inneraliasboundedstringhelper_map_struct_name =
-        "MapulongInnerAliasBolongndedStringHelper";
+        "MapStringInnerAliasBoundedStringHelper";
 constexpr const char* const string_inneraliasboundedwstringhelper_map_struct_name =
-        "MapulongInnerAliasBolongndedWStringHelper";
+        "MapStringInnerAliasBoundedWStringHelper";
 constexpr const char* const string_innerenumhelper_map_struct_name = "MapStringInnerEnumHelper";
 constexpr const char* const string_innerbitmaskhelper_map_struct_name = "MapStringInnerBitMaskHelper";
 constexpr const char* const string_inneraliashelper_map_struct_name = "MapStringInnerAliasHelper";
@@ -231,6 +233,7 @@ constexpr const char* const string_inneraliasmaphelper_map_struct_name = "MapStr
 constexpr const char* const string_innerunionhelper_map_struct_name = "MapStringInnerUnionHelper";
 constexpr const char* const string_innerstructurehelper_map_struct_name = "MapStringInnerStructureHelper";
 constexpr const char* const string_innerbitsethelper_map_struct_name = "MapStringInnerBitsetHelper";
+// Maps with wstring as key were omitted because there is not supported currently.
 constexpr const char* const inneraliasboundedstringhelper_short_map_struct_name =
         "MapInnerAliasBoundedStringHelperShort";
 constexpr const char* const inneraliasboundedstringhelper_ushort_map_struct_name =
@@ -260,9 +263,9 @@ constexpr const char* const inneraliasboundedstringhelper_string_map_struct_name
 constexpr const char* const inneraliasboundedstringhelper_wstring_map_struct_name =
         "MapInnerAliasBoundedStringHelperWString";
 constexpr const char* const inneraliasboundedstringhelper_inneraliasboundedstringhelper_map_struct_name =
-        "MapulongInnerAliasBolongndedStringHelper";
+        "MapInnerAliasBoundedStringHelperInnerAliasBoundedStringHelper";
 constexpr const char* const inneraliasboundedstringhelper_inneraliasboundedwstringhelper_map_struct_name =
-        "MapulongInnerAliasBolongndedWStringHelper";
+        "MapInnerAliasBoundedStringHelperInnerAliasBoundedWStringHelper";
 constexpr const char* const inneraliasboundedstringhelper_innerenumhelper_map_struct_name =
         "MapInnerAliasBoundedStringHelperInnerEnumHelper";
 constexpr const char* const inneraliasboundedstringhelper_innerbitmaskhelper_map_struct_name =
@@ -281,6 +284,7 @@ constexpr const char* const inneraliasboundedstringhelper_innerstructurehelper_m
         "MapInnerAliasBoundedStringHelperInnerStructureHelper";
 constexpr const char* const inneraliasboundedstringhelper_innerbitsethelper_map_struct_name =
         "MapInnerAliasBoundedStringHelperInnerBitsetHelper";
+// Maps with alias of wstring as key were omitted because there is not supported currently.
 constexpr const char* const bounded_small_map_struct_name = "BoundedSmallMap";
 constexpr const char* const bounded_large_map_struct_name = "BoundedLargeMap";
 
@@ -424,14 +428,14 @@ constexpr const char* const var_longlong_innerunionhelper_map = "var_map_longlon
 constexpr const char* const var_longlong_innerstructurehelper_map = "var_map_longlong_innerstructurehelper";
 constexpr const char* const var_longlong_innerbitsethelper_map = "var_map_longlong_innerbitsethelper";
 constexpr const char* const var_ulonglong_short_map = "var_map_u_long_long_short";
-constexpr const char* const var_ulonglong_ushort_map = "var_map_u_long_long_ushort";
+constexpr const char* const var_ulonglong_ushort_map = "var_map_u_long_long_u_short";
 constexpr const char* const var_ulonglong_long_map = "var_map_u_long_long_long";
-constexpr const char* const var_ulonglong_ulong_map = "var_map_u_long_long_ulong";
+constexpr const char* const var_ulonglong_ulong_map = "var_map_u_long_long_u_long";
 constexpr const char* const var_ulonglong_longlong_map = "var_map_u_long_long_longlong";
-constexpr const char* const var_ulonglong_ulonglong_map = "var_map_u_long_long_ulonglong";
+constexpr const char* const var_ulonglong_ulonglong_map = "var_map_u_long_long_u_longlong";
 constexpr const char* const var_ulonglong_float_map = "var_map_u_long_long_float";
 constexpr const char* const var_ulonglong_double_map = "var_map_u_long_long_double";
-constexpr const char* const var_ulonglong_longdouble_map = "var_map_u_long_long_longdouble";
+constexpr const char* const var_ulonglong_longdouble_map = "var_map_u_long_long_long double";
 constexpr const char* const var_ulonglong_boolean_map = "var_map_u_long_long_boolean";
 constexpr const char* const var_ulonglong_octet_map = "var_map_u_long_long_octet";
 constexpr const char* const var_ulonglong_char_map = "var_map_u_long_long_char";
@@ -439,18 +443,19 @@ constexpr const char* const var_ulonglong_wchar_map = "var_map_u_long_long_wchar
 constexpr const char* const var_ulonglong_string_map = "var_map_u_long_long_string";
 constexpr const char* const var_ulonglong_wstring_map = "var_map_u_long_long_wstring";
 constexpr const char* const var_ulonglong_inneraliasboundedstringhelper_map =
-        "var_map_u_long_long_inneraliasboundedstringhelper";
+        "var_map_u_long_long_inner_alias_bounded_string_helper";
 constexpr const char* const var_ulonglong_inneraliasboundedwstringhelper_map =
-        "var_map_u_long_long_inneraliasboundedwstringhelper";
-constexpr const char* const var_ulonglong_innerenumhelper_map = "var_map_u_long_long_innerenumhelper";
-constexpr const char* const var_ulonglong_innerbitmaskhelper_map = "var_map_u_long_long_innerbitmaskhelper";
-constexpr const char* const var_ulonglong_inneraliashelper_map = "var_map_u_long_long_inneraliashelper";
-constexpr const char* const var_ulonglong_inneraliasarrayhelper_map = "var_map_u_long_long_inneraliasarrayhelper";
-constexpr const char* const var_ulonglong_inneraliassequencehelper_map = "var_map_u_long_long_inneraliassequencehelper";
-constexpr const char* const var_ulonglong_inneraliasmaphelper_map = "var_map_u_long_long_inneraliasmaphelper";
-constexpr const char* const var_ulonglong_innerunionhelper_map = "var_map_u_long_long_innerunionhelper";
-constexpr const char* const var_ulonglong_innerstructurehelper_map = "var_map_u_long_long_innerstructurehelper";
-constexpr const char* const var_ulonglong_innerbitsethelper_map = "var_map_u_long_long_innerbitsethelper";
+        "var_map_u_long_long_inner_alias_bounded_wstring_helper";
+constexpr const char* const var_ulonglong_innerenumhelper_map = "var_map_u_long_long_inner_enum_helper";
+constexpr const char* const var_ulonglong_innerbitmaskhelper_map = "var_map_u_long_long_inner_bit_mask_helper";
+constexpr const char* const var_ulonglong_inneraliashelper_map = "var_map_u_long_long_inner_alias_helper";
+constexpr const char* const var_ulonglong_inneraliasarrayhelper_map = "var_map_u_long_long_inner_alias_array_helper";
+constexpr const char* const var_ulonglong_inneraliassequencehelper_map =
+        "var_map_u_long_long_inner_alias_sequence_helper";
+constexpr const char* const var_ulonglong_inneraliasmaphelper_map = "var_map_u_long_long_inner_alias_map_helper";
+constexpr const char* const var_ulonglong_innerunionhelper_map = "var_map_u_long_long_inner_union_helper";
+constexpr const char* const var_ulonglong_innerstructurehelper_map = "var_map_u_long_long_inner_structure_helper";
+constexpr const char* const var_ulonglong_innerbitsethelper_map = "var_map_u_long_long_inner_bitset_helper";
 constexpr const char* const var_string_short_map = "var_map_string_short";
 constexpr const char* const var_string_ushort_map = "var_map_string_ushort";
 constexpr const char* const var_string_long_map = "var_map_string_long";
@@ -547,7 +552,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -590,7 +595,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_short().end(), it);
+            ASSERT_NE(struct_data.var_map_short_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -605,7 +610,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_short().end(), it);
+            ASSERT_NE(struct_data.var_map_short_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -627,7 +632,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -670,7 +675,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_short_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -685,7 +690,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_short_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -707,7 +712,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -750,7 +755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_long().end(), it);
+            ASSERT_NE(struct_data.var_map_short_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -765,7 +770,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_long().end(), it);
+            ASSERT_NE(struct_data.var_map_short_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -787,7 +792,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -830,7 +835,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_short_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -845,7 +850,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_short_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -867,7 +872,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -910,7 +915,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_short_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -925,7 +930,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_short_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -947,7 +952,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -990,7 +995,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_short_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1005,7 +1010,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_short_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1027,7 +1032,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1070,7 +1075,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_float().end(), it);
+            ASSERT_NE(struct_data.var_map_short_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1085,7 +1090,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_float().end(), it);
+            ASSERT_NE(struct_data.var_map_short_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1107,7 +1112,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1150,7 +1155,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_double().end(), it);
+            ASSERT_NE(struct_data.var_map_short_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1165,7 +1170,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_double().end(), it);
+            ASSERT_NE(struct_data.var_map_short_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1187,7 +1192,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1230,7 +1235,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_short_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1245,7 +1250,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_short_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1267,7 +1272,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1310,7 +1315,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_short_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1325,7 +1330,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_short_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1347,7 +1352,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1390,7 +1395,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_short_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1405,7 +1410,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_short_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1427,7 +1432,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1470,7 +1475,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_char().end(), it);
+            ASSERT_NE(struct_data.var_map_short_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1485,7 +1490,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_char().end(), it);
+            ASSERT_NE(struct_data.var_map_short_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1507,7 +1512,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1515,10 +1520,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int16_t, wchar_t> value {
-        {100, 'a'},
-        {-100, 'A'},
-        {50, '{'},
-        {-50, '}'}
+        {100, L'a'},
+        {-100, L'A'},
+        {50, L'{'},
+        {-50, L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_short_wchar_map));
@@ -1550,7 +1555,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_short_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1565,7 +1570,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_short_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1588,7 +1593,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1631,7 +1636,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_string().end(), it);
+            ASSERT_NE(struct_data.var_map_short_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1646,7 +1651,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_string().end(), it);
+            ASSERT_NE(struct_data.var_map_short_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1669,7 +1674,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1712,7 +1717,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_short_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1727,7 +1732,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_short_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1749,7 +1754,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1792,7 +1797,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -1807,7 +1812,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -1829,7 +1834,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1872,7 +1877,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1887,7 +1892,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1909,7 +1914,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -1952,7 +1957,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1967,7 +1972,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -1989,7 +1994,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2032,7 +2037,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2047,7 +2052,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2069,7 +2074,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2112,7 +2117,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2127,7 +2132,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2149,7 +2154,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2192,7 +2197,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -2207,7 +2212,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -2229,7 +2234,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2272,7 +2277,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -2287,7 +2292,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -2309,7 +2314,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2377,8 +2382,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasmaphelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
+            ASSERT_NE(struct_data.var_map_short_inneraliasmaphelper().end(), it);
+            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -2392,7 +2397,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -2414,7 +2419,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2465,7 +2470,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -2492,7 +2497,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -2525,7 +2530,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2584,7 +2589,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -2600,7 +2605,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -2623,7 +2628,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2697,7 +2702,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -2715,7 +2720,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_short_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_short_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -2742,7 +2747,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2785,7 +2790,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_short().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2800,7 +2805,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_short().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2822,7 +2827,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2865,7 +2870,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2880,7 +2885,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2902,7 +2907,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -2945,7 +2950,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_long().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2960,7 +2965,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_long().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -2982,7 +2987,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3025,7 +3030,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3040,7 +3045,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3062,7 +3067,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3105,7 +3110,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3120,7 +3125,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3142,7 +3147,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3185,7 +3190,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3200,7 +3205,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3222,7 +3227,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3265,7 +3270,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_float().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3280,7 +3285,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_float().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3302,7 +3307,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3345,7 +3350,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_double().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3360,7 +3365,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_double().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3382,7 +3387,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3425,7 +3430,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3440,7 +3445,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3462,7 +3467,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3505,7 +3510,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3520,7 +3525,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3542,7 +3547,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3585,7 +3590,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3600,7 +3605,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3622,7 +3627,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3665,7 +3670,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_char().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3680,7 +3685,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_char().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3702,7 +3707,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3710,10 +3715,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint16_t, wchar_t> value {
-        {100, 'a'},
-        {200, 'A'},
-        {50, '{'},
-        {70, '}'}
+        {100, L'a'},
+        {200, L'A'},
+        {50, L'{'},
+        {70, L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ushort_wchar_map));
@@ -3745,7 +3750,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3760,7 +3765,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3783,7 +3788,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3826,7 +3831,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_string().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3841,7 +3846,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_string().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3864,7 +3869,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3907,7 +3912,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3922,7 +3927,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -3944,7 +3949,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -3987,7 +3992,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -4002,7 +4007,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -4024,7 +4029,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4067,7 +4072,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4082,7 +4087,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4104,7 +4109,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4147,7 +4152,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4162,7 +4167,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4184,7 +4189,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4227,7 +4232,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4242,7 +4247,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4264,7 +4269,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4307,7 +4312,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4322,7 +4327,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4344,7 +4349,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4387,7 +4392,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -4402,7 +4407,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -4424,7 +4429,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4467,7 +4472,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -4482,7 +4487,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -4504,7 +4509,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4572,8 +4577,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasmaphelper().end(), it);
-            EXPECT_EQ(map_element.second, it->second);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasmaphelper().end(), it);
+            EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
 
@@ -4587,7 +4592,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -4609,7 +4614,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4660,7 +4665,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -4687,7 +4692,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -4720,7 +4725,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4779,7 +4784,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -4795,7 +4800,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -4818,7 +4823,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4892,7 +4897,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -4910,7 +4915,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ushort_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ushort_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -4937,7 +4942,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -4980,7 +4985,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_short().end(), it);
+            ASSERT_NE(struct_data.var_map_long_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -4995,7 +5000,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_short().end(), it);
+            ASSERT_NE(struct_data.var_map_long_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5017,7 +5022,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5060,7 +5065,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_long_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5075,7 +5080,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_long_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5097,7 +5102,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5140,7 +5145,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5155,7 +5160,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5177,7 +5182,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5220,7 +5225,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_long_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5235,7 +5240,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_long_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5244,7 +5249,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
 
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLong)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongLongValue)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
@@ -5257,7 +5262,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5300,7 +5305,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_long_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5315,7 +5320,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_long_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5337,7 +5342,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5380,7 +5385,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_long_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5395,7 +5400,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_long_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5417,7 +5422,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5460,7 +5465,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_float().end(), it);
+            ASSERT_NE(struct_data.var_map_long_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5475,7 +5480,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_float().end(), it);
+            ASSERT_NE(struct_data.var_map_long_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5497,7 +5502,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5540,7 +5545,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_double().end(), it);
+            ASSERT_NE(struct_data.var_map_long_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5555,7 +5560,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_double().end(), it);
+            ASSERT_NE(struct_data.var_map_long_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5564,7 +5569,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
 
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongDouble)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongDoubleValue)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
@@ -5577,7 +5582,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5620,7 +5625,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_long_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5635,7 +5640,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_long_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5657,7 +5662,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5700,7 +5705,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_long_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5715,7 +5720,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_long_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5737,7 +5742,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5780,7 +5785,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_long_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5795,7 +5800,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_long_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5817,7 +5822,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5860,7 +5865,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_char().end(), it);
+            ASSERT_NE(struct_data.var_map_long_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5875,7 +5880,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_char().end(), it);
+            ASSERT_NE(struct_data.var_map_long_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5897,7 +5902,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -5905,10 +5910,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int32_t, wchar_t> value {
-        {-100, 'a'},
-        {200, 'A'},
-        {-50, '{'},
-        {70, '}'}
+        {-100, L'a'},
+        {200, L'A'},
+        {-50, L'{'},
+        {70, L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_long_wchar_map));
@@ -5940,7 +5945,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_long_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5955,7 +5960,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_long_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -5978,7 +5983,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6021,7 +6026,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_string().end(), it);
+            ASSERT_NE(struct_data.var_map_long_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6036,7 +6041,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_string().end(), it);
+            ASSERT_NE(struct_data.var_map_long_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6059,7 +6064,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6102,7 +6107,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_long_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6117,7 +6122,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_long_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6139,7 +6144,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6182,7 +6187,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -6197,7 +6202,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -6219,7 +6224,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6262,7 +6267,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6277,7 +6282,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6299,7 +6304,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6342,7 +6347,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6357,7 +6362,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6379,7 +6384,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6422,7 +6427,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6437,7 +6442,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6459,7 +6464,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6502,7 +6507,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6517,7 +6522,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6539,7 +6544,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6582,7 +6587,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -6597,7 +6602,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -6619,7 +6624,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6662,7 +6667,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -6677,7 +6682,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -6699,7 +6704,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6767,7 +6772,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -6782,7 +6787,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -6804,7 +6809,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6855,7 +6860,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -6882,7 +6887,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -6915,7 +6920,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -6974,7 +6979,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -6990,7 +6995,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -7013,7 +7018,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7087,7 +7092,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -7105,7 +7110,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_long_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_long_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -7132,7 +7137,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7175,7 +7180,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_short().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7190,7 +7195,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_short().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7212,7 +7217,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7255,7 +7260,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7270,7 +7275,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7292,7 +7297,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7335,7 +7340,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_long().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7350,7 +7355,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_long().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7372,7 +7377,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7415,7 +7420,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7430,7 +7435,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7439,7 +7444,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
 
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongLong)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
@@ -7452,7 +7457,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7495,7 +7500,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7510,7 +7515,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7532,7 +7537,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7575,7 +7580,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7590,7 +7595,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7612,7 +7617,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7655,7 +7660,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_float().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7670,7 +7675,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_float().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7692,7 +7697,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7735,7 +7740,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_double().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7750,7 +7755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_double().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7759,7 +7764,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
 
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongDouble)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongDouble)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
@@ -7772,7 +7777,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7815,7 +7820,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7830,7 +7835,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7852,7 +7857,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7895,7 +7900,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7910,7 +7915,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7932,7 +7937,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -7975,7 +7980,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -7990,7 +7995,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8012,7 +8017,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8055,7 +8060,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_char().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8070,7 +8075,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_char().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8092,7 +8097,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8100,10 +8105,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint32_t, wchar_t> value {
-        {100, 'a'},
-        {200, 'A'},
-        {50, '{'},
-        {70, '}'}
+        {100, L'a'},
+        {200, L'A'},
+        {50, L'{'},
+        {70, L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulong_wchar_map));
@@ -8135,7 +8140,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8150,7 +8155,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8173,7 +8178,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8216,7 +8221,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_string().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8231,7 +8236,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_string().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8254,7 +8259,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8297,7 +8302,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8312,7 +8317,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8334,7 +8339,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8377,7 +8382,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -8392,7 +8397,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -8414,7 +8419,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8457,7 +8462,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8472,7 +8477,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8494,7 +8499,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8537,7 +8542,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8552,7 +8557,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8574,7 +8579,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8617,7 +8622,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8632,7 +8637,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8654,7 +8659,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8697,7 +8702,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8712,7 +8717,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8734,7 +8739,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8777,7 +8782,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -8792,7 +8797,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -8814,7 +8819,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8857,7 +8862,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -8872,7 +8877,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -8894,7 +8899,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -8962,7 +8967,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -8977,7 +8982,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -8999,7 +9004,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9050,7 +9055,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -9077,7 +9082,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -9110,7 +9115,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9169,7 +9174,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -9185,7 +9190,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -9208,7 +9213,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9282,7 +9287,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -9300,7 +9305,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_ulong_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_ulong_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -9327,7 +9332,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9370,7 +9375,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_short().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9385,7 +9390,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_short().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9407,7 +9412,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9450,7 +9455,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9465,7 +9470,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9487,7 +9492,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9530,7 +9535,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_long().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9545,7 +9550,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_long().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9567,7 +9572,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9610,7 +9615,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9625,7 +9630,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9647,7 +9652,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9690,7 +9695,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9705,7 +9710,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9727,7 +9732,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9770,7 +9775,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9785,7 +9790,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9807,7 +9812,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9850,7 +9855,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_float().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9865,7 +9870,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_float().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9887,7 +9892,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -9930,7 +9935,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_double().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9945,7 +9950,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_double().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -9967,7 +9972,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10010,7 +10015,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10025,7 +10030,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10047,7 +10052,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10090,7 +10095,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10105,7 +10110,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10127,7 +10132,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10170,7 +10175,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10185,7 +10190,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10207,7 +10212,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10250,7 +10255,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_char().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10265,7 +10270,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_char().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10287,7 +10292,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10295,10 +10300,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<int64_t, wchar_t> value {
-        {-100, 'a'},
-        {200, 'A'},
-        {-50, '{'},
-        {70, '}'}
+        {-100, L'a'},
+        {200, L'A'},
+        {-50, L'{'},
+        {70, L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_longlong_wchar_map));
@@ -10330,7 +10335,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10345,7 +10350,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10368,7 +10373,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10411,7 +10416,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_string().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10426,7 +10431,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_string().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10449,7 +10454,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10492,7 +10497,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10507,7 +10512,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10529,7 +10534,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10572,7 +10577,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -10587,7 +10592,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -10609,7 +10614,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10652,7 +10657,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10667,7 +10672,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10689,7 +10694,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10732,7 +10737,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10747,7 +10752,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10769,7 +10774,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10812,7 +10817,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10827,7 +10832,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10849,7 +10854,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10892,7 +10897,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10907,7 +10912,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -10929,7 +10934,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -10972,7 +10977,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -10987,7 +10992,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -11009,7 +11014,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11052,7 +11057,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -11067,7 +11072,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelpe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -11089,7 +11094,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11157,7 +11162,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11172,7 +11177,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -11194,7 +11199,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11245,7 +11250,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -11272,7 +11277,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -11305,7 +11310,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11364,7 +11369,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -11380,7 +11385,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -11403,7 +11408,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11477,7 +11482,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -11495,7 +11500,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_longlong_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_longlong_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -11522,7 +11527,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11565,7 +11570,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_short().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11580,7 +11585,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_short().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11602,7 +11607,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11645,7 +11650,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_u_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_u_short().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_u_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11660,7 +11665,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_u_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_u_short().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_u_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11669,7 +11674,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
 
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyLongValue)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
@@ -11682,7 +11687,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyLongValue)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11725,7 +11730,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyLongValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11740,7 +11745,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyLongValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11762,7 +11767,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11805,7 +11810,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_u_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_u_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_u_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11820,7 +11825,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_u_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_u_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_u_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11842,7 +11847,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11885,7 +11890,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11900,7 +11905,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11922,7 +11927,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -11965,7 +11970,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_u_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_u_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_u_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -11980,7 +11985,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_u_long_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_u_long_long().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_u_long_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12002,7 +12007,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12045,7 +12050,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_float().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12060,7 +12065,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_float().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12069,7 +12074,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
 
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyDoubleValue)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongLongValueDouble)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
@@ -12082,7 +12087,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyDoubleValue)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12125,7 +12130,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyDoubleValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_double().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12140,7 +12145,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongKeyDoubleValue)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_double().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12162,7 +12167,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12205,7 +12210,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_long_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_long_double().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_long_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12220,7 +12225,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_long_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_long_double().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_long_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12242,7 +12247,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12285,7 +12290,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12300,7 +12305,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12322,7 +12327,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12365,7 +12370,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12380,7 +12385,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12402,7 +12407,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12445,7 +12450,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_char().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12460,7 +12465,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_char().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12482,7 +12487,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12490,10 +12495,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<uint64_t, wchar_t> value {
-        {100, 'a'},
-        {200, 'A'},
-        {50, '{'},
-        {70, '}'}
+        {100, L'a'},
+        {200, L'A'},
+        {50, L'{'},
+        {70, L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_ulonglong_wchar_map));
@@ -12525,7 +12530,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12540,7 +12545,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12563,7 +12568,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12606,7 +12611,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_string().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12621,7 +12626,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_string().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12644,7 +12649,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12687,7 +12692,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12702,7 +12707,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12724,7 +12729,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12767,7 +12772,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -12782,7 +12787,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_string_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -12804,7 +12809,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12847,7 +12852,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12862,7 +12867,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_bounded_wstring_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12884,7 +12889,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -12927,7 +12932,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_enum_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_enum_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_enum_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12942,7 +12947,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_enum_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_enum_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_enum_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -12964,7 +12969,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13007,7 +13012,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_bit_mask_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_bit_mask_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_bit_mask_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13022,7 +13027,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_bit_mask_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_bit_mask_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_bit_mask_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13044,7 +13049,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13087,7 +13092,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13102,7 +13107,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13124,7 +13129,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13167,7 +13172,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_array_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_array_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_array_helper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -13182,7 +13187,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_array_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_array_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_array_helper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -13204,7 +13209,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13247,7 +13252,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_sequence_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_sequence_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_sequence_helper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -13262,7 +13267,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelp
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_sequence_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_sequence_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_sequence_helper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -13284,7 +13289,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13352,7 +13357,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_map_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_map_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_map_helper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13367,7 +13372,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_alias_map_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_alias_map_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_alias_map_helper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -13389,7 +13394,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13440,7 +13445,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_union_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_union_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_union_helper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -13467,7 +13472,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_union_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_union_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_union_helper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -13500,7 +13505,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13559,7 +13564,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_structure_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_structure_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_structure_helper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -13575,7 +13580,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_structure_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_structure_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_structure_helper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -13598,7 +13603,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13672,7 +13677,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_bitset_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -13690,7 +13695,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_u_long_long_inner_bitset_helper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
+            ASSERT_NE(struct_data.var_map_u_long_long_inner_bitset_helper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -13718,7 +13723,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13760,7 +13765,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_short().end(), it);
+            ASSERT_NE(struct_data.var_map_string_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13775,7 +13780,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_short().end(), it);
+            ASSERT_NE(struct_data.var_map_string_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13798,7 +13803,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13840,7 +13845,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_string_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13855,7 +13860,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_string_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13878,7 +13883,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -13920,7 +13925,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_long().end(), it);
+            ASSERT_NE(struct_data.var_map_string_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13935,7 +13940,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_long().end(), it);
+            ASSERT_NE(struct_data.var_map_string_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -13958,7 +13963,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14000,7 +14005,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_string_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14015,7 +14020,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_string_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14038,7 +14043,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14080,7 +14085,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_string_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14095,7 +14100,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_string_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14118,7 +14123,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14160,7 +14165,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_string_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14175,7 +14180,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_string_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14198,7 +14203,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14240,7 +14245,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_float().end(), it);
+            ASSERT_NE(struct_data.var_map_string_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14255,7 +14260,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_float().end(), it);
+            ASSERT_NE(struct_data.var_map_string_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14278,7 +14283,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14320,7 +14325,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_double().end(), it);
+            ASSERT_NE(struct_data.var_map_string_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14335,7 +14340,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_double().end(), it);
+            ASSERT_NE(struct_data.var_map_string_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14358,7 +14363,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14400,7 +14405,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_string_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14415,7 +14420,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_string_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14438,7 +14443,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14480,7 +14485,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_string_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14495,7 +14500,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_string_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14518,7 +14523,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14560,7 +14565,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_string_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14575,7 +14580,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_string_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14598,7 +14603,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14640,7 +14645,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_char().end(), it);
+            ASSERT_NE(struct_data.var_map_string_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14655,7 +14660,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_char().end(), it);
+            ASSERT_NE(struct_data.var_map_string_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14678,7 +14683,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14686,10 +14691,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, wchar_t> value {
-        {"we", 'a'},
-        {"are", 'A'},
-        {"testing", '{'},
-        {"things", '}'}
+        {"we", L'a'},
+        {"are", L'A'},
+        {"testing", L'{'},
+        {"things", L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_string_wchar_map));
@@ -14720,7 +14725,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_string_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14735,7 +14740,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_string_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14759,7 +14764,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14801,7 +14806,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_string().end(), it);
+            ASSERT_NE(struct_data.var_map_string_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14816,7 +14821,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_string().end(), it);
+            ASSERT_NE(struct_data.var_map_string_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14840,7 +14845,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
                         ->build(),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14882,7 +14887,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_string_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14897,7 +14902,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_string_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -14920,7 +14925,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -14962,7 +14967,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -14977,7 +14982,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasboundedstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -15000,7 +15005,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15042,7 +15047,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15057,7 +15062,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasboundedwstringhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15080,7 +15085,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15122,7 +15127,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15137,7 +15142,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15160,7 +15165,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15202,7 +15207,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15217,7 +15222,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15240,7 +15245,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15282,7 +15287,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15297,7 +15302,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15320,7 +15325,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15362,7 +15367,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -15377,7 +15382,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -15400,7 +15405,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15442,7 +15447,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -15457,7 +15462,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -15480,7 +15485,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15548,7 +15553,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15563,7 +15568,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -15586,7 +15591,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15637,7 +15642,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -15664,7 +15669,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -15698,7 +15703,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15757,7 +15762,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -15773,7 +15778,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -15797,7 +15802,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15871,7 +15876,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -15889,7 +15894,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_string_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_string_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -15901,6 +15906,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
 
 }
 //}}}
+
+// Maps with wstring as key were omitted because there is not supported currently.
 
 //{{{ InnerAliasBoundedStringHelper key
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperShort)
@@ -15916,7 +15923,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -15958,7 +15965,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_short().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15973,7 +15980,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_short().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_short().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_short().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -15995,7 +16002,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16037,7 +16044,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16052,7 +16059,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_ushort().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_ushort().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ushort().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16074,7 +16081,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16116,7 +16123,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_long().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16131,7 +16138,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_long().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_long().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_long().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16153,7 +16160,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16195,7 +16202,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16210,7 +16217,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_ulong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulong().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16232,7 +16239,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_INT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16274,7 +16281,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16289,7 +16296,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_longlong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_longlong().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_longlong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16311,7 +16318,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_UINT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16353,7 +16360,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16368,7 +16375,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_ulonglong().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulonglong().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_ulonglong().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16390,7 +16397,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT32),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16432,7 +16439,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_float().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16447,7 +16454,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_float().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_float().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_float().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16469,7 +16476,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT64),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16511,7 +16518,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_double().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16526,7 +16533,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_double().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_double().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_double().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16548,7 +16555,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_FLOAT128),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16590,7 +16597,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16605,7 +16612,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_longdouble().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_longdouble().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_longdouble().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16627,7 +16634,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BOOLEAN),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16669,7 +16676,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16684,7 +16691,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_boolean().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_boolean().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_boolean().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16706,7 +16713,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_BYTE),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16748,7 +16755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16763,7 +16770,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_octet().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_octet().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_octet().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16785,7 +16792,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR8),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16827,7 +16834,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_char().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16842,7 +16849,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_char().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_char().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_char().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16864,7 +16871,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->get_primitive_type(TK_CHAR16),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16872,10 +16879,10 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
     ASSERT_TRUE(data);
 
     const std::unordered_map<std::string, wchar_t> value {
-        {"we", 'a'},
-        {"are", 'A'},
-        {"testing", '{'},
-        {"things", '}'}
+        {"we", L'a'},
+        {"are", L'A'},
+        {"testing", L'{'},
+        {"things", L'}'}
     };
     wchar_t test_value;
     auto map_data = data->loan_value(data->get_member_id_by_name(var_inneraliasboundedstringhelper_wchar_map));
@@ -16906,7 +16913,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16921,7 +16928,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_wchar().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_wchar().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_wchar().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -16944,7 +16951,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->create_string_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -16986,7 +16993,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_string().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17001,7 +17008,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_string().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_string().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_string().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17024,7 +17031,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
                 create_inner_alias_bounded_string_helper(),
                 DynamicTypeBuilderFactory:: get_instance()->create_wstring_type(static_cast<uint32_t>(LENGTH_UNLIMITED))
                         ->build(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17066,7 +17073,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17081,7 +17088,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_wstring().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_wstring().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_wstring().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17103,7 +17110,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_alias_bounded_string_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17149,7 +17156,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().find(
                 map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -17166,7 +17173,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().find(
                 map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second.to_string());
         }
     }
@@ -17188,7 +17195,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_alias_bounded_wstring_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17234,7 +17241,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().find(
                 map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17251,7 +17258,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().find(
                 map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasboundedwstringhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17273,7 +17280,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_enum_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17316,7 +17323,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17331,7 +17338,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerenumhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17353,7 +17360,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_bitmask_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17397,7 +17404,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17412,7 +17419,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitmaskhelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17434,7 +17441,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_alias_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17477,7 +17484,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17492,7 +17499,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliashelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17514,7 +17521,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_alias_array_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17558,7 +17565,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -17573,7 +17580,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasarrayhelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -17595,7 +17602,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_alias_sequence_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17640,7 +17647,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it =
                     struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -17656,7 +17663,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         {
             auto it =
                     struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliassequencehelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -17678,7 +17685,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_alias_map_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17748,7 +17755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -17763,7 +17770,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_inneraliasmaphelper().end(), it);
             EXPECT_TRUE(std::equal(map_element.second.begin(), map_element.second.end(), it->second.begin()));
         }
     }
@@ -17785,7 +17792,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_union_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17837,7 +17844,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -17864,7 +17871,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerunionhelper().end(), it);
             if (union_long_member_name == map_element.second.first)
             {
                 EXPECT_EQ(map_element.second.second, static_cast<int16_t>(it->second.longValue()));
@@ -17897,7 +17904,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_struct_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -17958,7 +17965,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -17974,7 +17981,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerstructurehelper().end(), it);
             EXPECT_EQ(map_element.second.first, it->second.field1());
             EXPECT_EQ(map_element.second.second, it->second.field2());
         }
@@ -17997,7 +18004,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
     member_descriptor->type(DynamicTypeBuilderFactory::get_instance()->create_map_type(
                 create_inner_alias_bounded_string_helper(),
                 create_inner_bitset_helper(),
-                10)->build());
+                static_cast<uint32_t>(LENGTH_UNLIMITED))->build());
     ASSERT_EQ(RETCODE_OK, type_builder->add_member(member_descriptor));
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -18072,7 +18079,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -18090,7 +18097,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         for (auto const& map_element : value)
         {
             auto it = struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().find(map_element.first);
-            EXPECT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
+            ASSERT_NE(struct_data.var_map_inneraliasboundedstringhelper_innerbitsethelper().end(), it);
             EXPECT_EQ(std::get<0>(map_element.second), it->second.a());
             EXPECT_EQ(std::get<1>(map_element.second), it->second.b());
             EXPECT_EQ(std::get<2>(map_element.second), it->second.c());
@@ -18230,7 +18237,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         for (auto const& map_element : value_small_map)
         {
             auto it = struct_data.var_small_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_small_map().end(), it);
+            ASSERT_NE(struct_data.var_small_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_unbounded_string_long_bounded_small_map.size(),
@@ -18238,7 +18245,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         for (auto const& map_element : value_unbounded_string_long_bounded_small_map)
         {
             auto it = struct_data.var_unbounded_string_long_bounded_small_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_unbounded_string_long_bounded_small_map().end(), it);
+            ASSERT_NE(struct_data.var_unbounded_string_long_bounded_small_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_long_unbounded_string_long_bounded_small_map.size(),
@@ -18246,7 +18253,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         for (auto const& map_element : value_long_unbounded_string_long_bounded_small_map)
         {
             auto it = struct_data.var_long_unbounded_string_bounded_small_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_long_unbounded_string_bounded_small_map().end(), it);
+            ASSERT_NE(struct_data.var_long_unbounded_string_bounded_small_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -18261,7 +18268,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         for (auto const& map_element : value_small_map)
         {
             auto it = struct_data.var_small_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_small_map().end(), it);
+            ASSERT_NE(struct_data.var_small_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_unbounded_string_long_bounded_small_map.size(),
@@ -18269,7 +18276,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         for (auto const& map_element : value_unbounded_string_long_bounded_small_map)
         {
             auto it = struct_data.var_unbounded_string_long_bounded_small_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_unbounded_string_long_bounded_small_map().end(), it);
+            ASSERT_NE(struct_data.var_unbounded_string_long_bounded_small_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_long_unbounded_string_long_bounded_small_map.size(),
@@ -18277,7 +18284,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         for (auto const& map_element : value_long_unbounded_string_long_bounded_small_map)
         {
             auto it = struct_data.var_long_unbounded_string_bounded_small_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_long_unbounded_string_bounded_small_map().end(), it);
+            ASSERT_NE(struct_data.var_long_unbounded_string_bounded_small_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -18413,7 +18420,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         for (auto const& map_element : value_large_map)
         {
             auto it = struct_data.var_large_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_large_map().end(), it);
+            ASSERT_NE(struct_data.var_large_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_unbounded_string_long_bounded_large_map.size(),
@@ -18421,7 +18428,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         for (auto const& map_element : value_unbounded_string_long_bounded_large_map)
         {
             auto it = struct_data.var_unbounded_string_long_bounded_large_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_unbounded_string_long_bounded_large_map().end(), it);
+            ASSERT_NE(struct_data.var_unbounded_string_long_bounded_large_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_long_unbounded_string_long_bounded_large_map.size(),
@@ -18429,7 +18436,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         for (auto const& map_element : value_long_unbounded_string_long_bounded_large_map)
         {
             auto it = struct_data.var_long_unbounded_string_bounded_large_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_long_unbounded_string_bounded_large_map().end(), it);
+            ASSERT_NE(struct_data.var_long_unbounded_string_bounded_large_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }
@@ -18444,7 +18451,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         for (auto const& map_element : value_large_map)
         {
             auto it = struct_data.var_large_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_large_map().end(), it);
+            ASSERT_NE(struct_data.var_large_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_unbounded_string_long_bounded_large_map.size(),
@@ -18452,7 +18459,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         for (auto const& map_element : value_unbounded_string_long_bounded_large_map)
         {
             auto it = struct_data.var_unbounded_string_long_bounded_large_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_unbounded_string_long_bounded_large_map().end(), it);
+            ASSERT_NE(struct_data.var_unbounded_string_long_bounded_large_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
         EXPECT_EQ(value_long_unbounded_string_long_bounded_large_map.size(),
@@ -18460,7 +18467,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         for (auto const& map_element : value_long_unbounded_string_long_bounded_large_map)
         {
             auto it = struct_data.var_long_unbounded_string_bounded_large_map().find(map_element.first);
-            EXPECT_NE(struct_data.var_long_unbounded_string_bounded_large_map().end(), it);
+            ASSERT_NE(struct_data.var_long_unbounded_string_bounded_large_map().end(), it);
             EXPECT_EQ(map_element.second, it->second);
         }
     }

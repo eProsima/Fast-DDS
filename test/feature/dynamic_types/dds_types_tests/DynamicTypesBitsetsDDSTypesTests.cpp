@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-
 #include <gtest/gtest.h>
 
 #include "../DynamicTypesDDSTypesTest.hpp"
@@ -167,7 +165,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetStruct)
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
     member_descriptor->name(var_innerbitsethelper_name);
-    member_descriptor->type(DynamicTypesDDSTypesTest::create_inner_bitset_helper());
+    member_descriptor->type(create_inner_bitset_helper());
     type_builder->add_member(member_descriptor);
     member_descriptor = traits<MemberDescriptor>::make_shared();
     member_descriptor->name(var_innertypedbitsethelper_name);

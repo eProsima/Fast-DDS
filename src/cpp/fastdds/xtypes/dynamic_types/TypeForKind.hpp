@@ -163,6 +163,9 @@ template <TypeKind TK, TypeKind PromotedTK>
 struct TypePromotion : std::false_type {};
 
 template <>
+struct TypePromotion<TK_INT8, TK_INT8> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_INT8, TK_INT16> : std::true_type {};
 
 template <>
@@ -181,6 +184,9 @@ template <>
 struct TypePromotion<TK_INT8, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_INT16, TK_INT16> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_INT16, TK_INT32> : std::true_type {};
 
 template <>
@@ -196,6 +202,9 @@ template <>
 struct TypePromotion<TK_INT16, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_INT32, TK_INT32> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_INT32, TK_INT64> : std::true_type {};
 
 template <>
@@ -205,7 +214,13 @@ template <>
 struct TypePromotion<TK_INT32, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_INT64, TK_INT64> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_INT64, TK_FLOAT128> : std::true_type {};
+
+template <>
+struct TypePromotion<TK_UINT8, TK_UINT8> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_UINT8, TK_INT16> : std::true_type {};
@@ -235,6 +250,9 @@ template <>
 struct TypePromotion<TK_UINT8, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_UINT16, TK_UINT16> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_UINT16, TK_INT32> : std::true_type {};
 
 template <>
@@ -256,6 +274,9 @@ template <>
 struct TypePromotion<TK_UINT16, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_UINT32, TK_UINT32> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_UINT32, TK_INT64> : std::true_type {};
 
 template <>
@@ -268,7 +289,13 @@ template <>
 struct TypePromotion<TK_UINT32, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_UINT64, TK_UINT64> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_UINT64, TK_FLOAT128> : std::true_type {};
+
+template <>
+struct TypePromotion<TK_FLOAT32, TK_FLOAT32> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_FLOAT32, TK_FLOAT64> : std::true_type {};
@@ -277,7 +304,16 @@ template <>
 struct TypePromotion<TK_FLOAT32, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_FLOAT64, TK_FLOAT64> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_FLOAT64, TK_FLOAT128> : std::true_type {};
+
+template <>
+struct TypePromotion<TK_FLOAT128, TK_FLOAT128> : std::true_type {};
+
+template <>
+struct TypePromotion<TK_CHAR8, TK_CHAR8> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_CHAR8, TK_CHAR16> : std::true_type {};
@@ -301,6 +337,9 @@ template <>
 struct TypePromotion<TK_CHAR8, TK_FLOAT128> : std::true_type {};
 
 template <>
+struct TypePromotion<TK_CHAR16, TK_CHAR16> : std::true_type {};
+
+template <>
 struct TypePromotion<TK_CHAR16, TK_INT32> : std::true_type {};
 
 template <>
@@ -314,6 +353,9 @@ struct TypePromotion<TK_CHAR16, TK_FLOAT64> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_CHAR16, TK_FLOAT128> : std::true_type {};
+
+template <>
+struct TypePromotion<TK_BYTE, TK_BYTE> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_BYTE, TK_INT8> : std::true_type {};
@@ -356,6 +398,9 @@ struct TypePromotion<TK_BYTE, TK_CHAR16> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_BYTE, TK_BOOLEAN> : std::true_type {};
+
+template <>
+struct TypePromotion<TK_BOOLEAN, TK_BOOLEAN> : std::true_type {};
 
 template <>
 struct TypePromotion<TK_BOOLEAN, TK_INT8> : std::true_type {};

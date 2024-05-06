@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-
 #include <gtest/gtest.h>
 
 #include "../DynamicTypesDDSTypesTest.hpp"
@@ -35,11 +33,11 @@ const char* const inner_structure_helper_empty_child_struct_name = "InnerStructu
 const char* const inner_structure_helper_empty_child_child_struct_name = "InnerStructureHelperEmptyChildChild";
 const char* const inner_empty_structure_helper_child_struct_name = "InnerEmptyStructureHelperChild";
 const char* const struct_alias_inheritance_struct_struct_name = "StructAliasInheritanceStruct";
-const char* const struct_inheritance_struct_struct_name = "StructInheritanceStruct";
-const char* const inner_bitset_helper_child_struct_name = "InnerBitsetHelperChild";
-const char* const inner_bitset_helper_child_child_struct_name = "InnerBitsetHelperChildChild";
-const char* const bitset_alias_inheritance_bitset_struct_name = "BitsetAliasInheritanceBitset";
-const char* const bitsets_child_inheritance_bitset_struct_name = "BitsetsChildInheritanceStruct";
+const char* const struct_inheritance_struct_struct_name = "StructturesInheritanceStruct";
+const char* const inner_bitset_helper_child_bitset_name = "InnerBitsetHelperChild";
+const char* const inner_bitset_helper_child_child_bitset_name = "InnerBitsetHelperChildChild";
+const char* const bitset_alias_inheritance_bitset_bitset_name = "BitsetAliasInheritanceBitset";
+const char* const bitsets_child_inheritance_bitset_bitset_name = "BitsetsChildInheritanceStruct";
 
 const char* const var_child_longlong = "var_child_longlong";
 const char* const var_child_ulonglong = "var_child_ulonglong";
@@ -91,7 +89,7 @@ DynamicType::_ref_type create_inner_struct_helper_child_child()
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_structure_helper_child_struct_name);
-    type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_struct_helper());
+    type_descriptor->base_type(create_inner_struct_helper_child());
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -142,7 +140,7 @@ DynamicType::_ref_type create_inner_struct_helper_empty_child_child()
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
     type_descriptor->name(inner_structure_helper_empty_child_struct_name);
-    type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_struct_helper());
+    type_descriptor->base_type(create_inner_struct_helper_empty_child());
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     DynamicType::_ref_type struct_type {type_builder->build()};
@@ -205,7 +203,7 @@ DynamicType::_ref_type create_inner_bitset_helper_child()
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_BITSET);
-    type_descriptor->name(inner_bitset_helper_child_struct_name);
+    type_descriptor->name(inner_bitset_helper_child_bitset_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_bitset_helper());
     type_descriptor->bound({17});
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
@@ -224,7 +222,7 @@ DynamicType::_ref_type create_inner_bitset_helper_child_child()
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_BITSET);
-    type_descriptor->name(inner_bitset_helper_child_child_struct_name);
+    type_descriptor->name(inner_bitset_helper_child_child_bitset_name);
     type_descriptor->base_type(create_inner_bitset_helper_child());
     type_descriptor->bound({14});
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
@@ -243,7 +241,7 @@ DynamicType::_ref_type create_bitset_alias_inheritance_bitset()
 
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_BITSET);
-    type_descriptor->name(bitset_alias_inheritance_bitset_struct_name);
+    type_descriptor->name(bitset_alias_inheritance_bitset_bitset_name);
     type_descriptor->base_type(DynamicTypesDDSTypesTest::create_inner_bitset_helper_alias());
     type_descriptor->bound({10});
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
@@ -897,7 +895,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
     type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(bitsets_child_inheritance_bitset_struct_name);
+    type_descriptor->name(bitsets_child_inheritance_bitset_bitset_name);
     DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
 
     MemberDescriptor::_ref_type member_descriptor {traits<MemberDescriptor>::make_shared()};
@@ -1046,6 +1044,22 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BitsetsChildInheritanceStruct)
         BitsetsChildInheritanceStructPubSubType static_pubsubType;
         check_serialization_deserialization(struct_type, data, XCDR2_DATA_REPRESENTATION, struct_data,
                 static_pubsubType);
+        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChild().a());
+        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChild().b());
+        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChild().c());
+        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChild().d());
+        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChild().child_w());
+        EXPECT_EQ(octet_value, struct_data.var_InnerBitsetHelperChildChild().a());
+        EXPECT_EQ(bool_value, struct_data.var_InnerBitsetHelperChildChild().b());
+        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().c());
+        EXPECT_EQ(short_value, struct_data.var_InnerBitsetHelperChildChild().d());
+        EXPECT_EQ(long_value, struct_data.var_InnerBitsetHelperChildChild().child_w());
+        EXPECT_EQ(ushort_value, struct_data.var_InnerBitsetHelperChildChild().childchild_z());
+        EXPECT_EQ(octet_value, struct_data.var_BitsetAliasInheritanceBitset().a());
+        EXPECT_EQ(bool_value, struct_data.var_BitsetAliasInheritanceBitset().b());
+        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().c());
+        EXPECT_EQ(short_value, struct_data.var_BitsetAliasInheritanceBitset().d());
+        EXPECT_EQ(ushort_value, struct_data.var_BitsetAliasInheritanceBitset().new_bitfield());
     }
 
     EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), RETCODE_OK);

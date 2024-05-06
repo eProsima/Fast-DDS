@@ -51,8 +51,6 @@ constexpr const char* const mutable_inheritance_struct_name = "MutableInheritanc
 constexpr const char* const mutable_inheritanceempty_struct_name = "MutableInheritanceEmptyStruct";
 constexpr const char* const mutable_extensibilityinheritance_struct_name = "MutableExtensibilityInheritance";
 
-constexpr const char* var_str_name = "var_str";
-
 DynamicType::_ref_type create_mutable_short_struct()
 {
     TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
@@ -700,13 +698,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableUnionStruct)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MutableEmptyStruct)
 {
-    TypeDescriptor::_ref_type type_descriptor {traits<TypeDescriptor>::make_shared()};
-    type_descriptor->kind(TK_STRUCTURE);
-    type_descriptor->name(mutable_empty_struct_name);
-    type_descriptor->extensibility_kind(ExtensibilityKind::MUTABLE);
-    DynamicTypeBuilder::_ref_type type_builder {DynamicTypeBuilderFactory::get_instance()->create_type(type_descriptor)};
-
-    DynamicType::_ref_type struct_type = type_builder->build();
+    DynamicType::_ref_type struct_type = create_mutable_empty_struct();
     DynamicData::_ref_type data {DynamicDataFactory::get_instance()->create_data(struct_type)};
     ASSERT_TRUE(data);
 

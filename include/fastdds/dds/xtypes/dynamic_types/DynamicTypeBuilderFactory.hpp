@@ -180,7 +180,7 @@ public:
      * @retval RETCODE_OK is always returned.
      */
     FASTDDS_EXPORTED_API virtual ReturnCode_t delete_type(
-            traits<DynamicType>::ref_type type) = 0;
+            traits<DynamicType>::ref_type& type) = 0;
 
 protected:
 
