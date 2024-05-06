@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
 #include <limits>
 #include <sstream>
 #include <string>
@@ -23,28 +24,28 @@ namespace eprosima {
 
 template<typename ... Args>
 static void set_name_to_current_thread_impl(
-        char* thread_name_buffer,
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         Args... args)
 {
-    snprintf(thread_name_buffer, 16, fmt, args ...);
+    snprintf(thread_name_buffer.data(), 16, fmt, args ...);
 
     std::wstringstream stream;
-    stream << thread_name_buffer;
+    stream << thread_name_buffer.data();
     std::wstring w_thread_name = stream.str();
 
     SetThreadDescription(GetCurrentThread(), w_thread_name.c_str());
 }
 
 void set_name_to_current_thread(
-        char* thread_name_buffer,
+        std::array<char, 16>& thread_name_buffer,
         const char* name)
 {
     set_name_to_current_thread_impl(thread_name_buffer, "%s", name);
 }
 
 void set_name_to_current_thread(
-        char* thread_name_buffer,
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg)
 {
@@ -55,26 +56,17 @@ void set_name_to_current_thread(
         const char* fmt,
         uint32_t arg)
 {
-    char thread_name_buffer[16];
+    std::array<char, 16> thread_name_buffer;
     set_name_to_current_thread(thread_name_buffer, fmt, arg);
 }
 
 void set_name_to_current_thread(
-        char* thread_name_buffer,
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg1,
         uint32_t arg2)
 {
     set_name_to_current_thread_impl(thread_name_buffer, fmt, arg1, arg2);
-}
-
-void set_name_to_current_thread(
-        const char* fmt,
-        uint32_t arg1,
-        uint32_t arg2)
-{
-    char thread_name_buffer[16];
-    set_name_to_current_thread(thread_name_buffer, fmt, arg1, arg2);
 }
 
 static void configure_current_thread_priority(

@@ -15,6 +15,8 @@
 #ifndef UTILS__THREADING_HPP_
 #define UTILS__THREADING_HPP_
 
+#include <array>
+
 #include "./thread.hpp"
 
 namespace eprosima {
@@ -35,7 +37,7 @@ struct ThreadSettings;
  *                         name if there is a limit on the length of the name of a thread.
  */
 void set_name_to_current_thread(
-        char* thread_name_buffer,
+        std::array<char, 16>& thread_name_buffer,
         const char* name);
 
 /**
@@ -49,7 +51,7 @@ void set_name_to_current_thread(
  * @param[in]       arg   Single variadic argument passed to the formatting function.
  */
 void set_name_to_current_thread(
-        char* thread_name_buffer,
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg);
 
@@ -78,22 +80,7 @@ void set_name_to_current_thread(
  * @param[in]       arg2  Second variadic argument passed to the formatting function.
  */
 void set_name_to_current_thread(
-        char* thread_name_buffer,
-        const char* fmt,
-        uint32_t arg1,
-        uint32_t arg2);
-
-/**
- * @brief Give a name to the thread calling this function.
- *
- * @param[in]       fmt   A null-terminated string to be used as the format argument of
- *                        a `snprintf` like function, in order to accomodate the restrictions of
- *                        the OS. Those restrictions may truncate the final thread name if there
- *                        is a limit on the length of the name of a thread.
- * @param[in]       arg1  First variadic argument passed to the formatting function.
- * @param[in]       arg2  Second variadic argument passed to the formatting function.
- */
-void set_name_to_current_thread(
+        std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg1,
         uint32_t arg2);
@@ -129,9 +116,9 @@ eprosima::thread create_thread(
 {
     return eprosima::thread(settings.stack_size, [=]()
                    {
-                       char thread_name_buffer[16]{};
+                       std::array<char, 16> thread_name_buffer;
                        set_name_to_current_thread(thread_name_buffer, name, args ...);
-                       apply_thread_settings_to_current_thread(thread_name_buffer, settings);
+                       apply_thread_settings_to_current_thread(thread_name_buffer.data(), settings);
                        func();
                    });
 }

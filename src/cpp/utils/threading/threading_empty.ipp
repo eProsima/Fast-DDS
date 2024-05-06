@@ -49,13 +49,6 @@ void set_name_to_current_thread(
 {
 }
 
-void set_name_to_current_thread(
-        const char* /* fmt */,
-        uint32_t /* arg1 */,
-        uint32_t /* arg2 */)
-{
-}
-
 void apply_thread_settings_to_current_thread(
         const char* /* thread_name */,
         const fastdds::rtps::ThreadSettings& /*settings*/)
