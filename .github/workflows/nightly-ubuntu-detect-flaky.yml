@@ -99,7 +99,7 @@ jobs:
           # Translate CTest XML reports to jUnit
           if [ ! -f ${test_results_file} ]
           then
-            echo "::group::Translating test report to jUnit..."
+            echo "::group::Translating test report to jUnit specific format"
             python3 ${{ github.workspace }}/src/fastdds/.github/resources/ctest2junit.py \
               --build-dir ${{ github.workspace }}/build/fastdds \
               --xslt ${{ github.workspace }}/src/fastdds/.github/resources/ctest-to-junit-reducted.xsl \
