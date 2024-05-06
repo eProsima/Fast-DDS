@@ -63,6 +63,7 @@ DiscoveryDataBase::~DiscoveryDataBase()
 void DiscoveryDataBase::add_server(
         fastdds::rtps::GuidPrefix_t server)
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     EPROSIMA_LOG_INFO(DISCOVERY_DATABASE, "Server " << server << " added");
     if (std::find(servers_.begin(), servers_.end(), server) == servers_.end())
     {
@@ -73,6 +74,7 @@ void DiscoveryDataBase::add_server(
 void DiscoveryDataBase::remove_server(
         fastrtps::rtps::GuidPrefix_t server)
 {
+    std::lock_guard<std::recursive_mutex> guard(mutex_);
     auto remove_it = std::find(servers_.begin(), servers_.end(), server);
     if (remove_it != servers_.end())
     {
@@ -633,6 +635,7 @@ void DiscoveryDataBase::match_new_server_(
             {
                 if (part.first == participant_prefix)
                 {
+                    std::lock_guard<std::recursive_mutex> guard(mutex_);
                     bool resend_new_pdp = false;
                     for (auto& server: servers_)
                     {
@@ -2262,7 +2265,7 @@ std::map<eprosima::fastdds::rtps::GUID_t, DiscoveryEndpointInfo>::iterator Disco
     auto pit = participants_.find(it->first.guidPrefix);
     if (pit == participants_.end())
     {
-        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Attempting to delete and orphan reader");
+        EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Attempting to delete an orphan reader");
         // Returning error here could lead to an infinite loop
     }
     else
