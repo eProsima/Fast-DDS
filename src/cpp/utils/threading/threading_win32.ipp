@@ -79,7 +79,7 @@ static void configure_current_thread_priority(
         {
             EPROSIMA_LOG_ERROR(SYSTEM,
                     "Problem to set priority of thread with id [" << GetCurrentThreadId() << "," << thread_name << "] to value " << priority <<
-                    ".");
+                    ". Error '" << GetLastError() << "'");
         }
     }
 }
@@ -94,7 +94,7 @@ static void configure_current_thread_affinity(
         {
             EPROSIMA_LOG_ERROR(SYSTEM,
                     "Problem to set affinity of thread with id [" << GetCurrentThreadId() << "," << thread_name << "] to value " << affinity_mask <<
-                    ".");
+                    ". Error '" << GetLastError() << "'");
         }
     }
 }

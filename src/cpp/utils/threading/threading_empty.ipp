@@ -15,13 +15,13 @@
 namespace eprosima {
 
 void set_name_to_current_thread(
-        char*, /* thread_name_buffer */
+        std::array<char, 16>& /* thread_name_buffer */,
         const char* /* name */)
 {
 }
 
 void set_name_to_current_thread(
-        char*, /* thread_name_buffer */
+        std::array<char, 16>& /* thread_name_buffer */,
         const char* /* fmt */,
         uint32_t /* arg */)
 {
@@ -34,15 +34,7 @@ void set_name_to_current_thread(
 }
 
 void set_name_to_current_thread(
-        char* /* thread_name_buffer */,
-        const char* /* fmt */,
-        uint32_t /* arg1 */,
-        uint32_t /* arg2 */)
-{
-}
-
-void set_name_to_current_thread(
-        char* /* thread_name_buffer */,
+        std::array<char, 16>& /* thread_name_buffer */,
         const char* /* fmt */,
         uint32_t /* arg1 */,
         uint32_t /* arg2 */)
