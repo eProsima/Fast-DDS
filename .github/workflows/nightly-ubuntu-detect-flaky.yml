@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         fastdds-branch:
-          - '3.0.x-devel'
+          - 'feature/detect_flaky_tests'
         cmake-build-type:
           - 'RelWithDebInfo'
     steps:
