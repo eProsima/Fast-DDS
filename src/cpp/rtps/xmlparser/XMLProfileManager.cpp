@@ -712,7 +712,6 @@ XMLP_ret XMLProfileManager::extractReplierProfile(
 
 void XMLProfileManager::DeleteInstance()
 {
-    participant_factory_profiles_.clear();
     participant_profiles_.clear();
     publisher_profiles_.clear();
     subscriber_profiles_.clear();
