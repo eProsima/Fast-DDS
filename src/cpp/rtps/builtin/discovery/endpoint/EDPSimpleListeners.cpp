@@ -73,6 +73,7 @@ void EDPBasePUBListener::add_writer_from_change(
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     auto temp_writer_data = edp->get_temporary_writer_proxies_pool().get();
+    const auto type_server = change->writerGUID;
 
     if (temp_writer_data->readFromCDRMessage(&tempMsg, network,
             edp->mp_RTPSParticipant->has_shm_transport(), true, change->vendor_id))
@@ -139,6 +140,7 @@ void EDPBasePUBListener::add_writer_from_change(
         {
             edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
                 temp_writer_data,
+                type_server,
                 after_typelookup_callback);
         }
         // If TypeInformation does not exist, try fallback mechanism
@@ -213,6 +215,7 @@ void EDPBaseSUBListener::add_reader_from_change(
     const NetworkFactory& network = edp->mp_RTPSParticipant->network_factory();
     CDRMessage_t tempMsg(change->serializedPayload);
     auto temp_reader_data = edp->get_temporary_reader_proxies_pool().get();
+    const auto type_server = change->writerGUID;
 
     if (temp_reader_data->readFromCDRMessage(&tempMsg, network,
             edp->mp_RTPSParticipant->has_shm_transport(), true, change->vendor_id))
@@ -280,6 +283,7 @@ void EDPBaseSUBListener::add_reader_from_change(
         {
             edp->mp_RTPSParticipant->typelookup_manager()->async_get_type(
                 temp_reader_data,
+                type_server,
                 after_typelookup_callback);
         }
         // If TypeInformation does not exist, try fallback mechanism
