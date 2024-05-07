@@ -55,14 +55,6 @@ void set_name_to_current_thread(
 }
 
 void set_name_to_current_thread(
-        const char* fmt,
-        uint32_t arg)
-{
-    std::array<char, 16> thread_name_buffer;
-    set_name_to_current_thread(thread_name_buffer, fmt, arg);
-}
-
-void set_name_to_current_thread(
         std::array<char, 16>& thread_name_buffer,
         const char* fmt,
         uint32_t arg1,

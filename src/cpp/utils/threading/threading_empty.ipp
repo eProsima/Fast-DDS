@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <array>
+#include <cstdint>
+
 namespace eprosima {
 
 void set_name_to_current_thread(

@@ -58,19 +58,6 @@ void set_name_to_current_thread(
 /**
  * @brief Give a name to the thread calling this function.
  *
- * @param[in]  fmt   A null-terminated string to be used as the format argument of
- *                   a `snprintf` like function, in order to accomodate the restrictions of
- *                   the OS. Those restrictions may truncate the final thread name if there
- *                   is a limit on the length of the name of a thread.
- * @param[in]  arg   Single variadic argument passed to the formatting function.
- */
-void set_name_to_current_thread(
-        const char* fmt,
-        uint32_t arg);
-
-/**
- * @brief Give a name to the thread calling this function.
- *
  * @param[in, out]  thread_name_buffer  Buffer to store the name of the thread.
  * @param[in]       fmt   A null-terminated string to be used as the format argument of
  *                        a `snprintf` like function, in order to accomodate the restrictions of
