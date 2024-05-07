@@ -312,18 +312,20 @@ SampleIdentity TypeLookupManager::get_types(
 
 ReturnCode_t TypeLookupManager::async_get_type(
         eprosima::ProxyPool<eprosima::fastdds::rtps::WriterProxyData>::smart_ptr& temp_writer_data,
+        const fastdds::rtps::GUID_t& type_server,
         const AsyncGetTypeWriterCallback& callback)
 {
     return check_type_identifier_received<eprosima::fastdds::rtps::WriterProxyData>(
-        temp_writer_data, callback, async_get_type_writer_callbacks_);
+        temp_writer_data, type_server, callback, async_get_type_writer_callbacks_);
 }
 
 ReturnCode_t TypeLookupManager::async_get_type(
         eprosima::ProxyPool<eprosima::fastdds::rtps::ReaderProxyData>::smart_ptr&  temp_reader_data,
+        const fastdds::rtps::GUID_t& type_server,
         const AsyncGetTypeReaderCallback& callback)
 {
     return check_type_identifier_received<eprosima::fastdds::rtps::ReaderProxyData>(
-        temp_reader_data, callback, async_get_type_reader_callbacks_);
+        temp_reader_data, type_server, callback, async_get_type_reader_callbacks_);
 }
 
 TypeKind TypeLookupManager::get_type_kind_to_propagate() const
@@ -346,6 +348,7 @@ TypeKind TypeLookupManager::get_type_kind_to_propagate() const
 template <typename ProxyType, typename AsyncCallback>
 ReturnCode_t TypeLookupManager::check_type_identifier_received(
         typename eprosima::ProxyPool<ProxyType>::smart_ptr& temp_proxy_data,
+        const fastdds::rtps::GUID_t& type_server,
         const AsyncCallback& callback,
         std::unordered_map<xtypes::TypeIdentfierWithSize,
         std::vector<std::pair<ProxyType*,
@@ -356,7 +359,6 @@ ReturnCode_t TypeLookupManager::check_type_identifier_received(
             TK_NONE ?
             temp_proxy_data->type_information().type_information.complete().typeid_with_size() :
             temp_proxy_data->type_information().type_information.minimal().typeid_with_size();
-    fastdds::rtps::GUID_t type_server = temp_proxy_data->guid();
 
     // Check if the type is known
     if (fastdds::rtps::RTPSDomainImpl::get_instance()->type_object_registry_observer().
