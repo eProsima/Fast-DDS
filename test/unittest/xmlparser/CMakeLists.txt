@@ -132,6 +132,7 @@ target_compile_definitions(XMLProfileParserTests PRIVATE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
     )
 target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
@@ -221,6 +222,7 @@ target_compile_definitions(XMLParserTests PRIVATE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
     )
 target_include_directories(XMLParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
@@ -427,6 +429,7 @@ add_executable(XMLLoadFileTests ${XMLLOADFILE_SOURCE})
 target_compile_definitions(XMLLoadFileTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio
     )
 target_include_directories(XMLLoadFileTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/TypeObjectRegistry
