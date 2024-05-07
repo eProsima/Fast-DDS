@@ -1531,6 +1531,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& set_events_thread_settings(
+            const eprosima::fastdds::rtps::ThreadSettings& settings)
+    {
+        participant_qos_.timed_events_thread(settings);
+        return *this;
+    }
+
     const std::string& topic_name() const
     {
         return topic_name_;
