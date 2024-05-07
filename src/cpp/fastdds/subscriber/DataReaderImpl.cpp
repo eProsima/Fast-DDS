@@ -1799,7 +1799,7 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
     else
     {
         is_plain = type_->is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
-            && type_->is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+                && type_->is_plain(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
     }
 
     // When the user requested PREALLOCATED_WITH_REALLOC, but we know the type cannot

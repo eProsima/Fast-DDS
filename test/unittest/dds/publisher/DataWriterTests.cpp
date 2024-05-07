@@ -2192,6 +2192,7 @@ public:
     {
         return custom_is_plain();
     }
+
 };
 
 TEST(DataWriterTests, data_type_is_plain_data_representation)

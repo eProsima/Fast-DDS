@@ -3832,6 +3832,7 @@ public:
     {
         return custom_is_plain();
     }
+
 };
 
 TEST_F(DataReaderTests, data_type_is_plain_data_representation)
